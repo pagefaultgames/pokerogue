@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";
@@ -16,11 +16,11 @@ export class EnemyCommandPhase extends FieldPhase {
   protected fieldIndex: integer;
   protected skipTurn: boolean = false;
 
-  constructor(scene: BattleScene, fieldIndex: integer) {
-    super(scene);
+  constructor(fieldIndex: integer) {
+    super();
 
     this.fieldIndex = fieldIndex;
-    if (this.scene.currentBattle.mysteryEncounter?.skipEnemyBattleTurns) {
+    if (gScene.currentBattle.mysteryEncounter?.skipEnemyBattleTurns) {
       this.skipTurn = true;
     }
   }
@@ -28,9 +28,9 @@ export class EnemyCommandPhase extends FieldPhase {
   start() {
     super.start();
 
-    const enemyPokemon = this.scene.getEnemyField()[this.fieldIndex];
+    const enemyPokemon = gScene.getEnemyField()[this.fieldIndex];
 
-    const battle = this.scene.currentBattle;
+    const battle = gScene.currentBattle;
 
     const trainer = battle.trainer;
 
@@ -74,10 +74,10 @@ export class EnemyCommandPhase extends FieldPhase {
     /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
 
-    this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
+    gScene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
         { command: Command.FIGHT, move: nextMove, skip: this.skipTurn };
 
-    this.scene.currentBattle.enemySwitchCounter = Math.max(this.scene.currentBattle.enemySwitchCounter - 1, 0);
+    gScene.currentBattle.enemySwitchCounter = Math.max(gScene.currentBattle.enemySwitchCounter - 1, 0);
 
     this.end();
   }

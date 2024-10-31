@@ -1,9 +1,9 @@
-import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
+import { gScene } from "#app/battle-scene";
 
 export interface ModalConfig {
   buttonActions: Function[];
@@ -17,8 +17,8 @@ export abstract class ModalUiHandler extends UiHandler {
   protected buttonBgs: Phaser.GameObjects.NineSlice[];
   protected buttonLabels: Phaser.GameObjects.Text[];
 
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
 
     this.buttonContainers = [];
     this.buttonBgs = [];
@@ -42,15 +42,15 @@ export abstract class ModalUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.modalContainer = this.scene.add.container(0, 0);
+    this.modalContainer = gScene.add.container(0, 0);
 
-    this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.modalBg = addWindow(this.scene, 0, 0, 0, 0);
+    this.modalBg = addWindow(0, 0, 0, 0);
 
     this.modalContainer.add(this.modalBg);
 
-    this.titleText = addTextObject(this.scene, 0, 4, "", TextStyle.SETTINGS_LABEL);
+    this.titleText = addTextObject(0, 4, "", TextStyle.SETTINGS_LABEL);
     this.titleText.setOrigin(0.5, 0);
 
     this.modalContainer.add(this.titleText);
@@ -68,14 +68,14 @@ export abstract class ModalUiHandler extends UiHandler {
 
   private addButton(label: string) {
     const buttonTopMargin = this.getButtonTopMargin();
-    const buttonLabel = addTextObject(this.scene, 0, 8, label, TextStyle.TOOLTIP_CONTENT);
+    const buttonLabel = addTextObject(0, 8, label, TextStyle.TOOLTIP_CONTENT);
     buttonLabel.setOrigin(0.5, 0.5);
 
-    const buttonBg = addWindow(this.scene, 0, 0, buttonLabel.getBounds().width + 8, 16, false, false, 0, 0, WindowVariant.THIN);
+    const buttonBg = addWindow(0, 0, buttonLabel.getBounds().width + 8, 16, false, false, 0, 0, WindowVariant.THIN);
     buttonBg.setOrigin(0.5, 0);
     buttonBg.setInteractive(new Phaser.Geom.Rectangle(0, 0, buttonBg.width, buttonBg.height), Phaser.Geom.Rectangle.Contains);
 
-    const buttonContainer = this.scene.add.container(0, buttonTopMargin);
+    const buttonContainer = gScene.add.container(0, buttonTopMargin);
 
     this.buttonLabels.push(buttonLabel);
     this.buttonBgs.push(buttonBg);
@@ -95,7 +95,7 @@ export abstract class ModalUiHandler extends UiHandler {
       if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
         const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin();
 
-        const overlay = this.scene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
+        const overlay = gScene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6, 0);
         overlay.setOrigin(0.5, 0.5);
         overlay.setName("rect-ui-overlay-modal");
         overlay.setAlpha(0);
@@ -103,7 +103,7 @@ export abstract class ModalUiHandler extends UiHandler {
         this.modalContainer.add(overlay);
         this.modalContainer.moveTo(overlay, 0);
 
-        this.scene.tweens.add({
+        gScene.tweens.add({
           targets: overlay,
           alpha: 1,
           duration: 250,
@@ -136,7 +136,7 @@ export abstract class ModalUiHandler extends UiHandler {
     const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin(config);
 
     const [ width, height ] = [ this.getWidth(config), this.getHeight(config) ];
-    this.modalContainer.setPosition((((this.scene.game.canvas.width / 6) - (width + (marginRight - marginLeft))) / 2), (((-this.scene.game.canvas.height / 6) - (height + (marginBottom - marginTop))) / 2));
+    this.modalContainer.setPosition((((gScene.game.canvas.width / 6) - (width + (marginRight - marginLeft))) / 2), (((-gScene.game.canvas.height / 6) - (height + (marginBottom - marginTop))) / 2));
 
     this.modalBg.setSize(width, height);
 

@@ -1,5 +1,4 @@
 import { Modifier } from "typescript";
-import BattleScene from "../battle-scene";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
@@ -9,6 +8,7 @@ import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeCh
 import { ConditionFn } from "#app/@types/common";
 import { Stat, getShortenedStatKey } from "#app/enums/stat";
 import { Challenges } from "#app/enums/challenges";
+import { gScene } from "#app/battle-scene";
 
 export enum AchvTier {
   COMMON,
@@ -66,8 +66,8 @@ export class Achv {
     return this;
   }
 
-  validate(scene: BattleScene, args?: any[]): boolean {
-    return !this.conditionFunc || this.conditionFunc(scene, args);
+  validate(args?: any[]): boolean {
+    return !this.conditionFunc || this.conditionFunc(args);
   }
 
   getTier(): AchvTier {
@@ -91,7 +91,7 @@ export class MoneyAchv extends Achv {
   moneyAmount: integer;
 
   constructor(localizationKey: string, name: string, moneyAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, _args: any[]) => scene.money >= this.moneyAmount);
+    super(localizationKey, name, "", iconImage, score, (_args: any[]) => gScene.money >= this.moneyAmount);
     this.moneyAmount = moneyAmount;
   }
 }
@@ -100,7 +100,7 @@ export class RibbonAchv extends Achv {
   ribbonAmount: integer;
 
   constructor(localizationKey: string, name: string, ribbonAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, _args: any[]) => scene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
+    super(localizationKey, name, "", iconImage, score, (_args: any[]) => gScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
     this.ribbonAmount = ribbonAmount;
   }
 }
@@ -109,7 +109,7 @@ export class DamageAchv extends Achv {
   damageAmount: integer;
 
   constructor(localizationKey: string, name: string, damageAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
+    super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
     this.damageAmount = damageAmount;
   }
 }
@@ -118,7 +118,7 @@ export class HealAchv extends Achv {
   healAmount: integer;
 
   constructor(localizationKey: string, name: string, healAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
+    super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
     this.healAmount = healAmount;
   }
 }
@@ -127,20 +127,20 @@ export class LevelAchv extends Achv {
   level: integer;
 
   constructor(localizationKey: string, name: string, level: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
+    super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
     this.level = level;
   }
 }
 
 export class ModifierAchv extends Achv {
   constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, modifierFunc: (modifier: Modifier) => boolean) {
-    super(localizationKey, name, description, iconImage, score, (_scene: BattleScene, args: any[]) => modifierFunc((args[0] as Modifier)));
+    super(localizationKey, name, description, iconImage, score, (args: any[]) => modifierFunc((args[0] as Modifier)));
   }
 }
 
 export class ChallengeAchv extends Achv {
-  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, challengeFunc: (challenge: Challenge, scene: BattleScene) => boolean) {
-    super(localizationKey, name, description, iconImage, score, (_scene: BattleScene, args: any[]) => challengeFunc(args[0] as Challenge, _scene));
+  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, challengeFunc: (challenge: Challenge) => boolean) {
+    super(localizationKey, name, description, iconImage, score, (args: any[]) => challengeFunc(args[0] as Challenge));
   }
 }
 
@@ -327,36 +327,36 @@ export const achvs = {
   HATCH_SHINY: new Achv("HATCH_SHINY", "",  "HATCH_SHINY.description", "golden_egg", 100).setSecret(),
   HIDDEN_ABILITY: new Achv("HIDDEN_ABILITY", "",  "HIDDEN_ABILITY.description", "ability_charm", 75),
   PERFECT_IVS: new Achv("PERFECT_IVS", "",  "PERFECT_IVS.description", "blunder_policy", 100),
-  CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY", "",  "CLASSIC_VICTORY.description", "relic_crown", 150, c => c.gameData.gameStats.sessionsWon === 0),
-  UNEVOLVED_CLASSIC_VICTORY: new Achv("UNEVOLVED_CLASSIC_VICTORY", "", "UNEVOLVED_CLASSIC_VICTORY.description", "eviolite", 175, c => c.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)),
-  MONO_GEN_ONE_VICTORY: new ChallengeAchv("MONO_GEN_ONE", "",  "MONO_GEN_ONE.description", "ribbon_gen1", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 1 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GEN_TWO_VICTORY: new ChallengeAchv("MONO_GEN_TWO", "",  "MONO_GEN_TWO.description", "ribbon_gen2", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 2 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GEN_THREE_VICTORY: new ChallengeAchv("MONO_GEN_THREE", "",  "MONO_GEN_THREE.description", "ribbon_gen3", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 3 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GEN_FOUR_VICTORY: new ChallengeAchv("MONO_GEN_FOUR", "",  "MONO_GEN_FOUR.description", "ribbon_gen4", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 4 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GEN_FIVE_VICTORY: new ChallengeAchv("MONO_GEN_FIVE", "",  "MONO_GEN_FIVE.description", "ribbon_gen5", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 5 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GEN_SIX_VICTORY: new ChallengeAchv("MONO_GEN_SIX", "",  "MONO_GEN_SIX.description", "ribbon_gen6", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 6 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GEN_SEVEN_VICTORY: new ChallengeAchv("MONO_GEN_SEVEN", "",  "MONO_GEN_SEVEN.description", "ribbon_gen7", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 7 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GEN_EIGHT_VICTORY: new ChallengeAchv("MONO_GEN_EIGHT", "",  "MONO_GEN_EIGHT.description", "ribbon_gen8", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 8 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GEN_NINE_VICTORY: new ChallengeAchv("MONO_GEN_NINE", "",  "MONO_GEN_NINE.description", "ribbon_gen9", 100, (c, scene) => c instanceof SingleGenerationChallenge && c.value === 9 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_NORMAL: new ChallengeAchv("MONO_NORMAL", "", "MONO_NORMAL.description", "silk_scarf", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 1 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_FIGHTING: new ChallengeAchv("MONO_FIGHTING", "", "MONO_FIGHTING.description", "black_belt", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 2 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_FLYING: new ChallengeAchv("MONO_FLYING", "", "MONO_FLYING.description", "sharp_beak", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 3 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_POISON: new ChallengeAchv("MONO_POISON", "", "MONO_POISON.description", "poison_barb", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 4 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GROUND: new ChallengeAchv("MONO_GROUND", "", "MONO_GROUND.description", "soft_sand", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 5 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_ROCK: new ChallengeAchv("MONO_ROCK", "", "MONO_ROCK.description", "hard_stone", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 6 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_BUG: new ChallengeAchv("MONO_BUG", "", "MONO_BUG.description", "silver_powder", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 7 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GHOST: new ChallengeAchv("MONO_GHOST", "", "MONO_GHOST.description", "spell_tag", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 8 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_STEEL: new ChallengeAchv("MONO_STEEL", "", "MONO_STEEL.description", "metal_coat", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 9 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_FIRE: new ChallengeAchv("MONO_FIRE", "", "MONO_FIRE.description", "charcoal", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 10 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_WATER: new ChallengeAchv("MONO_WATER", "", "MONO_WATER.description", "mystic_water", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 11 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_GRASS: new ChallengeAchv("MONO_GRASS", "", "MONO_GRASS.description", "miracle_seed", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 12 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_ELECTRIC: new ChallengeAchv("MONO_ELECTRIC", "", "MONO_ELECTRIC.description", "magnet", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 13 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_PSYCHIC: new ChallengeAchv("MONO_PSYCHIC", "", "MONO_PSYCHIC.description", "twisted_spoon", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 14 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_ICE: new ChallengeAchv("MONO_ICE", "", "MONO_ICE.description", "never_melt_ice", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 15 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_DRAGON: new ChallengeAchv("MONO_DRAGON", "", "MONO_DRAGON.description", "dragon_fang", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 16 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_DARK: new ChallengeAchv("MONO_DARK", "", "MONO_DARK.description", "black_glasses", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 17 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  MONO_FAIRY: new ChallengeAchv("MONO_FAIRY", "", "MONO_FAIRY.description", "fairy_feather", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 18 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
-  FRESH_START: new ChallengeAchv("FRESH_START", "", "FRESH_START.description", "reviver_seed", 100, (c, scene) => c instanceof FreshStartChallenge && c.value > 0 && !scene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  CLASSIC_VICTORY: new Achv("CLASSIC_VICTORY", "",  "CLASSIC_VICTORY.description", "relic_crown", 150, (_) => gScene.gameData.gameStats.sessionsWon === 0),
+  UNEVOLVED_CLASSIC_VICTORY: new Achv("UNEVOLVED_CLASSIC_VICTORY", "", "UNEVOLVED_CLASSIC_VICTORY.description", "eviolite", 175, (_) => gScene.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)),
+  MONO_GEN_ONE_VICTORY: new ChallengeAchv("MONO_GEN_ONE", "",  "MONO_GEN_ONE.description", "ribbon_gen1", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 1 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GEN_TWO_VICTORY: new ChallengeAchv("MONO_GEN_TWO", "",  "MONO_GEN_TWO.description", "ribbon_gen2", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 2 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GEN_THREE_VICTORY: new ChallengeAchv("MONO_GEN_THREE", "",  "MONO_GEN_THREE.description", "ribbon_gen3", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 3 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GEN_FOUR_VICTORY: new ChallengeAchv("MONO_GEN_FOUR", "",  "MONO_GEN_FOUR.description", "ribbon_gen4", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 4 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GEN_FIVE_VICTORY: new ChallengeAchv("MONO_GEN_FIVE", "",  "MONO_GEN_FIVE.description", "ribbon_gen5", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 5 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GEN_SIX_VICTORY: new ChallengeAchv("MONO_GEN_SIX", "",  "MONO_GEN_SIX.description", "ribbon_gen6", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 6 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GEN_SEVEN_VICTORY: new ChallengeAchv("MONO_GEN_SEVEN", "",  "MONO_GEN_SEVEN.description", "ribbon_gen7", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 7 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GEN_EIGHT_VICTORY: new ChallengeAchv("MONO_GEN_EIGHT", "",  "MONO_GEN_EIGHT.description", "ribbon_gen8", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 8 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GEN_NINE_VICTORY: new ChallengeAchv("MONO_GEN_NINE", "",  "MONO_GEN_NINE.description", "ribbon_gen9", 100, (c) => c instanceof SingleGenerationChallenge && c.value === 9 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_NORMAL: new ChallengeAchv("MONO_NORMAL", "", "MONO_NORMAL.description", "silk_scarf", 100, (c) => c instanceof SingleTypeChallenge && c.value === 1 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_FIGHTING: new ChallengeAchv("MONO_FIGHTING", "", "MONO_FIGHTING.description", "black_belt", 100, (c) => c instanceof SingleTypeChallenge && c.value === 2 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_FLYING: new ChallengeAchv("MONO_FLYING", "", "MONO_FLYING.description", "sharp_beak", 100, (c) => c instanceof SingleTypeChallenge && c.value === 3 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_POISON: new ChallengeAchv("MONO_POISON", "", "MONO_POISON.description", "poison_barb", 100, (c) => c instanceof SingleTypeChallenge && c.value === 4 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GROUND: new ChallengeAchv("MONO_GROUND", "", "MONO_GROUND.description", "soft_sand", 100, (c) => c instanceof SingleTypeChallenge && c.value === 5 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_ROCK: new ChallengeAchv("MONO_ROCK", "", "MONO_ROCK.description", "hard_stone", 100, (c) => c instanceof SingleTypeChallenge && c.value === 6 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_BUG: new ChallengeAchv("MONO_BUG", "", "MONO_BUG.description", "silver_powder", 100, (c) => c instanceof SingleTypeChallenge && c.value === 7 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GHOST: new ChallengeAchv("MONO_GHOST", "", "MONO_GHOST.description", "spell_tag", 100, (c) => c instanceof SingleTypeChallenge && c.value === 8 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_STEEL: new ChallengeAchv("MONO_STEEL", "", "MONO_STEEL.description", "metal_coat", 100, (c) => c instanceof SingleTypeChallenge && c.value === 9 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_FIRE: new ChallengeAchv("MONO_FIRE", "", "MONO_FIRE.description", "charcoal", 100, (c) => c instanceof SingleTypeChallenge && c.value === 10 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_WATER: new ChallengeAchv("MONO_WATER", "", "MONO_WATER.description", "mystic_water", 100, (c) => c instanceof SingleTypeChallenge && c.value === 11 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_GRASS: new ChallengeAchv("MONO_GRASS", "", "MONO_GRASS.description", "miracle_seed", 100, (c) => c instanceof SingleTypeChallenge && c.value === 12 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_ELECTRIC: new ChallengeAchv("MONO_ELECTRIC", "", "MONO_ELECTRIC.description", "magnet", 100, (c) => c instanceof SingleTypeChallenge && c.value === 13 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_PSYCHIC: new ChallengeAchv("MONO_PSYCHIC", "", "MONO_PSYCHIC.description", "twisted_spoon", 100, (c) => c instanceof SingleTypeChallenge && c.value === 14 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_ICE: new ChallengeAchv("MONO_ICE", "", "MONO_ICE.description", "never_melt_ice", 100, (c) => c instanceof SingleTypeChallenge && c.value === 15 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_DRAGON: new ChallengeAchv("MONO_DRAGON", "", "MONO_DRAGON.description", "dragon_fang", 100, (c) => c instanceof SingleTypeChallenge && c.value === 16 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_DARK: new ChallengeAchv("MONO_DARK", "", "MONO_DARK.description", "black_glasses", 100, (c) => c instanceof SingleTypeChallenge && c.value === 17 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  MONO_FAIRY: new ChallengeAchv("MONO_FAIRY", "", "MONO_FAIRY.description", "fairy_feather", 100, (c) => c instanceof SingleTypeChallenge && c.value === 18 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
+  FRESH_START: new ChallengeAchv("FRESH_START", "", "FRESH_START.description", "reviver_seed", 100, (c) => c instanceof FreshStartChallenge && c.value > 0 && !gScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)),
   INVERSE_BATTLE: new ChallengeAchv("INVERSE_BATTLE", "", "INVERSE_BATTLE.description", "inverse", 100, c => c instanceof InverseBattleChallenge && c.value > 0),
   BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 100).setSecret(),
 };

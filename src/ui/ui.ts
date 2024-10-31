@@ -1,4 +1,4 @@
-import { default as BattleScene } from "../battle-scene";
+import { default as BattleScene, gScene } from "#app/battle-scene";
 import UiHandler from "./ui-handler";
 import BattleMessageUiHandler from "./battle-message-ui-handler";
 import CommandUiHandler from "./command-ui-handler";
@@ -156,55 +156,55 @@ export default class UI extends Phaser.GameObjects.Container {
 
   private overlayActive: boolean;
 
-  constructor(scene: BattleScene) {
-    super(scene, 0, scene.game.canvas.height / 6);
+  constructor() {
+    super(gScene, 0, gScene.game.canvas.height / 6);
 
     this.mode = Mode.MESSAGE;
     this.modeChain = [];
     this.handlers = [
-      new BattleMessageUiHandler(scene),
-      new TitleUiHandler(scene),
-      new CommandUiHandler(scene),
-      new FightUiHandler(scene),
-      new BallUiHandler(scene),
-      new TargetSelectUiHandler(scene),
-      new ModifierSelectUiHandler(scene),
-      new SaveSlotSelectUiHandler(scene),
-      new PartyUiHandler(scene),
-      new SummaryUiHandler(scene),
-      new StarterSelectUiHandler(scene),
-      new EvolutionSceneHandler(scene),
-      new EggHatchSceneHandler(scene),
-      new EggSummaryUiHandler(scene),
-      new ConfirmUiHandler(scene),
-      new OptionSelectUiHandler(scene),
-      new MenuUiHandler(scene),
-      new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
+      new BattleMessageUiHandler(),
+      new TitleUiHandler(),
+      new CommandUiHandler(),
+      new FightUiHandler(),
+      new BallUiHandler(),
+      new TargetSelectUiHandler(),
+      new ModifierSelectUiHandler(),
+      new SaveSlotSelectUiHandler(),
+      new PartyUiHandler(),
+      new SummaryUiHandler(),
+      new StarterSelectUiHandler(),
+      new EvolutionSceneHandler(),
+      new EggHatchSceneHandler(),
+      new EggSummaryUiHandler(),
+      new ConfirmUiHandler(),
+      new OptionSelectUiHandler(),
+      new MenuUiHandler(),
+      new OptionSelectUiHandler(Mode.MENU_OPTION_SELECT),
       // settings
-      new SettingsUiHandler(scene),
-      new SettingsDisplayUiHandler(scene),
-      new SettingsAudioUiHandler(scene),
-      new SettingsGamepadUiHandler(scene),
-      new GamepadBindingUiHandler(scene),
-      new SettingsKeyboardUiHandler(scene),
-      new KeyboardBindingUiHandler(scene),
-      new AchvsUiHandler(scene),
-      new GameStatsUiHandler(scene),
-      new EggListUiHandler(scene),
-      new EggGachaUiHandler(scene),
-      new LoginFormUiHandler(scene),
-      new RegistrationFormUiHandler(scene),
-      new LoadingModalUiHandler(scene),
-      new SessionReloadModalUiHandler(scene),
-      new UnavailableModalUiHandler(scene),
-      new GameChallengesUiHandler(scene),
-      new RenameFormUiHandler(scene),
-      new RunHistoryUiHandler(scene),
-      new RunInfoUiHandler(scene),
-      new TestDialogueUiHandler(scene, Mode.TEST_DIALOGUE),
-      new AutoCompleteUiHandler(scene),
-      new AdminUiHandler(scene),
-      new MysteryEncounterUiHandler(scene),
+      new SettingsUiHandler(),
+      new SettingsDisplayUiHandler(),
+      new SettingsAudioUiHandler(),
+      new SettingsGamepadUiHandler(),
+      new GamepadBindingUiHandler(),
+      new SettingsKeyboardUiHandler(),
+      new KeyboardBindingUiHandler(),
+      new AchvsUiHandler(),
+      new GameStatsUiHandler(),
+      new EggListUiHandler(),
+      new EggGachaUiHandler(),
+      new LoginFormUiHandler(),
+      new RegistrationFormUiHandler(),
+      new LoadingModalUiHandler(),
+      new SessionReloadModalUiHandler(),
+      new UnavailableModalUiHandler(),
+      new GameChallengesUiHandler(),
+      new RenameFormUiHandler(),
+      new RunHistoryUiHandler(),
+      new RunInfoUiHandler(),
+      new TestDialogueUiHandler(Mode.TEST_DIALOGUE),
+      new AutoCompleteUiHandler(),
+      new AdminUiHandler(),
+      new MysteryEncounterUiHandler(),
     ];
   }
 
@@ -213,38 +213,38 @@ export default class UI extends Phaser.GameObjects.Container {
     for (const handler of this.handlers) {
       handler.setup();
     }
-    this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
+    this.overlay = gScene.add.rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6, 0);
     this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
-    (this.scene as BattleScene).uiContainer.add(this.overlay);
+    gScene.uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
     this.setupTooltip();
 
-    this.achvBar = new AchvBar(this.scene as BattleScene);
+    this.achvBar = new AchvBar;
     this.achvBar.setup();
 
-    (this.scene as BattleScene).uiContainer.add(this.achvBar);
+    gScene.uiContainer.add(this.achvBar);
 
-    this.savingIcon = new SavingIconHandler(this.scene as BattleScene);
+    this.savingIcon = new SavingIconHandler;
     this.savingIcon.setup();
 
-    (this.scene as BattleScene).uiContainer.add(this.savingIcon);
+    gScene.uiContainer.add(this.savingIcon);
   }
 
   private setupTooltip() {
-    this.tooltipContainer = this.scene.add.container(0, 0);
+    this.tooltipContainer = gScene.add.container(0, 0);
     this.tooltipContainer.setName("tooltip");
     this.tooltipContainer.setVisible(false);
 
-    this.tooltipBg = addWindow(this.scene as BattleScene, 0, 0, 128, 31);
+    this.tooltipBg = addWindow(0, 0, 128, 31);
     this.tooltipBg.setName("window-tooltip-bg");
     this.tooltipBg.setOrigin(0, 0);
 
-    this.tooltipTitle = addTextObject(this.scene, 64, 4, "", TextStyle.TOOLTIP_TITLE);
+    this.tooltipTitle = addTextObject(64, 4, "", TextStyle.TOOLTIP_TITLE);
     this.tooltipTitle.setName("text-tooltip-title");
     this.tooltipTitle.setOrigin(0.5, 0);
 
-    this.tooltipContent = addTextObject(this.scene, 6, 16, "", TextStyle.TOOLTIP_CONTENT);
+    this.tooltipContent = addTextObject(6, 16, "", TextStyle.TOOLTIP_CONTENT);
     this.tooltipContent.setName("text-tooltip-content");
     this.tooltipContent.setWordWrapWidth(850);
 
@@ -252,7 +252,7 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipContainer.add(this.tooltipTitle);
     this.tooltipContainer.add(this.tooltipContent);
 
-    (this.scene as BattleScene).uiContainer.add(this.tooltipContainer);
+    gScene.uiContainer.add(this.tooltipContainer);
   }
 
   getHandler<H extends UiHandler = UiHandler>(): H {
@@ -268,7 +268,7 @@ export default class UI extends Phaser.GameObjects.Container {
       return false;
     }
 
-    const battleScene = this.scene as BattleScene;
+    const battleScene = gScene as BattleScene;
     if ([ Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE ].includes(this.mode)) {
       battleScene?.processInfoButton(pressed);
       return true;
@@ -318,7 +318,7 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
-    const battleScene = this.scene as BattleScene;
+    const battleScene = gScene as BattleScene;
     // Get localized dialogue (if available)
     let hasi18n = false;
     let text = keyOrText;
@@ -360,7 +360,7 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   shouldSkipDialogue(i18nKey: string): boolean {
-    const battleScene = this.scene as BattleScene;
+    const battleScene = gScene as BattleScene;
 
     if (i18next.exists(i18nKey) ) {
       if (battleScene.skipSeenDialogues && battleScene.gameData.getSeenDialogues()[i18nKey] === true) {
@@ -378,9 +378,9 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipContainer.setVisible(true);
     this.editTooltip(title, content);
     if (overlap) {
-      (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
+      gScene.uiContainer.moveAbove(this.tooltipContainer, this);
     } else {
-      (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
+      gScene.uiContainer.moveBelow(this.tooltipContainer, this);
     }
   }
 
@@ -400,11 +400,11 @@ export default class UI extends Phaser.GameObjects.Container {
 
   update(): void {
     if (this.tooltipContainer.visible) {
-      const xReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-      const yReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.y >= this.scene.game.canvas.height - this.tooltipBg.height * 6 - 12;
+      const xReverse = gScene.game.input.mousePointer && gScene.game.input.mousePointer.x >= gScene.game.canvas.width - this.tooltipBg.width * 6 - 12;
+      const yReverse = gScene.game.input.mousePointer && gScene.game.input.mousePointer.y >= gScene.game.canvas.height - this.tooltipBg.height * 6 - 12;
       this.tooltipContainer.setPosition(
-        !xReverse ? this.scene.game.input.mousePointer!.x / 6 + 2 : this.scene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2,
-        !yReverse ? this.scene.game.input.mousePointer!.y / 6 + 2 : this.scene.game.input.mousePointer!.y / 6 - this.tooltipBg.height - 2,
+        !xReverse ? gScene.game.input.mousePointer!.x / 6 + 2 : gScene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2,
+        !yReverse ? gScene.game.input.mousePointer!.y / 6 + 2 : gScene.game.input.mousePointer!.y / 6 - this.tooltipBg.height - 2,
       );
     }
   }
@@ -428,11 +428,11 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    (this.scene as BattleScene).playSound("ui/select");
+    gScene.playSound("ui/select");
   }
 
   playError(): void {
-    (this.scene as BattleScene).playSound("ui/error");
+    gScene.playSound("ui/error");
   }
 
   fadeOut(duration: integer): Promise<void> {
@@ -443,7 +443,7 @@ export default class UI extends Phaser.GameObjects.Container {
       this.overlayActive = true;
       this.overlay.setAlpha(0);
       this.overlay.setVisible(true);
-      this.scene.tweens.add({
+      gScene.tweens.add({
         targets: this.overlay,
         alpha: 1,
         duration: duration,
@@ -458,7 +458,7 @@ export default class UI extends Phaser.GameObjects.Container {
       if (!this.overlayActive) {
         return resolve();
       }
-      this.scene.tweens.add({
+      gScene.tweens.add({
         targets: this.overlay,
         alpha: 0,
         duration: duration,
@@ -485,7 +485,7 @@ export default class UI extends Phaser.GameObjects.Container {
           }
           if (chainMode && this.mode && !clear) {
             this.modeChain.push(this.mode);
-            (this.scene as BattleScene).updateGameInfo();
+            gScene.updateGameInfo();
           }
           this.mode = mode;
           const touchControls = document?.getElementById("touchControls");
@@ -500,7 +500,7 @@ export default class UI extends Phaser.GameObjects.Container {
         && (noTransitionModes.indexOf(this.mode) === -1 && noTransitionModes.indexOf(mode) === -1)))
         || (chainMode && noTransitionModes.indexOf(mode) === -1))) {
         this.fadeOut(250).then(() => {
-          this.scene.time.delayedCall(100, () => {
+          gScene.time.delayedCall(100, () => {
             doSetMode();
             this.fadeIn(250);
           });
@@ -533,7 +533,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
   resetModeChain(): void {
     this.modeChain = [];
-    (this.scene as BattleScene).updateGameInfo();
+    gScene.updateGameInfo();
   }
 
   revertMode(): Promise<boolean> {
@@ -547,7 +547,7 @@ export default class UI extends Phaser.GameObjects.Container {
       const doRevertMode = () => {
         this.getHandler().clear();
         this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
-        (this.scene as BattleScene).updateGameInfo();
+        gScene.updateGameInfo();
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
           touchControls.dataset.uiMode = Mode[this.mode];
@@ -557,7 +557,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
       if (noTransitionModes.indexOf(lastMode) === -1) {
         this.fadeOut(250).then(() => {
-          this.scene.time.delayedCall(100, () => {
+          gScene.time.delayedCall(100, () => {
             doRevertMode();
             this.fadeIn(250);
           });
@@ -589,11 +589,10 @@ export default class UI extends Phaser.GameObjects.Container {
    * @returns gamepad type
    */
   public getGamepadType(): string {
-    const scene = this.scene as BattleScene;
-    if (scene.inputMethod === "gamepad") {
-      return scene.inputController.getConfig(scene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+    if (gScene.inputMethod === "gamepad") {
+      return gScene.inputController.getConfig(gScene.inputController.selectedDevice[Device.GAMEPAD]).padType;
     } else {
-      return scene.inputMethod;
+      return gScene.inputMethod;
     }
   }
 }

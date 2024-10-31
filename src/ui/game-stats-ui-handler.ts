@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import BattleScene from "#app/battle-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import UiHandler from "#app/ui/ui-handler";
@@ -10,6 +9,7 @@ import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import { UiTheme } from "#enums/ui-theme";
+import { gScene } from "#app/battle-scene";
 
 interface DisplayStat {
   label_key?: string;
@@ -222,8 +222,8 @@ export default class GameStatsUiHandler extends UiHandler {
   private arrowUp: Phaser.GameObjects.Sprite;
   private arrowDown: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
 
     this.statLabels = [];
     this.statValues = [];
@@ -232,37 +232,37 @@ export default class GameStatsUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.gameStatsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.gameStatsContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
 
-    this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
+    const headerBg = addWindow(0, 0, (gScene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    const statsBgWidth = ((this.scene.game.canvas.width / 6) - 2) / 2;
+    const statsBgWidth = ((gScene.game.canvas.width / 6) - 2) / 2;
     const [ statsBgLeft, statsBgRight ] = new Array(2).fill(null).map((_, i) => {
       const width = statsBgWidth + 2;
-      const height = Math.floor((this.scene.game.canvas.height / 6) - headerBg.height - 2);
-      const statsBg = addWindow(this.scene, (statsBgWidth - 2) * i, headerBg.height, width, height, false, false, i > 0 ? -3 : 0, 1);
+      const height = Math.floor((gScene.game.canvas.height / 6) - headerBg.height - 2);
+      const statsBg = addWindow((statsBgWidth - 2) * i, headerBg.height, width, height, false, false, i > 0 ? -3 : 0, 1);
       statsBg.setOrigin(0, 0);
       return statsBg;
     });
 
-    this.statsContainer = this.scene.add.container(0, 0);
+    this.statsContainer = gScene.add.container(0, 0);
 
 
     new Array(18).fill(null).map((_, s) => {
 
-      const statLabel = addTextObject(this.scene, 8 + (s % 2 === 1 ? statsBgWidth : 0), 28 + Math.floor(s / 2) * 16, "", TextStyle.STATS_LABEL);
+      const statLabel = addTextObject(8 + (s % 2 === 1 ? statsBgWidth : 0), 28 + Math.floor(s / 2) * 16, "", TextStyle.STATS_LABEL);
       statLabel.setOrigin(0, 0);
       this.statsContainer.add(statLabel);
       this.statLabels.push(statLabel);
 
-      const statValue = addTextObject(this.scene, (statsBgWidth * ((s % 2) + 1)) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
+      const statValue = addTextObject((statsBgWidth * ((s % 2) + 1)) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
       statValue.setOrigin(1, 0);
       this.statsContainer.add(statValue);
       this.statValues.push(statValue);
@@ -275,10 +275,10 @@ export default class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.add(this.statsContainer);
 
     // arrows to show that we can scroll through the stats
-    const isLegacyTheme = this.scene.uiTheme === UiTheme.LEGACY;
-    this.arrowDown = this.scene.add.sprite(statsBgWidth, this.scene.game.canvas.height / 6 - (isLegacyTheme ? 9 : 5), "prompt");
+    const isLegacyTheme = gScene.uiTheme === UiTheme.LEGACY;
+    this.arrowDown = gScene.add.sprite(statsBgWidth, gScene.game.canvas.height / 6 - (isLegacyTheme ? 9 : 5), "prompt");
     this.gameStatsContainer.add(this.arrowDown);
-    this.arrowUp = this.scene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
+    this.arrowUp = gScene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
     this.arrowUp.flipY = true;
     this.gameStatsContainer.add(this.arrowUp);
 
@@ -298,7 +298,7 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.arrowUp.play("prompt");
     this.arrowDown.play("prompt");
-    if (this.scene.uiTheme === UiTheme.LEGACY) {
+    if (gScene.uiTheme === UiTheme.LEGACY) {
       this.arrowUp.setTint(0x484848);
       this.arrowDown.setTint(0x484848);
     }
@@ -318,7 +318,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + 18);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
-      const value = stat.sourceFunc!(this.scene.gameData); // TODO: is this bang correct?
+      const value = stat.sourceFunc!(gScene.gameData); // TODO: is this bang correct?
       this.statLabels[s].setText(!stat.hidden || isNaN(parseInt(value)) || parseInt(value) ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???");
       this.statValues[s].setText(value);
     });
@@ -348,7 +348,7 @@ export default class GameStatsUiHandler extends UiHandler {
 
     if (button === Button.CANCEL) {
       success = true;
-      this.scene.ui.revertMode();
+      gScene.ui.revertMode();
     } else {
       switch (button) {
         case Button.UP:

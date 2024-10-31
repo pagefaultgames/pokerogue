@@ -2,7 +2,7 @@ import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattl
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -91,9 +91,9 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
     .withFleeAllowed(false)
-    .withOnVisualsStart((scene: BattleScene) => {
-      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getParty()[0]);
-      danceAnim.play(scene);
+    .withOnVisualsStart(() => {
+      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, gScene.getEnemyPokemon()!, gScene.getParty()[0]);
+      danceAnim.play();
 
       return true;
     })
@@ -106,12 +106,12 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .withOnInit(() => {
+      const encounter = gScene.currentBattle.mysteryEncounter!;
 
       const species = getPokemonSpecies(Species.ORICORIO);
-      const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const enemyPokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, false);
+      const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
+      const enemyPokemon = new EnemyPokemon(species, level, TrainerSlot.NONE, false);
       if (!enemyPokemon.moveset.some(m => m && m.getMove().id === Moves.REVELATION_DANCE)) {
         if (enemyPokemon.moveset.length < 4) {
           enemyPokemon.moveset.push(new PokemonMove(Moves.REVELATION_DANCE));
@@ -122,7 +122,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
 
       // Set the form index based on the biome
       // Defaults to Baile style if somehow nothing matches
-      const currentBiome = scene.arena.biomeType;
+      const currentBiome = gScene.arena.biomeType;
       if (BAILE_STYLE_BIOMES.includes(currentBiome)) {
         enemyPokemon.formIndex = 0;
       } else if (POM_POM_STYLE_BIOMES.includes(currentBiome)) {
@@ -136,14 +136,14 @@ export const DancingLessonsEncounter: MysteryEncounter =
       }
 
       const oricorioData = new PokemonData(enemyPokemon);
-      const oricorio = scene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, oricorioData);
+      const oricorio = gScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, oricorioData);
 
       // Adds a real Pokemon sprite to the field (required for the animation)
-      scene.getEnemyParty().forEach(enemyPokemon => {
-        scene.field.remove(enemyPokemon, true);
+      gScene.getEnemyParty().forEach(enemyPokemon => {
+        gScene.field.remove(enemyPokemon, true);
       });
-      scene.currentBattle.enemyParty = [ oricorio ];
-      scene.field.add(oricorio);
+      gScene.currentBattle.enemyParty = [ oricorio ];
+      gScene.field.add(oricorio);
       // Spawns on offscreen field
       oricorio.x -= 300;
       encounter.loadAssets.push(oricorio.loadAssets());
@@ -156,8 +156,8 @@ export const DancingLessonsEncounter: MysteryEncounter =
           // Gets +1 to all stats except SPD on battle start
           tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(pokemon.scene, `${namespace}:option.1.boss_enraged`);
-            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF ], 1));
+            queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
+            gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF ], 1));
           }
         }],
       };
@@ -182,9 +182,9 @@ export const DancingLessonsEncounter: MysteryEncounter =
             },
           ],
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Pick battle
-          const encounter = scene.currentBattle.mysteryEncounter!;
+          const encounter = gScene.currentBattle.mysteryEncounter!;
 
           encounter.startOfBattleEffects.push({
             sourceBattlerIndex: BattlerIndex.ENEMY,
@@ -193,9 +193,9 @@ export const DancingLessonsEncounter: MysteryEncounter =
             ignorePp: true
           });
 
-          await hideOricorioPokemon(scene);
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.BATON ], fillRemaining: true });
-          await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
+          await hideOricorioPokemon();
+          setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.BATON ], fillRemaining: true });
+          await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
         })
         .build()
     )
@@ -211,25 +211,25 @@ export const DancingLessonsEncounter: MysteryEncounter =
             },
           ],
         })
-        .withPreOptionPhase(async (scene: BattleScene) => {
+        .withPreOptionPhase(async () => {
           // Learn its Dance
-          const encounter = scene.currentBattle.mysteryEncounter!;
+          const encounter = gScene.currentBattle.mysteryEncounter!;
 
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
-            scene.unshiftPhase(new LearnMovePhase(scene, scene.getParty().indexOf(pokemon), Moves.REVELATION_DANCE));
+            gScene.unshiftPhase(new LearnMovePhase(gScene.getParty().indexOf(pokemon), Moves.REVELATION_DANCE));
 
             // Play animation again to "learn" the dance
-            const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getPlayerPokemon());
-            danceAnim.play(scene);
+            const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, gScene.getEnemyPokemon()!, gScene.getPlayerPokemon());
+            danceAnim.play();
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected);
+          return selectPokemonForOption(onPokemonSelected);
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Learn its Dance
-          await hideOricorioPokemon(scene);
-          leaveEncounterWithoutBattle(scene, true);
+          await hideOricorioPokemon();
+          leaveEncounterWithoutBattle(true);
         })
         .build()
     )
@@ -248,9 +248,9 @@ export const DancingLessonsEncounter: MysteryEncounter =
             },
           ],
         })
-        .withPreOptionPhase(async (scene: BattleScene) => {
+        .withPreOptionPhase(async () => {
           // Open menu for selecting pokemon with a Dancing move
-          const encounter = scene.currentBattle.mysteryEncounter!;
+          const encounter = gScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for nature selection
             return pokemon.moveset
@@ -277,20 +277,20 @@ export const DancingLessonsEncounter: MysteryEncounter =
             if (!pokemon.isAllowedInBattle()) {
               return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
             }
-            const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
+            const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
+              return getEncounterText(`${namespace}:invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
+          return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Show the Oricorio a dance, and recruit it
-          const encounter = scene.currentBattle.mysteryEncounter!;
-          const oricorio = encounter.misc.oricorioData.toPokemon(scene);
+          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const oricorio = encounter.misc.oricorioData.toPokemon();
           oricorio.passive = true;
 
           // Ensure the Oricorio's moveset gains the Dance move the player used
@@ -303,18 +303,18 @@ export const DancingLessonsEncounter: MysteryEncounter =
             }
           }
 
-          await hideOricorioPokemon(scene);
-          await catchPokemon(scene, oricorio, null, PokeballType.POKEBALL, false);
-          leaveEncounterWithoutBattle(scene, true);
+          await hideOricorioPokemon();
+          await catchPokemon(oricorio, null, PokeballType.POKEBALL, false);
+          leaveEncounterWithoutBattle(true);
         })
         .build()
     )
     .build();
 
-function hideOricorioPokemon(scene: BattleScene) {
+function hideOricorioPokemon() {
   return new Promise<void>(resolve => {
-    const oricorioSprite = scene.getEnemyParty()[0];
-    scene.tweens.add({
+    const oricorioSprite = gScene.getEnemyParty()[0];
+    gScene.tweens.add({
       targets: oricorioSprite,
       x: "+=16",
       y: "-=16",
@@ -322,7 +322,7 @@ function hideOricorioPokemon(scene: BattleScene) {
       ease: "Sine.easeInOut",
       duration: 750,
       onComplete: () => {
-        scene.field.remove(oricorioSprite, true);
+        gScene.field.remove(oricorioSprite, true);
         resolve();
       }
     });

@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import { gScene } from "#app/battle-scene";
 import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
@@ -19,33 +19,33 @@ export default class AchvBar extends Phaser.GameObjects.Container {
 
   public shown: boolean;
 
-  constructor(scene: BattleScene) {
-    super(scene, scene.game.canvas.width / 6, 0);
-    this.playerGender = scene.gameData.gender;
+  constructor() {
+    super(gScene, gScene.game.canvas.width / 6, 0);
+    this.playerGender = gScene.gameData.gender;
   }
 
   setup(): void {
     this.defaultWidth = 200;
     this.defaultHeight = 40;
 
-    this.bg = this.scene.add.nineslice(0, 0, "achv_bar", undefined, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
+    this.bg = gScene.add.nineslice(0, 0, "achv_bar", undefined, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.icon = this.scene.add.sprite(4, 4, "items");
+    this.icon = gScene.add.sprite(4, 4, "items");
     this.icon.setOrigin(0, 0);
     this.add(this.icon);
 
-    this.titleText = addTextObject(this.scene, 40, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.titleText = addTextObject(40, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
     this.titleText.setOrigin(0, 0);
     this.add(this.titleText);
 
-    this.scoreText = addTextObject(this.scene, 150, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.scoreText = addTextObject(150, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
     this.scoreText.setOrigin(1, 0);
     this.add(this.scoreText);
 
-    this.descriptionText = addTextObject(this.scene, 43, 16, "", TextStyle.WINDOW_ALT, { fontSize: "72px" });
+    this.descriptionText = addTextObject(43, 16, "", TextStyle.WINDOW_ALT, { fontSize: "72px" });
     this.descriptionText.setOrigin(0, 0);
     this.add(this.descriptionText);
 
@@ -90,16 +90,16 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.bg.height = Math.max(this.defaultHeight, this.titleText.displayHeight + this.descriptionText.displayHeight + 8);
     this.icon.y = (this.bg.height / 2) - (this.icon.height / 2);
 
-    (this.scene as BattleScene).playSound("se/achv");
+    gScene.playSound("se/achv");
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: this,
-      x: (this.scene.game.canvas.width / 6) - (this.bg.width / 2),
+      x: (gScene.game.canvas.width / 6) - (this.bg.width / 2),
       duration: 500,
       ease: "Sine.easeOut"
     });
 
-    this.scene.time.delayedCall(10000, () => this.hide(this.playerGender));
+    gScene.time.delayedCall(10000, () => this.hide(this.playerGender));
 
     this.setVisible(true);
     this.shown = true;
@@ -110,9 +110,9 @@ export default class AchvBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: this,
-      x: (this.scene.game.canvas.width / 6),
+      x: (gScene.game.canvas.width / 6),
       duration: 500,
       ease: "Sine.easeIn",
       onComplete: () => {

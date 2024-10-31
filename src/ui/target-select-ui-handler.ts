@@ -1,5 +1,4 @@
 import { BattlerIndex } from "../battle";
-import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
@@ -9,6 +8,7 @@ import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon";
 import { ModifierBar } from "#app/modifier/modifier";
 import { SubstituteTag } from "#app/data/battler-tags";
+import { gScene } from "#app/battle-scene";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
@@ -24,8 +24,8 @@ export default class TargetSelectUiHandler extends UiHandler {
   private enemyModifiers: ModifierBar;
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.TARGET_SELECT);
+  constructor() {
+    super(Mode.TARGET_SELECT);
 
     this.cursor = -1;
   }
@@ -43,7 +43,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.move = args[1] as Moves;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
 
-    const moveTargets = getMoveTargets(this.scene.getPlayerField()[this.fieldIndex], this.move);
+    const moveTargets = getMoveTargets(gScene.getPlayerField()[this.fieldIndex], this.move);
     this.targets = moveTargets.targets;
     this.isMultipleTargets = moveTargets.multiple ?? false;
 
@@ -51,7 +51,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       return false;
     }
 
-    this.enemyModifiers = this.scene.getModifierBar(true);
+    this.enemyModifiers = gScene.getModifierBar(true);
 
     this.setCursor(this.targets.includes(this.cursor) ? this.cursor : this.targets[0]);
 
@@ -102,8 +102,8 @@ export default class TargetSelectUiHandler extends UiHandler {
   }
 
   setCursor(cursor: integer): boolean {
-    const singleTarget = this.scene.getField()[cursor];
-    const multipleTargets = this.targets.map(index => this.scene.getField()[index]);
+    const singleTarget = gScene.getField()[cursor];
+    const multipleTargets = this.targets.map(index => gScene.getField()[index]);
 
     this.targetsHighlighted = this.isMultipleTargets ? multipleTargets : [ singleTarget ];
 
@@ -117,7 +117,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       }
     }
 
-    this.targetFlashTween = this.scene.tweens.add({
+    this.targetFlashTween = gScene.tweens.add({
       targets: this.targetsHighlighted,
       key: { start: 1, to: 0.25 },
       loop: -1,
@@ -143,7 +143,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     const targetsBattleInfo = this.targetsHighlighted.map(target => target.getBattleInfo());
 
     targetsBattleInfo.map(info => {
-      this.targetBattleInfoMoveTween.push(this.scene.tweens.add({
+      this.targetBattleInfoMoveTween.push(gScene.tweens.add({
         targets: [ info ],
         y: { start: info.getBaseY(), to: info.getBaseY() + 1 },
         loop: -1,

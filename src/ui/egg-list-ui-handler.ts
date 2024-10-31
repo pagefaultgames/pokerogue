@@ -1,4 +1,3 @@
-import BattleScene from "#app/battle-scene";
 import { Mode } from "#app/ui/ui";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "#app/ui/text";
@@ -8,6 +7,7 @@ import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import ScrollableGridUiHandler from "#app/ui/scrollable-grid-handler";
 import { ScrollBar } from "#app/ui/scroll-bar";
+import { gScene } from "#app/battle-scene";
 
 export default class EggListUiHandler extends MessageUiHandler {
   private readonly ROWS = 9;
@@ -28,59 +28,59 @@ export default class EggListUiHandler extends MessageUiHandler {
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.EGG_LIST);
+  constructor() {
+    super(Mode.EGG_LIST);
   }
 
   setup() {
     const ui = this.getUi();
 
-    this.eggListContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
+    this.eggListContainer = gScene.add.container(0, -gScene.game.canvas.height / 6);
     this.eggListContainer.setVisible(false);
     ui.add(this.eggListContainer);
 
-    const bgColor = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0x006860);
+    const bgColor = gScene.add.rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6, 0x006860);
     bgColor.setOrigin(0, 0);
     this.eggListContainer.add(bgColor);
 
-    const eggListBg = this.scene.add.image(0, 0, "egg_list_bg");
+    const eggListBg = gScene.add.image(0, 0, "egg_list_bg");
     eggListBg.setOrigin(0, 0);
     this.eggListContainer.add(eggListBg);
 
-    this.eggListContainer.add(addWindow(this.scene, 1, 85, 106, 22));
-    this.eggListContainer.add(addWindow(this.scene, 1, 102, 106, 50, true));
-    this.eggListContainer.add(addWindow(this.scene, 1, 147, 106, 32, true));
-    this.eggListContainer.add(addWindow(this.scene, 107, 1, 212, 178));
+    this.eggListContainer.add(addWindow(1, 85, 106, 22));
+    this.eggListContainer.add(addWindow(1, 102, 106, 50, true));
+    this.eggListContainer.add(addWindow(1, 147, 106, 32, true));
+    this.eggListContainer.add(addWindow(107, 1, 212, 178));
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
-    this.iconAnimHandler.setup(this.scene);
+    this.iconAnimHandler.setup();
 
-    this.eggNameText = addTextObject(this.scene, 8, 68, "", TextStyle.SUMMARY);
+    this.eggNameText = addTextObject(8, 68, "", TextStyle.SUMMARY);
     this.eggNameText.setOrigin(0, 0);
     this.eggListContainer.add(this.eggNameText);
 
-    this.eggDateText = addTextObject(this.scene, 8, 91, "", TextStyle.TOOLTIP_CONTENT);
+    this.eggDateText = addTextObject(8, 91, "", TextStyle.TOOLTIP_CONTENT);
     this.eggListContainer.add(this.eggDateText);
 
-    this.eggHatchWavesText = addTextObject(this.scene, 8, 108, "", TextStyle.TOOLTIP_CONTENT);
+    this.eggHatchWavesText = addTextObject(8, 108, "", TextStyle.TOOLTIP_CONTENT);
     this.eggHatchWavesText.setWordWrapWidth(540);
     this.eggListContainer.add(this.eggHatchWavesText);
 
-    this.eggGachaInfoText = addTextObject(this.scene, 8, 152, "", TextStyle.TOOLTIP_CONTENT);
+    this.eggGachaInfoText = addTextObject(8, 152, "", TextStyle.TOOLTIP_CONTENT);
     this.eggGachaInfoText.setWordWrapWidth(540);
     this.eggListContainer.add(this.eggGachaInfoText);
 
-    this.eggListIconContainer = this.scene.add.container(113, 5);
+    this.eggListIconContainer = gScene.add.container(113, 5);
     this.eggListContainer.add(this.eggListIconContainer);
 
-    this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
+    this.cursorObj = gScene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
     this.eggListContainer.add(this.cursorObj);
 
-    this.eggSprite = this.scene.add.sprite(54, 37, "egg");
+    this.eggSprite = gScene.add.sprite(54, 37, "egg");
     this.eggListContainer.add(this.eggSprite);
 
-    const scrollBar = new ScrollBar(this.scene, 310, 5, 4, 170, this.ROWS);
+    const scrollBar = new ScrollBar(310, 5, 4, 170, this.ROWS);
     this.eggListContainer.add(scrollBar);
 
     this.scrollGridHandler = new ScrollableGridUiHandler(this, this.ROWS, this.COLUMNS)
@@ -88,15 +88,15 @@ export default class EggListUiHandler extends MessageUiHandler {
       .withUpdateGridCallBack(() => this.updateEggIcons())
       .withUpdateSingleElementCallback((i:number) => this.setEggDetails(i));
 
-    this.eggListMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
+    this.eggListMessageBoxContainer = gScene.add.container(0, gScene.game.canvas.height / 6);
     this.eggListMessageBoxContainer.setVisible(false);
     this.eggListContainer.add(this.eggListMessageBoxContainer);
 
-    const eggListMessageBox = addWindow(this.scene, 1, -1, 318, 28);
+    const eggListMessageBox = addWindow(1, -1, 318, 28);
     eggListMessageBox.setOrigin(0, 1);
     this.eggListMessageBoxContainer.add(eggListMessageBox);
 
-    this.message = addTextObject(this.scene, 8, -8, "", TextStyle.WINDOW, { maxLines: 1 });
+    this.message = addTextObject(8, -8, "", TextStyle.WINDOW, { maxLines: 1 });
     this.message.setOrigin(0, 1);
     this.eggListMessageBoxContainer.add(this.message);
 
@@ -112,7 +112,7 @@ export default class EggListUiHandler extends MessageUiHandler {
 
     this.eggListContainer.setVisible(true);
 
-    this.scrollGridHandler.setTotalElements(this.scene.gameData.eggs.length);
+    this.scrollGridHandler.setTotalElements(gScene.gameData.eggs.length);
 
     this.updateEggIcons();
     this.setCursor(0);
@@ -125,10 +125,10 @@ export default class EggListUiHandler extends MessageUiHandler {
    */
   private initEggIcons() {
     this.eggIcons = [];
-    for (let i = 0; i < Math.min(this.ROWS * this.COLUMNS, this.scene.gameData.eggs.length); i++) {
+    for (let i = 0; i < Math.min(this.ROWS * this.COLUMNS, gScene.gameData.eggs.length); i++) {
       const x = (i % this.COLUMNS) * 18;
       const y = Math.floor(i / this.COLUMNS) * 18;
-      const icon = this.scene.add.sprite(x - 2, y + 2, "egg_icons");
+      const icon = gScene.add.sprite(x - 2, y + 2, "egg_icons");
       icon.setScale(0.5);
       icon.setOrigin(0, 0);
       this.eggListIconContainer.add(icon);
@@ -141,14 +141,14 @@ export default class EggListUiHandler extends MessageUiHandler {
    */
   private updateEggIcons() {
     const indexOffset = this.scrollGridHandler.getItemOffset();
-    const eggsToShow = Math.min(this.eggIcons.length, this.scene.gameData.eggs.length - indexOffset);
+    const eggsToShow = Math.min(this.eggIcons.length, gScene.gameData.eggs.length - indexOffset);
 
     this.eggIcons.forEach((icon, i) => {
       if (i !== this.cursor) {
         this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
       }
       if (i < eggsToShow) {
-        const egg = this.scene.gameData.eggs[i + indexOffset];
+        const egg = gScene.gameData.eggs[i + indexOffset];
         icon.setFrame(egg.getKey());
         icon.setVisible(true);
       } else {
@@ -162,7 +162,7 @@ export default class EggListUiHandler extends MessageUiHandler {
    * @param index which egg in the list to display the info for
    */
   private setEggDetails(index: number): void {
-    const egg = this.scene.gameData.eggs[index];
+    const egg = gScene.gameData.eggs[index];
     this.eggSprite.setFrame(`egg_${egg.getKey()}`);
     this.eggNameText.setText(`${i18next.t("egg:egg")} (${egg.getEggDescriptor()})`);
     this.eggDateText.setText(
@@ -174,7 +174,7 @@ export default class EggListUiHandler extends MessageUiHandler {
       })
     );
     this.eggHatchWavesText.setText(egg.getEggHatchWavesMessage());
-    this.eggGachaInfoText.setText(egg.getEggTypeDescriptor(this.scene));
+    this.eggGachaInfoText.setText(egg.getEggTypeDescriptor());
   }
 
   processInput(button: Button): boolean {

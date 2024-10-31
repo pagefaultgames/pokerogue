@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { Biome } from "#app/enums/biome";
 import { getBiomeKey } from "#app/field/arena";
 import { BattlePhase } from "./battle-phase";
@@ -6,8 +6,8 @@ import { BattlePhase } from "./battle-phase";
 export class SwitchBiomePhase extends BattlePhase {
   private nextBiome: Biome;
 
-  constructor(scene: BattleScene, nextBiome: Biome) {
-    super(scene);
+  constructor(nextBiome: Biome) {
+    super();
 
     this.nextBiome = nextBiome;
   }
@@ -19,41 +19,41 @@ export class SwitchBiomePhase extends BattlePhase {
       return this.end();
     }
 
-    this.scene.tweens.add({
-      targets: [ this.scene.arenaEnemy, this.scene.lastEnemyTrainer ],
+    gScene.tweens.add({
+      targets: [ gScene.arenaEnemy, gScene.lastEnemyTrainer ],
       x: "+=300",
       duration: 2000,
       onComplete: () => {
-        this.scene.arenaEnemy.setX(this.scene.arenaEnemy.x - 600);
+        gScene.arenaEnemy.setX(gScene.arenaEnemy.x - 600);
 
-        this.scene.newArena(this.nextBiome);
+        gScene.newArena(this.nextBiome);
 
         const biomeKey = getBiomeKey(this.nextBiome);
         const bgTexture = `${biomeKey}_bg`;
-        this.scene.arenaBgTransition.setTexture(bgTexture);
-        this.scene.arenaBgTransition.setAlpha(0);
-        this.scene.arenaBgTransition.setVisible(true);
-        this.scene.arenaPlayerTransition.setBiome(this.nextBiome);
-        this.scene.arenaPlayerTransition.setAlpha(0);
-        this.scene.arenaPlayerTransition.setVisible(true);
+        gScene.arenaBgTransition.setTexture(bgTexture);
+        gScene.arenaBgTransition.setAlpha(0);
+        gScene.arenaBgTransition.setVisible(true);
+        gScene.arenaPlayerTransition.setBiome(this.nextBiome);
+        gScene.arenaPlayerTransition.setAlpha(0);
+        gScene.arenaPlayerTransition.setVisible(true);
 
-        this.scene.tweens.add({
-          targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
+        gScene.tweens.add({
+          targets: [ gScene.arenaPlayer, gScene.arenaBgTransition, gScene.arenaPlayerTransition ],
           duration: 1000,
           delay: 1000,
           ease: "Sine.easeInOut",
-          alpha: (target: any) => target === this.scene.arenaPlayer ? 0 : 1,
+          alpha: (target: any) => target === gScene.arenaPlayer ? 0 : 1,
           onComplete: () => {
-            this.scene.arenaBg.setTexture(bgTexture);
-            this.scene.arenaPlayer.setBiome(this.nextBiome);
-            this.scene.arenaPlayer.setAlpha(1);
-            this.scene.arenaEnemy.setBiome(this.nextBiome);
-            this.scene.arenaEnemy.setAlpha(1);
-            this.scene.arenaNextEnemy.setBiome(this.nextBiome);
-            this.scene.arenaBgTransition.setVisible(false);
-            this.scene.arenaPlayerTransition.setVisible(false);
-            if (this.scene.lastEnemyTrainer) {
-              this.scene.lastEnemyTrainer.destroy();
+            gScene.arenaBg.setTexture(bgTexture);
+            gScene.arenaPlayer.setBiome(this.nextBiome);
+            gScene.arenaPlayer.setAlpha(1);
+            gScene.arenaEnemy.setBiome(this.nextBiome);
+            gScene.arenaEnemy.setAlpha(1);
+            gScene.arenaNextEnemy.setBiome(this.nextBiome);
+            gScene.arenaBgTransition.setVisible(false);
+            gScene.arenaPlayerTransition.setVisible(false);
+            if (gScene.lastEnemyTrainer) {
+              gScene.lastEnemyTrainer.destroy();
             }
 
             this.end();

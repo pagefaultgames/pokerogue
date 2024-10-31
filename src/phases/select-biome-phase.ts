@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
 import { Biome } from "#app/enums/biome";
 import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";
@@ -10,58 +10,58 @@ import { PartyHealPhase } from "./party-heal-phase";
 import { SwitchBiomePhase } from "./switch-biome-phase";
 
 export class SelectBiomePhase extends BattlePhase {
-  constructor(scene: BattleScene) {
-    super(scene);
+  constructor() {
+    super();
   }
 
   start() {
     super.start();
 
-    const currentBiome = this.scene.arena.biomeType;
+    const currentBiome = gScene.arena.biomeType;
 
     const setNextBiome = (nextBiome: Biome) => {
-      if (this.scene.currentBattle.waveIndex % 10 === 1) {
-        this.scene.applyModifiers(MoneyInterestModifier, true, this.scene);
-        this.scene.unshiftPhase(new PartyHealPhase(this.scene, false));
+      if (gScene.currentBattle.waveIndex % 10 === 1) {
+        gScene.applyModifiers(MoneyInterestModifier, true);
+        gScene.unshiftPhase(new PartyHealPhase(false));
       }
-      this.scene.unshiftPhase(new SwitchBiomePhase(this.scene, nextBiome));
+      gScene.unshiftPhase(new SwitchBiomePhase(nextBiome));
       this.end();
     };
 
-    if ((this.scene.gameMode.isClassic && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex + 9))
-        || (this.scene.gameMode.isDaily && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex))
-        || (this.scene.gameMode.hasShortBiomes && !(this.scene.currentBattle.waveIndex % 50))) {
+    if ((gScene.gameMode.isClassic && gScene.gameMode.isWaveFinal(gScene.currentBattle.waveIndex + 9))
+        || (gScene.gameMode.isDaily && gScene.gameMode.isWaveFinal(gScene.currentBattle.waveIndex))
+        || (gScene.gameMode.hasShortBiomes && !(gScene.currentBattle.waveIndex % 50))) {
       setNextBiome(Biome.END);
-    } else if (this.scene.gameMode.hasRandomBiomes) {
+    } else if (gScene.gameMode.hasRandomBiomes) {
       setNextBiome(this.generateNextBiome());
     } else if (Array.isArray(biomeLinks[currentBiome])) {
       let biomes: Biome[] = [];
-      this.scene.executeWithSeedOffset(() => {
+      gScene.executeWithSeedOffset(() => {
         biomes = (biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
           .filter(b => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
           .map(b => !Array.isArray(b) ? b : b[0]);
-      }, this.scene.currentBattle.waveIndex);
-      if (biomes.length > 1 && this.scene.findModifier(m => m instanceof MapModifier)) {
+      }, gScene.currentBattle.waveIndex);
+      if (biomes.length > 1 && gScene.findModifier(m => m instanceof MapModifier)) {
         let biomeChoices: Biome[] = [];
-        this.scene.executeWithSeedOffset(() => {
+        gScene.executeWithSeedOffset(() => {
           biomeChoices = (!Array.isArray(biomeLinks[currentBiome])
             ? [ biomeLinks[currentBiome] as Biome ]
             : biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
             .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
             .map(b => Array.isArray(b) ? b[0] : b);
-        }, this.scene.currentBattle.waveIndex);
+        }, gScene.currentBattle.waveIndex);
         const biomeSelectItems = biomeChoices.map(b => {
           const ret: OptionSelectItem = {
             label: getBiomeName(b),
             handler: () => {
-              this.scene.ui.setMode(Mode.MESSAGE);
+              gScene.ui.setMode(Mode.MESSAGE);
               setNextBiome(b);
               return true;
             }
           };
           return ret;
         });
-        this.scene.ui.setMode(Mode.OPTION_SELECT, {
+        gScene.ui.setMode(Mode.OPTION_SELECT, {
           options: biomeSelectItems,
           delay: 1000
         });
@@ -76,9 +76,9 @@ export class SelectBiomePhase extends BattlePhase {
   }
 
   generateNextBiome(): Biome {
-    if (!(this.scene.currentBattle.waveIndex % 50)) {
+    if (!(gScene.currentBattle.waveIndex % 50)) {
       return Biome.END;
     }
-    return this.scene.generateRandomBiome(this.scene.currentBattle.waveIndex);
+    return gScene.generateRandomBiome(gScene.currentBattle.waveIndex);
   }
 }

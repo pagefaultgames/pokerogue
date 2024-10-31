@@ -1,5 +1,4 @@
 import { loggedInUser } from "#app/account";
-import BattleScene from "#app/battle-scene";
 import { BattleType } from "#app/battle";
 import { getDailyRunStarters, fetchDailyRunSeed } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
@@ -21,6 +20,7 @@ import { EncounterPhase } from "./encounter-phase";
 import { SelectChallengePhase } from "./select-challenge-phase";
 import { SelectStarterPhase } from "./select-starter-phase";
 import { SummonPhase } from "./summon-phase";
+import { gScene } from "#app/battle-scene";
 
 
 export class TitlePhase extends Phase {
@@ -28,8 +28,8 @@ export class TitlePhase extends Phase {
   private lastSessionData: SessionSaveData;
   public gameMode: GameModes;
 
-  constructor(scene: BattleScene) {
-    super(scene);
+  constructor() {
+    super();
 
     this.loaded = false;
   }
@@ -37,17 +37,17 @@ export class TitlePhase extends Phase {
   start(): void {
     super.start();
 
-    this.scene.ui.clearText();
-    this.scene.ui.fadeIn(250);
+    gScene.ui.clearText();
+    gScene.ui.fadeIn(250);
 
-    this.scene.playBgm("title", true);
+    gScene.playBgm("title", true);
 
-    this.scene.gameData.getSession(loggedInUser?.lastSessionSlot ?? -1).then(sessionData => {
+    gScene.gameData.getSession(loggedInUser?.lastSessionSlot ?? -1).then(sessionData => {
       if (sessionData) {
         this.lastSessionData = sessionData;
         const biomeKey = getBiomeKey(sessionData.arena.biome);
         const bgTexture = `${biomeKey}_bg`;
-        this.scene.arenaBg.setTexture(bgTexture);
+        gScene.arenaBg.setTexture(bgTexture);
       }
       this.showOptions();
     }).catch(err => {
@@ -72,11 +72,11 @@ export class TitlePhase extends Phase {
       handler: () => {
         const setModeAndEnd = (gameMode: GameModes) => {
           this.gameMode = gameMode;
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.clearText();
+          gScene.ui.setMode(Mode.MESSAGE);
+          gScene.ui.clearText();
           this.end();
         };
-        const { gameData } = this.scene;
+        const { gameData } = gScene;
         if (gameData.isUnlocked(Unlockables.ENDLESS_MODE)) {
           const options: OptionSelectItem[] = [
             {
@@ -113,17 +113,17 @@ export class TitlePhase extends Phase {
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              this.scene.clearPhaseQueue();
-              this.scene.pushPhase(new TitlePhase(this.scene));
+              gScene.clearPhaseQueue();
+              gScene.pushPhase(new TitlePhase());
               super.end();
               return true;
             }
           });
-          this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+          gScene.ui.showText(i18next.t("menu:selectGameMode"), null, () => gScene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
         } else {
           this.gameMode = GameModes.CLASSIC;
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.clearText();
+          gScene.ui.setMode(Mode.MESSAGE);
+          gScene.ui.clearText();
           this.end();
         }
         return true;
@@ -132,7 +132,7 @@ export class TitlePhase extends Phase {
     {
       label: i18next.t("menu:loadGame"),
       handler: () => {
-        this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
+        gScene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
           (slotId: integer) => {
             if (slotId === -1) {
               return this.showOptions();
@@ -153,7 +153,7 @@ export class TitlePhase extends Phase {
     {
       label: i18next.t("menu:settings"),
       handler: () => {
-        this.scene.ui.setOverlayMode(Mode.SETTINGS);
+        gScene.ui.setOverlayMode(Mode.SETTINGS);
         return true;
       },
       keepOpen: true
@@ -163,55 +163,55 @@ export class TitlePhase extends Phase {
       noCancel: true,
       yOffset: 47
     };
-    this.scene.ui.setMode(Mode.TITLE, config);
+    gScene.ui.setMode(Mode.TITLE, config);
   }
 
   loadSaveSlot(slotId: integer): void {
-    this.scene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
-    this.scene.ui.setMode(Mode.MESSAGE);
-    this.scene.ui.resetModeChain();
-    this.scene.gameData.loadSession(this.scene, slotId, slotId === -1 ? this.lastSessionData : undefined).then((success: boolean) => {
+    gScene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
+    gScene.ui.setMode(Mode.MESSAGE);
+    gScene.ui.resetModeChain();
+    gScene.gameData.loadSession(slotId, slotId === -1 ? this.lastSessionData : undefined).then((success: boolean) => {
       if (success) {
         this.loaded = true;
-        this.scene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
+        gScene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
       } else {
         this.end();
       }
     }).catch(err => {
       console.error(err);
-      this.scene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
+      gScene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
     });
   }
 
   initDailyRun(): void {
-    this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
-      this.scene.clearPhaseQueue();
+    gScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+      gScene.clearPhaseQueue();
       if (slotId === -1) {
-        this.scene.pushPhase(new TitlePhase(this.scene));
+        gScene.pushPhase(new TitlePhase());
         return super.end();
       }
-      this.scene.sessionSlotId = slotId;
+      gScene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {
-        this.scene.gameMode = getGameMode(GameModes.DAILY);
+        gScene.gameMode = getGameMode(GameModes.DAILY);
 
-        this.scene.setSeed(seed);
-        this.scene.resetSeed(0);
+        gScene.setSeed(seed);
+        gScene.resetSeed(0);
 
-        this.scene.money = this.scene.gameMode.getStartingMoney();
+        gScene.money = gScene.gameMode.getStartingMoney();
 
-        const starters = getDailyRunStarters(this.scene, seed);
-        const startingLevel = this.scene.gameMode.getStartingLevel();
+        const starters = getDailyRunStarters(seed);
+        const startingLevel = gScene.gameMode.getStartingLevel();
 
-        const party = this.scene.getParty();
+        const party = gScene.getParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
-          const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+          const starterProps = gScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
           const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
           const starterGender = starter.species.malePercent !== null
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
             : Gender.GENDERLESS;
-          const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
+          const starterPokemon = gScene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
           starterPokemon.setVisible(false);
           party.push(starterPokemon);
           loadPokemonAssets.push(starterPokemon.loadAssets());
@@ -226,18 +226,18 @@ export class TitlePhase extends Phase {
           .filter((m) => m !== null);
 
         for (const m of modifiers) {
-          this.scene.addModifier(m, true, false, false, true);
+          gScene.addModifier(m, true, false, false, true);
         }
-        this.scene.updateModifiers(true, true);
+        gScene.updateModifiers(true, true);
 
         Promise.all(loadPokemonAssets).then(() => {
-          this.scene.time.delayedCall(500, () => this.scene.playBgm());
-          this.scene.gameData.gameStats.dailyRunSessionsPlayed++;
-          this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
-          this.scene.newBattle();
-          this.scene.arena.init();
-          this.scene.sessionPlayTime = 0;
-          this.scene.lastSavePlayTime = 0;
+          gScene.time.delayedCall(500, () => gScene.playBgm());
+          gScene.gameData.gameStats.dailyRunSessionsPlayed++;
+          gScene.newArena(gScene.gameMode.getStartingBiome());
+          gScene.newBattle();
+          gScene.arena.init();
+          gScene.sessionPlayTime = 0;
+          gScene.lastSavePlayTime = 0;
           this.end();
         });
       };
@@ -260,43 +260,43 @@ export class TitlePhase extends Phase {
   }
 
   end(): void {
-    if (!this.loaded && !this.scene.gameMode.isDaily) {
-      this.scene.arena.preloadBgm();
-      this.scene.gameMode = getGameMode(this.gameMode);
+    if (!this.loaded && !gScene.gameMode.isDaily) {
+      gScene.arena.preloadBgm();
+      gScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {
-        this.scene.pushPhase(new SelectChallengePhase(this.scene));
+        gScene.pushPhase(new SelectChallengePhase());
       } else {
-        this.scene.pushPhase(new SelectStarterPhase(this.scene));
+        gScene.pushPhase(new SelectStarterPhase());
       }
-      this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
+      gScene.newArena(gScene.gameMode.getStartingBiome());
     } else {
-      this.scene.playBgm();
+      gScene.playBgm();
     }
 
-    this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
+    gScene.pushPhase(new EncounterPhase(this.loaded));
 
     if (this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
+      const availablePartyMembers = gScene.getParty().filter(p => p.isAllowedInBattle()).length;
 
-      this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
-      if (this.scene.currentBattle.double && availablePartyMembers > 1) {
-        this.scene.pushPhase(new SummonPhase(this.scene, 1, true, true));
+      gScene.pushPhase(new SummonPhase(0, true, true));
+      if (gScene.currentBattle.double && availablePartyMembers > 1) {
+        gScene.pushPhase(new SummonPhase(1, true, true));
       }
 
-      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
-        const minPartySize = this.scene.currentBattle.double ? 2 : 1;
+      if (gScene.currentBattle.battleType !== BattleType.TRAINER && (gScene.currentBattle.waveIndex > 1 || !gScene.gameMode.isDaily)) {
+        const minPartySize = gScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {
-          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
-          if (this.scene.currentBattle.double) {
-            this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+          gScene.pushPhase(new CheckSwitchPhase(0, gScene.currentBattle.double));
+          if (gScene.currentBattle.double) {
+            gScene.pushPhase(new CheckSwitchPhase(1, gScene.currentBattle.double));
           }
         }
       }
     }
 
-    for (const achv of Object.keys(this.scene.gameData.achvUnlocks)) {
+    for (const achv of Object.keys(gScene.gameData.achvUnlocks)) {
       if (vouchers.hasOwnProperty(achv) && achv !== "CLASSIC_VICTORY") {
-        this.scene.validateVoucher(vouchers[achv]);
+        gScene.validateVoucher(vouchers[achv]);
       }
     }
 

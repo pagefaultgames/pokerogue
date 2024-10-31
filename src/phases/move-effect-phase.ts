@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { applyPreAttackAbAttrs, AddSecondStrikeAbAttr, IgnoreMoveEffectsAbAttr, applyPostDefendAbAttrs, PostDefendAbAttr, applyPostAttackAbAttrs, PostAttackAbAttr, MaxMultiHitAbAttr, AlwaysHitAbAttr, TypeImmunityAbAttr } from "#app/data/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
@@ -20,8 +20,8 @@ export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
   protected targets: BattlerIndex[];
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
-    super(scene, battlerIndex);
+  constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
+    super(battlerIndex);
     this.move = move;
     /**
      * In double battles, if the right Pokemon selects a spread move and the left Pokemon dies
@@ -78,7 +78,7 @@ export class MoveEffectPhase extends PokemonPhase {
         applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, false, targets.length, hitCount, new Utils.IntegerHolder(0));
         // If Multi-Lens is applicable, multiply the hit count by 1 + the number of Multi-Lenses held by the user
         if (move instanceof AttackMove && !move.hasAttr(FixedDamageAttr)) {
-          this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
+          gScene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
         }
         // Set the user's relevant turnData fields to reflect the final hit count
         user.turnData.hitCount = hitCount.value;
@@ -111,11 +111,11 @@ export class MoveEffectPhase extends PokemonPhase {
       if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag) && !isImmune)) {
         this.stopMultiHit();
         if (hasActiveTargets) {
-          this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget() ? getPokemonNameWithAffix(this.getTarget()!) : "" }));
+          gScene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getTarget() ? getPokemonNameWithAffix(this.getTarget()!) : "" }));
           moveHistoryEntry.result = MoveResult.MISS;
           applyMoveAttrs(MissEffectAttr, user, null, move);
         } else {
-          this.scene.queueMessage(i18next.t("battle:attackFailed"));
+          gScene.queueMessage(i18next.t("battle:attackFailed"));
           moveHistoryEntry.result = MoveResult.FAIL;
         }
         user.pushMoveHistory(moveHistoryEntry);
@@ -125,9 +125,9 @@ export class MoveEffectPhase extends PokemonPhase {
       /** All move effect attributes are chained together in this array to be applied asynchronously. */
       const applyAttrs: Promise<void>[] = [];
 
-      const playOnEmptyField = this.scene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false;
+      const playOnEmptyField = gScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false;
       // Move animation only needs one target
-      new MoveAnim(move.id as Moves, user, this.getTarget()!.getBattlerIndex()!, playOnEmptyField).play(this.scene, move.hitsSubstitute(user, this.getTarget()!), () => {
+      new MoveAnim(move.id as Moves, user, this.getTarget()!.getBattlerIndex()!, playOnEmptyField).play(move.hitsSubstitute(user, this.getTarget()!), () => {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
@@ -140,7 +140,7 @@ export class MoveEffectPhase extends PokemonPhase {
           const bypassIgnoreProtect = new Utils.BooleanHolder(false);
           /** If the move is not targeting a Pokemon on the user's side, try to apply conditional protection effects */
           if (!this.move.getMove().isAllyTarget()) {
-            this.scene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, false, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
+            gScene.arena.applyTagsForSide(ConditionalProtectTag, targetSide, false, hasConditionalProtectApplied, user, target, move.id, bypassIgnoreProtect);
           }
 
           /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
@@ -158,7 +158,7 @@ export class MoveEffectPhase extends PokemonPhase {
            */
           if (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()]) {
             this.stopMultiHit(target);
-            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            gScene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
             }
@@ -226,7 +226,7 @@ export class MoveEffectPhase extends PokemonPhase {
            * (see Relic Song's interaction with Parental Bond when used by Meloetta).
            */
           if (lastHit) {
-            this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+            gScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
           }
 
           /**
@@ -258,7 +258,7 @@ export class MoveEffectPhase extends PokemonPhase {
                        */
                       if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !move.hitsSubstitute(user, target)) {
                         const flinched = new Utils.BooleanHolder(false);
-                        user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
+                        gScene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
                         if (flinched.value) {
                           target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
                         }
@@ -275,7 +275,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
                           // If the invoked move is an enemy attack, apply the enemy's status effect-inflicting tokens
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
-                            user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
+                            gScene.applyShuffledModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
                           }
                           target.lapseTags(BattlerTagLapseType.AFTER_HIT);
 
@@ -287,7 +287,7 @@ export class MoveEffectPhase extends PokemonPhase {
                              * steal an item from the target granted by Grip Claw
                              */
                             if (this.move.getMove() instanceof AttackMove) {
-                              this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
+                              gScene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
                             }
                             resolve();
                           });
@@ -348,16 +348,16 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     if (user) {
       if (user.turnData.hitsLeft && --user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive()) {
-        this.scene.unshiftPhase(this.getNewHitPhase());
+        gScene.unshiftPhase(this.getNewHitPhase());
       } else {
         // Queue message for number of hits made by multi-move
         // If multi-hit attack only hits once, still want to render a message
         const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
         if (hitsTotal > 1 || (user.turnData.hitsLeft && user.turnData.hitsLeft > 0)) {
           // If there are multiple hits, or if there are hits of the multi-hit move left
-          this.scene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
+          gScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
-        this.scene.applyModifiers(HitHealModifier, this.player, user);
+        gScene.applyModifiers(HitHealModifier, this.player, user);
         // Clear all cached move effectiveness values among targets
         this.getTargets().forEach((target) => target.turnData.moveEffectiveness = null);
       }
@@ -428,14 +428,14 @@ export class MoveEffectPhase extends PokemonPhase {
   /** Returns the {@linkcode Pokemon} using this phase's invoked move */
   getUserPokemon(): Pokemon | undefined {
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
-      return this.scene.getPokemonById(this.battlerIndex) ?? undefined;
+      return gScene.getPokemonById(this.battlerIndex) ?? undefined;
     }
-    return (this.player ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
+    return (this.player ? gScene.getPlayerField() : gScene.getEnemyField())[this.fieldIndex];
   }
 
   /** Returns an array of all {@linkcode Pokemon} targeted by this phase's invoked move */
   getTargets(): Pokemon[] {
-    return this.scene.getField(true).filter(p => this.targets.indexOf(p.getBattlerIndex()) > -1);
+    return gScene.getField(true).filter(p => this.targets.indexOf(p.getBattlerIndex()) > -1);
   }
 
   /** Returns the first target of this phase's invoked move */
@@ -476,6 +476,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /** Returns a new MoveEffectPhase with the same properties as this phase */
   getNewHitPhase() {
-    return new MoveEffectPhase(this.scene, this.battlerIndex, this.targets, this.move);
+    return new MoveEffectPhase(this.battlerIndex, this.targets, this.move);
   }
 }

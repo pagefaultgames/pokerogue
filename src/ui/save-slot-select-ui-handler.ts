@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import BattleScene from "../battle-scene";
+import BattleScene, { gScene } from "#app/battle-scene";
 import { Button } from "#enums/buttons";
 import { GameMode } from "../game-mode";
 import * as Modifier from "../modifier/modifier";
@@ -39,35 +39,35 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   private sessionSlotsContainerInitialY: number;
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.SAVE_SLOT);
+  constructor() {
+    super(Mode.SAVE_SLOT);
   }
 
   setup() {
     const ui = this.getUi();
 
-    this.saveSlotSelectContainer = this.scene.add.container(0, 0);
+    this.saveSlotSelectContainer = gScene.add.container(0, 0);
     this.saveSlotSelectContainer.setVisible(false);
     ui.add(this.saveSlotSelectContainer);
 
-    const loadSessionBg = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, -this.scene.game.canvas.height / 6, 0x006860);
+    const loadSessionBg = gScene.add.rectangle(0, 0, gScene.game.canvas.width / 6, -gScene.game.canvas.height / 6, 0x006860);
     loadSessionBg.setOrigin(0, 0);
     this.saveSlotSelectContainer.add(loadSessionBg);
 
-    this.sessionSlotsContainerInitialY = -this.scene.game.canvas.height / 6 + 8;
+    this.sessionSlotsContainerInitialY = -gScene.game.canvas.height / 6 + 8;
 
-    this.sessionSlotsContainer = this.scene.add.container(8, this.sessionSlotsContainerInitialY);
+    this.sessionSlotsContainer = gScene.add.container(8, this.sessionSlotsContainerInitialY);
     this.saveSlotSelectContainer.add(this.sessionSlotsContainer);
 
-    this.saveSlotSelectMessageBoxContainer = this.scene.add.container(0, 0);
+    this.saveSlotSelectMessageBoxContainer = gScene.add.container(0, 0);
     this.saveSlotSelectMessageBoxContainer.setVisible(false);
     this.saveSlotSelectContainer.add(this.saveSlotSelectMessageBoxContainer);
 
-    this.saveSlotSelectMessageBox = addWindow(this.scene, 1, -1, 318, 28);
+    this.saveSlotSelectMessageBox = addWindow(1, -1, 318, 28);
     this.saveSlotSelectMessageBox.setOrigin(0, 1);
     this.saveSlotSelectMessageBoxContainer.add(this.saveSlotSelectMessageBox);
 
-    this.message = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
+    this.message = addTextObject(8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     this.message.setOrigin(0, 0);
     this.saveSlotSelectMessageBoxContainer.add(this.message);
 
@@ -122,9 +122,9 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
               if (this.sessionSlots[cursor].hasData) {
                 ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
                   ui.setOverlayMode(Mode.CONFIRM, () => {
-                    this.scene.gameData.deleteSession(cursor).then(response => {
+                    gScene.gameData.deleteSession(cursor).then(response => {
                       if (response === false) {
-                        this.scene.reset(true);
+                        gScene.reset(true);
                       } else {
                         saveAndCallback();
                       }
@@ -168,7 +168,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
           break;
         case Button.RIGHT:
           if (this.sessionSlots[cursorPosition].hasData && this.sessionSlots[cursorPosition].saveData) {
-            this.scene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[cursorPosition].saveData, RunDisplayMode.SESSION_PREVIEW);
+            gScene.ui.setOverlayMode(Mode.RUN_INFO, this.sessionSlots[cursorPosition].saveData, RunDisplayMode.SESSION_PREVIEW);
             success = true;
           }
       }
@@ -185,8 +185,8 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   populateSessionSlots() {
     for (let s = 0; s < SESSION_SLOTS_COUNT; s++) {
-      const sessionSlot = new SessionSlot(this.scene, s);
-      this.scene.add.existing(sessionSlot);
+      const sessionSlot = new SessionSlot(s);
+      gScene.add.existing(sessionSlot);
       this.sessionSlotsContainer.add(sessionSlot);
       this.sessionSlots.push(sessionSlot);
       sessionSlot.load().then((success) => {
@@ -223,9 +223,9 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.container(0, 0);
-      const cursorBox = this.scene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
-      const rightArrow = this.scene.add.image(0, 0, "cursor");
+      this.cursorObj = gScene.add.container(0, 0);
+      const cursorBox = gScene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 44, 6, 6, 6, 6);
+      const rightArrow = gScene.add.image(0, 0, "cursor");
       rightArrow.setPosition(160, 0);
       rightArrow.setName("rightArrow");
       this.cursorObj.add([ cursorBox, rightArrow ]);
@@ -286,7 +286,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     if (changed) {
       this.scrollCursor = scrollCursor;
       this.setCursor(this.cursor, prevSlotIndex);
-      this.scene.tweens.add({
+      gScene.tweens.add({
         targets: this.sessionSlotsContainer,
         y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
         duration: Utils.fixedInt(325),
@@ -326,8 +326,8 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
   public saveData: SessionSaveData;
 
-  constructor(scene: BattleScene, slotId: integer) {
-    super(scene, 0, slotId * 56);
+  constructor(slotId: integer) {
+    super(gScene, 0, slotId * 56);
 
     this.slotId = slotId;
 
@@ -335,10 +335,10 @@ class SessionSlot extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    const slotWindow = addWindow(this.scene, 0, 0, 304, 52);
+    const slotWindow = addWindow(0, 0, 304, 52);
     this.add(slotWindow);
 
-    this.loadingLabel = addTextObject(this.scene, 152, 26, i18next.t("saveSlotSelectUiHandler:loading"), TextStyle.WINDOW);
+    this.loadingLabel = addTextObject(152, 26, i18next.t("saveSlotSelectUiHandler:loading"), TextStyle.WINDOW);
     this.loadingLabel.setOrigin(0.5, 0.5);
     this.add(this.loadingLabel);
   }
@@ -346,24 +346,24 @@ class SessionSlot extends Phaser.GameObjects.Container {
   async setupWithData(data: SessionSaveData) {
     this.remove(this.loadingLabel, true);
 
-    const gameModeLabel = addTextObject(this.scene, 8, 5, `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
+    const gameModeLabel = addTextObject(8, 5, `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`, TextStyle.WINDOW);
     this.add(gameModeLabel);
 
-    const timestampLabel = addTextObject(this.scene, 8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
+    const timestampLabel = addTextObject(8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
 
-    const playTimeLabel = addTextObject(this.scene, 8, 33, Utils.getPlayTimeString(data.playTime), TextStyle.WINDOW);
+    const playTimeLabel = addTextObject(8, 33, Utils.getPlayTimeString(data.playTime), TextStyle.WINDOW);
     this.add(playTimeLabel);
 
-    const pokemonIconsContainer = this.scene.add.container(144, 4);
+    const pokemonIconsContainer = gScene.add.container(144, 4);
     data.party.forEach((p: PokemonData, i: integer) => {
-      const iconContainer = this.scene.add.container(26 * i, 0);
+      const iconContainer = gScene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
 
-      const pokemon = p.toPokemon(this.scene);
-      const icon = this.scene.addPokemonIcon(pokemon, 0, 0, 0, 0);
+      const pokemon = p.toPokemon();
+      const icon = gScene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(this.scene, 32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);
@@ -378,15 +378,15 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     this.add(pokemonIconsContainer);
 
-    const modifierIconsContainer = this.scene.add.container(148, 30);
+    const modifierIconsContainer = gScene.add.container(148, 30);
     modifierIconsContainer.setScale(0.5);
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
-      const modifier = m.toModifier(this.scene, Modifier[m.className]);
+      const modifier = m.toModifier(Modifier[m.className]);
       if (modifier instanceof Modifier.PokemonHeldItemModifier) {
         continue;
       }
-      const icon = modifier?.getIcon(this.scene, false);
+      const icon = modifier?.getIcon(false);
       if (icon) {
         icon.setPosition(24 * visibleModifierIndex, 0);
         modifierIconsContainer.add(icon);
@@ -401,7 +401,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
   load(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      this.scene.gameData.getSession(this.slotId).then(async sessionData => {
+      gScene.gameData.getSession(this.slotId).then(async sessionData => {
         // Ignore the results if the view was exited
         if (!this.active) {
           return;

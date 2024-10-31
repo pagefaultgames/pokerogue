@@ -1,4 +1,3 @@
-import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import { Mode } from "./ui";
@@ -7,6 +6,7 @@ import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
+import { gScene } from "#app/battle-scene";
 
 export enum Command {
   FIGHT = 0,
@@ -22,8 +22,8 @@ export default class CommandUiHandler extends UiHandler {
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.COMMAND);
+  constructor() {
+    super(Mode.COMMAND);
   }
 
   setup() {
@@ -35,13 +35,13 @@ export default class CommandUiHandler extends UiHandler {
       i18next.t("commandUiHandler:run")
     ];
 
-    this.commandsContainer = this.scene.add.container(217, -38.7);
+    this.commandsContainer = gScene.add.container(217, -38.7);
     this.commandsContainer.setName("commands");
     this.commandsContainer.setVisible(false);
     ui.add(this.commandsContainer);
 
     for (let c = 0; c < commands.length; c++) {
-      const commandText = addTextObject(this.scene, c % 2 === 0 ? 0 : 55.8, c < 2 ? 0 : 16, commands[c], TextStyle.WINDOW);
+      const commandText = addTextObject(c % 2 === 0 ? 0 : 55.8, c < 2 ? 0 : 16, commands[c], TextStyle.WINDOW);
       commandText.setName(commands[c]);
       this.commandsContainer.add(commandText);
     }
@@ -55,11 +55,11 @@ export default class CommandUiHandler extends UiHandler {
     this.commandsContainer.setVisible(true);
 
     let commandPhase: CommandPhase;
-    const currentPhase = this.scene.getCurrentPhase();
+    const currentPhase = gScene.getCurrentPhase();
     if (currentPhase instanceof CommandPhase) {
       commandPhase = currentPhase;
     } else {
-      commandPhase = this.scene.getStandbyPhase() as CommandPhase;
+      commandPhase = gScene.getStandbyPhase() as CommandPhase;
     }
 
     const messageHandler = this.getUi().getMessageHandler();
@@ -90,10 +90,10 @@ export default class CommandUiHandler extends UiHandler {
         switch (cursor) {
         // Fight
           case Command.FIGHT:
-            if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
+            if ((gScene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
               return true;
             }
-            ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+            ui.setMode(Mode.FIGHT, (gScene.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
             break;
           // Ball
@@ -103,17 +103,17 @@ export default class CommandUiHandler extends UiHandler {
             break;
           // Pokemon
           case Command.POKEMON:
-            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (gScene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
             success = true;
             break;
           // Run
           case Command.RUN:
-            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
+            (gScene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
             success = true;
             break;
         }
       } else {
-        (this.scene.getCurrentPhase() as CommandPhase).cancel();
+        (gScene.getCurrentPhase() as CommandPhase).cancel();
       }
     } else {
       switch (button) {
@@ -162,7 +162,7 @@ export default class CommandUiHandler extends UiHandler {
     }
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.image(0, 0, "cursor");
+      this.cursorObj = gScene.add.image(0, 0, "cursor");
       this.commandsContainer.add(this.cursorObj);
     }
 

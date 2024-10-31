@@ -2,7 +2,7 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { EnemyPartyConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals, generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { AttackTypeBoosterModifierType, modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { AbilityRequirement, CombinationPokemonRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { Species } from "#enums/species";
@@ -58,8 +58,8 @@ export const FieryFalloutEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       },
     ])
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .withOnInit(() => {
+      const encounter = gScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mons
       const volcaronaSpecies = getPokemonSpecies(Species.VOLCARONA);
@@ -71,7 +71,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             gender: Gender.MALE,
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
+              gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
             }
           },
           {
@@ -80,7 +80,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             gender: Gender.FEMALE,
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
+              gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
             }
           }
         ],
@@ -113,25 +113,25 @@ export const FieryFalloutEncounter: MysteryEncounter =
       ];
 
       // Load animations/sfx for Volcarona moves
-      loadCustomMovesForEncounter(scene, [ Moves.FIRE_SPIN, Moves.QUIVER_DANCE ]);
+      loadCustomMovesForEncounter([ Moves.FIRE_SPIN, Moves.QUIVER_DANCE ]);
 
-      scene.arena.trySetWeather(WeatherType.SUNNY, true);
+      gScene.arena.trySetWeather(WeatherType.SUNNY, true);
 
       encounter.setDialogueToken("volcaronaName", getPokemonSpecies(Species.VOLCARONA).getName());
 
       return true;
     })
-    .withOnVisualsStart((scene: BattleScene) => {
+    .withOnVisualsStart(() => {
       // Play animations
-      const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
-      background.playWithoutTargets(scene, 200, 70, 2, 3);
-      const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, scene.getPlayerPokemon()!, scene.getPlayerPokemon());
-      animation.playWithoutTargets(scene, 80, 100, 2);
-      scene.time.delayedCall(600, () => {
-        animation.playWithoutTargets(scene, -20, 100, 2);
+      const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, gScene.getPlayerPokemon()!, gScene.getPlayerPokemon());
+      background.playWithoutTargets(200, 70, 2, 3);
+      const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, gScene.getPlayerPokemon()!, gScene.getPlayerPokemon());
+      animation.playWithoutTargets(80, 100, 2);
+      gScene.time.delayedCall(600, () => {
+        animation.playWithoutTargets(-20, 100, 2);
       });
-      scene.time.delayedCall(1200, () => {
-        animation.playWithoutTargets(scene, 140, 150, 2);
+      gScene.time.delayedCall(1200, () => {
+        animation.playWithoutTargets(140, 150, 2);
       });
 
       return true;
@@ -150,10 +150,10 @@ export const FieryFalloutEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Pick battle
-        const encounter = scene.currentBattle.mysteryEncounter!;
-        setEncounterRewards(scene, { fillRemaining: true }, undefined, () => giveLeadPokemonAttackTypeBoostItem(scene));
+        const encounter = gScene.currentBattle.mysteryEncounter!;
+        setEncounterRewards({ fillRemaining: true }, undefined, () => giveLeadPokemonAttackTypeBoostItem());
 
         encounter.startOfBattleEffects.push(
           {
@@ -168,7 +168,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           });
-        await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
+        await initBattleWithEnemyConfig(gScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
       }
     )
     .withSimpleOption(
@@ -181,15 +181,15 @@ export const FieryFalloutEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Damage non-fire types and burn 1 random non-fire type member + give it Heatproof
-        const encounter = scene.currentBattle.mysteryEncounter!;
-        const nonFireTypes = scene.getParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(Type.FIRE));
+        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const nonFireTypes = gScene.getParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(Type.FIRE));
 
         for (const pkm of nonFireTypes) {
           const percentage = DAMAGE_PERCENTAGE / 100;
           const damage = Math.floor(pkm.getMaxHp() * percentage);
-          applyDamageToPokemon(scene, pkm, damage);
+          applyDamageToPokemon(pkm, damage);
         }
 
         // Burn random member
@@ -201,7 +201,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             // Burn applied
             encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
             encounter.setDialogueToken("abilityName", new Ability(Abilities.HEATPROOF, 3).name);
-            queueEncounterMessage(scene, `${namespace}:option.2.target_burned`);
+            queueEncounterMessage(`${namespace}:option.2.target_burned`);
 
             // Also permanently change the burned Pokemon's ability to Heatproof
             applyAbilityOverrideToPokemon(chosenPokemon, Abilities.HEATPROOF);
@@ -209,7 +209,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         }
 
         // No rewards
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
       }
     )
     .withOption(
@@ -231,44 +231,44 @@ export const FieryFalloutEncounter: MysteryEncounter =
             },
           ],
         })
-        .withPreOptionPhase(async (scene: BattleScene) => {
+        .withPreOptionPhase(async () => {
           // Do NOT await this, to prevent player from repeatedly pressing options
-          transitionMysteryEncounterIntroVisuals(scene, false, false, 2000);
+          transitionMysteryEncounterIntroVisuals(false, false, 2000);
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Fire types help calm the Volcarona
-          const encounter = scene.currentBattle.mysteryEncounter!;
-          await transitionMysteryEncounterIntroVisuals(scene);
-          setEncounterRewards(scene,
+          const encounter = gScene.currentBattle.mysteryEncounter!;
+          await transitionMysteryEncounterIntroVisuals();
+          setEncounterRewards(
             { fillRemaining: true },
             undefined,
             () => {
-              giveLeadPokemonAttackTypeBoostItem(scene);
+              giveLeadPokemonAttackTypeBoostItem();
             });
 
           const primary = encounter.options[2].primaryPokemon!;
 
-          setEncounterExp(scene, [ primary.id ], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
-          leaveEncounterWithoutBattle(scene);
+          setEncounterExp([ primary.id ], getPokemonSpecies(Species.VOLCARONA).baseExp * 2);
+          leaveEncounterWithoutBattle();
         })
         .build()
     )
     .build();
 
-function giveLeadPokemonAttackTypeBoostItem(scene: BattleScene) {
+function giveLeadPokemonAttackTypeBoostItem() {
   // Give first party pokemon attack type boost item for free at end of battle
-  const leadPokemon = scene.getParty()?.[0];
+  const leadPokemon = gScene.getParty()?.[0];
   if (leadPokemon) {
     // Generate type booster held item, default to Charcoal if item fails to generate
-    let boosterModifierType = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
+    let boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
     if (!boosterModifierType) {
-      boosterModifierType = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.FIRE ]) as AttackTypeBoosterModifierType;
+      boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.FIRE ]) as AttackTypeBoosterModifierType;
     }
-    applyModifierTypeToPlayerPokemon(scene, leadPokemon, boosterModifierType);
+    applyModifierTypeToPlayerPokemon(leadPokemon, boosterModifierType);
 
-    const encounter = scene.currentBattle.mysteryEncounter!;
+    const encounter = gScene.currentBattle.mysteryEncounter!;
     encounter.setDialogueToken("itemName", boosterModifierType.name);
     encounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
-    queueEncounterMessage(scene, `${namespace}:found_item`);
+    queueEncounterMessage(`${namespace}:found_item`);
   }
 }

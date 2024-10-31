@@ -1,6 +1,6 @@
 import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
@@ -58,8 +58,8 @@ export const SafariZoneEncounter: MysteryEncounter =
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
-    .withOnInit((scene: BattleScene) => {
-      scene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
+    .withOnInit(() => {
+      gScene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
       return true;
     })
     .withOption(MysteryEncounterOptionBuilder
@@ -74,25 +74,25 @@ export const SafariZoneEncounter: MysteryEncounter =
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => {
+      .withOptionPhase(async () => {
         // Start safari encounter
-        const encounter = scene.currentBattle.mysteryEncounter!;
+        const encounter = gScene.currentBattle.mysteryEncounter!;
         encounter.continuousEncounter = true;
         encounter.misc = {
           safariPokemonRemaining: NUM_SAFARI_ENCOUNTERS
         };
-        updatePlayerMoney(scene, -(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
+        updatePlayerMoney(-(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Load bait/mud assets
-        scene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
-        scene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
-        scene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
-        scene.loadAtlas("safari_zone_bait", "mystery-encounters");
-        scene.loadAtlas("safari_zone_mud", "mystery-encounters");
+        gScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
+        gScene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
+        gScene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
+        gScene.loadAtlas("safari_zone_bait", "mystery-encounters");
+        gScene.loadAtlas("safari_zone_mud", "mystery-encounters");
         // Clear enemy party
-        scene.currentBattle.enemyParty = [];
-        await transitionMysteryEncounterIntroVisuals(scene);
-        await summonSafariPokemon(scene);
-        initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, hideDescription: true });
+        gScene.currentBattle.enemyParty = [];
+        await transitionMysteryEncounterIntroVisuals();
+        await summonSafariPokemon();
+        initSubsequentOptionSelect({ overrideOptions: safariZoneGameOptions, hideDescription: true });
         return true;
       })
       .build()
@@ -107,9 +107,9 @@ export const SafariZoneEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Leave encounter with no rewards or exp
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
         return true;
       }
     )
@@ -142,26 +142,26 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
         }
       ],
     })
-    .withOptionPhase(async (scene: BattleScene) => {
+    .withOptionPhase(async () => {
       // Throw a ball option
-      const encounter = scene.currentBattle.mysteryEncounter!;
+      const encounter = gScene.currentBattle.mysteryEncounter!;
       const pokemon = encounter.misc.pokemon;
-      const catchResult = await throwPokeball(scene, pokemon);
+      const catchResult = await throwPokeball(pokemon);
 
       if (catchResult) {
         // You caught pokemon
         // Check how many safari pokemon left
         if (encounter.misc.safariPokemonRemaining > 0) {
-          await summonSafariPokemon(scene);
-          initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, startingCursorIndex: 0, hideDescription: true });
+          await summonSafariPokemon();
+          initSubsequentOptionSelect({ overrideOptions: safariZoneGameOptions, startingCursorIndex: 0, hideDescription: true });
         } else {
           // End safari mode
           encounter.continuousEncounter = false;
-          leaveEncounterWithoutBattle(scene, true);
+          leaveEncounterWithoutBattle(true);
         }
       } else {
         // Pokemon catch failed, end turn
-        await doEndTurn(scene, 0);
+        await doEndTurn(0);
       }
       return true;
     })
@@ -177,22 +177,22 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
         },
       ],
     })
-    .withOptionPhase(async (scene: BattleScene) => {
+    .withOptionPhase(async () => {
       // Throw bait option
-      const pokemon = scene.currentBattle.mysteryEncounter!.misc.pokemon;
-      await throwBait(scene, pokemon);
+      const pokemon = gScene.currentBattle.mysteryEncounter!.misc.pokemon;
+      await throwBait(pokemon);
 
       // 100% chance to increase catch stage +2
-      tryChangeCatchStage(scene, 2);
+      tryChangeCatchStage(2);
       // 80% chance to increase flee stage +1
-      const fleeChangeResult = tryChangeFleeStage(scene, 1, 8);
+      const fleeChangeResult = tryChangeFleeStage(1, 8);
       if (!fleeChangeResult) {
-        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari.busy_eating`) ?? "", null, 1000, false );
+        await showEncounterText(getEncounterText(`${namespace}:safari.busy_eating`) ?? "", null, 1000, false );
       } else {
-        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari.eating`) ?? "", null, 1000, false);
+        await showEncounterText(getEncounterText(`${namespace}:safari.eating`) ?? "", null, 1000, false);
       }
 
-      await doEndTurn(scene, 1);
+      await doEndTurn(1);
       return true;
     })
     .build(),
@@ -207,21 +207,21 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
         },
       ],
     })
-    .withOptionPhase(async (scene: BattleScene) => {
+    .withOptionPhase(async () => {
       // Throw mud option
-      const pokemon = scene.currentBattle.mysteryEncounter!.misc.pokemon;
-      await throwMud(scene, pokemon);
+      const pokemon = gScene.currentBattle.mysteryEncounter!.misc.pokemon;
+      await throwMud(pokemon);
       // 100% chance to decrease flee stage -2
-      tryChangeFleeStage(scene, -2);
+      tryChangeFleeStage(-2);
       // 80% chance to decrease catch stage -1
-      const catchChangeResult = tryChangeCatchStage(scene, -1, 8);
+      const catchChangeResult = tryChangeCatchStage(-1, 8);
       if (!catchChangeResult) {
-        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari.beside_itself_angry`) ?? "", null, 1000, false );
+        await showEncounterText(getEncounterText(`${namespace}:safari.beside_itself_angry`) ?? "", null, 1000, false );
       } else {
-        await showEncounterText(scene, getEncounterText(scene, `${namespace}:safari.angry`) ?? "", null, 1000, false );
+        await showEncounterText(getEncounterText(`${namespace}:safari.angry`) ?? "", null, 1000, false );
       }
 
-      await doEndTurn(scene, 2);
+      await doEndTurn(2);
       return true;
     })
     .build(),
@@ -231,40 +231,40 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       buttonLabel: `${namespace}:safari.4.label`,
       buttonTooltip: `${namespace}:safari.4.tooltip`,
     })
-    .withOptionPhase(async (scene: BattleScene) => {
+    .withOptionPhase(async () => {
       // Flee option
-      const encounter = scene.currentBattle.mysteryEncounter!;
+      const encounter = gScene.currentBattle.mysteryEncounter!;
       const pokemon = encounter.misc.pokemon;
-      await doPlayerFlee(scene, pokemon);
+      await doPlayerFlee(pokemon);
       // Check how many safari pokemon left
       if (encounter.misc.safariPokemonRemaining > 0) {
-        await summonSafariPokemon(scene);
-        initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, startingCursorIndex: 3, hideDescription: true });
+        await summonSafariPokemon();
+        initSubsequentOptionSelect({ overrideOptions: safariZoneGameOptions, startingCursorIndex: 3, hideDescription: true });
       } else {
         // End safari mode
         encounter.continuousEncounter = false;
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
       }
       return true;
     })
     .build()
 ];
 
-async function summonSafariPokemon(scene: BattleScene) {
-  const encounter = scene.currentBattle.mysteryEncounter!;
+async function summonSafariPokemon() {
+  const encounter = gScene.currentBattle.mysteryEncounter!;
   // Message pokemon remaining
   encounter.setDialogueToken("remainingCount", encounter.misc.safariPokemonRemaining);
-  scene.queueMessage(getEncounterText(scene, `${namespace}:safari.remaining_count`) ?? "", null, true);
+  gScene.queueMessage(getEncounterText(`${namespace}:safari.remaining_count`) ?? "", null, true);
 
   // Generate pokemon using safariPokemonRemaining so they are always the same pokemon no matter how many turns are taken
   // Safari pokemon roll twice on shiny and HA chances, but are otherwise normal
   let enemySpecies;
   let pokemon;
-  scene.executeWithSeedOffset(() => {
+  gScene.executeWithSeedOffset(() => {
     enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
-    const level = scene.currentBattle.getLevelForWave();
-    enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, scene.gameMode));
-    pokemon = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
+    const level = gScene.currentBattle.getLevelForWave();
+    enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, gScene.gameMode));
+    pokemon = gScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
 
     // Roll shiny twice
     if (!pokemon.shiny) {
@@ -276,7 +276,7 @@ async function summonSafariPokemon(scene: BattleScene) {
       const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
       if (pokemon.abilityIndex < hiddenIndex) {
         const hiddenAbilityChance = new IntegerHolder(256);
-        scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+        gScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
         const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
@@ -288,10 +288,10 @@ async function summonSafariPokemon(scene: BattleScene) {
 
     pokemon.calculateStats();
 
-    scene.currentBattle.enemyParty.unshift(pokemon);
-  }, scene.currentBattle.waveIndex * 1000 * encounter.misc.safariPokemonRemaining);
+    gScene.currentBattle.enemyParty.unshift(pokemon);
+  }, gScene.currentBattle.waveIndex * 1000 * encounter.misc.safariPokemonRemaining);
 
-  scene.gameData.setPokemonSeen(pokemon, true);
+  gScene.gameData.setPokemonSeen(pokemon, true);
   await pokemon.loadAssets();
 
   // Reset safari catch and flee rates
@@ -300,7 +300,7 @@ async function summonSafariPokemon(scene: BattleScene) {
   encounter.misc.pokemon = pokemon;
   encounter.misc.safariPokemonRemaining -= 1;
 
-  scene.unshiftPhase(new SummonPhase(scene, 0, false));
+  gScene.unshiftPhase(new SummonPhase(0, false));
 
   encounter.setDialogueToken("pokemonName", getPokemonNameWithAffix(pokemon));
 
@@ -309,49 +309,49 @@ async function summonSafariPokemon(scene: BattleScene) {
   // shows up and the IV scanner breaks. For now, we place the IV scanner code
   // separately so that at least the IV scanner works.
 
-  const ivScannerModifier = scene.findModifier(m => m instanceof IvScannerModifier);
+  const ivScannerModifier = gScene.findModifier(m => m instanceof IvScannerModifier);
   if (ivScannerModifier) {
-    scene.pushPhase(new ScanIvsPhase(scene, pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
+    gScene.pushPhase(new ScanIvsPhase(pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
   }
 }
 
-function throwPokeball(scene: BattleScene, pokemon: EnemyPokemon): Promise<boolean> {
+function throwPokeball(pokemon: EnemyPokemon): Promise<boolean> {
   const baseCatchRate = pokemon.species.catchRate;
   // Catch stage ranges from -6 to +6 (like stat boost stages)
-  const safariCatchStage = scene.currentBattle.mysteryEncounter!.misc.catchStage;
+  const safariCatchStage = gScene.currentBattle.mysteryEncounter!.misc.catchStage;
   // Catch modifier ranges from 2/8 (-6 stage) to 8/2 (+6)
   const safariModifier = (2 + Math.min(Math.max(safariCatchStage, 0), 6)) / (2 - Math.max(Math.min(safariCatchStage, 0), -6));
   // Catch rate same as safari ball
   const pokeballMultiplier = 1.5;
   const catchRate = Math.round(baseCatchRate * pokeballMultiplier * safariModifier);
   const ballTwitchRate = Math.round(1048560 / Math.sqrt(Math.sqrt(16711680 / catchRate)));
-  return trainerThrowPokeball(scene, pokemon, PokeballType.POKEBALL, ballTwitchRate);
+  return trainerThrowPokeball(pokemon, PokeballType.POKEBALL, ballTwitchRate);
 }
 
-async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boolean> {
+async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const bait: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 25, "safari_zone_bait", "0001.png");
+  const bait: Phaser.GameObjects.Sprite = gScene.addFieldSprite(16 + 75, 80 + 25, "safari_zone_bait", "0001.png");
   bait.setOrigin(0.5, 0.625);
-  scene.field.add(bait);
+  gScene.field.add(bait);
 
   return new Promise(resolve => {
-    scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
-    scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
-      scene.playSound("se/pb_throw");
+    gScene.trainer.setTexture(`trainer_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+    gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
+      gScene.playSound("se/pb_throw");
 
       // Trainer throw frames
-      scene.trainer.setFrame("2");
-      scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
-        scene.trainer.setFrame("3");
-        scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
-          scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+      gScene.trainer.setFrame("2");
+      gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
+        gScene.trainer.setFrame("3");
+        gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
+          gScene.trainer.setTexture(`trainer_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
         });
       });
 
       // Pokeball move and catch logic
-      scene.tweens.add({
+      gScene.tweens.add({
         targets: bait,
         x: { value: 210 + fpOffset[0], ease: "Linear" },
         y: { value: 55 + fpOffset[1], ease: "Cubic.easeOut" },
@@ -359,8 +359,8 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
         onComplete: () => {
 
           let index = 1;
-          scene.time.delayedCall(768, () => {
-            scene.tweens.add({
+          gScene.time.delayedCall(768, () => {
+            gScene.tweens.add({
               targets: pokemon,
               duration: 150,
               ease: "Cubic.easeOut",
@@ -368,12 +368,12 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
               y: originalY - 5,
               loop: 6,
               onStart: () => {
-                scene.playSound("battle_anims/PRSFX- Bug Bite");
+                gScene.playSound("battle_anims/PRSFX- Bug Bite");
                 bait.setFrame("0002.png");
               },
               onLoop: () => {
                 if (index % 2 === 0) {
-                  scene.playSound("battle_anims/PRSFX- Bug Bite");
+                  gScene.playSound("battle_anims/PRSFX- Bug Bite");
                 }
                 if (index === 4) {
                   bait.setFrame("0003.png");
@@ -381,7 +381,7 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
                 index++;
               },
               onComplete: () => {
-                scene.time.delayedCall(256, () => {
+                gScene.time.delayedCall(256, () => {
                   bait.destroy();
                   resolve(true);
                 });
@@ -394,55 +394,55 @@ async function throwBait(scene: BattleScene, pokemon: EnemyPokemon): Promise<boo
   });
 }
 
-async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<boolean> {
+async function throwMud(pokemon: EnemyPokemon): Promise<boolean> {
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const mud: Phaser.GameObjects.Sprite = scene.addFieldSprite(16 + 75, 80 + 35, "safari_zone_mud", "0001.png");
+  const mud: Phaser.GameObjects.Sprite = gScene.addFieldSprite(16 + 75, 80 + 35, "safari_zone_mud", "0001.png");
   mud.setOrigin(0.5, 0.625);
-  scene.field.add(mud);
+  gScene.field.add(mud);
 
   return new Promise(resolve => {
-    scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
-    scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
-      scene.playSound("se/pb_throw");
+    gScene.trainer.setTexture(`trainer_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+    gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
+      gScene.playSound("se/pb_throw");
 
       // Trainer throw frames
-      scene.trainer.setFrame("2");
-      scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
-        scene.trainer.setFrame("3");
-        scene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
-          scene.trainer.setTexture(`trainer_${scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+      gScene.trainer.setFrame("2");
+      gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
+        gScene.trainer.setFrame("3");
+        gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
+          gScene.trainer.setTexture(`trainer_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
         });
       });
 
       // Mud throw and splat
-      scene.tweens.add({
+      gScene.tweens.add({
         targets: mud,
         x: { value: 230 + fpOffset[0], ease: "Linear" },
         y: { value: 55 + fpOffset[1], ease: "Cubic.easeOut" },
         duration: 500,
         onComplete: () => {
           // Mud frame 2
-          scene.playSound("battle_anims/PRSFX- Sludge Bomb2");
+          gScene.playSound("battle_anims/PRSFX- Sludge Bomb2");
           mud.setFrame("0002.png");
           // Mud splat
-          scene.time.delayedCall(200, () => {
+          gScene.time.delayedCall(200, () => {
             mud.setFrame("0003.png");
-            scene.time.delayedCall(400, () => {
+            gScene.time.delayedCall(400, () => {
               mud.setFrame("0004.png");
             });
           });
 
           // Fade mud then angry animation
-          scene.tweens.add({
+          gScene.tweens.add({
             targets: mud,
             alpha: 0,
             ease: "Cubic.easeIn",
             duration: 1000,
             onComplete: () => {
               mud.destroy();
-              scene.tweens.add({
+              gScene.tweens.add({
                 targets: pokemon,
                 duration: 300,
                 ease: "Cubic.easeOut",
@@ -450,10 +450,10 @@ async function throwMud(scene: BattleScene, pokemon: EnemyPokemon): Promise<bool
                 y: originalY - 20,
                 loop: 1,
                 onStart: () => {
-                  scene.playSound("battle_anims/PRSFX- Taunt2");
+                  gScene.playSound("battle_anims/PRSFX- Taunt2");
                 },
                 onLoop: () => {
-                  scene.playSound("battle_anims/PRSFX- Taunt2");
+                  gScene.playSound("battle_anims/PRSFX- Taunt2");
                 },
                 onComplete: () => {
                   resolve(true);
@@ -477,52 +477,52 @@ function isPokemonFlee(pokemon: EnemyPokemon, fleeStage: number): boolean {
   return roll < fleeRate;
 }
 
-function tryChangeFleeStage(scene: BattleScene, change: number, chance?: number): boolean {
+function tryChangeFleeStage(change: number, chance?: number): boolean {
   if (chance && randSeedInt(10) >= chance) {
     return false;
   }
-  const currentFleeStage = scene.currentBattle.mysteryEncounter!.misc.fleeStage ?? 0;
-  scene.currentBattle.mysteryEncounter!.misc.fleeStage = Math.min(Math.max(currentFleeStage + change, -6), 6);
+  const currentFleeStage = gScene.currentBattle.mysteryEncounter!.misc.fleeStage ?? 0;
+  gScene.currentBattle.mysteryEncounter!.misc.fleeStage = Math.min(Math.max(currentFleeStage + change, -6), 6);
   return true;
 }
 
-function tryChangeCatchStage(scene: BattleScene, change: number, chance?: number): boolean {
+function tryChangeCatchStage(change: number, chance?: number): boolean {
   if (chance && randSeedInt(10) >= chance) {
     return false;
   }
-  const currentCatchStage = scene.currentBattle.mysteryEncounter!.misc.catchStage ?? 0;
-  scene.currentBattle.mysteryEncounter!.misc.catchStage = Math.min(Math.max(currentCatchStage + change, -6), 6);
+  const currentCatchStage = gScene.currentBattle.mysteryEncounter!.misc.catchStage ?? 0;
+  gScene.currentBattle.mysteryEncounter!.misc.catchStage = Math.min(Math.max(currentCatchStage + change, -6), 6);
   return true;
 }
 
-async function doEndTurn(scene: BattleScene, cursorIndex: number) {
+async function doEndTurn(cursorIndex: number) {
   // First cleanup and destroy old Pokemon objects that were left in the enemyParty
   // They are left in enemyParty temporarily so that VictoryPhase properly handles EXP
-  const party = scene.getEnemyParty();
+  const party = gScene.getEnemyParty();
   if (party.length > 1) {
     for (let i = 1; i < party.length; i++) {
       party[i].destroy();
     }
-    scene.currentBattle.enemyParty = party.slice(0, 1);
+    gScene.currentBattle.enemyParty = party.slice(0, 1);
   }
 
-  const encounter = scene.currentBattle.mysteryEncounter!;
+  const encounter = gScene.currentBattle.mysteryEncounter!;
   const pokemon = encounter.misc.pokemon;
   const isFlee = isPokemonFlee(pokemon, encounter.misc.fleeStage);
   if (isFlee) {
     // Pokemon flees!
-    await doPokemonFlee(scene, pokemon);
+    await doPokemonFlee(pokemon);
     // Check how many safari pokemon left
     if (encounter.misc.safariPokemonRemaining > 0) {
-      await summonSafariPokemon(scene);
-      initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, startingCursorIndex: cursorIndex, hideDescription: true });
+      await summonSafariPokemon();
+      initSubsequentOptionSelect({ overrideOptions: safariZoneGameOptions, startingCursorIndex: cursorIndex, hideDescription: true });
     } else {
       // End safari mode
       encounter.continuousEncounter = false;
-      leaveEncounterWithoutBattle(scene, true);
+      leaveEncounterWithoutBattle(true);
     }
   } else {
-    scene.queueMessage(getEncounterText(scene, `${namespace}:safari.watching`) ?? "", 0, null, 1000);
-    initSubsequentOptionSelect(scene, { overrideOptions: safariZoneGameOptions, startingCursorIndex: cursorIndex, hideDescription: true });
+    gScene.queueMessage(getEncounterText(`${namespace}:safari.watching`) ?? "", 0, null, 1000);
+    initSubsequentOptionSelect({ overrideOptions: safariZoneGameOptions, startingCursorIndex: cursorIndex, hideDescription: true });
   }
 }

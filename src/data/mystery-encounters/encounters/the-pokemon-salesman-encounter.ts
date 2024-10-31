@@ -1,7 +1,7 @@
 import { leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
@@ -57,8 +57,8 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .withOnInit(() => {
+      const encounter = gScene.currentBattle.mysteryEncounter!;
 
       let species = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
       let tries = 0;
@@ -74,10 +74,10 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         // If no HA mon found or you roll 1%, give shiny Magikarp
         species = getPokemonSpecies(Species.MAGIKARP);
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, undefined, true, 0);
+        pokemon = new PlayerPokemon(species, 5, hiddenIndex, species.formIndex, undefined, true, 0);
       } else {
         const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex);
+        pokemon = new PlayerPokemon(species, 5, hiddenIndex, species.formIndex);
       }
       pokemon.generateAndPopulateMoveset();
 
@@ -100,7 +100,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}:description_shiny`;
         encounter.options[0].dialogue!.buttonTooltip = `${namespace}:option.1.tooltip_shiny`;
       }
-      const price = scene.getWaveMoneyAmount(priceMultiplier);
+      const price = gScene.getWaveMoneyAmount(priceMultiplier);
       encounter.setDialogueToken("purchasePokemon", pokemon.getNameToRender());
       encounter.setDialogueToken("price", price.toString());
       encounter.misc = {
@@ -126,24 +126,24 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
             }
           ],
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withOptionPhase(async () => {
+          const encounter = gScene.currentBattle.mysteryEncounter!;
           const price = encounter.misc.price;
           const purchasedPokemon = encounter.misc.pokemon as PlayerPokemon;
 
           // Update money
-          updatePlayerMoney(scene, -price, true, false);
+          updatePlayerMoney(-price, true, false);
 
           // Show dialogue
-          await showEncounterDialogue(scene, `${namespace}:option.1.selected_dialogue`, `${namespace}:speaker`);
-          await transitionMysteryEncounterIntroVisuals(scene);
+          await showEncounterDialogue(`${namespace}:option.1.selected_dialogue`, `${namespace}:speaker`);
+          await transitionMysteryEncounterIntroVisuals();
 
           // "Catch" purchased pokemon
           const data = new PokemonData(purchasedPokemon);
           data.player = false;
-          await catchPokemon(scene, data.toPokemon(scene) as EnemyPokemon, null, PokeballType.POKEBALL, true, true);
+          await catchPokemon(data.toPokemon() as EnemyPokemon, null, PokeballType.POKEBALL, true, true);
 
-          leaveEncounterWithoutBattle(scene, true);
+          leaveEncounterWithoutBattle(true);
         })
         .build()
     )
@@ -157,9 +157,9 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Leave encounter with no rewards or exp
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
         return true;
       }
     )

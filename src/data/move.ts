@@ -38,6 +38,7 @@ import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
 import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
 import { SwitchType } from "#enums/switch-type";
+import { gScene } from "#app/battle-scene";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -742,10 +743,10 @@ export default class Move implements Localizable {
     const isOhko = this.hasAttr(OneHitKOAccuracyAttr);
 
     if (!isOhko) {
-      user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+      gScene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
     }
 
-    if (user.scene.arena.weather?.weatherType === WeatherType.FOG) {
+    if (gScene.arena.weather?.weatherType === WeatherType.FOG) {
       /**
        *  The 0.9 multiplier is PokeRogue-only implementation, Bulbapedia uses 3/5
        *  See Fog {@link https://bulbapedia.bulbagarden.net/wiki/Fog}
@@ -753,7 +754,7 @@ export default class Move implements Localizable {
       moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
     }
 
-    if (!isOhko && user.scene.arena.getTag(ArenaTagType.GRAVITY)) {
+    if (!isOhko && gScene.arena.getTag(ArenaTagType.GRAVITY)) {
       moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
     }
 
@@ -778,7 +779,7 @@ export default class Move implements Localizable {
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, null, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
-    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !source.scene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !gScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
       power.value = 60;
     }
 
@@ -789,7 +790,7 @@ export default class Move implements Localizable {
     }
 
     const fieldAuras = new Set(
-      source.scene.getField(true)
+      gScene.getField(true)
         .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr).filter(attr => {
           const condition = attr.getCondition();
           return (!condition || condition(p));
@@ -800,7 +801,7 @@ export default class Move implements Localizable {
       aura.applyPreAttack(source, null, simulated, target, this, [ power ]);
     }
 
-    const alliedField: Pokemon[] = source instanceof PlayerPokemon ? source.scene.getPlayerField() : source.scene.getEnemyField();
+    const alliedField: Pokemon[] = source instanceof PlayerPokemon ? gScene.getPlayerField() : gScene.getEnemyField();
     alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, target, this, simulated, power));
 
     power.value *= typeChangeMovePowerMultiplier.value;
@@ -812,11 +813,11 @@ export default class Move implements Localizable {
 
     applyMoveAttrs(VariablePowerAttr, source, target, this, power);
 
-    source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
+    gScene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
 
     if (!this.hasAttr(TypelessAttr)) {
-      source.scene.arena.applyTags(WeakenMoveTypeTag, simulated, this.type, power);
-      source.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
+      gScene.arena.applyTags(WeakenMoveTypeTag, simulated, this.type, power);
+      gScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
     }
 
     if (source.getTag(HelpingHandTag)) {
@@ -930,7 +931,7 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
      * @param target the {@linkcode Pokemon} targeted by this move (optional)
      */
     showChargeText(user: Pokemon, target?: Pokemon): void {
-      user.scene.queueMessage(this._chargeText
+      gScene.queueMessage(this._chargeText
         .replace("{USER}", getPokemonNameWithAffix(user))
         .replace("{TARGET}", getPokemonNameWithAffix(target))
       );
@@ -1112,7 +1113,7 @@ export class MoveEffectAttr extends MoveAttr {
 
     if ((!move.hasAttr(FlinchAttr) || moveChance.value <= move.chance) && !move.hasAttr(SecretPowerAttr)) {
       const userSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      user.scene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, false, moveChance);
+      gScene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, false, moveChance);
     }
 
     if (!selfEffect) {
@@ -1152,7 +1153,7 @@ export class MessageHeaderAttr extends MoveHeaderAttr {
       : this.message(user, move);
 
     if (message) {
-      user.scene.queueMessage(message);
+      gScene.queueMessage(message);
       return true;
     }
     return false;
@@ -1205,7 +1206,7 @@ export class PreMoveMessageAttr extends MoveAttr {
       ? this.message as string
       : this.message(user, target, move);
     if (message) {
-      user.scene.queueMessage(message, 500);
+      gScene.queueMessage(message, 500);
       return true;
     }
     return false;
@@ -1437,7 +1438,7 @@ export class RecoilAttr extends MoveEffectAttr {
     }
 
     user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true, true);
-    user.scene.queueMessage(i18next.t("moveTriggers:hitWithRecoil", { pokemonName: getPokemonNameWithAffix(user) }));
+    gScene.queueMessage(i18next.t("moveTriggers:hitWithRecoil", { pokemonName: getPokemonNameWithAffix(user) }));
     user.turnData.damageTaken += recoilDamage;
 
     return true;
@@ -1549,7 +1550,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value) {
       user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), HitResult.OTHER, false, true, true);
-      user.scene.queueMessage(i18next.t("moveTriggers:cutHpPowerUpMove", { pokemonName: getPokemonNameWithAffix(user) })); // Queue recoil message
+      gScene.queueMessage(i18next.t("moveTriggers:cutHpPowerUpMove", { pokemonName: getPokemonNameWithAffix(user) })); // Queue recoil message
     }
     return true;
   }
@@ -1654,7 +1655,7 @@ export class HealAttr extends MoveEffectAttr {
    * This heals the target and shows the appropriate message.
    */
   addHealPhase(target: Pokemon, healRatio: number) {
-    target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
+    gScene.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
       Utils.toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim));
   }
 
@@ -1694,11 +1695,11 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     if (!this.canApply(user, target, move, args)) {
       return false;
     }
-    const partyPokemon = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+    const partyPokemon = user.isPlayer() ? gScene.getParty() : gScene.getEnemyParty();
     partyPokemon.forEach(p => this.cureStatus(p, user.id));
 
     if (this.message) {
-      user.scene.queueMessage(this.message);
+      gScene.queueMessage(this.message);
     }
 
     return true;
@@ -1717,7 +1718,7 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
       pokemon.resetStatus();
       pokemon.updateInfo();
     } else {
-      pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
+      gScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
     }
   }
 }
@@ -1766,9 +1767,9 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     }
 
     // We don't know which party member will be chosen, so pick the highest max HP in the party
-    const maxPartyMemberHp = user.scene.getParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
+    const maxPartyMemberHp = gScene.getParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
 
-    user.scene.pushPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
+    gScene.pushPhase(new PokemonHealPhase(user.getBattlerIndex(),
       maxPartyMemberHp, i18next.t("moveTriggers:sacrificialFullRestore", { pokemonName: getPokemonNameWithAffix(user) }), true, false, false, true), true);
 
     return true;
@@ -1779,7 +1780,7 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.scene.getParty().filter(p => p.isActive()).length > user.scene.currentBattle.getBattlerCount();
+    return (user, target, move) => gScene.getParty().filter(p => p.isActive()).length > gScene.currentBattle.getBattlerCount();
   }
 }
 
@@ -1808,7 +1809,7 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const weatherModifier = args[0] as Utils.NumberHolder;
     //If the type-based attack power modifier due to weather (e.g. Water moves in Sun) is below 1, set it to 1
-    if (user.scene.arena.weather?.weatherType === this.weather) {
+    if (gScene.arena.weather?.weatherType === this.weather) {
       weatherModifier.value = Math.max(weatherModifier.value, 1);
     }
     return true;
@@ -1822,8 +1823,8 @@ export abstract class WeatherHealAttr extends HealAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let healRatio = 0.5;
-    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
-      const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
+    if (!gScene.arena.weather?.isEffectSuppressed()) {
+      const weatherType = gScene.arena.weather?.weatherType || WeatherType.NONE;
       healRatio = this.getWeatherHealRatio(weatherType);
     }
     this.addHealPhase(user, healRatio);
@@ -1970,7 +1971,7 @@ export class HitHealAttr extends MoveEffectAttr {
         message = "";
       }
     }
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(), healAmount, message, false, true));
+    gScene.unshiftPhase(new PokemonHealPhase(user.getBattlerIndex(), healAmount, message, false, true));
     return true;
   }
 
@@ -2109,7 +2110,7 @@ export class MultiHitAttr extends MoveAttr {
       case MultiHitType._10:
         return 10;
       case MultiHitType.BEAT_UP:
-        const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+        const party = user.isPlayer() ? gScene.getParty() : gScene.getEnemyParty();
         // No status means the ally pokemon can contribute to Beat Up
         return party.reduce((total, pokemon) => {
           return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
@@ -2167,7 +2168,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
 
       if (user !== target && target.isSafeguarded(user)) {
         if (move.category === MoveCategory.STATUS) {
-          user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
+          gScene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
         }
         return false;
       }
@@ -2227,7 +2228,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
 
       if (canSetStatus) {
         if (user.status) {
-          user.scene.queueMessage(getStatusEffectHealText(user.status.effect, getPokemonNameWithAffix(user)));
+          gScene.queueMessage(getStatusEffectHealText(user.status.effect, getPokemonNameWithAffix(user)));
         }
         user.resetStatus();
         user.updateInfo();
@@ -2270,9 +2271,9 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
         const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-        user.scene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
+        gScene.tryTransferHeldItemModifier(stolenItem, user, false).then(success => {
           if (success) {
-            user.scene.queueMessage(i18next.t("moveTriggers:stoleItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: stolenItem.type.name }));
+            gScene.queueMessage(i18next.t("moveTriggers:stoleItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: stolenItem.type.name }));
           }
           resolve(success);
         });
@@ -2284,7 +2285,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+    return gScene.findModifiers(m => m instanceof PokemonHeldItemModifier
       && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
   }
 
@@ -2352,12 +2353,12 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
       // Decrease item amount and update icon
       !--removedItem.stackCount;
-      target.scene.updateModifiers(target.isPlayer());
+      gScene.updateModifiers(target.isPlayer());
 
       if (this.berriesOnly) {
-        user.scene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
+        gScene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
       } else {
-        user.scene.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
+        gScene.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
       }
     }
 
@@ -2365,7 +2366,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+    return gScene.findModifiers(m => m instanceof PokemonHeldItemModifier
       && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
   }
 
@@ -2407,7 +2408,7 @@ export class EatBerryAttr extends MoveEffectAttr {
     }
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     const preserve = new Utils.BooleanHolder(false);
-    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
+    gScene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
     if (!preserve.value) {
       this.reduceBerryModifier(target);
     }
@@ -2416,17 +2417,17 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
   getTargetHeldBerries(target: Pokemon): BerryModifier[] {
-    return target.scene.findModifiers(m => m instanceof BerryModifier
+    return gScene.findModifiers(m => m instanceof BerryModifier
       && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
   }
 
   reduceBerryModifier(target: Pokemon) {
     if (this.chosenBerry?.stackCount === 1) {
-      target.scene.removeModifier(this.chosenBerry, !target.isPlayer());
+      gScene.removeModifier(this.chosenBerry, !target.isPlayer());
     } else if (this.chosenBerry !== undefined && this.chosenBerry.stackCount > 1) {
       this.chosenBerry.stackCount--;
     }
-    target.scene.updateModifiers(target.isPlayer());
+    gScene.updateModifiers(target.isPlayer());
   }
 
   eatBerry(consumer: Pokemon) {
@@ -2468,7 +2469,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
     // if the target has berries, pick a random berry and steal it
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name });
-    user.scene.queueMessage(message);
+    gScene.queueMessage(message);
     this.reduceBerryModifier(target);
     this.eatBerry(user);
     return true;
@@ -2517,7 +2518,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 
     const pokemon = this.selfTarget ? user : target;
     if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
-      pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+      gScene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
       pokemon.resetStatus();
       pokemon.updateInfo();
 
@@ -2588,11 +2589,11 @@ export class WeatherChangeAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return user.scene.arena.trySetWeather(this.weatherType, true);
+    return gScene.arena.trySetWeather(this.weatherType, true);
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
+    return (user, target, move) => !gScene.arena.weather || (gScene.arena.weather.weatherType !== this.weatherType && !gScene.arena.weather.isImmutable());
   }
 }
 
@@ -2606,8 +2607,8 @@ export class ClearWeatherAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.scene.arena.weather?.weatherType === this.weatherType) {
-      return user.scene.arena.trySetWeather(WeatherType.NONE, true);
+    if (gScene.arena.weather?.weatherType === this.weatherType) {
+      return gScene.arena.trySetWeather(WeatherType.NONE, true);
     }
 
     return false;
@@ -2624,16 +2625,16 @@ export class TerrainChangeAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return user.scene.arena.trySetTerrain(this.terrainType, true, true);
+    return gScene.arena.trySetTerrain(this.terrainType, true, true);
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.scene.arena.terrain || (user.scene.arena.terrain.terrainType !== this.terrainType);
+    return (user, target, move) => !gScene.arena.terrain || (gScene.arena.terrain.terrainType !== this.terrainType);
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     // TODO: Expand on this
-    return user.scene.arena.terrain ? 0 : 6;
+    return gScene.arena.terrain ? 0 : 6;
   }
 }
 
@@ -2643,7 +2644,7 @@ export class ClearTerrainAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return user.scene.arena.trySetTerrain(TerrainType.NONE, true, true);
+    return gScene.arena.trySetTerrain(TerrainType.NONE, true, true);
   }
 }
 
@@ -2712,12 +2713,12 @@ export class InstantChargeAttr extends MoveAttr {
 export class WeatherInstantChargeAttr extends InstantChargeAttr {
   constructor(weatherTypes: WeatherType[]) {
     super((user, move) => {
-      const currentWeather = user.scene.arena.weather;
+      const currentWeather = gScene.arena.weather;
 
       if (Utils.isNullOrUndefined(currentWeather?.weatherType)) {
         return false;
       } else {
-        return !currentWeather?.isEffectSuppressed(user.scene)
+        return !currentWeather?.isEffectSuppressed()
           && weatherTypes.includes(currentWeather?.weatherType);
       }
     });
@@ -2748,16 +2749,16 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       if (args.length < 2 || !args[1]) {
-        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, false, () => {
+        new MoveChargeAnim(this.chargeAnim, move.id, user).play(false, () => {
           (args[0] as Utils.BooleanHolder).value = true;
-          user.scene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
+          gScene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
-          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, false, target.getBattlerIndex());
+          gScene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, false, target.getBattlerIndex());
 
           resolve(true);
         });
       } else {
-        user.scene.ui.showText(i18next.t("moveTriggers:tookMoveAttack", { pokemonName: getPokemonNameWithAffix(user.scene.getPokemonById(target.id) ?? undefined), moveName: move.name }), null, () => resolve(true));
+        gScene.ui.showText(i18next.t("moveTriggers:tookMoveAttack", { pokemonName: getPokemonNameWithAffix(gScene.getPokemonById(target.id) ?? undefined), moveName: move.name }), null, () => resolve(true));
       }
     });
   }
@@ -2786,29 +2787,29 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.turnData.combiningPledge) {
       // "The two moves have become one!\nIt's a combined move!"
-      user.scene.queueMessage(i18next.t("moveTriggers:combiningPledge"));
+      gScene.queueMessage(i18next.t("moveTriggers:combiningPledge"));
       return false;
     }
 
     const overridden = args[0] as Utils.BooleanHolder;
 
-    const allyMovePhase = user.scene.findPhase<MovePhase>((phase) => phase instanceof MovePhase && phase.pokemon.isPlayer() === user.isPlayer());
+    const allyMovePhase = gScene.findPhase<MovePhase>((phase) => phase instanceof MovePhase && phase.pokemon.isPlayer() === user.isPlayer());
     if (allyMovePhase) {
       const allyMove = allyMovePhase.move.getMove();
       if (allyMove !== move && allyMove.hasAttr(AwaitCombinedPledgeAttr)) {
         [ user, allyMovePhase.pokemon ].forEach((p) => p.turnData.combiningPledge = move.id);
 
         // "{userPokemonName} is waiting for {allyPokemonName}'s move..."
-        user.scene.queueMessage(i18next.t("moveTriggers:awaitingPledge", {
+        gScene.queueMessage(i18next.t("moveTriggers:awaitingPledge", {
           userPokemonName: getPokemonNameWithAffix(user),
           allyPokemonName: getPokemonNameWithAffix(allyMovePhase.pokemon)
         }));
 
         // Move the ally's MovePhase (if needed) so that the ally moves next
-        const allyMovePhaseIndex = user.scene.phaseQueue.indexOf(allyMovePhase);
-        const firstMovePhaseIndex = user.scene.phaseQueue.findIndex((phase) => phase instanceof MovePhase);
+        const allyMovePhaseIndex = gScene.phaseQueue.indexOf(allyMovePhase);
+        const firstMovePhaseIndex = gScene.phaseQueue.findIndex((phase) => phase instanceof MovePhase);
         if (allyMovePhaseIndex !== firstMovePhaseIndex) {
-          user.scene.prependToPhase(user.scene.phaseQueue.splice(allyMovePhaseIndex, 1)[0], MovePhase);
+          gScene.prependToPhase(gScene.phaseQueue.splice(allyMovePhaseIndex, 1)[0], MovePhase);
         }
 
         overridden.value = true;
@@ -2870,7 +2871,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) {
       const stages = this.getLevels(user);
-      user.scene.unshiftPhase(new StatStageChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, stages, this.showMessage));
+      gScene.unshiftPhase(new StatStageChangePhase((this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, stages, this.showMessage));
       return true;
     }
 
@@ -2955,11 +2956,11 @@ export class SecretPowerAttr extends MoveEffectAttr {
       return false;
     }
     let secondaryEffect: MoveEffectAttr;
-    const terrain = user.scene.arena.getTerrainType();
+    const terrain = gScene.arena.getTerrainType();
     if (terrain !== TerrainType.NONE) {
       secondaryEffect = this.determineTerrainEffect(terrain);
     } else {
-      const biome = user.scene.arena.biomeType;
+      const biome = gScene.arena.biomeType;
       secondaryEffect = this.determineBiomeEffect(biome);
     }
     // effectChanceOverride used in the application of the actual secondary effect
@@ -3111,7 +3112,7 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
     const randStats = BATTLE_STATS.filter(s => target.getStatStage(s) < 6);
     if (randStats.length > 0) {
       const boostStat = [ randStats[user.randSeedInt(randStats.length)] ];
-      user.scene.unshiftPhase(new StatStageChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2));
+      gScene.unshiftPhase(new StatStageChangePhase(target.getBattlerIndex(), this.selfTarget, boostStat, 2));
       return true;
     }
     return false;
@@ -3124,8 +3125,8 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
   }
 
   getLevels(user: Pokemon): number {
-    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
-      const weatherType = user.scene.arena.weather?.weatherType;
+    if (!gScene.arena.weather?.isEffectSuppressed()) {
+      const weatherType = gScene.arena.weather?.weatherType;
       if (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN) {
         return this.stages + 1;
       }
@@ -3181,7 +3182,7 @@ export class CopyStatsAttr extends MoveEffectAttr {
     }
     target.updateInfo();
     user.updateInfo();
-    target.scene.queueMessage(i18next.t("moveTriggers:copiedStatChanges", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:copiedStatChanges", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -3200,7 +3201,7 @@ export class InvertStatsAttr extends MoveEffectAttr {
     target.updateInfo();
     user.updateInfo();
 
-    target.scene.queueMessage(i18next.t("moveTriggers:invertStats", { pokemonName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:invertStats", { pokemonName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -3215,13 +3216,13 @@ export class ResetStatsAttr extends MoveEffectAttr {
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const promises: Promise<void>[] = [];
     if (this.targetAllPokemon) { // Target all pokemon on the field when Freezy Frost or Haze are used
-      const activePokemon = user.scene.getField(true);
+      const activePokemon = gScene.getField(true);
       activePokemon.forEach(p => promises.push(this.resetStats(p)));
-      target.scene.queueMessage(i18next.t("moveTriggers:statEliminated"));
+      gScene.queueMessage(i18next.t("moveTriggers:statEliminated"));
     } else { // Affects only the single target when Clear Smog is used
       if (!move.hitsSubstitute(user, target)) {
         promises.push(this.resetStats(target));
-        target.scene.queueMessage(i18next.t("moveTriggers:resetStats", { pokemonName: getPokemonNameWithAffix(target) }));
+        gScene.queueMessage(i18next.t("moveTriggers:resetStats", { pokemonName: getPokemonNameWithAffix(target) }));
       }
     }
 
@@ -3274,9 +3275,9 @@ export class SwapStatStagesAttr extends MoveEffectAttr {
       user.updateInfo();
 
       if (this.stats.length === 7) {
-        user.scene.queueMessage(i18next.t("moveTriggers:switchedStatChanges", { pokemonName: getPokemonNameWithAffix(user) }));
+        gScene.queueMessage(i18next.t("moveTriggers:switchedStatChanges", { pokemonName: getPokemonNameWithAffix(user) }));
       } else if (this.stats.length === 2) {
-        user.scene.queueMessage(i18next.t("moveTriggers:switchedTwoStatChanges", {
+        gScene.queueMessage(i18next.t("moveTriggers:switchedTwoStatChanges", {
           pokemonName: getPokemonNameWithAffix(user),
           firstStat: i18next.t(getStatKey(this.stats[0])),
           secondStat: i18next.t(getStatKey(this.stats[1]))
@@ -3301,12 +3302,12 @@ export class HpSplitAttr extends MoveEffectAttr {
       if (user.hp < hpValue) {
         const healing = user.heal(hpValue - user.hp);
         if (healing) {
-          user.scene.damageNumberHandler.add(user, healing, HitResult.HEAL);
+          gScene.damageNumberHandler.add(user, healing, HitResult.HEAL);
         }
       } else if (user.hp > hpValue) {
         const damage = user.damage(user.hp - hpValue, true);
         if (damage) {
-          user.scene.damageNumberHandler.add(user, damage);
+          gScene.damageNumberHandler.add(user, damage);
         }
       }
       infoUpdates.push(user.updateInfo());
@@ -3314,12 +3315,12 @@ export class HpSplitAttr extends MoveEffectAttr {
       if (target.hp < hpValue) {
         const healing = target.heal(hpValue - target.hp);
         if (healing) {
-          user.scene.damageNumberHandler.add(user, healing, HitResult.HEAL);
+          gScene.damageNumberHandler.add(user, healing, HitResult.HEAL);
         }
       } else if (target.hp > hpValue) {
         const damage = target.damage(target.hp - hpValue, true);
         if (damage) {
-          target.scene.damageNumberHandler.add(target, damage);
+          gScene.damageNumberHandler.add(target, damage);
         }
       }
       infoUpdates.push(target.updateInfo());
@@ -3402,7 +3403,7 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
  * @returns The base power of the Beat Up hit.
  */
 const beatUpFunc = (user: Pokemon, allyIndex: number): number => {
-  const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+  const party = user.isPlayer() ? gScene.getParty() : gScene.getEnemyParty();
 
   for (let i = allyIndex; i < party.length; i++) {
     const pokemon = party[i];
@@ -3430,7 +3431,7 @@ export class BeatUpAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
 
-    const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+    const party = user.isPlayer() ? gScene.getParty() : gScene.getEnemyParty();
     const allyCount = party.filter(pokemon => {
       return pokemon.id === user.id || !pokemon.status?.effect;
     }).length;
@@ -3442,19 +3443,19 @@ export class BeatUpAttr extends VariablePowerAttr {
 
 const doublePowerChanceMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   let message: string = "";
-  user.scene.executeWithSeedOffset(() => {
+  gScene.executeWithSeedOffset(() => {
     const rand = Utils.randSeedInt(100);
     if (rand < move.chance) {
       message = i18next.t("moveTriggers:goingAllOutForAttack", { pokemonName: getPokemonNameWithAffix(user) });
     }
-  }, user.scene.currentBattle.turn << 6, user.scene.waveSeed);
+  }, gScene.currentBattle.turn << 6, gScene.waveSeed);
   return message;
 };
 
 export class DoublePowerChanceAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let rand: integer;
-    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), user.scene.currentBattle.turn << 6, user.scene.waveSeed);
+    gScene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), gScene.currentBattle.turn << 6, gScene.waveSeed);
     if (rand! < move.chance) {
       const power = args[0] as Utils.NumberHolder;
       power.value *= 2;
@@ -3688,8 +3689,8 @@ export class OpponentHighHpPowerAttr extends VariablePowerAttr {
 
 export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log(target.getLastXMoves(1), target.scene.currentBattle.turn);
-    if (!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn)) {
+    console.log(target.getLastXMoves(1), gScene.currentBattle.turn);
+    if (!target.getLastXMoves(1).find(m => m.turn === gScene.currentBattle.turn)) {
       (args[0] as Utils.NumberHolder).value *= 2;
       return true;
     }
@@ -3712,7 +3713,7 @@ export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
 
 const magnitudeMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   let message: string;
-  user.scene.executeWithSeedOffset(() => {
+  gScene.executeWithSeedOffset(() => {
     const magnitudeThresholds = [ 5, 15, 35, 65, 75, 95 ];
 
     const rand = Utils.randSeedInt(100);
@@ -3725,7 +3726,7 @@ const magnitudeMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
     }
 
     message = i18next.t("moveTriggers:magnitudeMessage", { magnitude: m + 4 });
-  }, user.scene.currentBattle.turn << 6, user.scene.waveSeed);
+  }, gScene.currentBattle.turn << 6, gScene.waveSeed);
   return message!;
 };
 
@@ -3738,7 +3739,7 @@ export class MagnitudePowerAttr extends VariablePowerAttr {
 
     let rand: integer;
 
-    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), user.scene.currentBattle.turn << 6, user.scene.waveSeed);
+    gScene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), gScene.currentBattle.turn << 6, gScene.waveSeed);
 
     let m = 0;
     for (; m < magnitudeThresholds.length; m++) {
@@ -3755,9 +3756,9 @@ export class MagnitudePowerAttr extends VariablePowerAttr {
 
 export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
+    if (!gScene.arena.weather?.isEffectSuppressed()) {
       const power = args[0] as Utils.NumberHolder;
-      const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
+      const weatherType = gScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
         case WeatherType.RAIN:
         case WeatherType.SANDSTORM:
@@ -3873,7 +3874,7 @@ export class PresentPowerAttr extends VariablePowerAttr {
     } else if (80 < powerSeed && powerSeed <= 100) {
       // If this move is multi-hit, disable all other hits
       user.stopMultiHit();
-      target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
+      gScene.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
         Utils.toDmgValue(target.getMaxHp() / 4), i18next.t("moveTriggers:regainedHealth", { pokemonName: getPokemonNameWithAffix(target) }), true));
     }
 
@@ -4023,7 +4024,7 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
       pokemonActed.push(enemy);
     }
 
-    if (user.scene.currentBattle.double) {
+    if (gScene.currentBattle.double) {
       const userAlly = user.getAlly();
       const enemyAlly = enemy?.getAlly();
 
@@ -4158,9 +4159,9 @@ export class VariableAccuracyAttr extends MoveAttr {
  */
 export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
+    if (!gScene.arena.weather?.isEffectSuppressed()) {
       const accuracy = args[0] as Utils.NumberHolder;
-      const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
+      const weatherType = gScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
         case WeatherType.SUNNY:
         case WeatherType.HARSH_SUN:
@@ -4184,9 +4185,9 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
  */
 export class StormAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
+    if (!gScene.arena.weather?.isEffectSuppressed()) {
       const accuracy = args[0] as Utils.NumberHolder;
-      const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
+      const weatherType = gScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
         case WeatherType.RAIN:
         case WeatherType.HEAVY_RAIN:
@@ -4240,9 +4241,9 @@ export class ToxicAccuracyAttr extends VariableAccuracyAttr {
 
 export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
+    if (!gScene.arena.weather?.isEffectSuppressed()) {
       const accuracy = args[0] as Utils.NumberHolder;
-      const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
+      const weatherType = gScene.arena.weather?.weatherType || WeatherType.NONE;
       if (weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW) {
         accuracy.value = -1;
         return true;
@@ -4539,8 +4540,8 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
-      switch (user.scene.arena.weather?.weatherType) {
+    if (!gScene.arena.weather?.isEffectSuppressed()) {
+      switch (gScene.arena.weather?.weatherType) {
         case WeatherType.SUNNY:
         case WeatherType.HARSH_SUN:
           moveType.value = Type.FIRE;
@@ -4590,7 +4591,7 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const currentTerrain = user.scene.arena.getTerrainType();
+    const currentTerrain = gScene.arena.getTerrainType();
     switch (currentTerrain) {
       case TerrainType.MISTY:
         moveType.value = Type.FAIRY;
@@ -4755,7 +4756,7 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
     const multiplier = args[0] as Utils.NumberHolder;
     if (target.isOfType(Type.WATER)) {
       const effectivenessAgainstWater = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, Type.WATER));
-      applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstWater);
+      applyChallenges(gScene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstWater);
       if (effectivenessAgainstWater.value !== 0) {
         multiplier.value *= 2 / effectivenessAgainstWater.value;
         return true;
@@ -4866,7 +4867,7 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
   }
 
   user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), HitResult.OTHER, false, true);
-  user.scene.queueMessage(i18next.t("moveTriggers:keptGoingAndCrashed", { pokemonName: getPokemonNameWithAffix(user) }));
+  gScene.queueMessage(i18next.t("moveTriggers:keptGoingAndCrashed", { pokemonName: getPokemonNameWithAffix(user) }));
   user.turnData.damageTaken += Utils.toDmgValue(user.getMaxHp() / 2);
 
   return true;
@@ -5156,12 +5157,12 @@ export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
     if (user.getTypes(true).includes(Type.GHOST)) {
       if (target.getTag(BattlerTagType.CURSED)) {
-        user.scene.queueMessage(i18next.t("battle:attackFailed"));
+        gScene.queueMessage(i18next.t("battle:attackFailed"));
         return false;
       }
       const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
-      user.scene.queueMessage(
+      gScene.queueMessage(
         i18next.t("battlerTags:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
           pokemonName: getPokemonNameWithAffix(target)
@@ -5171,8 +5172,8 @@ export class CurseAttr extends MoveEffectAttr {
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
-      user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF ], 1));
-      user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), true, [ Stat.SPD ], -1));
+      gScene.unshiftPhase(new StatStageChangePhase(user.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF ], 1));
+      gScene.unshiftPhase(new StatStageChangePhase(user.getBattlerIndex(), true, [ Stat.SPD ], -1));
       return true;
     }
   }
@@ -5243,7 +5244,7 @@ export class ConfuseAttr extends AddBattlerTagAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!this.selfTarget && target.isSafeguarded(user)) {
       if (move.category === MoveCategory.STATUS) {
-        user.scene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
+        gScene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
       }
       return false;
     }
@@ -5303,7 +5304,7 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    user.scene.queueMessage(i18next.t("moveTriggers:tookAimAtTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:tookAimAtTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -5319,7 +5320,7 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    user.scene.queueMessage(i18next.t("moveTriggers:faintCountdown", { pokemonName: getPokemonNameWithAffix(target), turnCount: this.turnCountMin - 1 }));
+    gScene.queueMessage(i18next.t("moveTriggers:faintCountdown", { pokemonName: getPokemonNameWithAffix(target), turnCount: this.turnCountMin - 1 }));
 
     return true;
   }
@@ -5349,7 +5350,7 @@ export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.scene.getField(true).forEach(pokemon =>
+    gScene.getField(true).forEach(pokemon =>
       pokemon.findAndRemoveTags(tag => tag.tagType === BattlerTagType.SUBSTITUTE));
     return true;
   }
@@ -5411,7 +5412,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
     }
 
     if ((move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
-      user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      gScene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
       return true;
     }
 
@@ -5420,7 +5421,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc | null {
     return this.failOnOverlap
-      ? (user, target, move) => !user.scene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
+      ? (user, target, move) => !gScene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
       : null;
   }
 }
@@ -5449,7 +5450,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
     const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
     for (const tagType of this.tagTypes) {
-      user.scene.arena.removeTagOnSide(tagType, side);
+      gScene.arena.removeTagOnSide(tagType, side);
     }
 
     return true;
@@ -5460,7 +5461,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
+      const tag = gScene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
       if (!tag) {
         return true;
       }
@@ -5484,9 +5485,9 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
+    const tag = gScene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
     if ((moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
-      user.scene.arena.addTag(this.tagType, 0, move.id, user.id, side);
+      gScene.arena.addTag(this.tagType, 0, move.id, user.id, side);
       if (!tag) {
         return true;
       }
@@ -5512,20 +5513,20 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
     }
 
     if (this.targetBothSides) {
-      user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER);
 
-      user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
-      user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY);
-      user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.ENEMY);
-      user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.ENEMY);
     } else {
-      user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
     }
 
     return true;
@@ -5548,17 +5549,17 @@ export class RemoveScreensAttr extends MoveEffectAttr {
     }
 
     if (this.targetBothSides) {
-      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
+      gScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.PLAYER);
 
-      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.ENEMY);
-      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.ENEMY);
-      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.ENEMY);
     } else {
-      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.REFLECT, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      gScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
     }
 
     return true;
@@ -5584,25 +5585,25 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    const tagPlayerTemp = user.scene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.PLAYER);
-    const tagEnemyTemp = user.scene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.ENEMY);
+    const tagPlayerTemp = gScene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.PLAYER);
+    const tagEnemyTemp = gScene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.ENEMY);
 
 
     if (tagPlayerTemp) {
       for (const swapTagsType of tagPlayerTemp) {
-        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
-        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.ENEMY, true); // TODO: is the bang correct?
+        gScene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
+        gScene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.ENEMY, true); // TODO: is the bang correct?
       }
     }
     if (tagEnemyTemp) {
       for (const swapTagsType of tagEnemyTemp) {
-        user.scene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
-        user.scene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.PLAYER, true); // TODO: is the bang correct?
+        gScene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
+        gScene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.PLAYER, true); // TODO: is the bang correct?
       }
     }
 
 
-    user.scene.queueMessage(i18next.t("moveTriggers:swapArenaTags", { pokemonName: getPokemonNameWithAffix(user) }));
+    gScene.queueMessage(i18next.t("moveTriggers:swapArenaTags", { pokemonName: getPokemonNameWithAffix(user) }));
     return true;
   }
 }
@@ -5655,40 +5656,40 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
     return new Promise(resolve => {
       // If user is player, checks if the user has fainted pokemon
       if (user instanceof PlayerPokemon
-        && user.scene.getParty().findIndex(p => p.isFainted()) > -1) {
+        && gScene.getParty().findIndex(p => p.isFainted()) > -1) {
         (user as PlayerPokemon).revivalBlessing().then(() => {
           resolve(true);
         });
       // If user is enemy, checks that it is a trainer, and it has fainted non-boss pokemon in party
       } else if (user instanceof EnemyPokemon
         && user.hasTrainer()
-        && user.scene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1) {
+        && gScene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1) {
         // Selects a random fainted pokemon
-        const faintedPokemon = user.scene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
+        const faintedPokemon = gScene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
         const pokemon = faintedPokemon[user.randSeedInt(faintedPokemon.length)];
-        const slotIndex = user.scene.getEnemyParty().findIndex(p => pokemon.id === p.id);
+        const slotIndex = gScene.getEnemyParty().findIndex(p => pokemon.id === p.id);
         pokemon.resetStatus();
         pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-        user.scene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
+        gScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
 
-        if (user.scene.currentBattle.double && user.scene.getEnemyParty().length > 1) {
+        if (gScene.currentBattle.double && gScene.getEnemyParty().length > 1) {
           const allyPokemon = user.getAlly();
           if (slotIndex <= 1) {
-            user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, false));
+            gScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, false));
           } else if (allyPokemon.isFainted()) {
-            user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false));
+            gScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false));
           }
         }
         resolve(true);
       } else {
-        user.scene.queueMessage(i18next.t("battle:attackFailed"));
+        gScene.queueMessage(i18next.t("battle:attackFailed"));
         resolve(false);
       }
     });
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    if (user.hasTrainer() && user.scene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1) {
+    if (user.hasTrainer() && gScene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1) {
       return 20;
     }
 
@@ -5721,52 +5722,52 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     const switchOutTarget = this.selfSwitch ? user : target;
     if (switchOutTarget instanceof PlayerPokemon) {
       // Switch out logic for the player's Pokemon
-      if (switchOutTarget.scene.getParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      if (gScene.getParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
         switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        user.scene.prependToPhase(new SwitchPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
+        gScene.prependToPhase(new SwitchPhase(this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
         return true;
       }
       return false;
-    } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
+    } else if (gScene.currentBattle.battleType !== BattleType.WILD) {
       // Switch out logic for trainer battles
-      if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      if (gScene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
         // for opponent switching out
         switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        user.scene.prependToPhase(new SwitchSummonPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(),
-          (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
+        gScene.prependToPhase(new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(),
+          (gScene.currentBattle.trainer ? gScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
           false, false), MoveEndPhase);
       }
     } else {
       // Switch out logic for everything else (eg: WILD battles)
-      if (user.scene.currentBattle.waveIndex % 10 === 0) {
+      if (gScene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
         switchOutTarget.leaveField(false);
-        user.scene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
+        gScene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
 
         // in double battles redirect potential moves off fled pokemon
-        if (switchOutTarget.scene.currentBattle.double) {
+        if (gScene.currentBattle.double) {
           const allyPokemon = switchOutTarget.getAlly();
-          switchOutTarget.scene.redirectPokemonMoves(switchOutTarget, allyPokemon);
+          gScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
         }
       }
 
       if (!switchOutTarget.getAlly()?.isActive(true)) {
-        user.scene.clearEnemyHeldItemModifiers();
+        gScene.clearEnemyHeldItemModifiers();
 
         if (switchOutTarget.hp) {
-          user.scene.pushPhase(new BattleEndPhase(user.scene));
-          user.scene.pushPhase(new NewBattlePhase(user.scene));
+          gScene.pushPhase(new BattleEndPhase());
+          gScene.pushPhase(new NewBattlePhase());
         }
       }
     }
@@ -5794,7 +5795,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           return false;
         }
 
-        if (!player && user.scene.currentBattle.isBattleMysteryEncounter() && !user.scene.currentBattle.mysteryEncounter?.fleeAllowed) {
+        if (!player && gScene.currentBattle.isBattleMysteryEncounter() && !gScene.currentBattle.mysteryEncounter?.fleeAllowed) {
           // Don't allow wild opponents to be force switched during MEs with flee disabled
           return false;
         }
@@ -5804,25 +5805,25 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return !blockedByAbility.value;
       }
 
-      if (!player && user.scene.currentBattle.battleType === BattleType.WILD) {
+      if (!player && gScene.currentBattle.battleType === BattleType.WILD) {
         if (this.isBatonPass()) {
           return false;
         }
         // Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
-        if (user.scene.currentBattle.waveIndex % 10 === 0) {
+        if (gScene.currentBattle.waveIndex % 10 === 0) {
           return false;
         }
       }
 
-      const party = player ? user.scene.getParty() : user.scene.getEnemyParty();
-      return (!player && !user.scene.currentBattle.battleType)
+      const party = player ? gScene.getParty() : gScene.getEnemyParty();
+      return (!player && !gScene.currentBattle.battleType)
         || party.filter(p => p.isAllowedInBattle()
-          && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > user.scene.currentBattle.getBattlerCount();
+          && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > gScene.currentBattle.getBattlerCount();
     };
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    if (!user.scene.getEnemyParty().find(p => p.isActive() && !p.isOnField())) {
+    if (!gScene.getEnemyParty().find(p => p.isActive() && !p.isOnField())) {
       return -20;
     }
     let ret = this.selfSwitch ? Math.floor((1 - user.getHpRatio()) * 20) : super.getUserBenefitScore(user, target, move);
@@ -5837,13 +5838,13 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
 export class ChillyReceptionAttr extends ForceSwitchOutAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.arena.trySetWeather(WeatherType.SNOW, true);
+    gScene.arena.trySetWeather(WeatherType.SNOW, true);
     return super.apply(user, target, move, args);
   }
 
   getCondition(): MoveConditionFunc {
     // chilly reception move will go through if the weather is change-able to snow, or the user can switch out, else move will fail
-    return (user, target, move) => user.scene.arena.weather?.weatherType !== WeatherType.SNOW || super.getSwitchOutCondition()(user, target, move);
+    return (user, target, move) => gScene.arena.weather?.weatherType !== WeatherType.SNOW || super.getSwitchOutCondition()(user, target, move);
   }
 }
 export class RemoveTypeAttr extends MoveEffectAttr {
@@ -5901,7 +5902,7 @@ export class CopyTypeAttr extends MoveEffectAttr {
     user.summonData.types = targetTypes;
     user.updateInfo();
 
-    user.scene.queueMessage(i18next.t("moveTriggers:copyType", { pokemonName: getPokemonNameWithAffix(user), targetPokemonName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:copyType", { pokemonName: getPokemonNameWithAffix(user), targetPokemonName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -5921,12 +5922,12 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const biomeType = user.scene.arena.getTypeForBiome();
+    const biomeType = gScene.arena.getTypeForBiome();
 
     user.summonData.types = [ biomeType ];
     user.updateInfo();
 
-    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:Type.${Type[biomeType]}`) }));
+    gScene.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:Type.${Type[biomeType]}`) }));
 
     return true;
   }
@@ -5945,7 +5946,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
     target.summonData.types = [ this.type ];
     target.updateInfo();
 
-    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(target), typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`) }));
+    gScene.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(target), typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`) }));
 
     return true;
   }
@@ -5968,7 +5969,7 @@ export class AddTypeAttr extends MoveEffectAttr {
     target.summonData.addedType = this.type;
     target.updateInfo();
 
-    user.scene.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`), pokemonName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`), pokemonName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -5990,7 +5991,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 
     const firstMoveType = target.getMoveset()[0]?.getMove().type!; // TODO: is this bang correct?
     user.summonData.types = [ firstMoveType ];
-    user.scene.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:Type.${Type[firstMoveType]}`) }));
+    gScene.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:Type.${Type[firstMoveType]}`) }));
 
     return true;
   }
@@ -6033,7 +6034,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
       }
       const targets = selectTargets;
       user.getMoveQueue().push({ move: move?.moveId!, targets: targets, ignorePP: true }); // TODO: is this bang correct?
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, moveset[moveIndex]!, true)); // There's a PR to re-do the move(s) that use this Attr, gonna put `!` for now
+      gScene.unshiftPhase(new MovePhase(user, targets, moveset[moveIndex]!, true)); // There's a PR to re-do the move(s) that use this Attr, gonna put `!` for now
       return true;
     }
 
@@ -6058,9 +6059,9 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
           ? [ target.getBattlerIndex() ]
           : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
       user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(user.scene, moveId).then(() => {
-        loadMoveAnimAssets(user.scene, [ moveId ], true)
+      gScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(moveId, 0, 0, true), true));
+      initMoveAnim(moveId).then(() => {
+        loadMoveAnimAssets([ moveId ], true)
           .then(() => resolve(true));
       });
     });
@@ -6071,10 +6072,10 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       let moveId;
-      switch (user.scene.arena.getTerrainType()) {
+      switch (gScene.arena.getTerrainType()) {
       // this allows terrains to 'override' the biome move
         case TerrainType.NONE:
-          switch (user.scene.arena.biomeType) {
+          switch (gScene.arena.biomeType) {
             case Biome.TOWN:
               moveId = Moves.ROUND;
               break;
@@ -6201,9 +6202,9 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
       }
 
       user.getMoveQueue().push({ move: moveId, targets: [ target.getBattlerIndex() ], ignorePP: true });
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(user.scene, moveId).then(() => {
-        loadMoveAnimAssets(user.scene, [ moveId ], true)
+      gScene.unshiftPhase(new MovePhase(user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true));
+      initMoveAnim(moveId).then(() => {
+        loadMoveAnimAssets([ moveId ], true)
           .then(() => resolve(true));
       });
     });
@@ -6211,7 +6212,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
 }
 
 const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
-  const copiableMove = user.scene.currentBattle.lastMove;
+  const copiableMove = gScene.currentBattle.lastMove;
 
   if (!copiableMove) {
     return false;
@@ -6228,7 +6229,7 @@ const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
 
 export class CopyMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const lastMove = user.scene.currentBattle.lastMove;
+    const lastMove = gScene.currentBattle.lastMove;
 
     const moveTargets = getMoveTargets(user, lastMove);
     if (!moveTargets.targets.length) {
@@ -6242,7 +6243,7 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
         : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
     user.getMoveQueue().push({ move: lastMove, targets: targets, ignorePP: true });
 
-    user.scene.unshiftPhase(new MovePhase(user.scene, user as PlayerPokemon, targets, new PokemonMove(lastMove, 0, 0, true), true));
+    gScene.unshiftPhase(new MovePhase(user as PlayerPokemon, targets, new PokemonMove(lastMove, 0, 0, true), true));
 
     return true;
   }
@@ -6280,8 +6281,8 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     movesetMove!.ppUsed = Math.min((movesetMove?.ppUsed!) + this.reduction, movesetMove?.getMovePp()!); // TODO: is the bang correct?
 
     const message = i18next.t("battle:ppReduced", { targetName: getPokemonNameWithAffix(target), moveName: movesetMove?.getName(), reduction: (movesetMove?.ppUsed!) - lastPpUsed }); // TODO: is the bang correct?
-    user.scene.eventTarget.dispatchEvent(new MoveUsedEvent(target?.id, movesetMove?.getMove()!, movesetMove?.ppUsed!)); // TODO: are these bangs correct?
-    user.scene.queueMessage(message);
+    gScene.eventTarget.dispatchEvent(new MoveUsedEvent(target?.id, movesetMove?.getMove()!, movesetMove?.ppUsed!)); // TODO: are these bangs correct?
+    gScene.queueMessage(message);
 
     return true;
   }
@@ -6392,7 +6393,7 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
     user.summonData.moveset = user.getMoveset().slice(0);
     user.summonData.moveset[thisMoveIndex] = new PokemonMove(copiedMove.id, 0, 0);
 
-    user.scene.queueMessage(i18next.t("moveTriggers:copiedMove", { pokemonName: getPokemonNameWithAffix(user), moveName: copiedMove.name }));
+    gScene.queueMessage(i18next.t("moveTriggers:copiedMove", { pokemonName: getPokemonNameWithAffix(user), moveName: copiedMove.name }));
 
     return true;
   }
@@ -6441,7 +6442,7 @@ export class SketchAttr extends MoveEffectAttr {
 
     user.setMove(sketchIndex, sketchedMove.id);
 
-    user.scene.queueMessage(i18next.t("moveTriggers:sketchedMove", { pokemonName: getPokemonNameWithAffix(user), moveName: sketchedMove.name }));
+    gScene.queueMessage(i18next.t("moveTriggers:sketchedMove", { pokemonName: getPokemonNameWithAffix(user), moveName: sketchedMove.name }));
 
     return true;
   }
@@ -6499,9 +6500,9 @@ export class AbilityChangeAttr extends MoveEffectAttr {
     const moveTarget = this.selfTarget ? user : target;
 
     moveTarget.summonData.ability = this.ability;
-    user.scene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
+    gScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
 
-    user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name }));
+    gScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name }));
 
     return true;
   }
@@ -6527,11 +6528,11 @@ export class AbilityCopyAttr extends MoveEffectAttr {
 
     user.summonData.ability = target.getAbility().id;
 
-    user.scene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
+    gScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
 
-    if (this.copyToPartner && user.scene.currentBattle?.double && user.getAlly().hp) {
+    if (this.copyToPartner && gScene.currentBattle?.double && user.getAlly().hp) {
       user.getAlly().summonData.ability = target.getAbility().id;
-      user.getAlly().scene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user.getAlly()), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
+      gScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user.getAlly()), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
     }
 
     return true;
@@ -6540,7 +6541,7 @@ export class AbilityCopyAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       let ret = !target.getAbility().hasAttr(UncopiableAbilityAbAttr) && !user.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
-      if (this.copyToPartner && user.scene.currentBattle?.double) {
+      if (this.copyToPartner && gScene.currentBattle?.double) {
         ret = ret && (!user.getAlly().hp || !user.getAlly().getAbility().hasAttr(UnsuppressableAbilityAbAttr));
       } else {
         ret = ret && user.getAbility().id !== target.getAbility().id;
@@ -6564,7 +6565,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
 
     target.summonData.ability = user.getAbility().id;
 
-    user.scene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix(target), abilityName: allAbilities[user.getAbility().id].name }));
+    gScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix(target), abilityName: allAbilities[user.getAbility().id].name }));
 
     return true;
   }
@@ -6584,11 +6585,11 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
     user.summonData.ability = target.getAbility().id;
     target.summonData.ability = tempAbilityId;
 
-    user.scene.queueMessage(i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }));
+    gScene.queueMessage(i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }));
     // Swaps Forecast/Flower Gift from Castform/Cherrim
-    user.scene.arena.triggerWeatherBasedFormChangesToNormal();
+    gScene.arena.triggerWeatherBasedFormChangesToNormal();
     // Swaps Forecast/Flower Gift to Castform/Cherrim (edge case)
-    user.scene.arena.triggerWeatherBasedFormChanges();
+    gScene.arena.triggerWeatherBasedFormChanges();
 
     return true;
   }
@@ -6614,9 +6615,9 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
     }
 
     target.summonData.abilitySuppressed = true;
-    target.scene.arena.triggerWeatherBasedFormChangesToNormal();
+    gScene.arena.triggerWeatherBasedFormChangesToNormal();
 
-    target.scene.queueMessage(i18next.t("moveTriggers:suppressAbilities", { pokemonName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:suppressAbilities", { pokemonName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -6694,7 +6695,7 @@ export class TransformAttr extends MoveEffectAttr {
     user.summonData.types = target.getTypes();
     promises.push(user.updateInfo());
 
-    user.scene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
     promises.push(user.loadAssets(false).then(() => {
       user.playAnim();
@@ -6737,7 +6738,7 @@ export class SwapStatAttr extends MoveEffectAttr {
       user.setStat(this.stat, target.getStat(this.stat, false), false);
       target.setStat(this.stat, temp, false);
 
-      user.scene.queueMessage(i18next.t("moveTriggers:switchedStat", {
+      gScene.queueMessage(i18next.t("moveTriggers:switchedStat", {
         pokemonName: getPokemonNameWithAffix(user),
         stat: i18next.t(getStatKey(this.stat)),
       }));
@@ -6783,7 +6784,7 @@ export class ShiftStatAttr extends MoveEffectAttr {
     user.setStat(this.statToSwitch, secondStat, false);
     user.setStat(this.statToSwitchWith, firstStat, false);
 
-    user.scene.queueMessage(i18next.t("moveTriggers:shiftedStats", {
+    gScene.queueMessage(i18next.t("moveTriggers:shiftedStats", {
       pokemonName: getPokemonNameWithAffix(user),
       statToSwitch: i18next.t(getStatKey(this.statToSwitch)),
       statToSwitchWith: i18next.t(getStatKey(this.statToSwitchWith))
@@ -6842,7 +6843,7 @@ export class AverageStatsAttr extends MoveEffectAttr {
         target.setStat(s, avg, false);
       }
 
-      user.scene.queueMessage(i18next.t(this.msgKey, { pokemonName: getPokemonNameWithAffix(user) }));
+      gScene.queueMessage(i18next.t(this.msgKey, { pokemonName: getPokemonNameWithAffix(user) }));
 
       return true;
     }
@@ -6870,8 +6871,8 @@ export class MoneyAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
-    user.scene.currentBattle.moneyScattered += user.scene.getWaveMoneyAmount(0.2);
-    user.scene.queueMessage(i18next.t("moveTriggers:coinsScatteredEverywhere"));
+    gScene.currentBattle.moneyScattered += gScene.getWaveMoneyAmount(0.2);
+    gScene.queueMessage(i18next.t("moveTriggers:coinsScatteredEverywhere"));
     return true;
   }
 }
@@ -6895,7 +6896,7 @@ export class DestinyBondAttr extends MoveEffectAttr {
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.queueMessage(`${i18next.t("moveTriggers:tryingToTakeFoeDown", { pokemonName: getPokemonNameWithAffix(user) })}`);
+    gScene.queueMessage(`${i18next.t("moveTriggers:tryingToTakeFoeDown", { pokemonName: getPokemonNameWithAffix(user) })}`);
     user.addTag(BattlerTagType.DESTINY_BOND, undefined, move.id, user.id);
     return true;
   }
@@ -6985,7 +6986,7 @@ export class AttackedByItemAttr extends MoveAttr {
       }
 
       const itemName = heldItems[0]?.type?.name ?? "item";
-      target.scene.queueMessage(i18next.t("moveTriggers:attackedByItem", { pokemonName: getPokemonNameWithAffix(target), itemName: itemName }));
+      gScene.queueMessage(i18next.t("moveTriggers:attackedByItem", { pokemonName: getPokemonNameWithAffix(target), itemName: itemName }));
 
       return true;
     };
@@ -7024,30 +7025,30 @@ export class AfterYouAttr extends MoveEffectAttr {
    * @returns true
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    user.scene.queueMessage(i18next.t("moveTriggers:afterYou", { targetName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:afterYou", { targetName: getPokemonNameWithAffix(target) }));
 
     //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
-    const nextAttackPhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
-    if (nextAttackPhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      target.scene.prependToPhase(new MovePhase(target.scene, target, [ ...nextAttackPhase.targets ], nextAttackPhase.move), MovePhase);
+    const nextAttackPhase = gScene.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    if (nextAttackPhase && gScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      gScene.prependToPhase(new MovePhase(target, [ ...nextAttackPhase.targets ], nextAttackPhase.move), MovePhase);
     }
 
     return true;
   }
 }
 
-const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
+const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !gScene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
 
-const failIfSingleBattle: MoveConditionFunc = (user, target, move) => user.scene.currentBattle.double;
+const failIfSingleBattle: MoveConditionFunc = (user, target, move) => gScene.currentBattle.double;
 
 const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
   const cancelled = new Utils.BooleanHolder(false);
-  user.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
+  gScene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
   // Queue a message if an ability prevented usage of the move
   if (cancelled.value) {
-    user.scene.queueMessage(i18next.t("moveTriggers:cannotUseMove", { pokemonName: getPokemonNameWithAffix(user), moveName: move.name }));
+    gScene.queueMessage(i18next.t("moveTriggers:cannotUseMove", { pokemonName: getPokemonNameWithAffix(user), moveName: move.name }));
   }
   return !cancelled.value;
 };
@@ -7056,7 +7057,7 @@ const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: 
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(Abilities.COMATOSE);
 
-const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => user.scene.phaseQueue.find(phase => phase instanceof MovePhase) !== undefined;
+const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => gScene.phaseQueue.find(phase => phase instanceof MovePhase) !== undefined;
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
@@ -7173,13 +7174,13 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
     const userTypes = user.getTypes();
-    const validTypes = this.getTypeResistances(user.scene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    const validTypes = this.getTypeResistances(gScene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
     if (!validTypes.length) {
       return false;
     }
     const type = validTypes[user.randSeedInt(validTypes.length)];
     user.summonData.types = [ type ];
-    user.scene.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: Utils.toReadableString(Type[type]) }));
+    gScene.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: Utils.toReadableString(Type[type]) }));
     user.updateInfo();
 
     return true;
@@ -7238,7 +7239,7 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    user.scene.queueMessage(i18next.t("moveTriggers:exposedMove", { pokemonName: getPokemonNameWithAffix(user), targetPokemonName: getPokemonNameWithAffix(target) }));
+    gScene.queueMessage(i18next.t("moveTriggers:exposedMove", { pokemonName: getPokemonNameWithAffix(user), targetPokemonName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -7559,7 +7560,7 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.EARTHQUAKE, Type.GROUND, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 1)
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.UNDERGROUND)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FISSURE, Type.GROUND, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
@@ -7836,7 +7837,7 @@ export function initMoves() {
       .attr(ConfuseAttr),
     new SelfStatusMove(Moves.BELLY_DRUM, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(CutHpStatStageBoostAttr, [ Stat.ATK ], 12, 2, (user) => {
-        user.scene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", { pokemonName: getPokemonNameWithAffix(user), statName: i18next.t(getStatKey(Stat.ATK)) }));
+        gScene.queueMessage(i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", { pokemonName: getPokemonNameWithAffix(user), statName: i18next.t(getStatKey(Stat.ATK)) }));
       }),
     new AttackMove(Moves.SLUDGE_BOMB, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.POISON)
@@ -7955,7 +7956,7 @@ export function initMoves() {
     new AttackMove(Moves.MAGNITUDE, Type.GROUND, MoveCategory.PHYSICAL, -1, 100, 30, -1, 0, 2)
       .attr(PreMoveMessageAttr, magnitudeMessageFunc)
       .attr(MagnitudePowerAttr)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.UNDERGROUND)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -8228,7 +8229,7 @@ export function initMoves() {
       .attr(FlinchAttr),
     new AttackMove(Moves.WEATHER_BALL, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 3)
       .attr(WeatherBallTypeAttr)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN ].includes(user.scene.arena.weather?.weatherType!) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1) // TODO: is this bang correct?
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN ].includes(gScene.arena.weather?.weatherType!) && !gScene.arena.weather?.isEffectSuppressed() ? 2 : 1) // TODO: is this bang correct?
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
       .attr(PartyStatusCureAttr, i18next.t("moveTriggers:soothingAromaWaftedThroughArea"), Abilities.SAP_SIPPER)
@@ -8401,7 +8402,7 @@ export function initMoves() {
     new AttackMove(Moves.CLOSE_COMBAT, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], -1, true),
     new AttackMove(Moves.PAYBACK, Type.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 4)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.BALL ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getLastXMoves(1).find(m => m.turn === gScene.currentBattle.turn) || gScene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.BALL ? 2 : 1),
     new AttackMove(Moves.ASSURANCE, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.turnData.damageTaken > 0 ? 2 : 1),
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
@@ -8457,7 +8458,7 @@ export function initMoves() {
     new StatusMove(Moves.WORRY_SEED, Type.GRASS, 100, 10, -1, 0, 4)
       .attr(AbilityChangeAttr, Abilities.INSOMNIA),
     new AttackMove(Moves.SUCKER_PUNCH, Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, 1, 4)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS), // TODO: is this bang correct?
+      .condition((user, target, move) => gScene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[gScene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS), // TODO: is this bang correct?
     new StatusMove(Moves.TOXIC_SPIKES, Type.POISON, -1, 20, -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
@@ -8468,7 +8469,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, true, true)
-      .condition((user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY) && [ BattlerTagType.FLOATING, BattlerTagType.IGNORE_FLYING, BattlerTagType.INGRAIN ].every((tag) => !user.getTag(tag))),
+      .condition((user, target, move) => !gScene.arena.getTag(ArenaTagType.GRAVITY) && [ BattlerTagType.FLOATING, BattlerTagType.IGNORE_FLYING, BattlerTagType.INGRAIN ].every((tag) => !user.getTag(tag))),
     new AttackMove(Moves.FLARE_BLITZ, Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 4)
       .attr(RecoilAttr, false, 0.33)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
@@ -8813,9 +8814,9 @@ export function initMoves() {
       .attr(CopyTypeAttr),
     new AttackMove(Moves.RETALIATE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => {
-        const turn = user.scene.currentBattle.turn;
-        const lastPlayerFaint = user.scene.currentBattle.playerFaintsHistory[user.scene.currentBattle.playerFaintsHistory.length - 1];
-        const lastEnemyFaint = user.scene.currentBattle.enemyFaintsHistory[user.scene.currentBattle.enemyFaintsHistory.length - 1];
+        const turn = gScene.currentBattle.turn;
+        const lastPlayerFaint = gScene.currentBattle.playerFaintsHistory[gScene.currentBattle.playerFaintsHistory.length - 1];
+        const lastEnemyFaint = gScene.currentBattle.enemyFaintsHistory[gScene.currentBattle.enemyFaintsHistory.length - 1];
         return (
           (lastPlayerFaint !== undefined && turn - lastPlayerFaint.turn === 1 && user.isPlayer()) ||
           (lastEnemyFaint !== undefined && turn - lastEnemyFaint.turn === 1 && !user.isPlayer())
@@ -8861,7 +8862,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.BULLDOZE, Type.GROUND, MoveCategory.PHYSICAL, 60, 100, 20, 100, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FROST_BREATH, Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, 100, 0, 5)
@@ -8983,7 +8984,7 @@ export function initMoves() {
       .target(MoveTarget.ALL)
       .condition((user, target, move) => {
         // If any fielded pokémon is grass-type and grounded.
-        return [ ...user.scene.getEnemyParty(), ...user.scene.getParty() ].some((poke) => poke.isOfType(Type.GRASS) && poke.isGrounded());
+        return [ ...gScene.getEnemyParty(), ...gScene.getParty() ].some((poke) => poke.isOfType(Type.GRASS) && poke.isGrounded());
       })
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, false, (user, target, move) => target.isOfType(Type.GRASS) && target.isGrounded()),
     new StatusMove(Moves.STICKY_WEB, Type.BUG, -1, 20, -1, 0, 6)
@@ -9303,7 +9304,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1, true)
       .punchingMove(),
     new StatusMove(Moves.FLORAL_HEALING, Type.FAIRY, -1, 10, -1, 0, 7)
-      .attr(BoostHealAttr, 0.5, 2 / 3, true, false, (user, target, move) => user.scene.arena.terrain?.terrainType === TerrainType.GRASSY)
+      .attr(BoostHealAttr, 0.5, 2 / 3, true, false, (user, target, move) => gScene.arena.terrain?.terrainType === TerrainType.GRASSY)
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, -1, 0, 7)
@@ -9355,7 +9356,7 @@ export function initMoves() {
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, Type.FIRE, (user) => {
-        user.scene.queueMessage(i18next.t("moveTriggers:burnedItselfOut", { pokemonName: getPokemonNameWithAffix(user) }));
+        gScene.queueMessage(i18next.t("moveTriggers:burnedItselfOut", { pokemonName: getPokemonNameWithAffix(user) }));
       }),
     new StatusMove(Moves.SPEED_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 7)
       .attr(SwapStatAttr, Stat.SPD)
@@ -9390,7 +9391,7 @@ export function initMoves() {
     new AttackMove(Moves.BRUTAL_SWING, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(Moves.AURORA_VEIL, Type.ICE, -1, 20, -1, 0, 7)
-      .condition((user, target, move) => (user.scene.arena.weather?.weatherType === WeatherType.HAIL || user.scene.arena.weather?.weatherType === WeatherType.SNOW) && !user.scene.arena.weather?.isEffectSuppressed(user.scene))
+      .condition((user, target, move) => (gScene.arena.weather?.weatherType === WeatherType.HAIL || gScene.arena.weather?.weatherType === WeatherType.SNOW) && !gScene.arena.weather?.isEffectSuppressed())
       .attr(AddArenaTagAttr, ArenaTagType.AURORA_VEIL, 5, true)
       .target(MoveTarget.USER_SIDE),
     /* Unused */
@@ -9546,10 +9547,10 @@ export function initMoves() {
     new AttackMove(Moves.DYNAMAX_CANNON, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => {
       // Move is only stronger against overleveled foes.
-        if (target.level > target.scene.getMaxExpLevel()) {
+        if (target.level > gScene.getMaxExpLevel()) {
           const dynamaxCannonPercentMarginBeforeFullDamage = 0.05; // How much % above MaxExpLevel of wave will the target need to be to take full damage.
           // The move's power scales as the margin is approached, reaching double power when it does or goes over it.
-          return 1 + Math.min(1, (target.level - target.scene.getMaxExpLevel()) / (target.scene.getMaxExpLevel() * dynamaxCannonPercentMarginBeforeFullDamage));
+          return 1 + Math.min(1, (target.level - gScene.getMaxExpLevel()) / (gScene.getMaxExpLevel() * dynamaxCannonPercentMarginBeforeFullDamage));
         } else {
           return 1;
         }
@@ -9567,7 +9568,7 @@ export function initMoves() {
       .attr(EatBerryAttr)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
       .condition((user) => {
-        const userBerries = user.scene.findModifiers(m => m instanceof BerryModifier, user.isPlayer());
+        const userBerries = gScene.findModifiers(m => m instanceof BerryModifier, user.isPlayer());
         return userBerries.length > 0;
       })
       .edgeCase(), // Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
@@ -9707,7 +9708,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1),
     new AttackMove(Moves.GRAV_APPLE, Type.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTag(ArenaTagType.GRAVITY) ? 1.5 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTag(ArenaTagType.GRAVITY) ? 1.5 : 1)
       .makesContact(false),
     new AttackMove(Moves.SPIRIT_BREAK, Type.FAIRY, MoveCategory.PHYSICAL, 75, 100, 15, 100, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1),
@@ -9729,11 +9730,11 @@ export function initMoves() {
     new AttackMove(Moves.STEEL_BEAM, Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, -1, 0, 8)
       .attr(HalfSacrificialAttr),
     new AttackMove(Moves.EXPANDING_FORCE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1)
-      .attr(VariableTargetAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1)
+      .attr(VariableTargetAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER),
     new AttackMove(Moves.STEEL_ROLLER, Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, 0, 8)
       .attr(ClearTerrainAttr)
-      .condition((user, target, move) => !!user.scene.arena.terrain),
+      .condition((user, target, move) => !!gScene.arena.terrain),
     new AttackMove(Moves.SCALE_SHOT, Type.DRAGON, MoveCategory.PHYSICAL, 25, 90, 20, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 1, true, null, true, false, MoveEffectTrigger.HIT, false, true)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1, true, null, true, false, MoveEffectTrigger.HIT, false, true)
@@ -9750,16 +9751,16 @@ export function initMoves() {
     new AttackMove(Moves.MISTY_EXPLOSION, Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
       .condition(failIfDampCondition)
       .makesContact(false),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
-      .attr(IncrementMovePriorityAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.GRASSY && user.isGrounded()),
+      .attr(IncrementMovePriorityAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.GRASSY && user.isGrounded()),
     new AttackMove(Moves.RISING_VOLTAGE, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1),
     new AttackMove(Moves.TERRAIN_PULSE, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)
       .attr(TerrainPulseTypeAttr)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() !== TerrainType.NONE && user.isGrounded() ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTerrainType() !== TerrainType.NONE && user.isGrounded() ? 2 : 1)
       .pulseMove(),
     new AttackMove(Moves.SKITTER_SMACK, Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1),
@@ -10018,7 +10019,7 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(Moves.LAST_RESPECTS, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
       .partial() // Counter resets every wave instead of on arena reset
-      .attr(MovePowerMultiplierAttr, (user, target, move) => 1 + Math.min(user.isPlayer() ? user.scene.currentBattle.playerFaints : user.scene.currentBattle.enemyFaints, 100))
+      .attr(MovePowerMultiplierAttr, (user, target, move) => 1 + Math.min(user.isPlayer() ? gScene.currentBattle.playerFaints : gScene.currentBattle.enemyFaints, 100))
       .makesContact(false),
     new AttackMove(Moves.LUMINA_CRASH, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -2),
@@ -10042,7 +10043,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_GET_HIT, true, false, 0, 0, true)
       .attr(AddBattlerTagAttr, BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false, 0, 0, true)
       .condition((user, target, move) => {
-        return !(target.getTag(BattlerTagType.PROTECTED)?.tagType === "PROTECTED" || target.scene.arena.getTag(ArenaTagType.MAT_BLOCK)?.tagType === "MAT_BLOCK");
+        return !(target.getTag(BattlerTagType.PROTECTED)?.tagType === "PROTECTED" || gScene.arena.getTag(ArenaTagType.MAT_BLOCK)?.tagType === "MAT_BLOCK");
       }),
     new StatusMove(Moves.REVIVAL_BLESSING, Type.NORMAL, -1, 1, -1, 0, 9)
       .triageMove()
@@ -10093,11 +10094,11 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1, true, null, true, false, MoveEffectTrigger.HIT, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.PSYBLADE, Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => gScene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
       .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => [ WeatherType.SUNNY, WeatherType.HARSH_SUN ].includes(user.scene.arena.weather?.weatherType!) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 1.5 : 1), // TODO: is this bang correct?
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [ WeatherType.SUNNY, WeatherType.HARSH_SUN ].includes(gScene.arena.weather?.weatherType!) && !gScene.arena.weather?.isEffectSuppressed() ? 1.5 : 1), // TODO: is this bang correct?
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
@@ -10144,7 +10145,7 @@ export function initMoves() {
       })
       .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, Type.ELECTRIC, (user) => {
-        user.scene.queueMessage(i18next.t("moveTriggers:usedUpAllElectricity", { pokemonName: getPokemonNameWithAffix(user) }));
+        gScene.queueMessage(i18next.t("moveTriggers:usedUpAllElectricity", { pokemonName: getPokemonNameWithAffix(user) }));
       }),
     new AttackMove(Moves.GIGATON_HAMMER, Type.STEEL, MoveCategory.PHYSICAL, 160, 100, 5, -1, 0, 9)
       .makesContact(false)
@@ -10211,7 +10212,7 @@ export function initMoves() {
       .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK)
       .condition(failIfLastCondition),
     new AttackMove(Moves.THUNDERCLAP, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, -1, 1, 9)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS), // TODO: is this bang correct?
+      .condition((user, target, move) => gScene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[gScene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS), // TODO: is this bang correct?
     new AttackMove(Moves.MIGHTY_CLEAVE, Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, -1, 0, 9)
       .slicingMove()
       .ignoresProtect(),
@@ -10237,7 +10238,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, false, 2),
     new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
       .attr(FlinchAttr)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].priority > 0 ) // TODO: is this bang correct?
+      .condition((user, target, move) => gScene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[gScene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS && allMoves[gScene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].priority > 0 ) // TODO: is this bang correct?
       .partial(), // Should also apply when target move priority increased by ability ex. gale wings
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)

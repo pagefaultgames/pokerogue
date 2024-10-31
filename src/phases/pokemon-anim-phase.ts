@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { SubstituteTag } from "#app/data/battler-tags";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import Pokemon from "#app/field/pokemon";
@@ -13,8 +13,8 @@ export class PokemonAnimPhase extends BattlePhase {
   /** Any other field sprites affected by this animation */
   private fieldAssets: Phaser.GameObjects.Sprite[];
 
-  constructor(scene: BattleScene, key: PokemonAnimType, pokemon: Pokemon, fieldAssets?: Phaser.GameObjects.Sprite[]) {
-    super(scene);
+  constructor(key: PokemonAnimType, pokemon: Pokemon, fieldAssets?: Phaser.GameObjects.Sprite[]) {
+    super();
 
     this.key = key;
     this.pokemon = pokemon;
@@ -49,13 +49,13 @@ export class PokemonAnimPhase extends BattlePhase {
     }
 
     const getSprite = () => {
-      const sprite = this.scene.addFieldSprite(
+      const sprite = gScene.addFieldSprite(
         this.pokemon.x + this.pokemon.getSprite().x,
         this.pokemon.y + this.pokemon.getSprite().y,
         `pkmn${this.pokemon.isPlayer() ? "__back" : ""}__sub`
       );
       sprite.setOrigin(0.5, 1);
-      this.scene.field.add(sprite);
+      gScene.field.add(sprite);
       return sprite;
     };
 
@@ -68,12 +68,12 @@ export class PokemonAnimPhase extends BattlePhase {
     subTintSprite.setScale(0.01);
 
     if (this.pokemon.isPlayer()) {
-      this.scene.field.bringToTop(this.pokemon);
+      gScene.field.bringToTop(this.pokemon);
     }
 
-    this.scene.playSound("PRSFX- Transform");
+    gScene.playSound("PRSFX- Transform");
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: this.pokemon,
       duration: 500,
       x: this.pokemon.x + this.pokemon.getSubstituteOffset()[0],
@@ -82,7 +82,7 @@ export class PokemonAnimPhase extends BattlePhase {
       ease: "Sine.easeIn"
     });
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: subTintSprite,
       delay: 250,
       scale: subScale,
@@ -90,7 +90,7 @@ export class PokemonAnimPhase extends BattlePhase {
       duration: 500,
       onComplete: () => {
         subSprite.setVisible(true);
-        this.pokemon.scene.tweens.add({
+        gScene.tweens.add({
           targets: subTintSprite,
           delay: 250,
           alpha: 0,
@@ -116,14 +116,14 @@ export class PokemonAnimPhase extends BattlePhase {
       return this.end();
     }
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: subSprite,
       alpha: 0,
       ease: "Sine.easeInOut",
       duration: 500
     });
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: this.pokemon,
       x: subSprite.x,
       y: subSprite.y,
@@ -145,7 +145,7 @@ export class PokemonAnimPhase extends BattlePhase {
       return this.end();
     }
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: this.pokemon,
       x: subSprite.x + this.pokemon.getSubstituteOffset()[0],
       y: subSprite.y + this.pokemon.getSubstituteOffset()[1],
@@ -154,7 +154,7 @@ export class PokemonAnimPhase extends BattlePhase {
       duration: 500
     });
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: subSprite,
       alpha: 1,
       ease: "Sine.easeInOut",
@@ -175,13 +175,13 @@ export class PokemonAnimPhase extends BattlePhase {
     }
 
     const getSprite = () => {
-      const sprite = this.scene.addFieldSprite(
+      const sprite = gScene.addFieldSprite(
         subSprite.x,
         subSprite.y,
         `pkmn${this.pokemon.isPlayer() ? "__back" : ""}__sub`
       );
       sprite.setOrigin(0.5, 1);
-      this.scene.field.add(sprite);
+      gScene.field.add(sprite);
       return sprite;
     };
 
@@ -191,30 +191,30 @@ export class PokemonAnimPhase extends BattlePhase {
     subTintSprite.setTintFill(0xFFFFFF);
     subTintSprite.setScale(subScale);
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: subTintSprite,
       alpha: 1,
       ease: "Sine.easeInOut",
       duration: 500,
       onComplete: () => {
         subSprite.destroy();
-        const flashTimer = this.scene.time.addEvent({
+        const flashTimer = gScene.time.addEvent({
           delay: 100,
           repeat: 7,
           startAt: 200,
           callback: () => {
-            this.scene.playSound("PRSFX- Substitute2.wav");
+            gScene.playSound("PRSFX- Substitute2.wav");
 
             subTintSprite.setVisible(flashTimer.repeatCount % 2 === 0);
             if (!flashTimer.repeatCount) {
-              this.scene.tweens.add({
+              gScene.tweens.add({
                 targets: subTintSprite,
                 scale: 0.01,
                 ease: "Sine.cubicEaseIn",
                 duration: 500
               });
 
-              this.scene.tweens.add({
+              gScene.tweens.add({
                 targets: this.pokemon,
                 x: this.pokemon.x - this.pokemon.getSubstituteOffset()[0],
                 y: this.pokemon.y - this.pokemon.getSubstituteOffset()[1],

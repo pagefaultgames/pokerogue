@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
@@ -63,7 +63,7 @@ export class ModifierType {
     return i18next.t(`${this.localeKey}.name` as any);
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t(`${this.localeKey}.description` as any);
   }
 
@@ -182,12 +182,12 @@ class AddPokeballModifierType extends ModifierType {
     });
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.AddPokeballModifierType.description", {
       "modifierCount": this.count,
       "pokeballName": getPokeballName(this.pokeballType),
       "catchRate": getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : "100%",
-      "pokeballAmount": `${scene.pokeballCounts[this.pokeballType]}`,
+      "pokeballAmount": `${gScene.pokeballCounts[this.pokeballType]}`,
     });
   }
 }
@@ -209,7 +209,7 @@ class AddVoucherModifierType extends ModifierType {
     });
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.AddVoucherModifierType.description", {
       "modifierCount": this.count,
       "voucherTypeName": getVoucherTypeName(this.voucherType),
@@ -231,8 +231,8 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
   constructor(localeKey: string, iconImage: string, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
     super(localeKey, iconImage, newModifierFunc, (pokemon: PlayerPokemon) => {
       const dummyModifier = this.newModifier(pokemon);
-      const matchingModifier = pokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(dummyModifier)) as PokemonHeldItemModifier;
-      const maxStackCount = dummyModifier.getMaxStackCount(pokemon.scene);
+      const matchingModifier = gScene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(dummyModifier)) as PokemonHeldItemModifier;
+      const maxStackCount = dummyModifier.getMaxStackCount();
       if (!maxStackCount) {
         return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", { "pokemonName": getPokemonNameWithAffix(pokemon) });
       }
@@ -267,7 +267,7 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
     this.healStatus = healStatus;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return this.restorePoints
       ? i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.description", {
         restorePoints: this.restorePoints,
@@ -297,7 +297,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
     };
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonReviveModifierType.description", { restorePercent: this.restorePercent });
   }
 }
@@ -313,7 +313,7 @@ export class PokemonStatusHealModifierType extends PokemonModifierType {
       }));
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonStatusHealModifierType.description");
   }
 }
@@ -345,7 +345,7 @@ export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
     this.restorePoints = restorePoints;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return this.restorePoints > -1
       ? i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.description", { restorePoints: this.restorePoints })
       : i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.extra.fully")
@@ -368,7 +368,7 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
     this.restorePoints = restorePoints;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return this.restorePoints > -1
       ? i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.description", { restorePoints: this.restorePoints })
       : i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.extra.fully")
@@ -393,7 +393,7 @@ export class PokemonPpUpModifierType extends PokemonMoveModifierType {
     this.upPoints = upPoints;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonPpUpModifierType.description", { upPoints: this.upPoints });
   }
 }
@@ -417,7 +417,7 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
     return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.name", { natureName: getNatureName(this.nature) });
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.description", { natureName: getNatureName(this.nature, true, true, true) });
   }
 }
@@ -443,7 +443,7 @@ export class DoubleBattleChanceBoosterModifierType extends ModifierType {
     this.maxBattles = maxBattles;
   }
 
-  getDescription(_scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", {
       battleCount: this.maxBattles
     });
@@ -468,7 +468,7 @@ export class TempStatStageBoosterModifierType extends ModifierType implements Ge
     return i18next.t(`modifierType:TempStatStageBoosterItem.${this.nameKey}`);
   }
 
-  getDescription(_scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
       stat: i18next.t(getStatKey(this.stat)),
       amount: i18next.t(`modifierType:ModifierType.TempStatStageBoosterModifierType.extra.${this.quantityKey}`)
@@ -493,7 +493,7 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
     return getBerryName(this.berryType);
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return getBerryEffectDescription(this.berryType);
   }
 
@@ -539,7 +539,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
     return i18next.t(`modifierType:AttackTypeBoosterItem.${AttackTypeBoosterItem[this.moveType]?.toLowerCase()}`);
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     // TODO: Need getTypeName?
     return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", { moveType: i18next.t(`pokemonInfo:Type.${Type[this.moveType]}`) });
   }
@@ -576,9 +576,9 @@ export class PokemonLevelIncrementModifierType extends PokemonModifierType {
     super(localeKey, iconImage, (_type, args) => new PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id), (_pokemon: PlayerPokemon) => null);
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     let levels = 1;
-    const hasCandyJar = scene.modifiers.find(modifier => modifier instanceof LevelIncrementBoosterModifier);
+    const hasCandyJar = gScene.modifiers.find(modifier => modifier instanceof LevelIncrementBoosterModifier);
     if (hasCandyJar) {
       levels += hasCandyJar.stackCount;
     }
@@ -591,9 +591,9 @@ export class AllPokemonLevelIncrementModifierType extends ModifierType {
     super(localeKey, iconImage, (_type, _args) => new PokemonLevelIncrementModifier(this, -1));
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     let levels = 1;
-    const hasCandyJar = scene.modifiers.find(modifier => modifier instanceof LevelIncrementBoosterModifier);
+    const hasCandyJar = gScene.modifiers.find(modifier => modifier instanceof LevelIncrementBoosterModifier);
     if (hasCandyJar) {
       levels += hasCandyJar.stackCount;
     }
@@ -617,7 +617,7 @@ export class BaseStatBoosterModifierType extends PokemonHeldItemModifierType imp
     return i18next.t(`modifierType:BaseStatBoosterItem.${this.key}`);
   }
 
-  getDescription(_scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", { stat: i18next.t(getStatKey(this.stat)) });
   }
 
@@ -637,7 +637,7 @@ export class PokemonBaseStatTotalModifierType extends PokemonHeldItemModifierTyp
     this.statModifier = statModifier;
   }
 
-  override getDescription(scene: BattleScene): string {
+  override getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description", {
       increaseDecrease: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.increase" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.decrease"),
       blessCurse: i18next.t(this.statModifier >= 0 ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.blessed" : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.cursed"),
@@ -663,7 +663,7 @@ export class PokemonBaseStatFlatModifierType extends PokemonHeldItemModifierType
     this.stats = stats;
   }
 
-  override getDescription(scene: BattleScene): string {
+  override getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description", {
       stats: this.stats.map(stat => i18next.t(getStatKey(stat))).join("/"),
       statValue: this.statModifier,
@@ -684,7 +684,7 @@ class AllPokemonFullHpRestoreModifierType extends ModifierType {
     this.descriptionKey = descriptionKey!; // TODO: is this bang correct?
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t(`${this.descriptionKey || "modifierType:ModifierType.AllPokemonFullHpRestoreModifierType"}.description` as any);
   }
 }
@@ -706,10 +706,10 @@ export class MoneyRewardModifierType extends ModifierType {
     this.moneyMultiplierDescriptorKey = moneyMultiplierDescriptorKey;
   }
 
-  getDescription(scene: BattleScene): string {
-    const moneyAmount = new IntegerHolder(scene.getWaveMoneyAmount(this.moneyMultiplier));
-    scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-    const formattedMoney = formatMoney(scene.moneyFormat, moneyAmount.value);
+  getDescription(): string {
+    const moneyAmount = new IntegerHolder(gScene.getWaveMoneyAmount(this.moneyMultiplier));
+    gScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    const formattedMoney = formatMoney(gScene.moneyFormat, moneyAmount.value);
 
     return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
@@ -727,7 +727,7 @@ export class ExpBoosterModifierType extends ModifierType {
     this.boostPercent = boostPercent;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.ExpBoosterModifierType.description", { boostPercent: this.boostPercent });
   }
 }
@@ -741,7 +741,7 @@ export class PokemonExpBoosterModifierType extends PokemonHeldItemModifierType {
     this.boostPercent = boostPercent;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonExpBoosterModifierType.description", { boostPercent: this.boostPercent });
   }
 }
@@ -751,7 +751,7 @@ export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifie
     super(localeKey, iconImage, (_type, args) => new PokemonFriendshipBoosterModifier(this, (args[0] as Pokemon).id));
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonFriendshipBoosterModifierType.description");
   }
 }
@@ -765,7 +765,7 @@ export class PokemonMoveAccuracyBoosterModifierType extends PokemonHeldItemModif
     this.amount = amount;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonMoveAccuracyBoosterModifierType.description", { accuracyAmount: this.amount });
   }
 }
@@ -775,7 +775,7 @@ export class PokemonMultiHitModifierType extends PokemonHeldItemModifierType {
     super(localeKey, iconImage, (type, args) => new PokemonMultiHitModifier(type as PokemonMultiHitModifierType, (args[0] as Pokemon).id));
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonMultiHitModifierType.description");
   }
 }
@@ -802,8 +802,8 @@ export class TmModifierType extends PokemonModifierType {
     });
   }
 
-  getDescription(scene: BattleScene): string {
-    return i18next.t(scene.enableMoveInfo ? "modifierType:ModifierType.TmModifierTypeWithInfo.description" : "modifierType:ModifierType.TmModifierType.description", { moveName: allMoves[this.moveId].name });
+  getDescription(): string {
+    return i18next.t(gScene.enableMoveInfo ? "modifierType:ModifierType.TmModifierTypeWithInfo.description" : "modifierType:ModifierType.TmModifierType.description", { moveName: allMoves[this.moveId].name });
   }
 }
 
@@ -831,7 +831,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
     return i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.evolutionItem]}`);
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.EvolutionItemModifierType.description");
   }
 
@@ -870,7 +870,7 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
     return i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.formChangeItem]}`);
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.FormChangeItemModifierType.description");
   }
 
@@ -890,7 +890,7 @@ export class FusePokemonModifierType extends PokemonModifierType {
       });
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.FusePokemonModifierType.description");
   }
 }
@@ -1116,12 +1116,12 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
 
       const formChangeItemPool = [ ...new Set(party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
-        let formChangeItemTriggers = formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(MegaEvolutionAccessModifier).length)
-          && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) || party[0].scene.getModifiers(GigantamaxAccessModifier).length)
+        let formChangeItemTriggers = formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || gScene.getModifiers(MegaEvolutionAccessModifier).length)
+          && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) || gScene.getModifiers(GigantamaxAccessModifier).length)
           && (!fc.conditions.length || fc.conditions.filter(cond => cond instanceof SpeciesFormChangeCondition && cond.predicate(p)).length)
           && (fc.preFormKey === p.getFormKey()))
           .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
-          .filter(t => t && t.active && !p.scene.findModifier(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === p.id && m.formChangeItem === t.item));
+          .filter(t => t && t.active && !gScene.findModifier(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === p.id && m.formChangeItem === t.item));
 
         if (p.species.speciesId === Species.NECROZMA) {
           // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
@@ -1174,7 +1174,7 @@ export class TerastallizeModifierType extends PokemonHeldItemModifierType implem
     return i18next.t("modifierType:ModifierType.TerastallizeModifierType.name", { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.TerastallizeModifierType.description", { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
   }
 
@@ -1192,7 +1192,7 @@ export class ContactHeldItemTransferChanceModifierType extends PokemonHeldItemMo
     this.chancePercent = chancePercent;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", { chancePercent: this.chancePercent });
   }
 }
@@ -1202,7 +1202,7 @@ export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierTyp
     super(localeKey, iconImage, (type, args) => new TurnHeldItemTransferModifier(type, (args[0] as Pokemon).id), group, soundName);
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.TurnHeldItemTransferModifierType.description");
   }
 }
@@ -1218,7 +1218,7 @@ export class EnemyAttackStatusEffectChanceModifierType extends ModifierType {
     this.effect = effect;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
       chancePercent: this.chancePercent,
       statusEffect: getStatusEffectDescriptor(this.effect),
@@ -1235,7 +1235,7 @@ export class EnemyEndureChanceModifierType extends ModifierType {
     this.chancePercent = chancePercent;
   }
 
-  getDescription(scene: BattleScene): string {
+  getDescription(): string {
     return i18next.t("modifierType:ModifierType.EnemyEndureChanceModifierType.description", { chancePercent: this.chancePercent });
   }
 }
@@ -1252,8 +1252,8 @@ type WeightedModifierTypeWeightFunc = (party: Pokemon[], rerollCount?: integer) 
  */
 function skipInClassicAfterWave(wave: integer, defaultWeight: integer): WeightedModifierTypeWeightFunc {
   return (party: Pokemon[]) => {
-    const gameMode =  party[0].scene.gameMode;
-    const currentWave = party[0].scene.currentBattle.waveIndex;
+    const gameMode =  gScene.gameMode;
+    const currentWave = gScene.currentBattle.waveIndex;
     return gameMode.isClassic && currentWave >= wave ? 0 : defaultWeight;
   };
 }
@@ -1277,8 +1277,8 @@ function skipInLastClassicWaveOrDefault(defaultWeight: integer) : WeightedModifi
  */
 function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
   return (party: Pokemon[]) => {
-    const lures = party[0].scene.getModifiers(DoubleBattleChanceBoosterModifier);
-    return !(party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex === 199) && (lures.length === 0 || lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0) ? weight : 0;
+    const lures = gScene.getModifiers(DoubleBattleChanceBoosterModifier);
+    return !(gScene.gameMode.isClassic && gScene.currentBattle.waveIndex === 199) && (lures.length === 0 || lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0) ? weight : 0;
   };
 }
 class WeightedModifierType {
@@ -1412,7 +1412,7 @@ export const modifierTypes = {
   TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterModifierTypeGenerator(),
 
   DIRE_HIT: () => new class extends ModifierType {
-    getDescription(_scene: BattleScene): string {
+    getDescription(): string {
       return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
         stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises"),
         amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.stage")
@@ -1435,7 +1435,7 @@ export const modifierTypes = {
     if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Type)) {
       return new TerastallizeModifierType(pregenArgs[0] as Type);
     }
-    if (!party[0].scene.getModifiers(TerastallizeAccessModifier).length) {
+    if (!gScene.getModifiers(TerastallizeAccessModifier).length) {
       return null;
     }
     let type: Type;
@@ -1588,7 +1588,7 @@ interface ModifierPool {
  * @returns boolean: true if the player has the maximum of a given ball type
  */
 function hasMaximumBalls(party: Pokemon[], ballType: PokeballType): boolean {
-  return (party[0].scene.gameMode.isClassic && party[0].scene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS);
+  return (gScene.gameMode.isClassic && gScene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS);
 }
 
 const modifierPool: ModifierPool = {
@@ -1671,12 +1671,12 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
-      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
+      return Math.min(Math.ceil(gScene.currentBattle.waveIndex / 15), 8);
     }, 8),
     new WeightedModifierType(modifierTypes.MAP,
-      (party: Pokemon[]) => party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex < 180 ? party[0].scene.eventManager.isEventActive() ? 2 : 1 : 0,
-      (party: Pokemon[]) => party[0].scene.eventManager.isEventActive() ? 2 : 1),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party[0].scene.eventManager.isEventActive() ? 3 : 0),
+      (party: Pokemon[]) => gScene.gameMode.isClassic && gScene.currentBattle.waveIndex < 180 ? gScene.eventManager.isEventActive() ? 2 : 1 : 0,
+      (party: Pokemon[]) => gScene.eventManager.isEventActive() ? 2 : 1),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => gScene.eventManager.isEventActive() ? 3 : 0),
     new WeightedModifierType(modifierTypes.TM_GREAT, 3),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
       if (!party.find(p => p.getLearnableLevelMoves().length)) {
@@ -1687,8 +1687,8 @@ const modifierPool: ModifierPool = {
     }, 4),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.TERA_SHARD, 1),
-    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
-    new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0, 1),
+    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => gScene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
+    new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !gScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.GREAT); return m;
   }),
@@ -1698,11 +1698,11 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
-    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
-    new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 6, 24),
+    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(gScene.currentBattle.waveIndex / 15) * 4, 32), 32),
+    new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(gScene.currentBattle.waveIndex / 50), 4) * 6, 24),
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
-      const { gameMode, gameData } = party[0].scene;
+      const { gameMode, gameData } = gScene;
       if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
         return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions)))
           && !p.getHeldItems().some(i => i instanceof EvolutionStatBoosterModifier) && !p.isMax()) ? 10 : 0;
@@ -1744,13 +1744,13 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
-    new WeightedModifierType(modifierTypes.RARER_CANDY, (party: Pokemon[]) => party[0].scene.eventManager.isEventActive() ? 6 : 4),
+    new WeightedModifierType(modifierTypes.RARER_CANDY, (party: Pokemon[]) => gScene.eventManager.isEventActive() ? 6 : 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.IV_SCANNER, skipInLastClassicWaveOrDefault(4)),
     new WeightedModifierType(modifierTypes.EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
     new WeightedModifierType(modifierTypes.EXP_SHARE, skipInLastClassicWaveOrDefault(10)),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, skipInLastClassicWaveOrDefault(3)),
-    new WeightedModifierType(modifierTypes.TERA_ORB, (party: Pokemon[]) => Math.min(Math.max(Math.floor(party[0].scene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
+    new WeightedModifierType(modifierTypes.TERA_ORB, (party: Pokemon[]) => Math.min(Math.max(Math.floor(gScene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 4),
   ].map(m => {
@@ -1767,16 +1767,16 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party[0].scene.eventManager.isEventActive() ? 0 : 4),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => gScene.eventManager.isEventActive() ? 0 : 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
-    new WeightedModifierType(modifierTypes.LOCK_CAPSULE, (party: Pokemon[]) => party[0].scene.gameMode.isClassic ? 0 : 3),
+    new WeightedModifierType(modifierTypes.LOCK_CAPSULE, (party: Pokemon[]) => gScene.gameMode.isClassic ? 0 : 3),
     new WeightedModifierType(modifierTypes.SUPER_EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
-    new WeightedModifierType(modifierTypes.RARE_FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 6, 24),
-    new WeightedModifierType(modifierTypes.MEGA_BRACELET, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 9, 36),
-    new WeightedModifierType(modifierTypes.DYNAMAX_BAND, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 9, 36),
-    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (party: Pokemon[], rerollCount: integer) => !party[0].scene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0, 3),
+    new WeightedModifierType(modifierTypes.RARE_FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(gScene.currentBattle.waveIndex / 50), 4) * 6, 24),
+    new WeightedModifierType(modifierTypes.MEGA_BRACELET, (party: Pokemon[]) => Math.min(Math.ceil(gScene.currentBattle.waveIndex / 50), 4) * 9, 36),
+    new WeightedModifierType(modifierTypes.DYNAMAX_BAND, (party: Pokemon[]) => Math.min(Math.ceil(gScene.currentBattle.waveIndex / 50), 4) * 9, 36),
+    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (party: Pokemon[], rerollCount: integer) => !gScene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0, 3),
   ].map(m => {
     m.setTier(ModifierTier.ROGUE); return m;
   }),
@@ -1786,9 +1786,9 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
     new WeightedModifierType(modifierTypes.MULTI_LENS, 18),
     new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) =>
-      !party[0].scene.gameMode.isDaily && !party[0].scene.gameMode.isEndless && !party[0].scene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
-    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (party[0].scene.gameMode.isDaily || (!party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))) ? 1 : 0, 1),
+      !gScene.gameMode.isDaily && !gScene.gameMode.isEndless && !gScene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
+    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !gScene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (gScene.gameMode.isDaily || (!gScene.gameMode.isFreshStartChallenge() && gScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))) ? 1 : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.MASTER); return m;
   })
@@ -2001,14 +2001,14 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     let i = 0;
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
-      const existingModifiers = party[0].scene.findModifiers(m => m.type.id === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
+      const existingModifiers = gScene.findModifiers(m => m.type.id === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
       const itemModifierType = weightedModifierType.modifierType instanceof ModifierTypeGenerator
         ? weightedModifierType.modifierType.generateType(party)
         : weightedModifierType.modifierType;
       const weight = !existingModifiers.length
         || itemModifierType instanceof PokemonHeldItemModifierType
         || itemModifierType instanceof FormChangeItemModifierType
-        || existingModifiers.find(m => m.stackCount < m.getMaxStackCount(party[0].scene, true))
+        || existingModifiers.find(m => m.stackCount < m.getMaxStackCount(true))
         ? weightedModifierType.weight instanceof Function
           ? (weightedModifierType.weight as Function)(party, rerollCount)
           : weightedModifierType.weight as integer
@@ -2229,7 +2229,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }
 
-export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: PersistentModifier[], scene: BattleScene): EnemyPersistentModifier {
+export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: PersistentModifier[]): EnemyPersistentModifier {
   let tierStackCount: number;
   switch (tier) {
     case ModifierTier.ULTRA:
@@ -2247,7 +2247,7 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
   let candidate = getNewModifierTypeOption([], ModifierPoolType.ENEMY_BUFF, tier);
   let r = 0;
   let matchingModifier: PersistentModifier | undefined;
-  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate?.type?.id)) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)) {
+  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate?.type?.id)) && matchingModifier.getMaxStackCount() < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)) {
     candidate = getNewModifierTypeOption([], ModifierPoolType.ENEMY_BUFF, tier);
   }
 
@@ -2438,11 +2438,11 @@ export class ModifierTypeOption {
  * @returns A number between 0 and 14 based on the party's total luck value, or a random number between 0 and 14 if the player is in Daily Run mode.
  */
 export function getPartyLuckValue(party: Pokemon[]): integer {
-  if (party[0].scene.gameMode.isDaily) {
+  if (gScene.gameMode.isDaily) {
     const DailyLuck = new NumberHolder(0);
-    party[0].scene.executeWithSeedOffset(() => {
+    gScene.executeWithSeedOffset(() => {
       DailyLuck.value = randSeedInt(15); // Random number between 0 and 14
-    }, 0, party[0].scene.seed);
+    }, 0, gScene.seed);
     return DailyLuck.value;
   }
   const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() : 0)

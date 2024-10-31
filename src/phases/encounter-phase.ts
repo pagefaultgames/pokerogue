@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { BattlerIndex, BattleType } from "#app/battle";
 import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
@@ -40,8 +40,8 @@ import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mys
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
 
-  constructor(scene: BattleScene, loaded?: boolean) {
-    super(scene);
+  constructor(loaded?: boolean) {
+    super();
 
     this.loaded = !!loaded;
   }
@@ -49,26 +49,26 @@ export class EncounterPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.updateGameInfo();
+    gScene.updateGameInfo();
 
-    this.scene.initSession();
+    gScene.initSession();
 
-    this.scene.eventTarget.dispatchEvent(new EncounterPhaseEvent());
+    gScene.eventTarget.dispatchEvent(new EncounterPhaseEvent());
 
     // Failsafe if players somehow skip floor 200 in classic mode
-    if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
-      this.scene.unshiftPhase(new GameOverPhase(this.scene));
+    if (gScene.gameMode.isClassic && gScene.currentBattle.waveIndex > 200) {
+      gScene.unshiftPhase(new GameOverPhase());
     }
 
     const loadEnemyAssets: Promise<void>[] = [];
 
-    const battle = this.scene.currentBattle;
+    const battle = gScene.currentBattle;
 
     // Generate and Init Mystery Encounter
     if (battle.isBattleMysteryEncounter() && !battle.mysteryEncounter) {
-      this.scene.executeWithSeedOffset(() => {
+      gScene.executeWithSeedOffset(() => {
         const currentSessionEncounterType = battle.mysteryEncounterType;
-        battle.mysteryEncounter = this.scene.getMysteryEncounter(currentSessionEncounterType);
+        battle.mysteryEncounter = gScene.getMysteryEncounter(currentSessionEncounterType);
       }, battle.waveIndex * 16);
     }
     const mysteryEncounter = battle.mysteryEncounter;
@@ -76,21 +76,21 @@ export class EncounterPhase extends BattlePhase {
       // If ME has an onInit() function, call it
       // Usually used for calculating rand data before initializing anything visual
       // Also prepopulates any dialogue tokens from encounter/option requirements
-      this.scene.executeWithSeedOffset(() => {
+      gScene.executeWithSeedOffset(() => {
         if (mysteryEncounter.onInit) {
-          mysteryEncounter.onInit(this.scene);
+          mysteryEncounter.onInit();
         }
-        mysteryEncounter.populateDialogueTokensFromRequirements(this.scene);
+        mysteryEncounter.populateDialogueTokensFromRequirements();
       }, battle.waveIndex);
 
       // Add any special encounter animations to load
       if (mysteryEncounter.encounterAnimations && mysteryEncounter.encounterAnimations.length > 0) {
-        loadEnemyAssets.push(initEncounterAnims(this.scene, mysteryEncounter.encounterAnimations).then(() => loadEncounterAnimAssets(this.scene, true)));
+        loadEnemyAssets.push(initEncounterAnims(mysteryEncounter.encounterAnimations).then(() => loadEncounterAnimAssets(true)));
       }
 
       // Add intro visuals for mystery encounter
-      mysteryEncounter.initIntroVisuals(this.scene);
-      this.scene.field.add(mysteryEncounter.introVisuals!);
+      mysteryEncounter.initIntroVisuals();
+      gScene.field.add(mysteryEncounter.introVisuals!);
     }
 
     let totalBst = 0;
@@ -104,35 +104,35 @@ export class EncounterPhase extends BattlePhase {
         if (battle.battleType === BattleType.TRAINER) {
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
-          let enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
+          let enemySpecies = gScene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
-          if (this.scene.findModifier(m => m instanceof BoostBugSpawnModifier)
-            && !this.scene.gameMode.isBoss(battle.waveIndex)
-            && this.scene.arena.biomeType !== Biome.END
+          if (gScene.findModifier(m => m instanceof BoostBugSpawnModifier)
+            && !gScene.gameMode.isBoss(battle.waveIndex)
+            && gScene.arena.biomeType !== Biome.END
             && randSeedInt(10) === 0) {
             enemySpecies = getGoldenBugNetSpecies(level);
           }
-          battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
-          if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+          battle.enemyParty[e] = gScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!gScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
+          if (gScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
-          this.scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
+          gScene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
             applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, false, battle.enemyParty[e]);
           });
         }
       }
-      const enemyPokemon = this.scene.getEnemyParty()[e];
+      const enemyPokemon = gScene.getEnemyParty()[e];
       if (e < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
         enemyPokemon.resetSummonData();
       }
 
       if (!this.loaded) {
-        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER || battle?.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE);
+        gScene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER || battle?.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE);
       }
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
-        if (this.scene.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || this.scene.gameMode.isWaveFinal(battle.waveIndex))) {
+        if (gScene.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || gScene.gameMode.isWaveFinal(battle.waveIndex))) {
           if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
             enemyPokemon.formIndex = 1;
             enemyPokemon.updateScale();
@@ -141,10 +141,10 @@ export class EncounterPhase extends BattlePhase {
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
           enemyPokemon.updateScale();
-          const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
-          this.scene.removeModifier(bossMBH!);
+          const bossMBH = gScene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
+          gScene.removeModifier(bossMBH!);
           bossMBH?.setTransferrableFalse();
-          this.scene.addEnemyModifier(bossMBH!);
+          gScene.addEnemyModifier(bossMBH!);
         }
       }
 
@@ -156,8 +156,8 @@ export class EncounterPhase extends BattlePhase {
       return true;
     });
 
-    if (this.scene.getParty().filter(p => p.isShiny()).length === 6) {
-      this.scene.validateAchv(achvs.SHINY_PARTY);
+    if (gScene.getParty().filter(p => p.isShiny()).length === 6) {
+      gScene.validateAchv(achvs.SHINY_PARTY);
     }
 
     if (battle.battleType === BattleType.TRAINER) {
@@ -171,11 +171,11 @@ export class EncounterPhase extends BattlePhase {
       }
       // Load Mystery Encounter Exclamation bubble and sfx
       loadEnemyAssets.push(new Promise<void>(resolve => {
-        this.scene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
-        this.scene.loadImage("encounter_exclaim", "mystery-encounters");
-        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
-        if (!this.scene.load.isLoading()) {
-          this.scene.load.start();
+        gScene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
+        gScene.loadImage("encounter_exclaim", "mystery-encounters");
+        gScene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
+        if (!gScene.load.isLoading()) {
+          gScene.load.start();
         }
       }));
     } else {
@@ -199,16 +199,16 @@ export class EncounterPhase extends BattlePhase {
         }
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
-            this.scene.field.add(enemyPokemon);
+            gScene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-            const playerPokemon = this.scene.getPlayerPokemon();
+            const playerPokemon = gScene.getPlayerPokemon();
             if (playerPokemon?.visible) {
-              this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
+              gScene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
             }
             enemyPokemon.tint(0, 0.5);
           } else if (battle.battleType === BattleType.TRAINER) {
             enemyPokemon.setVisible(false);
-            this.scene.currentBattle.trainer?.tint(0, 0.5);
+            gScene.currentBattle.trainer?.tint(0, 0.5);
           }
           if (battle.double) {
             enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
@@ -218,56 +218,56 @@ export class EncounterPhase extends BattlePhase {
       });
 
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
-        regenerateModifierPoolThresholds(this.scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
-        this.scene.generateEnemyModifiers();
+        regenerateModifierPoolThresholds(gScene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
+        gScene.generateEnemyModifiers();
       }
 
-      this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+      gScene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
           this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
-          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || (this.scene.lastSavePlayTime ?? 0) >= 300).then(success => {
-            this.scene.disableMenu = false;
+          gScene.gameData.saveAll(true, battle.waveIndex % 10 === 1 || (gScene.lastSavePlayTime ?? 0) >= 300).then(success => {
+            gScene.disableMenu = false;
             if (!success) {
-              return this.scene.reset(true);
+              return gScene.reset(true);
             }
             this.doEncounter();
-            this.scene.resetSeed();
+            gScene.resetSeed();
           });
         } else {
           this.doEncounter();
-          this.scene.resetSeed();
+          gScene.resetSeed();
         }
       });
     });
   }
 
   doEncounter() {
-    this.scene.playBgm(undefined, true);
-    this.scene.updateModifiers(false);
-    this.scene.setFieldScale(1);
+    gScene.playBgm(undefined, true);
+    gScene.updateModifiers(false);
+    gScene.setFieldScale(1);
 
     /*if (startingWave > 10) {
         for (let m = 0; m < Math.min(Math.floor(startingWave / 10), 99); m++)
-          this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier(), true);
-        this.scene.updateModifiers(true);
+          gScene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, gScene.getParty())[0].type.newModifier(), true);
+        gScene.updateModifiers(true);
       }*/
 
-    const { battleType, waveIndex } = this.scene.currentBattle;
-    if (this.scene.isMysteryEncounterValidForWave(battleType,  waveIndex) && !this.scene.currentBattle.isBattleMysteryEncounter()) {
+    const { battleType, waveIndex } = gScene.currentBattle;
+    if (gScene.isMysteryEncounterValidForWave(battleType,  waveIndex) && !gScene.currentBattle.isBattleMysteryEncounter()) {
       // Increment ME spawn chance if an ME could have spawned but did not
       // Only do this AFTER session has been saved to avoid duplicating increments
-      this.scene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
+      gScene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
     }
 
-    for (const pokemon of this.scene.getParty()) {
+    for (const pokemon of gScene.getParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
       }
     }
 
-    const enemyField = this.scene.getEnemyField();
-    this.scene.tweens.add({
-      targets: [ this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer ].flat(),
+    const enemyField = gScene.getEnemyField();
+    gScene.tweens.add({
+      targets: [ gScene.arenaEnemy, gScene.currentBattle.trainer, enemyField, gScene.arenaPlayer, gScene.trainer ].flat(),
       x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
       onComplete: () => {
@@ -277,13 +277,13 @@ export class EncounterPhase extends BattlePhase {
       }
     });
 
-    const encounterIntroVisuals = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
+    const encounterIntroVisuals = gScene.currentBattle?.mysteryEncounter?.introVisuals;
     if (encounterIntroVisuals) {
       const enterFromRight = encounterIntroVisuals.enterFromRight;
       if (enterFromRight) {
         encounterIntroVisuals.x += 500;
       }
-      this.scene.tweens.add({
+      gScene.tweens.add({
         targets: encounterIntroVisuals,
         x: enterFromRight ? "-=200" : "+=300",
         duration: 2000
@@ -292,18 +292,18 @@ export class EncounterPhase extends BattlePhase {
   }
 
   getEncounterMessage(): string {
-    const enemyField = this.scene.getEnemyField();
+    const enemyField = gScene.getEnemyField();
 
-    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+    if (gScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
       return i18next.t("battle:bossAppeared", { bossName: getPokemonNameWithAffix(enemyField[0]) });
     }
 
-    if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
-      if (this.scene.currentBattle.double) {
-        return i18next.t("battle:trainerAppearedDouble", { trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) });
+    if (gScene.currentBattle.battleType === BattleType.TRAINER) {
+      if (gScene.currentBattle.double) {
+        return i18next.t("battle:trainerAppearedDouble", { trainerName: gScene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) });
 
       } else {
-        return i18next.t("battle:trainerAppeared", { trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) });
+        return i18next.t("battle:trainerAppeared", { trainerName: gScene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) });
       }
     }
 
@@ -313,83 +313,83 @@ export class EncounterPhase extends BattlePhase {
   }
 
   doEncounterCommon(showEncounterMessage: boolean = true) {
-    const enemyField = this.scene.getEnemyField();
+    const enemyField = gScene.getEnemyField();
 
-    if (this.scene.currentBattle.battleType === BattleType.WILD) {
+    if (gScene.currentBattle.battleType === BattleType.WILD) {
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.untint(100, "Sine.easeOut");
         enemyPokemon.cry();
         enemyPokemon.showInfo();
         if (enemyPokemon.isShiny()) {
-          this.scene.validateAchv(achvs.SEE_SHINY);
+          gScene.validateAchv(achvs.SEE_SHINY);
         }
       });
-      this.scene.updateFieldScale();
+      gScene.updateFieldScale();
       if (showEncounterMessage) {
-        this.scene.ui.showText(this.getEncounterMessage(), null, () => this.end(), 1500);
+        gScene.ui.showText(this.getEncounterMessage(), null, () => this.end(), 1500);
       } else {
         this.end();
       }
-    } else if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
-      const trainer = this.scene.currentBattle.trainer;
+    } else if (gScene.currentBattle.battleType === BattleType.TRAINER) {
+      const trainer = gScene.currentBattle.trainer;
       trainer?.untint(100, "Sine.easeOut");
       trainer?.playAnim();
 
       const doSummon = () => {
-        this.scene.currentBattle.started = true;
-        this.scene.playBgm(undefined);
-        this.scene.pbTray.showPbTray(this.scene.getParty());
-        this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+        gScene.currentBattle.started = true;
+        gScene.playBgm(undefined);
+        gScene.pbTray.showPbTray(gScene.getParty());
+        gScene.pbTrayEnemy.showPbTray(gScene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
-          const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
-          this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
-          if (this.scene.currentBattle.double && availablePartyMembers > 1) {
-            this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
+          const availablePartyMembers = gScene.getEnemyParty().filter(p => !p.isFainted()).length;
+          gScene.unshiftPhase(new SummonPhase(0, false));
+          if (gScene.currentBattle.double && availablePartyMembers > 1) {
+            gScene.unshiftPhase(new SummonPhase(1, false));
           }
           this.end();
         };
         if (showEncounterMessage) {
-          this.scene.ui.showText(this.getEncounterMessage(), null, doTrainerSummon, 1500, true);
+          gScene.ui.showText(this.getEncounterMessage(), null, doTrainerSummon, 1500, true);
         } else {
           doTrainerSummon();
         }
       };
 
-      const encounterMessages = this.scene.currentBattle.trainer?.getEncounterMessages();
+      const encounterMessages = gScene.currentBattle.trainer?.getEncounterMessages();
 
       if (!encounterMessages?.length) {
         doSummon();
       } else {
         let message: string;
-        this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), this.scene.currentBattle.waveIndex);
+        gScene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), gScene.currentBattle.waveIndex);
         message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
-          this.scene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
-            this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doSummon()));
+          gScene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
+            gScene.charSprite.hide().then(() => gScene.hideFieldOverlay(250).then(() => doSummon()));
           });
         };
-        if (this.scene.currentBattle.trainer?.config.hasCharSprite && !this.scene.ui.shouldSkipDialogue(message)) {
-          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer?.getKey()!, getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon())); // TODO: is this bang correct?
+        if (gScene.currentBattle.trainer?.config.hasCharSprite && !gScene.ui.shouldSkipDialogue(message)) {
+          gScene.showFieldOverlay(500).then(() => gScene.charSprite.showCharacter(trainer?.getKey()!, getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon())); // TODO: is this bang correct?
         } else {
           showDialogueAndSummon();
         }
       }
-    } else if (this.scene.currentBattle.isBattleMysteryEncounter() && this.scene.currentBattle.mysteryEncounter) {
-      const encounter = this.scene.currentBattle.mysteryEncounter;
+    } else if (gScene.currentBattle.isBattleMysteryEncounter() && gScene.currentBattle.mysteryEncounter) {
+      const encounter = gScene.currentBattle.mysteryEncounter;
       const introVisuals = encounter.introVisuals;
       introVisuals?.playAnim();
 
       if (encounter.onVisualsStart) {
-        encounter.onVisualsStart(this.scene);
+        encounter.onVisualsStart();
       }
 
       const doEncounter = () => {
         const doShowEncounterOptions = () => {
-          this.scene.ui.clearText();
-          this.scene.ui.getMessageHandler().hideNameText();
+          gScene.ui.clearText();
+          gScene.ui.getMessageHandler().hideNameText();
 
-          this.scene.unshiftPhase(new MysteryEncounterPhase(this.scene));
+          gScene.unshiftPhase(new MysteryEncounterPhase());
           this.end();
         };
 
@@ -403,13 +403,13 @@ export class EncounterPhase extends BattlePhase {
             const showNextDialogue = () => {
               const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
               const dialogue = introDialogue[i];
-              const title = getEncounterText(this.scene, dialogue?.speaker);
-              const text = getEncounterText(this.scene, dialogue.text)!;
+              const title = getEncounterText(dialogue?.speaker);
+              const text = getEncounterText(dialogue.text)!;
               i++;
               if (title) {
-                this.scene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
+                gScene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
               } else {
-                this.scene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+                gScene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
               }
             };
 
@@ -427,101 +427,101 @@ export class EncounterPhase extends BattlePhase {
       if (!encounterMessage) {
         doEncounter();
       } else {
-        doTrainerExclamation(this.scene);
-        this.scene.ui.showDialogue(encounterMessage, "???", null, () => {
-          this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => doEncounter()));
+        doTrainerExclamation();
+        gScene.ui.showDialogue(encounterMessage, "???", null, () => {
+          gScene.charSprite.hide().then(() => gScene.hideFieldOverlay(250).then(() => doEncounter()));
         });
       }
     }
   }
 
   end() {
-    const enemyField = this.scene.getEnemyField();
+    const enemyField = gScene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
       if (enemyPokemon.isShiny()) {
-        this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
+        gScene.unshiftPhase(new ShinySparklePhase(BattlerIndex.ENEMY + e));
       }
     });
 
-    if (![ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.scene.currentBattle.battleType)) {
-      enemyField.map(p => this.scene.pushConditionalPhase(new PostSummonPhase(this.scene, p.getBattlerIndex()), () => {
+    if (![ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(gScene.currentBattle.battleType)) {
+      enemyField.map(p => gScene.pushConditionalPhase(new PostSummonPhase(p.getBattlerIndex()), () => {
         // if there is not a player party, we can't continue
-        if (!this.scene.getParty()?.length) {
+        if (!gScene.getParty()?.length) {
           return false;
         }
         // how many player pokemon are on the field ?
-        const pokemonsOnFieldCount = this.scene.getParty().filter(p => p.isOnField()).length;
+        const pokemonsOnFieldCount = gScene.getParty().filter(p => p.isOnField()).length;
         // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-        const requiredPokemonsOnField = Math.min(this.scene.getParty().filter((p) => !p.isFainted()).length, 2);
+        const requiredPokemonsOnField = Math.min(gScene.getParty().filter((p) => !p.isFainted()).length, 2);
         // if it's a double, there should be 2, otherwise 1
-        if (this.scene.currentBattle.double) {
+        if (gScene.currentBattle.double) {
           return pokemonsOnFieldCount === requiredPokemonsOnField;
         }
         return pokemonsOnFieldCount === 1;
       }));
-      const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
+      const ivScannerModifier = gScene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
-        enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
+        enemyField.map(p => gScene.pushPhase(new ScanIvsPhase(p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
       }
     }
 
     if (!this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle());
+      const availablePartyMembers = gScene.getParty().filter(p => p.isAllowedInBattle());
 
       if (!availablePartyMembers[0].isOnField()) {
-        this.scene.pushPhase(new SummonPhase(this.scene, 0));
+        gScene.pushPhase(new SummonPhase(0));
       }
 
-      if (this.scene.currentBattle.double) {
+      if (gScene.currentBattle.double) {
         if (availablePartyMembers.length > 1) {
-          this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
+          gScene.pushPhase(new ToggleDoublePositionPhase(true));
           if (!availablePartyMembers[1].isOnField()) {
-            this.scene.pushPhase(new SummonPhase(this.scene, 1));
+            gScene.pushPhase(new SummonPhase(1));
           }
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          this.scene.pushPhase(new ReturnPhase(this.scene, 1));
+          gScene.pushPhase(new ReturnPhase(1));
         }
-        this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
+        gScene.pushPhase(new ToggleDoublePositionPhase(false));
       }
 
-      if (this.scene.currentBattle.battleType !== BattleType.TRAINER && (this.scene.currentBattle.waveIndex > 1 || !this.scene.gameMode.isDaily)) {
-        const minPartySize = this.scene.currentBattle.double ? 2 : 1;
+      if (gScene.currentBattle.battleType !== BattleType.TRAINER && (gScene.currentBattle.waveIndex > 1 || !gScene.gameMode.isDaily)) {
+        const minPartySize = gScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers.length > minPartySize) {
-          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
-          if (this.scene.currentBattle.double) {
-            this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+          gScene.pushPhase(new CheckSwitchPhase(0, gScene.currentBattle.double));
+          if (gScene.currentBattle.double) {
+            gScene.pushPhase(new CheckSwitchPhase(1, gScene.currentBattle.double));
           }
         }
       }
     }
-    handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
+    handleTutorial(Tutorial.Access_Menu).then(() => super.end());
   }
 
   tryOverrideForBattleSpec(): boolean {
-    switch (this.scene.currentBattle.battleSpec) {
+    switch (gScene.currentBattle.battleSpec) {
       case BattleSpec.FINAL_BOSS:
-        const enemy = this.scene.getEnemyPokemon();
-        this.scene.ui.showText(this.getEncounterMessage(), null, () => {
+        const enemy = gScene.getEnemyPokemon();
+        gScene.ui.showText(this.getEncounterMessage(), null, () => {
           const localizationKey = "battleSpecDialogue:encounter";
-          if (this.scene.ui.shouldSkipDialogue(localizationKey)) {
+          if (gScene.ui.shouldSkipDialogue(localizationKey)) {
           // Logging mirrors logging found in dialogue-ui-handler
             console.log(`Dialogue ${localizationKey} skipped`);
             this.doEncounterCommon(false);
           } else {
-            const count = 5643853 + this.scene.gameData.gameStats.classicSessionsPlayed;
+            const count = 5643853 + gScene.gameData.gameStats.classicSessionsPlayed;
             // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
             const ordinalUsed = !i18next.exists(localizationKey, { fallbackLng: []}) || i18next.resolvedLanguage === "en" ? i18next.t("battleSpecDialogue:key", { count: count, ordinal: true }) : "";
             const cycleCount = count.toLocaleString() + ordinalUsed;
-            const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
+            const genderIndex = gScene.gameData.gender ?? PlayerGender.UNSET;
             const genderStr = PlayerGender[genderIndex].toLowerCase();
             const encounterDialogue = i18next.t(localizationKey, { context: genderStr, cycleCount: cycleCount });
-            if (!this.scene.gameData.getSeenDialogues()[localizationKey]) {
-              this.scene.gameData.saveSeenDialogue(localizationKey);
+            if (!gScene.gameData.getSeenDialogues()[localizationKey]) {
+              gScene.gameData.saveSeenDialogue(localizationKey);
             }
-            this.scene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+            gScene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
               this.doEncounterCommon(false);
             });
           }
@@ -541,7 +541,7 @@ export class EncounterPhase extends BattlePhase {
    */
   trySetWeatherIfNewBiome(): void {
     if (!this.loaded) {
-      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+      gScene.arena.trySetWeather(getRandomWeatherType(gScene.arena), false);
     }
   }
 }

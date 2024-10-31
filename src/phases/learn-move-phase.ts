@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import Move, { allMoves } from "#app/data/move";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
@@ -28,8 +28,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private learnMoveType;
   private cost: number;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE, cost: number = -1) {
-    super(scene, partyMemberIndex);
+  constructor(partyMemberIndex: integer, moveId: Moves, learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE, cost: number = -1) {
+    super(partyMemberIndex);
     this.moveId = moveId;
     this.learnMoveType = learnMoveType;
     this.cost = cost;
@@ -48,8 +48,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       return this.end();
     }
 
-    this.messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler ? Mode.EVOLUTION_SCENE : Mode.MESSAGE;
-    this.scene.ui.setMode(this.messageMode);
+    this.messageMode = gScene.ui.getHandler() instanceof EvolutionSceneHandler ? Mode.EVOLUTION_SCENE : Mode.MESSAGE;
+    gScene.ui.setMode(this.messageMode);
     // If the Pokemon has less than 4 moves, the new move is added to the largest empty moveset index
     // If it has 4 moves, the phase then checks if the player wants to replace the move itself.
     if (currentMoveset.length < 4) {
@@ -73,12 +73,12 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName: getPokemonNameWithAffix(pokemon) });
     const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName: move.name });
     const preQText = [ learnMovePrompt, moveLimitReached ].join("$");
-    await this.scene.ui.showTextPromise(preQText);
-    await this.scene.ui.showTextPromise(shouldReplaceQ, undefined, false);
-    await this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
+    await gScene.ui.showTextPromise(preQText);
+    await gScene.ui.showTextPromise(shouldReplaceQ, undefined, false);
+    await gScene.ui.setModeWithoutClear(Mode.CONFIRM,
       () => this.forgetMoveProcess(move, pokemon), // Yes
       () => { // No
-        this.scene.ui.setMode(this.messageMode);
+        gScene.ui.setMode(this.messageMode);
         this.rejectMoveAndEnd(move, pokemon);
       }
     );
@@ -96,16 +96,16 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param Pokemon The Pokemon learning the move
    */
   async forgetMoveProcess(move: Move, pokemon: Pokemon) {
-    this.scene.ui.setMode(this.messageMode);
-    await this.scene.ui.showTextPromise(i18next.t("battle:learnMoveForgetQuestion"), undefined, true);
-    await this.scene.ui.setModeWithoutClear(Mode.SUMMARY, pokemon, SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
+    gScene.ui.setMode(this.messageMode);
+    await gScene.ui.showTextPromise(i18next.t("battle:learnMoveForgetQuestion"), undefined, true);
+    await gScene.ui.setModeWithoutClear(Mode.SUMMARY, pokemon, SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
       if (moveIndex === 4) {
-        this.scene.ui.setMode(this.messageMode).then(() => this.rejectMoveAndEnd(move, pokemon));
+        gScene.ui.setMode(this.messageMode).then(() => this.rejectMoveAndEnd(move, pokemon));
         return;
       }
       const forgetSuccessText = i18next.t("battle:learnMoveForgetSuccess", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: pokemon.moveset[moveIndex]!.getName() });
       const fullText = [ i18next.t("battle:countdownPoof"), forgetSuccessText, i18next.t("battle:learnMoveAnd") ].join("$");
-      this.scene.ui.setMode(this.messageMode).then(() => this.learnMove(moveIndex, move, pokemon, fullText));
+      gScene.ui.setMode(this.messageMode).then(() => this.learnMove(moveIndex, move, pokemon, fullText));
     });
   }
 
@@ -120,14 +120,14 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param Pokemon The Pokemon learning the move
    */
   async rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
-    await this.scene.ui.showTextPromise(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), undefined, false);
-    this.scene.ui.setModeWithoutClear(Mode.CONFIRM,
+    await gScene.ui.showTextPromise(i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }), undefined, false);
+    gScene.ui.setModeWithoutClear(Mode.CONFIRM,
       () => {
-        this.scene.ui.setMode(this.messageMode);
-        this.scene.ui.showTextPromise(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), undefined, true).then(() => this.end());
+        gScene.ui.setMode(this.messageMode);
+        gScene.ui.showTextPromise(i18next.t("battle:learnMoveNotLearned", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name }), undefined, true).then(() => this.end());
       },
       () => {
-        this.scene.ui.setMode(this.messageMode);
+        gScene.ui.setMode(this.messageMode);
         this.replaceMoveCheck(move, pokemon);
       }
     );
@@ -154,31 +154,31 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         pokemon.usedTMs = [];
       }
       pokemon.usedTMs.push(this.moveId);
-      this.scene.tryRemovePhase((phase) => phase instanceof SelectModifierPhase);
+      gScene.tryRemovePhase((phase) => phase instanceof SelectModifierPhase);
     } else if (this.learnMoveType === LearnMoveType.MEMORY) {
       if (this.cost !== -1) {
         if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-          this.scene.money -= this.cost;
-          this.scene.updateMoneyText();
-          this.scene.animateMoneyChanged(false);
+          gScene.money -= this.cost;
+          gScene.updateMoneyText();
+          gScene.animateMoneyChanged(false);
         }
-        this.scene.playSound("se/buy");
+        gScene.playSound("se/buy");
       } else {
-        this.scene.tryRemovePhase((phase) => phase instanceof SelectModifierPhase);
+        gScene.tryRemovePhase((phase) => phase instanceof SelectModifierPhase);
       }
     }
     pokemon.setMove(index, this.moveId);
-    initMoveAnim(this.scene, this.moveId).then(() => {
-      loadMoveAnimAssets(this.scene, [ this.moveId ], true);
+    initMoveAnim(this.moveId).then(() => {
+      loadMoveAnimAssets([ this.moveId ], true);
     });
-    this.scene.ui.setMode(this.messageMode);
+    gScene.ui.setMode(this.messageMode);
     const learnMoveText = i18next.t("battle:learnMove", { pokemonName: getPokemonNameWithAffix(pokemon), moveName: move.name });
     if (textMessage) {
-      await this.scene.ui.showTextPromise(textMessage);
+      await gScene.ui.showTextPromise(textMessage);
     }
-    this.scene.playSound("level_up_fanfare"); // Sound loaded into game as is
-    this.scene.ui.showText(learnMoveText, null, () => {
-      this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+    gScene.playSound("level_up_fanfare"); // Sound loaded into game as is
+    gScene.ui.showText(learnMoveText, null, () => {
+      gScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
       this.end();
     }, this.messageMode === Mode.EVOLUTION_SCENE ? 1000 : undefined, true);
   }

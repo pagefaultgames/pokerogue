@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { DexEntry, StarterDataEntry } from "#app/system/game-data";
 
@@ -17,11 +17,8 @@ export class EggHatchData {
   public dexEntryBeforeUpdate: DexEntry;
   /** stored copy of the hatched pokemon's starter entry before it was updated due to hatch */
   public starterDataEntryBeforeUpdate: StarterDataEntry;
-  /** reference to the battle scene to get gamedata and update dex */
-  private scene: BattleScene;
 
-  constructor(scene: BattleScene, pokemon: PlayerPokemon, eggMoveIndex: number) {
-    this.scene = scene;
+  constructor(pokemon: PlayerPokemon, eggMoveIndex: number) {
     this.pokemon = pokemon;
     this.eggMoveIndex = eggMoveIndex;
   }
@@ -39,8 +36,8 @@ export class EggHatchData {
      * Used before updating the dex, so comparing the pokemon to these entries will show the new attributes
      */
   setDex() {
-    const currDexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
-    const currStarterDataEntry = this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
+    const currDexEntry = gScene.gameData.dexData[this.pokemon.species.speciesId];
+    const currStarterDataEntry = gScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
     this.dexEntryBeforeUpdate = {
       seenAttr: currDexEntry.seenAttr,
       caughtAttr: currDexEntry.caughtAttr,
@@ -86,9 +83,9 @@ export class EggHatchData {
      */
   updatePokemon(showMessage : boolean = false) {
     return new Promise<void>(resolve => {
-      this.scene.gameData.setPokemonCaught(this.pokemon, true, true, showMessage).then(() => {
-        this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-        this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then((value) => {
+      gScene.gameData.setPokemonCaught(this.pokemon, true, true, showMessage).then(() => {
+        gScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+        gScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then((value) => {
           this.setEggMoveUnlocked(value);
           resolve();
         });

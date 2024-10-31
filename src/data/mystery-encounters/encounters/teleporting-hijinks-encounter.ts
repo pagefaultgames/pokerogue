@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, generateModifierTypeOption, initBattleWithEnemyConfig, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoneyRequirement, WaveModulusRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
@@ -62,9 +62,9 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
-      const price = scene.getWaveMoneyAmount(MONEY_COST_MULTIPLIER);
+    .withOnInit(() => {
+      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const price = gScene.getWaveMoneyAmount(MONEY_COST_MULTIPLIER);
       encounter.setDialogueToken("price", price.toString());
       encounter.misc = {
         price
@@ -85,14 +85,14 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
             }
           ],
         })
-        .withPreOptionPhase(async (scene: BattleScene) => {
+        .withPreOptionPhase(async () => {
           // Update money
-          updatePlayerMoney(scene, -scene.currentBattle.mysteryEncounter!.misc.price, true, false);
+          updatePlayerMoney(-gScene.currentBattle.mysteryEncounter!.misc.price, true, false);
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const config: EnemyPartyConfig = await doBiomeTransitionDialogueAndBattleInit(scene);
-          setEncounterRewards(scene, { fillRemaining: true });
-          await initBattleWithEnemyConfig(scene, config);
+        .withOptionPhase(async () => {
+          const config: EnemyPartyConfig = await doBiomeTransitionDialogueAndBattleInit();
+          setEncounterRewards({ fillRemaining: true });
+          await initBattleWithEnemyConfig(config);
         })
         .build()
     )
@@ -110,11 +110,11 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
             }
           ],
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const config: EnemyPartyConfig = await doBiomeTransitionDialogueAndBattleInit(scene);
-          setEncounterRewards(scene, { fillRemaining: true });
-          setEncounterExp(scene, scene.currentBattle.mysteryEncounter!.selectedOption!.primaryPokemon!.id, 100);
-          await initBattleWithEnemyConfig(scene, config);
+        .withOptionPhase(async () => {
+          const config: EnemyPartyConfig = await doBiomeTransitionDialogueAndBattleInit();
+          setEncounterRewards({ fillRemaining: true });
+          setEncounterExp(gScene.currentBattle.mysteryEncounter!.selectedOption!.primaryPokemon!.id, 100);
+          await initBattleWithEnemyConfig(config);
         })
         .build()
     )
@@ -128,14 +128,14 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Inspect the Machine
-        const encounter = scene.currentBattle.mysteryEncounter!;
+        const encounter = gScene.currentBattle.mysteryEncounter!;
 
         // Init enemy
-        const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-        const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
-        const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
+        const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
+        const bossSpecies = gScene.arena.randomSpecies(gScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(gScene.getParty()), true);
+        const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
         encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
         const config: EnemyPartyConfig = {
           pokemonConfigs: [{
@@ -146,36 +146,36 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
           }],
         };
 
-        const magnet = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.STEEL ])!;
-        const metalCoat = generateModifierTypeOption(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.ELECTRIC ])!;
-        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ magnet, metalCoat ], fillRemaining: true });
-        await transitionMysteryEncounterIntroVisuals(scene, true, true);
-        await initBattleWithEnemyConfig(scene, config);
+        const magnet = generateModifierTypeOption(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.STEEL ])!;
+        const metalCoat = generateModifierTypeOption(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.ELECTRIC ])!;
+        setEncounterRewards({ guaranteedModifierTypeOptions: [ magnet, metalCoat ], fillRemaining: true });
+        await transitionMysteryEncounterIntroVisuals(true, true);
+        await initBattleWithEnemyConfig(config);
       }
     )
     .build();
 
-async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
-  const encounter = scene.currentBattle.mysteryEncounter!;
+async function doBiomeTransitionDialogueAndBattleInit() {
+  const encounter = gScene.currentBattle.mysteryEncounter!;
 
   // Calculate new biome (cannot be current biome)
-  const filteredBiomes = BIOME_CANDIDATES.filter(b => scene.arena.biomeType !== b);
+  const filteredBiomes = BIOME_CANDIDATES.filter(b => gScene.arena.biomeType !== b);
   const newBiome = filteredBiomes[randSeedInt(filteredBiomes.length)];
 
   // Show dialogue and transition biome
-  await showEncounterText(scene, `${namespace}:transport`);
-  await Promise.all([ animateBiomeChange(scene, newBiome), transitionMysteryEncounterIntroVisuals(scene) ]);
-  scene.playBgm();
-  await showEncounterText(scene, `${namespace}:attacked`);
+  await showEncounterText(`${namespace}:transport`);
+  await Promise.all([ animateBiomeChange(newBiome), transitionMysteryEncounterIntroVisuals() ]);
+  gScene.playBgm();
+  await showEncounterText(`${namespace}:attacked`);
 
   // Init enemy
-  const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-  const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
-  const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
+  const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
+  const bossSpecies = gScene.arena.randomSpecies(gScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(gScene.getParty()), true);
+  const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
   encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
 
   // Defense/Spd buffs below wave 50, +1 to all stats otherwise
-  const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
+  const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = gScene.currentBattle.waveIndex < 50 ?
     [ Stat.DEF, Stat.SPDEF, Stat.SPD ] :
     [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
 
@@ -187,8 +187,8 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
       isBoss: true,
       tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
       mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-        queueEncounterMessage(pokemon.scene, `${namespace}:boss_enraged`);
-        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
+        queueEncounterMessage(`${namespace}:boss_enraged`);
+        gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
       }
     }],
   };
@@ -196,46 +196,46 @@ async function doBiomeTransitionDialogueAndBattleInit(scene: BattleScene) {
   return config;
 }
 
-async function animateBiomeChange(scene: BattleScene, nextBiome: Biome) {
+async function animateBiomeChange(nextBiome: Biome) {
   return new Promise<void>(resolve => {
-    scene.tweens.add({
-      targets: [ scene.arenaEnemy, scene.lastEnemyTrainer ],
+    gScene.tweens.add({
+      targets: [ gScene.arenaEnemy, gScene.lastEnemyTrainer ],
       x: "+=300",
       duration: 2000,
       onComplete: () => {
-        scene.newArena(nextBiome);
+        gScene.newArena(nextBiome);
 
         const biomeKey = getBiomeKey(nextBiome);
         const bgTexture = `${biomeKey}_bg`;
-        scene.arenaBgTransition.setTexture(bgTexture);
-        scene.arenaBgTransition.setAlpha(0);
-        scene.arenaBgTransition.setVisible(true);
-        scene.arenaPlayerTransition.setBiome(nextBiome);
-        scene.arenaPlayerTransition.setAlpha(0);
-        scene.arenaPlayerTransition.setVisible(true);
+        gScene.arenaBgTransition.setTexture(bgTexture);
+        gScene.arenaBgTransition.setAlpha(0);
+        gScene.arenaBgTransition.setVisible(true);
+        gScene.arenaPlayerTransition.setBiome(nextBiome);
+        gScene.arenaPlayerTransition.setAlpha(0);
+        gScene.arenaPlayerTransition.setVisible(true);
 
-        scene.tweens.add({
-          targets: [ scene.arenaPlayer, scene.arenaBgTransition, scene.arenaPlayerTransition ],
+        gScene.tweens.add({
+          targets: [ gScene.arenaPlayer, gScene.arenaBgTransition, gScene.arenaPlayerTransition ],
           duration: 1000,
           ease: "Sine.easeInOut",
-          alpha: (target: any) => target === scene.arenaPlayer ? 0 : 1,
+          alpha: (target: any) => target === gScene.arenaPlayer ? 0 : 1,
           onComplete: () => {
-            scene.arenaBg.setTexture(bgTexture);
-            scene.arenaPlayer.setBiome(nextBiome);
-            scene.arenaPlayer.setAlpha(1);
-            scene.arenaEnemy.setBiome(nextBiome);
-            scene.arenaEnemy.setAlpha(1);
-            scene.arenaNextEnemy.setBiome(nextBiome);
-            scene.arenaBgTransition.setVisible(false);
-            scene.arenaPlayerTransition.setVisible(false);
-            if (scene.lastEnemyTrainer) {
-              scene.lastEnemyTrainer.destroy();
+            gScene.arenaBg.setTexture(bgTexture);
+            gScene.arenaPlayer.setBiome(nextBiome);
+            gScene.arenaPlayer.setAlpha(1);
+            gScene.arenaEnemy.setBiome(nextBiome);
+            gScene.arenaEnemy.setAlpha(1);
+            gScene.arenaNextEnemy.setBiome(nextBiome);
+            gScene.arenaBgTransition.setVisible(false);
+            gScene.arenaPlayerTransition.setVisible(false);
+            if (gScene.lastEnemyTrainer) {
+              gScene.lastEnemyTrainer.destroy();
             }
 
             resolve();
 
-            scene.tweens.add({
-              targets: scene.arenaEnemy,
+            gScene.tweens.add({
+              targets: gScene.arenaEnemy,
               x: "-=300",
             });
           }

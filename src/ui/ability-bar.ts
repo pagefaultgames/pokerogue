@@ -1,5 +1,5 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import BattleScene from "../battle-scene";
+import { gScene } from "#app/battle-scene";
 import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
@@ -17,17 +17,17 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
   public shown: boolean;
 
-  constructor(scene: BattleScene) {
-    super(scene, hiddenX, baseY);
+  constructor() {
+    super(gScene, hiddenX, baseY);
   }
 
   setup(): void {
-    this.bg = this.scene.add.image(0, 0, "ability_bar_left");
+    this.bg = gScene.add.image(0, 0, "ability_bar_left");
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.abilityBarText = addTextObject(this.scene, 15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.abilityBarText = addTextObject(15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
     this.abilityBarText.setOrigin(0, 0);
     this.abilityBarText.setWordWrapWidth(600, true);
     this.add(this.abilityBarText);
@@ -43,11 +43,11 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    (this.scene as BattleScene).fieldUI.bringToTop(this);
+    gScene.fieldUI.bringToTop(this);
 
 
-    this.y = baseY + ((this.scene as BattleScene).currentBattle.double ? 14 : 0);
-    this.tween = this.scene.tweens.add({
+    this.y = baseY + (gScene.currentBattle.double ? 14 : 0);
+    this.tween = gScene.tweens.add({
       targets: this,
       x: shownX,
       duration: 500,
@@ -75,7 +75,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
       this.tween.stop();
     }
 
-    this.tween = this.scene.tweens.add({
+    this.tween = gScene.tweens.add({
       targets: this,
       x: -91,
       duration: 500,

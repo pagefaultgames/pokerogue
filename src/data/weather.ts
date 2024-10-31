@@ -5,10 +5,10 @@ import Pokemon from "../field/pokemon";
 import { Type } from "./type";
 import Move, { AttackMove } from "./move";
 import * as Utils from "../utils";
-import BattleScene from "../battle-scene";
 import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
+import { gScene } from "#app/battle-scene";
 
 export { WeatherType };
 export class Weather {
@@ -101,8 +101,8 @@ export class Weather {
     return false;
   }
 
-  isEffectSuppressed(scene: BattleScene): boolean {
-    const field = scene.getField(true);
+  isEffectSuppressed(): boolean {
+    const field = gScene.getField(true);
 
     for (const pokemon of field) {
       let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null  = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];

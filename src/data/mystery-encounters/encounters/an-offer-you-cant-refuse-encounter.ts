@@ -2,7 +2,7 @@ import { generateModifierType, leaveEncounterWithoutBattle, setEncounterExp, upd
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
@@ -69,14 +69,14 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
-      const pokemon = getHighestStatTotalPlayerPokemon(scene, true, true);
+    .withOnInit(() => {
+      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const pokemon = getHighestStatTotalPlayerPokemon(true, true);
 
       const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
       const starterValue: number = speciesStarterCosts[baseSpecies] ?? 1;
       const multiplier = Math.max(MONEY_MAXIMUM_MULTIPLIER / 10 * starterValue, MONEY_MINIMUM_MULTIPLIER);
-      const price = scene.getWaveMoneyAmount(multiplier);
+      const price = gScene.getWaveMoneyAmount(multiplier);
 
       encounter.setDialogueToken("strongestPokemon", pokemon.getNameToRender());
       encounter.setDialogueToken("price", price.toString());
@@ -89,7 +89,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
 
       // If player meets the combo OR requirements for option 2, populate the token
       const opt2Req = encounter.options[1].primaryPokemonRequirements[0];
-      if (opt2Req.meetsRequirement(scene)) {
+      if (opt2Req.meetsRequirement()) {
         const abilityToken = encounter.dialogueTokens["option2PrimaryAbility"];
         const moveToken = encounter.dialogueTokens["option2PrimaryMove"];
         if (abilityToken) {
@@ -99,7 +99,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         }
       }
 
-      const shinyCharm = generateModifierType(scene, modifierTypes.SHINY_CHARM);
+      const shinyCharm = generateModifierType(modifierTypes.SHINY_CHARM);
       encounter.setDialogueToken("itemName", shinyCharm?.name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
       encounter.setDialogueToken("liepardName", getPokemonSpecies(Species.LIEPARD).getName());
 
@@ -118,17 +118,17 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
             },
           ],
         })
-        .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withPreOptionPhase(async (): Promise<boolean> => {
+          const encounter = gScene.currentBattle.mysteryEncounter!;
           // Update money and remove pokemon from party
-          updatePlayerMoney(scene, encounter.misc.price);
-          scene.removePokemonFromPlayerParty(encounter.misc.pokemon);
+          updatePlayerMoney(encounter.misc.price);
+          gScene.removePokemonFromPlayerParty(encounter.misc.pokemon);
           return true;
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Give the player a Shiny Charm
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.SHINY_CHARM));
-          leaveEncounterWithoutBattle(scene, true);
+          gScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.SHINY_CHARM));
+          leaveEncounterWithoutBattle(true);
         })
         .build()
     )
@@ -152,15 +152,15 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
             },
           ],
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Extort the rich kid for money
-          const encounter = scene.currentBattle.mysteryEncounter!;
+          const encounter = gScene.currentBattle.mysteryEncounter!;
           // Update money and remove pokemon from party
-          updatePlayerMoney(scene, encounter.misc.price);
+          updatePlayerMoney(encounter.misc.price);
 
-          setEncounterExp(scene, encounter.options[1].primaryPokemon!.id, getPokemonSpecies(Species.LIEPARD).baseExp, true);
+          setEncounterExp(encounter.options[1].primaryPokemon!.id, getPokemonSpecies(Species.LIEPARD).baseExp, true);
 
-          leaveEncounterWithoutBattle(scene, true);
+          leaveEncounterWithoutBattle(true);
         })
         .build()
     )
@@ -175,9 +175,9 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Leave encounter with no rewards or exp
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
         return true;
       }
     )

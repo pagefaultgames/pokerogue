@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { MoveChargeAnim } from "#app/data/battle-anims";
 import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/move";
@@ -19,8 +19,8 @@ export class MoveChargePhase extends PokemonPhase {
   /** The field index targeted by the move (Charging moves assume single target) */
   public targetIndex: BattlerIndex;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, targetIndex: BattlerIndex, move: PokemonMove) {
-    super(scene, battlerIndex);
+  constructor(battlerIndex: BattlerIndex, targetIndex: BattlerIndex, move: PokemonMove) {
+    super(battlerIndex);
     this.move = move;
     this.targetIndex = targetIndex;
   }
@@ -39,7 +39,7 @@ export class MoveChargePhase extends PokemonPhase {
       return super.end();
     }
 
-    new MoveChargeAnim(move.chargeAnim, move.id, user).play(this.scene, false, () => {
+    new MoveChargeAnim(move.chargeAnim, move.id, user).play(false, () => {
       move.showChargeText(user, target);
 
       applyMoveChargeAttrs(MoveEffectAttr, user, target, move).then(() => {
@@ -61,9 +61,9 @@ export class MoveChargePhase extends PokemonPhase {
 
       if (instantCharge.value) {
         // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
-        this.scene.tryRemovePhase((phase) => phase instanceof MoveEndPhase && phase.getPokemon() === user);
+        gScene.tryRemovePhase((phase) => phase instanceof MoveEndPhase && phase.getPokemon() === user);
         // queue a new MovePhase for this move's attack phase
-        this.scene.unshiftPhase(new MovePhase(this.scene, user, [ this.targetIndex ], this.move, false));
+        gScene.unshiftPhase(new MovePhase(user, [ this.targetIndex ], this.move, false));
       } else {
         user.getMoveQueue().push({ move: move.id, targets: [ this.targetIndex ]});
       }
@@ -75,10 +75,10 @@ export class MoveChargePhase extends PokemonPhase {
   }
 
   public getUserPokemon(): Pokemon {
-    return (this.player ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
+    return (this.player ? gScene.getPlayerField() : gScene.getEnemyField())[this.fieldIndex];
   }
 
   public getTargetPokemon(): Pokemon | undefined {
-    return this.scene.getField(true).find((p) => this.targetIndex === p.getBattlerIndex());
+    return gScene.getField(true).find((p) => this.targetIndex === p.getBattlerIndex());
   }
 }

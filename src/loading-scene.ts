@@ -20,6 +20,7 @@ import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initVouchers } from "#app/system/voucher";
 import { Biome } from "#enums/biome";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
+import { gScene } from "#app/battle-scene";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -510,7 +511,7 @@ export class LoadingScene extends SceneBase {
 
   async create() {
     this.events.once(Phaser.Scenes.Events.DESTROY, () => this.handleDestroy());
-    this.scene.start("battle");
+    gScene.scene.start("battle");
   }
 
   handleDestroy() {

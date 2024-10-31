@@ -1,4 +1,3 @@
-import BattleScene from "#app/battle-scene";
 import { hasTouchscreen, isMobile } from "#app/touch-controls";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
@@ -10,6 +9,7 @@ import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handl
 import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
 import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
 import i18next from "i18next";
+import { gScene } from "#app/battle-scene";
 
 
 /**
@@ -42,8 +42,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   protected settings: Array<Setting>;
   protected localStorageKey: string;
 
-  constructor(scene: BattleScene, type: SettingType, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(type: SettingType, mode: Mode | null = null) {
+    super(mode);
     this.settings = Setting.filter(s => s.type === type && !s?.isHidden?.());
     this.reloadRequired = false;
     this.rowsToDisplay = 8;
@@ -55,40 +55,40 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.settingsContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
     this.settingsContainer.setName(`settings-${this.title}`);
-    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6 - 20), Phaser.Geom.Rectangle.Contains);
+    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6 - 20), Phaser.Geom.Rectangle.Contains);
 
     this.navigationIcons = {};
 
-    this.navigationContainer = new NavigationMenu(this.scene, 0, 0);
+    this.navigationContainer = new NavigationMenu(0, 0);
 
-    this.optionsBg = addWindow(this.scene, 0, this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
+    this.optionsBg = addWindow(0, this.navigationContainer.height, (gScene.game.canvas.width / 6) - 2, (gScene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
     this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
-    const actionsBg = addWindow(this.scene, 0, (this.scene.game.canvas.height / 6) - this.navigationContainer.height, (this.scene.game.canvas.width / 6) - 2, 22);
+    const actionsBg = addWindow(0, (gScene.game.canvas.height / 6) - this.navigationContainer.height, (gScene.game.canvas.width / 6) - 2, 22);
     actionsBg.setOrigin(0, 0);
 
-    const iconAction = this.scene.add.sprite(0, 0, "keyboard");
+    const iconAction = gScene.add.sprite(0, 0, "keyboard");
     iconAction.setOrigin(0, -0.1);
     iconAction.setPositionRelative(actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
-    const actionText = addTextObject(this.scene, 0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
+    const actionText = addTextObject(0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
     actionText.setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width / 6 - 2, 0);
 
-    const iconCancel = this.scene.add.sprite(0, 0, "keyboard");
+    const iconCancel = gScene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
     iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
-    const cancelText = addTextObject(this.scene, 0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
+    const cancelText = addTextObject(0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width / 6 - 2, 0);
 
-    this.optionsContainer = this.scene.add.container(0, 0);
+    this.optionsContainer = gScene.add.container(0, 0);
 
     this.settingLabels = [];
     this.optionValueLabels = [];
@@ -102,12 +102,12 @@ export default class AbstractSettingsUiHandler extends UiHandler {
           settingName += ` (${i18next.t("settings:requireReload")})`;
         }
 
-        this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
+        this.settingLabels[s] = addTextObject(8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
         this.settingLabels[s].setOrigin(0, 0);
 
         this.optionsContainer.add(this.settingLabels[s]);
         this.optionValueLabels.push(setting.options.map((option, o) => {
-          const valueLabel = addTextObject(this.scene, 0, 0, option.label, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_VALUE);
+          const valueLabel = addTextObject(0, 0, option.label, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_VALUE);
           valueLabel.setOrigin(0, 0);
 
           this.optionsContainer.add(valueLabel);
@@ -132,7 +132,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
 
     this.optionCursors = this.settings.map(setting => setting.default);
 
-    this.scrollBar = new ScrollBar(this.scene, this.optionsBg.width - 9, this.optionsBg.y + 5, 4, this.optionsBg.height - 11, this.rowsToDisplay);
+    this.scrollBar = new ScrollBar(this.optionsBg.width - 9, this.optionsBg.y + 5, 4, this.optionsBg.height - 11, this.rowsToDisplay);
     this.scrollBar.setTotalRows(this.settings.length);
 
     this.settingsContainer.add(this.optionsBg);
@@ -163,9 +163,9 @@ export default class AbstractSettingsUiHandler extends UiHandler {
         this.navigationIcons[settingName].alpha = 1;
         continue;
       }
-      const icon = this.scene.inputController?.getIconForLatestInputRecorded(settingName);
+      const icon = gScene.inputController?.getIconForLatestInputRecorded(settingName);
       if (icon) {
-        const type = this.scene.inputController?.getLastSourceType();
+        const type = gScene.inputController?.getLastSourceType();
         this.navigationIcons[settingName].setTexture(type);
         this.navigationIcons[settingName].setFrame(icon);
         this.navigationIcons[settingName].alpha = 1;
@@ -220,7 +220,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       success = true;
       NavigationManager.getInstance().reset();
       // Reverts UI to its previous state on cancel.
-      this.scene.ui.revertMode();
+      gScene.ui.revertMode();
     } else {
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
@@ -296,7 +296,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   activateSetting(setting: Setting): boolean {
     switch (setting.key) {
       case SettingKeys.Move_Touch_Controls:
-        this.scene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), this.scene);
+        gScene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), gScene);
         return true;
     }
     return false;
@@ -312,8 +312,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      const cursorWidth = (this.scene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
-      this.cursorObj = this.scene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
+      const cursorWidth = (gScene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
+      this.cursorObj = gScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }
@@ -352,7 +352,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
-      this.scene.gameData.saveSetting(setting.key, cursor);
+      gScene.gameData.saveSetting(setting.key, cursor);
       if (this.reloadSettings.includes(setting)) {
         this.reloadRequired = true;
       }
@@ -405,10 +405,10 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.settingsContainer.setVisible(false);
     this.setScrollCursor(0);
     this.eraseCursor();
-    this.getUi().bgmBar.toggleBgmBar(this.scene.showBgmBar);
+    this.getUi().bgmBar.toggleBgmBar(gScene.showBgmBar);
     if (this.reloadRequired) {
       this.reloadRequired = false;
-      this.scene.reset(true, false, true);
+      gScene.reset(true, false, true);
     }
   }
 

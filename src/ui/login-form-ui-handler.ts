@@ -3,10 +3,10 @@ import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
 import i18next from "i18next";
-import BattleScene from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { gScene } from "#app/battle-scene";
 
 interface BuildInteractableImageOpts {
   scale?: number;
@@ -30,15 +30,15 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   private infoContainer: Phaser.GameObjects.Container;
   private externalPartyBg: Phaser.GameObjects.NineSlice;
   private externalPartyTitle: Phaser.GameObjects.Text;
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
   }
 
   setup(): void {
     super.setup();
     this.buildExternalPartyContainer();
 
-    this.infoContainer = this.scene.add.container(0, 0);
+    this.infoContainer = gScene.add.container(0, 0);
 
     this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
       x: 20,
@@ -52,11 +52,11 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   private buildExternalPartyContainer() {
-    this.externalPartyContainer = this.scene.add.container(0, 0);
-    this.externalPartyContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 12, this.scene.game.canvas.height / 12), Phaser.Geom.Rectangle.Contains);
-    this.externalPartyTitle = addTextObject(this.scene, 0, 4, "", TextStyle.SETTINGS_LABEL);
+    this.externalPartyContainer = gScene.add.container(0, 0);
+    this.externalPartyContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 12, gScene.game.canvas.height / 12), Phaser.Geom.Rectangle.Contains);
+    this.externalPartyTitle = addTextObject(0, 4, "", TextStyle.SETTINGS_LABEL);
     this.externalPartyTitle.setOrigin(0.5, 0);
-    this.externalPartyBg = addWindow(this.scene, 0, 0, 0, 0);
+    this.externalPartyBg = addWindow(0, 0, 0, 0);
     this.externalPartyContainer.add(this.externalPartyBg);
     this.externalPartyContainer.add(this.externalPartyTitle);
 
@@ -127,10 +127,10 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
+        gScene.ui.setMode(Mode.LOADING, { buttonActions: []});
         const onFail = error => {
-          this.scene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-          this.scene.ui.playError();
+          gScene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+          gScene.ui.playError();
         };
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
@@ -198,9 +198,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     });
 
     const onFail = error => {
-      this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
-      this.scene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-      this.scene.ui.playError();
+      gScene.ui.setMode(Mode.LOADING, { buttonActions: []});
+      gScene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+      gScene.ui.playError();
     };
 
     this.usernameInfoImage.on("pointerdown", () => {
@@ -213,17 +213,17 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           options.push({
             label: dataKeys[i].replace(keyToFind, ""),
             handler: () => {
-              this.scene.ui.revertMode();
+              gScene.ui.revertMode();
               this.infoContainer.disableInteractive();
               return true;
             }
           });
         }
-        this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+        gScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
           options: options,
           delay: 1000
         });
-        this.infoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height), Phaser.Geom.Rectangle.Contains);
+        this.infoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width, gScene.game.canvas.height), Phaser.Geom.Rectangle.Contains);
       } else {
         if (dataKeys.length > 2) {
           return onFail(this.ERR_TOO_MANY_SAVES);
@@ -234,7 +234,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     });
 
     this.externalPartyContainer.setAlpha(0);
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: this.externalPartyContainer,
       duration: Utils.fixedInt(1000),
       ease: "Sine.easeInOut",
@@ -243,7 +243,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     });
 
     this.infoContainer.setAlpha(0);
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: this.infoContainer,
       duration: Utils.fixedInt(1000),
       ease: "Sine.easeInOut",
@@ -259,7 +259,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       y = 0,
       origin = { x: 0, y: 0 }
     } = opts;
-    const img = this.scene.add.image(x, y, texture);
+    const img = gScene.add.image(x, y, texture);
     img.setName(name);
     img.setOrigin(origin.x, origin.y);
     img.setScale(scale);

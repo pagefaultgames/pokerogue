@@ -1,6 +1,5 @@
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import BattleScene from "../../battle-scene";
 import { hasTouchscreen } from "../../touch-controls";
 import { updateWindowType } from "../../ui/ui-theme";
 import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
@@ -10,6 +9,7 @@ import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { gScene } from "#app/battle-scene";
 
 function getTranslation(key: string): string {
   if (!getIsInitialized()) {
@@ -682,8 +682,8 @@ export function settingIndex(key: string) {
  * Resets all settings to their defaults
  * @param scene current BattleScene
  */
-export function resetSettings(scene: BattleScene) {
-  Setting.forEach(s => setSetting(scene, s.key, s.default));
+export function resetSettings() {
+  Setting.forEach(s => setSetting(s.key, s.default));
 }
 
 /**
@@ -693,158 +693,158 @@ export function resetSettings(scene: BattleScene) {
  * @param value value to update setting with
  * @returns true if successful, false if not
  */
-export function setSetting(scene: BattleScene, setting: string, value: integer): boolean {
+export function setSetting(setting: string, value: integer): boolean {
   const index: number = settingIndex(setting);
   if (index === -1) {
     return false;
   }
   switch (Setting[index].key) {
     case SettingKeys.Game_Speed:
-      scene.gameSpeed = parseFloat(Setting[index].options[value].value.replace("x", ""));
+      gScene.gameSpeed = parseFloat(Setting[index].options[value].value.replace("x", ""));
       break;
     case SettingKeys.Master_Volume:
-      scene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      scene.updateSoundVolume();
+      gScene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      gScene.updateSoundVolume();
       break;
     case SettingKeys.BGM_Volume:
-      scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      scene.updateSoundVolume();
+      gScene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      gScene.updateSoundVolume();
       break;
     case SettingKeys.Field_Volume:
-      scene.fieldVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      scene.updateSoundVolume();
+      gScene.fieldVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      gScene.updateSoundVolume();
       break;
     case SettingKeys.SE_Volume:
-      scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      scene.updateSoundVolume();
+      gScene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      gScene.updateSoundVolume();
       break;
     case SettingKeys.UI_Volume:
-      scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      gScene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
       break;
     case SettingKeys.Music_Preference:
-      scene.musicPreference = value;
+      gScene.musicPreference = value;
       break;
     case SettingKeys.Damage_Numbers:
-      scene.damageNumbersMode = value;
+      gScene.damageNumbersMode = value;
       break;
     case SettingKeys.UI_Theme:
-      scene.uiTheme = value;
+      gScene.uiTheme = value;
       break;
     case SettingKeys.Window_Type:
-      updateWindowType(scene, parseInt(Setting[index].options[value].value));
+      updateWindowType(parseInt(Setting[index].options[value].value));
       break;
     case SettingKeys.Tutorials:
-      scene.enableTutorials = Setting[index].options[value].value === "On";
+      gScene.enableTutorials = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Move_Info:
-      scene.enableMoveInfo = Setting[index].options[value].value === "On";
+      gScene.enableMoveInfo = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Enable_Retries:
-      scene.enableRetries = Setting[index].options[value].value === "On";
+      gScene.enableRetries = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Hide_IVs:
-      scene.hideIvs = Setting[index].options[value].value === "On";
+      gScene.hideIvs = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Skip_Seen_Dialogues:
-      scene.skipSeenDialogues = Setting[index].options[value].value === "On";
+      gScene.skipSeenDialogues = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Egg_Skip:
-      scene.eggSkipPreference = value;
+      gScene.eggSkipPreference = value;
       break;
     case SettingKeys.Battle_Style:
-      scene.battleStyle = value;
+      gScene.battleStyle = value;
       break;
     case SettingKeys.Show_BGM_Bar:
-      scene.showBgmBar = Setting[index].options[value].value === "On";
+      gScene.showBgmBar = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Candy_Upgrade_Notification:
-      if (scene.candyUpgradeNotification === value) {
+      if (gScene.candyUpgradeNotification === value) {
         break;
       }
-      scene.candyUpgradeNotification = value;
-      scene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
+      gScene.candyUpgradeNotification = value;
+      gScene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
       break;
     case SettingKeys.Candy_Upgrade_Display:
-      scene.candyUpgradeDisplay = value;
+      gScene.candyUpgradeDisplay = value;
     case SettingKeys.Money_Format:
       switch (Setting[index].options[value].value) {
         case "Normal":
-          scene.moneyFormat = MoneyFormat.NORMAL;
+          gScene.moneyFormat = MoneyFormat.NORMAL;
           break;
         case "Abbreviated":
-          scene.moneyFormat = MoneyFormat.ABBREVIATED;
+          gScene.moneyFormat = MoneyFormat.ABBREVIATED;
           break;
       }
-      scene.updateMoneyText(false);
+      gScene.updateMoneyText(false);
       break;
     case SettingKeys.Sprite_Set:
-      scene.experimentalSprites = !!value;
+      gScene.experimentalSprites = !!value;
       if (value) {
-        scene.initExpSprites();
+        gScene.initExpSprites();
       }
       break;
     case SettingKeys.Move_Animations:
-      scene.moveAnimations = Setting[index].options[value].value === "On";
+      gScene.moveAnimations = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Show_Moveset_Flyout:
-      scene.showMovesetFlyout = Setting[index].options[value].value === "On";
+      gScene.showMovesetFlyout = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Show_Arena_Flyout:
-      scene.showArenaFlyout = Setting[index].options[value].value === "On";
+      gScene.showArenaFlyout = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Show_Time_Of_Day_Widget:
-      scene.showTimeOfDayWidget = Setting[index].options[value].value === "On";
+      gScene.showTimeOfDayWidget = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Time_Of_Day_Animation:
-      scene.timeOfDayAnimation = Setting[index].options[value].value === "Bounce" ? EaseType.BOUNCE : EaseType.BACK;
+      gScene.timeOfDayAnimation = Setting[index].options[value].value === "Bounce" ? EaseType.BOUNCE : EaseType.BACK;
       break;
     case SettingKeys.Show_Stats_on_Level_Up:
-      scene.showLevelUpStats = Setting[index].options[value].value === "On";
+      gScene.showLevelUpStats = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Shop_Cursor_Target:
       const selectedValue = shopCursorTargetIndexMap[value];
-      scene.shopCursorTarget = selectedValue;
+      gScene.shopCursorTarget = selectedValue;
       break;
     case SettingKeys.EXP_Gains_Speed:
-      scene.expGainsSpeed = value;
+      gScene.expGainsSpeed = value;
       break;
     case SettingKeys.EXP_Party_Display:
-      scene.expParty = value;
+      gScene.expParty = value;
       break;
     case SettingKeys.HP_Bar_Speed:
-      scene.hpBarSpeed = value;
+      gScene.hpBarSpeed = value;
       break;
     case SettingKeys.Fusion_Palette_Swaps:
-      scene.fusionPaletteSwaps = !!value;
+      gScene.fusionPaletteSwaps = !!value;
       break;
     case SettingKeys.Player_Gender:
-      if (scene.gameData) {
+      if (gScene.gameData) {
         const female = Setting[index].options[value].value === "Girl";
-        scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
-        scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
+        gScene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
+        gScene.trainer.setTexture(gScene.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
       } else {
         return false;
       }
       break;
     case SettingKeys.Touch_Controls:
-      scene.enableTouchControls = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
+      gScene.enableTouchControls = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
       const touchControls = document.getElementById("touchControls");
       if (touchControls) {
-        touchControls.classList.toggle("visible", scene.enableTouchControls);
+        touchControls.classList.toggle("visible", gScene.enableTouchControls);
       }
       break;
     case SettingKeys.Vibration:
-      scene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
+      gScene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
       break;
     case SettingKeys.Type_Hints:
-      scene.typeHints = Setting[index].options[value].value === "On";
+      gScene.typeHints = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Language:
       if (value) {
-        if (scene.ui) {
+        if (gScene.ui) {
           const cancelHandler = () => {
-            scene.ui.revertMode();
-            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
+            gScene.ui.revertMode();
+            (gScene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
           };
           const changeLocaleHandler = (locale: string): boolean => {
             try {
@@ -859,7 +859,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               return false;
             }
           };
-          scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          gScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
             options: [
               {
                 label: "English",
@@ -917,7 +917,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
       }
       break;
     case SettingKeys.Shop_Overlay_Opacity:
-      scene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
+      gScene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
       break;
   }
 

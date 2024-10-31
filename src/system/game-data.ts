@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import BattleScene, { bypassLogin, PokeballCounts } from "#app/battle-scene";
+import { bypassLogin, gScene, PokeballCounts } from "#app/battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys } from "#app/data/pokemon-species";
@@ -298,8 +298,6 @@ const systemShortKeys = {
 };
 
 export class GameData {
-  private scene: BattleScene;
-
   public trainerId: integer;
   public secretId: integer;
 
@@ -323,8 +321,7 @@ export class GameData {
   public eggPity: integer[];
   public unlockPity: integer[];
 
-  constructor(scene: BattleScene) {
-    this.scene = scene;
+  constructor() {
     this.loadSettings();
     this.loadGamepadSettings();
     this.loadMappingConfigs();
@@ -367,7 +364,7 @@ export class GameData {
       voucherUnlocks: this.voucherUnlocks,
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
-      gameVersion: this.scene.game.config.gameVersion,
+      gameVersion: gScene.game.config.gameVersion,
       timestamp: new Date().getTime(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0)
@@ -388,7 +385,7 @@ export class GameData {
 
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      this.scene.ui.savingIcon.show();
+      gScene.ui.savingIcon.show();
       const data = this.getSystemSaveData();
 
       const maxIntAttrValue = 0x80000000;
@@ -400,11 +397,11 @@ export class GameData {
         Utils.apiPost(`savedata/system/update?clientSessionId=${clientSessionId}`, systemData, undefined, true)
           .then(response => response.text())
           .then(error => {
-            this.scene.ui.savingIcon.hide();
+            gScene.ui.savingIcon.hide();
             if (error) {
               if (error.startsWith("session out of date")) {
-                this.scene.clearPhaseQueue();
-                this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                gScene.clearPhaseQueue();
+                gScene.unshiftPhase(new ReloadSessionPhase());
               }
               console.error(error);
               return resolve(false);
@@ -412,7 +409,7 @@ export class GameData {
             resolve(true);
           });
       } else {
-        this.scene.ui.savingIcon.hide();
+        gScene.ui.savingIcon.hide();
 
         resolve(true);
       }
@@ -433,10 +430,10 @@ export class GameData {
           .then(response => {
             if (!response.length || response[0] !== "{") {
               if (response.startsWith("sql: no rows in result set")) {
-                this.scene.queueMessage("Save data could not be found. If this is a new account, you can safely ignore this message.", null, true);
+                gScene.queueMessage("Save data could not be found. If this is a new account, you can safely ignore this message.", null, true);
                 return resolve(true);
               } else if (response.indexOf("Too many connections") > -1) {
-                this.scene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
+                gScene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
                 return resolve(false);
               }
               console.error(response);
@@ -576,7 +573,7 @@ export class GameData {
    * Retrieves current run history data, organized by time stamp.
    * At the moment, only retrievable from locale cache
    */
-  async getRunHistoryData(scene: BattleScene): Promise<RunHistoryData> {
+  async getRunHistoryData(): Promise<RunHistoryData> {
     if (!Utils.isLocal) {
       /**
        * Networking Code DO NOT DELETE!
@@ -624,13 +621,12 @@ export class GameData {
 
   /**
    * Saves a new entry to Run History
-   * @param scene: BattleScene object
    * @param runEntry: most recent SessionSaveData of the run
    * @param isVictory: result of the run
    * Arbitrary limit of 25 runs per player - Will delete runs, starting with the oldest one, if needed
    */
-  async saveRunHistory(scene: BattleScene, runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
-    const runHistoryData = await this.getRunHistoryData(scene);
+  async saveRunHistory(runEntry : SessionSaveData, isVictory: boolean): Promise<boolean> {
+    const runHistoryData = await this.getRunHistoryData();
     // runHistoryData should always return run history or {} empty object
     let timestamps = Object.keys(runHistoryData).map(Number);
 
@@ -708,8 +704,8 @@ export class GameData {
       .then(response => response.json());
 
     if (!response.valid) {
-      this.scene.clearPhaseQueue();
-      this.scene.unshiftPhase(new ReloadSessionPhase(this.scene, JSON.stringify(response.systemData)));
+      gScene.clearPhaseQueue();
+      gScene.unshiftPhase(new ReloadSessionPhase(JSON.stringify(response.systemData)));
       this.clearLocalData();
       return false;
     }
@@ -739,10 +735,10 @@ export class GameData {
       settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
     }
 
-    setSetting(this.scene, setting, valueIndex);
+    setSetting(setting, valueIndex);
 
     settings[setting] = valueIndex;
-    settings["gameVersion"] = this.scene.game.config.gameVersion;
+    settings["gameVersion"] = gScene.game.config.gameVersion;
 
     localStorage.setItem("settings", JSON.stringify(settings));
 
@@ -788,7 +784,7 @@ export class GameData {
     const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!);  // Parse the existing 'mappingConfigs' from localStorage // TODO: is this bang correct?
 
     for (const key of Object.keys(mappingConfigs)) {// Iterate over the keys of the mapping configurations
-      this.scene.inputController.injectConfig(key, mappingConfigs[key]);
+      gScene.inputController.injectConfig(key, mappingConfigs[key]);
     }  // Inject each configuration into the input controller for the corresponding key
 
     return true;  // Return true to indicate the operation was successful
@@ -799,7 +795,7 @@ export class GameData {
       return false;
     }  // If 'mappingConfigs' does not exist, return false
     localStorage.removeItem("mappingConfigs");
-    this.scene.inputController.resetConfigs();
+    gScene.inputController.resetConfigs();
     return true; // TODO: is `true` the correct return value?
   }
 
@@ -824,9 +820,9 @@ export class GameData {
     }
 
     if (device === Device.GAMEPAD) {
-      setSettingGamepad(this.scene, setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
+      setSettingGamepad(setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
     } else if (device === Device.KEYBOARD) {
-      setSettingKeyboard(this.scene, setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
+      setSettingKeyboard(setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
     }
 
     Object.keys(settingDefaults).forEach(s => {  // Iterate over the default gamepad settings
@@ -845,7 +841,7 @@ export class GameData {
    * @returns true if succesful, false if not
    */
   private loadSettings(): boolean {
-    resetSettings(this.scene);
+    resetSettings();
 
     if (!localStorage.hasOwnProperty("settings")) {
       return false;
@@ -856,14 +852,14 @@ export class GameData {
     applySettingsVersionMigration(settings);
 
     for (const setting of Object.keys(settings)) {
-      setSetting(this.scene, setting, settings[setting]);
+      setSetting(setting, settings[setting]);
     }
 
     return true; // TODO: is `true` the correct return value?
   }
 
   private loadGamepadSettings(): boolean {
-    Object.values(SettingGamepad).map(setting => setting as SettingGamepad).forEach(setting => setSettingGamepad(this.scene, setting, settingGamepadDefaults[setting]));
+    Object.values(SettingGamepad).map(setting => setting as SettingGamepad).forEach(setting => setSettingGamepad(setting, settingGamepadDefaults[setting]));
 
     if (!localStorage.hasOwnProperty("settingsGamepad")) {
       return false;
@@ -871,7 +867,7 @@ export class GameData {
     const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad")!); // TODO: is this bang correct?
 
     for (const setting of Object.keys(settingsGamepad)) {
-      setSettingGamepad(this.scene, setting as SettingGamepad, settingsGamepad[setting]);
+      setSettingGamepad(setting as SettingGamepad, settingsGamepad[setting]);
     }
 
     return true; // TODO: is `true` the correct return value?
@@ -944,27 +940,27 @@ export class GameData {
     return ret;
   }
 
-  public getSessionSaveData(scene: BattleScene): SessionSaveData {
+  public getSessionSaveData(): SessionSaveData {
     return {
-      seed: scene.seed,
-      playTime: scene.sessionPlayTime,
-      gameMode: scene.gameMode.modeId,
-      party: scene.getParty().map(p => new PokemonData(p)),
-      enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
-      arena: new ArenaData(scene.arena),
-      pokeballCounts: scene.pokeballCounts,
-      money: Math.floor(scene.money),
-      score: scene.score,
-      waveIndex: scene.currentBattle.waveIndex,
-      battleType: scene.currentBattle.battleType,
-      trainer: scene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
-      gameVersion: scene.game.config.gameVersion,
+      seed: gScene.seed,
+      playTime: gScene.sessionPlayTime,
+      gameMode: gScene.gameMode.modeId,
+      party: gScene.getParty().map(p => new PokemonData(p)),
+      enemyParty: gScene.getEnemyParty().map(p => new PokemonData(p)),
+      modifiers: gScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: gScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      arena: new ArenaData(gScene.arena),
+      pokeballCounts: gScene.pokeballCounts,
+      money: Math.floor(gScene.money),
+      score: gScene.score,
+      waveIndex: gScene.currentBattle.waveIndex,
+      battleType: gScene.currentBattle.battleType,
+      trainer: gScene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(gScene.currentBattle.trainer) : null,
+      gameVersion: gScene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
-      mysteryEncounterType: scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
-      mysteryEncounterSaveData: scene.mysteryEncounterSaveData
+      challenges: gScene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: gScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
+      mysteryEncounterSaveData: gScene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 
@@ -1007,68 +1003,68 @@ export class GameData {
     });
   }
 
-  loadSession(scene: BattleScene, slotId: integer, sessionData?: SessionSaveData): Promise<boolean> {
+  loadSession(slotId: integer, sessionData?: SessionSaveData): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
           console.debug(sessionData);
 
-          scene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
+          gScene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
           if (sessionData.challenges) {
-            scene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+            gScene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
           }
 
-          scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
-          scene.resetSeed();
+          gScene.setSeed(sessionData.seed || gScene.game.config.seed[0]);
+          gScene.resetSeed();
 
-          console.log("Seed:", scene.seed);
+          console.log("Seed:", gScene.seed);
 
-          scene.sessionPlayTime = sessionData.playTime || 0;
-          scene.lastSavePlayTime = 0;
+          gScene.sessionPlayTime = sessionData.playTime || 0;
+          gScene.lastSavePlayTime = 0;
 
           const loadPokemonAssets: Promise<void>[] = [];
 
-          const party = scene.getParty();
+          const party = gScene.getParty();
           party.splice(0, party.length);
 
           for (const p of sessionData.party) {
-            const pokemon = p.toPokemon(scene) as PlayerPokemon;
+            const pokemon = p.toPokemon() as PlayerPokemon;
             pokemon.setVisible(false);
             loadPokemonAssets.push(pokemon.loadAssets());
             party.push(pokemon);
           }
 
-          Object.keys(scene.pokeballCounts).forEach((key: string) => {
-            scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
+          Object.keys(gScene.pokeballCounts).forEach((key: string) => {
+            gScene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
           });
           if (Overrides.POKEBALL_OVERRIDE.active) {
-            scene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+            gScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
           }
 
-          scene.money = Math.floor(sessionData.money || 0);
-          scene.updateMoneyText();
+          gScene.money = Math.floor(sessionData.money || 0);
+          gScene.updateMoneyText();
 
-          if (scene.money > this.gameStats.highestMoney) {
-            this.gameStats.highestMoney = scene.money;
+          if (gScene.money > this.gameStats.highestMoney) {
+            this.gameStats.highestMoney = gScene.money;
           }
 
-          scene.score = sessionData.score;
-          scene.updateScoreText();
+          gScene.score = sessionData.score;
+          gScene.updateScoreText();
 
-          scene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
+          gScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
 
-          scene.newArena(sessionData.arena.biome);
+          gScene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
           const mysteryEncounterType = sessionData.mysteryEncounterType !== -1 ? sessionData.mysteryEncounterType : undefined;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterType)!; // TODO: is this bang correct?
+          const battle = gScene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterType)!; // TODO: is this bang correct?
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
-          scene.arena.init();
+          gScene.arena.init();
 
           sessionData.enemyParty.forEach((enemyData, e) => {
-            const enemyPokemon = enemyData.toPokemon(scene, battleType, e, sessionData.trainer?.variant === TrainerVariant.DOUBLE) as EnemyPokemon;
+            const enemyPokemon = enemyData.toPokemon(battleType, e, sessionData.trainer?.variant === TrainerVariant.DOUBLE) as EnemyPokemon;
             battle.enemyParty[e] = enemyPokemon;
             if (battleType === BattleType.WILD) {
               battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
@@ -1077,41 +1073,41 @@ export class GameData {
             loadPokemonAssets.push(enemyPokemon.loadAssets());
           });
 
-          scene.arena.weather = sessionData.arena.weather;
-          scene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE, scene.arena.weather?.weatherType!, scene.arena.weather?.turnsLeft!)); // TODO: is this bang correct?
+          gScene.arena.weather = sessionData.arena.weather;
+          gScene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE, gScene.arena.weather?.weatherType!, gScene.arena.weather?.turnsLeft!)); // TODO: is this bang correct?
 
-          scene.arena.terrain = sessionData.arena.terrain;
-          scene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, scene.arena.terrain?.terrainType!, scene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
+          gScene.arena.terrain = sessionData.arena.terrain;
+          gScene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, gScene.arena.terrain?.terrainType!, gScene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
 
-          scene.arena.tags = sessionData.arena.tags;
-          if (scene.arena.tags) {
-            for (const tag of scene.arena.tags) {
+          gScene.arena.tags = sessionData.arena.tags;
+          if (gScene.arena.tags) {
+            for (const tag of gScene.arena.tags) {
               if (tag instanceof ArenaTrapTag) {
                 const { tagType, side, turnCount, layers, maxLayers } = tag as ArenaTrapTag;
-                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+                gScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
               } else {
-                scene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+                gScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
               }
             }
           }
 
           for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(scene, Modifier[modifierData.className]);
+            const modifier = modifierData.toModifier(Modifier[modifierData.className]);
             if (modifier) {
-              scene.addModifier(modifier, true);
+              gScene.addModifier(modifier, true);
             }
           }
 
-          scene.updateModifiers(true);
+          gScene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(scene, Modifier[enemyModifierData.className]);
+            const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
             if (modifier) {
-              scene.addEnemyModifier(modifier, true);
+              gScene.addEnemyModifier(modifier, true);
             }
           }
 
-          scene.updateModifiers(false);
+          gScene.updateModifiers(false);
 
           Promise.all(loadPokemonAssets).then(() => resolve(true));
         };
@@ -1159,8 +1155,8 @@ export class GameData {
         }).then(error => {
           if (error) {
             if (error.startsWith("session out of date")) {
-              this.scene.clearPhaseQueue();
-              this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+              gScene.clearPhaseQueue();
+              gScene.unshiftPhase(new ReloadSessionPhase());
             }
             console.error(error);
             resolve(false);
@@ -1174,9 +1170,9 @@ export class GameData {
   /* Defines a localStorage item 'daily' to check on clears, offline implementation of savedata/newclear API
   If a GameModes clear other than Daily is checked, newClear = true as usual
   If a Daily mode is cleared, checks if it was already cleared before, based on seed, and returns true only to new daily clear runs */
-  offlineNewClear(scene: BattleScene): Promise<boolean> {
+  offlineNewClear(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      const sessionData = this.getSessionSaveData(scene);
+      const sessionData = this.getSessionSaveData();
       const seed = sessionData.seed;
       let daily: string[] = [];
 
@@ -1207,14 +1203,14 @@ export class GameData {
    * After session data is removed, attempt to update user info so the menu updates
    * To delete an unfinished run instead, use {@linkcode deleteSession}
    */
-  async tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
+  async tryClearSession(slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     let result: [boolean, boolean] = [ false, false ];
 
     if (bypassLogin) {
       localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       result = [ true, true ];
     } else {
-      const sessionData = this.getSessionSaveData(scene);
+      const sessionData = this.getSessionSaveData();
       const response = await Utils.apiPost(`savedata/session/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}&clientSessionId=${clientSessionId}`, JSON.stringify(sessionData), undefined, true);
 
       if (response.ok) {
@@ -1228,8 +1224,8 @@ export class GameData {
         result = [ true, jsonResponse.success ?? false ];
       } else {
         if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
-          this.scene.clearPhaseQueue();
-          this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+          gScene.clearPhaseQueue();
+          gScene.unshiftPhase(new ReloadSessionPhase());
         }
 
         console.error(jsonResponse);
@@ -1244,7 +1240,7 @@ export class GameData {
 
   parseSessionData(dataStr: string): SessionSaveData {
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
+      /*const versions = [ gScene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
 
       if (versions[0] !== versions[1]) {
         const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
@@ -1314,16 +1310,18 @@ export class GameData {
     return sessionData;
   }
 
-  saveAll(scene: BattleScene, skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
+  saveAll(skipVerification: boolean = false, sync: boolean = false, useCachedSession: boolean = false, useCachedSystem: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
         if (success !== null && !success) {
           return resolve(false);
         }
         if (sync) {
-          this.scene.ui.savingIcon.show();
+          gScene.ui.savingIcon.show();
         }
-        const sessionData = useCachedSession ? this.parseSessionData(decrypt(localStorage.getItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser?.username}`)!, bypassLogin)) : this.getSessionSaveData(scene); // TODO: is this bang correct?
+        const sessionData = useCachedSession ?
+          this.parseSessionData(decrypt(localStorage.getItem(`sessionData${gScene.sessionSlotId ? gScene.sessionSlotId : ""}_${loggedInUser?.username}`)!, bypassLogin)) // TODO: is this bang correct?
+          : this.getSessionSaveData();
 
         const maxIntAttrValue = 0x80000000;
         const systemData = useCachedSystem ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)) : this.getSystemSaveData(); // TODO: is this bang correct?
@@ -1331,13 +1329,13 @@ export class GameData {
         const request = {
           system: systemData,
           session: sessionData,
-          sessionSlotId: scene.sessionSlotId,
+          sessionSlotId: gScene.sessionSlotId,
           clientSessionId: clientSessionId
         };
 
         localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
 
-        localStorage.setItem(`sessionData${scene.sessionSlotId ? scene.sessionSlotId : ""}_${loggedInUser?.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
+        localStorage.setItem(`sessionData${gScene.sessionSlotId ? gScene.sessionSlotId : ""}_${loggedInUser?.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
         console.debug("Session data saved");
 
@@ -1346,13 +1344,13 @@ export class GameData {
             .then(response => response.text())
             .then(error => {
               if (sync) {
-                this.scene.lastSavePlayTime = 0;
-                this.scene.ui.savingIcon.hide();
+                gScene.lastSavePlayTime = 0;
+                gScene.ui.savingIcon.hide();
               }
               if (error) {
                 if (error.startsWith("session out of date")) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                  gScene.clearPhaseQueue();
+                  gScene.unshiftPhase(new ReloadSessionPhase());
                 }
                 console.error(error);
                 return resolve(false);
@@ -1361,7 +1359,7 @@ export class GameData {
             });
         } else {
           this.verify().then(success => {
-            this.scene.ui.savingIcon.hide();
+            gScene.ui.savingIcon.hide();
             resolve(success);
           });
         }
@@ -1461,15 +1459,15 @@ export class GameData {
               console.error(ex);
             }
 
-            const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText("", 0), Utils.fixedInt(1500));
+            const displayError = (error: string) => gScene.ui.showText(error, null, () => gScene.ui.showText("", 0), Utils.fixedInt(1500));
             dataName = dataName!; // tell TS compiler that dataName is defined!
 
             if (!valid) {
-              return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText("", 0), Utils.fixedInt(1500));
+              return gScene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => gScene.ui.showText("", 0), Utils.fixedInt(1500));
             }
 
-            this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
-              this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
+            gScene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
+              gScene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
@@ -1497,8 +1495,8 @@ export class GameData {
                   window.location = window.location;
                 }
               }, () => {
-                this.scene.ui.revertMode();
-                this.scene.ui.showText("", 0);
+                gScene.ui.revertMode();
+                gScene.ui.showText("", 0);
               }, false, -98);
             });
           };
@@ -1508,7 +1506,7 @@ export class GameData {
       }
     );
     saveFile.click();
-    /*(this.scene.plugins.get('rexfilechooserplugin') as FileChooserPlugin).open({ accept: '.prsv' })
+    /*(gScene.plugins.get('rexfilechooserplugin') as FileChooserPlugin).open({ accept: '.prsv' })
       .then(result => {
     });*/
   }
@@ -1526,7 +1524,7 @@ export class GameData {
 
     const defaultStarterNatures: Nature[] = [];
 
-    this.scene.executeWithSeedOffset(() => {
+    gScene.executeWithSeedOffset(() => {
       const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
       for (let s = 0; s < defaultStarterSpecies.length; s++) {
         defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
@@ -1570,7 +1568,7 @@ export class GameData {
 
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true, trainer: boolean = false): void {
     // Some Mystery Encounters block updates to these stats
-    if (this.scene.currentBattle?.isBattleMysteryEncounter() && this.scene.currentBattle.mysteryEncounter?.preventGameStatsUpdates) {
+    if (gScene.currentBattle?.isBattleMysteryEncounter() && gScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates) {
       return;
     }
     const dexEntry = this.dexData[pokemon.species.speciesId];
@@ -1603,7 +1601,7 @@ export class GameData {
     // If incrementCount === false (not a catch scenario), only update the pokemon's dex data if the Pokemon has already been marked as caught in dex
     // Prevents form changes, nature changes, etc. from unintentionally updating the dex data of a "rental" pokemon
     const speciesRootForm = pokemon.species.getRootSpeciesId();
-    if (!incrementCount && !this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
+    if (!incrementCount && !gScene.gameData.dexData[speciesRootForm].caughtAttr) {
       return Promise.resolve(false);
     } else {
       return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
@@ -1676,7 +1674,7 @@ export class GameData {
           }
         }
 
-        if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr || fromEgg)) {
+        if (!hasPrevolution && (!gScene.gameMode.isDaily || hasNewAttr || fromEgg)) {
           this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * (1 << (pokemon.variant ?? 0)) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
         }
       }
@@ -1695,8 +1693,8 @@ export class GameData {
           resolve(true);
           return;
         }
-        this.scene.playSound("level_up_fanfare");
-        this.scene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(true), null, true);
+        gScene.playSound("level_up_fanfare");
+        gScene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(true), null, true);
       } else {
         checkPrevolution(false);
       }
@@ -1711,25 +1709,25 @@ export class GameData {
     }
 
     if (!this.starterData[speciesIdToIncrement].classicWinCount) {
-      this.scene.gameData.gameStats.ribbonsOwned++;
+      gScene.gameData.gameStats.ribbonsOwned++;
     }
 
-    const ribbonsInStats: integer = this.scene.gameData.gameStats.ribbonsOwned;
+    const ribbonsInStats: integer = gScene.gameData.gameStats.ribbonsOwned;
 
     if (ribbonsInStats >= 100) {
-      this.scene.validateAchv(achvs._100_RIBBONS);
+      gScene.validateAchv(achvs._100_RIBBONS);
     }
     if (ribbonsInStats >= 75) {
-      this.scene.validateAchv(achvs._75_RIBBONS);
+      gScene.validateAchv(achvs._75_RIBBONS);
     }
     if (ribbonsInStats >= 50) {
-      this.scene.validateAchv(achvs._50_RIBBONS);
+      gScene.validateAchv(achvs._50_RIBBONS);
     }
     if (ribbonsInStats >= 25) {
-      this.scene.validateAchv(achvs._25_RIBBONS);
+      gScene.validateAchv(achvs._25_RIBBONS);
     }
     if (ribbonsInStats >= 10) {
-      this.scene.validateAchv(achvs._10_RIBBONS);
+      gScene.validateAchv(achvs._10_RIBBONS);
     }
 
     return ++this.starterData[speciesIdToIncrement].classicWinCount;
@@ -1744,8 +1742,8 @@ export class GameData {
   addStarterCandy(species: PokemonSpecies, count: integer): void {
     // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
     const speciesRootForm = species.getRootSpeciesId();
-    if (this.scene.gameData.dexData[speciesRootForm].caughtAttr) {
-      this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
+    if (gScene.gameData.dexData[speciesRootForm].caughtAttr) {
+      gScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
       this.starterData[species.speciesId].candyCount += count;
     }
   }
@@ -1781,19 +1779,19 @@ export class GameData {
         resolve(true);
         return;
       }
-      this.scene.playSound("level_up_fanfare");
+      gScene.playSound("level_up_fanfare");
       const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
       let message = prependSpeciesToMessage ? species.getName() + " " : "";
       message += eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
 
-      this.scene.ui.showText(message, null, () => resolve(true), null, true);
+      gScene.ui.showText(message, null, () => resolve(true), null, true);
     });
   }
 
   updateSpeciesDexIvs(speciesId: Species, ivs: integer[]): void {
     let dexEntry: DexEntry;
     do {
-      dexEntry = this.scene.gameData.dexData[speciesId];
+      dexEntry = gScene.gameData.dexData[speciesId];
       const dexIvs = dexEntry.ivs;
       for (let i = 0; i < dexIvs.length; i++) {
         if (dexIvs[i] < ivs[i]) {
@@ -1801,7 +1799,7 @@ export class GameData {
         }
       }
       if (dexIvs.filter(iv => iv === 31).length === 6) {
-        this.scene.validateAchv(achvs.PERFECT_IVS);
+        gScene.validateAchv(achvs.PERFECT_IVS);
       }
     } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
   }
@@ -1909,7 +1907,7 @@ export class GameData {
     }
 
     const cost = new Utils.NumberHolder(value);
-    applyChallenges(this.scene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
+    applyChallenges(gScene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
 
     return cost.value;
   }

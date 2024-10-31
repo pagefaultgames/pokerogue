@@ -1,5 +1,5 @@
+import { gScene } from "#app/battle-scene";
 import { PokeballType } from "#enums/pokeball";
-import BattleScene from "../battle-scene";
 import i18next from "i18next";
 
 export { PokeballType };
@@ -82,20 +82,20 @@ export function getPokeballTintColor(type: PokeballType): number {
   }
 }
 
-export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite, y1: number, y2: number, baseBounceDuration: integer, callback: Function) {
+export function doPokeballBounceAnim(pokeball: Phaser.GameObjects.Sprite, y1: number, y2: number, baseBounceDuration: integer, callback: Function) {
   let bouncePower = 1;
   let bounceYOffset = y1;
   let bounceY = y2;
   const yd = y2 - y1;
 
   const doBounce = () => {
-    scene.tweens.add({
+    gScene.tweens.add({
       targets: pokeball,
       y: y2,
       duration: bouncePower * baseBounceDuration,
       ease: "Cubic.easeIn",
       onComplete: () => {
-        scene.playSound("se/pb_bounce_1", { volume: bouncePower });
+        gScene.playSound("se/pb_bounce_1", { volume: bouncePower });
 
         bouncePower = bouncePower > 0.01 ? bouncePower * 0.5 : 0;
 
@@ -103,7 +103,7 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
           bounceYOffset = yd * bouncePower;
           bounceY = y2 - bounceYOffset;
 
-          scene.tweens.add({
+          gScene.tweens.add({
             targets: pokeball,
             y: bounceY,
             duration: bouncePower * baseBounceDuration,

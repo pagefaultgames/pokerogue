@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpBoosterModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
@@ -9,8 +9,8 @@ import { LevelUpPhase } from "./level-up-phase";
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {
   private expValue: number;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, expValue: number) {
-    super(scene, partyMemberIndex);
+  constructor(partyMemberIndex: integer, expValue: number) {
+    super(partyMemberIndex);
 
     this.expValue = expValue;
   }
@@ -20,14 +20,14 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const exp = new Utils.NumberHolder(this.expValue);
-    this.scene.applyModifiers(ExpBoosterModifier, true, exp);
+    gScene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
-    this.scene.ui.showText(i18next.t("battle:expGain", { pokemonName: getPokemonNameWithAffix(pokemon), exp: exp.value }), null, () => {
+    gScene.ui.showText(i18next.t("battle:expGain", { pokemonName: getPokemonNameWithAffix(pokemon), exp: exp.value }), null, () => {
       const lastLevel = pokemon.level;
       pokemon.addExp(exp.value);
       const newLevel = pokemon.level;
       if (newLevel > lastLevel) {
-        this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, lastLevel, newLevel));
+        gScene.unshiftPhase(new LevelUpPhase(this.partyMemberIndex, lastLevel, newLevel));
       }
       pokemon.updateInfo().then(() => this.end());
     }, null, true);

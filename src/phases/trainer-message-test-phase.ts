@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { TrainerType } from "#app/enums/trainer-type";
 import { BattlePhase } from "./battle-phase";
@@ -7,8 +7,8 @@ import { TestMessagePhase } from "./test-message-phase";
 export class TrainerMessageTestPhase extends BattlePhase {
   private trainerTypes: TrainerType[];
 
-  constructor(scene: BattleScene, ...trainerTypes: TrainerType[]) {
-    super(scene);
+  constructor(...trainerTypes: TrainerType[]) {
+    super();
 
     this.trainerTypes = trainerTypes;
   }
@@ -33,7 +33,7 @@ export class TrainerMessageTestPhase extends BattlePhase {
     }
 
     for (const message of testMessages) {
-      this.scene.pushPhase(new TestMessagePhase(this.scene, message));
+      gScene.pushPhase(new TestMessagePhase(message));
     }
 
     this.end();

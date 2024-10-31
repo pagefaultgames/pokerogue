@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs, BlockRedirectAbAttr, IncreasePpAbAttr, PokemonTypeChangeAbAttr, PostMoveUsedAbAttr, RedirectMoveAbAttr, ReduceStatusEffectDurationAbAttr } from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
@@ -62,8 +62,8 @@ export class MovePhase extends BattlePhase {
    * @param followUp Indicates that the move being uses is a "follow-up" - for example, a move being used by Metronome or Dancer.
    *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze and volatile status checks, etc.
    */
-  constructor(scene: BattleScene, pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false) {
-    super(scene);
+  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false) {
+    super();
 
     this.pokemon = pokemon;
     this.targets = targets;
@@ -118,7 +118,7 @@ export class MovePhase extends BattlePhase {
     // Check move to see if arena.ignoreAbilities should be true.
     if (!this.followUp) {
       if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null)) {
-        this.scene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
+        gScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
     }
 
@@ -158,7 +158,7 @@ export class MovePhase extends BattlePhase {
   }
 
   public getActiveTargetPokemon(): Pokemon[] {
-    return this.scene.getField(true).filter(p => this.targets.includes(p.getBattlerIndex()));
+    return gScene.getField(true).filter(p => this.targets.includes(p.getBattlerIndex()));
   }
 
   /**
@@ -197,10 +197,10 @@ export class MovePhase extends BattlePhase {
 
       if (activated) {
         this.cancel();
-        this.scene.queueMessage(getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
-        this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
+        gScene.queueMessage(getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
+        gScene.unshiftPhase(new CommonAnimPhase(this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
       } else if (healed) {
-        this.scene.queueMessage(getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
+        gScene.queueMessage(getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)));
         this.pokemon.resetStatus();
         this.pokemon.updateInfo();
       }
@@ -225,7 +225,7 @@ export class MovePhase extends BattlePhase {
     const moveQueue = this.pokemon.getMoveQueue();
 
     // form changes happen even before we know that the move wll execute.
-    this.scene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
+    gScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
 
     this.showMoveText();
 
@@ -243,12 +243,12 @@ export class MovePhase extends BattlePhase {
       const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
 
       this.move.usePp(ppUsed);
-      this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
+      gScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
     }
 
     // Update the battle's "last move" pointer, unless we're currently mimicking a move.
     if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
-      this.scene.currentBattle.lastMove = this.move.moveId;
+      gScene.currentBattle.lastMove = this.move.moveId;
     }
 
     /**
@@ -269,8 +269,8 @@ export class MovePhase extends BattlePhase {
      * TODO: is this sustainable?
      */
     const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
-    const failedDueToWeather: boolean = this.scene.arena.isMoveWeatherCancelled(this.pokemon, move);
-    const failedDueToTerrain: boolean = this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
+    const failedDueToWeather: boolean = gScene.arena.isMoveWeatherCancelled(this.pokemon, move);
+    const failedDueToTerrain: boolean = gScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
 
     const success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
 
@@ -282,7 +282,7 @@ export class MovePhase extends BattlePhase {
      */
     if (success) {
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
-      this.scene.unshiftPhase(new MoveEffectPhase(this.scene, this.pokemon.getBattlerIndex(), this.targets, this.move));
+      gScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, this.move));
 
     } else {
       if ([ Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE ].includes(this.move.moveId)) {
@@ -297,7 +297,7 @@ export class MovePhase extends BattlePhase {
       if (failureMessage) {
         failedText = failureMessage;
       } else if (failedDueToTerrain) {
-        failedText = getTerrainBlockMessage(this.pokemon, this.scene.arena.getTerrainType());
+        failedText = getTerrainBlockMessage(this.pokemon, gScene.arena.getTerrainType());
       }
 
       this.showFailedText(failedText);
@@ -309,7 +309,7 @@ export class MovePhase extends BattlePhase {
     // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
     // Note that the `!this.followUp` check here prevents an infinite Dancer loop.
     if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !this.followUp) {
-      this.scene.getField(true).forEach(pokemon => {
+      gScene.getField(true).forEach(pokemon => {
         applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
       });
     }
@@ -325,7 +325,7 @@ export class MovePhase extends BattlePhase {
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
 
       this.showMoveText();
-      this.scene.unshiftPhase(new MoveChargePhase(this.scene, this.pokemon.getBattlerIndex(), this.targets[0], this.move));
+      gScene.unshiftPhase(new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move));
     } else {
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
@@ -350,7 +350,7 @@ export class MovePhase extends BattlePhase {
    */
   public end(): void {
     if (!this.followUp && this.canMove()) {
-      this.scene.unshiftPhase(new MoveEndPhase(this.scene, this.pokemon.getBattlerIndex()));
+      gScene.unshiftPhase(new MoveEndPhase(this.pokemon.getBattlerIndex()));
     }
 
     super.end();
@@ -378,7 +378,7 @@ export class MovePhase extends BattlePhase {
       const redirectTarget = new NumberHolder(currentTarget);
 
       // check move redirection abilities of every pokemon *except* the user.
-      this.scene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, redirectTarget));
+      gScene.getField(true).filter(p => p !== this.pokemon).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, redirectTarget));
 
       /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
       let redirectedByAbility = (currentTarget !== redirectTarget.value);
@@ -405,7 +405,7 @@ export class MovePhase extends BattlePhase {
 
         if (this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr)) {
           redirectTarget.value = currentTarget;
-          this.scene.unshiftPhase(new ShowAbilityPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
+          gScene.unshiftPhase(new ShowAbilityPhase(this.pokemon.getBattlerIndex(), this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr)));
         }
 
         this.targets[0] = redirectTarget.value;
@@ -428,9 +428,9 @@ export class MovePhase extends BattlePhase {
 
         // account for metal burst and comeuppance hitting remaining targets in double battles
         // counterattack will redirect to remaining ally if original attacker faints
-        if (this.scene.currentBattle.double && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)) {
-          if (this.scene.getField()[this.targets[0]].hp === 0) {
-            const opposingField = this.pokemon.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+        if (gScene.currentBattle.double && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)) {
+          if (gScene.getField()[this.targets[0]].hp === 0) {
+            const opposingField = this.pokemon.isPlayer() ? gScene.getEnemyField() : gScene.getPlayerField();
             this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex() ?? BattlerIndex.ATTACKER;
           }
         }
@@ -467,7 +467,7 @@ export class MovePhase extends BattlePhase {
           this.move.usePp();
         }
 
-        this.scene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
+        gScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
       if (this.cancelled && this.pokemon.summonData?.tags?.find(t => t.tagType === BattlerTagType.FRENZY)) {
@@ -496,7 +496,7 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    this.scene.queueMessage(i18next.t("battle:useMove", {
+    gScene.queueMessage(i18next.t("battle:useMove", {
       pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
       moveName: this.move.getName()
     }), 500);
@@ -504,6 +504,6 @@ export class MovePhase extends BattlePhase {
   }
 
   protected showFailedText(failedText?: string): void {
-    this.scene.queueMessage(failedText ?? i18next.t("battle:attackFailed"));
+    gScene.queueMessage(failedText ?? i18next.t("battle:attackFailed"));
   }
 }

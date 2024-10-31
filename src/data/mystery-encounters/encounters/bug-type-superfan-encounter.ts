@@ -1,5 +1,6 @@
 import {
-  EnemyPartyConfig, generateModifierType,
+  EnemyPartyConfig,
+  generateModifierType,
   generateModifierTypeOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
@@ -17,7 +18,7 @@ import {
 } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -214,12 +215,12 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         text: `${namespace}:intro_dialogue`,
       },
     ])
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .withOnInit(() => {
+      const encounter = gScene.currentBattle.mysteryEncounter!;
       // Calculates what trainers are available for battle in the encounter
 
       // Bug type superfan trainer config
-      const config = getTrainerConfigForWave(scene.currentBattle.waveIndex);
+      const config = getTrainerConfigForWave(gScene.currentBattle.waveIndex);
       const spriteKey = config.getSpriteKey();
       encounter.enemyPartyConfigs.push({
         trainerConfig: config,
@@ -227,7 +228,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       });
 
       let beedrillKeys: { spriteKey: string, fileRoot: string }, butterfreeKeys: { spriteKey: string, fileRoot: string };
-      if (scene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
+      if (gScene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
         beedrillKeys = getSpriteKeysFromSpecies(Species.BEEDRILL, false);
         butterfreeKeys = getSpriteKeysFromSpecies(Species.BUTTERFREE, false);
       } else {
@@ -270,9 +271,9 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       ];
 
       const requiredItems = [
-        generateModifierType(scene, modifierTypes.QUICK_CLAW),
-        generateModifierType(scene, modifierTypes.GRIP_CLAW),
-        generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.BUG ]),
+        generateModifierType(modifierTypes.QUICK_CLAW),
+        generateModifierType(modifierTypes.GRIP_CLAW),
+        generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.BUG ]),
       ];
 
       const requiredItemString = requiredItems.map(m => m?.name ?? "unknown").join("/");
@@ -295,9 +296,9 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Select battle the bug trainer
-        const encounter = scene.currentBattle.mysteryEncounter!;
+        const encounter = gScene.currentBattle.mysteryEncounter!;
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
         // Init the moves available for tutor
@@ -313,9 +314,9 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         // Assigns callback that teaches move before continuing to rewards
         encounter.onRewards = doBugTypeMoveTutor;
 
-        setEncounterRewards(scene, { fillRemaining: true });
-        await transitionMysteryEncounterIntroVisuals(scene, true, true);
-        await initBattleWithEnemyConfig(scene, config);
+        setEncounterRewards({ fillRemaining: true });
+        await transitionMysteryEncounterIntroVisuals(true, true);
+        await initBattleWithEnemyConfig(config);
       }
     )
     .withOption(MysteryEncounterOptionBuilder
@@ -326,17 +327,17 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         buttonTooltip: `${namespace}:option.2.tooltip`,
         disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`
       })
-      .withPreOptionPhase(async (scene: BattleScene) => {
+      .withPreOptionPhase(async () => {
         // Player shows off their bug types
-        const encounter = scene.currentBattle.mysteryEncounter!;
+        const encounter = gScene.currentBattle.mysteryEncounter!;
 
         // Player gets different rewards depending on the number of bug types they have
-        const numBugTypes = scene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
+        const numBugTypes = gScene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
         const numBugTypesText = i18next.t(`${namespace}:numBugTypes`, { count: numBugTypes });
         encounter.setDialogueToken("numBugTypes", numBugTypesText);
 
         if (numBugTypes < 2) {
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.SUPER_LURE, modifierTypes.GREAT_BALL ], fillRemaining: false });
+          setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.SUPER_LURE, modifierTypes.GREAT_BALL ], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
@@ -344,7 +345,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
             },
           ];
         } else if (numBugTypes < 4) {
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.QUICK_CLAW, modifierTypes.MAX_LURE, modifierTypes.ULTRA_BALL ], fillRemaining: false });
+          setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.QUICK_CLAW, modifierTypes.MAX_LURE, modifierTypes.ULTRA_BALL ], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
@@ -352,7 +353,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
             },
           ];
         } else if (numBugTypes < 6) {
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.GRIP_CLAW, modifierTypes.MAX_LURE, modifierTypes.ROGUE_BALL ], fillRemaining: false });
+          setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.GRIP_CLAW, modifierTypes.MAX_LURE, modifierTypes.ROGUE_BALL ], fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
@@ -362,28 +363,28 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         } else {
           // If the player has any evolution/form change items that are valid for their party,
           // spawn one of those items in addition to Dynamax Band, Mega Band, and Master Ball
-          const modifierOptions: ModifierTypeOption[] = [ generateModifierTypeOption(scene, modifierTypes.MASTER_BALL)! ];
+          const modifierOptions: ModifierTypeOption[] = [ generateModifierTypeOption(modifierTypes.MASTER_BALL)! ];
           const specialOptions: ModifierTypeOption[] = [];
 
-          if (!scene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
-            modifierOptions.push(generateModifierTypeOption(scene, modifierTypes.MEGA_BRACELET)!);
+          if (!gScene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
+            modifierOptions.push(generateModifierTypeOption(modifierTypes.MEGA_BRACELET)!);
           }
-          if (!scene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
-            modifierOptions.push(generateModifierTypeOption(scene, modifierTypes.DYNAMAX_BAND)!);
+          if (!gScene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
+            modifierOptions.push(generateModifierTypeOption(modifierTypes.DYNAMAX_BAND)!);
           }
-          const nonRareEvolutionModifier = generateModifierTypeOption(scene, modifierTypes.EVOLUTION_ITEM);
+          const nonRareEvolutionModifier = generateModifierTypeOption(modifierTypes.EVOLUTION_ITEM);
           if (nonRareEvolutionModifier) {
             specialOptions.push(nonRareEvolutionModifier);
           }
-          const rareEvolutionModifier = generateModifierTypeOption(scene, modifierTypes.RARE_EVOLUTION_ITEM);
+          const rareEvolutionModifier = generateModifierTypeOption(modifierTypes.RARE_EVOLUTION_ITEM);
           if (rareEvolutionModifier) {
             specialOptions.push(rareEvolutionModifier);
           }
-          const formChangeModifier = generateModifierTypeOption(scene, modifierTypes.FORM_CHANGE_ITEM);
+          const formChangeModifier = generateModifierTypeOption(modifierTypes.FORM_CHANGE_ITEM);
           if (formChangeModifier) {
             specialOptions.push(formChangeModifier);
           }
-          const rareFormChangeModifier = generateModifierTypeOption(scene, modifierTypes.RARE_FORM_CHANGE_ITEM);
+          const rareFormChangeModifier = generateModifierTypeOption(modifierTypes.RARE_FORM_CHANGE_ITEM);
           if (rareFormChangeModifier) {
             specialOptions.push(rareFormChangeModifier);
           }
@@ -391,7 +392,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
             modifierOptions.push(specialOptions[randSeedInt(specialOptions.length)]);
           }
 
-          setEncounterRewards(scene, { guaranteedModifierTypeOptions: modifierOptions, fillRemaining: false });
+          setEncounterRewards({ guaranteedModifierTypeOptions: modifierOptions, fillRemaining: false });
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
@@ -400,9 +401,9 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
           ];
         }
       })
-      .withOptionPhase(async (scene: BattleScene) => {
+      .withOptionPhase(async () => {
         // Player shows off their bug types
-        leaveEncounterWithoutBattle(scene);
+        leaveEncounterWithoutBattle();
       })
       .build())
     .withOption(MysteryEncounterOptionBuilder
@@ -429,8 +430,8 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         ],
         secondOptionPrompt: `${namespace}:option.3.select_prompt`,
       })
-      .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-        const encounter = scene.currentBattle.mysteryEncounter!;
+      .withPreOptionPhase(async (): Promise<boolean> => {
+        const encounter = gScene.currentBattle.mysteryEncounter!;
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
@@ -466,30 +467,30 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
               (item instanceof AttackTypeBoosterModifier && (item.type as AttackTypeBoosterModifierType).moveType === Type.BUG);
           });
           if (!hasValidItem) {
-            return getEncounterText(scene, `${namespace}:option.3.invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
           }
 
           return null;
         };
 
-        return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
+        return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
       })
-      .withOptionPhase(async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter!;
+      .withOptionPhase(async () => {
+        const encounter = gScene.currentBattle.mysteryEncounter!;
         const modifier = encounter.misc.chosenModifier;
 
         // Remove the modifier if its stacks go to 0
         modifier.stackCount -= 1;
         if (modifier.stackCount === 0) {
-          scene.removeModifier(modifier);
+          gScene.removeModifier(modifier);
         }
-        scene.updateModifiers(true, true);
+        gScene.updateModifiers(true, true);
 
-        const bugNet = generateModifierTypeOption(scene, modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
+        const bugNet = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
         bugNet.type.tier = ModifierTier.ROGUE;
 
-        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ bugNet ], guaranteedModifierTypeFuncs: [ modifierTypes.REVIVER_SEED ], fillRemaining: false });
-        leaveEncounterWithoutBattle(scene, true);
+        setEncounterRewards({ guaranteedModifierTypeOptions: [ bugNet ], guaranteedModifierTypeFuncs: [ modifierTypes.REVIVER_SEED ], fillRemaining: false });
+        leaveEncounterWithoutBattle(true);
       })
       .build())
     .withOutroDialogue([
@@ -645,22 +646,22 @@ function getTrainerConfigForWave(waveIndex: number) {
   return config;
 }
 
-function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
+function doBugTypeMoveTutor(): Promise<void> {
   return new Promise<void>(async resolve => {
-    const moveOptions = scene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
-    await showEncounterDialogue(scene, `${namespace}:battle_won`, `${namespace}:speaker`);
+    const moveOptions = gScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
+    await showEncounterDialogue(`${namespace}:battle_won`, `${namespace}:speaker`);
 
     const overlayScale = 1;
-    const moveInfoOverlay = new MoveInfoOverlay(scene, {
+    const moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: false,
       scale: overlayScale,
       onSide: true,
       right: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
-      width: (scene.game.canvas.width / 6) - 2,
+      width: (gScene.game.canvas.width / 6) - 2,
     });
-    scene.ui.add(moveInfoOverlay);
+    gScene.ui.add(moveInfoOverlay);
 
     const optionSelectItems = moveOptions.map((move: PokemonMove) => {
       const option: OptionSelectItem = {
@@ -683,7 +684,7 @@ function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
       moveInfoOverlay.setVisible(false);
     };
 
-    const result = await selectOptionThenPokemon(scene, optionSelectItems, `${namespace}:teach_move_prompt`, undefined, onHoverOverCancel);
+    const result = await selectOptionThenPokemon(optionSelectItems, `${namespace}:teach_move_prompt`, undefined, onHoverOverCancel);
     // let forceExit = !!result;
     if (!result) {
       moveInfoOverlay.active = false;
@@ -694,7 +695,7 @@ function doBugTypeMoveTutor(scene: BattleScene): Promise<void> {
 
     // Option select complete, handle if they are learning a move
     if (result && result.selectedOptionIndex < moveOptions.length) {
-      scene.unshiftPhase(new LearnMovePhase(scene, result.selectedPokemonIndex, moveOptions[result.selectedOptionIndex].moveId));
+      gScene.unshiftPhase(new LearnMovePhase(result.selectedPokemonIndex, moveOptions[result.selectedOptionIndex].moveId));
     }
 
     // Complete battle and go to rewards

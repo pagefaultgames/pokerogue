@@ -1,4 +1,3 @@
-import BattleScene from "../battle-scene";
 import { getPokeballName } from "../data/pokeball";
 import { addTextObject, getTextStyleOptions, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
@@ -7,6 +6,7 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
 import { CommandPhase } from "#app/phases/command-phase";
+import { gScene } from "#app/battle-scene";
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
@@ -17,28 +17,28 @@ export default class BallUiHandler extends UiHandler {
 
   private scale: number = 0.1666666667;
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.BALL);
+  constructor() {
+    super(Mode.BALL);
   }
 
   setup() {
     const ui = this.getUi();
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, gScene.uiTheme).scale;
 
     let optionsTextContent = "";
 
-    for (let pb = 0; pb < Object.keys(this.scene.pokeballCounts).length; pb++) {
+    for (let pb = 0; pb < Object.keys(gScene.pokeballCounts).length; pb++) {
       optionsTextContent += `${getPokeballName(pb)}\n`;
     }
     optionsTextContent += "Cancel";
-    const optionsText = addTextObject(this.scene, 0, 0, optionsTextContent, TextStyle.WINDOW, { align: "right", maxLines: 6 });
+    const optionsText = addTextObject(0, 0, optionsTextContent, TextStyle.WINDOW, { align: "right", maxLines: 6 });
     const optionsTextWidth = optionsText.displayWidth;
-    this.pokeballSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 51 - Math.max(64, optionsTextWidth), -49);
+    this.pokeballSelectContainer = gScene.add.container((gScene.game.canvas.width / 6) - 51 - Math.max(64, optionsTextWidth), -49);
     this.pokeballSelectContainer.setVisible(false);
     ui.add(this.pokeballSelectContainer);
 
-    this.pokeballSelectBg = addWindow(this.scene, 0, 0, 50 + Math.max(64, optionsTextWidth), 32 + 480 * this.scale);
+    this.pokeballSelectBg = addWindow(0, 0, 50 + Math.max(64, optionsTextWidth), 32 + 480 * this.scale);
     this.pokeballSelectBg.setOrigin(0, 1);
     this.pokeballSelectContainer.add(this.pokeballSelectBg);
     this.pokeballSelectContainer.add(optionsText);
@@ -46,7 +46,7 @@ export default class BallUiHandler extends UiHandler {
     optionsText.setPositionRelative(this.pokeballSelectBg, 42, 9);
     optionsText.setLineSpacing(this.scale * 72);
 
-    this.countsText = addTextObject(this.scene, 0, 0, "", TextStyle.WINDOW, { maxLines: 5 });
+    this.countsText = addTextObject(0, 0, "", TextStyle.WINDOW, { maxLines: 5 });
     this.countsText.setPositionRelative(this.pokeballSelectBg, 18, 9);
     this.countsText.setLineSpacing(this.scale * 72);
     this.pokeballSelectContainer.add(this.countsText);
@@ -69,16 +69,16 @@ export default class BallUiHandler extends UiHandler {
 
     let success = false;
 
-    const pokeballTypeCount = Object.keys(this.scene.pokeballCounts).length;
+    const pokeballTypeCount = Object.keys(gScene.pokeballCounts).length;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const commandPhase = this.scene.getCurrentPhase() as CommandPhase;
+      const commandPhase = gScene.getCurrentPhase() as CommandPhase;
       success = true;
       if (button === Button.ACTION && this.cursor < pokeballTypeCount) {
-        if (this.scene.pokeballCounts[this.cursor]) {
+        if (gScene.pokeballCounts[this.cursor]) {
           if (commandPhase.handleCommand(Command.BALL, this.cursor)) {
-            this.scene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
-            this.scene.ui.setMode(Mode.MESSAGE);
+            gScene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
+            gScene.ui.setMode(Mode.MESSAGE);
             success = true;
           }
         } else {
@@ -107,14 +107,14 @@ export default class BallUiHandler extends UiHandler {
   }
 
   updateCounts() {
-    this.countsText.setText(Object.values(this.scene.pokeballCounts).map(c => `x${c}`).join("\n"));
+    this.countsText.setText(Object.values(gScene.pokeballCounts).map(c => `x${c}`).join("\n"));
   }
 
   setCursor(cursor: integer): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.image(0, 0, "cursor");
+      this.cursorObj = gScene.add.image(0, 0, "cursor");
       this.pokeballSelectContainer.add(this.cursorObj);
     }
 

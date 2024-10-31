@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { PlayerGender } from "#app/enums/player-gender";
 import { Phase } from "#app/phase";
 import { addTextObject, TextStyle } from "#app/ui/text";
@@ -8,31 +8,31 @@ export class EndCardPhase extends Phase {
   public endCard: Phaser.GameObjects.Image;
   public text: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene) {
-    super(scene);
+  constructor() {
+    super();
   }
 
   start(): void {
     super.start();
 
-    this.scene.ui.getMessageHandler().bg.setVisible(false);
-    this.scene.ui.getMessageHandler().nameBoxContainer.setVisible(false);
+    gScene.ui.getMessageHandler().bg.setVisible(false);
+    gScene.ui.getMessageHandler().nameBoxContainer.setVisible(false);
 
-    this.endCard = this.scene.add.image(0, 0, `end_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
+    this.endCard = gScene.add.image(0, 0, `end_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`);
     this.endCard.setOrigin(0);
     this.endCard.setScale(0.5);
-    this.scene.field.add(this.endCard);
+    gScene.field.add(this.endCard);
 
-    this.text = addTextObject(this.scene, this.scene.game.canvas.width / 12, (this.scene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
+    this.text = addTextObject(gScene.game.canvas.width / 12, (gScene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
     this.text.setOrigin(0.5);
-    this.scene.field.add(this.text);
+    gScene.field.add(this.text);
 
-    this.scene.ui.clearText();
+    gScene.ui.clearText();
 
-    this.scene.ui.fadeIn(1000).then(() => {
+    gScene.ui.fadeIn(1000).then(() => {
 
-      this.scene.ui.showText("", null, () => {
-        this.scene.ui.getMessageHandler().bg.setVisible(true);
+      gScene.ui.showText("", null, () => {
+        gScene.ui.getMessageHandler().bg.setVisible(true);
         this.end();
       }, null, true);
     });

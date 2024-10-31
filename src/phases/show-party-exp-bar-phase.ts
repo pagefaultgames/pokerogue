@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { ExpNotification } from "#app/enums/exp-notification";
 import { ExpBoosterModifier } from "#app/modifier/modifier";
@@ -10,8 +10,8 @@ import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-pha
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   private expValue: number;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, expValue: number) {
-    super(scene, partyMemberIndex);
+  constructor(partyMemberIndex: integer, expValue: number) {
+    super(partyMemberIndex);
 
     this.expValue = expValue;
   }
@@ -21,33 +21,33 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const exp = new Utils.NumberHolder(this.expValue);
-    this.scene.applyModifiers(ExpBoosterModifier, true, exp);
+    gScene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
 
     const lastLevel = pokemon.level;
     pokemon.addExp(exp.value);
     const newLevel = pokemon.level;
     if (newLevel > lastLevel) {
-      this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, lastLevel, newLevel));
+      gScene.unshiftPhase(new LevelUpPhase(this.partyMemberIndex, lastLevel, newLevel));
     }
-    this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));
+    gScene.unshiftPhase(new HidePartyExpBarPhase());
     pokemon.updateInfo();
 
-    if (this.scene.expParty === ExpNotification.SKIP) {
+    if (gScene.expParty === ExpNotification.SKIP) {
       this.end();
-    } else if (this.scene.expParty === ExpNotification.ONLY_LEVEL_UP) {
+    } else if (gScene.expParty === ExpNotification.ONLY_LEVEL_UP) {
       if (newLevel > lastLevel) { // this means if we level up
         // instead of displaying the exp gain in the small frame, we display the new level
         // we use the same method for mode 0 & 1, by giving a parameter saying to display the exp or the level
-        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === ExpNotification.ONLY_LEVEL_UP, newLevel).then(() => {
-          setTimeout(() => this.end(), 800 / Math.pow(2, this.scene.expGainsSpeed));
+        gScene.partyExpBar.showPokemonExp(pokemon, exp.value, gScene.expParty === ExpNotification.ONLY_LEVEL_UP, newLevel).then(() => {
+          setTimeout(() => this.end(), 800 / Math.pow(2, gScene.expGainsSpeed));
         });
       } else {
         this.end();
       }
-    } else if (this.scene.expGainsSpeed < ExpGainsSpeed.SKIP) {
-      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, false, newLevel).then(() => {
-        setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
+    } else if (gScene.expGainsSpeed < ExpGainsSpeed.SKIP) {
+      gScene.partyExpBar.showPokemonExp(pokemon, exp.value, false, newLevel).then(() => {
+        setTimeout(() => this.end(), 500 / Math.pow(2, gScene.expGainsSpeed));
       });
     } else {
       this.end();

@@ -1,3 +1,5 @@
+import { gScene } from "#app/battle-scene";
+
 /**
  * A vertical scrollbar element that resizes dynamically based on the current scrolling
  * and number of elements that can be shown on screen
@@ -18,8 +20,8 @@ export class ScrollBar extends Phaser.GameObjects.Container {
    * @param height the scrollbar's height
    * @param maxRows the maximum number of rows that can be shown at once
    */
-  constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, maxRows: number) {
-    super(scene, x, y);
+  constructor(x: number, y: number, width: number, height: number, maxRows: number) {
+    super(gScene, x, y);
 
     this.maxRows = maxRows;
     this.totalRows = maxRows;
@@ -28,15 +30,15 @@ export class ScrollBar extends Phaser.GameObjects.Container {
     const borderSize = 2;
     width = Math.max(width, 4);
 
-    this.bg = scene.add.nineslice(0, 0, "scroll_bar", undefined, width, height, borderSize, borderSize, borderSize, borderSize);
+    this.bg = gScene.add.nineslice(0, 0, "scroll_bar", undefined, width, height, borderSize, borderSize, borderSize, borderSize);
     this.bg.setOrigin(0, 0);
     this.add(this.bg);
 
-    this.handleBody = scene.add.rectangle(1, 1, width - 2, 4, 0xaaaaaa);
+    this.handleBody = gScene.add.rectangle(1, 1, width - 2, 4, 0xaaaaaa);
     this.handleBody.setOrigin(0, 0);
     this.add(this.handleBody);
 
-    this.handleBottom = scene.add.nineslice(1, 1, "scroll_bar_handle", undefined, width - 2, 2, 2, 0, 0, 0);
+    this.handleBottom = gScene.add.nineslice(1, 1, "scroll_bar_handle", undefined, width - 2, 2, 2, 0, 0, 0);
     this.handleBottom.setOrigin(0, 0);
     this.add(this.handleBottom);
   }

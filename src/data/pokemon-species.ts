@@ -4,7 +4,7 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
-import BattleScene, { AnySound } from "#app/battle-scene";
+import { AnySound, gScene } from "#app/battle-scene";
 import { GameMode } from "#app/game-mode";
 import { StarterMoveset } from "#app/system/game-data";
 import * as Utils from "#app/utils";
@@ -467,29 +467,29 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
-  loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
+  loadAssets(female: boolean, formIndex?: integer, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
       const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
-      scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
-      scene.load.audio(`cry/${this.getCryKey(formIndex)}`, `audio/cry/${this.getCryKey(formIndex)}.m4a`);
-      scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+      gScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
+      gScene.load.audio(`cry/${this.getCryKey(formIndex)}`, `audio/cry/${this.getCryKey(formIndex)}.m4a`);
+      gScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
         console.warn = () => {};
-        const frameNames = scene.anims.generateFrameNames(spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
+        const frameNames = gScene.anims.generateFrameNames(spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
         console.warn = originalWarn;
-        if (!(scene.anims.exists(spriteKey))) {
-          scene.anims.create({
+        if (!(gScene.anims.exists(spriteKey))) {
+          gScene.anims.create({
             key: this.getSpriteKey(female, formIndex, shiny, variant),
             frames: frameNames,
             frameRate: 12,
             repeat: -1
           });
         } else {
-          scene.anims.get(spriteKey).frameRate = 12;
+          gScene.anims.get(spriteKey).frameRate = 12;
         }
         let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
-        const useExpSprite = scene.experimentalSprites && scene.hasExpSprite(spriteKey);
+        const useExpSprite = gScene.experimentalSprites && gScene.hasExpSprite(spriteKey);
         if (useExpSprite) {
           spritePath = `exp/${spritePath}`;
         }
@@ -502,7 +502,7 @@ export abstract class PokemonSpeciesForm {
               if (variantColorCache.hasOwnProperty(key)) {
                 return resolve();
               }
-              scene.cachedFetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
+              gScene.cachedFetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
                 variantColorCache[key] = c;
                 resolve();
               });
@@ -514,8 +514,8 @@ export abstract class PokemonSpeciesForm {
         resolve();
       });
       if (startLoad) {
-        if (!scene.load.isLoading()) {
-          scene.load.start();
+        if (!gScene.load.isLoading()) {
+          gScene.load.start();
         }
       } else {
         resolve();
@@ -523,21 +523,21 @@ export abstract class PokemonSpeciesForm {
     });
   }
 
-  cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
+  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
     const cryKey = this.getCryKey(this.formIndex);
-    let cry: AnySound | null = scene.sound.get(cryKey) as AnySound;
+    let cry: AnySound | null = gScene.sound.get(cryKey) as AnySound;
     if (cry?.pendingRemove) {
       cry = null;
     }
-    cry = scene.playSound(`cry/${(cry ?? cryKey)}`, soundConfig);
+    cry = gScene.playSound(`cry/${(cry ?? cryKey)}`, soundConfig);
     if (ignorePlay) {
       cry.stop();
     }
     return cry;
   }
 
-  generateCandyColors(scene: BattleScene): integer[][] {
-    const sourceTexture = scene.textures.get(this.getSpriteKey(false));
+  generateCandyColors(): integer[][] {
+    const sourceTexture = gScene.textures.get(this.getSpriteKey(false));
 
     const sourceFrame = sourceTexture.frames[sourceTexture.firstFrame];
     const sourceImage = sourceTexture.getSourceImage() as HTMLImageElement;
@@ -580,7 +580,7 @@ export abstract class PokemonSpeciesForm {
     const originalRandom = Math.random;
     Math.random = () => Phaser.Math.RND.realInRange(0, 1);
 
-    scene.executeWithSeedOffset(() => {
+    gScene.executeWithSeedOffset(() => {
       paletteColors = QuantizerCelebi.quantize(pixelColors, 2);
     }, 0, "This result should not vary");
 
@@ -951,11 +951,11 @@ export const noStarterFormKeys: string[] = [
 * @param scene {@linkcode BattleScene} used as part of RNG
 * @returns A list of starters with Pokerus
 */
-export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
+export function getPokerusStarters(): PokemonSpecies[] {
   const pokerusStarters: PokemonSpecies[] = [];
   const date = new Date();
   date.setUTCHours(0, 0, 0, 0);
-  scene.executeWithSeedOffset(() => {
+  gScene.executeWithSeedOffset(() => {
     while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
       const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarterCosts)), 10);
       const species = getPokemonSpecies(randomSpeciesId);

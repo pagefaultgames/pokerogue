@@ -1,9 +1,9 @@
-import BattleScene from "../../battle-scene";
 import SettingsGamepadUiHandler from "../../ui/settings/settings-gamepad-ui-handler";
 import { Mode } from "../../ui/ui";
 import { truncateString } from "../../utils";
 import { Button } from "#enums/buttons";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
+import { gScene } from "#app/battle-scene";
 
 export enum SettingGamepad {
     Controller = "CONTROLLER",
@@ -80,12 +80,12 @@ export const settingGamepadBlackList = [
   SettingKeyboard.Button_Right,
 ];
 
-export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, value: integer): boolean {
+export function setSettingGamepad(setting: SettingGamepad, value: integer): boolean {
   switch (setting) {
     case SettingGamepad.Gamepad_Support:
     // if we change the value of the gamepad support, we call a method in the inputController to
     // activate or deactivate the controller listener
-      scene.inputController.setGamepadSupport(settingGamepadOptions[setting][value] !== "Disabled");
+      gScene.inputController.setGamepadSupport(settingGamepadOptions[setting][value] !== "Disabled");
       break;
     case SettingGamepad.Button_Action:
     case SettingGamepad.Button_Cancel:
@@ -101,13 +101,13 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
     case SettingGamepad.Button_Slow_Down:
     case SettingGamepad.Button_Submit:
       if (value) {
-        if (scene.ui) {
+        if (gScene.ui) {
           const cancelHandler = (success: boolean = false) : boolean => {
-            scene.ui.revertMode();
-            (scene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
+            gScene.ui.revertMode();
+            (gScene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
             return success;
           };
-          scene.ui.setOverlayMode(Mode.GAMEPAD_BINDING, {
+          gScene.ui.setOverlayMode(Mode.GAMEPAD_BINDING, {
             target: setting,
             cancelHandler: cancelHandler,
           });
@@ -116,20 +116,20 @@ export function setSettingGamepad(scene: BattleScene, setting: SettingGamepad, v
       break;
     case SettingGamepad.Controller:
       if (value) {
-        const gp = scene.inputController.getGamepadsName();
-        if (scene.ui && gp) {
+        const gp = gScene.inputController.getGamepadsName();
+        if (gScene.ui && gp) {
           const cancelHandler = () => {
-            scene.ui.revertMode();
-            (scene.ui.getHandler() as SettingsGamepadUiHandler).setOptionCursor(Object.values(SettingGamepad).indexOf(SettingGamepad.Controller), 0, true);
-            (scene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
+            gScene.ui.revertMode();
+            (gScene.ui.getHandler() as SettingsGamepadUiHandler).setOptionCursor(Object.values(SettingGamepad).indexOf(SettingGamepad.Controller), 0, true);
+            (gScene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
             return false;
           };
           const changeGamepadHandler = (gamepad: string) => {
-            scene.inputController.setChosenGamepad(gamepad);
+            gScene.inputController.setChosenGamepad(gamepad);
             cancelHandler();
             return true;
           };
-          scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          gScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
             options: [ ...gp.map((g: string) => ({
               label: truncateString(g, 30), // Truncate the gamepad name for display
               handler: () => changeGamepadHandler(g)

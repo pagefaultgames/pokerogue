@@ -1,7 +1,7 @@
 import { Type } from "#app/data/type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, } from "../utils/encounter-phase-utils";
@@ -138,21 +138,21 @@ export const WeirdDreamEncounter: MysteryEncounter =
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
-    .withOnInit((scene: BattleScene) => {
-      scene.loadBgm("mystery_encounter_weird_dream", "mystery_encounter_weird_dream.mp3");
+    .withOnInit(() => {
+      gScene.loadBgm("mystery_encounter_weird_dream", "mystery_encounter_weird_dream.mp3");
 
       // Calculate all the newly transformed Pokemon and begin asset load
-      const teamTransformations = getTeamTransformations(scene);
+      const teamTransformations = getTeamTransformations();
       const loadAssets = teamTransformations.map(t => (t.newPokemon as PlayerPokemon).loadAssets());
-      scene.currentBattle.mysteryEncounter!.misc = {
+      gScene.currentBattle.mysteryEncounter!.misc = {
         teamTransformations,
         loadAssets
       };
 
       return true;
     })
-    .withOnVisualsStart((scene: BattleScene) => {
-      scene.fadeAndSwitchBgm("mystery_encounter_weird_dream");
+    .withOnVisualsStart(() => {
+      gScene.fadeAndSwitchBgm("mystery_encounter_weird_dream");
       return true;
     })
     .withOption(
@@ -168,25 +168,25 @@ export const WeirdDreamEncounter: MysteryEncounter =
             }
           ],
         })
-        .withPreOptionPhase(async (scene: BattleScene) => {
+        .withPreOptionPhase(async () => {
           // Play the animation as the player goes through the dialogue
-          scene.time.delayedCall(1000, () => {
-            doShowDreamBackground(scene);
+          gScene.time.delayedCall(1000, () => {
+            doShowDreamBackground();
           });
 
-          for (const transformation of scene.currentBattle.mysteryEncounter!.misc.teamTransformations) {
-            scene.removePokemonFromPlayerParty(transformation.previousPokemon, false);
-            scene.getParty().push(transformation.newPokemon);
+          for (const transformation of gScene.currentBattle.mysteryEncounter!.misc.teamTransformations) {
+            gScene.removePokemonFromPlayerParty(transformation.previousPokemon, false);
+            gScene.getParty().push(transformation.newPokemon);
           }
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Starts cutscene dialogue, but does not await so that cutscene plays as player goes through dialogue
-          const cutsceneDialoguePromise = showEncounterText(scene, `${namespace}:option.1.cutscene`);
+          const cutsceneDialoguePromise = showEncounterText(`${namespace}:option.1.cutscene`);
 
           // Change the entire player's party
           // Wait for all new Pokemon assets to be loaded before showing transformation animations
-          await Promise.all(scene.currentBattle.mysteryEncounter!.misc.loadAssets);
-          const transformations = scene.currentBattle.mysteryEncounter!.misc.teamTransformations;
+          await Promise.all(gScene.currentBattle.mysteryEncounter!.misc.loadAssets);
+          const transformations = gScene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
           // If there are 1-3 transformations, do them centered back to back
           // Otherwise, the first 3 transformations are executed side-by-side, then any remaining 1-3 transformations occur in those same respective positions
@@ -195,21 +195,21 @@ export const WeirdDreamEncounter: MysteryEncounter =
               const pokemon1 = transformation.previousPokemon;
               const pokemon2 = transformation.newPokemon;
 
-              await doPokemonTransformationSequence(scene, pokemon1, pokemon2, TransformationScreenPosition.CENTER);
+              await doPokemonTransformationSequence(pokemon1, pokemon2, TransformationScreenPosition.CENTER);
             }
           } else {
-            await doSideBySideTransformations(scene, transformations);
+            await doSideBySideTransformations(transformations);
           }
 
           // Make sure player has finished cutscene dialogue
           await cutsceneDialoguePromise;
 
-          doHideDreamBackground(scene);
-          await showEncounterText(scene, `${namespace}:option.1.dream_complete`);
+          doHideDreamBackground();
+          await showEncounterText(`${namespace}:option.1.dream_complete`);
 
-          await doNewTeamPostProcess(scene, transformations);
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.MEMORY_MUSHROOM, modifierTypes.ROGUE_BALL, modifierTypes.MINT, modifierTypes.MINT, modifierTypes.MINT ], fillRemaining: false });
-          leaveEncounterWithoutBattle(scene, true);
+          await doNewTeamPostProcess(transformations);
+          setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.MEMORY_MUSHROOM, modifierTypes.ROGUE_BALL, modifierTypes.MINT, modifierTypes.MINT, modifierTypes.MINT ], fillRemaining: false });
+          leaveEncounterWithoutBattle(true);
         })
         .build()
     )
@@ -223,9 +223,9 @@ export const WeirdDreamEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Battle your "future" team for some item rewards
-        const transformations: PokemonTransformation[] = scene.currentBattle.mysteryEncounter!.misc.teamTransformations;
+        const transformations: PokemonTransformation[] = gScene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
         // Uses the pokemon that player's party would have transformed into
         const enemyPokemonConfigs: EnemyPokemonConfig[] = [];
@@ -233,7 +233,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           const newPokemon = transformation.newPokemon;
           const previousPokemon = transformation.previousPokemon;
 
-          await postProcessTransformedPokemon(scene, previousPokemon, newPokemon, newPokemon.species.getRootSpeciesId(), true);
+          await postProcessTransformedPokemon(previousPokemon, newPokemon, newPokemon.species.getRootSpeciesId(), true);
 
           const dataSource = new PokemonData(newPokemon);
           dataSource.player = false;
@@ -251,7 +251,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           if (shouldGetOldGateau(newPokemon)) {
             const stats = getOldGateauBoostedStats(newPokemon);
             newPokemonHeldItemConfigs.push({
-              modifier: generateModifierType(scene, modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU, [ OLD_GATEAU_STATS_UP, stats ]) as PokemonHeldItemModifierType,
+              modifier: generateModifierType(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU, [ OLD_GATEAU_STATS_UP, stats ]) as PokemonHeldItemModifierType,
               stackCount: 1,
               isTransferable: false
             });
@@ -268,7 +268,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           enemyPokemonConfigs.push(enemyConfig);
         }
 
-        const genderIndex = scene.gameData.gender ?? PlayerGender.UNSET;
+        const genderIndex = gScene.gameData.gender ?? PlayerGender.UNSET;
         const trainerConfig = trainerConfigs[genderIndex === PlayerGender.FEMALE ? TrainerType.FUTURE_SELF_F : TrainerType.FUTURE_SELF_M].clone();
         trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
         const enemyPartyConfig: EnemyPartyConfig = {
@@ -280,7 +280,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
         const onBeforeRewards = () => {
           // Before battle rewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
           // One random pokemon will get its passive unlocked
-          const passiveDisabledPokemon = scene.getParty().filter(p => !p.passive);
+          const passiveDisabledPokemon = gScene.getParty().filter(p => !p.passive);
           if (passiveDisabledPokemon?.length > 0) {
             const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
             enablePassiveMon.passive = true;
@@ -288,10 +288,10 @@ export const WeirdDreamEncounter: MysteryEncounter =
           }
         };
 
-        setEncounterRewards(scene, { guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], fillRemaining: false }, undefined, onBeforeRewards);
+        setEncounterRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], fillRemaining: false }, undefined, onBeforeRewards);
 
-        await showEncounterText(scene, `${namespace}:option.2.selected_2`, null, undefined, true);
-        await initBattleWithEnemyConfig(scene, enemyPartyConfig);
+        await showEncounterText(`${namespace}:option.2.selected_2`, null, undefined, true);
+        await initBattleWithEnemyConfig(enemyPartyConfig);
       }
     )
     .withSimpleOption(
@@ -304,9 +304,9 @@ export const WeirdDreamEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Leave, reduce party levels by 10%
-        for (const pokemon of scene.getParty()) {
+        for (const pokemon of gScene.getParty()) {
           pokemon.level = Math.max(Math.ceil((100 - PERCENT_LEVEL_LOSS_ON_REFUSE) / 100 * pokemon.level), 1);
           pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
           pokemon.levelExp = 0;
@@ -315,7 +315,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           await pokemon.updateInfo();
         }
 
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
         return true;
       }
     )
@@ -328,8 +328,8 @@ interface PokemonTransformation {
   heldItems: PokemonHeldItemModifier[];
 }
 
-function getTeamTransformations(scene: BattleScene): PokemonTransformation[] {
-  const party = scene.getParty();
+function getTeamTransformations(): PokemonTransformation[] {
+  const party = gScene.getParty();
   // Removes all pokemon from the party
   const alreadyUsedSpecies: PokemonSpecies[] = party.map(p => p.species);
   const pokemonTransformations: PokemonTransformation[] = party.map(p => {
@@ -378,37 +378,37 @@ function getTeamTransformations(scene: BattleScene): PokemonTransformation[] {
 
   for (const transformation of pokemonTransformations) {
     const newAbilityIndex = randSeedInt(transformation.newSpecies.getAbilityCount());
-    transformation.newPokemon = scene.addPlayerPokemon(transformation.newSpecies, transformation.previousPokemon.level, newAbilityIndex, undefined);
+    transformation.newPokemon = gScene.addPlayerPokemon(transformation.newSpecies, transformation.previousPokemon.level, newAbilityIndex, undefined);
   }
 
   return pokemonTransformations;
 }
 
-async function doNewTeamPostProcess(scene: BattleScene, transformations: PokemonTransformation[]) {
+async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
   let atLeastOneNewStarter = false;
   for (const transformation of transformations) {
     const previousPokemon = transformation.previousPokemon;
     const newPokemon = transformation.newPokemon;
     const speciesRootForm = newPokemon.species.getRootSpeciesId();
 
-    if (await postProcessTransformedPokemon(scene, previousPokemon, newPokemon, speciesRootForm)) {
+    if (await postProcessTransformedPokemon(previousPokemon, newPokemon, speciesRootForm)) {
       atLeastOneNewStarter = true;
     }
 
     // Copy old items to new pokemon
     for (const item of transformation.heldItems) {
       item.pokemonId = newPokemon.id;
-      await scene.addModifier(item, false, false, false, true);
+      await gScene.addModifier(item, false, false, false, true);
     }
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
       const stats = getOldGateauBoostedStats(newPokemon);
       const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU()
-        .generateType(scene.getParty(), [ OLD_GATEAU_STATS_UP, stats ])
+        .generateType(gScene.getParty(), [ OLD_GATEAU_STATS_UP, stats ])
         ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
       const modifier = modType?.newModifier(newPokemon);
       if (modifier) {
-        await scene.addModifier(modifier, false, false, false, true);
+        await gScene.addModifier(modifier, false, false, false, true);
       }
     }
 
@@ -417,7 +417,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
   }
 
   // One random pokemon will get its passive unlocked
-  const passiveDisabledPokemon = scene.getParty().filter(p => !p.passive);
+  const passiveDisabledPokemon = gScene.getParty().filter(p => !p.passive);
   if (passiveDisabledPokemon?.length > 0) {
     const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
     enablePassiveMon.passive = true;
@@ -426,7 +426,7 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
 
   // If at least one new starter was unlocked, play 1 fanfare
   if (atLeastOneNewStarter) {
-    scene.playSound("level_up_fanfare");
+    gScene.playSound("level_up_fanfare");
   }
 }
 
@@ -439,14 +439,14 @@ async function doNewTeamPostProcess(scene: BattleScene, transformations: Pokemon
  * @param speciesRootForm
  * @param forBattle Default `false`. If false, will perform achievements and dex unlocks for the player.
  */
-async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon: PlayerPokemon, newPokemon: PlayerPokemon, speciesRootForm: Species, forBattle: boolean = false): Promise<boolean> {
+async function postProcessTransformedPokemon(previousPokemon: PlayerPokemon, newPokemon: PlayerPokemon, speciesRootForm: Species, forBattle: boolean = false): Promise<boolean> {
   let isNewStarter = false;
   // Roll HA a second time
   if (newPokemon.species.abilityHidden) {
     const hiddenIndex = newPokemon.species.ability2 ? 2 : 1;
     if (newPokemon.abilityIndex < hiddenIndex) {
       const hiddenAbilityChance = new IntegerHolder(256);
-      scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+      gScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
       const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
@@ -468,26 +468,26 @@ async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon
   // For pokemon at/below 570 BST or any shiny pokemon, unlock it permanently as if you had caught it
   if (!forBattle && (newPokemon.getSpeciesForm().getBaseStatTotal() <= NON_LEGENDARY_BST_THRESHOLD || newPokemon.isShiny())) {
     if (newPokemon.getSpeciesForm().abilityHidden && newPokemon.abilityIndex === newPokemon.getSpeciesForm().getAbilityCount() - 1) {
-      scene.validateAchv(achvs.HIDDEN_ABILITY);
+      gScene.validateAchv(achvs.HIDDEN_ABILITY);
     }
 
     if (newPokemon.species.subLegendary) {
-      scene.validateAchv(achvs.CATCH_SUB_LEGENDARY);
+      gScene.validateAchv(achvs.CATCH_SUB_LEGENDARY);
     }
 
     if (newPokemon.species.legendary) {
-      scene.validateAchv(achvs.CATCH_LEGENDARY);
+      gScene.validateAchv(achvs.CATCH_LEGENDARY);
     }
 
     if (newPokemon.species.mythical) {
-      scene.validateAchv(achvs.CATCH_MYTHICAL);
+      gScene.validateAchv(achvs.CATCH_MYTHICAL);
     }
 
-    scene.gameData.updateSpeciesDexIvs(newPokemon.species.getRootSpeciesId(true), newPokemon.ivs);
-    const newStarterUnlocked = await scene.gameData.setPokemonCaught(newPokemon, true, false, false);
+    gScene.gameData.updateSpeciesDexIvs(newPokemon.species.getRootSpeciesId(true), newPokemon.ivs);
+    const newStarterUnlocked = await gScene.gameData.setPokemonCaught(newPokemon, true, false, false);
     if (newStarterUnlocked) {
       isNewStarter = true;
-      await showEncounterText(scene, i18next.t("battle:addedAsAStarter", { pokemonName: getPokemonSpecies(speciesRootForm).getName() }));
+      await showEncounterText(i18next.t("battle:addedAsAStarter", { pokemonName: getPokemonSpecies(speciesRootForm).getName() }));
     }
   }
 
@@ -503,8 +503,8 @@ async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon
   });
 
   // For pokemon that the player owns (including ones just caught), gain a candy
-  if (!forBattle && !!scene.gameData.dexData[speciesRootForm].caughtAttr) {
-    scene.gameData.addStarterCandy(getPokemonSpecies(speciesRootForm), 1);
+  if (!forBattle && !!gScene.gameData.dexData[speciesRootForm].caughtAttr) {
+    gScene.gameData.addStarterCandy(getPokemonSpecies(speciesRootForm), 1);
   }
 
   // Set the moveset of the new pokemon to be the same as previous, but with 1 egg move and 1 (attempted) STAB move of the new species
@@ -514,7 +514,7 @@ async function postProcessTransformedPokemon(scene: BattleScene, previousPokemon
 
   newPokemon.moveset = previousPokemon.moveset.slice(0);
 
-  const newEggMoveIndex = await addEggMoveToNewPokemonMoveset(scene, newPokemon, speciesRootForm, forBattle);
+  const newEggMoveIndex = await addEggMoveToNewPokemonMoveset(newPokemon, speciesRootForm, forBattle);
 
   // Try to add a favored STAB move (might fail if Pokemon already knows a bunch of moves from newPokemonGeneratedMoveset)
   addFavoredMoveToNewPokemonMoveset(newPokemon, newPokemonGeneratedMoveset, newEggMoveIndex);
@@ -596,31 +596,31 @@ function getTransformedSpecies(originalBst: number, bstSearchRange: [number, num
   return newSpecies;
 }
 
-function doShowDreamBackground(scene: BattleScene) {
-  const transformationContainer = scene.add.container(0, -scene.game.canvas.height / 6);
+function doShowDreamBackground() {
+  const transformationContainer = gScene.add.container(0, -gScene.game.canvas.height / 6);
   transformationContainer.name = "Dream Background";
 
   // In case it takes a bit for video to load
-  const transformationStaticBg = scene.add.rectangle(0, 0, scene.game.canvas.width / 6, scene.game.canvas.height / 6, 0);
+  const transformationStaticBg = gScene.add.rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6, 0);
   transformationStaticBg.setName("Black Background");
   transformationStaticBg.setOrigin(0, 0);
   transformationContainer.add(transformationStaticBg);
   transformationStaticBg.setVisible(true);
 
-  const transformationVideoBg: Phaser.GameObjects.Video = scene.add.video(0, 0, "evo_bg").stop();
+  const transformationVideoBg: Phaser.GameObjects.Video = gScene.add.video(0, 0, "evo_bg").stop();
   transformationVideoBg.setLoop(true);
   transformationVideoBg.setOrigin(0, 0);
   transformationVideoBg.setScale(0.4359673025);
   transformationContainer.add(transformationVideoBg);
 
-  scene.fieldUI.add(transformationContainer);
-  scene.fieldUI.bringToTop(transformationContainer);
+  gScene.fieldUI.add(transformationContainer);
+  gScene.fieldUI.bringToTop(transformationContainer);
   transformationVideoBg.play();
 
   transformationContainer.setVisible(true);
   transformationContainer.alpha = 0;
 
-  scene.tweens.add({
+  gScene.tweens.add({
     targets: transformationContainer,
     alpha: 1,
     duration: 3000,
@@ -628,39 +628,39 @@ function doShowDreamBackground(scene: BattleScene) {
   });
 }
 
-function doHideDreamBackground(scene: BattleScene) {
-  const transformationContainer = scene.fieldUI.getByName("Dream Background");
+function doHideDreamBackground() {
+  const transformationContainer = gScene.fieldUI.getByName("Dream Background");
 
-  scene.tweens.add({
+  gScene.tweens.add({
     targets: transformationContainer,
     alpha: 0,
     duration: 3000,
     ease: "Sine.easeInOut",
     onComplete: () => {
-      scene.fieldUI.remove(transformationContainer, true);
+      gScene.fieldUI.remove(transformationContainer, true);
     }
   });
 }
 
-function doSideBySideTransformations(scene: BattleScene, transformations: PokemonTransformation[]) {
+function doSideBySideTransformations(transformations: PokemonTransformation[]) {
   return new Promise<void>(resolve => {
     const allTransformationPromises: Promise<void>[] = [];
     for (let i = 0; i < 3; i++) {
       const delay = i * 4000;
-      scene.time.delayedCall(delay, () => {
+      gScene.time.delayedCall(delay, () => {
         const transformation = transformations[i];
         const pokemon1 = transformation.previousPokemon;
         const pokemon2 = transformation.newPokemon;
         const screenPosition = i as TransformationScreenPosition;
 
-        const transformationPromise = doPokemonTransformationSequence(scene, pokemon1, pokemon2, screenPosition)
+        const transformationPromise = doPokemonTransformationSequence(pokemon1, pokemon2, screenPosition)
           .then(() => {
             if (transformations.length > i + 3) {
               const nextTransformationAtPosition = transformations[i + 3];
               const nextPokemon1 = nextTransformationAtPosition.previousPokemon;
               const nextPokemon2 = nextTransformationAtPosition.newPokemon;
 
-              allTransformationPromises.push(doPokemonTransformationSequence(scene, nextPokemon1, nextPokemon2, screenPosition));
+              allTransformationPromises.push(doPokemonTransformationSequence(nextPokemon1, nextPokemon2, screenPosition));
             }
           });
         allTransformationPromises.push(transformationPromise);
@@ -685,7 +685,7 @@ function doSideBySideTransformations(scene: BattleScene, transformations: Pokemo
  * @param newPokemon
  * @param speciesRootForm
  */
-async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: PlayerPokemon, speciesRootForm: Species, forBattle: boolean = false): Promise<number | null> {
+async function addEggMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, speciesRootForm: Species, forBattle: boolean = false): Promise<number | null> {
   let eggMoveIndex: null | number = null;
   const eggMoves = newPokemon.getEggMoves()?.slice(0);
   if (eggMoves) {
@@ -711,8 +711,8 @@ async function addEggMoveToNewPokemonMoveset(scene: BattleScene, newPokemon: Pla
       }
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
-      if (!forBattle && !isNullOrUndefined(randomEggMoveIndex) && !!scene.gameData.dexData[speciesRootForm].caughtAttr) {
-        await scene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
+      if (!forBattle && !isNullOrUndefined(randomEggMoveIndex) && !!gScene.gameData.dexData[speciesRootForm].caughtAttr) {
+        await gScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }
     }
   }

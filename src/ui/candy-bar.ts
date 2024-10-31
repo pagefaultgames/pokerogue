@@ -1,4 +1,4 @@
-import BattleScene, { starterColors } from "../battle-scene";
+import { gScene, starterColors } from "#app/battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { argbFromRgba } from "@material/material-color-utilities";
 import * as Utils from "../utils";
@@ -16,29 +16,29 @@ export default class CandyBar extends Phaser.GameObjects.Container {
 
   public shown: boolean;
 
-  constructor(scene: BattleScene) {
-    super(scene, (scene.game.canvas.width / 6), -((scene.game.canvas.height) / 6) + 15);
+  constructor() {
+    super(gScene, (gScene.game.canvas.width / 6), -((gScene.game.canvas.height) / 6) + 15);
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
+    this.bg = gScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.candyIcon = this.scene.add.sprite(14, 0, "items", "candy");
+    this.candyIcon = gScene.add.sprite(14, 0, "items", "candy");
     this.candyIcon.setOrigin(0.5, 0);
     this.candyIcon.setScale(0.5);
 
     this.add(this.candyIcon);
 
-    this.candyOverlayIcon = this.scene.add.sprite(14, 0, "items", "candy_overlay");
+    this.candyOverlayIcon = gScene.add.sprite(14, 0, "items", "candy_overlay");
     this.candyOverlayIcon.setOrigin(0.5, 0);
     this.candyOverlayIcon.setScale(0.5);
 
     this.add(this.candyOverlayIcon);
 
-    this.countText = addTextObject(this.scene, 22, 4, "", TextStyle.BATTLE_INFO);
+    this.countText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO);
     this.countText.setOrigin(0, 0);
     this.add(this.countText);
 
@@ -61,21 +61,21 @@ export default class CandyBar extends Phaser.GameObjects.Container {
       this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
       this.candyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
 
-      this.countText.setText(`${(this.scene as BattleScene).gameData.starterData[starterSpeciesId].candyCount + count} (+${count.toString()})`);
+      this.countText.setText(`${gScene.gameData.starterData[starterSpeciesId].candyCount + count} (+${count.toString()})`);
 
       this.bg.width = this.countText.displayWidth + 28;
 
-      (this.scene as BattleScene).fieldUI.bringToTop(this);
+      gScene.fieldUI.bringToTop(this);
 
       if (this.tween) {
         this.tween.stop();
       }
 
-      (this.scene as BattleScene).playSound("se/shing");
+      gScene.playSound("se/shing");
 
-      this.tween = this.scene.tweens.add({
+      this.tween = gScene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / 6) - (this.bg.width - 5),
+        x: (gScene.game.canvas.width / 6) - (this.bg.width - 5),
         duration: 500,
         ease: "Sine.easeOut",
         onComplete: () => {
@@ -104,9 +104,9 @@ export default class CandyBar extends Phaser.GameObjects.Container {
         this.tween.stop();
       }
 
-      this.tween = this.scene.tweens.add({
+      this.tween = gScene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / 6),
+        x: (gScene.game.canvas.width / 6),
         duration: 500,
         ease: "Sine.easeIn",
         onComplete: () => {

@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { BattleStyle } from "#app/enums/battle-style";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -14,8 +14,8 @@ export class CheckSwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
   protected useName: boolean;
 
-  constructor(scene: BattleScene, fieldIndex: integer, useName: boolean) {
-    super(scene);
+  constructor(fieldIndex: integer, useName: boolean) {
+    super();
 
     this.fieldIndex = fieldIndex;
     this.useName = useName;
@@ -24,20 +24,20 @@ export class CheckSwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    const pokemon = this.scene.getPlayerField()[this.fieldIndex];
+    const pokemon = gScene.getPlayerField()[this.fieldIndex];
 
-    if (this.scene.battleStyle === BattleStyle.SET) {
+    if (gScene.battleStyle === BattleStyle.SET) {
       super.end();
       return;
     }
 
-    if (this.scene.field.getAll().indexOf(pokemon) === -1) {
-      this.scene.unshiftPhase(new SummonMissingPhase(this.scene, this.fieldIndex));
+    if (gScene.field.getAll().indexOf(pokemon) === -1) {
+      gScene.unshiftPhase(new SummonMissingPhase(this.fieldIndex));
       super.end();
       return;
     }
 
-    if (!this.scene.getParty().slice(1).filter(p => p.isActive()).length) {
+    if (!gScene.getParty().slice(1).filter(p => p.isActive()).length) {
       super.end();
       return;
     }
@@ -47,14 +47,14 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
-      this.scene.ui.setMode(Mode.CONFIRM, () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
+    gScene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
+      gScene.ui.setMode(Mode.CONFIRM, () => {
+        gScene.ui.setMode(Mode.MESSAGE);
+        gScene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
+        gScene.unshiftPhase(new SwitchPhase(SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
         this.end();
       }, () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
+        gScene.ui.setMode(Mode.MESSAGE);
         this.end();
       });
     });

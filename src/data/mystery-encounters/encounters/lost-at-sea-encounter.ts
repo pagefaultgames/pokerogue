@@ -2,7 +2,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { leaveEncounterWithoutBattle, setEncounterExp } from "../utils/encounter-phase-utils";
@@ -41,8 +41,8 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     },
   ])
   .withIntroDialogue([{ text: `${namespace}:intro` }])
-  .withOnInit((scene: BattleScene) => {
-    const encounter = scene.currentBattle.mysteryEncounter!;
+  .withOnInit(() => {
+    const encounter = gScene.currentBattle.mysteryEncounter!;
 
     encounter.setDialogueToken("damagePercentage", String(DAMAGE_PERCENTAGE));
     encounter.setDialogueToken("option1RequiredMove", new PokemonMove(OPTION_1_REQUIRED_MOVE).getName());
@@ -70,7 +70,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => handlePokemonGuidingYouPhase(scene))
+      .withOptionPhase(async () => handlePokemonGuidingYouPhase())
       .build()
   )
   .withOption(
@@ -89,7 +89,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => handlePokemonGuidingYouPhase(scene))
+      .withOptionPhase(async () => handlePokemonGuidingYouPhase())
       .build()
   )
   .withSimpleOption(
@@ -103,16 +103,16 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         },
       ],
     },
-    async (scene: BattleScene) => {
-      const allowedPokemon = scene.getParty().filter((p) => p.isAllowedInBattle());
+    async () => {
+      const allowedPokemon = gScene.getParty().filter((p) => p.isAllowedInBattle());
 
       for (const pkm of allowedPokemon) {
         const percentage = DAMAGE_PERCENTAGE / 100;
         const damage = Math.floor(pkm.getMaxHp() * percentage);
-        applyDamageToPokemon(scene, pkm, damage);
+        applyDamageToPokemon(pkm, damage);
       }
 
-      leaveEncounterWithoutBattle(scene);
+      leaveEncounterWithoutBattle();
 
       return true;
     }
@@ -129,16 +129,16 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  *
  * @param scene Battle scene
  */
-function handlePokemonGuidingYouPhase(scene: BattleScene) {
+function handlePokemonGuidingYouPhase() {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
-  const { mysteryEncounter } = scene.currentBattle;
+  const { mysteryEncounter } = gScene.currentBattle;
 
   if (mysteryEncounter?.selectedOption?.primaryPokemon?.id) {
-    setEncounterExp(scene, mysteryEncounter.selectedOption.primaryPokemon.id, laprasSpecies.baseExp, true);
+    setEncounterExp(mysteryEncounter.selectedOption.primaryPokemon.id, laprasSpecies.baseExp, true);
   } else {
     console.warn("Lost at sea: No guide pokemon found but pokemon guides player. huh!?");
   }
 
-  leaveEncounterWithoutBattle(scene);
+  leaveEncounterWithoutBattle();
   return true;
 }

@@ -1,4 +1,4 @@
-import BattleScene, { bypassLogin } from "../battle-scene";
+import { bypassLogin, gScene } from "#app/battle-scene";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
@@ -62,8 +62,8 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   public bgmBar: BgmBar;
 
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
 
     this.excludedMenus = () => [
       { condition: [ Mode.COMMAND, Mode.TITLE ].includes(mode ?? Mode.TITLE), options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
@@ -85,16 +85,16 @@ export default class MenuUiHandler extends MessageUiHandler {
       wikiUrl = `https://wiki.pokerogue.net/${lang}:start`;
     }
 
-    this.bgmBar = new BgmBar(this.scene);
+    this.bgmBar = new BgmBar();
     this.bgmBar.setup();
 
     ui.bgmBar = this.bgmBar;
 
-    this.menuContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
+    this.menuContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
     this.menuContainer.setName("menu");
-    this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.menuOverlay = new Phaser.GameObjects.Rectangle(this.scene, -1, -1, this.scene.scaledCanvas.width, this.scene.scaledCanvas.height, 0xffffff, 0.3);
+    this.menuOverlay = new Phaser.GameObjects.Rectangle(gScene, -1, -1, gScene.scaledCanvas.width, gScene.scaledCanvas.height, 0xffffff, 0.3);
     this.menuOverlay.setName("menu-overlay");
     this.menuOverlay.setOrigin(0, 0);
     this.menuContainer.add(this.menuOverlay);
@@ -109,7 +109,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   render() {
     const ui = this.getUi();
     this.excludedMenus = () => [
-      { condition: this.scene.getCurrentPhase() instanceof SelectModifierPhase, options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
+      { condition: gScene.getCurrentPhase() instanceof SelectModifierPhase, options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
@@ -119,15 +119,15 @@ export default class MenuUiHandler extends MessageUiHandler {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
       });
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
+    this.optionSelectText = addTextObject(0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale;
-    this.menuBg = addWindow(this.scene,
-      (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25),
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, gScene.uiTheme).scale;
+    this.menuBg = addWindow(
+      (gScene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25),
       0,
       this.optionSelectText.displayWidth + 19 + 24 * this.scale,
-      (this.scene.game.canvas.height / 6) - 2
+      (gScene.game.canvas.height / 6) - 2
     );
     this.menuBg.setOrigin(0, 0);
 
@@ -139,21 +139,21 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     ui.add(this.menuContainer);
 
-    this.menuMessageBoxContainer = this.scene.add.container(0, 130);
+    this.menuMessageBoxContainer = gScene.add.container(0, 130);
     this.menuMessageBoxContainer.setName("menu-message-box");
     this.menuMessageBoxContainer.setVisible(false);
 
     // Window for general messages
-    this.menuMessageBox = addWindow(this.scene, 0, 0, this.defaultMessageBoxWidth, 48);
+    this.menuMessageBox = addWindow(0, 0, this.defaultMessageBoxWidth, 48);
     this.menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(this.menuMessageBox);
 
     // Full-width window used for testing dialog messages in debug mode
-    this.dialogueMessageBox = addWindow(this.scene, -this.textPadding, 0, this.scene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
+    this.dialogueMessageBox = addWindow(-this.textPadding, 0, gScene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
     this.dialogueMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(this.dialogueMessageBox);
 
-    const menuMessageText = addTextObject(this.scene, this.textPadding, this.textPadding, "", TextStyle.WINDOW, { maxLines: 2 });
+    const menuMessageText = addTextObject(this.textPadding, this.textPadding, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
@@ -202,7 +202,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
-          confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
+          confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => gScene.gameData.importData(GameDataType.SESSION, slotId));
           return true;
         },
         keepOpen: true
@@ -215,7 +215,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         Promise.all(
           new Array(5).fill(null).map((_, i) => {
             const slotId = i;
-            return this.scene.gameData.getSession(slotId).then(data => {
+            return gScene.gameData.getSession(slotId).then(data => {
               if (data) {
                 dataSlots.push(slotId);
               }
@@ -223,7 +223,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           })).then(() => {
           confirmSlot(i18next.t("menuUiHandler:exportSlotSelect"),
             i => dataSlots.indexOf(i) > -1,
-            slotId => this.scene.gameData.tryExportData(GameDataType.SESSION, slotId));
+            slotId => gScene.gameData.tryExportData(GameDataType.SESSION, slotId));
         });
         return true;
       },
@@ -232,7 +232,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:importRunHistory"),
       handler: () => {
-        this.scene.gameData.importData(GameDataType.RUN_HISTORY);
+        gScene.gameData.importData(GameDataType.RUN_HISTORY);
         return true;
       },
       keepOpen: true
@@ -240,7 +240,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:exportRunHistory"),
       handler: () => {
-        this.scene.gameData.tryExportData(GameDataType.RUN_HISTORY);
+        gScene.gameData.tryExportData(GameDataType.RUN_HISTORY);
         return true;
       },
       keepOpen: true
@@ -250,7 +250,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
           ui.revertMode();
-          this.scene.gameData.importData(GameDataType.SYSTEM);
+          gScene.gameData.importData(GameDataType.SYSTEM);
           return true;
         },
         keepOpen: true
@@ -259,7 +259,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:exportData"),
       handler: () => {
-        this.scene.gameData.tryExportData(GameDataType.SYSTEM);
+        gScene.gameData.tryExportData(GameDataType.SYSTEM);
         return true;
       },
       keepOpen: true
@@ -310,7 +310,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               }
               // Switch to the dialog test window
               this.setDialogTestMode(true);
-              ui.showText(String(i18next.t(translatedString, interpolatorOptions)), null, () => this.scene.ui.showText("", 0, () => {
+              ui.showText(String(i18next.t(translatedString, interpolatorOptions)), null, () => gScene.ui.showText("", 0, () => {
                 handler.tutorialActive = false;
                 // Go back to the default message window
                 this.setDialogTestMode(false);
@@ -329,7 +329,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:cancel"),
       handler: () => {
-        this.scene.ui.revertMode();
+        gScene.ui.revertMode();
         return true;
       },
       keepOpen: true
@@ -420,7 +420,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               return true;
             }
           });
-          this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          gScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
             options: options,
             delay: 0
           });
@@ -432,7 +432,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     communityOptions.push({
       label: i18next.t("menuUiHandler:cancel"),
       handler: () => {
-        this.scene.ui.revertMode();
+        gScene.ui.revertMode();
         return true;
       }
     });
@@ -460,12 +460,12 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.getUi().hideTooltip();
 
-    this.scene.playSound("ui/menu_open");
+    gScene.playSound("ui/menu_open");
 
     // Make sure the tutorial overlay sits above everything, but below the message box
     this.menuContainer.bringToTop(this.tutorialOverlay);
     this.menuContainer.bringToTop(this.menuMessageBoxContainer);
-    handleTutorial(this.scene, Tutorial.Menu);
+    handleTutorial(Tutorial.Menu);
 
     this.bgmBar.toggleBgmBar(true);
 
@@ -511,7 +511,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           success = true;
           break;
         case MenuOptions.EGG_LIST:
-          if (this.scene.gameData.eggs.length) {
+          if (gScene.gameData.eggs.length) {
             ui.revertMode();
             ui.setOverlayMode(Mode.EGG_LIST);
             success = true;
@@ -543,7 +543,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                       if (!res.ok) {
                         console.error(`Unlink failed (${res.status}: ${res.statusText})`);
                       }
-                      updateUserInfo().then(() => this.scene.reset(true, true));
+                      updateUserInfo().then(() => gScene.reset(true, true));
                     });
                     return true;
                   }
@@ -564,7 +564,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                       if (!res.ok) {
                         console.error(`Unlink failed (${res.status}: ${res.statusText})`);
                       }
-                      updateUserInfo().then(() => this.scene.reset(true, true));
+                      updateUserInfo().then(() => gScene.reset(true, true));
                     });
                     return true;
                   }
@@ -579,18 +579,18 @@ export default class MenuUiHandler extends MessageUiHandler {
           success = true;
           break;
         case MenuOptions.SAVE_AND_QUIT:
-          if (this.scene.currentBattle) {
+          if (gScene.currentBattle) {
             success = true;
             const doSaveQuit = () => {
               ui.setMode(Mode.LOADING, {
                 buttonActions: [], fadeOut: () =>
-                  this.scene.gameData.saveAll(this.scene, true, true, true, true).then(() => {
+                  gScene.gameData.saveAll(true, true, true, true).then(() => {
 
-                    this.scene.reset(true);
+                    gScene.reset(true);
                   })
               });
             };
-            if (this.scene.currentBattle.turn > 1) {
+            if (gScene.currentBattle.turn > 1) {
               ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
                 if (!this.active) {
                   this.showText("", 0);
@@ -617,11 +617,11 @@ export default class MenuUiHandler extends MessageUiHandler {
                   console.error(`Log out failed (${res.status}: ${res.statusText})`);
                 }
                 Utils.removeCookie(Utils.sessionIdKey);
-                updateUserInfo().then(() => this.scene.reset(true, true));
+                updateUserInfo().then(() => gScene.reset(true, true));
               })
             });
           };
-          if (this.scene.currentBattle) {
+          if (gScene.currentBattle) {
             ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               if (!this.active) {
                 this.showText("", 0);
@@ -682,7 +682,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuMessageBox.setVisible(!isDialogMode);
     this.dialogueMessageBox.setVisible(isDialogMode);
     // If we're testing dialog, we use the same word wrapping as the battle message handler
-    this.message.setWordWrapWidth(isDialogMode ? this.scene.ui.getMessageHandler().wordWrapWidth : this.defaultWordWrapWidth);
+    this.message.setWordWrapWidth(isDialogMode ? gScene.ui.getMessageHandler().wordWrapWidth : this.defaultWordWrapWidth);
     this.message.setX(isDialogMode ? this.textPadding + 1 : this.textPadding);
     this.message.setY(isDialogMode ? this.textPadding + 0.4 : this.textPadding);
   }
@@ -697,7 +697,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.image(0, 0, "cursor");
+      this.cursorObj = gScene.add.image(0, 0, "cursor");
       this.cursorObj.setOrigin(0, 0);
       this.menuContainer.add(this.cursorObj);
     }

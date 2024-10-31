@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import { gScene } from "#app/battle-scene";
 import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 
@@ -11,17 +11,17 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
   public shown: boolean;
 
-  constructor(scene: BattleScene) {
-    super(scene, (scene.game.canvas.width / 6), -((scene.game.canvas.height) / 6) + 15);
+  constructor() {
+    super(gScene, (gScene.game.canvas.width / 6), -((gScene.game.canvas.height) / 6) + 15);
   }
 
   setup(): void {
-    this.bg = this.scene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
+    this.bg = gScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.expText = addTextObject(this.scene, 22, 4, "", TextStyle.BATTLE_INFO);
+    this.expText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO);
     this.expText.setOrigin(0, 0);
     this.add(this.expText);
 
@@ -35,7 +35,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
         return resolve();
       }
 
-      this.pokemonIcon = (this.scene as BattleScene).addPokemonIcon(pokemon, -8, 15, 0, 0.5);
+      this.pokemonIcon = gScene.addPokemonIcon(pokemon, -8, 15, 0, 0.5);
       this.pokemonIcon.setScale(0.5);
 
       this.add(this.pokemonIcon);
@@ -54,16 +54,16 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       this.bg.width = this.expText.displayWidth + 28;
 
-      (this.scene as BattleScene).fieldUI.bringToTop(this);
+      gScene.fieldUI.bringToTop(this);
 
       if (this.tween) {
         this.tween.stop();
       }
 
-      this.tween = this.scene.tweens.add({
+      this.tween = gScene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / 6) - (this.bg.width - 5),
-        duration: 500 / Math.pow(2, pokemon.scene.expGainsSpeed),
+        x: (gScene.game.canvas.width / 6) - (this.bg.width - 5),
+        duration: 500 / Math.pow(2, gScene.expGainsSpeed),
         ease: "Sine.easeOut",
         onComplete: () => {
           this.tween = null;
@@ -86,9 +86,9 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
         this.tween.stop();
       }
 
-      this.tween = this.scene.tweens.add({
+      this.tween = gScene.tweens.add({
         targets: this,
-        x: (this.scene.game.canvas.width / 6),
+        x: (gScene.game.canvas.width / 6),
         duration: 500,
         ease: "Sine.easeIn",
         onComplete: () => {

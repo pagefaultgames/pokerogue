@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, generateModifierType, handleMysteryEncounterBattleFailed, initBattleWithEnemyConfig, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { randSeedShuffle } from "#app/utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -94,14 +94,14 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
         text: `${namespace}:intro_dialogue`,
       },
     ])
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
-      const waveIndex = scene.currentBattle.waveIndex;
+    .withOnInit(() => {
+      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const waveIndex = gScene.currentBattle.waveIndex;
       // Calculates what trainers are available for battle in the encounter
 
       // If player is in space biome, uses special "Space" version of the trainer
       encounter.enemyPartyConfigs = [
-        getPartyConfig(scene)
+        getPartyConfig()
       ];
 
       const cleffaSpecies = waveIndex < FIRST_STAGE_EVOLUTION_WAVE ? Species.CLEFFA : waveIndex < FINAL_STAGE_EVOLUTION_WAVE ? Species.CLEFAIRY : Species.CLEFABLE;
@@ -126,7 +126,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       ];
 
       // Determine the 3 pokemon the player can battle with
-      let partyCopy = scene.getParty().slice(0);
+      let partyCopy = gScene.getParty().slice(0);
       partyCopy = partyCopy
         .filter(p => p.isAllowedInBattle())
         .sort((a, b) => a.friendship - b.friendship);
@@ -140,7 +140,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
 
       // Dialogue and egg calcs for Pokemon 1
       const [ pokemon1CommonEggs, pokemon1RareEggs ] = calculateEggRewardsForPokemon(pokemon1);
-      let pokemon1Tooltip = getEncounterText(scene, `${namespace}:option.1.tooltip_base`)!;
+      let pokemon1Tooltip = getEncounterText(`${namespace}:option.1.tooltip_base`)!;
       if (pokemon1RareEggs > 0) {
         const eggsText = i18next.t(`${namespace}:numEggs`, { count: pokemon1RareEggs, rarity: i18next.t("egg:greatTier") });
         pokemon1Tooltip += i18next.t(`${namespace}:eggs_tooltip`, { eggs: eggsText });
@@ -155,7 +155,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
 
       // Dialogue and egg calcs for Pokemon 2
       const [ pokemon2CommonEggs, pokemon2RareEggs ] = calculateEggRewardsForPokemon(pokemon2);
-      let pokemon2Tooltip = getEncounterText(scene, `${namespace}:option.2.tooltip_base`)!;
+      let pokemon2Tooltip = getEncounterText(`${namespace}:option.2.tooltip_base`)!;
       if (pokemon2RareEggs > 0) {
         const eggsText = i18next.t(`${namespace}:numEggs`, { count: pokemon2RareEggs, rarity: i18next.t("egg:greatTier") });
         pokemon2Tooltip += i18next.t(`${namespace}:eggs_tooltip`, { eggs: eggsText });
@@ -170,7 +170,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
 
       // Dialogue and egg calcs for Pokemon 3
       const [ pokemon3CommonEggs, pokemon3RareEggs ] = calculateEggRewardsForPokemon(pokemon3);
-      let pokemon3Tooltip = getEncounterText(scene, `${namespace}:option.3.tooltip_base`)!;
+      let pokemon3Tooltip = getEncounterText(`${namespace}:option.3.tooltip_base`)!;
       if (pokemon3RareEggs > 0) {
         const eggsText = i18next.t(`${namespace}:numEggs`, { count: pokemon3RareEggs, rarity: i18next.t("egg:greatTier") });
         pokemon3Tooltip += i18next.t(`${namespace}:eggs_tooltip`, { eggs: eggsText });
@@ -213,22 +213,22 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
             },
           ],
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withOptionPhase(async () => {
+          const encounter = gScene.currentBattle.mysteryEncounter!;
           // Spawn battle with first pokemon
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon1, pokemon1CommonEggs, pokemon1RareEggs } = encounter.misc;
           encounter.misc.chosenPokemon = pokemon1;
           encounter.setDialogueToken("chosenPokemon", pokemon1.getNameToRender());
-          const eggOptions = getEggOptions(scene, pokemon1CommonEggs, pokemon1RareEggs);
-          setEncounterRewards(scene,
+          const eggOptions = getEggOptions(pokemon1CommonEggs, pokemon1RareEggs);
+          setEncounterRewards(
             { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
             eggOptions,
-            () => doPostEncounterCleanup(scene));
+            () => doPostEncounterCleanup());
 
           // Remove all Pokemon from the party except the chosen Pokemon
-          removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon1);
+          removePokemonFromPartyAndStoreHeldItems(encounter, pokemon1);
 
           // Configure outro dialogue for egg rewards
           encounter.dialogue.outro = [
@@ -249,7 +249,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          await initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(config);
         })
         .build()
     )
@@ -265,22 +265,22 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
             },
           ],
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withOptionPhase(async () => {
+          const encounter = gScene.currentBattle.mysteryEncounter!;
           // Spawn battle with second pokemon
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon2, pokemon2CommonEggs, pokemon2RareEggs } = encounter.misc;
           encounter.misc.chosenPokemon = pokemon2;
           encounter.setDialogueToken("chosenPokemon", pokemon2.getNameToRender());
-          const eggOptions = getEggOptions(scene, pokemon2CommonEggs, pokemon2RareEggs);
-          setEncounterRewards(scene,
+          const eggOptions = getEggOptions(pokemon2CommonEggs, pokemon2RareEggs);
+          setEncounterRewards(
             { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
             eggOptions,
-            () => doPostEncounterCleanup(scene));
+            () => doPostEncounterCleanup());
 
           // Remove all Pokemon from the party except the chosen Pokemon
-          removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon2);
+          removePokemonFromPartyAndStoreHeldItems(encounter, pokemon2);
 
           // Configure outro dialogue for egg rewards
           encounter.dialogue.outro = [
@@ -301,7 +301,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          await initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(config);
         })
         .build()
     )
@@ -317,22 +317,22 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
             },
           ],
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withOptionPhase(async () => {
+          const encounter = gScene.currentBattle.mysteryEncounter!;
           // Spawn battle with third pokemon
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
           const { pokemon3, pokemon3CommonEggs, pokemon3RareEggs } = encounter.misc;
           encounter.misc.chosenPokemon = pokemon3;
           encounter.setDialogueToken("chosenPokemon", pokemon3.getNameToRender());
-          const eggOptions = getEggOptions(scene, pokemon3CommonEggs, pokemon3RareEggs);
-          setEncounterRewards(scene,
+          const eggOptions = getEggOptions(pokemon3CommonEggs, pokemon3RareEggs);
+          setEncounterRewards(
             { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
             eggOptions,
-            () => doPostEncounterCleanup(scene));
+            () => doPostEncounterCleanup());
 
           // Remove all Pokemon from the party except the chosen Pokemon
-          removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon3);
+          removePokemonFromPartyAndStoreHeldItems(encounter, pokemon3);
 
           // Configure outro dialogue for egg rewards
           encounter.dialogue.outro = [
@@ -353,7 +353,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           }
 
           encounter.onGameOver = onGameOver;
-          await initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(config);
         })
         .build()
     )
@@ -365,9 +365,9 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
     ])
     .build();
 
-function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
+function getPartyConfig(): EnemyPartyConfig {
   // Bug type superfan trainer config
-  const waveIndex = scene.currentBattle.waveIndex;
+  const waveIndex = gScene.currentBattle.waveIndex;
   const breederConfig = trainerConfigs[TrainerType.EXPERT_POKEMON_BREEDER].clone();
   breederConfig.name = i18next.t(trainerNameKey);
 
@@ -387,14 +387,14 @@ function getPartyConfig(scene: BattleScene): EnemyPartyConfig {
         ivs: [ 31, 31, 31, 31, 31, 31 ],
         modifierConfigs: [
           {
-            modifier: generateModifierType(scene, modifierTypes.TERA_SHARD, [ Type.STEEL ]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(modifierTypes.TERA_SHARD, [ Type.STEEL ]) as PokemonHeldItemModifierType,
           }
         ]
       }
     ]
   };
 
-  if (scene.arena.biomeType === Biome.SPACE) {
+  if (gScene.arena.biomeType === Biome.SPACE) {
     // All 3 members always Cleffa line, but different configs
     baseConfig.pokemonConfigs!.push({
       nickname: i18next.t(`${namespace}:cleffa_2_nickname`, { speciesName: getPokemonSpecies(cleffaSpecies).getName() }),
@@ -477,14 +477,13 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   return [ numCommons, numRares ];
 }
 
-function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number) {
+function getEggOptions(commonEggs: number, rareEggs: number) {
   const eggDescription = i18next.t(`${namespace}:title`) + ":\n" + i18next.t(trainerNameKey);
   const eggOptions: IEggOptions[] = [];
 
   if (commonEggs > 0) {
     for (let i = 0; i < commonEggs; i++) {
       eggOptions.push({
-        scene,
         pulled: false,
         sourceType: EggSourceType.EVENT,
         eggDescriptor: eggDescription,
@@ -495,7 +494,6 @@ function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number)
   if (rareEggs > 0) {
     for (let i = 0; i < rareEggs; i++) {
       eggOptions.push({
-        scene,
         pulled: false,
         sourceType: EggSourceType.EVENT,
         eggDescriptor: eggDescription,
@@ -507,42 +505,42 @@ function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number)
   return eggOptions;
 }
 
-function removePokemonFromPartyAndStoreHeldItems(scene: BattleScene, encounter: MysteryEncounter, chosenPokemon: PlayerPokemon) {
-  const party = scene.getParty();
+function removePokemonFromPartyAndStoreHeldItems(encounter: MysteryEncounter, chosenPokemon: PlayerPokemon) {
+  const party = gScene.getParty();
   const chosenIndex = party.indexOf(chosenPokemon);
   party[chosenIndex] = party[0];
   party[0] = chosenPokemon;
-  encounter.misc.originalParty = scene.getParty().slice(1);
+  encounter.misc.originalParty = gScene.getParty().slice(1);
   encounter.misc.originalPartyHeldItems = encounter.misc.originalParty
     .map(p => p.getHeldItems());
-  scene["party"] = [
+  gScene["party"] = [
     chosenPokemon
   ];
 }
 
-function checkAchievement(scene: BattleScene) {
-  if (scene.arena.biomeType === Biome.SPACE) {
-    scene.validateAchv(achvs.BREEDERS_IN_SPACE);
+function checkAchievement() {
+  if (gScene.arena.biomeType === Biome.SPACE) {
+    gScene.validateAchv(achvs.BREEDERS_IN_SPACE);
   }
 }
 
-function restorePartyAndHeldItems(scene: BattleScene) {
-  const encounter = scene.currentBattle.mysteryEncounter!;
+function restorePartyAndHeldItems() {
+  const encounter = gScene.currentBattle.mysteryEncounter!;
   // Restore original party
-  scene.getParty().push(...encounter.misc.originalParty);
+  gScene.getParty().push(...encounter.misc.originalParty);
 
   // Restore held items
   const originalHeldItems = encounter.misc.originalPartyHeldItems;
   originalHeldItems.forEach((pokemonHeldItemsList: PokemonHeldItemModifier[]) => {
     pokemonHeldItemsList.forEach(heldItem => {
-      scene.addModifier(heldItem, true, false, false, true);
+      gScene.addModifier(heldItem, true, false, false, true);
     });
   });
-  scene.updateModifiers(true);
+  gScene.updateModifiers(true);
 }
 
-function onGameOver(scene: BattleScene) {
-  const encounter = scene.currentBattle.mysteryEncounter!;
+function onGameOver() {
+  const encounter = gScene.currentBattle.mysteryEncounter!;
 
   encounter.dialogue.outro = [
     {
@@ -552,7 +550,7 @@ function onGameOver(scene: BattleScene) {
   ];
 
   // Restore original party, player loses all friendship with chosen mon (it remains fainted)
-  restorePartyAndHeldItems(scene);
+  restorePartyAndHeldItems();
   const chosenPokemon  = encounter.misc.chosenPokemon;
   chosenPokemon.friendship = 0;
 
@@ -563,33 +561,33 @@ function onGameOver(scene: BattleScene) {
   encounter.misc.encounterFailed = true;
 
   // Revert BGM
-  scene.playBgm(scene.arena.bgm);
+  gScene.playBgm(gScene.arena.bgm);
 
   // Clear any leftover battle phases
-  scene.clearPhaseQueue();
-  scene.clearPhaseQueueSplice();
+  gScene.clearPhaseQueue();
+  gScene.clearPhaseQueueSplice();
 
   // Return enemy Pokemon
-  const pokemon = scene.getEnemyPokemon();
+  const pokemon = gScene.getEnemyPokemon();
   if (pokemon) {
-    scene.playSound("se/pb_rel");
+    gScene.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
-    scene.tweens.add({
+    gScene.tweens.add({
       targets: pokemon,
       duration: 250,
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        scene.field.remove(pokemon, true);
+        gScene.field.remove(pokemon, true);
       }
     });
   }
 
   // Show the enemy trainer
-  scene.time.delayedCall(250, () => {
-    const sprites = scene.currentBattle.trainer?.getSprites();
-    const tintSprites = scene.currentBattle.trainer?.getTintSprites();
+  gScene.time.delayedCall(250, () => {
+    const sprites = gScene.currentBattle.trainer?.getSprites();
+    const tintSprites = gScene.currentBattle.trainer?.getTintSprites();
     if (sprites && tintSprites) {
       for (let i = 0; i < sprites.length; i++) {
         sprites[i].setVisible(true);
@@ -598,8 +596,8 @@ function onGameOver(scene: BattleScene) {
         tintSprites[i].clearTint();
       }
     }
-    scene.tweens.add({
-      targets: scene.currentBattle.trainer,
+    gScene.tweens.add({
+      targets: gScene.currentBattle.trainer,
       x: "-=16",
       y: "+=16",
       alpha: 1,
@@ -609,18 +607,18 @@ function onGameOver(scene: BattleScene) {
   });
 
 
-  handleMysteryEncounterBattleFailed(scene, true);
+  handleMysteryEncounterBattleFailed(true);
 
   return false;
 }
 
-function doPostEncounterCleanup(scene: BattleScene) {
-  const encounter = scene.currentBattle.mysteryEncounter!;
+function doPostEncounterCleanup() {
+  const encounter = gScene.currentBattle.mysteryEncounter!;
   if (!encounter.misc.encounterFailed) {
     // Give achievement if in Space biome
-    checkAchievement(scene);
+    checkAchievement();
     // Give 20 friendship to the chosen pokemon
     encounter.misc.chosenPokemon.addFriendship(FRIENDSHIP_ADDED);
-    restorePartyAndHeldItems(scene);
+    restorePartyAndHeldItems();
   }
 }

@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { applyPostSummonAbAttrs, PostSummonAbAttr } from "#app/data/ability";
 import { ArenaTrapTag } from "#app/data/arena-tag";
@@ -8,8 +8,8 @@ import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class PostSummonPhase extends PokemonPhase {
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
-    super(scene, battlerIndex);
+  constructor(battlerIndex: BattlerIndex) {
+    super(battlerIndex);
   }
 
   start() {
@@ -20,10 +20,10 @@ export class PostSummonPhase extends PokemonPhase {
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }
-    this.scene.arena.applyTags(ArenaTrapTag, false, pokemon);
+    gScene.arena.applyTags(ArenaTrapTag, false, pokemon);
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects
-    if (this.scene.currentBattle.isBattleMysteryEncounter() && pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0) {
+    if (gScene.currentBattle.isBattleMysteryEncounter() && pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0) {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
 

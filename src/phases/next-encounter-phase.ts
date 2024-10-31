@@ -1,9 +1,9 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { EncounterPhase } from "./encounter-phase";
 
 export class NextEncounterPhase extends EncounterPhase {
-  constructor(scene: BattleScene) {
-    super(scene);
+  constructor() {
+    super();
   }
 
   start() {
@@ -11,29 +11,29 @@ export class NextEncounterPhase extends EncounterPhase {
   }
 
   doEncounter(): void {
-    this.scene.playBgm(undefined, true);
+    gScene.playBgm(undefined, true);
 
-    for (const pokemon of this.scene.getParty()) {
+    for (const pokemon of gScene.getParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
       }
     }
 
-    this.scene.arenaNextEnemy.setBiome(this.scene.arena.biomeType);
-    this.scene.arenaNextEnemy.setVisible(true);
+    gScene.arenaNextEnemy.setBiome(gScene.arena.biomeType);
+    gScene.arenaNextEnemy.setVisible(true);
 
-    const enemyField = this.scene.getEnemyField();
-    const moveTargets: any[] = [ this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer ];
-    const lastEncounterVisuals = this.scene.lastMysteryEncounter?.introVisuals;
+    const enemyField = gScene.getEnemyField();
+    const moveTargets: any[] = [ gScene.arenaEnemy, gScene.arenaNextEnemy, gScene.currentBattle.trainer, enemyField, gScene.lastEnemyTrainer ];
+    const lastEncounterVisuals = gScene.lastMysteryEncounter?.introVisuals;
     if (lastEncounterVisuals) {
       moveTargets.push(lastEncounterVisuals);
     }
-    const nextEncounterVisuals = this.scene.currentBattle.mysteryEncounter?.introVisuals;
+    const nextEncounterVisuals = gScene.currentBattle.mysteryEncounter?.introVisuals;
     if (nextEncounterVisuals) {
       const enterFromRight = nextEncounterVisuals.enterFromRight;
       if (enterFromRight) {
         nextEncounterVisuals.x += 500;
-        this.scene.tweens.add({
+        gScene.tweens.add({
           targets: nextEncounterVisuals,
           x: "-=200",
           duration: 2000
@@ -43,22 +43,22 @@ export class NextEncounterPhase extends EncounterPhase {
       }
     }
 
-    this.scene.tweens.add({
+    gScene.tweens.add({
       targets: moveTargets.flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {
-        this.scene.arenaEnemy.setBiome(this.scene.arena.biomeType);
-        this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
-        this.scene.arenaEnemy.setAlpha(1);
-        this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);
-        this.scene.arenaNextEnemy.setVisible(false);
-        if (this.scene.lastEnemyTrainer) {
-          this.scene.lastEnemyTrainer.destroy();
+        gScene.arenaEnemy.setBiome(gScene.arena.biomeType);
+        gScene.arenaEnemy.setX(gScene.arenaNextEnemy.x);
+        gScene.arenaEnemy.setAlpha(1);
+        gScene.arenaNextEnemy.setX(gScene.arenaNextEnemy.x - 300);
+        gScene.arenaNextEnemy.setVisible(false);
+        if (gScene.lastEnemyTrainer) {
+          gScene.lastEnemyTrainer.destroy();
         }
         if (lastEncounterVisuals) {
-          this.scene.field.remove(lastEncounterVisuals, true);
-          this.scene.lastMysteryEncounter!.introVisuals = undefined;
+          gScene.field.remove(lastEncounterVisuals, true);
+          gScene.lastMysteryEncounter!.introVisuals = undefined;
         }
 
         if (!this.tryOverrideForBattleSpec()) {

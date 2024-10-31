@@ -1,6 +1,5 @@
 import i18next from "i18next";
 import { classicFixedBattles, FixedBattleConfig, FixedBattleConfigs } from "./battle";
-import BattleScene from "./battle-scene";
 import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
@@ -9,6 +8,7 @@ import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
+import { gScene } from "#app/battle-scene";
 
 export enum GameModes {
   CLASSIC,
@@ -115,10 +115,10 @@ export class GameMode implements GameModeConfig {
    * - override from overrides.ts
    * - Town
    */
-  getStartingBiome(scene: BattleScene): Biome {
+  getStartingBiome(): Biome {
     switch (this.modeId) {
       case GameModes.DAILY:
-        return scene.generateRandomBiome(this.getWaveForDifficulty(1));
+        return gScene.generateRandomBiome(this.getWaveForDifficulty(1));
       default:
         return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
@@ -146,7 +146,7 @@ export class GameMode implements GameModeConfig {
     if (this.isDaily) {
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
-    if ((waveIndex % 30) === (arena.scene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
+    if ((waveIndex % 30) === (gScene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
       return true;
     } else if (waveIndex % 10 !== 1 && waveIndex % 10) {
       /**
@@ -163,11 +163,11 @@ export class GameMode implements GameModeConfig {
           if (w === waveIndex) {
             continue;
           }
-          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
+          if ((w % 30) === (gScene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
             allowTrainerBattle = false;
             break;
           } else if (w < waveIndex) {
-            arena.scene.executeWithSeedOffset(() => {
+            gScene.executeWithSeedOffset(() => {
               const waveTrainerChance = arena.getTrainerChance();
               if (!Utils.randSeedInt(waveTrainerChance)) {
                 allowTrainerBattle = false;

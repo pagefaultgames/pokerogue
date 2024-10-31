@@ -1,29 +1,29 @@
-import BattleScene from "../../battle-scene";
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
 import { Mode } from "../ui";
 import { getKeyWithKeycode } from "#app/configs/inputs/configHandler";
 import { Device } from "#enums/devices";
 import { addTextObject, TextStyle } from "#app/ui/text";
+import { gScene } from "#app/battle-scene";
 
 
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
 
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
     // Listen to gamepad button down events to initiate binding.
-    scene.input.keyboard?.on("keydown", this.onKeyDown, this);
+    gScene.input.keyboard?.on("keydown", this.onKeyDown, this);
   }
 
   setup() {
     super.setup();
 
     // New button icon setup.
-    this.newButtonIcon = this.scene.add.sprite(0, 0, "keyboard");
+    this.newButtonIcon = gScene.add.sprite(0, 0, "keyboard");
     this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 32);
     this.newButtonIcon.setOrigin(0.5);
     this.newButtonIcon.setVisible(false);
 
-    this.actionLabel = addTextObject(this.scene, 0, 0, "Assign button", TextStyle.SETTINGS_LABEL);
+    this.actionLabel = addTextObject(0, 0, "Assign button", TextStyle.SETTINGS_LABEL);
     this.actionLabel.setOrigin(0, 0.5);
     this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 80, this.actionBg.height / 2);
     this.actionsContainer.add(this.actionLabel);
@@ -32,7 +32,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
   }
 
   getSelectedDevice() {
-    return this.scene.inputController?.selectedDevice[Device.KEYBOARD];
+    return gScene.inputController?.selectedDevice[Device.KEYBOARD];
   }
 
   onKeyDown(event): void {
@@ -51,7 +51,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     if (!this.listening || this.buttonPressed !== null || blacklist.includes(key)) {
       return;
     }
-    const activeConfig = this.scene.inputController.getActiveConfig(Device.KEYBOARD);
+    const activeConfig = gScene.inputController.getActiveConfig(Device.KEYBOARD);
     const _key = getKeyWithKeycode(activeConfig, key);
     const buttonIcon = activeConfig.icons[_key];
     if (!buttonIcon) {
@@ -63,9 +63,9 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
   }
 
   swapAction(): boolean {
-    const activeConfig = this.scene.inputController.getActiveConfig(Device.KEYBOARD);
-    if (this.scene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
-      this.scene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
+    const activeConfig = gScene.inputController.getActiveConfig(Device.KEYBOARD);
+    if (gScene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
+      gScene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
       return true;
     }
     return false;

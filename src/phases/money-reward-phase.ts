@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { gScene } from "#app/battle-scene";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { MoneyMultiplierModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
@@ -8,27 +8,27 @@ import { BattlePhase } from "./battle-phase";
 export class MoneyRewardPhase extends BattlePhase {
   private moneyMultiplier: number;
 
-  constructor(scene: BattleScene, moneyMultiplier: number) {
-    super(scene);
+  constructor(moneyMultiplier: number) {
+    super();
 
     this.moneyMultiplier = moneyMultiplier;
   }
 
   start() {
-    const moneyAmount = new Utils.IntegerHolder(this.scene.getWaveMoneyAmount(this.moneyMultiplier));
+    const moneyAmount = new Utils.IntegerHolder(gScene.getWaveMoneyAmount(this.moneyMultiplier));
 
-    this.scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    gScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-    if (this.scene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
+    if (gScene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
       moneyAmount.value *= 2;
     }
 
-    this.scene.addMoney(moneyAmount.value);
+    gScene.addMoney(moneyAmount.value);
 
     const userLocale = navigator.language || "en-US";
     const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
     const message = i18next.t("battle:moneyWon", { moneyAmount: formattedMoneyAmount });
 
-    this.scene.ui.showText(message, null, () => this.end(), null, true);
+    gScene.ui.showText(message, null, () => this.end(), null, true);
   }
 }

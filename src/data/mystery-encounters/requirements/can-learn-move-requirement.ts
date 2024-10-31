@@ -1,8 +1,8 @@
-import BattleScene from "#app/battle-scene";
 import { Moves } from "#app/enums/moves";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
 import { EncounterPokemonRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
+import { gScene } from "#app/battle-scene";
 
 /**
  * {@linkcode CanLearnMoveRequirement} options
@@ -38,8 +38,8 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
     this.invertQuery = options.invertQuery ?? false;
   }
 
-  override meetsRequirement(scene: BattleScene): boolean {
-    const partyPokemon = scene.getParty().filter((pkm) => (this.includeFainted ? pkm.isAllowed() : pkm.isAllowedInBattle()));
+  override meetsRequirement(): boolean {
+    const partyPokemon = gScene.getParty().filter((pkm) => (this.includeFainted ? pkm.isAllowed() : pkm.isAllowedInBattle()));
 
     if (isNullOrUndefined(partyPokemon) || this.requiredMoves?.length < 0) {
       return false;
@@ -63,7 +63,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
     }
   }
 
-  override getDialogueToken(_scene: BattleScene, _pokemon?: PlayerPokemon): [string, string] {
+  override getDialogueToken(__pokemon?: PlayerPokemon): [string, string] {
     return [ "requiredMoves", this.requiredMoves.map(m => new PokemonMove(m).getName()).join(", ") ];
   }
 

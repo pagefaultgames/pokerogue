@@ -1,8 +1,8 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-import BattleScene from "../battle-scene";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 import i18next from "i18next";
+import { gScene } from "#app/battle-scene";
 
 
 const ivChartSize = 24;
@@ -21,8 +21,8 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   private ivChart: Phaser.GameObjects.Polygon;
   private ivStatValueTexts: BBCodeText[];
 
-  constructor(scene: BattleScene, x: number, y: number, showDiff?: boolean) {
-    super(scene, x, y);
+  constructor(x: number, y: number, showDiff?: boolean) {
+    super(gScene, x, y);
 
     this.showDiff = !!showDiff;
 
@@ -32,21 +32,21 @@ export class StatsContainer extends Phaser.GameObjects.Container {
   setup() {
     this.setName("stats");
     const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
-    const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);
+    const ivChartBg = gScene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);
     ivChartBg.setOrigin(0, 0);
 
-    const ivChartBorder = this.scene.add.polygon(ivChartBg.x, ivChartBg.y, ivChartBgData)
+    const ivChartBorder = gScene.add.polygon(ivChartBg.x, ivChartBg.y, ivChartBgData)
       .setStrokeStyle(1, 0x484050);
     ivChartBorder.setOrigin(0, 0);
 
     const ivChartBgLines = [[ 0, -1, 0, 1 ], [ -0.825, -0.5, 0.825, 0.5 ], [ 0.825, -0.5, -0.825, 0.5 ]].map(coords => {
-      const line = new Phaser.GameObjects.Line(this.scene, ivChartBg.x, ivChartBg.y, ivChartSize * coords[0], ivChartSize * coords[1], ivChartSize * coords[2], ivChartSize * coords[3], 0xffffff)
+      const line = new Phaser.GameObjects.Line(gScene, ivChartBg.x, ivChartBg.y, ivChartSize * coords[0], ivChartSize * coords[1], ivChartSize * coords[2], ivChartSize * coords[3], 0xffffff)
         .setLineWidth(0.5);
       line.setOrigin(0, 0);
       return line;
     });
 
-    this.ivChart = this.scene.add.polygon(ivChartBg.x, ivChartBg.y, defaultIvChartData, 0x98d8a0, 0.75);
+    this.ivChart = gScene.add.polygon(ivChartBg.x, ivChartBg.y, defaultIvChartData, 0x98d8a0, 0.75);
     this.ivChart.setOrigin(0, 0);
 
     this.add(ivChartBg);
@@ -58,7 +58,6 @@ export class StatsContainer extends Phaser.GameObjects.Container {
 
     for (const s of PERMANENT_STATS) {
       const statLabel = addTextObject(
-        this.scene,
         ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[s][0] * 1.325 + (this.showDiff ? 0 : ivLabelOffset[s]),
         ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[s][1] * 1.325 - 4 + (this.showDiff ? 0 : ivChartLabelyOffset[s]),
         i18next.t(getStatKey(s)),
@@ -66,7 +65,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       );
       statLabel.setOrigin(0.5);
 
-      this.ivStatValueTexts[s] = addBBCodeTextObject(this.scene, statLabel.x - (this.showDiff ? 0 : ivLabelOffset[s]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
+      this.ivStatValueTexts[s] = addBBCodeTextObject(statLabel.x - (this.showDiff ? 0 : ivLabelOffset[s]), statLabel.y + 8, "0", TextStyle.TOOLTIP_CONTENT);
       this.ivStatValueTexts[s].setOrigin(0.5);
 
 
@@ -79,7 +78,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     if (ivs) {
       const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][0], (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1] ] ).flat();
       const lastIvChartData = this.statsIvsCache || defaultIvChartData;
-      const perfectIVColor: string = getTextColor(TextStyle.SUMMARY_GOLD, false, (this.scene as BattleScene).uiTheme);
+      const perfectIVColor: string = getTextColor(TextStyle.SUMMARY_GOLD, false, gScene.uiTheme);
       this.statsIvsCache = ivChartData.slice(0);
 
       this.ivStatValueTexts.map((t: BBCodeText, i: integer) => {
@@ -93,7 +92,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         }
         if (this.showDiff && originalIvs) {
           if (originalIvs[i] < ivs[i]) {
-            label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false, (this.scene as BattleScene).uiTheme)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true, (this.scene as BattleScene).uiTheme)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
+            label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false, gScene.uiTheme)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true, gScene.uiTheme)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
           } else {
             label += " (-)";
           }
@@ -108,7 +107,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         Phaser.Display.Color.IntegerToColor(newColor)
       ] : null;
 
-      this.scene.tweens.addCounter({
+      gScene.tweens.addCounter({
         from: 0,
         to: 1,
         duration: 1000,
