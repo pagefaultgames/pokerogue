@@ -33,7 +33,7 @@ export function holdOn(ms: number) {
 
 export function generateStarter(scene, species?: Species[]) {
   const seed = "test";
-  const starters = getTestRunStarters(scene, seed, species);
+  const starters = getTestRunStarters(seed, species);
   const startingLevel = scene.gameMode.getStartingLevel();
   for (const starter of starters) {
     const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
@@ -47,9 +47,9 @@ export function generateStarter(scene, species?: Species[]) {
   return starters;
 }
 
-function getTestRunStarters(scene, seed, species) {
+function getTestRunStarters(seed, species) {
   if (!species) {
-    return getDailyRunStarters(scene, seed);
+    return getDailyRunStarters(seed);
   }
   const starters: Starter[] = [];
   const startingLevel = getGameMode(GameModes.CLASSIC).getStartingLevel();
@@ -57,7 +57,7 @@ function getTestRunStarters(scene, seed, species) {
   for (const specie of species) {
     const starterSpeciesForm = getPokemonSpeciesForm(specie, 0);
     const starterSpecies = getPokemonSpecies(starterSpeciesForm.speciesId);
-    const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, 0, undefined, undefined, undefined, undefined, undefined, undefined);
+    const pokemon = new PlayerPokemon(starterSpecies, startingLevel, undefined, 0);
     const starter: Starter = {
       species: starterSpecies,
       dexAttr: pokemon.getDexAttr(),

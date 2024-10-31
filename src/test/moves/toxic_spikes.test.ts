@@ -116,8 +116,7 @@ describe("Moves - Toxic Spikes", () => {
 
   it("should persist through reload", async () => {
     game.override.startingWave(1);
-    const scene = game.scene;
-    const gameData = new GameData(scene);
+    const gameData = new GameData();
 
     await game.classicMode.runToSummon([ Species.MIGHTYENA ]);
 
@@ -128,10 +127,10 @@ describe("Moves - Toxic Spikes", () => {
     await game.phaseInterceptor.to("BattleEndPhase");
     await game.toNextWave();
 
-    const sessionData : SessionSaveData = gameData["getSessionSaveData"](game.scene);
+    const sessionData : SessionSaveData = gameData["getSessionSaveData"]();
     localStorage.setItem("sessionTestData", encrypt(JSON.stringify(sessionData), true));
     const recoveredData : SessionSaveData = gameData.parseSessionData(decrypt(localStorage.getItem("sessionTestData")!, true));
-    gameData.loadSession(game.scene, 0, recoveredData);
+    gameData.loadSession(0, recoveredData);
 
     expect(sessionData.arena.tags).toEqual(recoveredData.arena.tags);
     localStorage.removeItem("sessionTestData");

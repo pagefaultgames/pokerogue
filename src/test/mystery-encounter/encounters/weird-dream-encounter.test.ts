@@ -84,8 +84,8 @@ describe("Weird Dream - Mystery Encounter", () => {
 
     expect(WeirdDreamEncounter.onInit).toBeDefined();
 
-    WeirdDreamEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    WeirdDreamEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(loadBgmSpy).toHaveBeenCalled();
     expect(onInitResult).toBe(true);

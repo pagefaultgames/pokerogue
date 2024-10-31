@@ -1,3 +1,4 @@
+import type BattleScene from "#app/battle-scene";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import Move, { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
@@ -11,6 +12,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+let gScene: BattleScene;
 
 describe("Moves - Light Screen", () => {
   let phaserGame: Phaser.Game;
@@ -30,6 +32,7 @@ describe("Moves - Light Screen", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    gScene = game.scene;
     game.override.battleType("single");
     game.override.ability(Abilities.NONE);
     game.override.moveset([ Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE ]);
@@ -93,8 +96,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (defender.scene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side)) {
-    defender.scene.arena.applyTagsForSide(ArenaTagType.LIGHT_SCREEN, side, false, attacker, move.category, multiplierHolder);
+  if (gScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side)) {
+    gScene.arena.applyTagsForSide(ArenaTagType.LIGHT_SCREEN, side, false, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

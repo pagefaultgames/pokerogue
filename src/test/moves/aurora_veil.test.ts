@@ -1,3 +1,4 @@
+import type BattleScene from "#app/battle-scene";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import Move, { allMoves } from "#app/data/move";
 import { WeatherType } from "#app/data/weather";
@@ -12,6 +13,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+let gScene: BattleScene;
 
 describe("Moves - Aurora Veil", () => {
   let phaserGame: Phaser.Game;
@@ -31,6 +33,7 @@ describe("Moves - Aurora Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    gScene = game.scene;
     game.override.battleType("single");
     game.override.ability(Abilities.NONE);
     game.override.moveset([ Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE ]);
@@ -110,8 +113,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (defender.scene.arena.getTagOnSide(ArenaTagType.AURORA_VEIL, side)) {
-    defender.scene.arena.applyTagsForSide(ArenaTagType.AURORA_VEIL, side, false, attacker, move.category, multiplierHolder);
+  if (gScene.arena.getTagOnSide(ArenaTagType.AURORA_VEIL, side)) {
+    gScene.arena.applyTagsForSide(ArenaTagType.AURORA_VEIL, side, false, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

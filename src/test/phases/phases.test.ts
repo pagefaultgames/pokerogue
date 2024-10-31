@@ -29,7 +29,7 @@ describe("Phases", () => {
 
   describe("LoginPhase", () => {
     it("should start the login phase", async () => {
-      const loginPhase = new LoginPhase(scene);
+      const loginPhase = new LoginPhase();
       scene.unshiftPhase(loginPhase);
       await game.phaseInterceptor.run(LoginPhase);
       expect(scene.ui.getMode()).to.equal(Mode.MESSAGE);
@@ -38,7 +38,7 @@ describe("Phases", () => {
 
   describe("TitlePhase", () => {
     it("should start the title phase", async () => {
-      const titlePhase = new TitlePhase(scene);
+      const titlePhase = new TitlePhase();
       scene.unshiftPhase(titlePhase);
       await game.phaseInterceptor.run(TitlePhase);
       expect(scene.ui.getMode()).to.equal(Mode.TITLE);
@@ -47,7 +47,7 @@ describe("Phases", () => {
 
   describe("UnavailablePhase", () => {
     it("should start the unavailable phase", async () => {
-      const unavailablePhase = new UnavailablePhase(scene);
+      const unavailablePhase = new UnavailablePhase();
       scene.unshiftPhase(unavailablePhase);
       await game.phaseInterceptor.run(UnavailablePhase);
       expect(scene.ui.getMode()).to.equal(Mode.UNAVAILABLE);

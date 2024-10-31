@@ -24,6 +24,8 @@ import { SwitchType } from "#enums/switch-type";
 describe("Abilities - ZEN MODE", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const baseForm = 0;
+  const zenForm = 1;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -37,30 +39,27 @@ describe("Abilities - ZEN MODE", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.ZEN_MODE);
     game.override.startingLevel(100);
-    game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
+    game.override.moveset([ Moves.SPLASH ]);
+    game.override.enemyMoveset(Moves.TACKLE);
   });
 
   test(
     "not enough damage to change form",
     async () => {
-      const moveToUse = Moves.SPLASH;
-      await game.startBattle([ Species.DARMANITAN ]);
+      await game.classicMode.startBattle([ Species.DARMANITAN ]);
       game.scene.getParty()[0].stats[Stat.HP] = 100;
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 
-      game.move.select(moveToUse);
+      game.move.select(Moves.SPLASH);
 
       await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
       await game.phaseInterceptor.to(DamagePhase, false);
-      // await game.phaseInterceptor.runFrom(DamagePhase).to(DamagePhase, false);
       const damagePhase = game.scene.getCurrentPhase() as DamagePhase;
       damagePhase.updateAmount(40);
       await game.phaseInterceptor.runFrom(DamagePhase).to(TurnEndPhase, false);
@@ -72,13 +71,12 @@ describe("Abilities - ZEN MODE", () => {
   test(
     "enough damage to change form",
     async () => {
-      const moveToUse = Moves.SPLASH;
-      await game.startBattle([ Species.DARMANITAN ]);
+      await game.classicMode.startBattle([ Species.DARMANITAN ]);
       game.scene.getParty()[0].stats[Stat.HP] = 1000;
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 
-      game.move.select(moveToUse);
+      game.move.select(Moves.SPLASH);
 
       await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
       await game.phaseInterceptor.to(QuietFormChangePhase);
@@ -91,17 +89,15 @@ describe("Abilities - ZEN MODE", () => {
   test(
     "kill pokemon while on zen mode",
     async () => {
-      const moveToUse = Moves.SPLASH;
-      await game.startBattle([ Species.DARMANITAN, Species.CHARIZARD ]);
+      await game.classicMode.startBattle([ Species.DARMANITAN, Species.CHARIZARD ]);
       game.scene.getParty()[0].stats[Stat.HP] = 1000;
       game.scene.getParty()[0].hp = 100;
       expect(game.scene.getParty()[0].formIndex).toBe(0);
 
-      game.move.select(moveToUse);
+      game.move.select(Moves.SPLASH);
 
       await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
       await game.phaseInterceptor.to(DamagePhase, false);
-      // await game.phaseInterceptor.runFrom(DamagePhase).to(DamagePhase, false);
       const damagePhase = game.scene.getCurrentPhase() as DamagePhase;
       damagePhase.updateAmount(80);
       await game.phaseInterceptor.runFrom(DamagePhase).to(QuietFormChangePhase);
@@ -113,7 +109,7 @@ describe("Abilities - ZEN MODE", () => {
       await game.phaseInterceptor.run(EnemyCommandPhase);
       await game.phaseInterceptor.run(TurnStartPhase);
       game.onNextPrompt("SwitchPhase", Mode.PARTY, () => {
-        game.scene.unshiftPhase(new SwitchSummonPhase(game.scene, SwitchType.SWITCH, 0, 1, false));
+        game.scene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, 0, 1, false));
         game.scene.ui.setMode(Mode.MESSAGE);
       });
       game.onNextPrompt("SwitchPhase", Mode.MESSAGE, () => {
@@ -128,14 +124,12 @@ describe("Abilities - ZEN MODE", () => {
   test(
     "check if fainted pokemon switches to base form on arena reset",
     async () => {
-      const baseForm = 0,
-        zenForm = 1;
       game.override.startingWave(4);
       game.override.starterForms({
         [Species.DARMANITAN]: zenForm,
       });
 
-      await game.startBattle([ Species.MAGIKARP, Species.DARMANITAN ]);
+      await game.classicMode.startBattle([ Species.MAGIKARP, Species.DARMANITAN ]);
 
       const darmanitan = game.scene.getParty().find((p) => p.species.speciesId === Species.DARMANITAN)!;
       expect(darmanitan).not.toBe(undefined);

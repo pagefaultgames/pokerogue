@@ -95,7 +95,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     expect(encounter.onInit).toBeDefined();
 
-    const onInitResult = onInit!(scene);
+    const onInitResult = onInit!();
     expect(onInitResult).toBe(true);
   });
 

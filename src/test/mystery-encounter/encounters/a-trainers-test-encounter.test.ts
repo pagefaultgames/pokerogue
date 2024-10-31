@@ -78,8 +78,8 @@ describe("A Trainer's Test - Mystery Encounter", () => {
 
     expect(ATrainersTestEncounter.onInit).toBeDefined();
 
-    ATrainersTestEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    ATrainersTestEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(ATrainersTestEncounter.dialogueTokens?.statTrainerName).toBeDefined();
     expect(ATrainersTestEncounter.misc.trainerType).toBeDefined();

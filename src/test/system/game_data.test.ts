@@ -55,7 +55,7 @@ describe("System - Game Data", () => {
     it("should return [true, true] if bypassLogin is true", async () => {
       vi.spyOn(BattleScene, "bypassLogin", "get").mockReturnValue(true);
 
-      const result = await game.scene.gameData.tryClearSession(game.scene, 0);
+      const result = await game.scene.gameData.tryClearSession(0);
 
       expect(result).toEqual([ true, true ]);
     });
@@ -63,7 +63,7 @@ describe("System - Game Data", () => {
     it("should return [true, true] if successful", async () => {
       server.use(http.post(`${apiBase}/savedata/session/clear`, () => HttpResponse.json({ success: true })));
 
-      const result = await game.scene.gameData.tryClearSession(game.scene, 0);
+      const result = await game.scene.gameData.tryClearSession(0);
 
       expect(result).toEqual([ true, true ]);
       expect(account.updateUserInfo).toHaveBeenCalled();
@@ -72,7 +72,7 @@ describe("System - Game Data", () => {
     it("should return [true, false] if not successful", async () => {
       server.use(http.post(`${apiBase}/savedata/session/clear`, () => HttpResponse.json({ success: false })));
 
-      const result = await game.scene.gameData.tryClearSession(game.scene, 0);
+      const result = await game.scene.gameData.tryClearSession(0);
 
       expect(result).toEqual([ true, false ]);
       expect(account.updateUserInfo).toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe("System - Game Data", () => {
         http.post(`${apiBase}/savedata/session/clear`, () => HttpResponse.json({ error: "session out of date" }))
       );
 
-      const result = await game.scene.gameData.tryClearSession(game.scene, 0);
+      const result = await game.scene.gameData.tryClearSession(0);
 
       expect(result).toEqual([ false, false ]);
       expect(account.updateUserInfo).toHaveBeenCalled();

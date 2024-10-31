@@ -97,8 +97,8 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     expect(TheStrongStuffEncounter.onInit).toBeDefined();
 
-    TheStrongStuffEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    TheStrongStuffEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(TheStrongStuffEncounter.enemyPartyConfigs).toEqual([
       {
