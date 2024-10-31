@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { applyAbAttrs, applyPostStatStageChangeAbAttrs, applyPreStatStageChangeAbAttrs, PostStatStageChangeAbAttr, ProtectStatAbAttr, StatStageChangeCopyAbAttr, StatStageChangeMultiplierAbAttr } from "#app/data/ability";
+import { applyAbAttrs, applyPostStatStageChangeAbAttrs, applyPreStatStageChangeAbAttrs, PostStatStageChangeAbAttr, ProtectStatAbAttr, ReflectStatStageChangeAbAttr, StatStageChangeCopyAbAttr, StatStageChangeMultiplierAbAttr } from "#app/data/ability";
 import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
 import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -10,6 +10,7 @@ import { NumberHolder, BooleanHolder } from "#app/utils";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
+import { OctolockTag } from "#app/data/battler-tags";
 
 export type StatStageChangeCallback = (target: Pokemon | null, changed: BattleStat[], relativeChanges: number[]) => void;
 
@@ -47,6 +48,29 @@ export class StatStageChangePhase extends PokemonPhase {
     }
 
     const pokemon = this.getPokemon();
+    let opponentPokemon: Pokemon | undefined;
+
+    /** StickY web should be like
+     * if (stat loss due to switching in on sticky web)
+     *    if (have mirror armor)
+     *      if (enemy that used sticky web is in)
+     *        apply -1 spd to that enemy
+     */
+
+    // Gets the position of last enemy or player pokemon that used ability or move, primarily for double battles involving Mirror Armor
+    if (pokemon.isPlayer()) {
+      if (this.scene.currentBattle.double && this.scene.getEnemyField().length === 2) {
+        opponentPokemon = this.scene.getEnemyField()[this.scene.currentBattle.lastEnemyInvolved];
+      } else {
+        opponentPokemon = this.scene.getEnemyPokemon();
+      }
+    } else {
+      if (this.scene.currentBattle.double && this.scene.getPlayerField().length === 2) {
+        opponentPokemon = this.scene.getPlayerField()[this.scene.currentBattle.lastPlayerInvolved];
+      } else {
+        opponentPokemon = this.scene.getPlayerPokemon();
+      }
+    }
 
     if (!pokemon.isActive(true)) {
       return this.end();
@@ -70,6 +94,16 @@ export class StatStageChangePhase extends PokemonPhase {
 
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {
         applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled, simulate);
+
+
+        // TODO: CODE INTERACTION WITH MAGIC BOUNCE AS WELL
+        // TODO: CODE INTERACTION WITH STICKY WEB
+        // TODO: PREVENT REFLECTION FROM OPPONENT MIRROR ARMOR FOR INFINITE LOOP
+        // TODO: FIX INTERACTION WITH MEMENTO, SHOULD LOWER OPPONENT STATS THEN DIE
+        /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
+        if (opponentPokemon !== undefined && !pokemon.findTag(t => t instanceof OctolockTag)) {
+          applyPreStatStageChangeAbAttrs(ReflectStatStageChangeAbAttr, pokemon, stat, cancelled, simulate, opponentPokemon, this.stages);
+        }
       }
 
       // If one stat stage decrease is cancelled, simulate the rest of the applications

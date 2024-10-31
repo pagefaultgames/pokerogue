@@ -2705,6 +2705,50 @@ export class PreStatStageChangeAbAttr extends AbAttr {
 }
 
 /**
+ * Reflect one or all {@linkcode BattleStat} reductions caused by other Pokémon's moves and Abilities.
+ * Currently only applies to Mirror Armor
+ */
+// TODO: CODE INTERACTION WITH MAGIC BOUNCE AS WELL
+// TODO: CODE INTERACTION WITH STICKY WEB
+// TODO: PREVENT REFLECTION FROM OPPONENT MIRROR ARMOR FOR INFINITE LOOP
+export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
+  /** {@linkcode BattleStat} to reflect */
+  private reflectedStat? : BattleStat;
+  constructor() {
+    super();
+  }
+
+  /**
+   * Apply the {@linkcode ReflectStatStageChangeAbAttr} to an interaction
+   * @param _pokemon The user pokemon
+   * @param _passive
+   * @param _simulated
+   * @param stat the {@linkcode BattleStat} being affected
+   * @param cancelled The {@linkcode Utils.BooleanHolder} that will be set to true due to reflection
+   * @param _args
+   * @returns true because it reflects any stat being lowered
+   */
+  applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, _args: any[]): boolean {
+    const attacker: Pokemon = _args[0];
+    const stages = _args[1];
+    this.reflectedStat = stat;
+    if (!_simulated) {
+      attacker.scene.unshiftPhase(new StatStageChangePhase(attacker.scene, attacker.getBattlerIndex(), false, [ stat ], stages));
+    }
+    cancelled.value = true;
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ..._args: any[]): string {
+    return i18next.t("abilityTriggers:protectStat", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      abilityName,
+      statName: this.reflectedStat ? i18next.t(getStatKey(this.reflectedStat)) : i18next.t("battle:stats")
+    });
+  }
+}
+
+/**
  * Protect one or all {@linkcode BattleStat} from reductions caused by other Pokémon's moves and Abilities
  */
 export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
@@ -5712,8 +5756,8 @@ export function initAbilities() {
     new Ability(Abilities.PROPELLER_TAIL, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.MIRROR_ARMOR, 8)
-      .ignorable()
-      .unimplemented(),
+      .attr(ReflectStatStageChangeAbAttr)
+      .ignorable(),
     /**
      * Right now, the logic is attached to Surf and Dive moves. Ideally, the post-defend/hit should be an
      * ability attribute but the current implementation of move effects for BattlerTag does not support this- in the case

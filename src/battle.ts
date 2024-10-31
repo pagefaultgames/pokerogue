@@ -81,6 +81,9 @@ export default class Battle {
   public battleSeed: string = Utils.randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered: number = 0;
+  /** Primarily for double battles, keeps track of last enemy and player pokemon that triggered its ability or used a move */
+  public lastEnemyInvolved: number;
+  public lastPlayerInvolved: number;
   public lastUsedPokeball: PokeballType | null = null;
   /** The number of times a Pokemon on the player's side has fainted this battle */
   public playerFaints: number = 0;
