@@ -181,7 +181,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
-
     if (dataSource) {
       this.id = dataSource.id;
       this.hp = dataSource.hp;
