@@ -126,6 +126,7 @@ export class MistTag extends ArenaTag {
    * Cancels the lowering of stats
    * @param arena the {@linkcode Arena} containing this effect
    * @param simulated `true` if the effect should be applied quietly
+   * @param attacker the {@linkcode Pokemon} using a move into this effect.
    * @param cancelled a {@linkcode BooleanHolder} whose value is set to `true`
    * to flag the stat reduction as cancelled
    * @returns `true` if a stat reduction was cancelled; `false` otherwise
