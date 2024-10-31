@@ -51,7 +51,7 @@ export class CheckSwitchPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.SWITCH, this.fieldIndex, false, true));
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
         this.end();
       }, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
