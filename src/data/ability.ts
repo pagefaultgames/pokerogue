@@ -4864,8 +4864,8 @@ class ForceSwitchOutHelper {
  * recovered based on the damage dealt in the current turn. The recovery is multiplied by the
  * Shell Bell's modifier (if any).
  *
- * @param {Pokemon} pokemon - The Pokémon whose Shell Bell recovery is being calculated.
- * @returns {number} The amount of health recovered by Shell Bell.
+ * @param pokemon - The Pokémon whose Shell Bell recovery is being calculated.
+ * @returns The amount of health recovered by Shell Bell.
  */
 function calculateShellBellRecovery(pokemon: Pokemon): number {
   const shellBellModifier = pokemon.getHeldItems().find(m => m instanceof HitHealModifier);
