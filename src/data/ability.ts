@@ -4814,9 +4814,9 @@ class ForceSwitchOutHelper {
   /**
    * Determines if a Pokémon can switch out based on its status, the opponent's status, and battle conditions.
    *
-   * @param {Pokemon} pokemon The Pokémon attempting to switch out.
-   * @param {Pokemon} opponent The opponent Pokémon.
-   * @returns {boolean} True if the switch-out condition is met, false otherwise.
+   * @param pokemon The Pokémon attempting to switch out.
+   * @param opponent The opponent Pokémon.
+   * @returns `true` if the switch-out condition is met
    */
   getSwitchOutCondition(pokemon: Pokemon, opponent: Pokemon): boolean {
     const switchOutTarget = pokemon;
