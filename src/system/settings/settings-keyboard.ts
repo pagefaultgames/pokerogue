@@ -135,53 +135,53 @@ export const settingKeyboardBlackList = [
 
 export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard, value: integer): boolean {
   switch (setting) {
-  case SettingKeyboard.Button_Up:
-  case SettingKeyboard.Button_Down:
-  case SettingKeyboard.Button_Left:
-  case SettingKeyboard.Button_Right:
-  case SettingKeyboard.Button_Action:
-  case SettingKeyboard.Button_Cancel:
-  case SettingKeyboard.Button_Menu:
-  case SettingKeyboard.Button_Stats:
-  case SettingKeyboard.Button_Cycle_Shiny:
-  case SettingKeyboard.Button_Cycle_Form:
-  case SettingKeyboard.Button_Cycle_Gender:
-  case SettingKeyboard.Button_Cycle_Ability:
-  case SettingKeyboard.Button_Cycle_Nature:
-  case SettingKeyboard.Button_Cycle_Variant:
-  case SettingKeyboard.Button_Speed_Up:
-  case SettingKeyboard.Button_Slow_Down:
-  case SettingKeyboard.Alt_Button_Up:
-  case SettingKeyboard.Alt_Button_Down:
-  case SettingKeyboard.Alt_Button_Left:
-  case SettingKeyboard.Alt_Button_Right:
-  case SettingKeyboard.Alt_Button_Action:
-  case SettingKeyboard.Alt_Button_Cancel:
-  case SettingKeyboard.Alt_Button_Menu:
-  case SettingKeyboard.Alt_Button_Stats:
-  case SettingKeyboard.Alt_Button_Cycle_Shiny:
-  case SettingKeyboard.Alt_Button_Cycle_Form:
-  case SettingKeyboard.Alt_Button_Cycle_Gender:
-  case SettingKeyboard.Alt_Button_Cycle_Ability:
-  case SettingKeyboard.Alt_Button_Cycle_Nature:
-  case SettingKeyboard.Alt_Button_Cycle_Variant:
-  case SettingKeyboard.Alt_Button_Speed_Up:
-  case SettingKeyboard.Alt_Button_Slow_Down:
-  case SettingKeyboard.Alt_Button_Submit:
-    if (value) {
-      if (scene.ui) {
-        const cancelHandler = (success: boolean = false) : boolean => {
-          scene.ui.revertMode();
-          (scene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
-          return success;
-        };
-        scene.ui.setOverlayMode(Mode.KEYBOARD_BINDING, {
-          target: setting,
-          cancelHandler: cancelHandler,
-        });
+    case SettingKeyboard.Button_Up:
+    case SettingKeyboard.Button_Down:
+    case SettingKeyboard.Button_Left:
+    case SettingKeyboard.Button_Right:
+    case SettingKeyboard.Button_Action:
+    case SettingKeyboard.Button_Cancel:
+    case SettingKeyboard.Button_Menu:
+    case SettingKeyboard.Button_Stats:
+    case SettingKeyboard.Button_Cycle_Shiny:
+    case SettingKeyboard.Button_Cycle_Form:
+    case SettingKeyboard.Button_Cycle_Gender:
+    case SettingKeyboard.Button_Cycle_Ability:
+    case SettingKeyboard.Button_Cycle_Nature:
+    case SettingKeyboard.Button_Cycle_Variant:
+    case SettingKeyboard.Button_Speed_Up:
+    case SettingKeyboard.Button_Slow_Down:
+    case SettingKeyboard.Alt_Button_Up:
+    case SettingKeyboard.Alt_Button_Down:
+    case SettingKeyboard.Alt_Button_Left:
+    case SettingKeyboard.Alt_Button_Right:
+    case SettingKeyboard.Alt_Button_Action:
+    case SettingKeyboard.Alt_Button_Cancel:
+    case SettingKeyboard.Alt_Button_Menu:
+    case SettingKeyboard.Alt_Button_Stats:
+    case SettingKeyboard.Alt_Button_Cycle_Shiny:
+    case SettingKeyboard.Alt_Button_Cycle_Form:
+    case SettingKeyboard.Alt_Button_Cycle_Gender:
+    case SettingKeyboard.Alt_Button_Cycle_Ability:
+    case SettingKeyboard.Alt_Button_Cycle_Nature:
+    case SettingKeyboard.Alt_Button_Cycle_Variant:
+    case SettingKeyboard.Alt_Button_Speed_Up:
+    case SettingKeyboard.Alt_Button_Slow_Down:
+    case SettingKeyboard.Alt_Button_Submit:
+      if (value) {
+        if (scene.ui) {
+          const cancelHandler = (success: boolean = false) : boolean => {
+            scene.ui.revertMode();
+            (scene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
+            return success;
+          };
+          scene.ui.setOverlayMode(Mode.KEYBOARD_BINDING, {
+            target: setting,
+            cancelHandler: cancelHandler,
+          });
+        }
       }
-    }
-    break;
+      break;
         // case SettingKeyboard.Default_Layout:
         //     if (value && scene.ui) {
         //             const cancelHandler = () => {

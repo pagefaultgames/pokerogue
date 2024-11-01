@@ -1,6 +1,6 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
-import { AttackMove, BeakBlastHeaderAttr, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
+import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
 import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
@@ -134,15 +134,15 @@ export class AnimConfig {
         for (const te of frameTimedEvents[fte]) {
           let timedEvent: AnimTimedEvent | undefined;
           switch (te.eventType) {
-          case "AnimTimedSoundEvent":
-            timedEvent = new AnimTimedSoundEvent(te.frameIndex, te.resourceName, te);
-            break;
-          case "AnimTimedAddBgEvent":
-            timedEvent = new AnimTimedAddBgEvent(te.frameIndex, te.resourceName, te);
-            break;
-          case "AnimTimedUpdateBgEvent":
-            timedEvent = new AnimTimedUpdateBgEvent(te.frameIndex, te.resourceName, te);
-            break;
+            case "AnimTimedSoundEvent":
+              timedEvent = new AnimTimedSoundEvent(te.frameIndex, te.resourceName, te);
+              break;
+            case "AnimTimedAddBgEvent":
+              timedEvent = new AnimTimedAddBgEvent(te.frameIndex, te.resourceName, te);
+              break;
+            case "AnimTimedUpdateBgEvent":
+              timedEvent = new AnimTimedUpdateBgEvent(te.frameIndex, te.resourceName, te);
+              break;
           }
 
           timedEvent && timedEvents.push(timedEvent);
@@ -243,12 +243,12 @@ class AnimFrame {
     if (!init) {
       let target = AnimFrameTarget.GRAPHIC;
       switch (pattern) {
-      case -2:
-        target = AnimFrameTarget.TARGET;
-        break;
-      case -1:
-        target = AnimFrameTarget.USER;
-        break;
+        case -2:
+          target = AnimFrameTarget.TARGET;
+          break;
+        case -1:
+          target = AnimFrameTarget.USER;
+          break;
       }
       this.target = target;
       this.graphicFrame = pattern >= 0 ? pattern : 0;
@@ -476,8 +476,11 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
       } else {
         const loadedCheckTimer = setInterval(() => {
           if (moveAnims.get(move) !== null) {
-            const chargeAttr = allMoves[move].getAttrs(ChargeAttr)[0] || allMoves[move].getAttrs(DelayedAttackAttr)[0];
-            if (chargeAttr && chargeAnims.get(chargeAttr.chargeAnim) === null) {
+            const chargeAnimSource = (allMoves[move].isChargingMove())
+              ? allMoves[move]
+              : (allMoves[move].getAttrs(DelayedAttackAttr)[0]
+                ?? allMoves[move].getAttrs(BeakBlastHeaderAttr)[0]);
+            if (chargeAnimSource && chargeAnims.get(chargeAnimSource.chargeAnim) === null) {
               return;
             }
             clearInterval(loadedCheckTimer);
@@ -507,11 +510,12 @@ export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
             } else {
               populateMoveAnim(move, ba);
             }
-            const chargeAttr = allMoves[move].getAttrs(ChargeAttr)[0]
-                            || allMoves[move].getAttrs(DelayedAttackAttr)[0]
-                            || allMoves[move].getAttrs(BeakBlastHeaderAttr)[0];
-            if (chargeAttr) {
-              initMoveChargeAnim(scene, chargeAttr.chargeAnim).then(() => resolve());
+            const chargeAnimSource = (allMoves[move].isChargingMove())
+              ? allMoves[move]
+              : (allMoves[move].getAttrs(DelayedAttackAttr)[0]
+                  ?? allMoves[move].getAttrs(BeakBlastHeaderAttr)[0]);
+            if (chargeAnimSource) {
+              initMoveChargeAnim(scene, chargeAnimSource.chargeAnim).then(() => resolve());
             } else {
               resolve();
             }
@@ -638,11 +642,12 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
   return new Promise(resolve => {
     const moveAnimations = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
     for (const moveId of moveIds) {
-      const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr)[0]
-                      || allMoves[moveId].getAttrs(DelayedAttackAttr)[0]
-                      || allMoves[moveId].getAttrs(BeakBlastHeaderAttr)[0];
-      if (chargeAttr) {
-        const moveChargeAnims = chargeAnims.get(chargeAttr.chargeAnim);
+      const chargeAnimSource = (allMoves[moveId].isChargingMove())
+        ? allMoves[moveId]
+        : (allMoves[moveId].getAttrs(DelayedAttackAttr)[0]
+                  ?? allMoves[moveId].getAttrs(BeakBlastHeaderAttr)[0]);
+      if (chargeAnimSource) {
+        const moveChargeAnims = chargeAnims.get(chargeAnimSource.chargeAnim);
         moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims![0]); // TODO: is the bang correct?
         if (Array.isArray(moveChargeAnims)) {
           moveAnimations.push(moveChargeAnims[1]);
@@ -803,23 +808,23 @@ export abstract class BattleAnim {
         let scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
         const scaleY = (frame.zoomY / 100);
         switch (frame.focus) {
-        case AnimFocus.TARGET:
-          x += targetInitialX - targetFocusX;
-          y += (targetInitialY - targetHalfHeight) - targetFocusY;
-          break;
-        case AnimFocus.USER:
-          x += userInitialX - userFocusX;
-          y += (userInitialY - userHalfHeight) - userFocusY;
-          break;
-        case AnimFocus.USER_TARGET:
-          const point = transformPoint(this.srcLine[0], this.srcLine[1], this.srcLine[2], this.srcLine[3],
-            this.dstLine[0], this.dstLine[1] - userHalfHeight, this.dstLine[2], this.dstLine[3] - targetHalfHeight, x, y);
-          x = point[0];
-          y = point[1];
-          if (frame.target === AnimFrameTarget.GRAPHIC && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])) {
-            scaleX = scaleX * -1;
-          }
-          break;
+          case AnimFocus.TARGET:
+            x += targetInitialX - targetFocusX;
+            y += (targetInitialY - targetHalfHeight) - targetFocusY;
+            break;
+          case AnimFocus.USER:
+            x += userInitialX - userFocusX;
+            y += (userInitialY - userHalfHeight) - userFocusY;
+            break;
+          case AnimFocus.USER_TARGET:
+            const point = transformPoint(this.srcLine[0], this.srcLine[1], this.srcLine[2], this.srcLine[3],
+              this.dstLine[0], this.dstLine[1] - userHalfHeight, this.dstLine[2], this.dstLine[3] - targetHalfHeight, x, y);
+            x = point[0];
+            y = point[1];
+            if (frame.target === AnimFrameTarget.GRAPHIC && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])) {
+              scaleX = scaleX * -1;
+            }
+            break;
         }
         const angle = -frame.angle;
         const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
@@ -993,44 +998,44 @@ export abstract class BattleAnim {
                 spritePriorities[graphicIndex] = frame.priority;
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
-                  case 0:
-                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
-                    break;
-                  case 1:
-                    scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
-                    break;
-                  case 2:
-                    switch (frame.focus) {
-                    case AnimFocus.USER:
-                      if (this.bgSprite) {
-                        scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.bgSprite);
-                      } else {
-                        scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
+                    case 0:
+                      scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
+                      break;
+                    case 1:
+                      scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
+                      break;
+                    case 2:
+                      switch (frame.focus) {
+                        case AnimFocus.USER:
+                          if (this.bgSprite) {
+                            scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.bgSprite);
+                          } else {
+                            scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
+                          }
+                          break;
+                        case AnimFocus.TARGET:
+                          scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
+                          break;
+                        default:
+                          setSpritePriority(1);
+                          break;
                       }
                       break;
-                    case AnimFocus.TARGET:
-                      scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
+                    case 3:
+                      switch (frame.focus) {
+                        case AnimFocus.USER:
+                          scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
+                          break;
+                        case AnimFocus.TARGET:
+                          scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
+                          break;
+                        default:
+                          setSpritePriority(1);
+                          break;
+                      }
                       break;
                     default:
                       setSpritePriority(1);
-                      break;
-                    }
-                    break;
-                  case 3:
-                    switch (frame.focus) {
-                    case AnimFocus.USER:
-                      scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
-                      break;
-                    case AnimFocus.TARGET:
-                      scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
-                      break;
-                    default:
-                      setSpritePriority(1);
-                      break;
-                    }
-                    break;
-                  default:
-                    setSpritePriority(1);
                   }
                 };
                 setSpritePriority(frame.priority);
@@ -1396,108 +1401,108 @@ export async function populateAnims() {
       const fieldName = field.slice(0, field.indexOf(":"));
       const fieldData = field.slice(fieldName.length + 1, field.lastIndexOf("\n")).trim();
       switch (fieldName) {
-      case "array":
-        const framesData = fieldData.split("  - - - ").slice(1);
-        for (let fd = 0; fd < framesData.length; fd++) {
-          anim.frames.push([]);
-          const frameData = framesData[fd];
-          const focusFramesData = frameData.split("    - - ");
-          for (let tf = 0; tf < focusFramesData.length; tf++) {
-            const values = focusFramesData[tf].replace(/      \- /g, "").split("\n");
-            const targetFrame = new AnimFrame(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]), parseFloat(values[11]), parseFloat(values[3]),
-              parseInt(values[4]) === 1, parseInt(values[6]) === 1, parseInt(values[5]), parseInt(values[7]), parseInt(values[8]), parseInt(values[12]), parseInt(values[13]),
-              parseInt(values[14]), parseInt(values[15]), parseInt(values[16]), parseInt(values[17]), parseInt(values[18]), parseInt(values[19]),
-              parseInt(values[21]), parseInt(values[22]), parseInt(values[23]), parseInt(values[24]), parseInt(values[20]) === 1, parseInt(values[25]), parseInt(values[26]) as AnimFocus);
-            anim.frames[fd].push(targetFrame);
+        case "array":
+          const framesData = fieldData.split("  - - - ").slice(1);
+          for (let fd = 0; fd < framesData.length; fd++) {
+            anim.frames.push([]);
+            const frameData = framesData[fd];
+            const focusFramesData = frameData.split("    - - ");
+            for (let tf = 0; tf < focusFramesData.length; tf++) {
+              const values = focusFramesData[tf].replace(/      \- /g, "").split("\n");
+              const targetFrame = new AnimFrame(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]), parseFloat(values[11]), parseFloat(values[3]),
+                parseInt(values[4]) === 1, parseInt(values[6]) === 1, parseInt(values[5]), parseInt(values[7]), parseInt(values[8]), parseInt(values[12]), parseInt(values[13]),
+                parseInt(values[14]), parseInt(values[15]), parseInt(values[16]), parseInt(values[17]), parseInt(values[18]), parseInt(values[19]),
+                parseInt(values[21]), parseInt(values[22]), parseInt(values[23]), parseInt(values[24]), parseInt(values[20]) === 1, parseInt(values[25]), parseInt(values[26]) as AnimFocus);
+              anim.frames[fd].push(targetFrame);
+            }
           }
-        }
-        break;
-      case "graphic":
-        const graphic = fieldData !== "''" ? fieldData : "";
-        anim.graphic = graphic.indexOf(".") > -1
-          ? graphic.slice(0, fieldData.indexOf("."))
-          : graphic;
-        break;
-      case "timing":
-        const timingEntries = fieldData.split("- !ruby/object:PBAnimTiming ").slice(1);
-        for (let t = 0; t < timingEntries.length; t++) {
-          const timingData = timingEntries[t].replace(/\n/g, " ").replace(/[ ]{2,}/g, " ").replace(/[a-z]+: ! '', /ig, "").replace(/name: (.*?),/, "name: \"$1\",")
-            .replace(/flashColor: !ruby\/object:Color { alpha: ([\d\.]+), blue: ([\d\.]+), green: ([\d\.]+), red: ([\d\.]+)}/, "flashRed: $4, flashGreen: $3, flashBlue: $2, flashAlpha: $1");
-          const frameIndex = parseInt(/frame: (\d+)/.exec(timingData)![1]); // TODO: is the bang correct?
-          let resourceName = /name: "(.*?)"/.exec(timingData)![1].replace("''", ""); // TODO: is the bang correct?
-          const timingType = parseInt(/timingType: (\d)/.exec(timingData)![1]); // TODO: is the bang correct?
-          let timedEvent: AnimTimedEvent | undefined;
-          switch (timingType) {
-          case 0:
-            if (resourceName && resourceName.indexOf(".") === -1) {
-              let ext: string | undefined;
-              [ "wav", "mp3", "m4a" ].every(e => {
-                if (seNames.indexOf(`${resourceName}.${e}`) > -1) {
-                  ext = e;
-                  return false;
+          break;
+        case "graphic":
+          const graphic = fieldData !== "''" ? fieldData : "";
+          anim.graphic = graphic.indexOf(".") > -1
+            ? graphic.slice(0, fieldData.indexOf("."))
+            : graphic;
+          break;
+        case "timing":
+          const timingEntries = fieldData.split("- !ruby/object:PBAnimTiming ").slice(1);
+          for (let t = 0; t < timingEntries.length; t++) {
+            const timingData = timingEntries[t].replace(/\n/g, " ").replace(/[ ]{2,}/g, " ").replace(/[a-z]+: ! '', /ig, "").replace(/name: (.*?),/, "name: \"$1\",")
+              .replace(/flashColor: !ruby\/object:Color { alpha: ([\d\.]+), blue: ([\d\.]+), green: ([\d\.]+), red: ([\d\.]+)}/, "flashRed: $4, flashGreen: $3, flashBlue: $2, flashAlpha: $1");
+            const frameIndex = parseInt(/frame: (\d+)/.exec(timingData)![1]); // TODO: is the bang correct?
+            let resourceName = /name: "(.*?)"/.exec(timingData)![1].replace("''", ""); // TODO: is the bang correct?
+            const timingType = parseInt(/timingType: (\d)/.exec(timingData)![1]); // TODO: is the bang correct?
+            let timedEvent: AnimTimedEvent | undefined;
+            switch (timingType) {
+              case 0:
+                if (resourceName && resourceName.indexOf(".") === -1) {
+                  let ext: string | undefined;
+                  [ "wav", "mp3", "m4a" ].every(e => {
+                    if (seNames.indexOf(`${resourceName}.${e}`) > -1) {
+                      ext = e;
+                      return false;
+                    }
+                    return true;
+                  });
+                  if (!ext) {
+                    ext = ".wav";
+                  }
+                  resourceName += `.${ext}`;
                 }
-                return true;
-              });
-              if (!ext) {
-                ext = ".wav";
+                timedEvent = new AnimTimedSoundEvent(frameIndex, resourceName);
+                break;
+              case 1:
+                timedEvent = new AnimTimedAddBgEvent(frameIndex, resourceName.slice(0, resourceName.indexOf(".")));
+                break;
+              case 2:
+                timedEvent = new AnimTimedUpdateBgEvent(frameIndex, resourceName.slice(0, resourceName.indexOf(".")));
+                break;
+            }
+            if (!timedEvent) {
+              continue;
+            }
+            const propPattern = /([a-z]+): (.*?)(?:,|\})/ig;
+            let propMatch: RegExpExecArray;
+            while ((propMatch = propPattern.exec(timingData)!)) { // TODO: is this bang correct?
+              const prop = propMatch[1];
+              let value: any = propMatch[2];
+              switch (prop) {
+                case "bgX":
+                case "bgY":
+                  value = parseFloat(value);
+                  break;
+                case "volume":
+                case "pitch":
+                case "opacity":
+                case "colorRed":
+                case "colorGreen":
+                case "colorBlue":
+                case "colorAlpha":
+                case "duration":
+                case "flashScope":
+                case "flashRed":
+                case "flashGreen":
+                case "flashBlue":
+                case "flashAlpha":
+                case "flashDuration":
+                  value = parseInt(value);
+                  break;
               }
-              resourceName += `.${ext}`;
+              if (timedEvent.hasOwnProperty(prop)) {
+                timedEvent[prop] = value;
+              }
             }
-            timedEvent = new AnimTimedSoundEvent(frameIndex, resourceName);
-            break;
-          case 1:
-            timedEvent = new AnimTimedAddBgEvent(frameIndex, resourceName.slice(0, resourceName.indexOf(".")));
-            break;
-          case 2:
-            timedEvent = new AnimTimedUpdateBgEvent(frameIndex, resourceName.slice(0, resourceName.indexOf(".")));
-            break;
-          }
-          if (!timedEvent) {
-            continue;
-          }
-          const propPattern = /([a-z]+): (.*?)(?:,|\})/ig;
-          let propMatch: RegExpExecArray;
-          while ((propMatch = propPattern.exec(timingData)!)) { // TODO: is this bang correct?
-            const prop = propMatch[1];
-            let value: any = propMatch[2];
-            switch (prop) {
-            case "bgX":
-            case "bgY":
-              value = parseFloat(value);
-              break;
-            case "volume":
-            case "pitch":
-            case "opacity":
-            case "colorRed":
-            case "colorGreen":
-            case "colorBlue":
-            case "colorAlpha":
-            case "duration":
-            case "flashScope":
-            case "flashRed":
-            case "flashGreen":
-            case "flashBlue":
-            case "flashAlpha":
-            case "flashDuration":
-              value = parseInt(value);
-              break;
+            if (!anim.frameTimedEvents.has(frameIndex)) {
+              anim.frameTimedEvents.set(frameIndex, []);
             }
-            if (timedEvent.hasOwnProperty(prop)) {
-              timedEvent[prop] = value;
-            }
-          }
-          if (!anim.frameTimedEvents.has(frameIndex)) {
-            anim.frameTimedEvents.set(frameIndex, []);
-          }
           anim.frameTimedEvents.get(frameIndex)!.push(timedEvent); // TODO: is this bang correct?
-        }
-        break;
-      case "position":
-        anim.position = parseInt(fieldData);
-        break;
-      case "hue":
-        anim.hue = parseInt(fieldData);
-        break;
+          }
+          break;
+        case "position":
+          anim.position = parseInt(fieldData);
+          break;
+        case "hue":
+          anim.hue = parseInt(fieldData);
+          break;
       }
     }
   }

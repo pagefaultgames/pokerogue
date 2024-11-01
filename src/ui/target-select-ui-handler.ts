@@ -71,26 +71,26 @@ export default class TargetSelectUiHandler extends UiHandler {
       success = false;
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1) {
-          success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1) {
-          success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
-        }
-        break;
-      case Button.LEFT:
-        if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1) {
+            success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1) {
+            success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1) {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 
@@ -184,6 +184,7 @@ export default class TargetSelectUiHandler extends UiHandler {
   }
 
   clear() {
+    this.cursor = -1;
     super.clear();
     this.eraseCursor();
   }
