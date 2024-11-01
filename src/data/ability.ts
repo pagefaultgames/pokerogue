@@ -4907,12 +4907,12 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
    * Checks various conditions based on the moves used by the Pokémon, the opponents' moves, and
    * the Pokémon's health after damage to determine whether the switch-out should occur.
    *
-   * @param {Pokemon} pokemon The Pokémon that took damage.
-   * @param {number} damage The amount of damage taken by the Pokémon.
-   * @param {boolean} passive N/A
-   * @param {boolean} simulated Whether the ability is being simulated.
-   * @param {any[]} args N/A
-   * @returns {boolean | Promise<boolean>} True if the switch-out logic was successfully applied, false otherwise.
+   * @param pokemon The Pokémon that took damage.
+   * @param damage The amount of damage taken by the Pokémon.
+   * @param passive N/A
+   * @param simulated Whether the ability is being simulated.
+   * @param args N/A
+   * @returns `true` if the switch-out logic was successfully applied
    */
   applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const moveHistory = pokemon.getMoveHistory();
