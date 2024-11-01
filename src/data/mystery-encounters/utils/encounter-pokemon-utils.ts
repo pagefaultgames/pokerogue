@@ -288,6 +288,7 @@ export function applyDamageToPokemon(scene: BattleScene, pokemon: PlayerPokemon,
   if (damage <= 0) {
     console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
   }
+  // If a Pokemon would faint from the damage applied, its HP is instead set to 1.
   if (pokemon.hp - damage <= 0) {
     damage = pokemon.hp - 1;
   }
