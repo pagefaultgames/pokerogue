@@ -4967,7 +4967,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
       return false;
     }
   }
-  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+  public getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
     return this.helper.getFailedText(target);
   }
 }
