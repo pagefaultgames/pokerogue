@@ -4880,7 +4880,7 @@ function calculateShellBellRecovery(pokemon: Pokemon): number {
  * @extends AbAttr
  */
 export class PostDamageAbAttr extends AbAttr {
-  applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  public applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
