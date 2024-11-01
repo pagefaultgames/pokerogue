@@ -285,7 +285,7 @@ export class EggHatchPhase extends Phase {
     this.canSkip = false;
     this.hatched = true;
     if (this.evolutionBgm) {
-      SoundFade.fadeOut(this.evolutionBgm, Utils.fixedInt(100));
+      SoundFade.fadeOut(gScene, this.evolutionBgm, Utils.fixedInt(100));
     }
     for (let e = 0; e < 5; e++) {
       gScene.time.delayedCall(Utils.fixedInt(375 * e), () => gScene.playSound("se/egg_hatch", { volume: 1 - (e * 0.2) }));

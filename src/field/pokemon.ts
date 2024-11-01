@@ -3191,9 +3191,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       fusionCry.destroy();
       scene.time.delayedCall(Utils.fixedInt(Math.ceil(duration * 0.4)), () => {
         try {
-          SoundFade.fadeOut(cry, Utils.fixedInt(Math.ceil(duration * 0.2)));
+          SoundFade.fadeOut(gScene, cry, Utils.fixedInt(Math.ceil(duration * 0.2)));
           fusionCry = this.getFusionSpeciesForm().cry(Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0) }, soundConfig));
-          SoundFade.fadeIn(fusionCry, Utils.fixedInt(Math.ceil(duration * 0.2)), scene.masterVolume * scene.seVolume, 0);
+          SoundFade.fadeIn(gScene, fusionCry, Utils.fixedInt(Math.ceil(duration * 0.2)), scene.masterVolume * scene.seVolume, 0);
         } catch (err) {
           console.error(err);
         }
@@ -3318,9 +3318,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           frameProgress -= frameThreshold;
         }
         if (i === transitionIndex) {
-          SoundFade.fadeOut(cry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)));
+          SoundFade.fadeOut(gScene, cry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)));
           fusionCry = gScene.playSound(fusionCryKey, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
-          SoundFade.fadeIn(fusionCry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)), gScene.masterVolume * gScene.seVolume, 0);
+          SoundFade.fadeIn(gScene, fusionCry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)), gScene.masterVolume * gScene.seVolume, 0);
         }
         rate *= 0.99;
         if (cry && !cry.pendingRemove) {

@@ -189,7 +189,7 @@ export class EvolutionPhase extends Phase {
                             }
                           });
 
-                          SoundFade.fadeOut(evolutionBgm, 100);
+                          SoundFade.fadeOut(gScene, evolutionBgm, 100);
 
                           gScene.unshiftPhase(new EndEvolutionPhase());
 
@@ -249,7 +249,7 @@ export class EvolutionPhase extends Phase {
                                       alpha: 0,
                                       duration: 250,
                                       onComplete: () => {
-                                        SoundFade.fadeOut(evolutionBgm, 100);
+                                        SoundFade.fadeOut(gScene, evolutionBgm, 100);
                                         gScene.time.delayedCall(250, () => {
                                           this.pokemon.cry();
                                           gScene.time.delayedCall(1250, () => {
