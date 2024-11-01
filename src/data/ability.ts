@@ -4896,7 +4896,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
   private helper: ForceSwitchOutHelper;
   private hpRatio: number;
 
-  constructor(hpRatio:number = 0.5) {
+  constructor(hpRatio: number = 0.5) {
     super();
     this.hpRatio = hpRatio;
     this.helper = new ForceSwitchOutHelper(SwitchType.SWITCH);
