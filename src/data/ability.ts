@@ -4823,10 +4823,6 @@ class ForceSwitchOutHelper {
     const player = switchOutTarget instanceof PlayerPokemon;
 
     if (player) {
-      if (!player && pokemon.scene.currentBattle.isBattleMysteryEncounter() && !pokemon.scene.currentBattle.mysteryEncounter?.fleeAllowed) {
-        return false;
-      }
-
       const blockedByAbility = new Utils.BooleanHolder(false);
       applyAbAttrs(ForceSwitchOutImmunityAbAttr, opponent, blockedByAbility);
       return !blockedByAbility.value;
@@ -4836,6 +4832,10 @@ class ForceSwitchOutHelper {
       if (!pokemon.scene.currentBattle.waveIndex && pokemon.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
+    }
+
+    if (!player && pokemon.scene.currentBattle.isBattleMysteryEncounter() && !pokemon.scene.currentBattle.mysteryEncounter?.fleeAllowed) {
+      return false;
     }
 
     const party = player ? pokemon.scene.getParty() : pokemon.scene.getEnemyParty();
@@ -4954,10 +4954,6 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
           if (!this.helper.getSwitchOutCondition(pokemon, opponent)) {
             return false;
           }
-        }
-        // Trapping moves do not prevent activation
-        if (pokemon.getTag(BattlerTagType.TRAPPED) !== undefined) {
-          pokemon.removeTag(BattlerTagType.TRAPPED);
         }
         return this.helper.switchOutLogic(pokemon);
       } else {
