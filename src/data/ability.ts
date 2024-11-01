@@ -4914,7 +4914,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
    * @param args N/A
    * @returns `true` if the switch-out logic was successfully applied
    */
-  applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  public override applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const moveHistory = pokemon.getMoveHistory();
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
     const fordbiddenAttackingMoves = [ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ];
