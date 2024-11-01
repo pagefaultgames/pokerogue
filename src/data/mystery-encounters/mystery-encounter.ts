@@ -53,6 +53,7 @@ export interface IMysteryEncounter {
   hasBattleAnimationsWithoutTargets: boolean;
   skipEnemyBattleTurns: boolean;
   skipToFightInput: boolean;
+  preventGameStatsUpdates: boolean;
 
   onInit?: (scene: BattleScene) => boolean;
   onVisualsStart?: (scene: BattleScene) => boolean;
@@ -150,6 +151,10 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * If true, will skip COMMAND input and go straight to FIGHT (move select) input menu
    */
   skipToFightInput: boolean;
+  /**
+   * If true, will prevent updating {@linkcode GameStats} for encountering and/or defeating Pokemon
+   */
+  preventGameStatsUpdates: boolean;
 
   // #region Event callback functions
 
@@ -190,7 +195,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
   secondaryPokemon?: PlayerPokemon[];
 
   // #region Post-construct / Auto-populated params
-
+  localizationKey: string;
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for an encounter
    */
@@ -264,6 +269,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ?? MysteryEncounterTier.COMMON;
+    this.localizationKey = this.localizationKey ?? "";
     this.dialogue = this.dialogue ?? {};
     this.spriteConfigs = this.spriteConfigs ? [ ...this.spriteConfigs ] : [];
     // Default max is 1 for ROGUE encounters, 2 for others
@@ -324,7 +330,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
       if (activeMon.length > 0) {
         this.primaryPokemon = activeMon[0];
       } else {
-        this.primaryPokemon = scene.getParty().filter(p => !p.isFainted())[0];
+        this.primaryPokemon = scene.getParty().filter(p => p.isAllowedInBattle())[0];
       }
       return true;
     }
@@ -528,6 +534,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   options: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]];
   enemyPartyConfigs: EnemyPartyConfig[] = [];
 
+  localizationKey: string = "";
   dialogue: MysteryEncounterDialogue = {};
   requirements: EncounterSceneRequirement[] = [];
   primaryPokemonRequirements: EncounterPokemonRequirement[] = [];
@@ -546,6 +553,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   hasBattleAnimationsWithoutTargets: boolean = false;
   skipEnemyBattleTurns: boolean = false;
   skipToFightInput: boolean = false;
+  preventGameStatsUpdates: boolean = false;
   maxAllowedEncounters: number = 3;
   expMultiplier: number = 1;
 
@@ -630,6 +638,16 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   withIntro({ spriteConfigs, dialogue } : {spriteConfigs: MysteryEncounterSpriteConfig[], dialogue?:  MysteryEncounterDialogue["intro"]}) {
     return this.withIntroSpriteConfigs(spriteConfigs).withIntroDialogue(dialogue);
+  }
+
+  /**
+   * Sets the localization key used by the encounter
+   * @param localizationKey the string used as the key
+   * @returns `this`
+   */
+  setLocalizationKey(localizationKey: string): this {
+    this.localizationKey = localizationKey;
+    return this;
   }
 
   /**
@@ -721,6 +739,14 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
   withSkipToFightInput(skipToFightInput: boolean): this & Required<Pick<IMysteryEncounter, "skipToFightInput">> {
     return Object.assign(this, { skipToFightInput });
+  }
+
+  /**
+   * If true, will prevent updating {@linkcode GameStats} for encountering and/or defeating Pokemon
+   * Default `false`
+   */
+  withPreventGameStatsUpdates(preventGameStatsUpdates: boolean): this & Required<Pick<IMysteryEncounter, "preventGameStatsUpdates">> {
+    return Object.assign(this, { preventGameStatsUpdates });
   }
 
   /**

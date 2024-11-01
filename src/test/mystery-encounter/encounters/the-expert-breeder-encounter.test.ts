@@ -124,10 +124,31 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       });
     });
 
-    it("should start battle against the trainer", async () => {
+    it("should start battle against the trainer with correctly loaded assets", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
+
+      let successfullyLoaded = false;
+      vi.spyOn(scene, "getEnemyParty").mockImplementation(() => {
+        const ace = scene.currentBattle?.enemyParty[0];
+        if (ace) {
+          // Pretend that loading assets takes an extra 500ms
+          vi.spyOn(ace, "loadAssets").mockImplementation(() => new Promise(resolve => {
+            setTimeout(() => {
+              successfullyLoaded = true;
+              resolve();
+            }, 500);
+          }));
+        }
+
+        return scene.currentBattle?.enemyParty ?? [];
+      });
+
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
+      // Check that assets are successfully loaded
+      expect(successfullyLoaded).toBe(true);
+
+      // Check usual battle stuff
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
@@ -155,7 +176,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.GREAT).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
@@ -182,10 +203,31 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       });
     });
 
-    it("should start battle against the trainer", async () => {
+    it("should start battle against the trainer with correctly loaded assets", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
+
+      let successfullyLoaded = false;
+      vi.spyOn(scene, "getEnemyParty").mockImplementation(() => {
+        const ace = scene.currentBattle?.enemyParty[0];
+        if (ace) {
+          // Pretend that loading assets takes an extra 500ms
+          vi.spyOn(ace, "loadAssets").mockImplementation(() => new Promise(resolve => {
+            setTimeout(() => {
+              successfullyLoaded = true;
+              resolve();
+            }, 500);
+          }));
+        }
+
+        return scene.currentBattle?.enemyParty ?? [];
+      });
+
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
+      // Check that assets are successfully loaded
+      expect(successfullyLoaded).toBe(true);
+
+      // Check usual battle stuff
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
@@ -213,7 +255,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.GREAT).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
@@ -240,10 +282,31 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       });
     });
 
-    it("should start battle against the trainer", async () => {
+    it("should start battle against the trainer with correctly loaded assets", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
+
+      let successfullyLoaded = false;
+      vi.spyOn(scene, "getEnemyParty").mockImplementation(() => {
+        const ace = scene.currentBattle?.enemyParty[0];
+        if (ace) {
+          // Pretend that loading assets takes an extra 500ms
+          vi.spyOn(ace, "loadAssets").mockImplementation(() => new Promise(resolve => {
+            setTimeout(() => {
+              successfullyLoaded = true;
+              resolve();
+            }, 500);
+          }));
+        }
+
+        return scene.currentBattle?.enemyParty ?? [];
+      });
+
       await runMysteryEncounterToEnd(game, 3, undefined, true);
 
+      // Check that assets are successfully loaded
+      expect(successfullyLoaded).toBe(true);
+
+      // Check usual battle stuff
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
@@ -271,7 +334,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.GREAT).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);

@@ -166,6 +166,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       }
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -285,7 +286,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             ignorePp: true
           });
 
-          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+          await transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
         })
         .build()
@@ -327,7 +328,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           });
           await scene.updateModifiers(true);
 
-          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+          await transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -358,7 +359,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           greedent.moveset = [ new PokemonMove(Moves.THRASH), new PokemonMove(Moves.BODY_PRESS), new PokemonMove(Moves.STUFF_CHEEKS), new PokemonMove(Moves.SLACK_OFF) ];
           greedent.passive = true;
 
-          transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
+          await transitionMysteryEncounterIntroVisuals(scene, true, true, 500);
           await catchPokemon(scene, greedent, null, PokeballType.POKEBALL, false);
           leaveEncounterWithoutBattle(scene, true);
         })

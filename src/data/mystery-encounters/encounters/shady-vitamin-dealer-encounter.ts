@@ -21,7 +21,7 @@ import i18next from "i18next";
 const namespace = "mysteryEncounters/shadyVitaminDealer";
 
 const VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER = 1.5;
-const VITAMIN_DEALER_EXPENSIVE_PRICE_MULTIPLIER = 3.5;
+const VITAMIN_DEALER_EXPENSIVE_PRICE_MULTIPLIER = 5;
 
 /**
  * Shady Vitamin Dealer encounter.
@@ -62,6 +62,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         speaker: `${namespace}:speaker`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -137,11 +138,11 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             newNature = randSeedInt(25) as Nature;
           }
 
-          chosenPokemon.nature = newNature;
+          chosenPokemon.customPokemonData.nature = newNature;
           encounter.setDialogueToken("newNature", getNatureName(newNature));
           queueEncounterMessage(scene, `${namespace}:cheap_side_effects`);
           setEncounterExp(scene, [ chosenPokemon.id ], 100);
-          chosenPokemon.updateInfo();
+          await chosenPokemon.updateInfo();
         })
         .build()
     )
@@ -203,7 +204,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
           queueEncounterMessage(scene, `${namespace}:no_bad_effects`);
           setEncounterExp(scene, [ chosenPokemon.id ], 100);
 
-          chosenPokemon.updateInfo();
+          await chosenPokemon.updateInfo();
         })
         .build()
     )

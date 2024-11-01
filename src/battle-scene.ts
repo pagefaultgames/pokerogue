@@ -4,7 +4,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "#app/utils";
-import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import { PokeballType } from "#app/data/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "#app/data/battle-anims";
 import { Phase } from "#app/phase";
@@ -86,7 +86,7 @@ import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-ph
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { allMysteryEncounters, ANTI_VARIANCE_WEIGHT_MODIFIER, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, mysteryEncountersByBiome, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { allMysteryEncounters, ANTI_VARIANCE_WEIGHT_MODIFIER, AVERAGE_ENCOUNTERS_PER_RUN_TARGET, BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, mysteryEncountersByBiome } from "#app/data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -95,6 +95,7 @@ import { ExpPhase } from "#app/phases/exp-phase";
 import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -789,7 +790,7 @@ export default class BattleScene extends SceneBase {
   }
 
   getEnemyParty(): EnemyPokemon[] {
-    return this.currentBattle?.enemyParty || [];
+    return this.currentBattle?.enemyParty ?? [];
   }
 
   getEnemyPokemon(): EnemyPokemon | undefined {
@@ -1190,10 +1191,7 @@ export default class BattleScene extends SceneBase {
         if (trainerConfigs[trainerType].doubleOnly) {
           doubleTrainer = true;
         } else if (trainerConfigs[trainerType].hasDouble) {
-          const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
-          this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-          playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
-          doubleTrainer = !Utils.randSeedInt(doubleChance.value);
+          doubleTrainer = !Utils.randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (trainerConfigs[trainerType].trainerTypeDouble && ![ TrainerType.TATE, TrainerType.LIZA ].includes(trainerType)) {
             doubleTrainer = false;
@@ -1206,12 +1204,10 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex, mysteryEncounterType) || newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex) || newBattleType === BattleType.MYSTERY_ENCOUNTER) {
         newBattleType = BattleType.MYSTERY_ENCOUNTER;
-        // Reset base spawn weight
+        // Reset to base spawn weight
         this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
-      } else if (newBattleType === BattleType.WILD) {
-        this.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
       }
     }
 
@@ -1358,69 +1354,69 @@ export default class BattleScene extends SceneBase {
     }
 
     switch (species.speciesId) {
-    case Species.UNOWN:
-    case Species.SHELLOS:
-    case Species.GASTRODON:
-    case Species.BASCULIN:
-    case Species.DEERLING:
-    case Species.SAWSBUCK:
-    case Species.FROAKIE:
-    case Species.FROGADIER:
-    case Species.SCATTERBUG:
-    case Species.SPEWPA:
-    case Species.VIVILLON:
-    case Species.FLABEBE:
-    case Species.FLOETTE:
-    case Species.FLORGES:
-    case Species.FURFROU:
-    case Species.PUMPKABOO:
-    case Species.GOURGEIST:
-    case Species.ORICORIO:
-    case Species.MAGEARNA:
-    case Species.ZARUDE:
-    case Species.SQUAWKABILLY:
-    case Species.TATSUGIRI:
-    case Species.PALDEA_TAUROS:
-      return Utils.randSeedInt(species.forms.length);
-    case Species.PIKACHU:
-      return Utils.randSeedInt(8);
-    case Species.EEVEE:
-      return Utils.randSeedInt(2);
-    case Species.GRENINJA:
-      return Utils.randSeedInt(2);
-    case Species.ZYGARDE:
-      return Utils.randSeedInt(3);
-    case Species.MINIOR:
-      return Utils.randSeedInt(6);
-    case Species.ALCREMIE:
-      return Utils.randSeedInt(9);
-    case Species.MEOWSTIC:
-    case Species.INDEEDEE:
-    case Species.BASCULEGION:
-    case Species.OINKOLOGNE:
-      return gender === Gender.FEMALE ? 1 : 0;
-    case Species.TOXTRICITY:
-      const lowkeyNatures = [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ];
-      if (nature !== undefined && lowkeyNatures.indexOf(nature) > -1) {
-        return 1;
-      }
-      return 0;
-    case Species.GIMMIGHOUL:
-      // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
-      if (this.gameMode.hasMysteryEncounters) {
-        return 1; // Wandering form
-      } else {
+      case Species.UNOWN:
+      case Species.SHELLOS:
+      case Species.GASTRODON:
+      case Species.BASCULIN:
+      case Species.DEERLING:
+      case Species.SAWSBUCK:
+      case Species.FROAKIE:
+      case Species.FROGADIER:
+      case Species.SCATTERBUG:
+      case Species.SPEWPA:
+      case Species.VIVILLON:
+      case Species.FLABEBE:
+      case Species.FLOETTE:
+      case Species.FLORGES:
+      case Species.FURFROU:
+      case Species.PUMPKABOO:
+      case Species.GOURGEIST:
+      case Species.ORICORIO:
+      case Species.MAGEARNA:
+      case Species.ZARUDE:
+      case Species.SQUAWKABILLY:
+      case Species.TATSUGIRI:
+      case Species.PALDEA_TAUROS:
         return Utils.randSeedInt(species.forms.length);
-      }
+      case Species.PIKACHU:
+        return Utils.randSeedInt(8);
+      case Species.EEVEE:
+        return Utils.randSeedInt(2);
+      case Species.GRENINJA:
+        return Utils.randSeedInt(2);
+      case Species.ZYGARDE:
+        return Utils.randSeedInt(4);
+      case Species.MINIOR:
+        return Utils.randSeedInt(7);
+      case Species.ALCREMIE:
+        return Utils.randSeedInt(9);
+      case Species.MEOWSTIC:
+      case Species.INDEEDEE:
+      case Species.BASCULEGION:
+      case Species.OINKOLOGNE:
+        return gender === Gender.FEMALE ? 1 : 0;
+      case Species.TOXTRICITY:
+        const lowkeyNatures = [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ];
+        if (nature !== undefined && lowkeyNatures.indexOf(nature) > -1) {
+          return 1;
+        }
+        return 0;
+      case Species.GIMMIGHOUL:
+      // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
+        if (this.gameMode.hasMysteryEncounters) {
+          return 1; // Wandering form
+        } else {
+          return Utils.randSeedInt(species.forms.length);
+        }
     }
 
     if (ignoreArena) {
       switch (species.speciesId) {
-      case Species.BURMY:
-      case Species.WORMADAM:
-      case Species.ROTOM:
-      case Species.LYCANROC:
-        return Utils.randSeedInt(species.forms.length);
+        case Species.BURMY:
+        case Species.WORMADAM:
+        case Species.ROTOM:
+        case Species.LYCANROC:
+          return Utils.randSeedInt(species.forms.length);
       }
       return 0;
     }
@@ -1885,17 +1881,17 @@ export default class BattleScene extends SceneBase {
           const soundDetails = sound.key.split("/");
           switch (soundDetails[0]) {
 
-          case "battle_anims":
-          case "cry":
-            if (soundDetails[1].startsWith("PRSFX- ")) {
-              sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
-            } else {
-              sound.setVolume(this.masterVolume * this.fieldVolume);
-            }
-            break;
-          case "se":
-          case "ui":
-            sound.setVolume(this.masterVolume * this.seVolume);
+            case "battle_anims":
+            case "cry":
+              if (soundDetails[1].startsWith("PRSFX- ")) {
+                sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
+              } else {
+                sound.setVolume(this.masterVolume * this.fieldVolume);
+              }
+              break;
+            case "se":
+            case "ui":
+              sound.setVolume(this.masterVolume * this.seVolume);
           }
         }
       }
@@ -1935,31 +1931,31 @@ export default class BattleScene extends SceneBase {
       const keyDetails = key.split("/");
       config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
-      case "level_up_fanfare":
-      case "item_fanfare":
-      case "minor_fanfare":
-      case "heal":
-      case "evolution":
-      case "evolution_fanfare":
+        case "level_up_fanfare":
+        case "item_fanfare":
+        case "minor_fanfare":
+        case "heal":
+        case "evolution":
+        case "evolution_fanfare":
         // These sounds are loaded in as BGM, but played as sound effects
         // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-        config["volume"] *= (this.masterVolume * this.bgmVolume);
-        break;
-      case "battle_anims":
-      case "cry":
-        config["volume"] *= (this.masterVolume * this.fieldVolume);
-        //PRSFX sound files are unusually loud
-        if (keyDetails[1].startsWith("PRSFX- ")) {
-          config["volume"] *= 0.5;
-        }
-        break;
-      case "ui":
+          config["volume"] *= (this.masterVolume * this.bgmVolume);
+          break;
+        case "battle_anims":
+        case "cry":
+          config["volume"] *= (this.masterVolume * this.fieldVolume);
+          //PRSFX sound files are unusually loud
+          if (keyDetails[1].startsWith("PRSFX- ")) {
+            config["volume"] *= 0.5;
+          }
+          break;
+        case "ui":
         //As of, right now this applies to the "select", "menu_open", "error" sound effects
-        config["volume"] *= (this.masterVolume * this.uiVolume);
-        break;
-      case "se":
-        config["volume"] *= (this.masterVolume * this.seVolume);
-        break;
+          config["volume"] *= (this.masterVolume * this.uiVolume);
+          break;
+        case "se":
+          config["volume"] *= (this.masterVolume * this.seVolume);
+          break;
       }
       this.sound.play(key, config);
       return this.sound.get(key) as AnySound;
@@ -1988,208 +1984,208 @@ export default class BattleScene extends SceneBase {
 
   getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
-    case "battle_kanto_champion": //B2W2 Kanto Champion Battle
-      return 13.950;
-    case "battle_johto_champion": //B2W2 Johto Champion Battle
-      return 23.498;
-    case "battle_hoenn_champion_g5": //B2W2 Hoenn Champion Battle
-      return 11.328;
-    case "battle_hoenn_champion_g6": //ORAS Hoenn Champion Battle
-      return 11.762;
-    case "battle_sinnoh_champion": //B2W2 Sinnoh Champion Battle
-      return 12.235;
-    case "battle_champion_alder": //BW Unova Champion Battle
-      return 27.653;
-    case "battle_champion_iris": //B2W2 Unova Champion Battle
-      return 10.145;
-    case "battle_kalos_champion": //XY Kalos Champion Battle
-      return 10.380;
-    case "battle_alola_champion": //USUM Alola Champion Battle
-      return 13.025;
-    case "battle_galar_champion": //SWSH Galar Champion Battle
-      return 61.635;
-    case "battle_champion_geeta": //SV Champion Geeta Battle
-      return 37.447;
-    case "battle_champion_nemona": //SV Champion Nemona Battle
-      return 14.914;
-    case "battle_champion_kieran": //SV Champion Kieran Battle
-      return 7.206;
-    case "battle_hoenn_elite": //ORAS Elite Four Battle
-      return 11.350;
-    case "battle_unova_elite": //BW Elite Four Battle
-      return 17.730;
-    case "battle_kalos_elite": //XY Elite Four Battle
-      return 12.340;
-    case "battle_alola_elite": //SM Elite Four Battle
-      return 19.212;
-    case "battle_galar_elite": //SWSH League Tournament Battle
-      return 164.069;
-    case "battle_paldea_elite": //SV Elite Four Battle
-      return 12.770;
-    case "battle_bb_elite": //SV BB League Elite Four Battle
-      return 19.434;
-    case "battle_final_encounter": //PMD RTDX Rayquaza's Domain
-      return 19.159;
-    case "battle_final": //BW Ghetsis Battle
-      return 16.453;
-    case "battle_kanto_gym": //B2W2 Kanto Gym Battle
-      return 13.857;
-    case "battle_johto_gym": //B2W2 Johto Gym Battle
-      return 12.911;
-    case "battle_hoenn_gym": //B2W2 Hoenn Gym Battle
-      return 12.379;
-    case "battle_sinnoh_gym": //B2W2 Sinnoh Gym Battle
-      return 13.122;
-    case "battle_unova_gym": //BW Unova Gym Battle
-      return 19.145;
-    case "battle_kalos_gym": //XY Kalos Gym Battle
-      return 44.810;
-    case "battle_galar_gym": //SWSH Galar Gym Battle
-      return 171.262;
-    case "battle_paldea_gym": //SV Paldea Gym Battle
-      return 127.489;
-    case "battle_legendary_kanto": //XY Kanto Legendary Battle
-      return 32.966;
-    case "battle_legendary_raikou": //HGSS Raikou Battle
-      return 12.632;
-    case "battle_legendary_entei": //HGSS Entei Battle
-      return 2.905;
-    case "battle_legendary_suicune": //HGSS Suicune Battle
-      return 12.636;
-    case "battle_legendary_lugia": //HGSS Lugia Battle
-      return 19.770;
-    case "battle_legendary_ho_oh": //HGSS Ho-oh Battle
-      return 17.668;
-    case "battle_legendary_regis_g5": //B2W2 Legendary Titan Battle
-      return 49.500;
-    case "battle_legendary_regis_g6": //ORAS Legendary Titan Battle
-      return 21.130;
-    case "battle_legendary_gro_kyo": //ORAS Groudon & Kyogre Battle
-      return 10.547;
-    case "battle_legendary_rayquaza": //ORAS Rayquaza Battle
-      return 10.495;
-    case "battle_legendary_deoxys": //ORAS Deoxys Battle
-      return 13.333;
-    case "battle_legendary_lake_trio": //ORAS Lake Guardians Battle
-      return 16.887;
-    case "battle_legendary_sinnoh": //ORAS Sinnoh Legendary Battle
-      return 22.770;
-    case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
-      return 16.009;
-    case "battle_legendary_origin_forme": //LA Origin Dialga & Palkia Battle
-      return 18.961;
-    case "battle_legendary_giratina": //ORAS Giratina Battle
-      return 10.451;
-    case "battle_legendary_arceus": //HGSS Arceus Battle
-      return 9.595;
-    case "battle_legendary_unova": //BW Unova Legendary Battle
-      return 13.855;
-    case "battle_legendary_kyurem": //BW Kyurem Battle
-      return 18.314;
-    case "battle_legendary_res_zek": //BW Reshiram & Zekrom Battle
-      return 18.329;
-    case "battle_legendary_xern_yvel": //XY Xerneas & Yveltal Battle
-      return 26.468;
-    case "battle_legendary_tapu": //SM Tapu Battle
-      return 0.000;
-    case "battle_legendary_sol_lun": //SM Solgaleo & Lunala Battle
-      return 6.525;
-    case "battle_legendary_ub": //SM Ultra Beast Battle
-      return 9.818;
-    case "battle_legendary_dusk_dawn": //USUM Dusk Mane & Dawn Wings Necrozma Battle
-      return 5.211;
-    case "battle_legendary_ultra_nec": //USUM Ultra Necrozma Battle
-      return 10.344;
-    case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
-      return 11.424;
-    case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
-      return 12.503;
-    case "battle_legendary_calyrex": //SWSH Calyrex Battle
-      return 50.641;
-    case "battle_legendary_riders": //SWSH Ice & Shadow Rider Calyrex Battle
-      return 18.155;
-    case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
-      return 0.175;
-    case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
-      return 6.333;
-    case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
-      return 6.442;
-    case "battle_legendary_loyal_three": //SV Loyal Three Battle
-      return 6.500;
-    case "battle_legendary_ogerpon": //SV Ogerpon Battle
-      return 14.335;
-    case "battle_legendary_terapagos": //SV Terapagos Battle
-      return 24.377;
-    case "battle_legendary_pecharunt": //SV Pecharunt Battle
-      return 6.508;
-    case "battle_rival": //BW Rival Battle
-      return 14.110;
-    case "battle_rival_2": //BW N Battle
-      return 17.714;
-    case "battle_rival_3": //BW Final N Battle
-      return 17.586;
-    case "battle_trainer": //BW Trainer Battle
-      return 13.686;
-    case "battle_wild": //BW Wild Battle
-      return 12.703;
-    case "battle_wild_strong": //BW Strong Wild Battle
-      return 13.940;
-    case "end_summit": //PMD RTDX Sky Tower Summit
-      return 30.025;
-    case "battle_rocket_grunt": //HGSS Team Rocket Battle
-      return 12.707;
-    case "battle_aqua_magma_grunt": //ORAS Team Aqua & Magma Battle
-      return 12.062;
-    case "battle_galactic_grunt": //BDSP Team Galactic Battle
-      return 13.043;
-    case "battle_plasma_grunt": //BW Team Plasma Battle
-      return 12.974;
-    case "battle_flare_grunt": //XY Team Flare Battle
-      return 4.228;
-    case "battle_aether_grunt": // SM Aether Foundation Battle
-      return 16.00;
-    case "battle_skull_grunt": // SM Team Skull Battle
-      return 20.87;
-    case "battle_macro_grunt": // SWSH Trainer Battle
-      return 11.56;
-    case "battle_star_grunt": //SV Team Star Battle
-      return 133.362;
-    case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
-      return 11.997;
-    case "battle_skull_admin": //SM Team Skull Admin Battle
-      return 15.463;
-    case "battle_oleana": //SWSH Oleana Battle
-      return 14.110;
-    case "battle_star_admin": //SV Team Star Boss Battle
-      return 9.493;
-    case "battle_rocket_boss": //USUM Giovanni Battle
-      return 9.115;
-    case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
-      return 14.847;
-    case "battle_galactic_boss": //BDSP Cyrus Battle
-      return 106.962;
-    case "battle_plasma_boss": //B2W2 Ghetsis Battle
-      return 25.624;
-    case "battle_flare_boss": //XY Lysandre Battle
-      return 8.085;
-    case "battle_aether_boss": //SM Lusamine Battle
-      return 11.33;
-    case "battle_skull_boss": //SM Guzma Battle
-      return 13.13;
-    case "battle_macro_boss": //SWSH Rose Battle
-      return 11.42;
-    case "battle_star_boss": //SV Cassiopeia Battle
-      return 25.764;
-    case "mystery_encounter_gen_5_gts": // BW GTS
-      return 8.52;
-    case "mystery_encounter_gen_6_gts": // XY GTS
-      return 9.24;
-    case "mystery_encounter_fun_and_games": // EoS Guildmaster Wigglytuff
-      return 4.78;
-    case "mystery_encounter_weird_dream": // EoS Temporal Spire
-      return 41.42;
-    case "mystery_encounter_delibirdy": // Firel Delibirdy
-      return 82.28;
+      case "battle_kanto_champion": //B2W2 Kanto Champion Battle
+        return 13.950;
+      case "battle_johto_champion": //B2W2 Johto Champion Battle
+        return 23.498;
+      case "battle_hoenn_champion_g5": //B2W2 Hoenn Champion Battle
+        return 11.328;
+      case "battle_hoenn_champion_g6": //ORAS Hoenn Champion Battle
+        return 11.762;
+      case "battle_sinnoh_champion": //B2W2 Sinnoh Champion Battle
+        return 12.235;
+      case "battle_champion_alder": //BW Unova Champion Battle
+        return 27.653;
+      case "battle_champion_iris": //B2W2 Unova Champion Battle
+        return 10.145;
+      case "battle_kalos_champion": //XY Kalos Champion Battle
+        return 10.380;
+      case "battle_alola_champion": //USUM Alola Champion Battle
+        return 13.025;
+      case "battle_galar_champion": //SWSH Galar Champion Battle
+        return 61.635;
+      case "battle_champion_geeta": //SV Champion Geeta Battle
+        return 37.447;
+      case "battle_champion_nemona": //SV Champion Nemona Battle
+        return 14.914;
+      case "battle_champion_kieran": //SV Champion Kieran Battle
+        return 7.206;
+      case "battle_hoenn_elite": //ORAS Elite Four Battle
+        return 11.350;
+      case "battle_unova_elite": //BW Elite Four Battle
+        return 17.730;
+      case "battle_kalos_elite": //XY Elite Four Battle
+        return 12.340;
+      case "battle_alola_elite": //SM Elite Four Battle
+        return 19.212;
+      case "battle_galar_elite": //SWSH League Tournament Battle
+        return 164.069;
+      case "battle_paldea_elite": //SV Elite Four Battle
+        return 12.770;
+      case "battle_bb_elite": //SV BB League Elite Four Battle
+        return 19.434;
+      case "battle_final_encounter": //PMD RTDX Rayquaza's Domain
+        return 19.159;
+      case "battle_final": //BW Ghetsis Battle
+        return 16.453;
+      case "battle_kanto_gym": //B2W2 Kanto Gym Battle
+        return 13.857;
+      case "battle_johto_gym": //B2W2 Johto Gym Battle
+        return 12.911;
+      case "battle_hoenn_gym": //B2W2 Hoenn Gym Battle
+        return 12.379;
+      case "battle_sinnoh_gym": //B2W2 Sinnoh Gym Battle
+        return 13.122;
+      case "battle_unova_gym": //BW Unova Gym Battle
+        return 19.145;
+      case "battle_kalos_gym": //XY Kalos Gym Battle
+        return 44.810;
+      case "battle_galar_gym": //SWSH Galar Gym Battle
+        return 171.262;
+      case "battle_paldea_gym": //SV Paldea Gym Battle
+        return 127.489;
+      case "battle_legendary_kanto": //XY Kanto Legendary Battle
+        return 32.966;
+      case "battle_legendary_raikou": //HGSS Raikou Battle
+        return 12.632;
+      case "battle_legendary_entei": //HGSS Entei Battle
+        return 2.905;
+      case "battle_legendary_suicune": //HGSS Suicune Battle
+        return 12.636;
+      case "battle_legendary_lugia": //HGSS Lugia Battle
+        return 19.770;
+      case "battle_legendary_ho_oh": //HGSS Ho-oh Battle
+        return 17.668;
+      case "battle_legendary_regis_g5": //B2W2 Legendary Titan Battle
+        return 49.500;
+      case "battle_legendary_regis_g6": //ORAS Legendary Titan Battle
+        return 21.130;
+      case "battle_legendary_gro_kyo": //ORAS Groudon & Kyogre Battle
+        return 10.547;
+      case "battle_legendary_rayquaza": //ORAS Rayquaza Battle
+        return 10.495;
+      case "battle_legendary_deoxys": //ORAS Deoxys Battle
+        return 13.333;
+      case "battle_legendary_lake_trio": //ORAS Lake Guardians Battle
+        return 16.887;
+      case "battle_legendary_sinnoh": //ORAS Sinnoh Legendary Battle
+        return 22.770;
+      case "battle_legendary_dia_pal": //ORAS Dialga & Palkia Battle
+        return 16.009;
+      case "battle_legendary_origin_forme": //LA Origin Dialga & Palkia Battle
+        return 18.961;
+      case "battle_legendary_giratina": //ORAS Giratina Battle
+        return 10.451;
+      case "battle_legendary_arceus": //HGSS Arceus Battle
+        return 9.595;
+      case "battle_legendary_unova": //BW Unova Legendary Battle
+        return 13.855;
+      case "battle_legendary_kyurem": //BW Kyurem Battle
+        return 18.314;
+      case "battle_legendary_res_zek": //BW Reshiram & Zekrom Battle
+        return 18.329;
+      case "battle_legendary_xern_yvel": //XY Xerneas & Yveltal Battle
+        return 26.468;
+      case "battle_legendary_tapu": //SM Tapu Battle
+        return 0.000;
+      case "battle_legendary_sol_lun": //SM Solgaleo & Lunala Battle
+        return 6.525;
+      case "battle_legendary_ub": //SM Ultra Beast Battle
+        return 9.818;
+      case "battle_legendary_dusk_dawn": //USUM Dusk Mane & Dawn Wings Necrozma Battle
+        return 5.211;
+      case "battle_legendary_ultra_nec": //USUM Ultra Necrozma Battle
+        return 10.344;
+      case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
+        return 11.424;
+      case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
+        return 12.503;
+      case "battle_legendary_calyrex": //SWSH Calyrex Battle
+        return 50.641;
+      case "battle_legendary_riders": //SWSH Ice & Shadow Rider Calyrex Battle
+        return 18.155;
+      case "battle_legendary_birds_galar": //SWSH Galarian Legendary Birds Battle
+        return 0.175;
+      case "battle_legendary_ruinous": //SV Treasures of Ruin Battle
+        return 6.333;
+      case "battle_legendary_kor_mir": //SV Depths of Area Zero Battle
+        return 6.442;
+      case "battle_legendary_loyal_three": //SV Loyal Three Battle
+        return 6.500;
+      case "battle_legendary_ogerpon": //SV Ogerpon Battle
+        return 14.335;
+      case "battle_legendary_terapagos": //SV Terapagos Battle
+        return 24.377;
+      case "battle_legendary_pecharunt": //SV Pecharunt Battle
+        return 6.508;
+      case "battle_rival": //BW Rival Battle
+        return 14.110;
+      case "battle_rival_2": //BW N Battle
+        return 17.714;
+      case "battle_rival_3": //BW Final N Battle
+        return 17.586;
+      case "battle_trainer": //BW Trainer Battle
+        return 13.686;
+      case "battle_wild": //BW Wild Battle
+        return 12.703;
+      case "battle_wild_strong": //BW Strong Wild Battle
+        return 13.940;
+      case "end_summit": //PMD RTDX Sky Tower Summit
+        return 30.025;
+      case "battle_rocket_grunt": //HGSS Team Rocket Battle
+        return 12.707;
+      case "battle_aqua_magma_grunt": //ORAS Team Aqua & Magma Battle
+        return 12.062;
+      case "battle_galactic_grunt": //BDSP Team Galactic Battle
+        return 13.043;
+      case "battle_plasma_grunt": //BW Team Plasma Battle
+        return 12.974;
+      case "battle_flare_grunt": //XY Team Flare Battle
+        return 4.228;
+      case "battle_aether_grunt": // SM Aether Foundation Battle
+        return 16.00;
+      case "battle_skull_grunt": // SM Team Skull Battle
+        return 20.87;
+      case "battle_macro_grunt": // SWSH Trainer Battle
+        return 11.56;
+      case "battle_star_grunt": //SV Team Star Battle
+        return 133.362;
+      case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
+        return 11.997;
+      case "battle_skull_admin": //SM Team Skull Admin Battle
+        return 15.463;
+      case "battle_oleana": //SWSH Oleana Battle
+        return 14.110;
+      case "battle_star_admin": //SV Team Star Boss Battle
+        return 9.493;
+      case "battle_rocket_boss": //USUM Giovanni Battle
+        return 9.115;
+      case "battle_aqua_magma_boss": //ORAS Archie & Maxie Battle
+        return 14.847;
+      case "battle_galactic_boss": //BDSP Cyrus Battle
+        return 106.962;
+      case "battle_plasma_boss": //B2W2 Ghetsis Battle
+        return 25.624;
+      case "battle_flare_boss": //XY Lysandre Battle
+        return 8.085;
+      case "battle_aether_boss": //SM Lusamine Battle
+        return 11.33;
+      case "battle_skull_boss": //SM Guzma Battle
+        return 13.13;
+      case "battle_macro_boss": //SWSH Rose Battle
+        return 11.42;
+      case "battle_star_boss": //SV Cassiopeia Battle
+        return 25.764;
+      case "mystery_encounter_gen_5_gts": // BW GTS
+        return 8.52;
+      case "mystery_encounter_gen_6_gts": // XY GTS
+        return 9.24;
+      case "mystery_encounter_fun_and_games": // EoS Guildmaster Wigglytuff
+        return 4.78;
+      case "mystery_encounter_weird_dream": // EoS Temporal Spire
+        return 41.42;
+      case "mystery_encounter_delibirdy": // Firel Delibirdy
+        return 82.28;
     }
 
     return 0;
@@ -2316,7 +2312,10 @@ export default class BattleScene extends SceneBase {
       }
     }
 
-    this.currentPhase?.start();
+    if (this.currentPhase) {
+      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
+      this.currentPhase.start();
+    }
   }
 
   overridePhase(phase: Phase): boolean {
@@ -2326,6 +2325,7 @@ export default class BattleScene extends SceneBase {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
+    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
     phase.start();
 
     return true;
@@ -2354,6 +2354,19 @@ export default class BattleScene extends SceneBase {
     const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
     if (phaseIndex > -1) {
       this.phaseQueue.splice(phaseIndex, 1);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Will search for a specific phase in {@linkcode phaseQueuePrepend} via filter, and remove the first result if a match is found.
+   * @param phaseFilter filter function
+   */
+  tryRemoveUnshiftedPhase(phaseFilter: (phase: Phase) => boolean): boolean {
+    const phaseIndex = this.phaseQueuePrepend.findIndex(phaseFilter);
+    if (phaseIndex > -1) {
+      this.phaseQueuePrepend.splice(phaseIndex, 1);
       return true;
     }
     return false;
@@ -2421,7 +2434,7 @@ export default class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
-  addModifier(modifier: Modifier | null, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<boolean> {
+  addModifier(modifier: Modifier | null, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean, cost?: number): Promise<boolean> {
     if (!modifier) {
       return Promise.resolve(false);
     }
@@ -2478,6 +2491,8 @@ export default class BattleScene extends SceneBase {
               }
             } else if (modifier instanceof FusePokemonModifier) {
               args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
+            } else if (modifier instanceof RememberMoveModifier && !Utils.isNullOrUndefined(cost)) {
+              args.push(cost);
             }
 
             if (modifier.shouldApply(pokemon, ...args)) {
@@ -2676,7 +2691,7 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-    * Removes all modifiers from enemy of PersistentModifier type
+    * Removes all modifiers from enemy pokemon of {@linkcode PersistentModifier} type
     */
   clearEnemyModifiers(): void {
     const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
@@ -2687,10 +2702,11 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-    * Removes all modifiers from enemy of PokemonHeldItemModifier type
+    * Removes all modifiers from enemy pokemon of {@linkcode PokemonHeldItemModifier} type
+    * @param pokemon - If specified, only removes held items from that {@linkcode Pokemon}
     */
-  clearEnemyHeldItemModifiers(): void {
-    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
+  clearEnemyHeldItemModifiers(pokemon?: Pokemon): void {
+    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier && (!pokemon || m.getPokemon(this) === pokemon));
     for (const m of modifiersToRemove) {
       this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
     }
@@ -3047,7 +3063,7 @@ export default class BattleScene extends SceneBase {
         const pId = partyMember.id;
         const participated = participantIds.has(pId);
         if (participated && pokemonDefeated) {
-          partyMember.addFriendship(2);
+          partyMember.addFriendship(FRIENDSHIP_GAIN_FROM_BATTLE);
           const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
           if (machoBraceModifier && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount(this)) {
             machoBraceModifier.stackCount++;
@@ -3118,17 +3134,25 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Returns if a wave COULD spawn a {@linkcode MysteryEncounter}.
+   * Even if returns `true`, does not guarantee that a wave will actually be a ME.
+   * That check is made in {@linkcode BattleScene.isWaveMysteryEncounter} instead.
+   */
+  isMysteryEncounterValidForWave(battleType: BattleType, waveIndex: number): boolean {
+    const [ lowestMysteryEncounterWave, highestMysteryEncounterWave ] = this.gameMode.getMysteryEncounterLegalWaves();
+    return this.gameMode.hasMysteryEncounters && battleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave;
+  }
+
+  /**
    * Determines whether a wave should randomly generate a {@linkcode MysteryEncounter}.
    * Currently, the only modes that MEs are allowed in are Classic and Challenge.
    * Additionally, MEs cannot spawn outside of waves 10-180 in those modes
-   *
    * @param newBattleType
    * @param waveIndex
-   * @param sessionDataEncounterType
    */
-  private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number, sessionDataEncounterType?: MysteryEncounterType): boolean {
+  private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number): boolean {
     const [ lowestMysteryEncounterWave, highestMysteryEncounterWave ] = this.gameMode.getMysteryEncounterLegalWaves();
-    if (this.gameMode.hasMysteryEncounters && newBattleType === BattleType.WILD && !this.gameMode.isBoss(waveIndex) && waveIndex < highestMysteryEncounterWave && waveIndex > lowestMysteryEncounterWave) {
+    if (this.isMysteryEncounterValidForWave(newBattleType, waveIndex)) {
       // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
       const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
       const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
@@ -3161,13 +3185,20 @@ export default class BattleScene extends SceneBase {
   /**
    * Loads or generates a mystery encounter
    * @param encounterType used to load session encounter when restarting game, etc.
+   * @param canBypass optional boolean to indicate that the request is coming from a function that needs to access a Mystery Encounter outside of gameplay requirements
    * @returns
    */
-  getMysteryEncounter(encounterType?: MysteryEncounterType): MysteryEncounter {
+  getMysteryEncounter(encounterType?: MysteryEncounterType, canBypass?: boolean): MysteryEncounter {
     // Loading override or session encounter
     let encounter: MysteryEncounter | null;
     if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE) && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
+      if (canBypass) {
+        return encounter;
+      }
+    } else if (canBypass) {
+      encounter = allMysteryEncounters[encounterType ?? -1];
+      return encounter;
     } else {
       encounter = !isNullOrUndefined(encounterType) ? allMysteryEncounters[encounterType] : null;
     }

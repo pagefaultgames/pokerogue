@@ -125,6 +125,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
       scene.time.delayedCall(500, () => scene.playSound("battle_anims/PRSFX- Spotlight2"));
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -209,7 +210,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(CHARMING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
+        .withPrimaryPokemonRequirement(new MoveRequirement(CHARMING_MOVES, true)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.3.label`,
           buttonTooltip: `${namespace}:option.3.tooltip`,

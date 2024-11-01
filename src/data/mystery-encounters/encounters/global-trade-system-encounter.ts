@@ -96,6 +96,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       }
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -398,7 +399,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           if (modifier.stackCount === 0) {
             scene.removeModifier(modifier);
           }
-          scene.updateModifiers(true, true);
+          await scene.updateModifiers(true, true);
 
           // Generate a trainer name
           const traderName = generateRandomTraderName();

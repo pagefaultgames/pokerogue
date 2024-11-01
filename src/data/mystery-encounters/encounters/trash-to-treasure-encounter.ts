@@ -54,6 +54,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       },
     ])
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -70,7 +71,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ]
       };
       const config: EnemyPartyConfig = {
-        levelAdditiveModifier: 1,
+        levelAdditiveModifier: 0.5,
         pokemonConfigs: [ pokemonConfig ],
         disableSwitch: true
       };
@@ -104,7 +105,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Gain 2 Leftovers and 2 Shell Bell
-          transitionMysteryEncounterIntroVisuals(scene);
+          await transitionMysteryEncounterIntroVisuals(scene);
           await tryApplyDigRewardItems(scene);
 
           const blackSludge = generateModifierType(scene, modifierTypes.MYSTERY_ENCOUNTER_BLACK_SLUDGE, [ SHOP_ITEM_COST_MULTIPLIER ]);
@@ -135,7 +136,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
           // Investigate garbage, battle Gmax Garbodor
           scene.setFieldScale(0.75);
           await showEncounterText(scene, `${namespace}:option.2.selected_2`);
-          transitionMysteryEncounterIntroVisuals(scene);
+          await transitionMysteryEncounterIntroVisuals(scene);
 
           const encounter = scene.currentBattle.mysteryEncounter!;
 
@@ -221,7 +222,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   await showEncounterText(scene, i18next.t("battle:rewardGainCount", { modifierName: shellBell.name, count: 2 }), null, undefined, true);
 }
 
-async function doGarbageDig(scene: BattleScene) {
+function doGarbageDig(scene: BattleScene) {
   scene.playSound("battle_anims/PRSFX- Dig2");
   scene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
     scene.playSound("battle_anims/PRSFX- Dig2");

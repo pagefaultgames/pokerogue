@@ -11,7 +11,7 @@ import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LearnMovePhase, LearnMoveType } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { achvs } from "#app/system/achv";
@@ -30,6 +30,7 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
+import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -401,6 +402,14 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
 
   resetBattleCount(): void {
     this.battleCount = this.maxBattles;
+  }
+
+  /**
+   * Updates an existing modifier with a new `maxBattles` and `battleCount`.
+   */
+  setNewBattleCount(count: number): void {
+    this.maxBattles = count;
+    this.battleCount = count;
   }
 
   getMaxBattles(): number {
@@ -959,7 +968,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 
     this.stackCount = pokemon
       ? pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
-        + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length
+        + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length
       : this.stackCount;
 
     const text = scene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
@@ -974,7 +983,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): number {
     this.stackCount = pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
-      + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length;
+      + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length;
     return 999;
   }
 }
@@ -1694,12 +1703,12 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
     super(type, pokemonId, stackCount);
 
     switch (type.id) {
-    case "TOXIC_ORB":
-      this.effect = StatusEffect.TOXIC;
-      break;
-    case "FLAME_ORB":
-      this.effect = StatusEffect.BURN;
-      break;
+      case "TOXIC_ORB":
+        this.effect = StatusEffect.TOXIC;
+        break;
+      case "FLAME_ORB":
+        this.effect = StatusEffect.BURN;
+        break;
     }
   }
 
@@ -2157,7 +2166,7 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
   override apply(playerPokemon: PlayerPokemon): boolean {
     const move = playerPokemon.getMoveset()[this.moveIndex];
 
-    if (move) {
+    if (move && !move.maxPpOverride) {
       move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
     }
 
@@ -2180,7 +2189,7 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.natureOverride = this.nature;
+    playerPokemon.customPokemonData.nature = this.nature;
     let speciesId = playerPokemon.species.speciesId;
     playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
 
@@ -2213,7 +2222,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
       playerPokemon.levelExp = 0;
     }
 
-    playerPokemon.addFriendship(5);
+    playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
 
     playerPokemon.scene.unshiftPhase(new LevelUpPhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.level - levelCount.value, playerPokemon.level));
 
@@ -2235,7 +2244,7 @@ export class TmModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, true));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, LearnMoveType.TM));
 
     return true;
   }
@@ -2255,8 +2264,9 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
-  override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex]));
+  override apply(playerPokemon: PlayerPokemon, cost?: number): boolean {
+
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex], LearnMoveType.MEMORY, cost));
 
     return true;
   }
@@ -2682,15 +2692,15 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
     count.value *= (this.getStackCount() + 1);
 
     switch (this.getStackCount()) {
-    case 1:
-      power.value *= 0.4;
-      break;
-    case 2:
-      power.value *= 0.25;
-      break;
-    case 3:
-      power.value *= 0.175;
-      break;
+      case 1:
+        power.value *= 0.4;
+        break;
+      case 2:
+        power.value *= 0.25;
+        break;
+      case 3:
+        power.value *= 0.175;
+        break;
     }
 
     return true;
@@ -3084,11 +3094,12 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
    * Steals an item from a set of target Pokemon.
    * This prioritizes high-tier held items when selecting the item to steal.
    * @param pokemon The {@linkcode Pokemon} holding this item
+   * @param target The {@linkcode Pokemon} to steal from (optional)
    * @param _args N/A
    * @returns `true` if an item was stolen; false otherwise.
    */
-  override apply(pokemon: Pokemon, ..._args: unknown[]): boolean {
-    const opponents = this.getTargets(pokemon);
+  override apply(pokemon: Pokemon, target?: Pokemon, ..._args: unknown[]): boolean {
+    const opponents = this.getTargets(pokemon, target);
 
     if (!opponents.length) {
       return false;
@@ -3187,7 +3198,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
  * @see {@linkcode HeldItemTransferModifier}
  */
 export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
-  private chance: number;
+  public readonly chance: number;
 
   constructor(type: ModifierType, pokemonId: number, chancePercent: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
@@ -3282,6 +3293,60 @@ export class ExtraModifierModifier extends PersistentModifier {
 
   getMaxStackCount(scene: BattleScene): number {
     return 3;
+  }
+}
+
+/**
+ * Modifier used for timed boosts to the player's shop item rewards.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class TempExtraModifierModifier extends LapsingPersistentModifier {
+  constructor(type: ModifierType, maxBattles: number, battleCount?: number, stackCount?: number) {
+    super(type, maxBattles, battleCount, stackCount);
+  }
+
+  /**
+   * Goes through existing modifiers for any that match Silver Pokeball,
+   * which will then add the max count of the new item to the existing count of the current item.
+   * If no existing Silver Pokeballs are found, will add a new one.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param scene
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as TempExtraModifierModifier;
+        const newBattleCount = this.getMaxBattles() + modifierInstance.getBattleCount();
+
+        modifierInstance.setNewBattleCount(newBattleCount);
+        scene.playSound("se/restore");
+        return true;
+      }
+    }
+
+    modifiers.push(this);
+    return true;
+  }
+
+  clone() {
+    return new TempExtraModifierModifier(this.type, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return (modifier instanceof TempExtraModifierModifier);
+  }
+
+  /**
+   * Increases the current rewards in the battle by the `stackCount`.
+   * @returns `true` if the shop reward number modifier applies successfully
+   * @param count {@linkcode NumberHolder} that holds the resulting shop item reward count
+   */
+  apply(count: NumberHolder): boolean {
+    count.value += this.getStackCount();
+    return true;
   }
 }
 
@@ -3634,7 +3699,7 @@ export function overrideHeldItems(scene: BattleScene, pokemon: Pokemon, isPlayer
   }
 
   if (!isPlayer) {
-    scene.clearEnemyHeldItemModifiers();
+    scene.clearEnemyHeldItemModifiers(pokemon);
   }
 
   heldItemsOverride.forEach(item => {

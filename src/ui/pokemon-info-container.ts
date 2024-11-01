@@ -21,24 +21,6 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
-  "en": {
-    infoContainerTextSize: "64px"
-  },
-  "de": {
-    infoContainerTextSize: "64px",
-  },
-  "es": {
-    infoContainerTextSize: "64px"
-  },
-  "fr": {
-    infoContainerTextSize: "64px"
-  },
-  "it": {
-    infoContainerTextSize: "64px"
-  },
-  "zh": {
-    infoContainerTextSize: "64px"
-  },
   "pt": {
     infoContainerTextSize: "60px",
     infoContainerLabelXPos: -15,
@@ -237,14 +219,20 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       const formKey = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey);
       const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
-      const speciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
+      const speciesName = Utils.capitalizeString(Species[pokemon.species.speciesId], "_", true, false);
 
       let formName = "";
       if (pokemon.species.speciesId === Species.ARCEUS) {
         formName = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
       } else {
         const i18key = `pokemonForm:${speciesName}${formText}`;
-        formName = i18next.exists(i18key) ? i18next.t(i18key) : formText;
+        if (i18next.exists(i18key)) {
+          formName = i18next.t(i18key);
+        } else {
+          const rootSpeciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
+          const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
+          formName = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
+        }
       }
 
       if (formName) {
@@ -279,11 +267,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle, false, this.scene.uiTheme));
       this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true, this.scene.uiTheme));
 
-
-      const ownedAbilityAttrs = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
-
       // Check if the player owns ability for the root form
-      const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs);
+      const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(starterEntry.abilityAttr);
 
       if (!playerOwnsThisAbility) {
         this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));

@@ -120,6 +120,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
 
       return true;
     })
+    .setLocalizationKey(`${namespace}`)
     .withTitle(`${namespace}:title`)
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
@@ -144,7 +145,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
+        .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES, true)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.2.label`,
           buttonTooltip: `${namespace}:option.2.tooltip`,

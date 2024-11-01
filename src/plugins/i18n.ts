@@ -81,6 +81,8 @@ const namespaceMap = {
   miscDialogue: "dialogue-misc",
   battleSpecDialogue: "dialogue-final-boss",
   doubleBattleDialogue: "dialogue-double-battle",
+  splashMessages: "splash-texts",
+  mysteryEncounterMessages: "mystery-encounter-texts",
 };
 
 //#region Functions
@@ -98,6 +100,22 @@ async function initFonts(language: string | undefined) {
       console.error(result.reason);
     }
   }
+}
+
+/**
+ * I18n money formatter with. (useful for BBCode coloring of text)\
+ * *If you don't want the BBCode tag applied, just use 'number' formatter*
+ * @example Input: `{{myMoneyValue, money}}`
+ *          Output: `@[MONEY]{₽100,000,000}`
+ * @param amount the money amount
+ * @returns a money formatted string
+ */
+function i18nMoneyFormatter(amount: any): string {
+  if (isNaN(Number(amount))) {
+    console.warn(`i18nMoneyFormatter: value "${amount}" is not a number!`);
+  }
+
+  return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
 }
 
 //#region Exports
@@ -135,7 +153,7 @@ export async function initI18n(): Promise<void> {
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
     fallbackLng: "en",
-    supportedLngs: [ "en", "es", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES" ],
+    supportedLngs: [ "en", "es-ES", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES" ],
     backend: {
       loadPath(lng: string, [ ns ]: string[]) {
         let fileName: string;
@@ -146,7 +164,7 @@ export async function initI18n(): Promise<void> {
         } else {
           fileName = camelCaseToKebabCase(ns);
         }
-        return `/locales/${lng}/${fileName}.json?v=${pkg.version}`;
+        return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
       },
     },
     defaultNS: "menu",
@@ -249,24 +267,10 @@ export async function initI18n(): Promise<void> {
     postProcess: [ "korean-postposition" ],
   });
 
-  // Input: {{myMoneyValue, money}}
-  // Output: @[MONEY]{₽100,000,000} (useful for BBCode coloring of text)
-  // If you don't want the BBCode tag applied, just use 'number' formatter
-  i18next.services.formatter?.add("money", (value, lng, options) => {
-    const numberFormattedString = Intl.NumberFormat(lng, options).format(value);
-    switch (lng) {
-    case "ja":
-      return `@[MONEY]{${numberFormattedString}}円`;
-    case "de":
-    case "es":
-    case "fr":
-    case "it":
-      return `@[MONEY]{${numberFormattedString} ₽}`;
-    default:
-      // English and other languages that use same format
-      return `@[MONEY]{₽${numberFormattedString}}`;
-    }
-  });
+
+  if (i18next.services.formatter) {
+    i18next.services.formatter.add("money", i18nMoneyFormatter);
+  }
 
   await initFonts(localStorage.getItem("prLang") ?? undefined);
 }
