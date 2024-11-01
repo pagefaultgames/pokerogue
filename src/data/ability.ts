@@ -4850,7 +4850,7 @@ class ForceSwitchOutHelper {
    * @param target The target Pokémon.
    * @returns The failure message, or `null` if no failure.
    */
-  getFailedText(target: Pokemon): string | null {
+  public getFailedText(target: Pokemon): string | null {
     const blockedByAbility = new Utils.BooleanHolder(false);
     applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
     return blockedByAbility.value ? i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) }) : null;
