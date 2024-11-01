@@ -4752,7 +4752,6 @@ class ForceSwitchOutHelper {
 
   switchOutLogic(pokemon: Pokemon): boolean {
     const switchOutTarget = pokemon;
-    // If the target is a Player Pokémon
     /**
      * If the switch-out target is a player-controlled Pokémon, the function checks:
      * - Whether there are available party members to switch in.
