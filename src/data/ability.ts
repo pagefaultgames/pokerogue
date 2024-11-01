@@ -4746,8 +4746,8 @@ class ForceSwitchOutHelper {
   /**
    * Handles the logic for switching out a Pokémon based on battle conditions, HP, and the switch type.
    *
-   * @param {Pokemon} pokemon The Pokémon attempting to switch out.
-   * @returns {boolean} True if the switch is successful, false otherwise.
+   * @param pokemon The {@linkcode Pokemon} attempting to switch out.
+   * @returns `true` if the switch is successful
    */
 
   switchOutLogic(pokemon: Pokemon): boolean {
