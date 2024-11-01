@@ -253,7 +253,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Mystery Encounters contain sprites associated with MEs + the title of the specific ME.
    */
   private parseRunStatus() {
-    const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize : "65px", lineSpacing: 0.1 });
+    const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, TextStyle.WINDOW, { fontSize : "65px", lineSpacing: 0.1 });
 
     const enemyContainer = this.scene.add.container(0, 0);
     this.runResultContainer.add(enemyContainer);
@@ -301,8 +301,10 @@ export default class RunInfoUiHandler extends UiHandler {
       descContainer.setPosition(47, 37);
       this.runResultContainer.add([ encounterExclaim, subSprite, descContainer ]);
     }
-
+    const currentBiomeText = addTextObject(this.scene, 6, 0, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "65px" });
+    currentBiomeText.setPosition(0, this.runResultContainer.displayHeight - 5);
     this.runResultContainer.add(runStatusText);
+    this.runResultContainer.add(currentBiomeText);
     this.runContainer.add(this.runResultContainer);
   }
 
