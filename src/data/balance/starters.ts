@@ -2,6 +2,12 @@ import { Species } from "#enums/species";
 
 export const POKERUS_STARTER_COUNT = 5;
 
+// #region Friendship constants
+export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 2;
+export const FRIENDSHIP_GAIN_FROM_BATTLE = 2;
+export const FRIENDSHIP_GAIN_FROM_RARE_CANDY = 5;
+export const FRIENDSHIP_LOSS_FROM_FAINT = 10;
+
 /**
  * Function to get the cumulative friendship threshold at which a candy is earned
  * @param starterCost The cost of the starter, found in {@linkcode speciesStarterCosts}
@@ -9,25 +15,25 @@ export const POKERUS_STARTER_COUNT = 5;
  */
 export function getStarterValueFriendshipCap(starterCost: number): number {
   switch (starterCost) {
-  case 1:
-    return 20;
-  case 2:
-    return 40;
-  case 3:
-    return 60;
-  case 4:
-    return 100;
-  case 5:
-    return 140;
-  case 6:
-    return 200;
-  case 7:
-    return 280;
-  case 8:
-  case 9:
-    return 450;
-  default:
-    return 600;
+    case 1:
+      return 20;
+    case 2:
+      return 40;
+    case 3:
+      return 60;
+    case 4:
+      return 100;
+    case 5:
+      return 140;
+    case 6:
+      return 200;
+    case 7:
+      return 280;
+    case 8:
+    case 9:
+      return 450;
+    default:
+      return 600;
   }
 }
 

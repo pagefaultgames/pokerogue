@@ -37,6 +37,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
     .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 unfainted pokemon in party
     .withFleeAllowed(false)
     .withHideWildIntroMessage(true)
+    .withPreventGameStatsUpdates(true) // Do not count the Pokemon as seen or defeated since it is ours
     .withIntroSpriteConfigs([
       {
         spriteKey: "training_session_gear",
@@ -162,7 +163,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -238,7 +239,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )
@@ -351,7 +352,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
           setEncounterRewards(scene, { fillRemaining: true }, undefined, onBeforeRewardsPhase);
 
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(scene, config);
         })
         .build()
     )

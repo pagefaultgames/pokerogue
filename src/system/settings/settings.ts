@@ -76,16 +76,16 @@ const SHOP_CURSOR_TARGET_OPTIONS: SettingOption[] = [
 
 const shopCursorTargetIndexMap = SHOP_CURSOR_TARGET_OPTIONS.map(option => {
   switch (option.value) {
-  case "Rewards":
-    return ShopCursorTarget.REWARDS;
-  case "Shop":
-    return ShopCursorTarget.SHOP;
-  case "Reroll":
-    return ShopCursorTarget.REROLL;
-  case "Check Team":
-    return ShopCursorTarget.CHECK_TEAM;
-  default:
-    throw new Error(`Unknown value: ${option.value}`);
+    case "Rewards":
+      return ShopCursorTarget.REWARDS;
+    case "Shop":
+      return ShopCursorTarget.SHOP;
+    case "Reroll":
+      return ShopCursorTarget.REROLL;
+    case "Check Team":
+      return ShopCursorTarget.CHECK_TEAM;
+    default:
+      throw new Error(`Unknown value: ${option.value}`);
   }
 });
 
@@ -699,226 +699,226 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     return false;
   }
   switch (Setting[index].key) {
-  case SettingKeys.Game_Speed:
-    scene.gameSpeed = parseFloat(Setting[index].options[value].value.replace("x", ""));
-    break;
-  case SettingKeys.Master_Volume:
-    scene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-    scene.updateSoundVolume();
-    break;
-  case SettingKeys.BGM_Volume:
-    scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-    scene.updateSoundVolume();
-    break;
-  case SettingKeys.Field_Volume:
-    scene.fieldVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-    scene.updateSoundVolume();
-    break;
-  case SettingKeys.SE_Volume:
-    scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-    scene.updateSoundVolume();
-    break;
-  case SettingKeys.UI_Volume:
-    scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
-    break;
-  case SettingKeys.Music_Preference:
-    scene.musicPreference = value;
-    break;
-  case SettingKeys.Damage_Numbers:
-    scene.damageNumbersMode = value;
-    break;
-  case SettingKeys.UI_Theme:
-    scene.uiTheme = value;
-    break;
-  case SettingKeys.Window_Type:
-    updateWindowType(scene, parseInt(Setting[index].options[value].value));
-    break;
-  case SettingKeys.Tutorials:
-    scene.enableTutorials = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Move_Info:
-    scene.enableMoveInfo = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Enable_Retries:
-    scene.enableRetries = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Hide_IVs:
-    scene.hideIvs = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Skip_Seen_Dialogues:
-    scene.skipSeenDialogues = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Egg_Skip:
-    scene.eggSkipPreference = value;
-    break;
-  case SettingKeys.Battle_Style:
-    scene.battleStyle = value;
-    break;
-  case SettingKeys.Show_BGM_Bar:
-    scene.showBgmBar = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Candy_Upgrade_Notification:
-    if (scene.candyUpgradeNotification === value) {
+    case SettingKeys.Game_Speed:
+      scene.gameSpeed = parseFloat(Setting[index].options[value].value.replace("x", ""));
       break;
-    }
-    scene.candyUpgradeNotification = value;
-    scene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
-    break;
-  case SettingKeys.Candy_Upgrade_Display:
-    scene.candyUpgradeDisplay = value;
-  case SettingKeys.Money_Format:
-    switch (Setting[index].options[value].value) {
-    case "Normal":
-      scene.moneyFormat = MoneyFormat.NORMAL;
+    case SettingKeys.Master_Volume:
+      scene.masterVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      scene.updateSoundVolume();
       break;
-    case "Abbreviated":
-      scene.moneyFormat = MoneyFormat.ABBREVIATED;
+    case SettingKeys.BGM_Volume:
+      scene.bgmVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      scene.updateSoundVolume();
       break;
-    }
-    scene.updateMoneyText(false);
-    break;
-  case SettingKeys.Sprite_Set:
-    scene.experimentalSprites = !!value;
-    if (value) {
-      scene.initExpSprites();
-    }
-    break;
-  case SettingKeys.Move_Animations:
-    scene.moveAnimations = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Show_Moveset_Flyout:
-    scene.showMovesetFlyout = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Show_Arena_Flyout:
-    scene.showArenaFlyout = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Show_Time_Of_Day_Widget:
-    scene.showTimeOfDayWidget = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Time_Of_Day_Animation:
-    scene.timeOfDayAnimation = Setting[index].options[value].value === "Bounce" ? EaseType.BOUNCE : EaseType.BACK;
-    break;
-  case SettingKeys.Show_Stats_on_Level_Up:
-    scene.showLevelUpStats = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Shop_Cursor_Target:
-    const selectedValue = shopCursorTargetIndexMap[value];
-    scene.shopCursorTarget = selectedValue;
-    break;
-  case SettingKeys.EXP_Gains_Speed:
-    scene.expGainsSpeed = value;
-    break;
-  case SettingKeys.EXP_Party_Display:
-    scene.expParty = value;
-    break;
-  case SettingKeys.HP_Bar_Speed:
-    scene.hpBarSpeed = value;
-    break;
-  case SettingKeys.Fusion_Palette_Swaps:
-    scene.fusionPaletteSwaps = !!value;
-    break;
-  case SettingKeys.Player_Gender:
-    if (scene.gameData) {
-      const female = Setting[index].options[value].value === "Girl";
-      scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
-      scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
-    } else {
-      return false;
-    }
-    break;
-  case SettingKeys.Touch_Controls:
-    scene.enableTouchControls = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
-    const touchControls = document.getElementById("touchControls");
-    if (touchControls) {
-      touchControls.classList.toggle("visible", scene.enableTouchControls);
-    }
-    break;
-  case SettingKeys.Vibration:
-    scene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
-    break;
-  case SettingKeys.Type_Hints:
-    scene.typeHints = Setting[index].options[value].value === "On";
-    break;
-  case SettingKeys.Language:
-    if (value) {
-      if (scene.ui) {
-        const cancelHandler = () => {
-          scene.ui.revertMode();
-          (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
-        };
-        const changeLocaleHandler = (locale: string): boolean => {
-          try {
-            i18next.changeLanguage(locale);
-            localStorage.setItem("prLang", locale);
-            cancelHandler();
-            // Reload the whole game to apply the new locale since also some constants are translated
-            window.location.reload();
-            return true;
-          } catch (error) {
-            console.error("Error changing locale:", error);
-            return false;
-          }
-        };
-        scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-          options: [
-            {
-              label: "English",
-              handler: () => changeLocaleHandler("en")
-            },
-            {
-              label: "Español",
-              handler: () => changeLocaleHandler("es")
-            },
-            {
-              label: "Italiano",
-              handler: () => changeLocaleHandler("it")
-            },
-            {
-              label: "Français",
-              handler: () => changeLocaleHandler("fr")
-            },
-            {
-              label: "Deutsch",
-              handler: () => changeLocaleHandler("de")
-            },
-            {
-              label: "Português (BR)",
-              handler: () => changeLocaleHandler("pt-BR")
-            },
-            {
-              label: "简体中文",
-              handler: () => changeLocaleHandler("zh-CN")
-            },
-            {
-              label: "繁體中文",
-              handler: () => changeLocaleHandler("zh-TW")
-            },
-            {
-              label: "한국어",
-              handler: () => changeLocaleHandler("ko")
-            },
-            {
-              label: "日本語",
-              handler: () => changeLocaleHandler("ja")
-            },
-            // {
-            //   label: "Català",
-            //   handler: () => changeLocaleHandler("ca-ES")
-            // },
-            {
-              label: i18next.t("settings:back"),
-              handler: () => cancelHandler()
-            }
-          ],
-          maxOptions: 7
-        });
+    case SettingKeys.Field_Volume:
+      scene.fieldVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      scene.updateSoundVolume();
+      break;
+    case SettingKeys.SE_Volume:
+      scene.seVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      scene.updateSoundVolume();
+      break;
+    case SettingKeys.UI_Volume:
+      scene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      break;
+    case SettingKeys.Music_Preference:
+      scene.musicPreference = value;
+      break;
+    case SettingKeys.Damage_Numbers:
+      scene.damageNumbersMode = value;
+      break;
+    case SettingKeys.UI_Theme:
+      scene.uiTheme = value;
+      break;
+    case SettingKeys.Window_Type:
+      updateWindowType(scene, parseInt(Setting[index].options[value].value));
+      break;
+    case SettingKeys.Tutorials:
+      scene.enableTutorials = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Move_Info:
+      scene.enableMoveInfo = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Enable_Retries:
+      scene.enableRetries = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Hide_IVs:
+      scene.hideIvs = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Skip_Seen_Dialogues:
+      scene.skipSeenDialogues = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Egg_Skip:
+      scene.eggSkipPreference = value;
+      break;
+    case SettingKeys.Battle_Style:
+      scene.battleStyle = value;
+      break;
+    case SettingKeys.Show_BGM_Bar:
+      scene.showBgmBar = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Candy_Upgrade_Notification:
+      if (scene.candyUpgradeNotification === value) {
+        break;
+      }
+      scene.candyUpgradeNotification = value;
+      scene.eventTarget.dispatchEvent(new CandyUpgradeNotificationChangedEvent(value));
+      break;
+    case SettingKeys.Candy_Upgrade_Display:
+      scene.candyUpgradeDisplay = value;
+    case SettingKeys.Money_Format:
+      switch (Setting[index].options[value].value) {
+        case "Normal":
+          scene.moneyFormat = MoneyFormat.NORMAL;
+          break;
+        case "Abbreviated":
+          scene.moneyFormat = MoneyFormat.ABBREVIATED;
+          break;
+      }
+      scene.updateMoneyText(false);
+      break;
+    case SettingKeys.Sprite_Set:
+      scene.experimentalSprites = !!value;
+      if (value) {
+        scene.initExpSprites();
+      }
+      break;
+    case SettingKeys.Move_Animations:
+      scene.moveAnimations = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Show_Moveset_Flyout:
+      scene.showMovesetFlyout = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Show_Arena_Flyout:
+      scene.showArenaFlyout = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Show_Time_Of_Day_Widget:
+      scene.showTimeOfDayWidget = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Time_Of_Day_Animation:
+      scene.timeOfDayAnimation = Setting[index].options[value].value === "Bounce" ? EaseType.BOUNCE : EaseType.BACK;
+      break;
+    case SettingKeys.Show_Stats_on_Level_Up:
+      scene.showLevelUpStats = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Shop_Cursor_Target:
+      const selectedValue = shopCursorTargetIndexMap[value];
+      scene.shopCursorTarget = selectedValue;
+      break;
+    case SettingKeys.EXP_Gains_Speed:
+      scene.expGainsSpeed = value;
+      break;
+    case SettingKeys.EXP_Party_Display:
+      scene.expParty = value;
+      break;
+    case SettingKeys.HP_Bar_Speed:
+      scene.hpBarSpeed = value;
+      break;
+    case SettingKeys.Fusion_Palette_Swaps:
+      scene.fusionPaletteSwaps = !!value;
+      break;
+    case SettingKeys.Player_Gender:
+      if (scene.gameData) {
+        const female = Setting[index].options[value].value === "Girl";
+        scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
+        scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
+      } else {
         return false;
       }
-    }
-    break;
-  case SettingKeys.Shop_Overlay_Opacity:
-    scene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
-    break;
+      break;
+    case SettingKeys.Touch_Controls:
+      scene.enableTouchControls = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
+      const touchControls = document.getElementById("touchControls");
+      if (touchControls) {
+        touchControls.classList.toggle("visible", scene.enableTouchControls);
+      }
+      break;
+    case SettingKeys.Vibration:
+      scene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
+      break;
+    case SettingKeys.Type_Hints:
+      scene.typeHints = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Language:
+      if (value) {
+        if (scene.ui) {
+          const cancelHandler = () => {
+            scene.ui.revertMode();
+            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
+          };
+          const changeLocaleHandler = (locale: string): boolean => {
+            try {
+              i18next.changeLanguage(locale);
+              localStorage.setItem("prLang", locale);
+              cancelHandler();
+              // Reload the whole game to apply the new locale since also some constants are translated
+              window.location.reload();
+              return true;
+            } catch (error) {
+              console.error("Error changing locale:", error);
+              return false;
+            }
+          };
+          scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+            options: [
+              {
+                label: "English",
+                handler: () => changeLocaleHandler("en")
+              },
+              {
+                label: "Español (ES)",
+                handler: () => changeLocaleHandler("es-ES")
+              },
+              {
+                label: "Italiano",
+                handler: () => changeLocaleHandler("it")
+              },
+              {
+                label: "Français",
+                handler: () => changeLocaleHandler("fr")
+              },
+              {
+                label: "Deutsch",
+                handler: () => changeLocaleHandler("de")
+              },
+              {
+                label: "Português (BR)",
+                handler: () => changeLocaleHandler("pt-BR")
+              },
+              {
+                label: "简体中文",
+                handler: () => changeLocaleHandler("zh-CN")
+              },
+              {
+                label: "繁體中文",
+                handler: () => changeLocaleHandler("zh-TW")
+              },
+              {
+                label: "한국어",
+                handler: () => changeLocaleHandler("ko")
+              },
+              {
+                label: "日本語",
+                handler: () => changeLocaleHandler("ja")
+              },
+              // {
+              //   label: "Català",
+              //   handler: () => changeLocaleHandler("ca-ES")
+              // },
+              {
+                label: i18next.t("settings:back"),
+                handler: () => cancelHandler()
+              }
+            ],
+            maxOptions: 7
+          });
+          return false;
+        }
+      }
+      break;
+    case SettingKeys.Shop_Overlay_Opacity:
+      scene.updateShopOverlayOpacity(parseInt(Setting[index].options[value].value) * .01);
+      break;
   }
 
   return true;

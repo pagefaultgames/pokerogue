@@ -448,21 +448,21 @@ export class SingleGenerationChallenge extends Challenge {
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
     let trainerTypes: TrainerType[] = [];
     switch (waveIndex) {
-    case 182:
-      trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]), TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
-      break;
-    case 184:
-      trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY ];
-      break;
-    case 186:
-      trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([ TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE ]), TrainerType.LARRY_ELITE ];
-      break;
-    case 188:
-      trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
-      break;
-    case 190:
-      trainerTypes = [ TrainerType.BLUE, Utils.randSeedItem([ TrainerType.RED, TrainerType.LANCE_CHAMPION ]), Utils.randSeedItem([ TrainerType.STEVEN, TrainerType.WALLACE ]), TrainerType.CYNTHIA, Utils.randSeedItem([ TrainerType.ALDER, TrainerType.IRIS ]), TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, Utils.randSeedItem([ TrainerType.GEETA, TrainerType.NEMONA ]) ];
-      break;
+      case 182:
+        trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]), TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
+        break;
+      case 184:
+        trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY ];
+        break;
+      case 186:
+        trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([ TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE ]), TrainerType.LARRY_ELITE ];
+        break;
+      case 188:
+        trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
+        break;
+      case 190:
+        trainerTypes = [ TrainerType.BLUE, Utils.randSeedItem([ TrainerType.RED, TrainerType.LANCE_CHAMPION ]), Utils.randSeedItem([ TrainerType.STEVEN, TrainerType.WALLACE ]), TrainerType.CYNTHIA, Utils.randSeedItem([ TrainerType.ALDER, TrainerType.IRIS ]), TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, Utils.randSeedItem([ TrainerType.GEETA, TrainerType.NEMONA ]) ];
+        break;
     }
     if (trainerTypes.length === 0) {
       return false;
@@ -891,45 +891,45 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
   gameMode.challenges.forEach(c => {
     if (c.value !== 0) {
       switch (challengeType) {
-      case ChallengeType.STARTER_CHOICE:
-        ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3]);
-        break;
-      case ChallengeType.STARTER_POINTS:
-        ret ||= c.applyStarterPoints(args[0]);
-        break;
-      case ChallengeType.STARTER_COST:
-        ret ||= c.applyStarterCost(args[0], args[1]);
-        break;
-      case ChallengeType.STARTER_MODIFY:
-        ret ||= c.applyStarterModify(args[0]);
-        break;
-      case ChallengeType.POKEMON_IN_BATTLE:
-        ret ||= c.applyPokemonInBattle(args[0], args[1]);
-        break;
-      case ChallengeType.FIXED_BATTLES:
-        ret ||= c.applyFixedBattle(args[0], args[1]);
-        break;
-      case ChallengeType.TYPE_EFFECTIVENESS:
-        ret ||= c.applyTypeEffectiveness(args[0]);
-        break;
-      case ChallengeType.AI_LEVEL:
-        ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
-        break;
-      case ChallengeType.AI_MOVE_SLOTS:
-        ret ||= c.applyMoveSlot(args[0], args[1]);
-        break;
-      case ChallengeType.PASSIVE_ACCESS:
-        ret ||= c.applyPassiveAccess(args[0], args[1]);
-        break;
-      case ChallengeType.GAME_MODE_MODIFY:
-        ret ||= c.applyGameModeModify(gameMode);
-        break;
-      case ChallengeType.MOVE_ACCESS:
-        ret ||= c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
-        break;
-      case ChallengeType.MOVE_WEIGHT:
-        ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
-        break;
+        case ChallengeType.STARTER_CHOICE:
+          ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3]);
+          break;
+        case ChallengeType.STARTER_POINTS:
+          ret ||= c.applyStarterPoints(args[0]);
+          break;
+        case ChallengeType.STARTER_COST:
+          ret ||= c.applyStarterCost(args[0], args[1]);
+          break;
+        case ChallengeType.STARTER_MODIFY:
+          ret ||= c.applyStarterModify(args[0]);
+          break;
+        case ChallengeType.POKEMON_IN_BATTLE:
+          ret ||= c.applyPokemonInBattle(args[0], args[1]);
+          break;
+        case ChallengeType.FIXED_BATTLES:
+          ret ||= c.applyFixedBattle(args[0], args[1]);
+          break;
+        case ChallengeType.TYPE_EFFECTIVENESS:
+          ret ||= c.applyTypeEffectiveness(args[0]);
+          break;
+        case ChallengeType.AI_LEVEL:
+          ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
+          break;
+        case ChallengeType.AI_MOVE_SLOTS:
+          ret ||= c.applyMoveSlot(args[0], args[1]);
+          break;
+        case ChallengeType.PASSIVE_ACCESS:
+          ret ||= c.applyPassiveAccess(args[0], args[1]);
+          break;
+        case ChallengeType.GAME_MODE_MODIFY:
+          ret ||= c.applyGameModeModify(gameMode);
+          break;
+        case ChallengeType.MOVE_ACCESS:
+          ret ||= c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
+          break;
+        case ChallengeType.MOVE_WEIGHT:
+          ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
+          break;
       }
     }
   });
@@ -943,18 +943,18 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  */
 export function copyChallenge(source: Challenge | any): Challenge {
   switch (source.id) {
-  case Challenges.SINGLE_GENERATION:
-    return SingleGenerationChallenge.loadChallenge(source);
-  case Challenges.SINGLE_TYPE:
-    return SingleTypeChallenge.loadChallenge(source);
-  case Challenges.LOWER_MAX_STARTER_COST:
-    return LowerStarterMaxCostChallenge.loadChallenge(source);
-  case Challenges.LOWER_STARTER_POINTS:
-    return LowerStarterPointsChallenge.loadChallenge(source);
-  case Challenges.FRESH_START:
-    return FreshStartChallenge.loadChallenge(source);
-  case Challenges.INVERSE_BATTLE:
-    return InverseBattleChallenge.loadChallenge(source);
+    case Challenges.SINGLE_GENERATION:
+      return SingleGenerationChallenge.loadChallenge(source);
+    case Challenges.SINGLE_TYPE:
+      return SingleTypeChallenge.loadChallenge(source);
+    case Challenges.LOWER_MAX_STARTER_COST:
+      return LowerStarterMaxCostChallenge.loadChallenge(source);
+    case Challenges.LOWER_STARTER_POINTS:
+      return LowerStarterPointsChallenge.loadChallenge(source);
+    case Challenges.FRESH_START:
+      return FreshStartChallenge.loadChallenge(source);
+    case Challenges.INVERSE_BATTLE:
+      return InverseBattleChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }

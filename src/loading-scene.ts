@@ -165,6 +165,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage("discord", "ui");
     this.loadImage("google", "ui");
     this.loadImage("settings_icon", "ui");
+    this.loadImage("link_icon", "ui");
+    this.loadImage("unlink_icon", "ui");
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
@@ -242,11 +244,11 @@ export class LoadingScene extends SceneBase {
       this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
-    const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ];
+    const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("egg-update_" + lang, "events");
+      this.loadImage("halloween2024-event-" + lang, "events");
     } else {
-      this.loadImage("egg-update_en", "events");
+      this.loadImage("halloween2024-event-en", "events");
     }
 
     this.loadAtlas("statuses", "");
@@ -477,18 +479,18 @@ export class LoadingScene extends SceneBase {
     this.load.on(this.LOAD_EVENTS.FILE_COMPLETE, (key: string) => {
       assetText.setText(i18next.t("menu:loadingAsset", { assetName: key }));
       switch (key) {
-      case "loading_bg":
-        bg.setTexture("loading_bg");
-        if (mobile) {
-          bg.setVisible(true);
-        }
-        break;
-      case "logo":
-        logo.setTexture("logo");
-        if (mobile) {
-          logo.setVisible(true);
-        }
-        break;
+        case "loading_bg":
+          bg.setTexture("loading_bg");
+          if (mobile) {
+            bg.setVisible(true);
+          }
+          break;
+        case "logo":
+          logo.setTexture("logo");
+          if (mobile) {
+            logo.setVisible(true);
+          }
+          break;
       }
     });
 
