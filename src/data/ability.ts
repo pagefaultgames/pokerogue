@@ -4822,7 +4822,7 @@ class ForceSwitchOutHelper {
     const switchOutTarget = pokemon;
     const player = switchOutTarget instanceof PlayerPokemon;
 
-    if (switchOutTarget instanceof PlayerPokemon) {
+    if (player) {
       if (!player && pokemon.scene.currentBattle.isBattleMysteryEncounter() && !pokemon.scene.currentBattle.mysteryEncounter?.fleeAllowed) {
         return false;
       }
