@@ -165,9 +165,10 @@ class DefaultOverrides {
   // -------------------------
 
   /** 1 to 256, set to null to ignore */
-  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = 256;
+  /** Requirements: STARTING_WAVE_OVERRIDE > 10 && STARTING_BIOME_OVERRIDE !== Biome.TOWN && MYSTERY_ENCOUNTER_RATE_OVERRIDE === 256 */
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
-  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = MysteryEncounterType.FIERY_FALLOUT;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES
