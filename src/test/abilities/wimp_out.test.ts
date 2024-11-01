@@ -548,6 +548,27 @@ describe("Abilities - Wimp Out", () => {
     confirmSwitch();
   });
 
+  it("triggers after last hit of multi hit move (multi lens)", async () => {
+    game.override
+      .enemyMoveset(Moves.TACKLE)
+      .enemyHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+    await game.classicMode.startBattle([
+      Species.WIMPOD,
+      Species.TYRUNT
+    ]);
+
+    game.scene.getPlayerPokemon()!.hp *= 0.51;
+
+    game.move.select(Moves.ENDURE);
+    game.doSelectPartyPokemon(1);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    expect(enemyPokemon.turnData.hitsLeft).toBe(0);
+    expect(enemyPokemon.turnData.hitCount).toBe(2);
+    confirmSwitch();
+  });
+
   // TODO: This interaction is not implemented yet
   it.todo("Wimp Out will not activate if the Pokémon's HP falls below half due to hurting itself in confusion", async () => {
     game.override

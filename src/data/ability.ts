@@ -9,7 +9,7 @@ import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, g
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
+import { BerryModifier, HitHealModifier, PokemonHeldItemModifier, PokemonMultiHitModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
 import i18next from "i18next";
@@ -5041,14 +5041,16 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
         } else if (opponent.turnData.hitsLeft > 1) {
           return false;
         }
-
+        const multiHitModifier = opponent.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
         if (allMoves[enemyLastMoveUsed.move].hasAttr(MultiHitAttr)) {
           damage = pokemon.turnData.damageTaken;
         }
+        if (multiHitModifier) {
+          // Ideally should be in the MultiHitAttr check, but turnData doesn't have proper data from MultiHitAttr.
+          damage *= 1 + multiHitModifier.stackCount;
+        }
       }
     }
-
-
     if (pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) {
       // Activates if it falls below half and recovers back above half from a Shell Bell
       const shellBellHeal = calculateShellBellRecovery(pokemon);
@@ -5852,9 +5854,11 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
       .attr(PostDamageForceSwitchAbAttr)
+      .edgeCase() // Doesn't account for damage differences with Multi-Lens (damage rolls, critical hits), Multi-Lens does not update turnData properly
       .edgeCase(), // Should not trigger when hurting itself in confusion
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .attr(PostDamageForceSwitchAbAttr)
+      .edgeCase() // Doesn't account for damage differences with Multi-Lens (damage rolls, critical hits), Multi-Lens does not update turnData properly
       .edgeCase(), // Should not trigger when hurting itself in confusion
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),
