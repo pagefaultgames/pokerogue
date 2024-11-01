@@ -4942,6 +4942,10 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
         } else if (opponent.turnData.hitsLeft > 1) {
           return false;
         }
+
+        if (allMoves[enemyLastMoveUsed.move].hasAttr(MultiHitAttr)) {
+          damage = pokemon.turnData.damageTaken;
+        }
       }
     }
 
