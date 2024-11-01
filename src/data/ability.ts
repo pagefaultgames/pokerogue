@@ -4847,8 +4847,8 @@ class ForceSwitchOutHelper {
   /**
    * Returns a message if the switch-out attempt fails due to ability effects.
    *
-   * @param {Pokemon} target The target Pokémon.
-   * @returns {string | null} The failure message, or null if no failure.
+   * @param target The target Pokémon.
+   * @returns The failure message, or `null` if no failure.
    */
   getFailedText(target: Pokemon): string | null {
     const blockedByAbility = new Utils.BooleanHolder(false);
