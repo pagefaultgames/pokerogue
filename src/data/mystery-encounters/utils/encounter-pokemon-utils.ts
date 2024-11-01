@@ -288,7 +288,9 @@ export function applyDamageToPokemon(scene: BattleScene, pokemon: PlayerPokemon,
   if (damage <= 0) {
     console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
   }
-
+  if (pokemon.hp - damage <= 0) {
+    damage = pokemon.hp - 1;
+  }
   applyHpChangeToPokemon(scene, pokemon, -damage);
 }
 

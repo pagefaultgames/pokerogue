@@ -48,8 +48,8 @@ class DefaultOverrides {
   readonly SEED_OVERRIDE: string = "";
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
-  readonly STARTING_WAVE_OVERRIDE: number = 0;
-  readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
+  readonly STARTING_WAVE_OVERRIDE: number = 15;
+  readonly STARTING_BIOME_OVERRIDE: Biome = Biome.VOLCANO;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
@@ -165,10 +165,9 @@ class DefaultOverrides {
   // -------------------------
 
   /** 1 to 256, set to null to ignore */
-  /** Requirement: STARTING_WAVE_OVERRIDE > 10 && STARTING_BIOME_OVERRIDE !== Biome.TOWN && MYSTERY_ENCOUNTER_RATE_OVERRIDE === 256 */
-  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
+  readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = 256;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
-  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
+  readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = MysteryEncounterType.FIERY_FALLOUT;
 
   // -------------------------
   // MODIFIER / ITEM OVERRIDES
