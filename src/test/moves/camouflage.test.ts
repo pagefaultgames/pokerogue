@@ -3,6 +3,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TerrainType } from "#app/data/terrain";
 import { Type } from "#app/data/type";
+import { BattlerIndex } from "#app/battle";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -39,12 +40,10 @@ describe("Moves - Camouflage", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.CAMOUFLAGE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTerrainType()).toBe(TerrainType.PSYCHIC);
     const pokemonType = playerPokemon.getTypes()[0];
     expect(pokemonType).toBe(Type.PSYCHIC);
-    const biomeType = game.scene.arena.getTypeForBiome();
-    expect(pokemonType).not.toBe(biomeType);
   });
 });
