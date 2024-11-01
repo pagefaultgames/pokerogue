@@ -4781,7 +4781,6 @@ class ForceSwitchOutHelper {
           false, false), MoveEndPhase);
         return true;
       }
-      // If it's a wild Pokémon encounter
     /**
      * For wild Pokémon battles, the Pokémon will flee if the conditions are met (waveIndex and double battles).
      */
