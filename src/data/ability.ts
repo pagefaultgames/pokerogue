@@ -4767,7 +4767,6 @@ class ForceSwitchOutHelper {
         pokemon.scene.prependToPhase(new SwitchPhase(pokemon.scene, this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
         return true;
       }
-      // If the battle is not a wild Pokémon encounter
     /**
      * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
      * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
