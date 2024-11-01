@@ -4818,7 +4818,7 @@ class ForceSwitchOutHelper {
    * @param opponent The opponent Pokémon.
    * @returns `true` if the switch-out condition is met
    */
-  getSwitchOutCondition(pokemon: Pokemon, opponent: Pokemon): boolean {
+  public getSwitchOutCondition(pokemon: Pokemon, opponent: Pokemon): boolean {
     const switchOutTarget = pokemon;
     const player = switchOutTarget instanceof PlayerPokemon;
 
