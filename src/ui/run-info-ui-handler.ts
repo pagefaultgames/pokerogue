@@ -302,7 +302,7 @@ export default class RunInfoUiHandler extends UiHandler {
       this.runResultContainer.add([ encounterExclaim, subSprite, descContainer ]);
     }
     const currentBiomeText = addTextObject(this.scene, 6, 0, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "65px" });
-    currentBiomeText.setPosition(0, this.runResultContainer.displayHeight - 5);
+    currentBiomeText.setPosition(6, this.runResultContainer.getBounds().height - 15);
     this.runResultContainer.add(runStatusText);
     this.runResultContainer.add(currentBiomeText);
     this.runContainer.add(this.runResultContainer);
@@ -388,12 +388,12 @@ export default class RunInfoUiHandler extends UiHandler {
           tObjSprite.setPosition(-9, -3);
           tObjPartnerSprite.setScale(0.55);
           doubleContainer.add([ tObjSprite, tObjPartnerSprite ]);
-          doubleContainer.setPosition(28, 40);
+          doubleContainer.setPosition(28, 34);
         }
         enemyContainer.add(doubleContainer);
       } else {
         const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.65;
-        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [ 12, 28 ] : [ 32, 36 ];
+        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [ 12, 28 ] : [ 32, 24 ];
         tObjSprite.setScale(scale, scale);
         tObjSprite.setPosition(position[0], position[1]);
         enemyContainer.add(tObjSprite);
