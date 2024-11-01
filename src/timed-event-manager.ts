@@ -35,7 +35,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2024, 10, 4, 0)),
     bannerKey: "halloween2024-event-",
     scale: 0.21,
-    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ]
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ]
   }
 ];
 
