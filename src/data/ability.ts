@@ -4749,7 +4749,7 @@ class ForceSwitchOutHelper {
    * @returns `true` if the switch is successful
    */
 
-  switchOutLogic(pokemon: Pokemon): boolean {
+  public switchOutLogic(pokemon: Pokemon): boolean {
     const switchOutTarget = pokemon;
     /**
      * If the switch-out target is a player-controlled Pokémon, the function checks:
