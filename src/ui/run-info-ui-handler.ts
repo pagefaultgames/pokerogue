@@ -674,7 +674,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const def = i18next.t("pokemonInfo:Stat.DEFshortened") + ": " + pStats[2];
       const spatk = i18next.t("pokemonInfo:Stat.SPATKshortened") + ": " + pStats[3];
       const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened") + ": " + pStats[4];
-      const speedLabel = (currentLanguage === "es" || currentLanguage === "pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
+      const speedLabel = (currentLanguage === "es-ES" || currentLanguage === "pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
       const speed = speedLabel + ": " + pStats[5];
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, { fontSize: textContainerFontSize, lineSpacing: lineSpacing });

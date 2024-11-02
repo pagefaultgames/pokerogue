@@ -205,11 +205,11 @@ export class TurnStartPhase extends FieldPhase {
     }
 
     this.scene.pushPhase(new WeatherEffectPhase(this.scene));
+    this.scene.pushPhase(new BerryPhase(this.scene));
 
     /** Add a new phase to check who should be taking status damage */
     this.scene.pushPhase(new CheckStatusEffectPhase(this.scene, moveOrder));
 
-    this.scene.pushPhase(new BerryPhase(this.scene));
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
     /**
