@@ -159,16 +159,16 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       }
     } else {
       switch (this.optionsContainer.getAll()?.length) {
-      default:
-      case 3:
-        success = this.handleTwoOptionMoveInput(button);
-        break;
-      case 4:
-        success = this.handleThreeOptionMoveInput(button);
-        break;
-      case 5:
-        success = this.handleFourOptionMoveInput(button);
-        break;
+        default:
+        case 3:
+          success = this.handleTwoOptionMoveInput(button);
+          break;
+        case 4:
+          success = this.handleThreeOptionMoveInput(button);
+          break;
+        case 5:
+          success = this.handleFourOptionMoveInput(button);
+          break;
       }
 
       this.displayOptionTooltip();
@@ -185,26 +185,26 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
-    case Button.UP:
-      if (cursor < this.viewPartyIndex) {
-        success = this.setCursor(this.viewPartyIndex);
-      }
-      break;
-    case Button.DOWN:
-      if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      }
-      break;
-    case Button.LEFT:
-      if (cursor > 0) {
-        success = this.setCursor(cursor - 1);
-      }
-      break;
-    case Button.RIGHT:
-      if (cursor < this.viewPartyIndex) {
-        success = this.setCursor(cursor + 1);
-      }
-      break;
+      case Button.UP:
+        if (cursor < this.viewPartyIndex) {
+          success = this.setCursor(this.viewPartyIndex);
+        }
+        break;
+      case Button.DOWN:
+        if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor > 0) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor < this.viewPartyIndex) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
     }
 
     return success;
@@ -214,34 +214,34 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
-    case Button.UP:
-      if (cursor === 2) {
-        success = this.setCursor(cursor - 2);
-      } else {
-        success = this.setCursor(this.viewPartyIndex);
-      }
-      break;
-    case Button.DOWN:
-      if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      } else {
-        success = this.setCursor(2);
-      }
-      break;
-    case Button.LEFT:
-      if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      } else if (cursor === 1) {
-        success = this.setCursor(cursor - 1);
-      }
-      break;
-    case Button.RIGHT:
-      if (cursor === 1) {
-        success = this.setCursor(this.viewPartyIndex);
-      } else if (cursor < 1) {
-        success = this.setCursor(cursor + 1);
-      }
-      break;
+      case Button.UP:
+        if (cursor === 2) {
+          success = this.setCursor(cursor - 2);
+        } else {
+          success = this.setCursor(this.viewPartyIndex);
+        }
+        break;
+      case Button.DOWN:
+        if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        } else {
+          success = this.setCursor(2);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        } else if (cursor === 1) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor === 1) {
+          success = this.setCursor(this.viewPartyIndex);
+        } else if (cursor < 1) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
     }
 
     return success;
@@ -251,34 +251,34 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
-    case Button.UP:
-      if (cursor >= 2 && cursor !== this.viewPartyIndex) {
-        success = this.setCursor(cursor - 2);
-      } else {
-        success = this.setCursor(this.viewPartyIndex);
-      }
-      break;
-    case Button.DOWN:
-      if (cursor <= 1) {
-        success = this.setCursor(cursor + 2);
-      } else if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      }
-      break;
-    case Button.LEFT:
-      if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      } else if (cursor % 2 === 1) {
-        success = this.setCursor(cursor - 1);
-      }
-      break;
-    case Button.RIGHT:
-      if (cursor === 1) {
-        success = this.setCursor(this.viewPartyIndex);
-      } else if (cursor % 2 === 0 && cursor !== this.viewPartyIndex) {
-        success = this.setCursor(cursor + 1);
-      }
-      break;
+      case Button.UP:
+        if (cursor >= 2 && cursor !== this.viewPartyIndex) {
+          success = this.setCursor(cursor - 2);
+        } else {
+          success = this.setCursor(this.viewPartyIndex);
+        }
+        break;
+      case Button.DOWN:
+        if (cursor <= 1) {
+          success = this.setCursor(cursor + 2);
+        } else if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        } else if (cursor % 2 === 1) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor === 1) {
+          success = this.setCursor(this.viewPartyIndex);
+        } else if (cursor % 2 === 0 && cursor !== this.viewPartyIndex) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
     }
 
     return success;
@@ -351,16 +351,16 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       let optionText: BBCodeText;
       switch (this.encounterOptions.length) {
-      default:
-      case 2:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
-        break;
-      case 3:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
-        break;
-      case 4:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
-        break;
+        default:
+        case 2:
+          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          break;
+        case 3:
+          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          break;
+        case 4:
+          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          break;
       }
 
       this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));

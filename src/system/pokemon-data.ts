@@ -12,7 +12,7 @@ import { loadBattlerTag } from "../data/battler-tags";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 export default class PokemonData {
   public id: integer;
@@ -33,7 +33,6 @@ export default class PokemonData {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
-  public natureOverride: Nature | -1;
   public moveset: (PokemonMove | null)[];
   public status: Status | null;
   public friendship: integer;
@@ -54,14 +53,20 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: integer;
-  public fusionMysteryEncounterPokemonData: MysteryEncounterPokemonData;
 
   public boss: boolean;
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+
   /** Data that can customize a Pokemon in non-standard ways from its Species */
-  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
+  public customPokemonData: CustomPokemonData;
+  public fusionCustomPokemonData: CustomPokemonData;
+
+  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments)
+  public natureOverride: Nature | -1;
+  public mysteryEncounterPokemonData: CustomPokemonData | null;
+  public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -87,7 +92,6 @@ export default class PokemonData {
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
-    this.natureOverride = source.natureOverride !== undefined ? source.natureOverride : -1;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
@@ -107,9 +111,15 @@ export default class PokemonData {
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
+    this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
     this.usedTMs = source.usedTMs ?? [];
 
-    this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(source.mysteryEncounterPokemonData);
+    this.customPokemonData = new CustomPokemonData(source.customPokemonData);
+
+    // Deprecated, but needed for session data migration
+    this.natureOverride = source.natureOverride;
+    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData ? new CustomPokemonData(source.mysteryEncounterPokemonData) : null;
+    this.fusionMysteryEncounterPokemonData = source.fusionMysteryEncounterPokemonData ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData) : null;
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -125,10 +135,10 @@ export default class PokemonData {
         }
       }
     } else {
-      this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+      this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
       if (!forHistory) {
         this.status = source.status
-          ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
+          ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
           : null;
       }
 
