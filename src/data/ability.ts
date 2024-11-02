@@ -3614,22 +3614,19 @@ export class MoodyAbAttr extends PostTurnAbAttr {
   }
 }
 
-export class PostTurnStatStageChangeAbAttr extends PostTurnAbAttr {
-  private stats: BattleStat[];
-  private stages: number;
+export class SpeedBoostAbAttr extends PostTurnAbAttr {
 
-  constructor(stats: BattleStat[], stages: number) {
+  constructor() {
     super(true);
-
-    this.stats = Array.isArray(stats)
-      ? stats
-      : [ stats ];
-    this.stages = stages;
   }
 
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     if (!simulated) {
-      pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.stages));
+      if (!pokemon.turnData.switchedInThisTurn && !pokemon.turnData.failedRunAway) {
+        pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.SPD ], 1));
+      } else {
+        return false;
+      }
     }
     return true;
   }
@@ -5011,7 +5008,7 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
     new Ability(Abilities.SPEED_BOOST, 3)
-      .attr(PostTurnStatStageChangeAbAttr, [ Stat.SPD ], 1),
+      .attr(SpeedBoostAbAttr),
     new Ability(Abilities.BATTLE_ARMOR, 3)
       .attr(BlockCritAbAttr)
       .ignorable(),

@@ -65,6 +65,15 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
+    /** In case the current pokemon was just switched in, make sure it is counted as participating in the combat */
+    this.scene.getPlayerField().forEach((pokemon, i) => {
+      if (pokemon?.isActive(true)) {
+        if (pokemon.isPlayer()) {
+          this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
+        }
+      }
+    });
+
     if (!this.tryOverrideForBattleSpec()) {
       this.doFaint();
     }

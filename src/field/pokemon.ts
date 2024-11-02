@@ -5153,6 +5153,8 @@ export class PokemonTurnData {
   public statStagesDecreased: boolean = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: Moves;
+  public switchedInThisTurn: boolean = false;
+  public failedRunAway: boolean = false;
 }
 
 export enum AiType {
