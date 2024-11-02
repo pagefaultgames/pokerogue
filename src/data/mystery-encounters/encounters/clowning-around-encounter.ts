@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
@@ -280,7 +280,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           let numRogue = 0;
           items.filter(m => m.isTransferable && !(m instanceof BerryModifier))
             .forEach(m => {
-              const type = m.type.withTierFromPool();
+              const type = m.type.withTierFromPool(ModifierPoolType.PLAYER, party);
               const tier = type.tier ?? ModifierTier.ULTRA;
               if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
                 numRogue += m.stackCount;
