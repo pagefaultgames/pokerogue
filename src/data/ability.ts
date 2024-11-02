@@ -5043,7 +5043,6 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
         } else if (source.turnData.hitsLeft > 1) {
           return false;
         }
-        const multiHitModifier = source.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
         if (source.turnData.hitCount > 1) {
           damage = pokemon.turnData.damageTaken;
         }
