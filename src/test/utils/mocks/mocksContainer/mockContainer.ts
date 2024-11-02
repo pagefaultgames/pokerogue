@@ -13,7 +13,7 @@ export default class MockContainer implements MockGameObject {
   public frame;
   protected textureManager;
   public list: MockGameObject[] = [];
-  private name?: string;
+  public name: string;
 
   constructor(textureManager: MockTextureManager, x, y) {
     this.x = x;
@@ -33,6 +33,10 @@ export default class MockContainer implements MockGameObject {
 
   removeFromDisplayList() {
     // same as remove or destroy
+  }
+
+  removeBetween(startIndex, endIndex, destroyChild) {
+    // Removes multiple children across an index range
   }
 
   addedToScene() {
@@ -151,6 +155,10 @@ export default class MockContainer implements MockGameObject {
     // Sends this Game Object to the back of its parent's display list.
   }
 
+  moveTo(obj) {
+    // Moves this Game Object to the given index in the list.
+  }
+
   moveAbove(obj) {
     // Moves this Game Object to be above the given Game Object in the display list.
   }
@@ -159,9 +167,9 @@ export default class MockContainer implements MockGameObject {
     // Moves this Game Object to be below the given Game Object in the display list.
   }
 
-  setName = (name: string) => {
+  setName(name: string) {
     this.name = name;
-  };
+  }
 
   bringToTop(obj) {
     // Brings this Game Object to the top of its parents display list.
@@ -203,6 +211,10 @@ export default class MockContainer implements MockGameObject {
 
   getAll() {
     return this.list;
+  }
+
+  getByName(key: string) {
+    return this.list.find(v => v.name === key) ?? new MockContainer(this.textureManager, 0, 0);
   }
 
   disableInteractive = () => null;

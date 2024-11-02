@@ -12,6 +12,7 @@ import { loadBattlerTag } from "../data/battler-tags";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 export default class PokemonData {
   public id: integer;
@@ -32,17 +33,18 @@ export default class PokemonData {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
-  public natureOverride: Nature | -1;
   public moveset: (PokemonMove | null)[];
   public status: Status | null;
   public friendship: integer;
   public metLevel: integer;
-  public metBiome: Biome | -1;
+  public metBiome: Biome | -1;        // -1 for starters
   public metSpecies: Species;
+  public metWave: number;            // 0 for unknown (previous saves), -1 for starters
   public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public usedTMs: Moves[];
+  public evoCounter: integer;
 
   public fusionSpecies: Species;
   public fusionFormIndex: integer;
@@ -56,6 +58,15 @@ export default class PokemonData {
   public bossSegments?: integer;
 
   public summonData: PokemonSummonData;
+
+  /** Data that can customize a Pokemon in non-standard ways from its Species */
+  public customPokemonData: CustomPokemonData;
+  public fusionCustomPokemonData: CustomPokemonData;
+
+  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments)
+  public natureOverride: Nature | -1;
+  public mysteryEncounterPokemonData: CustomPokemonData | null;
+  public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -81,14 +92,15 @@ export default class PokemonData {
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
-    this.natureOverride = source.natureOverride !== undefined ? source.natureOverride : -1;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.metSpecies = source.metSpecies;
+    this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
     this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
     if (!forHistory) {
       this.pauseEvolutions = !!source.pauseEvolutions;
+      this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
 
@@ -99,7 +111,15 @@ export default class PokemonData {
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
+    this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
     this.usedTMs = source.usedTMs ?? [];
+
+    this.customPokemonData = new CustomPokemonData(source.customPokemonData);
+
+    // Deprecated, but needed for session data migration
+    this.natureOverride = source.natureOverride;
+    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData ? new CustomPokemonData(source.mysteryEncounterPokemonData) : null;
+    this.fusionMysteryEncounterPokemonData = source.fusionMysteryEncounterPokemonData ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData) : null;
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -115,10 +135,10 @@ export default class PokemonData {
         }
       }
     } else {
-      this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+      this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
       if (!forHistory) {
         this.status = source.status
-          ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
+          ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
           : null;
       }
 

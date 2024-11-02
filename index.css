@@ -26,10 +26,36 @@ body {
 #app {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 #app > div:first-child {
-  transform-origin: top !important;
+  transform-origin: center !important;
+}
+
+/*
+  Supports automatic vertical centering as suggested in PR#1114, but only via CSS
+
+  Condition factorized to deduce CSS rules:
+  true if (isLandscape && !isMobile() && !hasTouchscreen() || (hasTouchscreen() && !isTouchControlsEnabled))
+*/
+
+/* isLandscape && !isMobile() && !hasTouchscreen() */
+@media (orientation: landscape) and (pointer: fine) {
+  #app {
+    align-items: center;
+  }
+}
+
+@media (pointer: coarse) {
+  /* hasTouchscreen() && !isTouchControlsEnabled */
+  body:has(> #touchControls[class=visible]) #app {
+    align-items: start;
+  }
+
+  body:has(> #touchControls[class=visible]) #app > div:first-child {
+    transform-origin: top !important;
+  }
 }
 
 #layout:fullscreen #dpad, #layout:fullscreen {

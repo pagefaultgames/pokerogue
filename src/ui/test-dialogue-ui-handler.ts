@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -17,15 +17,15 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
   setup() {
     super.setup();
 
-    const flattenKeys = (object, topKey?: string, midleKey?: string[]): Array<any> => {
-      return Object.keys(object).map((t, i) => {
+    const flattenKeys = (object?: any, topKey?: string, midleKey?: string[]): Array<any> => {
+      return Object.keys(object ?? {}).map((t, i) => {
         const value = Object.values(object)[i];
 
         if (typeof value === "object" && !isNullOrUndefined(value)) { // we check for not null or undefined here because if the language json file has a null key, the typeof will still be an object, but that object will be null, causing issues
           // If the value is an object, execute the same process
           // si el valor es un objeto ejecuta el mismo proceso
 
-          return flattenKeys(value, topKey ?? t, topKey ? midleKey ? [...midleKey, t] : [t] : undefined).filter((t) => t.length > 0);
+          return flattenKeys(value, topKey ?? t, topKey ? midleKey ? [ ...midleKey, t ] : [ t ] : undefined).filter((t) => t.length > 0);
         } else if (typeof value === "string" || isNullOrUndefined(value)) { // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
 
           // Return in the format expected by i18next
@@ -41,10 +41,6 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
 
   getModalTitle(config?: ModalConfig): string {
     return "Test Dialogue";
-  }
-
-  getFields(config?: ModalConfig): string[] {
-    return [ "Dialogue" ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -68,13 +64,20 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     return super.getReadableErrorMessage(error);
   }
 
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    return [{ label: "Dialogue" }];
+  }
+
   show(args: any[]): boolean {
     const ui = this.getUi();
+    const hasTitle = !!this.getModalTitle();
+    this.updateFields(this.getInputFieldConfigs(), hasTitle);
+    this.updateContainer(args[0] as ModalConfig);
     const input = this.inputs[0];
     input.setMaxLength(255);
 
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
-      if (["escape", "space"].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
+      if ([ "escape", "space" ].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
         ui.revertMode();

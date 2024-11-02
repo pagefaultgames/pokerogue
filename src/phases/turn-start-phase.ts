@@ -13,12 +13,13 @@ import { BerryPhase } from "./berry-phase";
 import { FieldPhase } from "./field-phase";
 import { MoveHeaderPhase } from "./move-header-phase";
 import { MovePhase } from "./move-phase";
-import { PostTurnStatusEffectPhase } from "./post-turn-status-effect-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { TurnEndPhase } from "./turn-end-phase";
 import { WeatherEffectPhase } from "./weather-effect-phase";
+import { CheckStatusEffectPhase } from "#app/phases/check-status-effect-phase";
 import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
+import { SwitchType } from "#enums/switch-type";
 
 export class TurnStartPhase extends FieldPhase {
   constructor(scene: BattleScene) {
@@ -42,20 +43,17 @@ export class TurnStartPhase extends FieldPhase {
       orderedTargets = Utils.randSeedShuffle(orderedTargets);
     }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
-    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getEffectiveStat(Stat.SPD) || 0;
-      const bSpeed = b?.getEffectiveStat(Stat.SPD) || 0;
-
-      return bSpeed - aSpeed;
-    });
-
-    // Next, a check for Trick Room is applied. If Trick Room is present, the order is reversed.
+    // Next, a check for Trick Room is applied to determine sort order.
     const speedReversed = new Utils.BooleanHolder(false);
-    this.scene.arena.applyTags(TrickRoomTag, speedReversed);
+    this.scene.arena.applyTags(TrickRoomTag, false, speedReversed);
 
-    if (speedReversed.value) {
-      orderedTargets = orderedTargets.reverse();
-    }
+    // Adjust the sort function based on whether Trick Room is active.
+    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
+      const aSpeed = a?.getEffectiveStat(Stat.SPD) ?? 0;
+      const bSpeed = b?.getEffectiveStat(Stat.SPD) ?? 0;
+
+      return speedReversed.value ? aSpeed - bSpeed : bSpeed - aSpeed;
+    });
 
     return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
   }
@@ -154,66 +152,64 @@ export class TurnStartPhase extends FieldPhase {
       }
 
       switch (turnCommand?.command) {
-      case Command.FIGHT:
-        const queuedMove = turnCommand.move;
-        pokemon.turnData.order = orderIndex++;
-        if (!queuedMove) {
-          continue;
-        }
-        const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move) || new PokemonMove(queuedMove.move);
-        if (move.getMove().hasAttr(MoveHeaderAttr)) {
-          this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
-        }
-        if (pokemon.isPlayer()) {
-          if (turnCommand.cursor === -1) {
-            this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
-          } else {
-            const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
-            this.scene.pushPhase(playerPhase);
+        case Command.FIGHT:
+          const queuedMove = turnCommand.move;
+          pokemon.turnData.order = orderIndex++;
+          if (!queuedMove) {
+            continue;
           }
-        } else {
-          this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
-        }
-        break;
-      case Command.BALL:
-        this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
-        break;
-      case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor!, true, turnCommand.args![0] as boolean, pokemon.isPlayer()));//TODO: is the bang correct here?
-        break;
-      case Command.RUN:
-        let runningPokemon = pokemon;
-        if (this.scene.currentBattle.double) {
-          const playerActivePokemon = field.filter(pokemon => {
-            if (!!pokemon) {
-              return pokemon.isPlayer() && pokemon.isActive();
+          const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move && m?.ppUsed < m?.getMovePp()) || new PokemonMove(queuedMove.move);
+          if (move.getMove().hasAttr(MoveHeaderAttr)) {
+            this.scene.unshiftPhase(new MoveHeaderPhase(this.scene, pokemon, move));
+          }
+          if (pokemon.isPlayer()) {
+            if (turnCommand.cursor === -1) {
+              this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
             } else {
-              return;
+              const playerPhase = new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
+              this.scene.pushPhase(playerPhase);
             }
-          });
-          // if only one pokemon is alive, use that one
-          if (playerActivePokemon.length > 1) {
-            // find which active pokemon has faster speed
-            const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
-            // check if either active pokemon has the ability "Run Away"
-            const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
-            runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
+          } else {
+            this.scene.pushPhase(new MovePhase(this.scene, pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
           }
-        }
-        this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
-        break;
+          break;
+        case Command.BALL:
+          this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
+          break;
+        case Command.POKEMON:
+          const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
+          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()));
+          break;
+        case Command.RUN:
+          let runningPokemon = pokemon;
+          if (this.scene.currentBattle.double) {
+            const playerActivePokemon = field.filter(pokemon => {
+              if (!!pokemon) {
+                return pokemon.isPlayer() && pokemon.isActive();
+              } else {
+                return;
+              }
+            });
+            // if only one pokemon is alive, use that one
+            if (playerActivePokemon.length > 1) {
+            // find which active pokemon has faster speed
+              const fasterPokemon = playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD) ? playerActivePokemon[0] : playerActivePokemon[1];
+              // check if either active pokemon has the ability "Run Away"
+              const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
+              runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
+            }
+          }
+          this.scene.unshiftPhase(new AttemptRunPhase(this.scene, runningPokemon.getFieldIndex()));
+          break;
       }
     }
 
     this.scene.pushPhase(new WeatherEffectPhase(this.scene));
-
-    for (const o of moveOrder) {
-      if (field[o].status && field[o].status.isPostTurn()) {
-        this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, o));
-      }
-    }
-
     this.scene.pushPhase(new BerryPhase(this.scene));
+
+    /** Add a new phase to check who should be taking status damage */
+    this.scene.pushPhase(new CheckStatusEffectPhase(this.scene, moveOrder));
+
     this.scene.pushPhase(new TurnEndPhase(this.scene));
 
     /**
