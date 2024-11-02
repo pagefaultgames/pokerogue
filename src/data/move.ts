@@ -5782,6 +5782,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return false;
       }
 
+      // Don't allow wild mons to flee with U-turn et al
+      if (this.selfSwitch && !user.isPlayer() && move.category !== MoveCategory.STATUS) {
+        return false;
+      }
+
       if (switchOutTarget.hp > 0) {
         switchOutTarget.leaveField(false);
         user.scene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
