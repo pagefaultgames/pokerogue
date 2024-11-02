@@ -1,30 +1,56 @@
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import {
-  AddSecondStrikeAbAttr, AlwaysHitAbAttr,
-  IgnoreMoveEffectsAbAttr, MaxMultiHitAbAttr,
-  PostAttackAbAttr, PostDefendAbAttr,
-  TypeImmunityAbAttr, applyPostAttackAbAttrs,
-  applyPostDefendAbAttrs, applyPreAttackAbAttrs
+  AddSecondStrikeAbAttr,
+  AlwaysHitAbAttr,
+  IgnoreMoveEffectsAbAttr,
+  MaxMultiHitAbAttr,
+  PostAttackAbAttr,
+  PostDefendAbAttr,
+  TypeImmunityAbAttr,
+  applyPostAttackAbAttrs,
+  applyPostDefendAbAttrs,
+  applyPreAttackAbAttrs,
 } from "#app/data/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
-import { BattlerTagLapseType, DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag } from "#app/data/battler-tags";
 import {
-  AttackMove, ChargeAttr, FixedDamageAttr, HitsTagAttr,
-  MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr,
-  MoveEffectTrigger, MoveFlags, MoveTarget, MultiHitAttr,
-  NoEffectAttr, OneHitKOAttr, OverrideMoveEffectAttr,
-  ToxicAccuracyAttr, VariableTargetAttr,
-  applyFilteredMoveAttrs, applyMoveAttrs
+  BattlerTagLapseType,
+  DamageProtectedTag,
+  ProtectedTag,
+  SemiInvulnerableTag,
+  SubstituteTag,
+} from "#app/data/battler-tags";
+import {
+  AttackMove,
+  FixedDamageAttr,
+  HitsTagAttr,
+  MissEffectAttr,
+  MoveAttr,
+  MoveCategory,
+  MoveEffectAttr,
+  MoveEffectTrigger,
+  MoveFlags,
+  MoveTarget,
+  MultiHitAttr,
+  NoEffectAttr,
+  OneHitKOAttr,
+  OverrideMoveEffectAttr,
+  ToxicAccuracyAttr,
+  VariableTargetAttr,
+  applyFilteredMoveAttrs,
+  applyMoveAttrs,
 } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { Type } from "#app/data/type";
 import Pokemon, { HitResult, MoveResult, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
-  ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier,
-  FlinchChanceModifier, HitHealModifier, PokemonMultiHitModifier
+  ContactHeldItemTransferChanceModifier,
+  EnemyAttackStatusEffectChanceModifier,
+  FlinchChanceModifier,
+  HitHealModifier,
+  PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, NumberHolder, executeIf } from "#app/utils";
@@ -256,15 +282,13 @@ export class MoveEffectPhase extends PokemonPhase {
               && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit) && hitResult !== HitResult.NO_EFFECT, user, target, move).then(() => {
               // All other effects require the move to not have failed or have been cancelled to trigger
               if (hitResult !== HitResult.FAIL) {
-                /** Are the move's effects tied to the first turn of a charge move? */
-                const chargeEffect = !!move.getAttrs(ChargeAttr).find(ca => ca.usedChargeEffect(user, this.getFirstTarget() ?? null, move));
                 /**
                  * If the invoked move's effects are meant to trigger during the move's "charge turn,"
                  * ignore all effects after this point.
                  * Otherwise, apply all self-targeted POST_APPLY effects.
                  */
-                executeIf(!chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_APPLY
-                  && attr.selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, move)).then(() => {
+                applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_APPLY
+                      && attr.selfTarget && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit), user, target, move).then(() => {
                   // All effects past this point require the move to have hit the target
                   if (hitResult !== HitResult.NO_EFFECT) {
                     // Apply all non-self-targeted POST_APPLY effects
@@ -282,7 +306,7 @@ export class MoveEffectPhase extends PokemonPhase {
                         }
                       }
                       // If the move was not protected against, apply all HIT effects
-                      executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT
+                      executeIf(!isProtected, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT
                         && (!attr.firstHitOnly || firstHit) && (!attr.lastHitOnly || lastHit) && (!attr.firstTargetOnly || firstTarget), user, target, this.move.getMove()).then(() => {
                         // Apply the target's post-defend ability effects (as long as the target is active or can otherwise apply them)
                         return executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult).then(() => {
@@ -295,10 +319,8 @@ export class MoveEffectPhase extends PokemonPhase {
                           if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
                             user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           }
-                          target.lapseTag(BattlerTagType.BEAK_BLAST_CHARGING);
-                          if (move.category === MoveCategory.PHYSICAL && user.isPlayer() !== target.isPlayer()) {
-                            target.lapseTag(BattlerTagType.SHELL_TRAP);
-                          }
+                          target.lapseTags(BattlerTagLapseType.AFTER_HIT);
+
                         })).then(() => {
                           // Apply the user's post-attack ability effects
                           applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move.getMove(), hitResult).then(() => {

@@ -544,11 +544,15 @@ export class Egg {
   ////
 }
 
-export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timestamp: number): Species {
-  const legendarySpecies = Object.entries(speciesEggTiers)
+export function getValidLegendaryGachaSpecies() : Species[] {
+  return Object.entries(speciesEggTiers)
     .filter(s => s[1] === EggTier.LEGENDARY)
     .map(s => parseInt(s[0]))
-    .filter(s => getPokemonSpecies(s).isObtainable());
+    .filter(s => getPokemonSpecies(s).isObtainable() && s !== Species.ETERNATUS);
+}
+
+export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timestamp: number): Species {
+  const legendarySpecies = getValidLegendaryGachaSpecies();
 
   let ret: Species;
 

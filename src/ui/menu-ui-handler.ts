@@ -13,6 +13,7 @@ import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { AdminMode, getAdminModeName } from "./admin-ui-handler";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -31,7 +32,7 @@ let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
-const donateUrl = "https://github.com/sponsors/patapancakes";
+const donateUrl = "https://github.com/sponsors/pagefaultgames";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private readonly textPadding = 8;
@@ -387,16 +388,41 @@ export default class MenuUiHandler extends MessageUiHandler {
       communityOptions.push({
         label: "Admin",
         handler: () => {
-          ui.playSelect();
-          ui.setOverlayMode(Mode.ADMIN, {
-            buttonActions: [
-              () => {
-                ui.revertMode();
-              },
-              () => {
-                ui.revertMode();
+
+          const skippedAdminModes: AdminMode[] = [ AdminMode.ADMIN ]; // this is here so that we can skip the menu populating enums that aren't meant for the menu, such as the AdminMode.ADMIN
+          const options: OptionSelectItem[] = [];
+          Object.values(AdminMode).filter((v) => !isNaN(Number(v)) && !skippedAdminModes.includes(v as AdminMode)).forEach((mode) => { // this gets all the enums in a way we can use
+            options.push({
+              label: getAdminModeName(mode as AdminMode),
+              handler: () => {
+                ui.playSelect();
+                ui.setOverlayMode(Mode.ADMIN, {
+                  buttonActions: [
+                  // we double revert here and below to go back 2 layers of menus
+                    () => {
+                      ui.revertMode();
+                      ui.revertMode();
+                    },
+                    () => {
+                      ui.revertMode();
+                      ui.revertMode();
+                    }
+                  ]
+                }, mode); // mode is our AdminMode enum
+                return true;
               }
-            ]
+            });
+          });
+          options.push({
+            label: "Cancel",
+            handler: () => {
+              ui.revertMode();
+              return true;
+            }
+          });
+          this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+            options: options,
+            delay: 0
           });
           return true;
         },
