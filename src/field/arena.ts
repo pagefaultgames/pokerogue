@@ -224,66 +224,6 @@ export class Arena {
     return 0;
   }
 
-  getTypeForBiome() {
-    switch (this.biomeType) {
-      case Biome.TOWN:
-      case Biome.PLAINS:
-      case Biome.METROPOLIS:
-        return Type.NORMAL;
-      case Biome.GRASS:
-      case Biome.TALL_GRASS:
-        return Type.GRASS;
-      case Biome.FOREST:
-      case Biome.JUNGLE:
-        return Type.BUG;
-      case Biome.SLUM:
-      case Biome.SWAMP:
-        return Type.POISON;
-      case Biome.SEA:
-      case Biome.BEACH:
-      case Biome.LAKE:
-      case Biome.SEABED:
-        return Type.WATER;
-      case Biome.MOUNTAIN:
-        return Type.FLYING;
-      case Biome.BADLANDS:
-        return Type.GROUND;
-      case Biome.CAVE:
-      case Biome.DESERT:
-        return Type.ROCK;
-      case Biome.ICE_CAVE:
-      case Biome.SNOWY_FOREST:
-        return Type.ICE;
-      case Biome.MEADOW:
-      case Biome.FAIRY_CAVE:
-      case Biome.ISLAND:
-        return Type.FAIRY;
-      case Biome.POWER_PLANT:
-        return Type.ELECTRIC;
-      case Biome.VOLCANO:
-        return Type.FIRE;
-      case Biome.GRAVEYARD:
-      case Biome.TEMPLE:
-        return Type.GHOST;
-      case Biome.DOJO:
-      case Biome.CONSTRUCTION_SITE:
-        return Type.FIGHTING;
-      case Biome.FACTORY:
-      case Biome.LABORATORY:
-        return Type.STEEL;
-      case Biome.RUINS:
-      case Biome.SPACE:
-        return Type.PSYCHIC;
-      case Biome.WASTELAND:
-      case Biome.END:
-        return Type.DRAGON;
-      case Biome.ABYSS:
-        return Type.DARK;
-      default:
-        return Type.UNKNOWN;
-    }
-  }
-
   getBgTerrainColorRatioForBiome(): number {
     switch (this.biomeType) {
       case Biome.SPACE:
@@ -794,7 +734,7 @@ export class Arena {
       case Biome.VOLCANO:
         return 17.637;
       case Biome.GRAVEYARD:
-        return 3.232;
+        return 13.711;
       case Biome.DOJO:
         return 6.205;
       case Biome.FACTORY:
