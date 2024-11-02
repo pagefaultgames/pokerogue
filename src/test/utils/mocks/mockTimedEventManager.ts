@@ -2,10 +2,6 @@ import { TimedEventManager } from "#app/timed-event-manager";
 
 /** Mock TimedEventManager so that ongoing events don't impact tests */
 export class MockTimedEventManager extends TimedEventManager {
-  constructor() {
-    super();
-  }
-
   override activeEvent() {
     return undefined;
   }

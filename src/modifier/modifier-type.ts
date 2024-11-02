@@ -136,14 +136,14 @@ export class ModifierType {
         if (this.id === modifier.modifierType.id) {
           let weight: number;
           if (modifier.weight instanceof Function) {
-            weight = party ? (modifier.weight as Function)(party, rerollCount) : 0;
+            weight = party ? modifier.weight(party, rerollCount) : 0;
           } else {
-            weight = modifier.weight as number;
+            weight = modifier.weight;
           }
           if (weight > 0) {
             this.tier = modifier.modifierType.tier;
             return this;
-          } else if (!isNullOrUndefined(defaultTier)) {
+          } else if (isNullOrUndefined(defaultTier)) {
             // If weight is 0, keep track of the first tier where the item was found
             defaultTier = modifier.modifierType.tier;
           }
