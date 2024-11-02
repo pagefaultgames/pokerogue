@@ -5839,7 +5839,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 }
 
-
 export class ChillyReceptionAttr extends ForceSwitchOutAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.scene.arena.trySetWeather(WeatherType.SNOW, true);
@@ -7063,6 +7062,11 @@ const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target
 
 const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => user.scene.phaseQueue.find(phase => phase instanceof MovePhase) !== undefined;
 
+const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
+  const party: Pokemon[] = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+  return party.some(pokemon => pokemon.isActive() && !pokemon.isOnField());
+};
+
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
 function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon | null, target: Pokemon | null, move: Move, args: any[]): Promise<void> {
@@ -7972,6 +7976,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new SelfStatusMove(Moves.BATON_PASS, Type.NORMAL, -1, 40, -1, 0, 2)
       .attr(ForceSwitchOutAttr, true, SwitchType.BATON_PASS)
+      .condition(failIfLastInPartyCondition)
       .hidesUser(),
     new StatusMove(Moves.ENCORE, Type.NORMAL, 100, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
@@ -10112,7 +10117,8 @@ export function initMoves() {
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
       .attr(AddSubstituteAttr, 0.5)
-      .attr(ForceSwitchOutAttr, true, SwitchType.SHED_TAIL),
+      .attr(ForceSwitchOutAttr, true, SwitchType.SHED_TAIL)
+      .condition(failIfLastInPartyCondition),
     new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
       .attr(PreMoveMessageAttr, (user, move) => i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(user) }))
       .attr(ChillyReceptionAttr, true),
