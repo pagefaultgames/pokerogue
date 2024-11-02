@@ -9,7 +9,7 @@ import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, g
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier, PokemonMultiHitModifier } from "../modifier/modifier";
+import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
 import i18next from "i18next";
@@ -4938,7 +4938,7 @@ class ForceSwitchOutHelper {
     }
 
     const party = player ? pokemon.scene.getParty() : pokemon.scene.getEnemyParty();
-    return (!player && pokemon.scene.currentBattle.battleType !== BattleType.WILD)
+    return (!player && pokemon.scene.currentBattle.battleType === BattleType.WILD)
       || party.filter(p => p.isAllowedInBattle()
         && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > pokemon.scene.currentBattle.getBattlerCount();
   }

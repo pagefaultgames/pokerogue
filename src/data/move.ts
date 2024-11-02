@@ -5761,20 +5761,6 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
   }
 }
 
-/**
-* Helper function to check if the Pokémon's health is below half after taking damage.
-* Used for an edge case interaction with Wimp Out/Emergency Exit.
-* If the Ability activates due to being hit by U-turn or Volt Switch, the user of that move will not be switched out.
-*/
-function shouldPreventSwitchOut(target: Pokemon): boolean {
-  const pokemonHealth = target.hp;
-  const maxPokemonHealth = target.getMaxHp();
-  const damageTaken = target.turnData.damageTaken;
-  const initialHealth = pokemonHealth + damageTaken;
-
-  // Check if the Pokémon's health has dropped below half after the damage
-  return initialHealth >= maxPokemonHealth / 2 && pokemonHealth < maxPokemonHealth / 2;
-}
 
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   constructor(
@@ -5801,8 +5787,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     */
     if (switchOutTarget instanceof PlayerPokemon) {
       if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr) &&
-          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH)) {
-        if (shouldPreventSwitchOut(target)) {
+          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH || move.id === Moves.FLIP_TURN)) {
+        if (this.hpDroppedBelowHalf(target)) {
           return false;
         }
       }
@@ -5836,8 +5822,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       * If it did, the user of U-turn or Volt Switch will not be switched out.
       */
       if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr) &&
-          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH)) {
-        if (shouldPreventSwitchOut(target)) {
+          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH) || move.id === Moves.FLIP_TURN) {
+        if (this.hpDroppedBelowHalf(target)) {
           return false;
         }
       }
@@ -5933,6 +5919,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut")(Math.min(Math.abs(statStageTotal), 10) / 10) * (statStageTotal >= 0 ? 10 : -10));
     }
     return ret;
+  }
+
+  /**
+  * Helper function to check if the Pokémon's health is below half after taking damage.
+  * Used for an edge case interaction with Wimp Out/Emergency Exit.
+  * If the Ability activates due to being hit by U-turn or Volt Switch, the user of that move will not be switched out.
+  */
+  hpDroppedBelowHalf(target: Pokemon): boolean {
+    const pokemonHealth = target.hp;
+    const maxPokemonHealth = target.getMaxHp();
+    const damageTaken = target.turnData.damageTaken;
+    const initialHealth = pokemonHealth + damageTaken;
+
+    // Check if the Pokémon's health has dropped below half after the damage
+    return initialHealth >= maxPokemonHealth / 2 && pokemonHealth < maxPokemonHealth / 2;
   }
 }
 

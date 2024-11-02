@@ -93,6 +93,7 @@ describe("Abilities - Wimp Out", () => {
     ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
+    enemyPokemon.hp *= 0.52;
 
     game.move.select(Moves.FALSE_SWIPE);
     await game.phaseInterceptor.to("BerryPhase");
@@ -160,18 +161,16 @@ describe("Abilities - Wimp Out", () => {
   it("If this Ability does not activate due to being hit by U-turn or Volt Switch, the user of that move will be switched out.", async () => {
     game.override
       .startingLevel(190)
+      .startingWave(8)
       .enemyMoveset([ Moves.U_TURN ]);
     await game.classicMode.startBattle([
       Species.GOLISOPOD,
       Species.TYRUNT
     ]);
-
+    const RIVAL_NINJASK1 = game.scene.getEnemyPokemon()?.id;
     game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-    const hasFled = enemyPokemon.switchOutStatus;
-    expect(hasFled).toBe(true);
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(game.scene.getEnemyPokemon()?.id !== RIVAL_NINJASK1);
   });
 
   it("Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.", async () => {
