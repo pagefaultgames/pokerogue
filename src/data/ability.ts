@@ -4979,7 +4979,7 @@ function calculateShellBellRecovery(pokemon: Pokemon): number {
  * @extends AbAttr
  */
 export class PostDamageAbAttr extends AbAttr {
-  public applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  public applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[], source?: Pokemon): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -5011,9 +5011,10 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
    * @param passive N/A
    * @param simulated Whether the ability is being simulated.
    * @param args N/A
+   * @param source The Pokemon that dealt damage
    * @returns `true` if the switch-out logic was successfully applied
    */
-  public override applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  public override applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[], source?: Pokemon): boolean | Promise<boolean> {
     const moveHistory = pokemon.getMoveHistory();
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
     const fordbiddenAttackingMoves = [ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ];
@@ -5027,22 +5028,21 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
     const fordbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
-    const getField = [ ...pokemon.getOpponents(), ...pokemon.getAlliedField() ];
-    for (const opponent of getField) {
-      const enemyMoveHistory = opponent.getMoveHistory();
+    if (source) {
+      const enemyMoveHistory = source.getMoveHistory();
       if (enemyMoveHistory.length > 0) {
         const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
         if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
           return false;
         // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
-        } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && opponent.hasAbility(Abilities.SHEER_FORCE)) {
+        } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(Abilities.SHEER_FORCE)) {
           return false;
         // Activate only after the last hit of multistrike moves
-        } else if (opponent.turnData.hitsLeft > 1) {
+        } else if (source.turnData.hitsLeft > 1) {
           return false;
         }
-        const multiHitModifier = opponent.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
-        if (allMoves[enemyLastMoveUsed.move].hasAttr(MultiHitAttr) || multiHitModifier) {
+        const multiHitModifier = source.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
+        if (allMoves[enemyLastMoveUsed.move].hasAttr(MultiHitAttr) || multiHitModifier || source.hasAbilityWithAttr(AddSecondStrikeAbAttr)) {
           damage = pokemon.turnData.damageTaken;
         }
       }
@@ -5105,8 +5105,8 @@ export function applyPostSetStatusAbAttrs(attrType: Constructor<PostSetStatusAbA
 }
 
 export function applyPostDamageAbAttrs(attrType: Constructor<PostDamageAbAttr>,
-  pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean = false, args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDamage(pokemon, damage, passive, simulated, args), args);
+  pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean = false, args: any[], source?: Pokemon): Promise<void> {
+  return applyAbAttrsInternal<PostDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDamage(pokemon, damage, passive, simulated, args, source), args);
 }
 
 /**
