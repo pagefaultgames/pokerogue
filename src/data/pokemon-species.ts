@@ -148,7 +148,8 @@ export abstract class PokemonSpeciesForm {
 
   constructor(type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: number, baseHp: number, baseAtk: number, baseDef: number, baseSpatk: number, baseSpdef: number, baseSpd: number,
-    catchRate: number, baseFriendship: number, baseExp: number, genderDiffs: boolean, isStarterSelectable: boolean) {
+    catchRate: number, baseFriendship: number, baseExp: number, genderDiffs: boolean, isStarterSelectable: boolean
+  ) {
     this.type1 = type1;
     this.type2 = type2;
     this.height = height;
@@ -622,7 +623,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: number, baseHp: number, baseAtk: number, baseDef: number, baseSpatk: number, baseSpdef: number, baseSpd: number,
     catchRate: number, baseFriendship: number, baseExp: number, growthRate: GrowthRate, malePercent: number | null,
-    genderDiffs: boolean, canChangeForm?: boolean, ...forms: PokemonForm[]) {
+    genderDiffs: boolean, canChangeForm?: boolean, ...forms: PokemonForm[]
+  ) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
       catchRate, baseFriendship, baseExp, genderDiffs, false);
     this.speciesId = id;
@@ -686,7 +688,6 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
   }
 
-  private getStrengthLevelDiff(strength: PartyMemberStrength): number {
   /**
    * @see {@linkcode getSpeciesForLevel} uses an ease in and ease out sine function:
    * @see {@link https://easings.net/#easeInSine}
@@ -705,6 +706,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
    * @param strength {@linkcode PartyMemberStrength} The strength of the party member in question
    * @returns {@linkcode integer} The level difference from expected evolution level tolerated for a mon to be unevolved. Lower value = higher evolution chance.
    */
+  private getStrengthLevelDiff(strength: PartyMemberStrength): number {
     switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
       case PartyMemberStrength.WEAKEST:
         return 60;
