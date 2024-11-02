@@ -5042,7 +5042,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
           return false;
         }
         const multiHitModifier = source.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
-        if (allMoves[enemyLastMoveUsed.move].hasAttr(MultiHitAttr) || multiHitModifier || source.hasAbilityWithAttr(AddSecondStrikeAbAttr)) {
+        if (source.turnData.hitCount > 1) {
           damage = pokemon.turnData.damageTaken;
         }
       }
