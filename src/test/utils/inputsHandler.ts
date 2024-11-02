@@ -41,18 +41,18 @@ export default class InputsHandler {
 
   pressGamepadButton(button: integer, duration: integer): Promise<void> {
     return new Promise(async (resolve) => {
-      this.scene.input.gamepad?.emit("down", this.fakePad, {index: button});
+      this.scene.input.gamepad?.emit("down", this.fakePad, { index: button });
       await holdOn(duration);
-      this.scene.input.gamepad?.emit("up", this.fakePad, {index: button});
+      this.scene.input.gamepad?.emit("up", this.fakePad, { index: button });
       resolve();
     });
   }
 
   pressKeyboardKey(key: integer, duration: integer): Promise<void> {
     return new Promise(async (resolve) => {
-      this.scene.input.keyboard?.emit("keydown", {keyCode: key});
+      this.scene.input.keyboard?.emit("keydown", { keyCode: key });
       await holdOn(duration);
-      this.scene.input.keyboard?.emit("keyup", {keyCode: key});
+      this.scene.input.keyboard?.emit("keyup", { keyCode: key });
       resolve();
     });
   }
@@ -67,11 +67,11 @@ export default class InputsHandler {
 
   listenInputs(): void {
     this.events.on("input_down", (event) => {
-      this.log.push({type: "input_down", button: event.button});
+      this.log.push({ type: "input_down", button: event.button });
     }, this);
 
     this.events.on("input_up", (event) => {
-      this.logUp.push({type: "input_up", button: event.button});
+      this.logUp.push({ type: "input_up", button: event.button });
     }, this);
   }
 }
@@ -82,7 +82,7 @@ class Fakepad extends Phaser.Input.Gamepad.Gamepad {
 
   constructor(pad) {
     //@ts-ignore
-    super(undefined, {...pad, buttons: pad.deviceMapping, axes: []}); //TODO: resolve ts-ignore
+    super(undefined, { ...pad, buttons: pad.deviceMapping, axes: []}); //TODO: resolve ts-ignore
     this.id = "xbox_360_fakepad";
     this.index = 0;
   }
@@ -90,7 +90,7 @@ class Fakepad extends Phaser.Input.Gamepad.Gamepad {
 
 class FakeMobile {
   constructor() {
-    const fakeMobilePage = fs.readFileSync("./src/test/utils/fakeMobile.html", {encoding: "utf8", flag: "r"});
+    const fakeMobilePage = fs.readFileSync("./src/test/utils/fakeMobile.html", { encoding: "utf8", flag: "r" });
     const dom = new JSDOM(fakeMobilePage);
     Object.defineProperty(window, "document", {
       value: dom.window.document,

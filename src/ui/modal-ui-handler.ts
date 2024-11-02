@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 
 export interface ModalConfig {
   buttonActions: Function[];
@@ -15,12 +15,14 @@ export abstract class ModalUiHandler extends UiHandler {
   protected titleText: Phaser.GameObjects.Text;
   protected buttonContainers: Phaser.GameObjects.Container[];
   protected buttonBgs: Phaser.GameObjects.NineSlice[];
+  protected buttonLabels: Phaser.GameObjects.Text[];
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
 
     this.buttonContainers = [];
     this.buttonBgs = [];
+    this.buttonLabels = [];
   }
 
   abstract getModalTitle(config?: ModalConfig): string;
@@ -75,6 +77,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
     const buttonContainer = this.scene.add.container(0, buttonTopMargin);
 
+    this.buttonLabels.push(buttonLabel);
     this.buttonBgs.push(buttonBg);
     this.buttonContainers.push(buttonContainer);
 
@@ -92,7 +95,7 @@ export abstract class ModalUiHandler extends UiHandler {
       if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
         const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin();
 
-        const overlay = this.scene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2, this.scene.game.canvas.width / 6, this.scene.game.canvas.height /6, 0);
+        const overlay = this.scene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
         overlay.setOrigin(0.5, 0.5);
         overlay.setName("rect-ui-overlay-modal");
         overlay.setAlpha(0);

@@ -12,6 +12,7 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
+import { Species } from "#enums/species";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -20,24 +21,6 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
-  "en": {
-    infoContainerTextSize: "64px"
-  },
-  "de": {
-    infoContainerTextSize: "64px",
-  },
-  "es": {
-    infoContainerTextSize: "64px"
-  },
-  "fr": {
-    infoContainerTextSize: "64px"
-  },
-  "it": {
-    infoContainerTextSize: "64px"
-  },
-  "zh": {
-    infoContainerTextSize: "64px"
-  },
   "pt": {
     infoContainerTextSize: "60px",
     infoContainerLabelXPos: -15,
@@ -234,7 +217,25 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
-      if (pokemon.species.forms?.[pokemon.formIndex]?.formName) {
+      const formKey = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey);
+      const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
+      const speciesName = Utils.capitalizeString(Species[pokemon.species.speciesId], "_", true, false);
+
+      let formName = "";
+      if (pokemon.species.speciesId === Species.ARCEUS) {
+        formName = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
+      } else {
+        const i18key = `pokemonForm:${speciesName}${formText}`;
+        if (i18next.exists(i18key)) {
+          formName = i18next.t(i18key);
+        } else {
+          const rootSpeciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
+          const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
+          formName = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
+        }
+      }
+
+      if (formName) {
         this.pokemonFormLabelText.setVisible(true);
         this.pokemonFormText.setVisible(true);
         const newForm = BigInt(1 << pokemon.formIndex) * DexAttr.DEFAULT_FORM;
@@ -247,11 +248,10 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
           this.pokemonFormLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true, this.scene.uiTheme));
         }
 
-        const formName = pokemon.species.forms?.[pokemon.formIndex]?.formName;
         this.pokemonFormText.setText(formName.length > this.numCharsBeforeCutoff ? formName.substring(0, this.numCharsBeforeCutoff - 3) + "..." : formName);
         if (formName.length > this.numCharsBeforeCutoff) {
           this.pokemonFormText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.pokemonFormText.width, this.pokemonFormText.height), Phaser.Geom.Rectangle.Contains);
-          this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", pokemon.species.forms?.[pokemon.formIndex]?.formName, true));
+          this.pokemonFormText.on("pointerover", () => (this.scene as BattleScene).ui.showTooltip("", formName, true));
           this.pokemonFormText.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
         } else {
           this.pokemonFormText.disableInteractive();
@@ -267,18 +267,10 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle, false, this.scene.uiTheme));
       this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true, this.scene.uiTheme));
 
-      /**
-       * If the opposing Pokemon only has 1 normal ability and is using the hidden ability it should have the same behavior
-       * if it had 2 normal abilities. This code checks if that is the case and uses the correct opponent Pokemon abilityIndex (2)
-       * for calculations so it aligns with where the hidden ability is stored in the starter data's abilityAttr (4)
-       */
-      const opponentPokemonOneNormalAbility = (pokemon.species.getAbilityCount() === 2);
-      const opponentPokemonAbilityIndex = (opponentPokemonOneNormalAbility && pokemon.abilityIndex === 1) ? 2 : pokemon.abilityIndex;
-      const opponentPokemonAbilityAttr = 1 << opponentPokemonAbilityIndex;
+      // Check if the player owns ability for the root form
+      const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(starterEntry.abilityAttr);
 
-      const rootFormHasHiddenAbility = starterEntry.abilityAttr & opponentPokemonAbilityAttr;
-
-      if (!rootFormHasHiddenAbility) {
+      if (!playerOwnsThisAbility) {
         this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
         this.pokemonAbilityLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
       } else {

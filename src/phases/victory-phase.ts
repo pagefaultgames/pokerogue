@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
-import { BattlerIndex, BattleType } from "#app/battle";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { BattlerIndex, BattleType, ClassicFixedBossWaves } from "#app/battle";
+import { CustomModifierSettings, modifierTypes } from "#app/modifier/modifier-type";
 import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
@@ -25,12 +25,17 @@ export class VictoryPhase extends PokemonPhase {
   start() {
     super.start();
 
-    this.scene.gameData.gameStats.pokemonDefeated++;
+    const isMysteryEncounter = this.scene.currentBattle.isBattleMysteryEncounter();
+
+    // update Pokemon defeated count except for MEs that disable it
+    if (!isMysteryEncounter || !this.scene.currentBattle.mysteryEncounter?.preventGameStatsUpdates) {
+      this.scene.gameData.gameStats.pokemonDefeated++;
+    }
 
     const expValue = this.getPokemon().getExpValue();
     this.scene.applyPartyExp(expValue, true);
 
-    if (this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER) {
+    if (isMysteryEncounter) {
       handleMysteryEncounterVictory(this.scene, false, this.isExpOnly);
       return this.end();
     }
@@ -42,8 +47,12 @@ export class VictoryPhase extends PokemonPhase {
       }
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         this.scene.pushPhase(new EggLapsePhase(this.scene));
+        if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_BOSS_2) {
+          // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
+          this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.LOCK_CAPSULE));
+        }
         if (this.scene.currentBattle.waveIndex % 10) {
-          this.scene.pushPhase(new SelectModifierPhase(this.scene));
+          this.scene.pushPhase(new SelectModifierPhase(this.scene, undefined, undefined, this.getFixedBattleCustomModifiers()));
         } else if (this.scene.gameMode.isDaily) {
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_CHARM));
           if (this.scene.currentBattle.waveIndex > 10 && !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
@@ -75,5 +84,19 @@ export class VictoryPhase extends PokemonPhase {
     }
 
     this.end();
+  }
+
+  /**
+   * If this wave is a fixed battle with special custom modifier rewards,
+   * will pass those settings to the upcoming {@linkcode SelectModifierPhase}`.
+   */
+  getFixedBattleCustomModifiers(): CustomModifierSettings | undefined {
+    const gameMode = this.scene.gameMode;
+    const waveIndex = this.scene.currentBattle.waveIndex;
+    if (gameMode.isFixedBattle(waveIndex)) {
+      return gameMode.getFixedBattle(waveIndex).customModifierRewardSettings;
+    }
+
+    return undefined;
   }
 }

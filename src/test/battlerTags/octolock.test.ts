@@ -10,7 +10,7 @@ vi.mock("#app/battle-scene.js");
 
 describe("BattlerTag - OctolockTag", () => {
   describe("lapse behavior", () => {
-    it("unshifts a StatStageChangePhase with expected stat stage changes", { timeout: 10000 }, async () => {
+    it("unshifts a StatStageChangePhase with expected stat stage changes", async () => {
       const mockPokemon = {
         scene: new BattleScene(),
         getBattlerIndex: () => 0,
@@ -30,11 +30,11 @@ describe("BattlerTag - OctolockTag", () => {
     });
   });
 
-  it ("traps its target (extends TrappedTag)", { timeout: 2000 }, async () => {
+  it ("traps its target (extends TrappedTag)", async () => {
     expect(new OctolockTag(1)).toBeInstanceOf(TrappedTag);
   });
 
-  it("can be added to pokemon who are not octolocked", { timeout: 2000 }, async => {
+  it("can be added to pokemon who are not octolocked", async => {
     const mockPokemon = {
       getTag: vi.fn().mockReturnValue(undefined) as Pokemon["getTag"],
     } as Pokemon;
@@ -47,7 +47,7 @@ describe("BattlerTag - OctolockTag", () => {
     expect(mockPokemon.getTag).toHaveBeenCalledWith(BattlerTagType.OCTOLOCK);
   });
 
-  it("cannot be added to pokemon who are octolocked", { timeout: 2000 }, async => {
+  it("cannot be added to pokemon who are octolocked", async => {
     const mockPokemon = {
       getTag: vi.fn().mockReturnValue(new BattlerTag(null!, null!, null!, null!)) as Pokemon["getTag"],
     } as Pokemon;

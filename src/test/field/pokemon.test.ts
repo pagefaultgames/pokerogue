@@ -3,6 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 import { PokeballType } from "#app/enums/pokeball";
 import BattleScene from "#app/battle-scene";
+import { Moves } from "#app/enums/moves";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
@@ -23,7 +24,7 @@ describe("Spec - Pokemon", () => {
   });
 
   it("should not crash when trying to set status of undefined", async () => {
-    await game.classicMode.runToSummon([Species.ABRA]);
+    await game.classicMode.runToSummon([ Species.ABRA ]);
 
     const pkm = game.scene.getPlayerPokemon()!;
     expect(pkm).toBeDefined();
@@ -36,7 +37,7 @@ describe("Spec - Pokemon", () => {
 
     beforeEach(async () => {
       game.override.enemySpecies(Species.ZUBAT);
-      await game.classicMode.runToSummon([Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA]); // 5 Abra, only 1 slot left
+      await game.classicMode.runToSummon([ Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA ]); // 5 Abra, only 1 slot left
       scene = game.scene;
     });
 
@@ -62,5 +63,16 @@ describe("Spec - Pokemon", () => {
         expect(pkm.species.speciesId).toBe(index === slotIndex ? Species.ZUBAT : Species.ABRA);
       });
     });
+  });
+
+  it("should not share tms between different forms", async () => {
+    game.override.starterForms({ [Species.ROTOM]: 4 });
+
+    await game.classicMode.startBattle([ Species.ROTOM ]);
+
+    const fanRotom = game.scene.getPlayerPokemon()!;
+
+    expect(fanRotom.compatibleTms).not.toContain(Moves.BLIZZARD);
+    expect(fanRotom.compatibleTms).toContain(Moves.AIR_SLASH);
   });
 });

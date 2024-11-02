@@ -5,7 +5,6 @@ import Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";
 
 
-
 export class PokemonAnimPhase extends BattlePhase {
   /** The type of animation to play in this phase */
   private key: PokemonAnimType;
@@ -26,20 +25,20 @@ export class PokemonAnimPhase extends BattlePhase {
     super.start();
 
     switch (this.key) {
-    case PokemonAnimType.SUBSTITUTE_ADD:
-      this.doSubstituteAddAnim();
-      break;
-    case PokemonAnimType.SUBSTITUTE_PRE_MOVE:
-      this.doSubstitutePreMoveAnim();
-      break;
-    case PokemonAnimType.SUBSTITUTE_POST_MOVE:
-      this.doSubstitutePostMoveAnim();
-      break;
-    case PokemonAnimType.SUBSTITUTE_REMOVE:
-      this.doSubstituteRemoveAnim();
-      break;
-    default:
-      this.end();
+      case PokemonAnimType.SUBSTITUTE_ADD:
+        this.doSubstituteAddAnim();
+        break;
+      case PokemonAnimType.SUBSTITUTE_PRE_MOVE:
+        this.doSubstitutePreMoveAnim();
+        break;
+      case PokemonAnimType.SUBSTITUTE_POST_MOVE:
+        this.doSubstitutePostMoveAnim();
+        break;
+      case PokemonAnimType.SUBSTITUTE_REMOVE:
+        this.doSubstituteRemoveAnim();
+        break;
+      default:
+        this.end();
     }
   }
 
@@ -53,7 +52,7 @@ export class PokemonAnimPhase extends BattlePhase {
       const sprite = this.scene.addFieldSprite(
         this.pokemon.x + this.pokemon.getSprite().x,
         this.pokemon.y + this.pokemon.getSprite().y,
-        `pkmn${this.pokemon.isPlayer() ? "__back": ""}__sub`
+        `pkmn${this.pokemon.isPlayer() ? "__back" : ""}__sub`
       );
       sprite.setOrigin(0.5, 1);
       this.scene.field.add(sprite);
@@ -179,7 +178,7 @@ export class PokemonAnimPhase extends BattlePhase {
       const sprite = this.scene.addFieldSprite(
         subSprite.x,
         subSprite.y,
-        `pkmn${this.pokemon.isPlayer() ? "__back": ""}__sub`
+        `pkmn${this.pokemon.isPlayer() ? "__back" : ""}__sub`
       );
       sprite.setOrigin(0.5, 1);
       this.scene.field.add(sprite);

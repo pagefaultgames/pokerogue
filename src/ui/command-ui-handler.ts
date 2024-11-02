@@ -4,7 +4,7 @@ import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 
@@ -67,7 +67,7 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", {pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon())}), 0);
+    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()) }), 0);
     if (this.getCursor() === Command.POKEMON) {
       this.setCursor(Command.FIGHT);
     } else {
@@ -89,54 +89,54 @@ export default class CommandUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         switch (cursor) {
         // Fight
-        case Command.FIGHT:
-          if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
-            return true;
-          }
-          ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
-          success = true;
-          break;
+          case Command.FIGHT:
+            if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
+              return true;
+            }
+            ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+            success = true;
+            break;
           // Ball
-        case Command.BALL:
-          ui.setModeWithoutClear(Mode.BALL);
-          success = true;
-          break;
+          case Command.BALL:
+            ui.setModeWithoutClear(Mode.BALL);
+            success = true;
+            break;
           // Pokemon
-        case Command.POKEMON:
-          ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
-          success = true;
-          break;
+          case Command.POKEMON:
+            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+            success = true;
+            break;
           // Run
-        case Command.RUN:
-          (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
-          success = true;
-          break;
+          case Command.RUN:
+            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
+            success = true;
+            break;
         }
       } else {
         (this.scene.getCurrentPhase() as CommandPhase).cancel();
       }
     } else {
       switch (button) {
-      case Button.UP:
-        if (cursor >= 2) {
-          success = this.setCursor(cursor - 2);
-        }
-        break;
-      case Button.DOWN:
-        if (cursor < 2) {
-          success = this.setCursor(cursor + 2);
-        }
-        break;
-      case Button.LEFT:
-        if (cursor % 2 === 1) {
-          success = this.setCursor(cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (cursor % 2 === 0) {
-          success = this.setCursor(cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (cursor >= 2) {
+            success = this.setCursor(cursor - 2);
+          }
+          break;
+        case Button.DOWN:
+          if (cursor < 2) {
+            success = this.setCursor(cursor + 2);
+          }
+          break;
+        case Button.LEFT:
+          if (cursor % 2 === 1) {
+            success = this.setCursor(cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (cursor % 2 === 0) {
+            success = this.setCursor(cursor + 1);
+          }
+          break;
       }
     }
 

@@ -1,4 +1,7 @@
-import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#app/data/egg";
+import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
+import { speciesStarterCosts } from "#app/data/balance/starters";
+import { Egg, getLegendaryGachaSpeciesForTimestamp, getValidLegendaryGachaSpecies } from "#app/data/egg";
+import { allSpecies } from "#app/data/pokemon-species";
 import { EggSourceType } from "#app/enums/egg-source-types";
 import { EggTier } from "#app/enums/egg-type";
 import { VariantTier } from "#app/enums/variant-tier";
@@ -55,7 +58,7 @@ describe("Egg Generation Tests", () => {
     let gachaSpeciesCount = 0;
 
     for (let i = 0; i < EGG_HATCH_COUNT; i++) {
-      const result = new Egg({ scene, timestamp, sourceType: EggSourceType.GACHA_LEGENDARY, tier: EggTier.MASTER }).generatePlayerPokemon(scene).species.speciesId;
+      const result = new Egg({ scene, timestamp, sourceType: EggSourceType.GACHA_LEGENDARY, tier: EggTier.LEGENDARY }).generatePlayerPokemon(scene).species.speciesId;
       if (result === expectedSpecies) {
         gachaSpeciesCount++;
       }
@@ -63,6 +66,12 @@ describe("Egg Generation Tests", () => {
 
     expect(gachaSpeciesCount).toBeGreaterThan(0.4 * EGG_HATCH_COUNT);
     expect(gachaSpeciesCount).toBeLessThan(0.6 * EGG_HATCH_COUNT);
+  });
+  it("should never be allowed to generate Eternatus via the legendary gacha", () => {
+    const validLegendaryGachaSpecies = getValidLegendaryGachaSpecies();
+    expect(validLegendaryGachaSpecies.every(s => speciesEggTiers[s] === EggTier.LEGENDARY)).toBe(true);
+    expect(validLegendaryGachaSpecies.every(s => allSpecies[s].isObtainable())).toBe(true);
+    expect(validLegendaryGachaSpecies.includes(Species.ETERNATUS)).toBe(false);
   });
   it("should hatch an Arceus. Set from species", () => {
     const scene = game.scene;
@@ -82,7 +91,7 @@ describe("Egg Generation Tests", () => {
   });
   it("should return an rare tier egg", () => {
     const scene = game.scene;
-    const expectedTier = EggTier.GREAT;
+    const expectedTier = EggTier.RARE;
 
     const result = new Egg({ scene, tier: expectedTier }).tier;
 
@@ -90,7 +99,7 @@ describe("Egg Generation Tests", () => {
   });
   it("should return an epic tier egg", () => {
     const scene = game.scene;
-    const expectedTier = EggTier.ULTRA;
+    const expectedTier = EggTier.EPIC;
 
     const result = new Egg({ scene, tier: expectedTier }).tier;
 
@@ -98,7 +107,7 @@ describe("Egg Generation Tests", () => {
   });
   it("should return an legendary tier egg", () => {
     const scene = game.scene;
-    const expectedTier = EggTier.MASTER;
+    const expectedTier = EggTier.LEGENDARY;
 
     const result = new Egg({ scene, tier: expectedTier }).tier;
 
@@ -200,7 +209,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
     const expectedEggTier = EggTier.COMMON;
 
-    const result = new Egg({ scene, tier: EggTier.MASTER, species: Species.BULBASAUR }).tier;
+    const result = new Egg({ scene, tier: EggTier.LEGENDARY, species: Species.BULBASAUR }).tier;
 
     expect(result).toBe(expectedEggTier);
   });
@@ -208,7 +217,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
     const expectedHatchWaves = 10;
 
-    const result = new Egg({ scene, tier: EggTier.MASTER, species: Species.BULBASAUR }).hatchWaves;
+    const result = new Egg({ scene, tier: EggTier.LEGENDARY, species: Species.BULBASAUR }).hatchWaves;
 
     expect(result).toBe(expectedHatchWaves);
   });
@@ -229,7 +238,7 @@ describe("Egg Generation Tests", () => {
 
     const result = new EggData(legacyEgg).toEgg();
 
-    expect(result.tier).toBe(EggTier.GREAT);
+    expect(result.tier).toBe(EggTier.RARE);
     expect(result.id).toBe(legacyEgg.id);
     expect(result.timestamp).toBe(legacyEgg.timestamp);
     expect(result.hatchWaves).toBe(legacyEgg.hatchWaves);
@@ -237,23 +246,23 @@ describe("Egg Generation Tests", () => {
   });
   it("should increase egg pity", () => {
     const scene = game.scene;
-    const startPityValues = [...scene.gameData.eggPity];
+    const startPityValues = [ ...scene.gameData.eggPity ];
 
     new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.COMMON });
 
-    expect(scene.gameData.eggPity[EggTier.GREAT]).toBe(startPityValues[EggTier.GREAT] + 1);
-    expect(scene.gameData.eggPity[EggTier.ULTRA]).toBe(startPityValues[EggTier.ULTRA] + 1);
-    expect(scene.gameData.eggPity[EggTier.MASTER]).toBe(startPityValues[EggTier.MASTER] + 1);
+    expect(scene.gameData.eggPity[EggTier.RARE]).toBe(startPityValues[EggTier.RARE] + 1);
+    expect(scene.gameData.eggPity[EggTier.EPIC]).toBe(startPityValues[EggTier.EPIC] + 1);
+    expect(scene.gameData.eggPity[EggTier.LEGENDARY]).toBe(startPityValues[EggTier.LEGENDARY] + 1);
   });
   it("should increase legendary egg pity by two", () => {
     const scene = game.scene;
-    const startPityValues = [...scene.gameData.eggPity];
+    const startPityValues = [ ...scene.gameData.eggPity ];
 
     new Egg({ scene, sourceType: EggSourceType.GACHA_LEGENDARY, pulled: true, tier: EggTier.COMMON });
 
-    expect(scene.gameData.eggPity[EggTier.GREAT]).toBe(startPityValues[EggTier.GREAT] + 1);
-    expect(scene.gameData.eggPity[EggTier.ULTRA]).toBe(startPityValues[EggTier.ULTRA] + 1);
-    expect(scene.gameData.eggPity[EggTier.MASTER]).toBe(startPityValues[EggTier.MASTER] + 2);
+    expect(scene.gameData.eggPity[EggTier.RARE]).toBe(startPityValues[EggTier.RARE] + 1);
+    expect(scene.gameData.eggPity[EggTier.EPIC]).toBe(startPityValues[EggTier.EPIC] + 1);
+    expect(scene.gameData.eggPity[EggTier.LEGENDARY]).toBe(startPityValues[EggTier.LEGENDARY] + 2);
   });
   it("should not increase manaphy egg count if bulbasaurs are pulled", () => {
     const scene = game.scene;
@@ -277,7 +286,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
     const startingRareEggsPulled = scene.gameData.gameStats.rareEggsPulled;
 
-    new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.GREAT });
+    new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.RARE });
 
     expect(scene.gameData.gameStats.rareEggsPulled).toBe(startingRareEggsPulled + 1);
   });
@@ -285,7 +294,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
     const startingEpicEggsPulled = scene.gameData.gameStats.epicEggsPulled;
 
-    new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.ULTRA });
+    new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.EPIC });
 
     expect(scene.gameData.gameStats.epicEggsPulled).toBe(startingEpicEggsPulled + 1);
   });
@@ -293,7 +302,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
     const startingLegendaryEggsPulled = scene.gameData.gameStats.legendaryEggsPulled;
 
-    new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.MASTER });
+    new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true, tier: EggTier.LEGENDARY });
 
     expect(scene.gameData.gameStats.legendaryEggsPulled).toBe(startingLegendaryEggsPulled + 1);
   });
@@ -301,8 +310,8 @@ describe("Egg Generation Tests", () => {
     vi.spyOn(Utils, "randInt").mockReturnValue(1);
 
     const scene = game.scene;
-    const expectedTier1 = EggTier.MASTER;
-    const expectedTier2 = EggTier.ULTRA;
+    const expectedTier1 = EggTier.LEGENDARY;
+    const expectedTier2 = EggTier.EPIC;
 
     const result1 = new Egg({ scene, sourceType: EggSourceType.GACHA_LEGENDARY, pulled: true }).tier;
     const result2 = new Egg({ scene, sourceType: EggSourceType.GACHA_MOVE, pulled: true }).tier;
@@ -323,7 +332,7 @@ describe("Egg Generation Tests", () => {
     scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     scene.resetSeed();
 
-    const firstEgg = new Egg({scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON});
+    const firstEgg = new Egg({ scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON });
     const firstHatch = firstEgg.generatePlayerPokemon(scene);
     let diffEggMove = false;
     let diffSpecies = false;
@@ -334,7 +343,7 @@ describe("Egg Generation Tests", () => {
       scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
       scene.resetSeed(); // Make sure that eggs are unpredictable even if using same seed
 
-      const newEgg = new Egg({scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON});
+      const newEgg = new Egg({ scene, sourceType: EggSourceType.GACHA_SHINY, tier: EggTier.COMMON });
       const newHatch = newEgg.generatePlayerPokemon(scene);
       diffEggMove = diffEggMove || (newEgg.eggMoveIndex !== firstEgg.eggMoveIndex);
       diffSpecies = diffSpecies || (newHatch.species.speciesId !== firstHatch.species.speciesId);
@@ -353,7 +362,7 @@ describe("Egg Generation Tests", () => {
     scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     scene.resetSeed();
 
-    const firstEgg = new Egg({scene, species: Species.BULBASAUR});
+    const firstEgg = new Egg({ scene, species: Species.BULBASAUR });
     const firstHatch = firstEgg.generatePlayerPokemon(scene);
     let diffEggMove = false;
     let diffSpecies = false;
@@ -363,7 +372,7 @@ describe("Egg Generation Tests", () => {
       scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
       scene.resetSeed(); // Make sure that eggs are unpredictable even if using same seed
 
-      const newEgg = new Egg({scene, species: Species.BULBASAUR});
+      const newEgg = new Egg({ scene, species: Species.BULBASAUR });
       const newHatch = newEgg.generatePlayerPokemon(scene);
       diffEggMove = diffEggMove || (newEgg.eggMoveIndex !== firstEgg.eggMoveIndex);
       diffSpecies = diffSpecies || (newHatch.species.speciesId !== firstHatch.species.speciesId);
@@ -375,5 +384,24 @@ describe("Egg Generation Tests", () => {
     expect(diffSpecies).toBe(false);
     expect(diffShiny).toBe(true);
     expect(diffAbility).toBe(true);
+  });
+
+  // For now, we are using this test to detect oversights in egg tiers.
+  // Delete this test if the balance team rebalances species costs independently of egg tiers.
+  it("should have correct egg tiers based on species costs", () => {
+    const getExpectedEggTier = (starterCost) =>
+      starterCost <= 3 ? EggTier.COMMON
+        : starterCost <= 5 ? EggTier.RARE
+          : starterCost <= 7 ? EggTier.EPIC
+            : EggTier.LEGENDARY;
+
+    allSpecies.forEach(pokemonSpecies => {
+      const rootSpecies = pokemonSpecies.getRootSpeciesId();
+      const speciesCost = speciesStarterCosts[rootSpecies];
+      const expectedEggTier = getExpectedEggTier(speciesCost);
+      const actualEggTier = speciesEggTiers[rootSpecies];
+
+      expect(actualEggTier).toBe(expectedEggTier);
+    });
   });
 });
