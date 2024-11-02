@@ -5781,13 +5781,14 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     }
 
     const switchOutTarget = this.selfSwitch ? user : target;
-    /**
-    * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
-    * If it did, the user of U-turn or Volt Switch will not be switched out.
-    */
     if (switchOutTarget instanceof PlayerPokemon) {
+      /**
+      * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
+      * If it did, the user of U-turn or Volt Switch will not be switched out.
+      */
       if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr) &&
-          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH || move.id === Moves.FLIP_TURN)) {
+          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH || move.id === Moves.FLIP_TURN)
+      ) {
         if (this.hpDroppedBelowHalf(target)) {
           return false;
         }
