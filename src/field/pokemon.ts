@@ -1258,6 +1258,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    // the type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    if (!ignoreOverride && this.summonData && this.summonData.addedType && !types.includes(this.summonData.addedType)) {
+      types.push(this.summonData.addedType);
+    }
+
     // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
     if (types.length > 1 && types[0] === types[1]) {
       types.splice(0, 1);
@@ -5107,6 +5112,7 @@ export class PokemonSummonData {
   public moveset: (PokemonMove | null)[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = [];
+  public addedType: Type | null = null;
 }
 
 export class PokemonBattleData {
@@ -5144,6 +5150,8 @@ export class PokemonTurnData {
   public statStagesDecreased: boolean = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: Moves;
+  public switchedInThisTurn: boolean = false;
+  public failedRunAway: boolean = false;
 }
 
 export enum AiType {
