@@ -191,12 +191,14 @@ export class MoveEffectPhase extends PokemonPhase {
           }
 
           /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
-          const isProtected = (bypassIgnoreProtect.value
-              || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
-              && (hasConditionalProtectApplied.value || (!target.findTags(t => t instanceof DamageProtectedTag).length
-              && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)))
+          const isProtected = (
+            bypassIgnoreProtect.value
+            || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
+            && (hasConditionalProtectApplied.value
+              || (!target.findTags(t => t instanceof DamageProtectedTag).length
+                && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)))
               || (this.move.getMove().category !== MoveCategory.STATUS
-              && target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
+                && target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
 
           /** Is the pokemon immune due to an ablility, and also not in a semi invulnerable state?  */
           const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr)
