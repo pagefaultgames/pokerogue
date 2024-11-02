@@ -3214,7 +3214,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let rate = 0.85;
     const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
     if (!cry || this.scene.fieldVolume === 0) {
-      return;
+      return callback();
     }
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
@@ -3280,7 +3280,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const fusionCryKey = this.fusionSpecies!.getCryKey(this.fusionFormIndex);
     let fusionCry = this.scene.playSound(fusionCryKey, { rate: rate }) as AnySound;
     if (!cry || !fusionCry || this.scene.fieldVolume === 0) {
-      return;
+      return callback();
     }
     fusionCry.stop();
     duration = Math.min(duration, fusionCry.totalDuration * 1000);
@@ -3325,7 +3325,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (i === transitionIndex && fusionCryKey) {
           SoundFade.fadeOut(this.scene, cry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)));
           fusionCry = this.scene.playSound(fusionCryKey, Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
-          SoundFade.fadeIn(this.scene, fusionCry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)), this.scene.masterVolume * this.scene.seVolume, 0);
+          SoundFade.fadeIn(this.scene, fusionCry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)), this.scene.masterVolume * this.scene.fieldVolume, 0);
         }
         rate *= 0.99;
         if (cry && !cry.pendingRemove) {
