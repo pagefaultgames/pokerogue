@@ -5697,8 +5697,8 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
 }
 
 /**
-* Helper function to check if the Pokémon's health is below half after taking damage
-* Used for an edge case interaction with Wimp Out/Emergency Exit
+* Helper function to check if the Pokémon's health is below half after taking damage.
+* Used for an edge case interaction with Wimp Out/Emergency Exit.
 * If the Ability activates due to being hit by U-turn or Volt Switch, the user of that move will not be switched out.
 */
 function shouldPreventSwitchOut(target: Pokemon): boolean {
@@ -5729,11 +5729,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       return false;
     }
 
+    const switchOutTarget = this.selfSwitch ? user : target;
     /**
     * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
     * If it did, the user of U-turn or Volt Switch will not be switched out.
     */
-    const switchOutTarget = this.selfSwitch ? user : target;
     if (switchOutTarget instanceof PlayerPokemon) {
       if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr) &&
           (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH)) {

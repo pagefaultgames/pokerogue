@@ -4841,13 +4841,13 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
 
 class ForceSwitchOutHelper {
   constructor(private switchType: SwitchType) {}
+
   /**
    * Handles the logic for switching out a Pokémon based on battle conditions, HP, and the switch type.
    *
    * @param pokemon The {@linkcode Pokemon} attempting to switch out.
    * @returns `true` if the switch is successful
    */
-
   public switchOutLogic(pokemon: Pokemon): boolean {
     const switchOutTarget = pokemon;
     /**
@@ -4938,7 +4938,7 @@ class ForceSwitchOutHelper {
     }
 
     const party = player ? pokemon.scene.getParty() : pokemon.scene.getEnemyParty();
-    return (!player && !pokemon.scene.currentBattle.battleType)
+    return (!player && pokemon.scene.currentBattle.battleType !== BattleType.WILD)
       || party.filter(p => p.isAllowedInBattle()
         && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > pokemon.scene.currentBattle.getBattlerCount();
   }
@@ -4989,16 +4989,18 @@ export class PostDamageAbAttr extends AbAttr {
  * This attribute checks various conditions related to the damage received, the moves used by the Pokémon
  * and its opponents, and determines whether a forced switch-out should occur.
  *
+ * Used by Wimp Out and Emergency Exit
+ *
  * @extends PostDamageAbAttr
+ * @see {@linkcode applyPostDamage}
  */
 export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
-  private helper: ForceSwitchOutHelper;
+  private helper: ForceSwitchOutHelper = new ForceSwitchOutHelper(SwitchType.SWITCH);
   private hpRatio: number;
 
   constructor(hpRatio: number = 0.5) {
     super();
     this.hpRatio = hpRatio;
-    this.helper = new ForceSwitchOutHelper(SwitchType.SWITCH);
   }
 
   /**
@@ -5020,7 +5022,6 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     const fordbiddenAttackingMoves = [ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ];
     if (moveHistory.length > 0) {
       const lastMoveUsed = moveHistory[moveHistory.length - 1];
-      // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
       if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
         return false;
       }
@@ -5032,6 +5033,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
       const enemyMoveHistory = source.getMoveHistory();
       if (enemyMoveHistory.length > 0) {
         const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
+        // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
         if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
           return false;
         // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
