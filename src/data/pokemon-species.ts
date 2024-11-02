@@ -938,12 +938,13 @@ export class PokemonForm extends PokemonSpeciesForm {
 
   constructor(formName: string, formKey: string, type1: Type, type2: Type | null, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: number, baseHp: number, baseAtk: number, baseDef: number, baseSpatk: number, baseSpdef: number, baseSpd: number,
-    catchRate: number, baseFriendship: number, baseExp: number, genderDiffs?: boolean, formSpriteKey?: string | null, isStarterSelectable?: boolean, ) {
+    catchRate: number, baseFriendship: number, baseExp: number, genderDiffs: boolean = false, formSpriteKey: string | null = null, isStarterSelectable: boolean = false
+  ) {
     super(type1, type2, height, weight, ability1, ability2, abilityHidden, baseTotal, baseHp, baseAtk, baseDef, baseSpatk, baseSpdef, baseSpd,
-      catchRate, baseFriendship, baseExp, !!genderDiffs, (!!isStarterSelectable || !formKey));
+      catchRate, baseFriendship, baseExp, genderDiffs, (isStarterSelectable || !formKey));
     this.formName = formName;
     this.formKey = formKey;
-    this.formSpriteKey = formSpriteKey !== undefined ? formSpriteKey : null;
+    this.formSpriteKey = formSpriteKey;
   }
 
   getFormSpriteKey(_formIndex?: number) {
