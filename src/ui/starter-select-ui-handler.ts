@@ -20,7 +20,6 @@ import { Type } from "#app/data/type";
 import { GameModes } from "#app/game-mode";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
-import * as Utils from "#app/utils";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
@@ -50,6 +49,7 @@ import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
+import { BooleanHolder, capitalizeString, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -298,10 +298,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private canCycleAbility: boolean;
   private canCycleNature: boolean;
   private canCycleVariant: boolean;
-  private value: integer = 0;
-  private canAddParty: boolean;
 
-  private assetLoadCancelled: Utils.BooleanHolder | null;
+  private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
   private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
@@ -387,7 +385,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (index === 0 || index === 19) {
         return;
       }
-      const typeSprite = this.scene.add.sprite(0, 0, Utils.getLocalizedSpriteKey("types"));
+      const typeSprite = this.scene.add.sprite(0, 0, getLocalizedSpriteKey("types"));
       typeSprite.setScale(0.5);
       typeSprite.setFrame(type.toLowerCase());
       typeOptions.push(new DropDownOption(this.scene, index, new DropDownLabel("", typeSprite)));
@@ -661,12 +659,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
+    this.type1Icon = this.scene.add.sprite(8, 98, getLocalizedSpriteKey("types"));
     this.type1Icon.setScale(0.5);
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = this.scene.add.sprite(26, 98, Utils.getLocalizedSpriteKey("types"));
+    this.type2Icon = this.scene.add.sprite(26, 98, getLocalizedSpriteKey("types"));
     this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
@@ -1133,20 +1131,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       targets: icon,
       loop: -1,
       // Make the initial bounce a little randomly delayed
-      delay: Utils.randIntRange(0, 50) * 5,
+      delay: randIntRange(0, 50) * 5,
       loopDelay: 1000,
       tweens: [
         {
           targets: icon,
           y: 2 - 5,
-          duration: Utils.fixedInt(125),
+          duration: fixedInt(125),
           ease: "Cubic.easeOut",
           yoyo: true
         },
         {
           targets: icon,
           y: 2 - 3,
-          duration: Utils.fixedInt(150),
+          duration: fixedInt(150),
           ease: "Cubic.easeOut",
           yoyo: true
         }
@@ -1442,7 +1440,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const [ isDupe, removeIndex ]: [boolean, number] = this.isInParty(this.lastSpecies); // checks to see if the pokemon is a duplicate; if it is, returns the index that will be removed
 
           const isPartyValid = this.isPartyValid();
-          const isValidForChallenge = new Utils.BooleanHolder(true);
+          const isValidForChallenge = new BooleanHolder(true);
 
           Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.lastSpecies, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId)), isPartyValid);
 
@@ -2320,8 +2318,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   }
 
-  getValueLimit(): integer {
-    const valueLimit = new Utils.IntegerHolder(0);
+  getValueLimit(): number {
+    const valueLimit = new NumberHolder(0);
     switch (this.scene.gameMode.modeId) {
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
@@ -2357,12 +2355,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               * Since some pokemon rely on forms to be valid (i.e. blaze tauros for fire challenges), we make a fake form and dex props to use in the challenge
               */
             const tempFormProps = BigInt(Math.pow(2, i)) * DexAttr.DEFAULT_FORM;
-            const isValidForChallenge = new Utils.BooleanHolder(true);
+            const isValidForChallenge = new BooleanHolder(true);
             Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, container.species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, tempFormProps), true);
             allFormsValid = allFormsValid || isValidForChallenge.value;
           }
         } else {
-          const isValidForChallenge = new Utils.BooleanHolder(true);
+          const isValidForChallenge = new BooleanHolder(true);
           Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, container.species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(container.species, false, true)), true);
           allFormsValid = isValidForChallenge.value;
         }
@@ -2624,8 +2622,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }
 
           // Set the candy colors
-          container.candyUpgradeIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][0])));
-          container.candyUpgradeOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(starterColors[speciesId][1])));
+          container.candyUpgradeIcon.setTint(argbFromRgba(rgbHexToRgba(starterColors[speciesId][0])));
+          container.candyUpgradeOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(starterColors[speciesId][1])));
 
           this.setUpgradeIcon(container);
         } else if (this.scene.candyUpgradeDisplay === 1) {
@@ -2760,7 +2758,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.lastSpecies = species!; // TODO: is this bang correct?
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
-      this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
+      this.pokemonNumberText.setText(padInt(species.speciesId, 4));
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
         this.pokemonNameText.setText(name);
@@ -2778,7 +2776,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
 
         //Growth translate
-        let growthReadable = Utils.toReadableString(GrowthRate[species.growthRate]);
+        let growthReadable = toReadableString(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t("growth:" + growthAux as any);
@@ -2826,9 +2824,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonShinyIcon.setY(117);
-          this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
+          this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
           this.pokemonCandyIcon.setVisible(true);
-          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
+          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
           this.pokemonCandyOverlayIcon.setVisible(true);
           this.pokemonCandyDarknessOverlay.setVisible(true);
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
@@ -2928,7 +2926,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
-      this.pokemonNumberText.setText(Utils.padInt(0, 4));
+      this.pokemonNumberText.setText(padInt(0, 4));
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonGrowthRateText.setText("");
       this.pokemonGrowthRateLabelText.setVisible(false);
@@ -2961,6 +2959,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
+
+    // We will only update the sprite if there is a change to form, shiny/variant
+    // or gender for species with gender sprite differences
+    const shouldUpdateSprite = (species?.genderDiffs && !isNullOrUndefined(female))
+     || !isNullOrUndefined(formIndex) || !isNullOrUndefined(shiny) || !isNullOrUndefined(variant);
 
     if (this.activeTooltip === "CANDY") {
       if (this.lastSpecies) {
@@ -3050,24 +3053,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterNatures[starterIndex] = this.natureCursor;
         }
 
-        const assetLoadCancelled = new Utils.BooleanHolder(false);
+        const assetLoadCancelled = new BooleanHolder(false);
         this.assetLoadCancelled = assetLoadCancelled;
 
-        species.loadAssets(this.scene, female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
-          if (assetLoadCancelled.value) {
-            return;
-          }
-          this.assetLoadCancelled = null;
-          this.speciesLoaded.set(species.speciesId, true);
-          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
-          this.pokemonSprite.setPipelineData("shiny", shiny);
-          this.pokemonSprite.setPipelineData("variant", variant);
-          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+        if (shouldUpdateSprite) {
+          species.loadAssets(this.scene, female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
+            if (assetLoadCancelled.value) {
+              return;
+            }
+            this.assetLoadCancelled = null;
+            this.speciesLoaded.set(species.speciesId, true);
+            this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+            this.pokemonSprite.setPipelineData("shiny", shiny);
+            this.pokemonSprite.setPipelineData("variant", variant);
+            this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+            this.pokemonSprite.setVisible(!this.statsMode);
+          });
+        } else {
           this.pokemonSprite.setVisible(!this.statsMode);
-        });
+        }
 
-
-        const isValidForChallenge = new Utils.BooleanHolder(true);
+        const isValidForChallenge = new BooleanHolder(true);
         Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
         const currentFilteredContainer = this.filteredStarterContainers.find(p => p.species.speciesId === species.speciesId);
         if (currentFilteredContainer) {
@@ -3224,9 +3230,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
-        const formText = Utils.capitalizeString(species?.forms[formIndex!]?.formKey, "-", false, false); // TODO: is the bang correct?
+        const formText = capitalizeString(species?.forms[formIndex!]?.formKey, "-", false, false); // TODO: is the bang correct?
 
-        const speciesName = Utils.capitalizeString(Species[species.speciesId], "_", true, false);
+        const speciesName = capitalizeString(Species[species.speciesId], "_", true, false);
 
         if (species.speciesId === Species.ARCEUS) {
           this.pokemonFormText.setText(i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`));
@@ -3392,12 +3398,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.valueLimitLabel.setColor(this.getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK));
     this.valueLimitLabel.setShadowColor(this.getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK, true));
     if (overLimit) {
-      this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
+      this.scene.time.delayedCall(fixedInt(500), () => this.tryUpdateValue());
       return false;
     }
     let isPartyValid: boolean = this.isPartyValid(); // this checks to see if the party is valid
     if (addingToParty) { // this does a check to see if the pokemon being added is valid; if so, it will update the isPartyValid boolean
-      const isNewPokemonValid = new Utils.BooleanHolder(true);
+      const isNewPokemonValid = new BooleanHolder(true);
       const species = this.filteredStarterContainers[this.cursor].species;
       Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isNewPokemonValid, this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)), false);
       isPartyValid = isPartyValid || isNewPokemonValid.value;
@@ -3406,13 +3412,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     /**
      * this loop is used to set the Sprite's alpha value and check if the user can select other pokemon more.
      */
-    this.canAddParty = false;
     const remainValue = valueLimit - newValue;
     for (let s = 0; s < this.allSpecies.length; s++) {
       /** Cost of pokemon species */
       const speciesStarterValue = this.scene.gameData.getSpeciesStarterValue(this.allSpecies[s].speciesId);
-      /** Used to detect if this pokemon is registered in starter */
-      const speciesStarterDexEntry = this.scene.gameData.dexData[this.allSpecies[s].speciesId];
       /** {@linkcode Phaser.GameObjects.Sprite} object of Pokémon for setting the alpha value */
       const speciesSprite = this.starterContainers[s].icon;
 
@@ -3427,7 +3430,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
        * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
        * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
        */
-      const isValidForChallenge = new Utils.BooleanHolder(true);
+      const isValidForChallenge = new BooleanHolder(true);
       Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, this.allSpecies[s], isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(this.allSpecies[s], this.getCurrentDexProps(this.allSpecies[s].speciesId)), isPartyValid);
 
       const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge.value;
@@ -3443,9 +3446,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       */
       if (canBeChosen || (isPokemonInParty && remainValue >= speciesStarterValue)) {
         speciesSprite.setAlpha(1);
-        if (speciesStarterDexEntry?.caughtAttr) {
-          this.canAddParty = true;
-        }
       } else {
         /**
          * If it can't be chosen, the user can't select.
@@ -3455,7 +3455,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     }
 
-    this.value = newValue;
     return true;
   }
 
@@ -3543,7 +3542,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   isPartyValid(): boolean {
     let canStart = false;
     for (let s = 0; s < this.starterSpecies.length; s++) {
-      const isValidForChallenge = new Utils.BooleanHolder(true);
+      const isValidForChallenge = new BooleanHolder(true);
       const species = this.starterSpecies[s];
       Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)), false);
       canStart = canStart || isValidForChallenge.value;
