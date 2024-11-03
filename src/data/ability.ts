@@ -4,7 +4,7 @@ import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { getPokemonNameWithAffix } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag, GroundedTag } from "./battler-tags";
+import { BattlerTag, BattlerTagLapseType, GroundedTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
@@ -2591,8 +2591,8 @@ export class CommanderAbAttr extends AbAttr {
   }
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): boolean {
-    // TODO: figure out how this works with X + Dondozo fusions
-    if (pokemon.scene.currentBattle?.double && pokemon.getAlly().species.speciesId === Species.DONDOZO) {
+    // TODO: Should this work with X + Dondozo fusions?
+    if (pokemon.scene.currentBattle?.double && pokemon.getAlly()?.species.speciesId === Species.DONDOZO) {
       // If the ally Dondozo is fainted or was previously "commanded" by
       // another Pokemon, this effect cannot apply.
       if (pokemon.getAlly().isFainted() || pokemon.getAlly().getTag(BattlerTagType.COMMANDED)) {
@@ -2600,6 +2600,8 @@ export class CommanderAbAttr extends AbAttr {
       }
 
       if (!simulated) {
+        // Lapse the source's semi-invulnerable tags (to avoid visual inconsistencies)
+        pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
         // Play an animation of the source jumping into the ally Dondozo's mouth
         pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_APPLY);
         // Apply boosts from this effect to the ally Dondozo
