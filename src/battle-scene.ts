@@ -323,6 +323,7 @@ export default class BattleScene extends SceneBase {
     this.conditionalQueue = [];
     this.phaseQueuePrependSpliceIndex = -1;
     this.nextCommandPhaseQueue = [];
+    this.eventManager = new TimedEventManager();
     this.updateGameInfo();
   }
 
@@ -378,7 +379,6 @@ export default class BattleScene extends SceneBase {
 
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
     (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
-    this.eventManager = new TimedEventManager();
 
     this.launchBattle();
   }

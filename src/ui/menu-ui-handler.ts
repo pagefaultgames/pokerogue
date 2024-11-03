@@ -32,7 +32,7 @@ let wikiUrl = "https://wiki.pokerogue.net/start";
 const discordUrl = "https://discord.gg/uWpTfdKG49";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
-const donateUrl = "https://github.com/sponsors/patapancakes";
+const donateUrl = "https://github.com/sponsors/pagefaultgames";
 
 export default class MenuUiHandler extends MessageUiHandler {
   private readonly textPadding = 8;
