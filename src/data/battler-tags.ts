@@ -2480,7 +2480,10 @@ export class SubstituteTag extends BattlerTag {
   onHit(pokemon: Pokemon): void {
     const moveEffectPhase = pokemon.scene.getCurrentPhase();
     if (moveEffectPhase instanceof MoveEffectPhase) {
-      const attacker = moveEffectPhase.getUserPokemon()!;
+      const attacker = moveEffectPhase.getUserPokemon();
+      if (!attacker) {
+        return;
+      }
       const move = moveEffectPhase.move.getMove();
       const firstHit = (attacker.turnData.hitCount === attacker.turnData.hitsLeft);
 

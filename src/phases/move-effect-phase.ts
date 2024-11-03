@@ -52,11 +52,11 @@ import {
   HitHealModifier,
   PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, executeIf, NumberHolder } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
-import { PokemonPhase } from "./pokemon-phase";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
@@ -517,7 +517,11 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    const user = this.getUserPokemon()!; // TODO: is this bang correct?
+    const user = this.getUserPokemon();
+
+    if (!user) {
+      return false;
+    }
 
     // Hit check only calculated on first hit for multi-hit moves unless flag is set to check all hits.
     // However, if an ability with the MaxMultiHitAbAttr, namely Skill Link, is present, act as a normal
