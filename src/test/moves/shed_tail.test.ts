@@ -59,7 +59,7 @@ describe("Moves - Shed Tail", () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const magikarp = game.scene.getPlayerPokemon()!;
-    expect(game.scene.getParty().length).toBe(1);
+    expect(game.scene.getPlayerParty().length).toBe(1);
 
     game.move.select(Moves.SHED_TAIL);
 
