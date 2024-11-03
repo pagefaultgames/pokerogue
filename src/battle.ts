@@ -346,6 +346,7 @@ export default class Battle {
             case Species.BUZZWOLE:
             case Species.XURKITREE:
             case Species.CELESTEELA:
+            case Species.KARTANA:
             case Species.GUZZLORD:
             case Species.POIPOLE:
             case Species.NAGANADEL:
