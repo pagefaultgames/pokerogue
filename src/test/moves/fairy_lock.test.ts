@@ -117,6 +117,7 @@ describe("Moves - Fairy Lock", () => {
     expect(game.scene.getPlayerField()[0].species.speciesId).not.toBe(Species.KLEFKI);
     expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(Species.TYRUNT);
   });
+
   it("If a Pokemon faints and is replaced the replacement is also trapped", async () => {
     game.override.moveset([ Moves.FAIRY_LOCK, Moves.SPLASH, Moves.MEMENTO ]);
     await game.classicMode.startBattle([ Species.KLEFKI, Species.GUZZLORD, Species.TYRUNT, Species.ZYGARDE ]);
