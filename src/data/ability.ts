@@ -4909,7 +4909,7 @@ export function applyPostFaintAbAttrs(attrType: Constructor<PostFaintAbAttr>,
 }
 
 export function applyPostItemLostAbAttrs(attrType: Constructor<PostItemLostAbAttr>,
-  pokemon: Pokemon, passive: boolean, simulated: boolean = false, args: any[]): Promise<void> {
+  pokemon: Pokemon, passive: boolean, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostItemLostAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostItemLost(pokemon, passive, simulated, args), args);
 }
 
