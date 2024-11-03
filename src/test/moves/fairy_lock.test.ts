@@ -64,6 +64,7 @@ describe("Moves - Fairy Lock", () => {
     expect(enemyField[0].isTrapped()).toEqual(false);
     expect(enemyField[1].isTrapped()).toEqual(false);
   });
+
   it("Ghost types can escape Fairy Lock", async () => {
     await game.classicMode.startBattle([ Species.DUSKNOIR, Species.GENGAR, Species.TYRUNT ]);
 
