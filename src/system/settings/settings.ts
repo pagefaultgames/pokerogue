@@ -639,7 +639,7 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:mixed")
       }
     ],
-    default: 0,
+    default: MusicPreference.MIXED,
     type: SettingType.AUDIO,
     requireReload: true
   },
