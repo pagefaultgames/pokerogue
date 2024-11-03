@@ -153,7 +153,7 @@ export async function initI18n(): Promise<void> {
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
     fallbackLng: "en",
-    supportedLngs: [ "en", "es", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES" ],
+    supportedLngs: [ "en", "es-ES", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES" ],
     backend: {
       loadPath(lng: string, [ ns ]: string[]) {
         let fileName: string;
@@ -164,7 +164,7 @@ export async function initI18n(): Promise<void> {
         } else {
           fileName = camelCaseToKebabCase(ns);
         }
-        return `/locales/${lng}/${fileName}.json?v=${pkg.version}`;
+        return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
       },
     },
     defaultNS: "menu",
