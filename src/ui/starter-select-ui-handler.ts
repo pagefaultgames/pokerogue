@@ -1893,7 +1893,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               let newVariant = props.variant;
               do {
                 newVariant = (newVariant + 1) % 3;
-                if (!newVariant) {
+                if (newVariant === 0) {
                   if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
                     break;
                   }

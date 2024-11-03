@@ -1849,7 +1849,8 @@ export class GameData {
         ret |= DexAttr.DEFAULT_VARIANT;
       }
     } else {
-      ret |= attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+      // Default to non shiny. Fallback to shiny if it's the only thing that's unlocked
+      ret |= (attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY)) ? DexAttr.NON_SHINY : DexAttr.SHINY;
 
       if (attr & DexAttr.DEFAULT_VARIANT) {
         ret |= DexAttr.DEFAULT_VARIANT;
