@@ -418,7 +418,7 @@ export function generateModifierType(scene: BattleScene, modifier: () => Modifie
   // Populates item id and tier (order matters)
   result = result
     .withIdFromFunc(modifierTypes[modifierId])
-    .withTierFromPool();
+    .withTierFromPool(ModifierPoolType.PLAYER, scene.getParty());
 
   return result instanceof ModifierTypeGenerator ? result.generateType(scene.getParty(), pregenArgs) : result;
 }
