@@ -91,6 +91,7 @@ describe("Moves - Fairy Lock", () => {
 
     expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(Species.GENGAR);
   });
+
   it("Phasing moves will still switch out", async () => {
     game.override.enemyMoveset([ Moves.SPLASH, Moves.WHIRLWIND ]);
     await game.classicMode.startBattle([ Species.KLEFKI, Species.TYRUNT, Species.ZYGARDE ]);
