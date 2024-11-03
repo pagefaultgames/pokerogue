@@ -30,7 +30,6 @@ describe("Abilities - Unburden", () => {
       .starterSpecies(Species.TREECKO)
       .startingLevel(1)
       .moveset([ Moves.POPULATION_BOMB, Moves.KNOCK_OFF, Moves.PLUCK, Moves.THIEF ])
-      .ability(Abilities.UNBURDEN)
       .startingHeldItems([
         { name: "BERRY", count: 1, type: BerryType.SITRUS },
         { name: "BERRY", count: 2, type: BerryType.APICOT },
@@ -40,6 +39,7 @@ describe("Abilities - Unburden", () => {
       .enemyLevel(100)
       .enemyMoveset([ Moves.FALSE_SWIPE ])
       .enemyAbility(Abilities.UNBURDEN)
+      .enemyPassiveAbility(Abilities.NO_GUARD)
       .enemyHeldItems([
         { name: "BERRY", type: BerryType.SITRUS, count: 1 },
         { name: "BERRY", type: BerryType.LUM, count: 1 },
@@ -49,6 +49,7 @@ describe("Abilities - Unburden", () => {
   it("should activate when a berry is eaten", async () => {
     await game.classicMode.startBattle();
     const playerPokemon = game.scene.getPlayerPokemon()!;
+    playerPokemon.abilityIndex = 2;
     const playerHeldItems = playerPokemon.getHeldItems().length;
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
     game.move.select(Moves.FALSE_SWIPE);
@@ -84,7 +85,6 @@ describe("Abilities - Unburden", () => {
         { name: "MULTI_LENS", count: 3 },
       ]);
     await game.classicMode.startBattle();
-    vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
@@ -103,8 +103,8 @@ describe("Abilities - Unburden", () => {
         { name: "LUCKY_EGG", count: 1 },
       ]);
     await game.classicMode.startBattle();
-    vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
     const playerPokemon = game.scene.getPlayerPokemon()!;
+    playerPokemon.abilityIndex = 2;
     const playerHeldItems = playerPokemon.getHeldItems().length;
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
     game.move.select(Moves.POPULATION_BOMB);
@@ -143,7 +143,6 @@ describe("Abilities - Unburden", () => {
         { name: "BERRY", type: BerryType.LUM, count: 1 },
       ]);
     await game.classicMode.startBattle();
-    vi.spyOn(allMoves[Moves.POPULATION_BOMB], "accuracy", "get").mockReturnValue(100);
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
@@ -177,4 +176,36 @@ describe("Abilities - Unburden", () => {
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
+  it("should deactivate when a neutralizing gas user enters the field", async () => {
+    game.override
+      .battleType("double")
+      .moveset([ Moves.SPLASH ]);
+
+    await game.classicMode.startBattle([ Species.TREECKO, Species.MEOWTH, Species.WEEZING ]);
+    const playerPokemon = game.scene.getParty();
+    const treecko = playerPokemon[0];
+    const weezing = playerPokemon[2];
+    treecko.abilityIndex = 2;
+    weezing.abilityIndex = 1;
+
+    const playerHeldItems = treecko.getHeldItems().length;
+    const initialPlayerSpeed = treecko.getStat(Stat.SPD);
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.FALSE_SWIPE, 0);
+    await game.forceEnemyMove(Moves.FALSE_SWIPE, 0);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(treecko.getHeldItems().length).toBeLessThan(playerHeldItems);
+    expect(treecko.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed * 2);
+
+    await game.toNextTurn();
+    game.move.select(Moves.SPLASH);
+    game.doSwitchPokemon(2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(treecko.getHeldItems().length).toBeLessThan(playerHeldItems);
+    expect(treecko.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed);
+  });
+
 });
