@@ -56,8 +56,8 @@ describe("Abilities - Sheer Force", () => {
     const power = new NumberHolder(move.power);
     const chance = new NumberHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getFirstTarget()!, move, false, power);
 
     expect(chance.value).toBe(0);
     expect(power.value).toBe(move.power * 5461 / 4096);
@@ -87,8 +87,8 @@ describe("Abilities - Sheer Force", () => {
     const power = new NumberHolder(move.power);
     const chance = new NumberHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getFirstTarget()!, move, false, power);
 
     expect(chance.value).toBe(-1);
     expect(power.value).toBe(move.power);
@@ -118,8 +118,8 @@ describe("Abilities - Sheer Force", () => {
     const power = new NumberHolder(move.power);
     const chance = new NumberHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getFirstTarget()!, move, false, power);
 
     expect(chance.value).toBe(-1);
     expect(power.value).toBe(move.power);
@@ -151,7 +151,7 @@ describe("Abilities - Sheer Force", () => {
     const power = new NumberHolder(move.power);
     const chance = new NumberHolder(move.chance);
     const user = phase.getUserPokemon()!;
-    const target = phase.getTarget()!;
+    const target = phase.getFirstTarget()!;
     const opponentType = target.getTypes()[0];
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, chance, move, target, false);
