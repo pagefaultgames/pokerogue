@@ -985,7 +985,7 @@ export class GameData {
       if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
         pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId })
           .then(async response => {
-            if (!response && response?.length === 0 || response?.[0] !== "{") {
+            if (!response || response?.length === 0 || response?.[0] !== "{") {
               console.error(response);
               return resolve(null);
             }
