@@ -33,7 +33,7 @@ describe("Moves - Fairy Lock", () => {
       .enemyMoveset([ Moves.SPLASH, Moves.U_TURN ]);
   });
 
-  it("Applies Fairy Lock tag for one turn, then apply Trapped tag for one turn", async () => {
+  it("Applies Fairy Lock tag for two turns", async () => {
     await game.classicMode.startBattle([ Species.KLEFKI, Species.TYRUNT ]);
     const playerPokemon = game.scene.getPlayerField();
     const enemyField = game.scene.getEnemyField();

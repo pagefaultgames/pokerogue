@@ -243,23 +243,30 @@ export class CommandPhase extends FieldPhase {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               this.scene.ui.setMode(Mode.MESSAGE);
             }
-            this.scene.ui.showText(
-              i18next.t("battle:noEscapePokemon", {
-                pokemonName: trapTag && trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId)
-                  ? getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)!)
-                  : fairyLockTag && fairyLockTag.sourceId && this.scene.getPokemonById(fairyLockTag.sourceId)
-                    ? getPokemonNameWithAffix(this.scene.getPokemonById(fairyLockTag.sourceId)!)
-                    : "",
-                moveName: trapTag ? trapTag.getMoveName() : fairyLockTag ? fairyLockTag.getMoveName() : "",
-                escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
-              }),
-              null,
-              () => {
-                this.scene.ui.showText("", 0);
-                if (!isSwitch) {
-                  this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-                }
-              }, null, true);
+            const showNoEscapeText = (tag: any) => {
+              this.scene.ui.showText(
+                i18next.t("battle:noEscapePokemon", {
+                  pokemonName: tag.sourceId && this.scene.getPokemonById(tag.sourceId) ? getPokemonNameWithAffix(this.scene.getPokemonById(tag.sourceId)!) : "",
+                  moveName: tag.getMoveName(),
+                  escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
+                }),
+                null,
+                () => {
+                  this.scene.ui.showText("", 0);
+                  if (!isSwitch) {
+                    this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+                  }
+                },
+                null,
+                true
+              );
+            };
+
+            if (trapTag) {
+              showNoEscapeText(trapTag);
+            } else if (fairyLockTag) {
+              showNoEscapeText(fairyLockTag);
+            }
           }
         }
         break;
