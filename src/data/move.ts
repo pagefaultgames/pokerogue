@@ -4465,7 +4465,7 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
     }
 
     if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(Species.ARCEUS) || [ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(Species.SILVALLY)) {
-      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies?.formIndex!; // TODO: is this bang correct?
+      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies?.formIndex!;
 
       moveType.value = Type[Type[form]];
       return true;
