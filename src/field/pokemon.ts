@@ -3228,7 +3228,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       delay: Utils.fixedInt(delay),
       repeat: -1,
       callback: () => {
-        ++i;
         frameThreshold = sprite.anims.msPerFrame / rate;
         frameProgress += delay;
         while (frameProgress > frameThreshold) {

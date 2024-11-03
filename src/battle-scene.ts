@@ -2981,19 +2981,13 @@ export default class BattleScene extends SceneBase {
    */
   getActiveKeys(): string[] {
     const keys: string[] = [];
-    const playerParty = this.getParty();
-    playerParty.forEach(p => {
+    const activePokemon: (PlayerPokemon | EnemyPokemon)[] = this.getParty();
+    activePokemon.concat(this.getEnemyParty());
+    activePokemon.forEach((p) => {
       keys.push(p.getSpriteKey(true));
-      keys.push(p.getBattleSpriteKey(true, true));
-      keys.push(p.species.getCryKey(p.formIndex));
-      if (p.fusionSpecies) {
-        keys.push(p.fusionSpecies.getCryKey(p.fusionFormIndex));
+      if (p instanceof PlayerPokemon) {
+        keys.push(p.getBattleSpriteKey(true, true));
       }
-    });
-    // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
-    const enemyParty = this.getEnemyParty();
-    enemyParty.forEach(p => {
-      keys.push(p.getSpriteKey(true));
       keys.push(p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
         keys.push(p.fusionSpecies.getCryKey(p.fusionFormIndex));
