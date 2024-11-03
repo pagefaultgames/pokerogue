@@ -229,14 +229,14 @@ export default class RunInfoUiHandler extends UiHandler {
       // Wild - Single and Doubles
       if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
         switch (this.runInfo.enemyParty.length) {
-        case 1:
+          case 1:
           // Wild - Singles
-          this.parseWildSingleDefeat(enemyContainer);
-          break;
-        case 2:
+            this.parseWildSingleDefeat(enemyContainer);
+            break;
+          case 2:
           //Wild - Doubles
-          this.parseWildDoubleDefeat(enemyContainer);
-          break;
+            this.parseWildDoubleDefeat(enemyContainer);
+            break;
         }
       } else if (this.runInfo.battleType === BattleType.TRAINER || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)) {
         this.parseTrainerDefeat(enemyContainer);
@@ -474,33 +474,33 @@ export default class RunInfoUiHandler extends UiHandler {
     modeText.setPosition(7, 5);
     modeText.appendText(i18next.t("runHistory:mode") + ": ", false);
     switch (this.runInfo.gameMode) {
-    case GameModes.DAILY:
-      modeText.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
-      break;
-    case GameModes.SPLICED_ENDLESS:
-      modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
-      break;
-    case GameModes.CHALLENGE:
-      modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
-      modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
-      modeText.setWrapMode(1); // wrap by word
-      modeText.setWrapWidth(500);
-      const rules: string[] = this.challengeParser();
-      if (rules) {
-        for (let i = 0; i < rules.length; i++) {
-          if (i > 0) {
-            modeText.appendText(" + ", false);
+      case GameModes.DAILY:
+        modeText.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
+        break;
+      case GameModes.SPLICED_ENDLESS:
+        modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
+        break;
+      case GameModes.CHALLENGE:
+        modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
+        modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
+        modeText.setWrapMode(1); // wrap by word
+        modeText.setWrapWidth(500);
+        const rules: string[] = this.challengeParser();
+        if (rules) {
+          for (let i = 0; i < rules.length; i++) {
+            if (i > 0) {
+              modeText.appendText(" + ", false);
+            }
+            modeText.appendText(rules[i], false);
           }
-          modeText.appendText(rules[i], false);
         }
-      }
-      break;
-    case GameModes.ENDLESS:
-      modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
-      break;
-    case GameModes.CLASSIC:
-      modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
-      break;
+        break;
+      case GameModes.ENDLESS:
+        modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
+        break;
+      case GameModes.CLASSIC:
+        modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
+        break;
     }
 
     // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
@@ -577,23 +577,23 @@ export default class RunInfoUiHandler extends UiHandler {
     for (let i = 0; i < this.runInfo.challenges.length; i++) {
       if (this.runInfo.challenges[i].value !== 0) {
         switch (this.runInfo.challenges[i].id) {
-        case Challenges.SINGLE_GENERATION:
-          rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
-          break;
-        case Challenges.SINGLE_TYPE:
-          const typeRule = Type[this.runInfo.challenges[i].value - 1];
-          const typeTextColor = `[color=${TypeColor[typeRule]}]`;
-          const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
-          const typeText = typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
-          rules.push(typeText);
-          break;
-        case Challenges.INVERSE_BATTLE:
-          rules.push(i18next.t("challenges:inverseBattle.shortName"));
-          break;
-        default:
-          const localisationKey = Challenges[this.runInfo.challenges[i].id].split("_").map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
-          rules.push(i18next.t(`challenges:${localisationKey}.name`));
-          break;
+          case Challenges.SINGLE_GENERATION:
+            rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
+            break;
+          case Challenges.SINGLE_TYPE:
+            const typeRule = Type[this.runInfo.challenges[i].value - 1];
+            const typeTextColor = `[color=${TypeColor[typeRule]}]`;
+            const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
+            const typeText = typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
+            rules.push(typeText);
+            break;
+          case Challenges.INVERSE_BATTLE:
+            rules.push(i18next.t("challenges:inverseBattle.shortName"));
+            break;
+          default:
+            const localisationKey = Challenges[this.runInfo.challenges[i].id].split("_").map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
+            rules.push(i18next.t(`challenges:${localisationKey}.name`));
+            break;
         }
       }
     }
@@ -674,7 +674,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const def = i18next.t("pokemonInfo:Stat.DEFshortened") + ": " + pStats[2];
       const spatk = i18next.t("pokemonInfo:Stat.SPATKshortened") + ": " + pStats[3];
       const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened") + ": " + pStats[4];
-      const speedLabel = (currentLanguage === "es" || currentLanguage === "pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
+      const speedLabel = (currentLanguage === "es-ES" || currentLanguage === "pt_BR") ? i18next.t("runHistory:SPDshortened") : i18next.t("pokemonInfo:Stat.SPDshortened");
       const speed = speedLabel + ": " + pStats[5];
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(this.scene, -5, 0, hp, TextStyle.SUMMARY, { fontSize: textContainerFontSize, lineSpacing: lineSpacing });
@@ -911,36 +911,36 @@ export default class RunInfoUiHandler extends UiHandler {
     const error = false;
 
     switch (button) {
-    case Button.CANCEL:
-      success = true;
-      if (this.pageMode === RunInfoUiMode.MAIN) {
-        this.runInfoContainer.removeAll(true);
-        this.runResultContainer.removeAll(true);
-        this.partyContainer.removeAll(true);
-        this.runContainer.removeAll(true);
-        if (this.isVictory) {
-          this.hallofFameContainer.removeAll(true);
+      case Button.CANCEL:
+        success = true;
+        if (this.pageMode === RunInfoUiMode.MAIN) {
+          this.runInfoContainer.removeAll(true);
+          this.runResultContainer.removeAll(true);
+          this.partyContainer.removeAll(true);
+          this.runContainer.removeAll(true);
+          if (this.isVictory) {
+            this.hallofFameContainer.removeAll(true);
+          }
+          super.clear();
+          this.runContainer.setVisible(false);
+          ui.revertMode();
+        } else if (this.pageMode === RunInfoUiMode.HALL_OF_FAME) {
+          this.hallofFameContainer.setVisible(false);
+          this.pageMode = RunInfoUiMode.MAIN;
+        } else if (this.pageMode === RunInfoUiMode.ENDING_ART) {
+          this.endCardContainer.setVisible(false);
+          this.runContainer.remove(this.endCardContainer);
+          this.pageMode = RunInfoUiMode.MAIN;
         }
-        super.clear();
-        this.runContainer.setVisible(false);
-        ui.revertMode();
-      } else if (this.pageMode === RunInfoUiMode.HALL_OF_FAME) {
-        this.hallofFameContainer.setVisible(false);
-        this.pageMode = RunInfoUiMode.MAIN;
-      } else if (this.pageMode === RunInfoUiMode.ENDING_ART) {
-        this.endCardContainer.setVisible(false);
-        this.runContainer.remove(this.endCardContainer);
-        this.pageMode = RunInfoUiMode.MAIN;
-      }
-      break;
-    case Button.DOWN:
-    case Button.UP:
-      break;
-    case Button.CYCLE_FORM:
-    case Button.CYCLE_SHINY:
-    case Button.CYCLE_ABILITY:
-      this.buttonCycleOption(button);
-      break;
+        break;
+      case Button.DOWN:
+      case Button.UP:
+        break;
+      case Button.CYCLE_FORM:
+      case Button.CYCLE_SHINY:
+      case Button.CYCLE_ABILITY:
+        this.buttonCycleOption(button);
+        break;
     }
 
     if (success) {
@@ -960,40 +960,40 @@ export default class RunInfoUiHandler extends UiHandler {
    */
   private buttonCycleOption(button: Button) {
     switch (button) {
-    case Button.CYCLE_FORM:
-      if (this.isVictory && this.pageMode !== RunInfoUiMode.HALL_OF_FAME) {
-        if (!this.endCardContainer || !this.endCardContainer.visible) {
-          this.createVictorySplash();
-          this.endCardContainer.setVisible(true);
-          this.runContainer.add(this.endCardContainer);
-          this.pageMode = RunInfoUiMode.ENDING_ART;
-        } else {
-          this.endCardContainer.setVisible(false);
-          this.runContainer.remove(this.endCardContainer);
-          this.pageMode = RunInfoUiMode.MAIN;
+      case Button.CYCLE_FORM:
+        if (this.isVictory && this.pageMode !== RunInfoUiMode.HALL_OF_FAME) {
+          if (!this.endCardContainer || !this.endCardContainer.visible) {
+            this.createVictorySplash();
+            this.endCardContainer.setVisible(true);
+            this.runContainer.add(this.endCardContainer);
+            this.pageMode = RunInfoUiMode.ENDING_ART;
+          } else {
+            this.endCardContainer.setVisible(false);
+            this.runContainer.remove(this.endCardContainer);
+            this.pageMode = RunInfoUiMode.MAIN;
+          }
         }
-      }
-      break;
-    case Button.CYCLE_SHINY:
-      if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
-        if (!this.hallofFameContainer.visible) {
-          this.hallofFameContainer.setVisible(true);
-          this.pageMode = RunInfoUiMode.HALL_OF_FAME;
-        } else {
-          this.hallofFameContainer.setVisible(false);
-          this.pageMode = RunInfoUiMode.MAIN;
+        break;
+      case Button.CYCLE_SHINY:
+        if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
+          if (!this.hallofFameContainer.visible) {
+            this.hallofFameContainer.setVisible(true);
+            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
+          } else {
+            this.hallofFameContainer.setVisible(false);
+            this.pageMode = RunInfoUiMode.MAIN;
+          }
         }
-      }
-      break;
-    case Button.CYCLE_ABILITY:
-      if (this.runInfo.modifiers.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
-        if (this.partyVisibility) {
-          this.showParty(false);
-        } else {
-          this.showParty(true);
+        break;
+      case Button.CYCLE_ABILITY:
+        if (this.runInfo.modifiers.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
+          if (this.partyVisibility) {
+            this.showParty(false);
+          } else {
+            this.showParty(true);
+          }
         }
-      }
-      break;
+        break;
     }
   }
 }

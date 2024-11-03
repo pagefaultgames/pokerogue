@@ -81,7 +81,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "35px",
     starterInfoXPos: 33,
   },
-  "es":{
+  "es-ES":{
     starterInfoTextSize: "56px",
     instructionTextSize: "35px",
   },
@@ -1303,119 +1303,119 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.startCursorObj.visible) { // this checks to see if the start button is selected
       switch (button) {
-      case Button.ACTION:
-        if (this.tryStart(true)) {
-          success = true;
-        } else {
-          error = true;
-        }
-        break;
-      case Button.UP:
+        case Button.ACTION:
+          if (this.tryStart(true)) {
+            success = true;
+          } else {
+            error = true;
+          }
+          break;
+        case Button.UP:
         // UP from start button: go to pokemon in team if any, otherwise filter
-        this.startCursorObj.setVisible(false);
-        if (this.starterSpecies.length > 0) {
-          this.starterIconsCursorIndex = this.starterSpecies.length - 1;
-          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-        } else {
+          this.startCursorObj.setVisible(false);
+          if (this.starterSpecies.length > 0) {
+            this.starterIconsCursorIndex = this.starterSpecies.length - 1;
+            this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+          } else {
+            this.startCursorObj.setVisible(false);
+            this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
+            this.setFilterMode(true);
+          }
+          success = true;
+          break;
+        case Button.DOWN:
+        // DOWN from start button: Go to filters
           this.startCursorObj.setVisible(false);
           this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
           this.setFilterMode(true);
-        }
-        success = true;
-        break;
-      case Button.DOWN:
-        // DOWN from start button: Go to filters
-        this.startCursorObj.setVisible(false);
-        this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
-        this.setFilterMode(true);
-        success = true;
-        break;
-      case Button.LEFT:
-        if (numberOfStarters > 0) {
-          this.startCursorObj.setVisible(false);
-          this.cursorObj.setVisible(true);
-          this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9 + 8); // set last column
           success = true;
-        }
-        break;
-      case Button.RIGHT:
-        if (numberOfStarters > 0) {
-          this.startCursorObj.setVisible(false);
-          this.cursorObj.setVisible(true);
-          this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9); // set first column
-          success = true;
-        }
-        break;
+          break;
+        case Button.LEFT:
+          if (numberOfStarters > 0) {
+            this.startCursorObj.setVisible(false);
+            this.cursorObj.setVisible(true);
+            this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9 + 8); // set last column
+            success = true;
+          }
+          break;
+        case Button.RIGHT:
+          if (numberOfStarters > 0) {
+            this.startCursorObj.setVisible(false);
+            this.cursorObj.setVisible(true);
+            this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9); // set first column
+            success = true;
+          }
+          break;
       }
     } else if (this.filterMode) {
       switch (button) {
-      case Button.LEFT:
-        if (this.filterBarCursor > 0) {
-          success = this.setCursor(this.filterBarCursor - 1);
-        } else {
-          success = this.setCursor(this.filterBar.numFilters - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (this.filterBarCursor < this.filterBar.numFilters - 1) {
-          success = this.setCursor(this.filterBarCursor + 1);
-        } else {
-          success = this.setCursor(0);
-        }
-        break;
-      case Button.UP:
-        if (this.filterBar.openDropDown) {
-          success = this.filterBar.decDropDownCursor();
-        } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
-          // UP from the last filter, move to start button
-          this.setFilterMode(false);
-          this.cursorObj.setVisible(false);
-          this.startCursorObj.setVisible(true);
-          success = true;
-        } else if (numberOfStarters > 0) {
-          // UP from filter bar to bottom of Pokemon list
-          this.setFilterMode(false);
-          this.scrollCursor = Math.max(0, numOfRows - 9);
-          this.updateScroll();
-          const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
-          const targetCol = Math.min(8, Math.floor(proportion * 11));
-          if (numberOfStarters % 9 > targetCol) {
-            this.setCursor(numberOfStarters - (numberOfStarters) % 9 + targetCol);
+        case Button.LEFT:
+          if (this.filterBarCursor > 0) {
+            success = this.setCursor(this.filterBarCursor - 1);
           } else {
-            this.setCursor(Math.max(numberOfStarters - (numberOfStarters) % 9 + targetCol - 9, 0));
+            success = this.setCursor(this.filterBar.numFilters - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.filterBarCursor < this.filterBar.numFilters - 1) {
+            success = this.setCursor(this.filterBarCursor + 1);
+          } else {
+            success = this.setCursor(0);
+          }
+          break;
+        case Button.UP:
+          if (this.filterBar.openDropDown) {
+            success = this.filterBar.decDropDownCursor();
+          } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
+          // UP from the last filter, move to start button
+            this.setFilterMode(false);
+            this.cursorObj.setVisible(false);
+            this.startCursorObj.setVisible(true);
+            success = true;
+          } else if (numberOfStarters > 0) {
+          // UP from filter bar to bottom of Pokemon list
+            this.setFilterMode(false);
+            this.scrollCursor = Math.max(0, numOfRows - 9);
+            this.updateScroll();
+            const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
+            const targetCol = Math.min(8, Math.floor(proportion * 11));
+            if (numberOfStarters % 9 > targetCol) {
+              this.setCursor(numberOfStarters - (numberOfStarters) % 9 + targetCol);
+            } else {
+              this.setCursor(Math.max(numberOfStarters - (numberOfStarters) % 9 + targetCol - 9, 0));
+            }
+            success = true;
+          }
+          break;
+        case Button.DOWN:
+          if (this.filterBar.openDropDown) {
+            success = this.filterBar.incDropDownCursor();
+          } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
+          // DOWN from the last filter, move to Pokemon in party if any
+            this.setFilterMode(false);
+            this.cursorObj.setVisible(false);
+            this.starterIconsCursorIndex = 0;
+            this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+            success = true;
+          } else if (numberOfStarters > 0) {
+          // DOWN from filter bar to top of Pokemon list
+            this.setFilterMode(false);
+            this.scrollCursor = 0;
+            this.updateScroll();
+            const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
+            const targetCol = Math.min(8, Math.floor(proportion * 11));
+            this.setCursor(Math.min(targetCol, numberOfStarters));
+            success = true;
+          }
+          break;
+        case Button.ACTION:
+          if (!this.filterBar.openDropDown) {
+            this.filterBar.toggleDropDown(this.filterBarCursor);
+          } else {
+            this.filterBar.toggleOptionState();
           }
           success = true;
-        }
-        break;
-      case Button.DOWN:
-        if (this.filterBar.openDropDown) {
-          success = this.filterBar.incDropDownCursor();
-        } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
-          // DOWN from the last filter, move to Pokemon in party if any
-          this.setFilterMode(false);
-          this.cursorObj.setVisible(false);
-          this.starterIconsCursorIndex = 0;
-          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-          success = true;
-        } else if (numberOfStarters > 0) {
-          // DOWN from filter bar to top of Pokemon list
-          this.setFilterMode(false);
-          this.scrollCursor = 0;
-          this.updateScroll();
-          const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
-          const targetCol = Math.min(8, Math.floor(proportion * 11));
-          this.setCursor(Math.min(targetCol, numberOfStarters));
-          success = true;
-        }
-        break;
-      case Button.ACTION:
-        if (!this.filterBar.openDropDown) {
-          this.filterBar.toggleDropDown(this.filterBarCursor);
-        } else {
-          this.filterBar.toggleOptionState();
-        }
-        success = true;
-        break;
+          break;
       }
     } else {
 
@@ -1856,259 +1856,259 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
         switch (button) {
-        case Button.CYCLE_SHINY:
-          if (this.canCycleShiny) {
-            starterAttributes.shiny = starterAttributes.shiny !== undefined ? !starterAttributes.shiny : false;
+          case Button.CYCLE_SHINY:
+            if (this.canCycleShiny) {
+              starterAttributes.shiny = starterAttributes.shiny !== undefined ? !starterAttributes.shiny : false;
 
-            if (starterAttributes.shiny) {
+              if (starterAttributes.shiny) {
               // Change to shiny, we need to get the proper default variant
-              const newProps = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
-              const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : newProps.variant;
-              this.setSpeciesDetails(this.lastSpecies, true, undefined, undefined, newVariant, undefined, undefined);
+                const newProps = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
+                const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : newProps.variant;
+                this.setSpeciesDetails(this.lastSpecies, true, undefined, undefined, newVariant, undefined, undefined);
 
-              this.scene.playSound("se/sparkle");
-              // Set the variant label to the shiny tint
-              const tint = getVariantTint(newVariant);
-              this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
-              this.pokemonShinyIcon.setTint(tint);
-              this.pokemonShinyIcon.setVisible(true);
-            } else {
-              this.setSpeciesDetails(this.lastSpecies, false, undefined, undefined, 0, undefined, undefined);
-              this.pokemonShinyIcon.setVisible(false);
-              success = true;
-            }
-          }
-          break;
-        case Button.CYCLE_FORM:
-          if (this.canCycleForm) {
-            const formCount = this.lastSpecies.forms.length;
-            let newFormIndex = props.formIndex;
-            do {
-              newFormIndex = (newFormIndex + 1) % formCount;
-              if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry!.caughtAttr! & this.scene.gameData.getFormAttr(newFormIndex)) { // TODO: are those bangs correct?
-                break;
+                this.scene.playSound("se/sparkle");
+                // Set the variant label to the shiny tint
+                const tint = getVariantTint(newVariant);
+                this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
+                this.pokemonShinyIcon.setTint(tint);
+                this.pokemonShinyIcon.setVisible(true);
+              } else {
+                this.setSpeciesDetails(this.lastSpecies, false, undefined, undefined, 0, undefined, undefined);
+                this.pokemonShinyIcon.setVisible(false);
+                success = true;
               }
-            } while (newFormIndex !== props.formIndex);
-            starterAttributes.form = newFormIndex; // store the selected form
-            this.setSpeciesDetails(this.lastSpecies, undefined, newFormIndex, undefined, undefined, undefined, undefined);
-            success = true;
-          }
-          break;
-        case Button.CYCLE_GENDER:
-          if (this.canCycleGender) {
-            starterAttributes.female = !props.female;
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !props.female, undefined, undefined, undefined);
-            success = true;
-          }
-          break;
-        case Button.CYCLE_ABILITY:
-          if (this.canCycleAbility) {
-            const abilityCount = this.lastSpecies.getAbilityCount();
-            const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
-            const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
-            let newAbilityIndex = this.abilityCursor;
-            do {
-              newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
-              if (newAbilityIndex === 0) {
-                if (hasAbility1) {
+            }
+            break;
+          case Button.CYCLE_FORM:
+            if (this.canCycleForm) {
+              const formCount = this.lastSpecies.forms.length;
+              let newFormIndex = props.formIndex;
+              do {
+                newFormIndex = (newFormIndex + 1) % formCount;
+                if (this.lastSpecies.forms[newFormIndex].isStarterSelectable && this.speciesStarterDexEntry!.caughtAttr! & this.scene.gameData.getFormAttr(newFormIndex)) { // TODO: are those bangs correct?
                   break;
                 }
-              } else if (newAbilityIndex === 1) {
+              } while (newFormIndex !== props.formIndex);
+              starterAttributes.form = newFormIndex; // store the selected form
+              this.setSpeciesDetails(this.lastSpecies, undefined, newFormIndex, undefined, undefined, undefined, undefined);
+              success = true;
+            }
+            break;
+          case Button.CYCLE_GENDER:
+            if (this.canCycleGender) {
+              starterAttributes.female = !props.female;
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !props.female, undefined, undefined, undefined);
+              success = true;
+            }
+            break;
+          case Button.CYCLE_ABILITY:
+            if (this.canCycleAbility) {
+              const abilityCount = this.lastSpecies.getAbilityCount();
+              const abilityAttr = this.scene.gameData.starterData[this.lastSpecies.speciesId].abilityAttr;
+              const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
+              let newAbilityIndex = this.abilityCursor;
+              do {
+                newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
+                if (newAbilityIndex === 0) {
+                  if (hasAbility1) {
+                    break;
+                  }
+                } else if (newAbilityIndex === 1) {
                 // If ability 1 and 2 are the same and ability 1 is unlocked, skip over ability 2
-                if (this.lastSpecies.ability1 === this.lastSpecies.ability2 && hasAbility1) {
-                  newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
-                }
-                break;
-              } else {
-                if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
+                  if (this.lastSpecies.ability1 === this.lastSpecies.ability2 && hasAbility1) {
+                    newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
+                  }
                   break;
+                } else {
+                  if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
+                    break;
+                  }
                 }
-              }
-            } while (newAbilityIndex !== this.abilityCursor);
-            starterAttributes.ability = newAbilityIndex; // store the selected ability
+              } while (newAbilityIndex !== this.abilityCursor);
+              starterAttributes.ability = newAbilityIndex; // store the selected ability
 
-            const { visible: tooltipVisible } = this.scene.ui.getTooltip();
+              const { visible: tooltipVisible } = this.scene.ui.getTooltip();
 
-            if (tooltipVisible && this.activeTooltip === "ABILITY") {
-              const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
-              this.scene.ui.editTooltip(`${newAbility.name}`, `${newAbility.description}`);
-            }
+              if (tooltipVisible && this.activeTooltip === "ABILITY") {
+                const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
+                this.scene.ui.editTooltip(`${newAbility.name}`, `${newAbility.description}`);
+              }
 
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
-            success = true;
-          }
-          break;
-        case Button.CYCLE_NATURE:
-          if (this.canCycleNature) {
-            const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
-            const natureIndex = natures.indexOf(this.natureCursor);
-            const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
-            // store cycled nature as default
-            starterAttributes.nature = newNature as unknown as integer;
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
-            success = true;
-          }
-          break;
-        case Button.V:
-          if (this.canCycleVariant) {
-            let newVariant = props.variant;
-            do {
-              newVariant = (newVariant + 1) % 3;
-              if (!newVariant) {
-                if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
-                  break;
-                }
-              } else if (newVariant === 1) {
-                if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_2) { // TODO: is this bang correct?
-                  break;
-                }
-              } else {
-                if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) { // TODO: is this bang correct?
-                  break;
-                }
-              }
-            } while (newVariant !== props.variant);
-            starterAttributes.variant = newVariant; // store the selected variant
-            this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant as Variant, undefined, undefined);
-            // Cycle tint based on current sprite tint
-            const tint = getVariantTint(newVariant as Variant);
-            this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
-            this.pokemonShinyIcon.setTint(tint);
-            success = true;
-          }
-          break;
-        case Button.UP:
-          if (!this.starterIconsCursorObj.visible) {
-            if (currentRow > 0) {
-              if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
-                this.scrollCursor--;
-                this.updateScroll();
-              }
-              success = this.setCursor(this.cursor - 9);
-            } else {
-              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
-              this.setFilterMode(true);
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newAbilityIndex, undefined);
               success = true;
             }
-          } else {
-            if (this.starterIconsCursorIndex === 0) {
+            break;
+          case Button.CYCLE_NATURE:
+            if (this.canCycleNature) {
+              const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
+              const natureIndex = natures.indexOf(this.natureCursor);
+              const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
+              // store cycled nature as default
+              starterAttributes.nature = newNature as unknown as integer;
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
+              success = true;
+            }
+            break;
+          case Button.V:
+            if (this.canCycleVariant) {
+              let newVariant = props.variant;
+              do {
+                newVariant = (newVariant + 1) % 3;
+                if (!newVariant) {
+                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
+                    break;
+                  }
+                } else if (newVariant === 1) {
+                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_2) { // TODO: is this bang correct?
+                    break;
+                  }
+                } else {
+                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) { // TODO: is this bang correct?
+                    break;
+                  }
+                }
+              } while (newVariant !== props.variant);
+              starterAttributes.variant = newVariant; // store the selected variant
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, newVariant as Variant, undefined, undefined);
+              // Cycle tint based on current sprite tint
+              const tint = getVariantTint(newVariant as Variant);
+              this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
+              this.pokemonShinyIcon.setTint(tint);
+              success = true;
+            }
+            break;
+          case Button.UP:
+            if (!this.starterIconsCursorObj.visible) {
+              if (currentRow > 0) {
+                if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
+                  this.scrollCursor--;
+                  this.updateScroll();
+                }
+                success = this.setCursor(this.cursor - 9);
+              } else {
+                this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+                this.setFilterMode(true);
+                success = true;
+              }
+            } else {
+              if (this.starterIconsCursorIndex === 0) {
               // Up from first Pokemon in the team > go to filter
-              this.starterIconsCursorObj.setVisible(false);
-              this.setSpecies(null);
-              this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
-              this.setFilterMode(true);
-            } else {
-              this.starterIconsCursorIndex--;
-              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-            }
-            success = true;
-          }
-          break;
-        case Button.DOWN:
-          if (!this.starterIconsCursorObj.visible) {
-            if (currentRow < numOfRows - 1) { // not last row
-              if (currentRow - this.scrollCursor === 8) { // last row of visible starters
-                this.scrollCursor++;
+                this.starterIconsCursorObj.setVisible(false);
+                this.setSpecies(null);
+                this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
+                this.setFilterMode(true);
+              } else {
+                this.starterIconsCursorIndex--;
+                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
               }
-              success = this.setCursor(this.cursor + 9);
-              this.updateScroll();
-            } else if (numOfRows > 1) {
-              // DOWN from last row of Pokemon > Wrap around to first row
-              this.scrollCursor = 0;
-              this.updateScroll();
-              success = this.setCursor(this.cursor % 9);
-            } else {
-              // DOWN from single row of Pokemon > Go to filters
-              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
-              this.setFilterMode(true);
               success = true;
             }
-          } else {
-            if (this.starterIconsCursorIndex <= this.starterSpecies.length - 2) {
-              this.starterIconsCursorIndex++;
-              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+            break;
+          case Button.DOWN:
+            if (!this.starterIconsCursorObj.visible) {
+              if (currentRow < numOfRows - 1) { // not last row
+                if (currentRow - this.scrollCursor === 8) { // last row of visible starters
+                  this.scrollCursor++;
+                }
+                success = this.setCursor(this.cursor + 9);
+                this.updateScroll();
+              } else if (numOfRows > 1) {
+              // DOWN from last row of Pokemon > Wrap around to first row
+                this.scrollCursor = 0;
+                this.updateScroll();
+                success = this.setCursor(this.cursor % 9);
+              } else {
+              // DOWN from single row of Pokemon > Go to filters
+                this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+                this.setFilterMode(true);
+                success = true;
+              }
             } else {
-              this.starterIconsCursorObj.setVisible(false);
-              this.setSpecies(null);
-              this.startCursorObj.setVisible(true);
+              if (this.starterIconsCursorIndex <= this.starterSpecies.length - 2) {
+                this.starterIconsCursorIndex++;
+                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+              } else {
+                this.starterIconsCursorObj.setVisible(false);
+                this.setSpecies(null);
+                this.startCursorObj.setVisible(true);
+              }
+              success = true;
             }
-            success = true;
-          }
-          break;
-        case Button.LEFT:
-          if (!this.starterIconsCursorObj.visible) {
-            if (this.cursor % 9 !== 0) {
-              success = this.setCursor(this.cursor - 1);
-            } else {
+            break;
+          case Button.LEFT:
+            if (!this.starterIconsCursorObj.visible) {
+              if (this.cursor % 9 !== 0) {
+                success = this.setCursor(this.cursor - 1);
+              } else {
               // LEFT from filtered Pokemon, on the left edge
 
-              if (this.starterSpecies.length === 0) {
+                if (this.starterSpecies.length === 0) {
                 // no starter in team > wrap around to the last column
-                success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
+                  success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
 
-              } else if (onScreenCurrentRow < 7) {
+                } else if (onScreenCurrentRow < 7) {
                 // at least one pokemon in team > for the first 7 rows, go to closest starter
-                this.cursorObj.setVisible(false);
-                this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
-                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+                  this.cursorObj.setVisible(false);
+                  this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
+                  this.moveStarterIconsCursor(this.starterIconsCursorIndex);
 
-              } else {
+                } else {
                 // at least one pokemon in team > from the bottom 2 rows, go to start run button
-                this.cursorObj.setVisible(false);
-                this.setSpecies(null);
-                this.startCursorObj.setVisible(true);
+                  this.cursorObj.setVisible(false);
+                  this.setSpecies(null);
+                  this.startCursorObj.setVisible(true);
+                }
+                success = true;
               }
-              success = true;
-            }
-          } else if (numberOfStarters > 0) {
+            } else if (numberOfStarters > 0) {
             // LEFT from team > Go to closest filtered Pokemon
-            const closestRowIndex = findClosestStarterRow(this.starterIconsCursorIndex, onScreenNumberOfRows);
-            this.starterIconsCursorObj.setVisible(false);
-            this.cursorObj.setVisible(true);
-            this.setCursor(Math.min(onScreenFirstIndex + closestRowIndex * 9 + 8, onScreenLastIndex));
-            success = true;
-          } else {
-            // LEFT from team and no Pokemon in filter > do nothing
-            success = false;
-          }
-          break;
-        case Button.RIGHT:
-          if (!this.starterIconsCursorObj.visible) {
-            // is not right edge
-            if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
-              success = this.setCursor(this.cursor + 1);
-            } else {
-              // RIGHT from filtered Pokemon, on the right edge
-              if (this.starterSpecies.length === 0) {
-                // no selected starter in team > wrap around to the first column
-                success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
-
-              } else if (onScreenCurrentRow < 7) {
-                // at least one pokemon in team > for the first 7 rows, go to closest starter
-                this.cursorObj.setVisible(false);
-                this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
-                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-
-              } else {
-                // at least one pokemon in team > from the bottom 2 rows, go to start run button
-                this.cursorObj.setVisible(false);
-                this.setSpecies(null);
-                this.startCursorObj.setVisible(true);
-              }
+              const closestRowIndex = findClosestStarterRow(this.starterIconsCursorIndex, onScreenNumberOfRows);
+              this.starterIconsCursorObj.setVisible(false);
+              this.cursorObj.setVisible(true);
+              this.setCursor(Math.min(onScreenFirstIndex + closestRowIndex * 9 + 8, onScreenLastIndex));
               success = true;
+            } else {
+            // LEFT from team and no Pokemon in filter > do nothing
+              success = false;
             }
-          } else if (numberOfStarters > 0) {
+            break;
+          case Button.RIGHT:
+            if (!this.starterIconsCursorObj.visible) {
+            // is not right edge
+              if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
+                success = this.setCursor(this.cursor + 1);
+              } else {
+              // RIGHT from filtered Pokemon, on the right edge
+                if (this.starterSpecies.length === 0) {
+                // no selected starter in team > wrap around to the first column
+                  success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
+
+                } else if (onScreenCurrentRow < 7) {
+                // at least one pokemon in team > for the first 7 rows, go to closest starter
+                  this.cursorObj.setVisible(false);
+                  this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
+                  this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+
+                } else {
+                // at least one pokemon in team > from the bottom 2 rows, go to start run button
+                  this.cursorObj.setVisible(false);
+                  this.setSpecies(null);
+                  this.startCursorObj.setVisible(true);
+                }
+                success = true;
+              }
+            } else if (numberOfStarters > 0) {
             // RIGHT from team > Go to closest filtered Pokemon
-            const closestRowIndex = findClosestStarterRow(this.starterIconsCursorIndex, onScreenNumberOfRows);
-            this.starterIconsCursorObj.setVisible(false);
-            this.cursorObj.setVisible(true);
-            this.setCursor(Math.min(onScreenFirstIndex + closestRowIndex * 9, onScreenLastIndex - (onScreenLastIndex % 9)));
-            success = true;
-          } else {
+              const closestRowIndex = findClosestStarterRow(this.starterIconsCursorIndex, onScreenNumberOfRows);
+              this.starterIconsCursorObj.setVisible(false);
+              this.cursorObj.setVisible(true);
+              this.setCursor(Math.min(onScreenFirstIndex + closestRowIndex * 9, onScreenLastIndex - (onScreenLastIndex % 9)));
+              success = true;
+            } else {
             // RIGHT from team and no Pokemon in filter > do nothing
-            success = false;
-          }
-          break;
+              success = false;
+            }
+            break;
         }
       }
     }
@@ -2210,29 +2210,29 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-      case SettingKeyboard.Button_Cycle_Shiny:
-        iconPath = "R.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Form:
-        iconPath = "F.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Gender:
-        iconPath = "G.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Ability:
-        iconPath = "E.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Nature:
-        iconPath = "N.png";
-        break;
-      case SettingKeyboard.Button_Cycle_Variant:
-        iconPath = "V.png";
-        break;
-      case SettingKeyboard.Button_Stats:
-        iconPath = "C.png";
-        break;
-      default:
-        break;
+        case SettingKeyboard.Button_Cycle_Shiny:
+          iconPath = "R.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Form:
+          iconPath = "F.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Gender:
+          iconPath = "G.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Ability:
+          iconPath = "E.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Nature:
+          iconPath = "N.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Variant:
+          iconPath = "V.png";
+          break;
+        case SettingKeyboard.Button_Stats:
+          iconPath = "C.png";
+          break;
+        default:
+          break;
       }
     } else {
       iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
@@ -2323,12 +2323,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   getValueLimit(): integer {
     const valueLimit = new Utils.IntegerHolder(0);
     switch (this.scene.gameMode.modeId) {
-    case GameModes.ENDLESS:
-    case GameModes.SPLICED_ENDLESS:
-      valueLimit.value = 15;
-      break;
-    default:
-      valueLimit.value = 10;
+      case GameModes.ENDLESS:
+      case GameModes.SPLICED_ENDLESS:
+        valueLimit.value = 15;
+        break;
+      default:
+        valueLimit.value = 10;
     }
 
     Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
@@ -2532,22 +2532,22 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
     this.filteredStarterContainers.sort((a, b) => {
       switch (sort.val) {
-      default:
-        break;
-      case SortCriteria.NUMBER:
-        return (a.species.speciesId - b.species.speciesId) * -sort.dir;
-      case SortCriteria.COST:
-        return (a.cost - b.cost) * -sort.dir;
-      case SortCriteria.CANDY:
-        const candyCountA = this.scene.gameData.starterData[a.species.speciesId].candyCount;
-        const candyCountB = this.scene.gameData.starterData[b.species.speciesId].candyCount;
-        return (candyCountA - candyCountB) * -sort.dir;
-      case SortCriteria.IV:
-        const avgIVsA = this.scene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[a.species.speciesId].ivs.length;
-        const avgIVsB = this.scene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[b.species.speciesId].ivs.length;
-        return (avgIVsA - avgIVsB) * -sort.dir;
-      case SortCriteria.NAME:
-        return a.species.name.localeCompare(b.species.name) * -sort.dir;
+        default:
+          break;
+        case SortCriteria.NUMBER:
+          return (a.species.speciesId - b.species.speciesId) * -sort.dir;
+        case SortCriteria.COST:
+          return (a.cost - b.cost) * -sort.dir;
+        case SortCriteria.CANDY:
+          const candyCountA = this.scene.gameData.starterData[a.species.speciesId].candyCount;
+          const candyCountB = this.scene.gameData.starterData[b.species.speciesId].candyCount;
+          return (candyCountA - candyCountB) * -sort.dir;
+        case SortCriteria.IV:
+          const avgIVsA = this.scene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[a.species.speciesId].ivs.length;
+          const avgIVsB = this.scene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) / this.scene.gameData.dexData[b.species.speciesId].ivs.length;
+          return (avgIVsA - avgIVsB) * -sort.dir;
+        case SortCriteria.NAME:
+          return a.species.name.localeCompare(b.species.name) * -sort.dir;
       }
       return 0;
     });
@@ -3362,16 +3362,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     starter.label.setText(valueStr);
     let textStyle: TextStyle;
     switch (baseStarterValue - starterValue) {
-    case 0:
-      textStyle = TextStyle.WINDOW;
-      break;
-    case 1:
-    case 0.5:
-      textStyle = TextStyle.SUMMARY_BLUE;
-      break;
-    default:
-      textStyle = TextStyle.SUMMARY_GOLD;
-      break;
+      case 0:
+        textStyle = TextStyle.WINDOW;
+        break;
+      case 1:
+      case 0.5:
+        textStyle = TextStyle.SUMMARY_BLUE;
+        break;
+      default:
+        textStyle = TextStyle.SUMMARY_GOLD;
+        break;
     }
     if (baseStarterValue - starterValue > 0) {
       starter.label.setColor(this.getTextColor(textStyle));

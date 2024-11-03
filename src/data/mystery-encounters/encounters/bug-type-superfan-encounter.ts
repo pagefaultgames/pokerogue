@@ -42,6 +42,8 @@ import {
   AttackTypeBoosterModifier,
   BypassSpeedChanceModifier,
   ContactHeldItemTransferChanceModifier,
+  GigantamaxAccessModifier,
+  MegaEvolutionAccessModifier,
   PokemonHeldItemModifier
 } from "#app/modifier/modifier";
 import i18next from "i18next";
@@ -191,12 +193,14 @@ const WAVE_LEVEL_BREAKPOINTS = [ 30, 50, 70, 100, 120, 140, 160 ];
 export const BugTypeSuperfanEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.BUG_TYPE_SUPERFAN)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-      // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
-      new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
-      new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
-      new TypeRequirement(Type.BUG, false, 1)
-    ))
+    .withPrimaryPokemonRequirement(
+      CombinationPokemonRequirement.Some(
+        // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
+        new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
+        new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
+        new TypeRequirement(Type.BUG, false, 1)
+      )
+    )
     .withMaxAllowedEncounters(1)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([]) // These are set in onInit()
@@ -356,10 +360,17 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
             },
           ];
         } else {
-          // If player has any evolution/form change items that are valid for their party, will spawn one of those items in addition to a Master Ball
-          const modifierOptions: ModifierTypeOption[] = [ generateModifierTypeOption(scene, modifierTypes.MASTER_BALL)!, generateModifierTypeOption(scene, modifierTypes.MAX_LURE)! ];
+          // If the player has any evolution/form change items that are valid for their party,
+          // spawn one of those items in addition to Dynamax Band, Mega Band, and Master Ball
+          const modifierOptions: ModifierTypeOption[] = [ generateModifierTypeOption(scene, modifierTypes.MASTER_BALL)! ];
           const specialOptions: ModifierTypeOption[] = [];
 
+          if (!scene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
+            modifierOptions.push(generateModifierTypeOption(scene, modifierTypes.MEGA_BRACELET)!);
+          }
+          if (!scene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
+            modifierOptions.push(generateModifierTypeOption(scene, modifierTypes.DYNAMAX_BAND)!);
+          }
           const nonRareEvolutionModifier = generateModifierTypeOption(scene, modifierTypes.EVOLUTION_ITEM);
           if (nonRareEvolutionModifier) {
             specialOptions.push(nonRareEvolutionModifier);
@@ -396,11 +407,13 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       .build())
     .withOption(MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-        // Meets one or both of the below reqs
-        new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
-        new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1)
-      ))
+      .withPrimaryPokemonRequirement(
+        CombinationPokemonRequirement.Some(
+          // Meets one or both of the below reqs
+          new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
+          new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1)
+        )
+      )
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,

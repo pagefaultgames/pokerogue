@@ -44,7 +44,7 @@ document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems
 
 let game;
 
-const startGame = async () => {
+const startGame = async (manifest?: any) => {
   await initI18n();
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).default;
@@ -94,13 +94,15 @@ const startGame = async () => {
     version: version
   });
   game.sound.pauseOnBlur = false;
+  if (manifest) {
+    game["manifest"] = manifest;
+  }
 };
 
 fetch("/manifest.json")
   .then(res => res.json())
   .then(jsonResponse => {
-    startGame();
-    game["manifest"] = jsonResponse.manifest;
+    startGame(jsonResponse.manifest);
   }).catch(() => {
     // Manifest not found (likely local build)
     startGame();
