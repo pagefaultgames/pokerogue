@@ -4969,7 +4969,7 @@ class ForceSwitchOutHelper {
 function calculateShellBellRecovery(pokemon: Pokemon): number {
   const shellBellModifier = pokemon.getHeldItems().find(m => m instanceof HitHealModifier);
   if (shellBellModifier) {
-    return Utils.toDmgValue(pokemon.turnData.damageDealt / 8) * shellBellModifier.stackCount;
+    return Utils.toDmgValue(pokemon.turnData.totalDamageDealt / 8) * shellBellModifier.stackCount;
   }
   return 0;
 }
