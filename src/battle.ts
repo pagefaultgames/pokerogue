@@ -288,6 +288,10 @@ export default class Battle {
               return "battle_legendary_rayquaza";
             case Species.DEOXYS:
               return "battle_legendary_deoxys";
+            case Species.UXIE:
+            case Species.MESPRIT:
+            case Species.AZELF:
+              return "battle_legendary_lake_trio";
             case Species.HEATRAN:
             case Species.CRESSELIA:
             case Species.DARKRAI:
