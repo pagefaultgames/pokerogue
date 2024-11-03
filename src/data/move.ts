@@ -3240,7 +3240,7 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
  */
 export class OrderUpStatBoostAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.HIT);
+    super(true, { trigger: MoveEffectTrigger.HIT });
   }
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
