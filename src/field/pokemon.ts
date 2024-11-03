@@ -3209,8 +3209,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const key = this.species.getCryKey(this.formIndex);
-    //eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let i = 0;
     let rate = 0.85;
     const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
     if (!cry || this.scene.fieldVolume === 0) {

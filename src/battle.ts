@@ -12,7 +12,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
-import { MusicPreference } from "./system/settings/settings";
+import { MusicPreference } from "#app/system/settings/settings";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";

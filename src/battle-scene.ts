@@ -13,7 +13,7 @@ import { Arena, ArenaBase } from "#app/field/arena";
 import { GameData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "#app/data/move";
-import { MusicPreference } from "./system/settings/settings";
+import { MusicPreference } from "#app/system/settings/settings";
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import AbilityBar from "#app/ui/ability-bar";
 import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr } from "#app/data/ability";
