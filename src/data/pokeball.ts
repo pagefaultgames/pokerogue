@@ -85,7 +85,7 @@ export function getPokeballTintColor(type: PokeballType): number {
 
 /**
  * Gets the critical capture chance based on number of mons registered in Dex and modified {@link https://bulbapedia.bulbagarden.net/wiki/Catch_rate Catch rate}
- * Multipliers and formula from {@link https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Critical_capture Bulbapedia "Catch Rate" page}
+ * Formula from {@link https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Critical_capture Bulbapedia "Catch Rate" page}
  * @param scene {@linkcode BattleScene} current BattleScene
  * @param modifiedCatchRate the modified catch rate as calculated in {@linkcode AttemptCapturePhase}
  * @returns the chance of getting a critical capture, out of 256
@@ -94,11 +94,11 @@ export function getCriticalCaptureChance(scene: BattleScene, modifiedCatchRate: 
   const dexCount = scene.gameData.getSpeciesCount(d => !!d.caughtAttr);
   const catchingCharmMultiplier = new NumberHolder(1);
   //scene.findModifier(m => m instanceof CriticalCaptureBoostModifier)?.apply(catchingCharmMultiplier);
-  const dexMultiplier = dexCount > 600 ? 2.5
-    : dexCount > 450 ? 2
-      : dexCount > 300 ? 1.5
-        : dexCount > 150 ? 1
-          : dexCount > 30 ? 0.5
+  const dexMultiplier = dexCount > 800 ? 2.5
+    : dexCount > 600 ? 2
+      : dexCount > 400 ? 1.5
+        : dexCount > 200 ? 1
+          : dexCount > 100 ? 0.5
             : 0;
   return Math.floor(catchingCharmMultiplier.value * dexMultiplier * modifiedCatchRate / 6);
 }
