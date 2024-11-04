@@ -58,8 +58,8 @@ describe("Abilities - Arena Trap", () => {
   });
 
   /**
-   * This checks if the Player Pokemon is able to switch out/run away after the Enemy Pokemon with {@link Abilities.ARENA_TRAP}
-   * is forcefully moved out of the field from moves such as Roar {@link Moves.ROAR}
+   * This checks if the Player Pokemon is able to switch out/run away after the Enemy Pokemon with {@linkcode Abilities.ARENA_TRAP}
+   * is forcefully moved out of the field from moves such as Roar {@linkcode Moves.ROAR}
    *
    * Note: It should be able to switch out/run away
    */
