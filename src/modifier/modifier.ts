@@ -2950,6 +2950,38 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 }
 
+export class CriticalCatchBoostModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: number) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof CriticalCatchBoostModifier;
+  }
+
+  clone(): CriticalCatchBoostModifier {
+    return new CriticalCatchBoostModifier(this.type, this.stackCount);
+  }
+
+  /**
+   * Applies {@linkcode CriticalCatchBoostModifier}
+   * @param boost {@linkcode NumberHolder} holding the boost value
+   * @returns always `true`
+   */
+  override apply(boost: NumberHolder): boolean {
+    // 1 stack: 2x
+    // 2 stack: 2.5x
+    // 3 stack: 3x
+    boost.value *= 1.5 + 0.5 * this.getStackCount();
+
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): number {
+    return 3;
+  }
+}
+
 export class LockModifierTiersModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
