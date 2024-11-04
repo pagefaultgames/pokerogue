@@ -193,4 +193,32 @@ describe("Abilities - Commander", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(dondozo.isActive(true)).toBeTruthy();
   });
+
+  it("should interrupt the source's semi-invulnerability", async () => {
+    game.override
+      .moveset([ Moves.SPLASH, Moves.DIVE ])
+      .enemyMoveset(Moves.SPLASH);
+
+    await game.classicMode.startBattle([ Species.TATSUGIRI, Species.MAGIKARP, Species.DONDOZO ]);
+
+    const tatsugiri = game.scene.getPlayerField()[0];
+
+    game.move.select(Moves.DIVE, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.SPLASH, 1);
+
+    await game.phaseInterceptor.to("CommandPhase");
+    await game.toNextTurn();
+
+    expect(tatsugiri.getTag(BattlerTagType.UNDERWATER)).toBeDefined();
+    game.doSwitchPokemon(2);
+
+    await game.phaseInterceptor.to("MovePhase", false);
+    const dondozo = game.scene.getPlayerField()[1];
+    expect(tatsugiri.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
+    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
+
+    await game.toNextTurn();
+    const enemy = game.scene.getEnemyField()[0];
+    expect(enemy.isFullHp()).toBeTruthy();
+  });
 });
