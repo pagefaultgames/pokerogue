@@ -39,8 +39,6 @@ export class EvolutionPhase extends Phase {
     this.pokemon = pokemon;
     this.evolution = evolution;
     this.lastLevel = lastLevel;
-    this.evolutionBgm = this.scene.playSoundWithoutBgm("evolution");
-    this.preEvolvedPokemonName = getPokemonNameWithAffix(this.pokemon);
   }
 
   validate(): boolean {
@@ -62,9 +60,9 @@ export class EvolutionPhase extends Phase {
 
       this.scene.fadeOutBgm(undefined, false);
 
-      const evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
+      this.evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
 
-      this.evolutionContainer = evolutionHandler.evolutionContainer;
+      this.evolutionContainer = this.evolutionHandler.evolutionContainer;
 
       this.evolutionBaseBg = this.scene.add.image(0, 0, "default_bg");
       this.evolutionBaseBg.setOrigin(0, 0);
@@ -117,14 +115,12 @@ export class EvolutionPhase extends Phase {
           sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
         });
       });
-
+      this.preEvolvedPokemonName = getPokemonNameWithAffix(this.pokemon);
       this.doEvolution();
     });
   }
 
   doEvolution(): void {
-    this.evolutionHandler = this.scene.ui.getHandler() as EvolutionSceneHandler;
-
     this.scene.ui.showText(i18next.t("menu:evolving", { pokemonName: this.preEvolvedPokemonName }), null, () => {
       this.pokemon.cry();
 
@@ -145,6 +141,7 @@ export class EvolutionPhase extends Phase {
         });
 
         this.scene.time.delayedCall(1000, () => {
+          this.evolutionBgm = this.scene.playSoundWithoutBgm("evolution");
           this.scene.tweens.add({
             targets: this.evolutionBgOverlay,
             alpha: 1,
