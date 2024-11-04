@@ -42,7 +42,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   function confirmSwitch(): void {
-    const [ pokemon1, pokemon2 ] = game.scene.getParty();
+    const [ pokemon1, pokemon2 ] = game.scene.getPlayerParty();
 
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
 
@@ -54,7 +54,7 @@ describe("Abilities - Wimp Out", () => {
   }
 
   function confirmNoSwitch(): void {
-    const [ pokemon1, pokemon2 ] = game.scene.getParty();
+    const [ pokemon1, pokemon2 ] = game.scene.getPlayerParty();
 
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
 
@@ -135,7 +135,7 @@ describe("Abilities - Wimp Out", () => {
 
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(game.scene.getParty()[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(game.scene.getPlayerParty()[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     confirmSwitch();
   });
 
@@ -263,7 +263,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getParty()[1].getHpRatio()).toBeGreaterThan(0.5);
+    expect(game.scene.getPlayerParty()[1].getHpRatio()).toBeGreaterThan(0.5);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.TYRUNT);
   });
@@ -424,7 +424,7 @@ describe("Abilities - Wimp Out", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getParty()[0].getHpRatio()).toEqual(0.51);
+    expect(game.scene.getPlayerParty()[0].getHpRatio()).toEqual(0.51);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.WIMPOD);
   });
@@ -522,7 +522,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getParty()[1].status?.effect).toEqual(StatusEffect.POISON);
+    expect(game.scene.getPlayerParty()[1].status?.effect).toEqual(StatusEffect.POISON);
     confirmSwitch();
   });
 
