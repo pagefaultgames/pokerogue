@@ -176,7 +176,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.ZEKROM
     ]);
 
-    const party = game.scene.getParty();
+    const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
 
     // Get rid of any modifiers that may alter power
@@ -235,7 +235,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.ZEKROM
     ]);
 
-    const party = game.scene.getParty();
+    const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
 
     // Get rid of any modifiers that may alter power

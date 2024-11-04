@@ -523,7 +523,11 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    const user = this.getUserPokemon()!; // TODO: is this bang correct?
+    const user = this.getUserPokemon();
+
+    if (!user) {
+      return false;
+    }
 
     // Hit check only calculated on first hit for multi-hit moves unless flag is set to check all hits.
     // However, if an ability with the MaxMultiHitAbAttr, namely Skill Link, is present, act as a normal
@@ -572,9 +576,9 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /** @returns The {@linkcode Pokemon} using this phase's invoked move */
-  public getUserPokemon(): Pokemon | undefined {
+  public getUserPokemon(): Pokemon | null {
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
-      return this.scene.getPokemonById(this.battlerIndex) ?? undefined;
+      return this.scene.getPokemonById(this.battlerIndex);
     }
     return (this.player ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
   }
@@ -602,8 +606,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /**
    * Prevents subsequent strikes of this phase's invoked move from occurring
-   * @param target {@linkcode Pokemon} if defined, only stop subsequent
-   * strikes against this Pokemon
+   * @param target - If defined, only stop subsequent strikes against this {@linkcode Pokemon}
    */
   public stopMultiHit(target?: Pokemon): void {
     // If given a specific target, remove the target from subsequent strikes

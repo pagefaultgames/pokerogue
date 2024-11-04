@@ -418,9 +418,9 @@ export function generateModifierType(scene: BattleScene, modifier: () => Modifie
   // Populates item id and tier (order matters)
   result = result
     .withIdFromFunc(modifierTypes[modifierId])
-    .withTierFromPool(ModifierPoolType.PLAYER, scene.getParty());
+    .withTierFromPool(ModifierPoolType.PLAYER, scene.getPlayerParty());
 
-  return result instanceof ModifierTypeGenerator ? result.generateType(scene.getParty(), pregenArgs) : result;
+  return result instanceof ModifierTypeGenerator ? result.generateType(scene.getPlayerParty(), pregenArgs) : result;
 }
 
 /**
@@ -451,9 +451,9 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
 
     // Open party screen to choose pokemon
     scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
-      if (slotIndex < scene.getParty().length) {
+      if (slotIndex < scene.getPlayerParty().length) {
         scene.ui.setMode(modeToSetOnExit).then(() => {
-          const pokemon = scene.getParty()[slotIndex];
+          const pokemon = scene.getPlayerParty()[slotIndex];
           const secondaryOptions = onPokemonSelected(pokemon);
           if (!secondaryOptions) {
             scene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -563,7 +563,7 @@ export function selectOptionThenPokemon(scene: BattleScene, options: OptionSelec
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
       // Open party screen to choose a Pokemon
       scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
-        if (slotIndex < scene.getParty().length) {
+        if (slotIndex < scene.getPlayerParty().length) {
           // Pokemon and option selected
           scene.ui.setMode(modeToSetOnExit).then(() => {
             const result: PokemonAndOptionSelected = { selectedPokemonIndex: slotIndex, selectedOptionIndex: selectedOptionIndex };
@@ -713,7 +713,7 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
  * @param doNotContinue - default `false`. If set to true, will not end the battle and continue to next wave
  */
 export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false, doNotContinue: boolean = false) {
-  const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  const allowedPkm = scene.getPlayerParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
     scene.clearPhaseQueue();
@@ -750,7 +750,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
  * @param addHealPhase
  */
 export function handleMysteryEncounterBattleFailed(scene: BattleScene, addHealPhase: boolean = false, doNotContinue: boolean = false) {
-  const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  const allowedPkm = scene.getPlayerParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
     scene.clearPhaseQueue();

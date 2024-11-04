@@ -49,7 +49,7 @@ describe("Double Battles", () => {
     await game.phaseInterceptor.to(BattleEndPhase);
     game.doSelectModifier();
 
-    const charizard = game.scene.getParty().findIndex(p => p.species.speciesId === Species.CHARIZARD);
+    const charizard = game.scene.getPlayerParty().findIndex(p => p.species.speciesId === Species.CHARIZARD);
     game.doRevivePokemon(charizard);
 
     await game.phaseInterceptor.to(TurnInitPhase);

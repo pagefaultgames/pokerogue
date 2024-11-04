@@ -313,8 +313,8 @@ export class ConditionalProtectTag extends ArenaTag {
  * protection effect.
  * @param arena {@linkcode Arena} The arena containing the protection effect
  * @param moveId {@linkcode Moves} The move to check against this condition
- * @returns `true` if the incoming move's priority is greater than 0. This includes
- * moves with modified priorities from abilities (e.g. Prankster)
+ * @returns `true` if the incoming move's priority is greater than 0.
+ *   This includes moves with modified priorities from abilities (e.g. Prankster)
  */
 const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
   const move = allMoves[moveId];
@@ -322,9 +322,11 @@ const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
   const effectPhase = arena.scene.getCurrentPhase();
 
   if (effectPhase instanceof MoveEffectPhase) {
-    const attacker = effectPhase.getUserPokemon()!;
+    const attacker = effectPhase.getUserPokemon();
     applyMoveAttrs(IncrementMovePriorityAttr, attacker, null, move, priority);
-    applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, false, move, priority);
+    if (attacker) {
+      applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, false, move, priority);
+    }
   }
   return priority.value > 0;
 };
@@ -1204,6 +1206,24 @@ class GrassWaterPledgeTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Fairy_Lock_(move) Fairy Lock}.
+ * Fairy Lock prevents all Pokémon (except Ghost types) on the field from switching out or
+ * fleeing during their next turn.
+ * If a Pokémon that's on the field when Fairy Lock is used goes on to faint later in the same turn,
+ * the Pokémon that replaces it will still be unable to switch out in the following turn.
+ */
+export class FairyLockTag extends ArenaTag {
+  constructor(turnCount: number, sourceId: number) {
+    super(ArenaTagType.FAIRY_LOCK, turnCount, Moves.FAIRY_LOCK, sourceId);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t("arenaTag:fairyLockOnAdd"));
+  }
+
+}
+
 // TODO: swap `sourceMove` and `sourceId` and make `sourceMove` an optional parameter
 export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove: Moves | undefined, sourceId: number, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
@@ -1262,6 +1282,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove
       return new WaterFirePledgeTag(sourceId, side);
     case ArenaTagType.GRASS_WATER_PLEDGE:
       return new GrassWaterPledgeTag(sourceId, side);
+    case ArenaTagType.FAIRY_LOCK:
+      return new FairyLockTag(turnCount, sourceId);
     default:
       return null;
   }
