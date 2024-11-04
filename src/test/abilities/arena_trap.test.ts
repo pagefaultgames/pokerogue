@@ -64,32 +64,31 @@ describe("Abilities - Arena Trap", () => {
    * Note: It should be able to switch out/run away
    */
   it("should lift if pokemon with this ability leaves the field", async () => {
-    game.override.battleType("double");
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.moveset([ Moves.ROAR, Moves.SPLASH ]);
+    game.override
+      .battleType("double")
+      .enemyMoveset(Moves.SPLASH)
+      .moveset([ Moves.ROAR, Moves.SPLASH ])
+      .ability(Abilities.BALL_FETCH);
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.SUDOWOODO, Species.LUNATONE ]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
-    const player1 = game.scene.getPlayerField()[0];
-    const player2 = game.scene.getPlayerField()[1];
+    const [ enemy1, enemy2 ] = game.scene.getEnemyField();
+    const [ player1, player2 ] = game.scene.getPlayerField();
 
     vi.spyOn(enemy1, "getAbility").mockReturnValue(allAbilities[Abilities.ARENA_TRAP]);
-    vi.spyOn(enemy2, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    vi.spyOn(player1, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    vi.spyOn(player2, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
 
     game.move.select(Moves.ROAR);
-    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
 
     // This runs the fist command phase where the moves are selected
     await game.toNextTurn();
     // During the next command phase the player pokemons should not be trapped anymore
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[0].isTrapped()).toBe(false);
-    expect(game.scene.getPlayerField()[1].isTrapped()).toBe(false);
-    expect(game.scene.getEnemyField()[0].isOnField()).toBe(false);
-    expect(game.scene.getEnemyField()[1].isOnField()).toBe(true);
+    expect(player1.isTrapped()).toBe(false);
+    expect(player2.isTrapped()).toBe(false);
+    expect(enemy1.isOnField()).toBe(false);
+    expect(enemy2.isOnField()).toBe(true);
   });
 });
