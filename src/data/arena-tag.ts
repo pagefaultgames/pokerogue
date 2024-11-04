@@ -313,8 +313,8 @@ export class ConditionalProtectTag extends ArenaTag {
  * protection effect.
  * @param arena {@linkcode Arena} The arena containing the protection effect
  * @param moveId {@linkcode Moves} The move to check against this condition
- * @returns `true` if the incoming move's priority is greater than 0. This includes
- * moves with modified priorities from abilities (e.g. Prankster)
+ * @returns `true` if the incoming move's priority is greater than 0.
+ *   This includes moves with modified priorities from abilities (e.g. Prankster)
  */
 const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
   const move = allMoves[moveId];
@@ -322,9 +322,11 @@ const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
   const effectPhase = arena.scene.getCurrentPhase();
 
   if (effectPhase instanceof MoveEffectPhase) {
-    const attacker = effectPhase.getUserPokemon()!;
+    const attacker = effectPhase.getUserPokemon();
     applyMoveAttrs(IncrementMovePriorityAttr, attacker, null, move, priority);
-    applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, false, move, priority);
+    if (attacker) {
+      applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, false, move, priority);
+    }
   }
   return priority.value > 0;
 };

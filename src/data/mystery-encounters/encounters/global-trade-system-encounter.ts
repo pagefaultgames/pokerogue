@@ -1,6 +1,7 @@
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { TrainerSlot, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import { MusicPreference } from "#app/system/settings/settings";
 import { getPlayerModifierTypeOptions, ModifierPoolType, ModifierTypeOption, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
@@ -105,7 +106,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
       // Load bgm
       let bgmKey: string;
-      if (scene.musicPreference === 0) {
+      if (scene.musicPreference === MusicPreference.CONSISTENT) {
         bgmKey = "mystery_encounter_gen_5_gts";
         scene.loadBgm(bgmKey, `${bgmKey}.mp3`);
       } else {
