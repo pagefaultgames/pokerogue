@@ -51,7 +51,7 @@ describe("Abilities - Pastel Veil", () => {
 
   it("it heals the poisoned status condition of allies if user is sent out into battle", async () => {
     await game.startBattle([ Species.MAGIKARP, Species.FEEBAS, Species.GALAR_PONYTA ]);
-    const ponyta = game.scene.getParty()[2];
+    const ponyta = game.scene.getPlayerParty()[2];
     const magikarp = game.scene.getPlayerField()[0];
     ponyta.abilityIndex = 1;
 

@@ -115,7 +115,7 @@ describe("Abilities - Illusion", () => {
 
     await game.startBattle([ Species.ABRA, Species.ZOROARK, Species.AXEW ]);
 
-    const axew = game.scene.getParty().at(2)!;
+    const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
     axew.nickname = btoa(unescape(encodeURIComponent("axew nickname")));
     axew.gender = Gender.FEMALE;
