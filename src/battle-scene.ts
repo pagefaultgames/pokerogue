@@ -13,6 +13,7 @@ import { Arena, ArenaBase } from "#app/field/arena";
 import { GameData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "#app/data/move";
+import { MusicPreference } from "#app/system/settings/settings";
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import AbilityBar from "#app/ui/ability-bar";
 import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr, PostItemLostAbAttr } from "#app/data/ability";
@@ -169,7 +170,7 @@ export default class BattleScene extends SceneBase {
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
-  public musicPreference: integer = 0;
+  public musicPreference: number = MusicPreference.MIXED;
   public moveAnimations: boolean = true;
   public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
   public skipSeenDialogues: boolean = false;
@@ -2998,22 +2999,16 @@ export default class BattleScene extends SceneBase {
    */
   getActiveKeys(): string[] {
     const keys: string[] = [];
-    const playerParty = this.getPlayerParty();
-    playerParty.forEach(p => {
+    let activePokemon: (PlayerPokemon | EnemyPokemon)[] = this.getPlayerParty();
+    activePokemon = activePokemon.concat(this.getEnemyParty());
+    activePokemon.forEach((p) => {
       keys.push(p.getSpriteKey(true));
-      keys.push(p.getBattleSpriteKey(true, true));
-      keys.push("cry/" + p.species.getCryKey(p.formIndex));
-      if (p.fusionSpecies) {
-        keys.push("cry/" + p.fusionSpecies.getCryKey(p.fusionFormIndex));
+      if (p instanceof PlayerPokemon) {
+        keys.push(p.getBattleSpriteKey(true, true));
       }
-    });
-    // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
-    const enemyParty = this.getEnemyParty();
-    enemyParty.forEach(p => {
-      keys.push(p.getSpriteKey(true));
-      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      keys.push(p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
-        keys.push("cry/" + p.fusionSpecies.getCryKey(p.fusionFormIndex));
+        keys.push(p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     return keys;
