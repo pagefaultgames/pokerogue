@@ -7393,6 +7393,12 @@ export class FirstMoveCondition extends MoveCondition {
   }
 }
 
+/**
+ * Condition used by the move {@link https://bulbapedia.bulbagarden.net/wiki/Upper_Hand_(move) | Upper Hand}.
+ * Moves with this condition are only successful when the target has selected
+ * a high-priority attack (after factoring in priority-boosting effects) and
+ * hasn't moved yet this turn.
+ */
 export class UpperHandCondition extends MoveCondition {
   constructor() {
     super((user, target, move) => {
