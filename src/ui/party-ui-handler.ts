@@ -1063,7 +1063,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.clearPartySlots();
       const releasedPokemon = this.scene.getPlayerParty().splice(slotIndex, 1)[0];
       let releasedId: number = 0;
-      if (releasedPokemon.isAllowedInChallenge()) {
+      if (releasedPokemon.isAllowedInChallenge() && releasedPokemon.friendship > 200) {
         releasedId = releasedPokemon.id;
       }
       this.populatePartySlots();
