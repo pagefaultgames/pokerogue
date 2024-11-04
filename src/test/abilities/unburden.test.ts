@@ -59,8 +59,8 @@ describe("Abilities - Unburden", () => {
 
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed * 2);
-
   });
+
   it("should activate when a berry is stolen", async () => {
     await game.classicMode.startBattle();
 
@@ -74,6 +74,7 @@ describe("Abilities - Unburden", () => {
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
+
   it("should activate when an item is knocked off", async () => {
     await game.classicMode.startBattle();
 
@@ -87,6 +88,7 @@ describe("Abilities - Unburden", () => {
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
+
   it("should activate when an item is stolen via attacking ability", async () => {
     game.override
       .ability(Abilities.MAGICIAN)
@@ -105,6 +107,7 @@ describe("Abilities - Unburden", () => {
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
+
   it("should activate when an item is stolen via defending ability", async () => {
     game.override
       .startingLevel(45)
@@ -127,6 +130,7 @@ describe("Abilities - Unburden", () => {
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed * 2);
   });
+
   it("should activate when an item is stolen via move", async () => {
     vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([ new StealHeldItemChanceAttr(1.0) ]); // give Thief 100% steal rate
     game.override.startingHeldItems([
@@ -144,6 +148,7 @@ describe("Abilities - Unburden", () => {
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
+
   it("should activate when an item is stolen via grip claw", async () => {
     game.override
       .startingLevel(5)
@@ -189,6 +194,7 @@ describe("Abilities - Unburden", () => {
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed);
   });
+
   it("should activate when a move that consumes a berry is used", async () => {
     game.override.enemyMoveset([ Moves.STUFF_CHEEKS ]);
     await game.classicMode.startBattle();
@@ -203,6 +209,7 @@ describe("Abilities - Unburden", () => {
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
+
   it("should deactivate when a neutralizing gas user enters the field", async () => {
     game.override
       .battleType("double")
