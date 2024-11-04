@@ -175,7 +175,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const leadPokemonId = scene.getParty()?.[0].id;
+      const leadPokemonId = scene.getPlayerParty()?.[0].id;
       const leadPokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).pokemonId === leadPokemonId, true) as PokemonHeldItemModifier[];
       const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
@@ -202,7 +202,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     it("should damage all non-fire party PKM by 20%, and burn + give Heatproof to a random Pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
 
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       const lapras = party.find((pkm) => pkm.species.speciesId === Species.LAPRAS)!;
       lapras.status = new Status(StatusEffect.POISON);
       const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA)!;
@@ -254,7 +254,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const leadPokemonItems = scene.getParty()?.[0].getHeldItems() as PokemonHeldItemModifier[];
+      const leadPokemonItems = scene.getPlayerParty()?.[0].getHeldItems() as PokemonHeldItemModifier[];
       const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
       expect(item).toBeDefined;
     });

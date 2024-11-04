@@ -53,24 +53,24 @@ export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string,
 }
 
 /**
- * Will never remove the player's last non-fainted Pokemon (if they only have 1)
+ * Will never remove the player's last non-fainted Pokemon (if they only have 1).
  * Otherwise, picks a Pokemon completely at random and removes from the party
  * @param scene
- * @param isAllowed Default false. If true, only picks from legal mons. If no legal mons are found (or there is 1, with `doNotReturnLastAllowedMon = true), will return a mon that is not allowed.
- * @param isFainted Default false. If true, includes fainted mons.
- * @param doNotReturnLastAllowedMon Default false. If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
+ * @param isAllowed Default `false`. If `true`, only picks from legal mons. If no legal mons are found (or there is 1, with `doNotReturnLastAllowedMon = true`), will return a mon that is not allowed.
+ * @param isFainted Default `false`. If `true`, includes fainted mons.
+ * @param doNotReturnLastAllowedMon Default `false`. If `true`, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
 export function getRandomPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false, doNotReturnLastAllowedMon: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
   let chosenIndex: number;
   let chosenPokemon: PlayerPokemon | null = null;
-  const fullyLegalMons = party.filter(p => (!isAllowed || p.isAllowed()) && (isFainted || !p.isFainted()));
-  const allowedOnlyMons = party.filter(p => p.isAllowed());
+  const fullyLegalMons = party.filter(p => (!isAllowed || p.isAllowedInChallenge()) && (isFainted || !p.isFainted()));
+  const allowedOnlyMons = party.filter(p => p.isAllowedInChallenge());
 
   if (doNotReturnLastAllowedMon && fullyLegalMons.length === 1) {
     // If there is only 1 legal/unfainted mon left, select from fainted legal mons
-    const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowed()) && p.isFainted());
+    const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowedInChallenge()) && p.isFainted());
     if (faintedLegalMons.length > 0) {
       chosenIndex = randSeedInt(faintedLegalMons.length);
       chosenPokemon = faintedLegalMons[chosenIndex];
@@ -101,11 +101,11 @@ export function getRandomPlayerPokemon(scene: BattleScene, isAllowed: boolean = 
  * @returns
  */
 export function getHighestLevelPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (isAllowed && !p.isAllowed()) {
+    if (isAllowed && !p.isAllowedInChallenge()) {
       continue;
     }
     if (!isFainted && p.isFainted()) {
@@ -127,11 +127,11 @@ export function getHighestLevelPlayerPokemon(scene: BattleScene, isAllowed: bool
  * @returns
  */
 export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentStat, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (isAllowed && !p.isAllowed()) {
+    if (isAllowed && !p.isAllowedInChallenge()) {
       continue;
     }
     if (!isFainted && p.isFainted()) {
@@ -152,11 +152,11 @@ export function getHighestStatPlayerPokemon(scene: BattleScene, stat: PermanentS
  * @returns
  */
 export function getLowestLevelPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (isAllowed && !p.isAllowed()) {
+    if (isAllowed && !p.isAllowedInChallenge()) {
       continue;
     }
     if (!isFainted && p.isFainted()) {
@@ -177,11 +177,11 @@ export function getLowestLevelPlayerPokemon(scene: BattleScene, isAllowed: boole
  * @returns
  */
 export function getHighestStatTotalPlayerPokemon(scene: BattleScene, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (isAllowed && !p.isAllowed()) {
+    if (isAllowed && !p.isAllowedInChallenge()) {
       continue;
     }
     if (!isFainted && p.isFainted()) {
@@ -315,7 +315,7 @@ export function applyHealToPokemon(scene: BattleScene, pokemon: PlayerPokemon, h
  */
 export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
   const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(pokemon.scene.getParty(), [ value ])
+    .generateType(pokemon.scene.getPlayerParty(), [ value ])
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
@@ -591,7 +591,7 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
       const addToParty = (slotIndex?: number) => {
         const newPokemon = pokemon.addToParty(pokeballType, slotIndex);
         const modifiers = scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
-        if (scene.getParty().filter(p => p.isShiny()).length === 6) {
+        if (scene.getPlayerParty().filter(p => p.isShiny()).length === 6) {
           scene.validateAchv(achvs.SHINY_PARTY);
         }
         Promise.all(modifiers.map(m => scene.addModifier(m, true))).then(() => {
@@ -605,7 +605,7 @@ export async function catchPokemon(scene: BattleScene, pokemon: EnemyPokemon, po
         });
       };
       Promise.all([ pokemon.hideInfo(), scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
-        if (scene.getParty().length === 6) {
+        if (scene.getPlayerParty().length === 6) {
           const promptRelease = () => {
             scene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
               scene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
@@ -826,7 +826,7 @@ export async function addPokemonDataToDexAndValidateAchievements(scene: BattleSc
  * @param invalidSelectionKey
  */
 export function isPokemonValidForEncounterOptionSelection(pokemon: Pokemon, scene: BattleScene, invalidSelectionKey: string): string | null {
-  if (!pokemon.isAllowed()) {
+  if (!pokemon.isAllowedInChallenge()) {
     return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
   }
   if (!pokemon.isAllowedInBattle()) {

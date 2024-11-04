@@ -12,7 +12,7 @@ import * as Utils from "#app/utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier } from "#app/modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
 import { PokeballType } from "#app/data/pokeball";
 import { Gender } from "#app/data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
@@ -22,7 +22,7 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
 import { WeatherType } from "#app/data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr } from "#app/data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, PostDamageForceSwitchAbAttr } from "#app/data/ability";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -325,35 +325,45 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.scene.field.getIndex(this) > -1;
   }
 
-  isFainted(checkStatus?: boolean): boolean {
-    return !this.hp && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
+  /**
+   * Checks if a pokemon is fainted (ie: its `hp <= 0`).
+   * It's usually better to call {@linkcode isAllowedInBattle()}
+   * @param checkStatus `true` to also check that the pokemon's status is {@linkcode StatusEffect.FAINT}
+   * @returns `true` if the pokemon is fainted
+   */
+  public isFainted(checkStatus: boolean = false): boolean {
+    return this.hp <= 0 && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
   }
 
   /**
-   * Check if this pokemon is both not fainted (or a fled wild pokemon) and allowed to be in battle.
-   * This is frequently a better alternative to {@link isFainted}
-   * @returns {boolean} True if pokemon is allowed in battle
+   * Check if this pokemon is both not fainted and allowed to be in battle based on currently active challenges.
+   * @returns {boolean} `true` if pokemon is allowed in battle
    */
-  isAllowedInBattle(): boolean {
-    return !this.isFainted() && this.isAllowed();
+  public isAllowedInBattle(): boolean {
+    return !this.isFainted() && this.isAllowedInChallenge();
   }
 
   /**
-   * Check if this pokemon is allowed (no challenge exclusion)
-   * This is frequently a better alternative to {@link isFainted}
-   * @returns {boolean} True if pokemon is allowed in battle
+   * Check if this pokemon is allowed based on any active challenges.
+   * It's usually better to call {@linkcode isAllowedInBattle()}
+   * @returns {boolean} `true` if pokemon is allowed in battle
    */
-  isAllowed(): boolean {
+  public isAllowedInChallenge(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(this.scene.gameMode, ChallengeType.POKEMON_IN_BATTLE, this, challengeAllowed);
     return challengeAllowed.value;
   }
 
-  isActive(onField?: boolean): boolean {
+  /**
+   * Checks if the pokemon is allowed in battle (ie: not fainted, and allowed under any active challenges).
+   * @param onField `true` to also check if the pokemon is currently on the field, defaults to `false`
+   * @returns `true` if the pokemon is "active". Returns `false` if there is no active {@linkcode BattleScene}
+   */
+  public isActive(onField: boolean = false): boolean {
     if (!this.scene) {
       return false;
     }
-    return this.isAllowedInBattle() && !!this.scene && (!onField || this.isOnField());
+    return this.isAllowedInBattle() && (!onField || this.isOnField());
   }
 
   getDexAttr(): bigint {
@@ -428,38 +438,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               resolve();
             };
             if (this.shiny) {
-              const populateVariantColors = (key: string, back: boolean = false): Promise<void> => {
+              const populateVariantColors = (isBackSprite: boolean = false): Promise<void> => {
                 return new Promise(resolve => {
-                  const battleSpritePath = this.getBattleSpriteAtlasPath(back, ignoreOverride).replace("variant/", "").replace(/_[1-3]$/, "");
+                  const battleSpritePath = this.getBattleSpriteAtlasPath(isBackSprite, ignoreOverride).replace("variant/", "").replace(/_[1-3]$/, "");
                   let config = variantData;
-                  const useExpSprite = this.scene.experimentalSprites && this.scene.hasExpSprite(this.getBattleSpriteKey(back, ignoreOverride));
+                  const useExpSprite = this.scene.experimentalSprites && this.scene.hasExpSprite(this.getBattleSpriteKey(isBackSprite, ignoreOverride));
                   battleSpritePath.split("/").map(p => config ? config = config[p] : null);
                   const variantSet: VariantSet = config as VariantSet;
                   if (variantSet && variantSet[this.variant] === 1) {
-                    if (variantColorCache.hasOwnProperty(key)) {
-                      return resolve();
+                    const cacheKey = this.getBattleSpriteKey(isBackSprite);
+                    if (!variantColorCache.hasOwnProperty(cacheKey)) {
+                      this.populateVariantColorCache(cacheKey, useExpSprite, battleSpritePath);
                     }
-                    this.scene.cachedFetch(`./images/pokemon/variant/${useExpSprite ? "exp/" : ""}${battleSpritePath}.json`).
-                      then(res => {
-                        // Prevent the JSON from processing if it failed to load
-                        if (!res.ok) {
-                          console.error(`Could not load ${res.url}!`);
-                          return;
-                        }
-                        return res.json();
-                      }).then(c => {
-                        variantColorCache[key] = c;
-                        resolve();
-                      });
-                  } else {
-                    resolve();
                   }
+                  resolve();
                 });
               };
               if (this.isPlayer()) {
-                Promise.all([ populateVariantColors(this.getBattleSpriteKey(false)), populateVariantColors(this.getBattleSpriteKey(true), true) ]).then(() => updateFusionPaletteAndResolve());
+                Promise.all([ populateVariantColors(false), populateVariantColors(true) ]).then(() => updateFusionPaletteAndResolve());
               } else {
-                populateVariantColors(this.getBattleSpriteKey(false)).then(() => updateFusionPaletteAndResolve());
+                populateVariantColors(false).then(() => updateFusionPaletteAndResolve());
               }
             } else {
               updateFusionPaletteAndResolve();
@@ -469,6 +467,45 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.load.start();
           }
         });
+    });
+  }
+
+  /**
+   * Gracefully handle errors loading a variant sprite. Log if it fails and attempt to fall back on
+   * non-experimental sprites before giving up.
+   *
+   * @param cacheKey the cache key for the variant color sprite
+   * @param attemptedSpritePath the sprite path that failed to load
+   * @param useExpSprite was the attempted sprite experimental
+   * @param battleSpritePath the filename of the sprite
+   * @param optionalParams any additional params to log
+   */
+  fallbackVariantColor(cacheKey: string, attemptedSpritePath: string, useExpSprite: boolean, battleSpritePath: string, ...optionalParams: any[]) {
+    console.warn(`Could not load ${attemptedSpritePath}!`, ...optionalParams);
+    if (useExpSprite) {
+      this.populateVariantColorCache(cacheKey, false, battleSpritePath);
+    }
+  }
+
+  /**
+   * Attempt to process variant sprite.
+   *
+   * @param cacheKey the cache key for the variant color sprite
+   * @param useExpSprite should the experimental sprite be used
+   * @param battleSpritePath the filename of the sprite
+   */
+  populateVariantColorCache(cacheKey: string, useExpSprite: boolean, battleSpritePath: string) {
+    const spritePath = `./images/pokemon/variant/${useExpSprite ? "exp/" : ""}${battleSpritePath}.json`;
+    this.scene.cachedFetch(spritePath).then(res => {
+      // Prevent the JSON from processing if it failed to load
+      if (!res.ok) {
+        return this.fallbackVariantColor(cacheKey, res.url, useExpSprite, battleSpritePath, res.status, res.statusText);
+      }
+      return res.json();
+    }).catch(error => {
+      this.fallbackVariantColor(cacheKey, spritePath, useExpSprite, battleSpritePath, error);
+    }).then(c => {
+      variantColorCache[cacheKey] = c;
     });
   }
 
@@ -944,6 +981,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (this.status && this.status.effect === StatusEffect.PARALYSIS) {
           ret >>= 1;
+        }
+        if (this.getTag(BattlerTagType.UNBURDEN) && !this.scene.getField(true).some(pokemon => pokemon !== this && pokemon.hasAbilityWithAttr(SuppressFieldAbilitiesAbAttr))) {
+          ret *= 2;
         }
         break;
     }
@@ -1528,7 +1568,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyCheckTrappedAbAttrs(CheckTrappedAbAttr, opponent, trappedByAbility, this, trappedAbMessages, simulated)
     );
 
-    return (trappedByAbility.value || !!this.getTag(TrappedTag));
+    const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    return (trappedByAbility.value || !!this.getTag(TrappedTag) || !!this.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, side));
   }
 
   /**
@@ -2791,7 +2832,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true);
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true, source);
 
         if (damage > 0) {
           if (source.isPlayer()) {
@@ -2800,10 +2841,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               this.scene.gameData.gameStats.highestDamage = damage;
             }
           }
-          source.turnData.damageDealt += damage;
-          source.turnData.currDamageDealt = damage;
+          source.turnData.totalDamageDealt += damage;
+          source.turnData.singleHitDamageDealt = damage;
           this.turnData.damageTaken += damage;
           this.battleData.hitCount++;
+
+          // Multi-Lens and Parental Bond check for Wimp Out/Emergency Exit
+          if (this.hasAbilityWithAttr(PostDamageForceSwitchAbAttr)) {
+            const multiHitModifier = source.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
+            if (multiHitModifier || source.hasAbilityWithAttr(AddSecondStrikeAbAttr)) {
+              applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
+            }
+          }
+
           const attackResult = { move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
           if (source.isPlayer() && !this.isPlayer()) {
@@ -2891,7 +2941,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.destroySubstitute();
       this.resetSummonData();
     }
-
     return damage;
   }
 
@@ -2905,12 +2954,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
    * @returns integer of damage done
    */
-  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
+  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): integer {
     const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
     damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
+    applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
     return damage;
   }
 
@@ -4164,7 +4214,7 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, this.getFieldIndex(), (slotIndex:integer, option: PartyOption) => {
         if (slotIndex >= 0 && slotIndex < 6) {
-          const pokemon = this.scene.getParty()[slotIndex];
+          const pokemon = this.scene.getPlayerParty()[slotIndex];
           if (!pokemon || !pokemon.isFainted()) {
             resolve();
           }
@@ -4174,7 +4224,7 @@ export class PlayerPokemon extends Pokemon {
           pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
           this.scene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: pokemon.name }), 0, true);
 
-          if (this.scene.currentBattle.double && this.scene.getParty().length > 1) {
+          if (this.scene.currentBattle.double && this.scene.getPlayerParty().length > 1) {
             const allyPokemon = this.getAlly();
             if (slotIndex <= 1) {
               // Revived ally pokemon
@@ -4316,7 +4366,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionLuck = this.fusionLuck;
         newPokemon.usedTMs = this.usedTMs;
 
-        this.scene.getParty().push(newPokemon);
+        this.scene.getPlayerParty().push(newPokemon);
         newPokemon.evolve((!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution)), evoSpecies);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && m.pokemonId === this.id, true) as PokemonHeldItemModifier[];
@@ -4432,8 +4482,8 @@ export class PlayerPokemon extends Pokemon {
 
       this.generateCompatibleTms();
       this.updateInfo(true);
-      const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
-      let partyMemberIndex = this.scene.getParty().indexOf(this);
+      const fusedPartyMemberIndex = this.scene.getPlayerParty().indexOf(pokemon);
+      let partyMemberIndex = this.scene.getPlayerParty().indexOf(this);
       if (partyMemberIndex > fusedPartyMemberIndex) {
         partyMemberIndex--;
       }
@@ -4446,8 +4496,8 @@ export class PlayerPokemon extends Pokemon {
       Promise.allSettled(transferModifiers).then(() => {
         this.scene.updateModifiers(true, true).then(() => {
           this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
-          this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
-          const newPartyMemberIndex = this.scene.getParty().indexOf(this);
+          this.scene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
+          const newPartyMemberIndex = this.scene.getPlayerParty().indexOf(this);
           pokemon.getMoveset(true).map((m: PokemonMove) => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m.getMove().id)));
           pokemon.destroy();
           this.updateFusionPalette();
@@ -5038,7 +5088,7 @@ export class EnemyPokemon extends Pokemon {
    * @returns the pokemon that was added or null if the pokemon could not be added
    */
   addToParty(pokeballType: PokeballType, slotIndex: number = -1) {
-    const party = this.scene.getParty();
+    const party = this.scene.getPlayerParty();
     let ret: PlayerPokemon | null = null;
 
     if (party.length < PLAYER_PARTY_MAX_SIZE) {
@@ -5096,7 +5146,6 @@ export class PokemonSummonData {
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
   public abilitiesApplied: Abilities[] = [];
-
   public speciesForm: PokemonSpeciesForm | null;
   public fusionSpeciesForm: PokemonSpeciesForm;
   public ability: Abilities = Abilities.NONE;
@@ -5136,8 +5185,8 @@ export class PokemonTurnData {
    * - `0` = Move is finished
    */
   public hitsLeft: number = -1;
-  public damageDealt: number = 0;
-  public currDamageDealt: number = 0;
+  public totalDamageDealt: number = 0;
+  public singleHitDamageDealt: number = 0;
   public damageTaken: number = 0;
   public attacksReceived: AttackMoveResult[] = [];
   public order: number;
