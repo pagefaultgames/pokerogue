@@ -370,7 +370,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(POOL_4_POKEMON.includes(enemyParty[4].species.speciesId)).toBe(true);
     });
 
-    it.todo("should let the player learn a Bug move after battle ends", async () => {
+    it("should let the player learn a Bug move after battle ends", async () => {
       const selectOptionSpy = vi.spyOn(encounterPhaseUtils, "selectOptionThenPokemon");
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
