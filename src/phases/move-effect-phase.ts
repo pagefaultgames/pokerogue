@@ -150,14 +150,13 @@ export class MoveEffectPhase extends PokemonPhase {
       /** Check if the target is immune via ability to the attacking move, and NOT in semi invulnerable state */
       const isImmune = targets[0]?.hasAbilityWithAttr(TypeImmunityAbAttr)
         && (targets[0]?.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
-        && !targets[0].getTag(SemiInvulnerableTag);
+        && !targets[0]?.getTag(SemiInvulnerableTag);
 
       /**
        * If no targets are left for the move to hit (FAIL), or the invoked move is single-target
        * (and not random target) and failed the hit check against its target (MISS), log the move
        * as FAILed or MISSed (depending on the conditions above) and end this phase.
        */
-
       if (!hasActiveTargets || (!move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag) && !isImmune)) {
         this.stopMultiHit();
         if (hasActiveTargets) {
