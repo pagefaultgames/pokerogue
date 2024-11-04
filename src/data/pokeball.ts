@@ -85,7 +85,7 @@ export function getPokeballTintColor(type: PokeballType): number {
 
 /**
  * Gets the critical capture chance based on number of mons registered in Dex and modified {@link https://bulbapedia.bulbagarden.net/wiki/Catch_rate Catch rate}
- * Formula from {@link https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Critical_capture Bulbapedia "Catch Rate" page}
+ * Formula from {@link https://www.dragonflycave.com/mechanics/gen-vi-vii-capturing Dragonfly Cave Gen 6 Capture Mechanics page}
  * @param scene {@linkcode BattleScene} current BattleScene
  * @param modifiedCatchRate the modified catch rate as calculated in {@linkcode AttemptCapturePhase}
  * @returns the chance of getting a critical capture, out of 256
@@ -96,14 +96,14 @@ export function getCriticalCaptureChance(scene: BattleScene, modifiedCatchRate: 
   }
   const dexCount = scene.gameData.getSpeciesCount(d => !!d.caughtAttr);
   const catchingCharmMultiplier = new NumberHolder(1);
-  //scene.findModifier(m => m instanceof CriticalCaptureBoostModifier)?.apply(catchingCharmMultiplier);
+  //scene.findModifier(m => m instanceof CriticalCatchChanceBoosterModifier)?.apply(catchingCharmMultiplier);
   const dexMultiplier = dexCount > 800 ? 2.5
     : dexCount > 600 ? 2
       : dexCount > 400 ? 1.5
         : dexCount > 200 ? 1
           : dexCount > 100 ? 0.5
             : 0;
-  return Math.floor(catchingCharmMultiplier.value * dexMultiplier * modifiedCatchRate / 6);
+  return Math.floor(catchingCharmMultiplier.value * dexMultiplier * Math.min(255, modifiedCatchRate) / 6);
 }
 
 export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite, y1: number, y2: number, baseBounceDuration: integer, callback: Function, isCritical: boolean = false) {

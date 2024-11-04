@@ -53,7 +53,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
     const modifiedCatchRate = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
-    const shakeProbability = Math.round(65536 * Math.pow((modifiedCatchRate / 1044480), 0.1875)); // Formula taken from gen 6
+    const shakeProbability = Math.round(65536 / Math.pow((255 / modifiedCatchRate), 0.1875)); // Formula taken from gen 6
     const criticalCaptureChance = getCriticalCaptureChance(this.scene, modifiedCatchRate);
     const isCritical = pokemon.randSeedInt(256) < criticalCaptureChance;
     const fpOffset = pokemon.getFieldPositionOffset();
@@ -122,8 +122,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < (isCritical ? 1 : 3)) {
-                    // Shake check (skip check for critical captures, but still play the sound)
-                    if (pokeballMultiplier === -1 || isCritical || pokemon.randSeedInt(65536) < shakeProbability) {
+                    // Shake check (skip check for critical or guaranteed captures, but still play the sound)
+                    if (pokeballMultiplier === -1 || isCritical || modifiedCatchRate >= 255 || pokemon.randSeedInt(65536) < shakeProbability) {
                       this.scene.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();
