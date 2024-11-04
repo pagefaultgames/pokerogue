@@ -24,6 +24,7 @@ import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
 import { version } from "../../../package.json";
+import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -232,6 +233,7 @@ export default class GameWrapper {
     this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
     this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
+    this.scene.eventManager = new MockTimedEventManager(); // Disable Timed Events
   }
 }
 

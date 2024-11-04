@@ -107,7 +107,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       let pokemonIconX = -20;
       let pokemonIconY = 6;
 
-      if ([ "de", "es", "fr", "ko", "pt-BR" ].includes(currentLanguage)) {
+      if ([ "de", "es-ES", "fr", "ko", "pt-BR" ].includes(currentLanguage)) {
         gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
         gachaX = 2;
         gachaY = 2;
@@ -115,7 +115,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       let legendaryLabelX = gachaX;
       let legendaryLabelY = gachaY;
-      if ([ "de", "es" ].includes(currentLanguage)) {
+      if ([ "de", "es-ES" ].includes(currentLanguage)) {
         pokemonIconX = -25;
         pokemonIconY = 10;
         legendaryLabelX = -6;
@@ -127,47 +127,47 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       gachaInfoContainer.add(gachaUpLabel);
 
       switch (gachaType as GachaType) {
-      case GachaType.LEGENDARY:
-        if ([ "de", "es" ].includes(currentLanguage)) {
-          gachaUpLabel.setAlign("center");
-          gachaUpLabel.setY(0);
-        }
-        if ([ "pt-BR" ].includes(currentLanguage)) {
-          gachaUpLabel.setX(legendaryLabelX - 2);
-        } else {
-          gachaUpLabel.setX(legendaryLabelX);
-        }
-        gachaUpLabel.setY(legendaryLabelY);
+        case GachaType.LEGENDARY:
+          if ([ "de", "es-ES" ].includes(currentLanguage)) {
+            gachaUpLabel.setAlign("center");
+            gachaUpLabel.setY(0);
+          }
+          if ([ "pt-BR" ].includes(currentLanguage)) {
+            gachaUpLabel.setX(legendaryLabelX - 2);
+          } else {
+            gachaUpLabel.setX(legendaryLabelX);
+          }
+          gachaUpLabel.setY(legendaryLabelY);
 
-        const pokemonIcon = this.scene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
-        if ([ "pt-BR" ].includes(currentLanguage)) {
-          pokemonIcon.setX(pokemonIconX - 2);
-        }
-        pokemonIcon.setScale(0.5);
-        pokemonIcon.setOrigin(0, 0.5);
+          const pokemonIcon = this.scene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
+          if ([ "pt-BR" ].includes(currentLanguage)) {
+            pokemonIcon.setX(pokemonIconX - 2);
+          }
+          pokemonIcon.setScale(0.5);
+          pokemonIcon.setOrigin(0, 0.5);
 
-        gachaInfoContainer.add(pokemonIcon);
-        break;
-      case GachaType.MOVE:
-        if ([ "de", "es", "fr", "pt-BR" ].includes(currentLanguage)) {
-          gachaUpLabel.setAlign("center");
-          gachaUpLabel.setY(0);
-        }
+          gachaInfoContainer.add(pokemonIcon);
+          break;
+        case GachaType.MOVE:
+          if ([ "de", "es-ES", "fr", "pt-BR" ].includes(currentLanguage)) {
+            gachaUpLabel.setAlign("center");
+            gachaUpLabel.setY(0);
+          }
 
-        gachaUpLabel.setText(i18next.t("egg:moveUPGacha"));
-        gachaUpLabel.setX(0);
-        gachaUpLabel.setOrigin(0.5, 0);
-        break;
-      case GachaType.SHINY:
-        if ([ "de", "fr", "ko" ].includes(currentLanguage)) {
-          gachaUpLabel.setAlign("center");
-          gachaUpLabel.setY(0);
-        }
+          gachaUpLabel.setText(i18next.t("egg:moveUPGacha"));
+          gachaUpLabel.setX(0);
+          gachaUpLabel.setOrigin(0.5, 0);
+          break;
+        case GachaType.SHINY:
+          if ([ "de", "fr", "ko" ].includes(currentLanguage)) {
+            gachaUpLabel.setAlign("center");
+            gachaUpLabel.setY(0);
+          }
 
-        gachaUpLabel.setText(i18next.t("egg:shinyUPGacha"));
-        gachaUpLabel.setX(0);
-        gachaUpLabel.setOrigin(0.5, 0);
-        break;
+          gachaUpLabel.setText(i18next.t("egg:shinyUPGacha"));
+          gachaUpLabel.setX(0);
+          gachaUpLabel.setOrigin(0.5, 0);
+          break;
       }
 
       const gachaKnob = this.scene.add.sprite(191, 89, "gacha_knob");
@@ -470,12 +470,12 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   getGuaranteedEggTierFromPullCount(pullCount: number): EggTier {
     switch (pullCount) {
-    case 10:
-      return EggTier.RARE;
-    case 25:
-      return EggTier.EPIC;
-    default:
-      return EggTier.COMMON;
+      case 10:
+        return EggTier.RARE;
+      case 25:
+        return EggTier.EPIC;
+      default:
+        return EggTier.COMMON;
     }
   }
 
@@ -567,11 +567,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   updateGachaInfo(gachaType: GachaType): void {
     const infoContainer = this.gachaInfoContainers[gachaType];
     switch (gachaType as GachaType) {
-    case GachaType.LEGENDARY:
-      const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.scene, new Date().getTime()));
-      const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
-      pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
-      break;
+      case GachaType.LEGENDARY:
+        const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.scene, new Date().getTime()));
+        const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
+        pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
+        break;
     }
   }
 
@@ -638,106 +638,106 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         }
       } else {
         switch (button) {
-        case Button.ACTION:
-          switch (this.cursor) {
-          case 0:
-            if (!this.scene.gameData.voucherCounts[VoucherType.REGULAR] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
-              error = true;
-              this.showError(i18next.t("egg:notEnoughVouchers"));
-            } else if (this.scene.gameData.eggs.length < 99 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
-              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
-                this.consumeVouchers(VoucherType.REGULAR, 1);
-              }
-              this.pull();
-              success = true;
-            } else {
-              error = true;
-              this.showError(i18next.t("egg:tooManyEggs"));
-            }
-            break;
-          case 2:
-            if (!this.scene.gameData.voucherCounts[VoucherType.PLUS] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
-              error = true;
-              this.showError(i18next.t("egg:notEnoughVouchers"));
-            } else if (this.scene.gameData.eggs.length < 95 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
-              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
-                this.consumeVouchers(VoucherType.PLUS, 1);
-              }
-              this.pull(5);
-              success = true;
-            } else {
-              error = true;
-              this.showError(i18next.t("egg:tooManyEggs"));
-            }
-            break;
-          case 1:
-          case 3:
-            if ((this.cursor === 1 && this.scene.gameData.voucherCounts[VoucherType.REGULAR] < 10 && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE)
+          case Button.ACTION:
+            switch (this.cursor) {
+              case 0:
+                if (!this.scene.gameData.voucherCounts[VoucherType.REGULAR] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                  error = true;
+                  this.showError(i18next.t("egg:notEnoughVouchers"));
+                } else if (this.scene.gameData.eggs.length < 99 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                  if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                    this.consumeVouchers(VoucherType.REGULAR, 1);
+                  }
+                  this.pull();
+                  success = true;
+                } else {
+                  error = true;
+                  this.showError(i18next.t("egg:tooManyEggs"));
+                }
+                break;
+              case 2:
+                if (!this.scene.gameData.voucherCounts[VoucherType.PLUS] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                  error = true;
+                  this.showError(i18next.t("egg:notEnoughVouchers"));
+                } else if (this.scene.gameData.eggs.length < 95 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                  if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                    this.consumeVouchers(VoucherType.PLUS, 1);
+                  }
+                  this.pull(5);
+                  success = true;
+                } else {
+                  error = true;
+                  this.showError(i18next.t("egg:tooManyEggs"));
+                }
+                break;
+              case 1:
+              case 3:
+                if ((this.cursor === 1 && this.scene.gameData.voucherCounts[VoucherType.REGULAR] < 10 && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE)
                   || (this.cursor === 3 && !this.scene.gameData.voucherCounts[VoucherType.PREMIUM] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE)) {
-              error = true;
-              this.showError(i18next.t("egg:notEnoughVouchers"));
-            } else if (this.scene.gameData.eggs.length < 90 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
-              if (this.cursor === 3) {
-                if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
-                  this.consumeVouchers(VoucherType.PREMIUM, 1);
+                  error = true;
+                  this.showError(i18next.t("egg:notEnoughVouchers"));
+                } else if (this.scene.gameData.eggs.length < 90 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                  if (this.cursor === 3) {
+                    if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                      this.consumeVouchers(VoucherType.PREMIUM, 1);
+                    }
+                  } else {
+                    if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                      this.consumeVouchers(VoucherType.REGULAR, 10);
+                    }
+                  }
+                  this.pull(10);
+                  success = true;
+                } else {
+                  error = true;
+                  this.showError(i18next.t("egg:tooManyEggs"));
                 }
-              } else {
-                if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
-                  this.consumeVouchers(VoucherType.REGULAR, 10);
+                break;
+              case 4:
+                if (!this.scene.gameData.voucherCounts[VoucherType.GOLDEN] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                  error = true;
+                  this.showError(i18next.t("egg:notEnoughVouchers"));
+                } else if (this.scene.gameData.eggs.length < 75 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                  if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                    this.consumeVouchers(VoucherType.GOLDEN, 1);
+                  }
+                  this.pull(25);
+                  success = true;
+                } else {
+                  error = true;
+                  this.showError(i18next.t("egg:tooManyEggs"));
                 }
-              }
-              this.pull(10);
-              success = true;
-            } else {
-              error = true;
-              this.showError(i18next.t("egg:tooManyEggs"));
+                break;
+              case 5:
+                ui.revertMode();
+                success = true;
+                break;
             }
             break;
-          case 4:
-            if (!this.scene.gameData.voucherCounts[VoucherType.GOLDEN] && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
-              error = true;
-              this.showError(i18next.t("egg:notEnoughVouchers"));
-            } else if (this.scene.gameData.eggs.length < 75 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
-              if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
-                this.consumeVouchers(VoucherType.GOLDEN, 1);
-              }
-              this.pull(25);
-              success = true;
-            } else {
-              error = true;
-              this.showError(i18next.t("egg:tooManyEggs"));
-            }
-            break;
-          case 5:
-            ui.revertMode();
+          case Button.CANCEL:
+            this.getUi().revertMode();
             success = true;
             break;
-          }
-          break;
-        case Button.CANCEL:
-          this.getUi().revertMode();
-          success = true;
-          break;
-        case Button.UP:
-          if (this.cursor) {
-            success = this.setCursor(this.cursor - 1);
-          }
-          break;
-        case Button.DOWN:
-          if (this.cursor < 5) {
-            success = this.setCursor(this.cursor + 1);
-          }
-          break;
-        case Button.LEFT:
-          if (this.gachaCursor) {
-            success = this.setGachaCursor(this.gachaCursor - 1);
-          }
-          break;
-        case Button.RIGHT:
-          if (this.gachaCursor < Utils.getEnumKeys(GachaType).length - 1) {
-            success = this.setGachaCursor(this.gachaCursor + 1);
-          }
-          break;
+          case Button.UP:
+            if (this.cursor) {
+              success = this.setCursor(this.cursor - 1);
+            }
+            break;
+          case Button.DOWN:
+            if (this.cursor < 5) {
+              success = this.setCursor(this.cursor + 1);
+            }
+            break;
+          case Button.LEFT:
+            if (this.gachaCursor) {
+              success = this.setGachaCursor(this.gachaCursor - 1);
+            }
+            break;
+          case Button.RIGHT:
+            if (this.gachaCursor < Utils.getEnumKeys(GachaType).length - 1) {
+              success = this.setGachaCursor(this.gachaCursor + 1);
+            }
+            break;
         }
       }
     }

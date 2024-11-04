@@ -1,7 +1,6 @@
 import { Gender } from "#app/data/gender";
 import { PokeballType } from "#app/data/pokeball";
 import Pokemon from "#app/field/pokemon";
-import { Stat } from "#enums/stat";
 import { Type } from "#app/data/type";
 import * as Utils from "#app/utils";
 import { WeatherType } from "#app/data/weather";
@@ -10,7 +9,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
+import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 
@@ -271,9 +270,21 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.MAROWAK, 28, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY))
   ],
   [Species.TYROGUE]: [
-    new SpeciesEvolution(Species.HITMONLEE, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] > p.stats[Stat.DEF])),
-    new SpeciesEvolution(Species.HITMONCHAN, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] < p.stats[Stat.DEF])),
-    new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition(p => p.stats[Stat.ATK] === p.stats[Stat.DEF]))
+    /**
+     * Custom: Evolves into Hitmonlee, Hitmonchan or Hitmontop at level 20
+     * if it knows Low Sweep, Mach Punch, or Rapid Spin, respectively.
+     * If Tyrogue knows multiple of these moves, its evolution is based on
+     * the first qualifying move in its moveset.
+     */
+    new SpeciesEvolution(Species.HITMONLEE, 20, null, new SpeciesEvolutionCondition(p =>
+      p.getMoveset(true).find(move => move && [ Moves.LOW_SWEEP, Moves.MACH_PUNCH, Moves.RAPID_SPIN ].includes(move?.moveId))?.moveId === Moves.LOW_SWEEP
+    )),
+    new SpeciesEvolution(Species.HITMONCHAN, 20, null, new SpeciesEvolutionCondition(p =>
+      p.getMoveset(true).find(move => move && [ Moves.LOW_SWEEP, Moves.MACH_PUNCH, Moves.RAPID_SPIN ].includes(move?.moveId))?.moveId === Moves.MACH_PUNCH
+    )),
+    new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition(p =>
+      p.getMoveset(true).find(move => move && [ Moves.LOW_SWEEP, Moves.MACH_PUNCH, Moves.RAPID_SPIN ].includes(move?.moveId))?.moveId === Moves.RAPID_SPIN
+    )),
   ],
   [Species.KOFFING]: [
     new SpeciesEvolution(Species.GALAR_WEEZING, 35, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT)),
@@ -1432,7 +1443,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.ROCKRUFF]: [
     new SpeciesFormEvolution(Species.LYCANROC, "", "midday", 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY) && (p.formIndex === 0))),
-    new SpeciesFormEvolution(Species.LYCANROC, "", "dusk", 25, null, new SpeciesEvolutionCondition(p =>  p.formIndex === 1)),
+    new SpeciesFormEvolution(Species.LYCANROC, "own-tempo", "dusk", 25, null, new SpeciesEvolutionCondition(p =>  p.formIndex === 1)),
     new SpeciesFormEvolution(Species.LYCANROC, "", "midnight", 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT) && (p.formIndex === 0)))
   ],
   [Species.STEENEE]: [
@@ -1652,11 +1663,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(Species.GHOLDENGO, "chest", "", 1, null, new SpeciesEvolutionCondition(p => p.evoCounter
       + p.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
       + p.scene.findModifiers(m => m instanceof MoneyMultiplierModifier
-        || m instanceof ExtraModifierModifier).length > 9), SpeciesWildEvolutionDelay.VERY_LONG),
+        || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length > 9), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesFormEvolution(Species.GHOLDENGO, "roaming", "", 1, null, new SpeciesEvolutionCondition(p => p.evoCounter
       + p.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
       + p.scene.findModifiers(m => m instanceof MoneyMultiplierModifier
-        || m instanceof ExtraModifierModifier).length > 9), SpeciesWildEvolutionDelay.VERY_LONG)
+        || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length > 9), SpeciesWildEvolutionDelay.VERY_LONG)
   ]
 };
 
