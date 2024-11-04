@@ -4869,7 +4869,7 @@ class ForceSwitchOutHelper {
      * - If the Pokémon is still alive (hp > 0), and if so, it leaves the field and a new SwitchPhase is initiated.
      */
     if (switchOutTarget instanceof PlayerPokemon) {
-      if (switchOutTarget.scene.getParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      if (switchOutTarget.scene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
 
@@ -4950,7 +4950,7 @@ class ForceSwitchOutHelper {
       return false;
     }
 
-    const party = player ? pokemon.scene.getParty() : pokemon.scene.getEnemyParty();
+    const party = player ? pokemon.scene.getPlayerParty() : pokemon.scene.getEnemyParty();
     return (!player && pokemon.scene.currentBattle.battleType === BattleType.WILD)
       || party.filter(p => p.isAllowedInBattle()
         && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > pokemon.scene.currentBattle.getBattlerCount();

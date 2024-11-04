@@ -126,7 +126,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       ];
 
       // Determine the 3 pokemon the player can battle with
-      let partyCopy = scene.getParty().slice(0);
+      let partyCopy = scene.getPlayerParty().slice(0);
       partyCopy = partyCopy
         .filter(p => p.isAllowedInBattle())
         .sort((a, b) => a.friendship - b.friendship);
@@ -508,11 +508,11 @@ function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number)
 }
 
 function removePokemonFromPartyAndStoreHeldItems(scene: BattleScene, encounter: MysteryEncounter, chosenPokemon: PlayerPokemon) {
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
   const chosenIndex = party.indexOf(chosenPokemon);
   party[chosenIndex] = party[0];
   party[0] = chosenPokemon;
-  encounter.misc.originalParty = scene.getParty().slice(1);
+  encounter.misc.originalParty = scene.getPlayerParty().slice(1);
   encounter.misc.originalPartyHeldItems = encounter.misc.originalParty
     .map(p => p.getHeldItems());
   scene["party"] = [
@@ -529,7 +529,7 @@ function checkAchievement(scene: BattleScene) {
 function restorePartyAndHeldItems(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter!;
   // Restore original party
-  scene.getParty().push(...encounter.misc.originalParty);
+  scene.getPlayerParty().push(...encounter.misc.originalParty);
 
   // Restore held items
   const originalHeldItems = encounter.misc.originalPartyHeldItems;

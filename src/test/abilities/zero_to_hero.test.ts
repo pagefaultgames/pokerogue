@@ -41,8 +41,8 @@ describe("Abilities - ZERO TO HERO", () => {
 
     await game.startBattle([ Species.FEEBAS, Species.PALAFIN, Species.PALAFIN ]);
 
-    const palafin1 = game.scene.getParty()[1];
-    const palafin2 = game.scene.getParty()[2];
+    const palafin1 = game.scene.getPlayerParty()[1];
+    const palafin2 = game.scene.getPlayerParty()[2];
     expect(palafin1.formIndex).toBe(heroForm);
     expect(palafin2.formIndex).toBe(heroForm);
     palafin2.hp = 0;
