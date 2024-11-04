@@ -51,8 +51,8 @@ export class AttemptCapturePhase extends PokemonPhase {
     const catchRate = pokemon.species.catchRate;
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
-    const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
-    const y = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
+    const modifiedCatchRate = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
+    const shakeProbability = Math.round(65536 * Math.pow((modifiedCatchRate / 1044480), 0.1875));
     const fpOffset = pokemon.getFieldPositionOffset();
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
@@ -114,7 +114,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
-                    if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < y) {
+                    if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < shakeProbability) {
                       this.scene.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();
