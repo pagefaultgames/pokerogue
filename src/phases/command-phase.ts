@@ -17,6 +17,8 @@ import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { isNullOrUndefined } from "#app/utils";
+import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
@@ -233,29 +235,40 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           } else {
             const trapTag = playerPokemon.getTag(TrappedTag);
+            const fairyLockTag = playerPokemon.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
 
-            if (!trapTag) {
+            if (!trapTag && !fairyLockTag) {
               i18next.t(`battle:noEscape${isSwitch ? "Switch" : "Flee"}`);
               break;
             }
-
             if (!isSwitch) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               this.scene.ui.setMode(Mode.MESSAGE);
             }
-            this.scene.ui.showText(
-              i18next.t("battle:noEscapePokemon", {
-                pokemonName:  trapTag.sourceId && this.scene.getPokemonById(trapTag.sourceId) ? getPokemonNameWithAffix(this.scene.getPokemonById(trapTag.sourceId)!) : "",
-                moveName: trapTag.getMoveName(),
-                escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
-              }),
-              null,
-              () => {
-                this.scene.ui.showText("", 0);
-                if (!isSwitch) {
-                  this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-                }
-              }, null, true);
+            const showNoEscapeText = (tag: any) => {
+              this.scene.ui.showText(
+                i18next.t("battle:noEscapePokemon", {
+                  pokemonName: tag.sourceId && this.scene.getPokemonById(tag.sourceId) ? getPokemonNameWithAffix(this.scene.getPokemonById(tag.sourceId)!) : "",
+                  moveName: tag.getMoveName(),
+                  escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
+                }),
+                null,
+                () => {
+                  this.scene.ui.showText("", 0);
+                  if (!isSwitch) {
+                    this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+                  }
+                },
+                null,
+                true
+              );
+            };
+
+            if (trapTag) {
+              showNoEscapeText(trapTag);
+            } else if (fairyLockTag) {
+              showNoEscapeText(fairyLockTag);
+            }
           }
         }
         break;
