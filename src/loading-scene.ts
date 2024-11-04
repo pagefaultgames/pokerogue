@@ -232,7 +232,7 @@ export class LoadingScene extends SceneBase {
     // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
-      if (Utils.verifyLang(lang)) {
+      if (Utils.hasAllLocalizedSprites(lang)) {
         this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {

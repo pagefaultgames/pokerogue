@@ -216,7 +216,7 @@ describe("Abilities - Unburden", () => {
       .moveset([ Moves.SPLASH ]);
     await game.classicMode.startBattle([ Species.TREECKO, Species.MEOWTH, Species.WEEZING ]);
 
-    const playerPokemon = game.scene.getParty();
+    const playerPokemon = game.scene.getPlayerParty();
     const treecko = playerPokemon[0];
     const weezing = playerPokemon[2];
     treecko.abilityIndex = 2;
