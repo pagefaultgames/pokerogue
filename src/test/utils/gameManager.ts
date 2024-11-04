@@ -1,20 +1,20 @@
 import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { BattleStyle } from "#app/enums/battle-style";
-import { Moves } from "#app/enums/moves";
 import { getMoveTargets } from "#app/data/move";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import overrides from "#app/overrides";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SelectTargetPhase } from "#app/phases/select-target-phase";
@@ -24,37 +24,36 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import InputsHandler from "#app/test/utils/inputsHandler";
+import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import CommandUiHandler from "#app/ui/command-ui-handler";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";
+import { isNullOrUndefined } from "#app/utils";
+import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
+import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
 import GameWrapper from "#test/utils/gameWrapper";
+import { ChallengeModeHelper } from "#test/utils/helpers/challengeModeHelper";
+import { ClassicModeHelper } from "#test/utils/helpers/classicModeHelper";
+import { DailyModeHelper } from "#test/utils/helpers/dailyModeHelper";
+import { ModifierHelper } from "#test/utils/helpers/modifiersHelper";
+import { MoveHelper } from "#test/utils/helpers/moveHelper";
+import { OverridesHelper } from "#test/utils/helpers/overridesHelper";
+import { ReloadHelper } from "#test/utils/helpers/reloadHelper";
+import { SettingsHelper } from "#test/utils/helpers/settingsHelper";
 import PhaseInterceptor from "#test/utils/phaseInterceptor";
 import TextInterceptor from "#test/utils/TextInterceptor";
 import { AES, enc } from "crypto-js";
 import fs from "fs";
-import { vi } from "vitest";
-import { ClassicModeHelper } from "./helpers/classicModeHelper";
-import { DailyModeHelper } from "./helpers/dailyModeHelper";
-import { ChallengeModeHelper } from "./helpers/challengeModeHelper";
-import { MoveHelper } from "./helpers/moveHelper";
-import { OverridesHelper } from "./helpers/overridesHelper";
-import { SettingsHelper } from "./helpers/settingsHelper";
-import { ReloadHelper } from "./helpers/reloadHelper";
-import { ModifierHelper } from "./helpers/modifiersHelper";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { expect } from "vitest";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { isNullOrUndefined } from "#app/utils";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
+import { expect, vi } from "vitest";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -157,6 +156,7 @@ export default class GameManager {
     this.scene.enableTutorials = false;
     this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
     this.scene.battleStyle = this.settings.battleStyle;
+    this.scene.fieldVolume = 0;
   }
 
   /**
@@ -427,7 +427,7 @@ export default class GameManager {
    * @param pokemonIndex the index of the pokemon in your party to revive
    */
   doRevivePokemon(pokemonIndex: number) {
-    const party = this.scene.getParty();
+    const party = this.scene.getPlayerParty();
     const candidate = new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0);
     const modifier = candidate.type!.newModifier(party[pokemonIndex]);
     this.scene.addModifier(modifier, false);

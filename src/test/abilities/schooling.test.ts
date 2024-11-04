@@ -43,7 +43,7 @@ describe("Abilities - SCHOOLING", () => {
 
       await game.startBattle([ Species.MAGIKARP, Species.WISHIWASHI ]);
 
-      const wishiwashi = game.scene.getParty().find((p) => p.species.speciesId === Species.WISHIWASHI)!;
+      const wishiwashi = game.scene.getPlayerParty().find((p) => p.species.speciesId === Species.WISHIWASHI)!;
       expect(wishiwashi).not.toBe(undefined);
       expect(wishiwashi.formIndex).toBe(schoolForm);
 
