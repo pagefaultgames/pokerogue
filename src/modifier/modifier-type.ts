@@ -19,7 +19,7 @@ import { Unlockables } from "#app/system/unlockables";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
 import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { getModifierTierTextTint } from "#app/ui/text";
-import { formatMoney, getEnumKeys, getEnumValues, IntegerHolder, NumberHolder, padInt, randSeedInt, randSeedItem } from "#app/utils";
+import { formatMoney, getEnumKeys, getEnumValues, IntegerHolder, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -121,16 +121,39 @@ export class ModifierType {
    * Populates item tier for ModifierType instance
    * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
    * To find the tier, this function performs a reverse lookup of the item type in modifier pools
+   * It checks the weight of the item and will use the first tier for which the weight is greater than 0
+   * This is to allow items to be in multiple item pools depending on the conditions, for example for events
+   * If all tiers have a weight of 0 for the item, the first tier where the item was found is used
    * @param poolType Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
+   * @param party optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedModifierTypeWeightFunc})
+   *  if not provided or empty, the weight check will be ignored
+   * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedModifierTypeWeightFunc})
    */
-  withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierType {
+  withTierFromPool(poolType: ModifierPoolType = ModifierPoolType.PLAYER, party?: PlayerPokemon[], rerollCount: number = 0): ModifierType {
+    let defaultTier: undefined | ModifierTier;
     for (const tier of Object.values(getModifierPoolForType(poolType))) {
       for (const modifier of tier) {
         if (this.id === modifier.modifierType.id) {
-          this.tier = modifier.modifierType.tier;
-          return this;
+          let weight: number;
+          if (modifier.weight instanceof Function) {
+            weight = party ? modifier.weight(party, rerollCount) : 0;
+          } else {
+            weight = modifier.weight;
+          }
+          if (weight > 0) {
+            this.tier = modifier.modifierType.tier;
+            return this;
+          } else if (isNullOrUndefined(defaultTier)) {
+            // If weight is 0, keep track of the first tier where the item was found
+            defaultTier = modifier.modifierType.tier;
+          }
         }
       }
+    }
+
+    // Didn't find a pool with weight > 0, fallback to first tier where the item was found, if any
+    if (defaultTier) {
+      this.tier = defaultTier;
     }
 
     return this;
@@ -502,45 +525,25 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   }
 }
 
-function getAttackTypeBoosterItemName(type: Type) {
-  switch (type) {
-    case Type.NORMAL:
-      return "Silk Scarf";
-    case Type.FIGHTING:
-      return "Black Belt";
-    case Type.FLYING:
-      return "Sharp Beak";
-    case Type.POISON:
-      return "Poison Barb";
-    case Type.GROUND:
-      return "Soft Sand";
-    case Type.ROCK:
-      return "Hard Stone";
-    case Type.BUG:
-      return "Silver Powder";
-    case Type.GHOST:
-      return "Spell Tag";
-    case Type.STEEL:
-      return "Metal Coat";
-    case Type.FIRE:
-      return "Charcoal";
-    case Type.WATER:
-      return "Mystic Water";
-    case Type.GRASS:
-      return "Miracle Seed";
-    case Type.ELECTRIC:
-      return "Magnet";
-    case Type.PSYCHIC:
-      return "Twisted Spoon";
-    case Type.ICE:
-      return "Never-Melt Ice";
-    case Type.DRAGON:
-      return "Dragon Fang";
-    case Type.DARK:
-      return "Black Glasses";
-    case Type.FAIRY:
-      return "Fairy Feather";
-  }
+enum AttackTypeBoosterItem {
+  SILK_SCARF,
+  BLACK_BELT,
+  SHARP_BEAK,
+  POISON_BARB,
+  SOFT_SAND,
+  HARD_STONE,
+  SILVER_POWDER,
+  SPELL_TAG,
+  METAL_COAT,
+  CHARCOAL,
+  MYSTIC_WATER,
+  MIRACLE_SEED,
+  MAGNET,
+  TWISTED_SPOON,
+  NEVER_MELT_ICE,
+  DRAGON_FANG,
+  BLACK_GLASSES,
+  FAIRY_FEATHER
 }
 
 export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
@@ -548,7 +551,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   public boostPercent: integer;
 
   constructor(moveType: Type, boostPercent: integer) {
-    super("", `${getAttackTypeBoosterItemName(moveType)?.replace(/[ \-]/g, "_").toLowerCase()}`,
+    super("", `${AttackTypeBoosterItem[moveType]?.toLowerCase()}`,
       (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent));
 
     this.moveType = moveType;
@@ -556,7 +559,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   }
 
   get name(): string {
-    return i18next.t(`modifierType:AttackTypeBoosterItem.${getAttackTypeBoosterItemName(this.moveType)?.replace(/[ \-]/g, "_").toLowerCase()}`);
+    return i18next.t(`modifierType:AttackTypeBoosterItem.${AttackTypeBoosterItem[this.moveType]?.toLowerCase()}`);
   }
 
   getDescription(scene: BattleScene): string {
@@ -2137,7 +2140,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
         // Populates item id and tier
         guaranteedMod = guaranteedMod
           .withIdFromFunc(modifierTypes[modifierId])
-          .withTierFromPool();
+          .withTierFromPool(ModifierPoolType.PLAYER, party);
 
         const modType = guaranteedMod instanceof ModifierTypeGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
         if (modType) {
@@ -2206,7 +2209,7 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
     }
 
     if (modifierType) {
-      options[i].type = modifierType.withIdFromFunc(modifierFunc).withTierFromPool();
+      options[i].type = modifierType.withIdFromFunc(modifierFunc).withTierFromPool(ModifierPoolType.PLAYER, party);
     }
   }
 }

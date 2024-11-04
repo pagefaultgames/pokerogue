@@ -487,7 +487,7 @@ export function verifyLang(lang?: string): boolean {
   }
 
   switch (lang) {
-    case "es":
+    case "es-ES":
     case "fr":
     case "de":
     case "it":
