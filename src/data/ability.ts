@@ -1956,6 +1956,10 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
   }
 }
 
+/**
+ * Ability attribute for ignoring the opponent's stat changes
+ * @param stats the stats that should be ignored
+ */
 export class IgnoreOpponentStatStagesAbAttr extends AbAttr {
   private stats: readonly BattleStat[];
 
@@ -1965,6 +1969,15 @@ export class IgnoreOpponentStatStagesAbAttr extends AbAttr {
     this.stats = stats ?? BATTLE_STATS;
   }
 
+  /**
+   * Modifies a BooleanHolder and returns the result to see if a stat is ignored or not
+   * @param _pokemon n/a
+   * @param _passive n/a
+   * @param simulated n/a
+   * @param _cancelled n/a
+   * @param args A BooleanHolder that represents whether or not to ignore a stat's stat changes
+   * @returns true if the stat is ignored, false otherwise
+   */
   apply(_pokemon: Pokemon, _passive: boolean, simulated: boolean, _cancelled: Utils.BooleanHolder, args: any[]) {
     if (this.stats.includes(args[0])) {
       (args[1] as Utils.BooleanHolder).value = true;
@@ -4969,7 +4982,7 @@ class ForceSwitchOutHelper {
 function calculateShellBellRecovery(pokemon: Pokemon): number {
   const shellBellModifier = pokemon.getHeldItems().find(m => m instanceof HitHealModifier);
   if (shellBellModifier) {
-    return Utils.toDmgValue(pokemon.turnData.damageDealt / 8) * shellBellModifier.stackCount;
+    return Utils.toDmgValue(pokemon.turnData.totalDamageDealt / 8) * shellBellModifier.stackCount;
   }
   return 0;
 }
@@ -5361,6 +5374,7 @@ export function initAbilities() {
     new Ability(Abilities.ILLUMINATE, 3)
       .attr(ProtectStatAbAttr, Stat.ACC)
       .attr(DoubleBattleChanceAbAttr)
+      .attr(IgnoreOpponentStatStagesAbAttr, [ Stat.EVA ])
       .ignorable(),
     new Ability(Abilities.TRACE, 3)
       .attr(PostSummonCopyAbilityAbAttr)
@@ -5580,7 +5594,7 @@ export function initAbilities() {
     new Ability(Abilities.FOREWARN, 4)
       .attr(ForewarnAbAttr),
     new Ability(Abilities.UNAWARE, 4)
-      .attr(IgnoreOpponentStatStagesAbAttr)
+      .attr(IgnoreOpponentStatStagesAbAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA ])
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
       .attr(DamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5),
