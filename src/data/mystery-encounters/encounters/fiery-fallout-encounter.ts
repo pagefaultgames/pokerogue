@@ -184,7 +184,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       async (scene: BattleScene) => {
         // Damage non-fire types and burn 1 random non-fire type member + give it Heatproof
         const encounter = scene.currentBattle.mysteryEncounter!;
-        const nonFireTypes = scene.getParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(Type.FIRE));
+        const nonFireTypes = scene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(Type.FIRE));
 
         for (const pkm of nonFireTypes) {
           const percentage = DAMAGE_PERCENTAGE / 100;
@@ -257,7 +257,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
 
 function giveLeadPokemonAttackTypeBoostItem(scene: BattleScene) {
   // Give first party pokemon attack type boost item for free at end of battle
-  const leadPokemon = scene.getParty()?.[0];
+  const leadPokemon = scene.getPlayerParty()?.[0];
   if (leadPokemon) {
     // Generate type booster held item, default to Charcoal if item fails to generate
     let boosterModifierType = generateModifierType(scene, modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;

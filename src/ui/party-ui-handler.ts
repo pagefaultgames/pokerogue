@@ -346,13 +346,13 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.optionsMode) {
       const option = this.options[this.optionsCursor];
       if (button === Button.ACTION) {
-        const pokemon = this.scene.getParty()[this.cursor];
+        const pokemon = this.scene.getPlayerParty()[this.cursor];
         if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode && option !== PartyOption.CANCEL) {
           this.startTransfer();
 
           let ableToTransfer: string;
-          for (let p = 0; p < this.scene.getParty().length; p++) { // this fore look goes through each of the party pokemon
-            const newPokemon = this.scene.getParty()[p];
+          for (let p = 0; p < this.scene.getPlayerParty().length; p++) { // this fore look goes through each of the party pokemon
+            const newPokemon = this.scene.getPlayerParty()[p];
             // this next line gets all of the transferable items from pokemon [p]; it does this by getting all the held modifiers that are transferable and checking to see if they belong to pokemon [p]
             const getTransferrableItemsFromPokemon = (newPokemon: PlayerPokemon) =>
               this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).isTransferable && (m as PokemonHeldItemModifier).pokemonId === newPokemon.id) as PokemonHeldItemModifier[];
@@ -409,7 +409,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]!); // TODO: is this bang correct?
             }
           } else {
-            filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, getTransferrableItemsFromPokemon(this.scene.getParty()[this.transferCursor])[this.transferOptionCursor]);
+            filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, getTransferrableItemsFromPokemon(this.scene.getPlayerParty()[this.transferCursor])[this.transferOptionCursor]);
           }
           if (filterResult === null) {
             if (this.partyUiMode !== PartyUiMode.SPLICE) {
@@ -419,7 +419,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               if (option === PartyOption.TRANSFER) {
                 if (this.transferCursor !== this.cursor) {
                   if (this.transferAll) {
-                    getTransferrableItemsFromPokemon(this.scene.getParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor));
+                    getTransferrableItemsFromPokemon(this.scene.getPlayerParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor));
                   } else {
                     (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.transferQuantities[this.transferOptionCursor], this.cursor);
                   }
@@ -580,7 +580,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         // show move description
         if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
           const option = this.options[this.optionsCursor];
-          const pokemon = this.scene.getParty()[this.cursor];
+          const pokemon = this.scene.getPlayerParty()[this.cursor];
           const move = allMoves[pokemon.getLearnableLevelMoves()[option]];
           if (move) {
             this.moveInfoOverlay.show(move);
@@ -596,7 +596,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
             /** Initialize item quantities for the selected Pokemon */
             const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-              && m.isTransferable && m.pokemonId === this.scene.getParty()[this.cursor].id) as PokemonHeldItemModifier[];
+              && m.isTransferable && m.pokemonId === this.scene.getPlayerParty()[this.cursor].id) as PokemonHeldItemModifier[];
             this.transferQuantities = itemModifiers.map(item => item.getStackCount());
             this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
           }
@@ -664,7 +664,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   populatePartySlots() {
-    const party = this.scene.getParty();
+    const party = this.scene.getPlayerParty();
 
     if (this.cursor < 6 && this.cursor >= party.length) {
       this.cursor = party.length - 1;
@@ -803,7 +803,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   updateOptions(): void {
-    const pokemon = this.scene.getParty()[this.cursor];
+    const pokemon = this.scene.getPlayerParty()[this.cursor];
 
     const learnableLevelMoves = this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER
       ? pokemon.getLearnableLevelMoves()
@@ -1059,13 +1059,13 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   doRelease(slotIndex: integer): void {
-    this.showText(this.getReleaseMessage(getPokemonNameWithAffix(this.scene.getParty()[slotIndex])), null, () => {
+    this.showText(this.getReleaseMessage(getPokemonNameWithAffix(this.scene.getPlayerParty()[slotIndex])), null, () => {
       this.clearPartySlots();
       this.scene.removePartyMemberModifiers(slotIndex);
-      const releasedPokemon = this.scene.getParty().splice(slotIndex, 1)[0];
+      const releasedPokemon = this.scene.getPlayerParty().splice(slotIndex, 1)[0];
       releasedPokemon.destroy();
       this.populatePartySlots();
-      if (this.cursor >= this.scene.getParty().length) {
+      if (this.cursor >= this.scene.getPlayerParty().length) {
         this.setCursor(this.cursor - 1);
       }
       if (this.partyUiMode === PartyUiMode.RELEASE) {

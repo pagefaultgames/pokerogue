@@ -181,7 +181,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
 
       // Sort berries by party member ID to more easily re-add later if necessary
       const berryItemsMap = new Map<number, BerryModifier[]>();
-      scene.getParty().forEach(pokemon => {
+      scene.getPlayerParty().forEach(pokemon => {
         const pokemonBerries = berryItems.filter(b => b.pokemonId === pokemon.id);
         if (pokemonBerries?.length > 0) {
           berryItemsMap.set(pokemon.id, pokemonBerries);
@@ -267,7 +267,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED);
           encounter.setDialogueToken("foodReward", revSeed?.name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"));
           const givePartyPokemonReviverSeeds = () => {
-            const party = scene.getParty();
+            const party = scene.getPlayerParty();
             party.forEach(p => {
               const heldItems = p.getHeldItems();
               if (revSeed && !heldItems.some(item => item instanceof PokemonInstantReviveModifier)) {
@@ -308,7 +308,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const berryMap = encounter.misc.berryItemsMap;
 
           // Returns 2/5 of the berries stolen to each Pokemon
-          const party = scene.getParty();
+          const party = scene.getPlayerParty();
           party.forEach(pokemon => {
             const stolenBerries: BerryModifier[] = berryMap.get(pokemon.id);
             const berryTypesAsArray: BerryType[] = [];
