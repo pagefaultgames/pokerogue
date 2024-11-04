@@ -1,6 +1,7 @@
 import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export type nil = null | undefined;
 
@@ -258,9 +259,16 @@ export const isLocal = (
    /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
   window.location.port !== "") || window.location.hostname === "";
 
+/**
+ * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
+ */
 export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
 
-// Set the server URL based on whether it's local or not
+/**
+ * Set the server URL based on whether it's local or not
+ *
+ * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
+ */
 export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
@@ -307,46 +315,12 @@ export function getCookie(cName: string): string {
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export function localPing() {
+export async function localPing() {
   if (isLocal) {
-    apiFetch("game/titlestats")
-      .then(resolved => isLocalServerConnected = true,
-        rejected => isLocalServerConnected = false
-      );
+    const titleStats = await pokerogueApi.getGameTitleStats();
+    isLocalServerConnected = !!titleStats;
+    console.log("isLocalServerConnected:", isLocalServerConnected);
   }
-}
-
-export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
-    const request = {};
-    if (authed) {
-      const sId = getCookie(sessionIdKey);
-      if (sId) {
-        request["headers"] = { "Authorization": sId };
-      }
-    }
-    fetch(`${apiUrl}/${path}`, request)
-      .then(response => resolve(response))
-      .catch(err => reject(err));
-  }) : new Promise(() => {});
-}
-
-export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
-    const headers = {
-      "Accept": contentType,
-      "Content-Type": contentType,
-    };
-    if (authed) {
-      const sId = getCookie(sessionIdKey);
-      if (sId) {
-        headers["Authorization"] = sId;
-      }
-    }
-    fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
-      .then(response => resolve(response))
-      .catch(err => reject(err));
-  }) : new Promise(() => {});
 }
 
 /** Alias for the constructor of a class */
