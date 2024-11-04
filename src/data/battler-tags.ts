@@ -2796,6 +2796,31 @@ export class PowerTrickTag extends BattlerTag {
   }
 }
 
+export class GrudgeTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.GRUDGE, [ BattlerTagLapseType.FAINT, BattlerTagLapseType.TURN_END ], 1);
+  }
+
+  onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.FAINT) {
+      if (pokemon.isFainted() && pokemon.turnData.attacksReceived.length > 0) {
+        const lastAttackSource = pokemon.scene.getPokemonById(pokemon.turnData.attacksReceived[0].sourceId);
+        if (lastAttackSource && lastAttackSource?.isOnField()) {
+          lastAttackSource.summonData.moveset[0]?.getMovePp();
+        }
+      }
+      return false;
+    } else {
+      return super.lapse(pokemon, lapseType);
+    }
+  }
+}
+
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
