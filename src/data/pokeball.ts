@@ -91,6 +91,9 @@ export function getPokeballTintColor(type: PokeballType): number {
  * @returns the chance of getting a critical capture, out of 256
  */
 export function getCriticalCaptureChance(scene: BattleScene, modifiedCatchRate: number): number {
+  if (scene.gameMode.isDaily || scene.gameMode.isFreshStartChallenge()) {
+    return 0;
+  }
   const dexCount = scene.gameData.getSpeciesCount(d => !!d.caughtAttr);
   const catchingCharmMultiplier = new NumberHolder(1);
   //scene.findModifier(m => m instanceof CriticalCaptureBoostModifier)?.apply(catchingCharmMultiplier);
