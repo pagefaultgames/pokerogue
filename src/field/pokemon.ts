@@ -352,11 +352,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return challengeAllowed.value;
   }
 
-  /**
-   * Checks if the Pokemon is allowed to be in battle and if it is on the field
-   * @param onField overrides if this Pokemon is on the field or not
-   * @returns returns false if there is no scene otherwise it returns true
-   */
   isActive(onField?: boolean): boolean {
     if (!this.scene) {
       return false;
