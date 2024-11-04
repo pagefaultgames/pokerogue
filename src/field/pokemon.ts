@@ -5128,7 +5128,7 @@ export class EnemyPokemon extends Pokemon {
         }
 
         if (pokemonReplaced && newPokemon.isAllowedInChallenge()) {
-          const modifiersToTransfer = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && !(m instanceof BaseStatModifier) && m.pokemonId === pokemonReplaced, true) as PokemonHeldItemModifier[];
+          const modifiersToTransfer = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && !(m instanceof BaseStatModifier) && m.isTransferable && m.pokemonId === pokemonReplaced, true) as PokemonHeldItemModifier[];
           const transferResults: Promise<boolean>[] = [];
           for (const modifier of modifiersToTransfer) {
             transferResults.push(this.scene.tryTransferHeldItemModifier(modifier, newPokemon, false, modifier.getStackCount(), true, true));
