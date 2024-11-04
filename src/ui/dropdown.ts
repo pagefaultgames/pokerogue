@@ -28,7 +28,8 @@ export enum SortCriteria {
   COST = 1,
   CANDY = 2,
   IV = 3,
-  NAME = 4
+  NAME = 4,
+  GROWTH = 5
 }
 
 export class DropDownLabel {

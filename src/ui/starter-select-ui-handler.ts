@@ -490,6 +490,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(this.scene, SortCriteria.CANDY, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
       new DropDownOption(this.scene, SortCriteria.IV, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
       new DropDownOption(this.scene, SortCriteria.NAME, new DropDownLabel(i18next.t("filterBar:sortByName")))
+      new DropDownOption(this.scene, SortCriteria.GROWTH, new DropDownLabel(i18next.t("filterBar:sortByGrowth")))
     ];
     this.filterBar.addFilter(DropDownColumn.SORT, i18next.t("filterBar:sortFilter"), new DropDown(this.scene, 0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
@@ -2555,6 +2556,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           return (avgIVsA - avgIVsB) * -sort.dir;
         case SortCriteria.NAME:
           return a.species.name.localeCompare(b.species.name) * -sort.dir;
+        case SortCriteria.GROWTH:
+          return (a.species.growthRate - b.species.growthRate) * -sort.dir;
       }
       return 0;
     });
