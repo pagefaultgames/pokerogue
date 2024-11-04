@@ -233,8 +233,8 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.clearEnemyHeldItemModifiers();
         this.scene.field.remove(pokemon, true);
       };
-      const addToParty = (slotIndex?: number) => {
-        const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex);
+      const addToParty = (slotIndex?: number, releasedPokemon?: number) => {
+        const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex, releasedPokemon);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         if (this.scene.getPlayerParty().filter(p => p.isShiny()).length === PLAYER_PARTY_MAX_SIZE) {
           this.scene.validateAchv(achvs.SHINY_PARTY);
@@ -262,15 +262,15 @@ export class AttemptCapturePhase extends PokemonPhase {
                   });
                 }, false);
               }, () => {
-                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
+                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: number, _option: PartyOption, releasedPokemon: number) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
-                      addToParty(slotIndex);
+                      addToParty(slotIndex, releasedPokemon);
                     } else {
                       promptRelease();
                     }
                   });
-                });
+                }, );
               }, () => {
                 this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                   removePokemon();

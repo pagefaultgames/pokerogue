@@ -123,7 +123,7 @@ export enum PartyOption {
   ALL = 4000,
 }
 
-export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
+export type PartySelectCallback = (cursor: integer, option: PartyOption, args?: any | undefined) => void;
 export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, itemQuantity?: integer, toCursor?: integer) => void;
 export type PartyModifierSpliceSelectCallback = (fromCursor: integer, toCursor?: integer) => void;
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string | null;
@@ -1061,9 +1061,11 @@ export default class PartyUiHandler extends MessageUiHandler {
   doRelease(slotIndex: integer): void {
     this.showText(this.getReleaseMessage(getPokemonNameWithAffix(this.scene.getPlayerParty()[slotIndex])), null, () => {
       this.clearPartySlots();
-      this.scene.removePartyMemberModifiers(slotIndex);
       const releasedPokemon = this.scene.getPlayerParty().splice(slotIndex, 1)[0];
-      releasedPokemon.destroy();
+      let releasedId: number = 0;
+      if (releasedPokemon.isAllowedInBattle()) {
+        releasedId = releasedPokemon.id;
+      }
       this.populatePartySlots();
       if (this.cursor >= this.scene.getPlayerParty().length) {
         this.setCursor(this.cursor - 1);
@@ -1071,8 +1073,9 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (this.partyUiMode === PartyUiMode.RELEASE) {
         const selectCallback = this.selectCallback;
         this.selectCallback = null;
-        selectCallback && selectCallback(this.cursor, PartyOption.RELEASE);
+        selectCallback && selectCallback(this.cursor, PartyOption.RELEASE, releasedId);
       }
+      releasedPokemon.destroy();
       this.showText("", 0);
     }, null, true);
   }

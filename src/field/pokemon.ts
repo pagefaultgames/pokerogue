@@ -5110,7 +5110,7 @@ export class EnemyPokemon extends Pokemon {
    * @param slotIndex an optional index to place the pokemon in the party
    * @returns the pokemon that was added or null if the pokemon could not be added
    */
-  addToParty(pokeballType: PokeballType, slotIndex: number = -1) {
+  addToParty(pokeballType: PokeballType, slotIndex: number = -1, pokemonReplaced?: number | null) {
     const party = this.scene.getPlayerParty();
     let ret: PlayerPokemon | null = null;
 
@@ -5125,6 +5125,15 @@ export class EnemyPokemon extends Pokemon {
       if (Utils.isBetween(slotIndex, 0, PLAYER_PARTY_MAX_SIZE - 1)) {
         if (slotIndex === 0) {
           newPokemon.setVisible(false); // Hide if replaced with first pokemon
+        }
+
+        if (pokemonReplaced && newPokemon.isAllowedInBattle()) {
+          const modifiersToTransfer = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemonReplaced, true) as PokemonHeldItemModifier[];
+          const transferResults: Promise<boolean>[] = [];
+          for (const modifier of modifiersToTransfer) {
+            transferResults.push(this.scene.tryTransferHeldItemModifier(modifier, newPokemon, false, modifier.getStackCount(), true, true));
+          }
+          Promise.allSettled(transferResults).then(() => newPokemon.scene.removePartyMemberModifiers(pokemonReplaced));
         }
         party.splice(slotIndex, 0, newPokemon);
       } else {

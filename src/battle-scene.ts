@@ -2632,10 +2632,9 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  removePartyMemberModifiers(partyMemberIndex: integer): Promise<void> {
+  removePartyMemberModifiers(partyMemberId: integer): Promise<void> {
     return new Promise(resolve => {
-      const pokemonId = this.getPlayerParty()[partyMemberIndex].id;
-      const modifiersToRemove = this.modifiers.filter(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === pokemonId);
+      const modifiersToRemove = this.modifiers.filter(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === partyMemberId);
       for (const m of modifiersToRemove) {
         this.modifiers.splice(this.modifiers.indexOf(m), 1);
       }
