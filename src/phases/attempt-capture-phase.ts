@@ -122,8 +122,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < (isCritical ? 1 : 3)) {
-                    // Shake check
-                    if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < shakeProbability) {
+                    // Shake check (skip the first for critical captures)
+                    if (pokeballMultiplier === -1 || isCritical && shakeCount === 1 || pokemon.randSeedInt(65536) < shakeProbability) {
                       this.scene.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();
