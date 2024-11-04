@@ -48,33 +48,42 @@ describe("Abilities - Unburden", () => {
 
   it("should activate when a berry is eaten", async () => {
     await game.classicMode.startBattle();
+
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.abilityIndex = 2;
     const playerHeldItems = playerPokemon.getHeldItems().length;
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
+
     game.move.select(Moves.FALSE_SWIPE);
     await game.toNextTurn();
+
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed * 2);
 
   });
   it("should activate when a berry is stolen", async () => {
     await game.classicMode.startBattle();
+
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
+
     game.move.select(Moves.PLUCK);
     await game.toNextTurn();
+
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
   it("should activate when an item is knocked off", async () => {
     await game.classicMode.startBattle();
+
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
+
     game.move.select(Moves.KNOCK_OFF);
     await game.toNextTurn();
+
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
@@ -85,11 +94,14 @@ describe("Abilities - Unburden", () => {
         { name: "MULTI_LENS", count: 3 },
       ]);
     await game.classicMode.startBattle();
+
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
+
     game.move.select(Moves.POPULATION_BOMB);
     await game.toNextTurn();
+
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
@@ -103,12 +115,15 @@ describe("Abilities - Unburden", () => {
         { name: "LUCKY_EGG", count: 1 },
       ]);
     await game.classicMode.startBattle();
+
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.abilityIndex = 2;
     const playerHeldItems = playerPokemon.getHeldItems().length;
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
+
     game.move.select(Moves.POPULATION_BOMB);
     await game.toNextTurn();
+
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed * 2);
   });
@@ -118,11 +133,14 @@ describe("Abilities - Unburden", () => {
       { name: "MULTI_LENS", count: 3 },
     ]);
     await game.classicMode.startBattle();
+
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
+
     game.move.select(Moves.THIEF);
     await game.toNextTurn();
+
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
@@ -143,13 +161,16 @@ describe("Abilities - Unburden", () => {
         { name: "BERRY", type: BerryType.LUM, count: 1 },
       ]);
     await game.classicMode.startBattle();
+
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
+
     while (enemyPokemon.getHeldItems().length === enemyHeldItemCt) {
       game.move.select(Moves.POPULATION_BOMB);
       await game.toNextTurn();
     }
+
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
@@ -157,22 +178,28 @@ describe("Abilities - Unburden", () => {
   it("should not activate when a neutralizing ability is present", async () => {
     game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
     await game.classicMode.startBattle();
+
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerHeldItems = playerPokemon.getHeldItems().length;
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
+
     game.move.select(Moves.FALSE_SWIPE);
     await game.toNextTurn();
+
     expect(playerPokemon.getHeldItems().length).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialPlayerSpeed);
   });
   it("should activate when a move that consumes a berry is used", async () => {
     game.override.enemyMoveset([ Moves.STUFF_CHEEKS ]);
     await game.classicMode.startBattle();
+
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyHeldItemCt = enemyPokemon.getHeldItems().length;
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
+
     game.move.select(Moves.STUFF_CHEEKS);
     await game.toNextTurn();
+
     expect(enemyPokemon.getHeldItems().length).toBeLessThan(enemyHeldItemCt);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBeCloseTo(initialEnemySpeed * 2);
   });
@@ -180,16 +207,16 @@ describe("Abilities - Unburden", () => {
     game.override
       .battleType("double")
       .moveset([ Moves.SPLASH ]);
-
     await game.classicMode.startBattle([ Species.TREECKO, Species.MEOWTH, Species.WEEZING ]);
+
     const playerPokemon = game.scene.getParty();
     const treecko = playerPokemon[0];
     const weezing = playerPokemon[2];
     treecko.abilityIndex = 2;
     weezing.abilityIndex = 1;
-
     const playerHeldItems = treecko.getHeldItems().length;
     const initialPlayerSpeed = treecko.getStat(Stat.SPD);
+
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.FALSE_SWIPE, 0);

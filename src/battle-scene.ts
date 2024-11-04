@@ -2595,14 +2595,14 @@ export default class BattleScene extends SceneBase {
               if (target.isPlayer()) {
                 this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
                   if (source) {
-                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, source.hasPassive(), false, []);
+                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
                   }
                   resolve(true);
                 });
               } else {
                 this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
                   if (source) {
-                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, source.hasPassive(), false, []);
+                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
                   }
                   resolve(true);
                 });
