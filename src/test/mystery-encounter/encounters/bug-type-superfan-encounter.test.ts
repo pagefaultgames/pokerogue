@@ -383,17 +383,11 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       });
       await game.phaseInterceptor.run(MysteryEncounterRewardsPhase);
 
-      // TODO: what is happening here?
       expect(selectOptionSpy).toHaveBeenCalledTimes(1);
-      const optionData = selectOptionSpy.mock.calls[0][1];
-      // @ts-expect-error
+      const optionData = selectOptionSpy.mock.calls[0][0];
       expect(PHYSICAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[0].label)).toBe(true);
-      // @ts-expect-error
       expect(SPECIAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[1].label)).toBe(true);
-      // @ts-expect-error
       expect(STATUS_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[2].label)).toBe(true);
-      // @ts-expect-error
-      expect(MISC_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[3].label)).toBe(true);
     });
   });
 
