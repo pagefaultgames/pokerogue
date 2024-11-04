@@ -2830,8 +2830,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               this.scene.gameData.gameStats.highestDamage = damage;
             }
           }
-          source.turnData.damageDealt += damage;
-          source.turnData.currDamageDealt = damage;
+          source.turnData.totalDamageDealt += damage;
+          source.turnData.singleHitDamageDealt = damage;
           this.turnData.damageTaken += damage;
           this.battleData.hitCount++;
 
@@ -5133,7 +5133,6 @@ export class PokemonSummonData {
   public tags: BattlerTag[] = [];
   public abilitySuppressed: boolean = false;
   public abilitiesApplied: Abilities[] = [];
-
   public speciesForm: PokemonSpeciesForm | null;
   public fusionSpeciesForm: PokemonSpeciesForm;
   public ability: Abilities = Abilities.NONE;
@@ -5173,8 +5172,8 @@ export class PokemonTurnData {
    * - `0` = Move is finished
    */
   public hitsLeft: number = -1;
-  public damageDealt: number = 0;
-  public currDamageDealt: number = 0;
+  public totalDamageDealt: number = 0;
+  public singleHitDamageDealt: number = 0;
   public damageTaken: number = 0;
   public attacksReceived: AttackMoveResult[] = [];
   public order: number;

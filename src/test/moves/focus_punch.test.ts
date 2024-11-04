@@ -59,7 +59,7 @@ describe("Moves - Focus Punch", () => {
 
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
       expect(leadPokemon.getMoveHistory().length).toBe(1);
-      expect(leadPokemon.turnData.damageDealt).toBe(enemyStartingHp - enemyPokemon.hp);
+      expect(leadPokemon.turnData.totalDamageDealt).toBe(enemyStartingHp - enemyPokemon.hp);
     }
   );
 
@@ -86,7 +86,7 @@ describe("Moves - Focus Punch", () => {
 
       expect(enemyPokemon.hp).toBe(enemyStartingHp);
       expect(leadPokemon.getMoveHistory().length).toBe(1);
-      expect(leadPokemon.turnData.damageDealt).toBe(0);
+      expect(leadPokemon.turnData.totalDamageDealt).toBe(0);
     }
   );
 
