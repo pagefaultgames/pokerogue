@@ -1,20 +1,20 @@
+import { type PokeballCounts } from "#app/battle-scene";
+import { Gender } from "#app/data/gender";
+import { Variant } from "#app/data/variant";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
 import { Moves } from "#enums/moves";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { type PokeballCounts } from "./battle-scene";
-import { Gender } from "./data/gender";
-import { Variant } from "./data/variant";
-import { type ModifierOverride } from "./modifier/modifier-type";
-import { Unlockables } from "./system/unlockables";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Overrides that are using when testing different in game situations
