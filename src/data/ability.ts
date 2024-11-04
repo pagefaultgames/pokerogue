@@ -3857,6 +3857,41 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   }
 }
 
+/**
+ * Triggers after the Pokemon loses or consumes an item
+ * @extends AbAttr
+ */
+export class PostItemLostAbAttr extends AbAttr {
+  applyPostItemLost(pokemon: Pokemon, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+/**
+ * Applies a Battler Tag to the Pokemon after it loses or consumes item
+ * @extends PostItemLostAbAttr
+ */
+export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
+  private tagType: BattlerTagType;
+  constructor(tagType: BattlerTagType) {
+    super(true);
+    this.tagType = tagType;
+  }
+  /**
+   * Adds the last used Pokeball back into the player's inventory
+   * @param pokemon {@linkcode Pokemon} with this ability
+   * @param args N/A
+   * @returns true if BattlerTag was applied
+   */
+  applyPostItemLost(pokemon: Pokemon, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    if (!pokemon.getTag(this.tagType) && !simulated) {
+      pokemon.addTag(this.tagType);
+      return true;
+    }
+    return false;
+  }
+}
+
 export class StatStageChangeMultiplierAbAttr extends AbAttr {
   private multiplier: integer;
 
@@ -5228,6 +5263,11 @@ export function applyPostFaintAbAttrs(attrType: Constructor<PostFaintAbAttr>,
   return applyAbAttrsInternal<PostFaintAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostFaint(pokemon, passive, simulated, attacker, move, hitResult, args), args, false, simulated);
 }
 
+export function applyPostItemLostAbAttrs(attrType: Constructor<PostItemLostAbAttr>,
+  pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostItemLostAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostItemLost(pokemon, simulated, args), args);
+}
+
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, passive));
   pokemon.scene.clearPhaseQueueSplice();
@@ -5521,7 +5561,7 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .unimplemented(),
+      .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN),
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReduceBurnDamageAbAttr, 0.5)
