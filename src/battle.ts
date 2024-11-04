@@ -233,7 +233,7 @@ export default class Battle {
     const wildOpponents = scene.getEnemyParty();
     for (const pokemon of wildOpponents) {
       if (this.battleSpec === BattleSpec.FINAL_BOSS) {
-        if (pokemon.species.getFormSpriteKey() === SpeciesFormKey.ETERNAMAX) {
+        if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ETERNAMAX) {
           return "battle_final";
         }
         return "battle_final_encounter";
@@ -299,7 +299,7 @@ export default class Battle {
               return "battle_legendary_sinnoh";
             case Species.DIALGA:
             case Species.PALKIA:
-              if (pokemon.species.getFormSpriteKey() === SpeciesFormKey.ORIGIN) {
+              if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ORIGIN) {
                 return "battle_legendary_origin_forme";
               }
               return "battle_legendary_dia_pal";
