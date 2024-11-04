@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { getPokeballCatchMultiplier, getPokeballAtlasKey, getPokeballTintColor, doPokeballBounceAnim } from "#app/data/pokeball";
+import { getPokeballCatchMultiplier, getPokeballAtlasKey, getPokeballTintColor, getCriticalCaptureChance, doPokeballBounceAnim } from "#app/data/pokeball";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { PokeballType } from "#app/enums/pokeball";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -52,7 +52,9 @@ export class AttemptCapturePhase extends PokemonPhase {
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
     const modifiedCatchRate = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
-    const shakeProbability = Math.round(65536 * Math.pow((modifiedCatchRate / 1044480), 0.1875));
+    const shakeProbability = Math.round(65536 * Math.pow((modifiedCatchRate / 1044480), 0.1875)); // Formula taken from gen 6
+    const criticalCaptureChance = getCriticalCaptureChance(this.scene, modifiedCatchRate);
+    const isCritical = pokemon.randSeedInt(256) < criticalCaptureChance;
     const fpOffset = pokemon.getFieldPositionOffset();
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
@@ -60,17 +62,19 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(this.pokeball);
 
-    this.scene.playSound("se/pb_throw");
+    this.scene.playSound("se/pb_throw", isCritical ? { rate: 0.2 } : undefined); // Crit catch throws are higher pitched
     this.scene.time.delayedCall(300, () => {
       this.scene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
 
     this.scene.tweens.add({
+      // Throw animation
       targets: this.pokeball,
       x: { value: 236 + fpOffset[0], ease: "Linear" },
       y: { value: 16 + fpOffset[1], ease: "Cubic.easeOut" },
       duration: 500,
       onComplete: () => {
+        // Ball opens
         this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
         this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
         this.scene.playSound("se/pb_rel");
@@ -79,30 +83,33 @@ export class AttemptCapturePhase extends PokemonPhase {
         addPokeballOpenParticles(this.scene, this.pokeball.x, this.pokeball.y, this.pokeballType);
 
         this.scene.tweens.add({
+          // Mon enters ball
           targets: pokemon,
           duration: 500,
           ease: "Sine.easeIn",
           scale: 0.25,
           y: 20,
           onComplete: () => {
+            // Ball closes
             this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
             pokemon.setVisible(false);
             this.scene.playSound("se/pb_catch");
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
             const doShake = () => {
+              // After the overall catch rate check, the game does 4 shake checks before confirming the catch.
               let shakeCount = 0;
               const pbX = this.pokeball.x;
               const shakeCounter = this.scene.tweens.addCounter({
                 from: 0,
                 to: 1,
-                repeat: 4,
+                repeat: isCritical ? 2 : 4, // Critical captures only perform 2 shake checks
                 yoyo: true,
                 ease: "Cubic.easeOut",
                 duration: 250,
                 repeatDelay: 500,
                 onUpdate: t => {
-                  if (shakeCount && shakeCount < 4) {
+                  if (shakeCount && shakeCount < (isCritical ? 2 : 4)) {
                     const value = t.getValue();
                     const directionMultiplier = shakeCount % 2 === 1 ? 1 : -1;
                     this.pokeball.setX(pbX + value * 4 * directionMultiplier);
@@ -113,7 +120,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                   if (!pokemon.species.isObtainable()) {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
-                  } else if (shakeCount++ < 3) {
+                  } else if (shakeCount++ < (isCritical ? 1 : 3)) {
+                    // Shake check
                     if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < shakeProbability) {
                       this.scene.playSound("se/pb_move");
                     } else {
@@ -152,7 +160,8 @@ export class AttemptCapturePhase extends PokemonPhase {
               });
             };
 
-            this.scene.time.delayedCall(250, () => doPokeballBounceAnim(this.scene, this.pokeball, 16, 72, 350, doShake));
+            // Ball bounces (handled in pokemon.ts)
+            this.scene.time.delayedCall(250, () => doPokeballBounceAnim(this.scene, this.pokeball, 16, 72, 350, doShake, isCritical));
           }
         });
       }
