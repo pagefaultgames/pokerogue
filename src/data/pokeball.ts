@@ -1,4 +1,4 @@
-import { IntegerHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { PokeballType } from "#enums/pokeball";
 import BattleScene from "../battle-scene";
 import i18next from "i18next";
@@ -92,7 +92,7 @@ export function getPokeballTintColor(type: PokeballType): number {
  */
 export function getCriticalCaptureChance(scene: BattleScene, modifiedCatchRate: number): number {
   const dexCount = scene.gameData.getSpeciesCount(d => !!d.caughtAttr);
-  const catchingCharmMultiplier = new IntegerHolder(1);
+  const catchingCharmMultiplier = new NumberHolder(1);
   //scene.findModifier(m => m instanceof CriticalCaptureBoostModifier)?.apply(catchingCharmMultiplier);
   const dexMultiplier = dexCount > 600 ? 2.5
     : dexCount > 450 ? 2
