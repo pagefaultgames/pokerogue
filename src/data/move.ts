@@ -4161,6 +4161,60 @@ export class CombinedPledgeStabBoostAttr extends MoveAttr {
   }
 }
 
+/**
+ * Variable Power attribute for {@link https://bulbapedia.bulbagarden.net/wiki/Round_(move) | Round}.
+ * Doubles power if another Pokemon has previously selected Round this turn.
+ * @extends VariablePowerAttr
+ */
+export class RoundPowerAttr extends VariablePowerAttr {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0];
+    if (!(power instanceof Utils.NumberHolder)) {
+      return false;
+    }
+
+    if (user.turnData?.joinedRound) {
+      power.value *= 2;
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Attribute for the "combo" effect of {@link https://bulbapedia.bulbagarden.net/wiki/Round_(move) | Round}.
+ * Preempts the next move in the turn order with the first instance of any Pokemon
+ * using Round. Also marks the Pokemon using the cued Round to double the move's power.
+ * @extends MoveEffectAttr
+ * @see {@linkcode RoundPowerAttr}
+ */
+export class CueNextRoundAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, { lastHitOnly: true });
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    const nextRoundPhase = user.scene.findPhase<MovePhase>(phase =>
+      phase instanceof MovePhase && phase.move.moveId === Moves.ROUND
+    );
+
+    if (!nextRoundPhase) {
+      return false;
+    }
+
+    // Update the phase queue so that the next Pokemon using Round moves next
+    const nextRoundIndex = user.scene.phaseQueue.indexOf(nextRoundPhase);
+    const nextMoveIndex = user.scene.phaseQueue.findIndex(phase => phase instanceof MovePhase);
+    if (nextRoundIndex !== nextMoveIndex) {
+      user.scene.prependToPhase(user.scene.phaseQueue.splice(nextRoundIndex, 1)[0], MovePhase);
+    }
+
+    // Mark the corresponding Pokemon as having "joined the Round" (for doubling power later)
+    nextRoundPhase.pokemon.turnData.joinedRound = true;
+    return true;
+  }
+}
+
 export class VariableAtkAttr extends MoveAttr {
   constructor() {
     super();
@@ -8960,8 +9014,9 @@ export function initMoves() {
       .condition((user, target, move) => !target.turnData.acted)
       .attr(AfterYouAttr),
     new AttackMove(Moves.ROUND, Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
-      .soundBased()
-      .partial(), // No effect implemented
+      .attr(CueNextRoundAttr)
+      .attr(RoundPowerAttr)
+      .soundBased(),
     new AttackMove(Moves.ECHOED_VOICE, Type.NORMAL, MoveCategory.SPECIAL, 40, 100, 15, -1, 0, 5)
       .attr(ConsecutiveUseMultiBasePowerAttr, 5, false)
       .soundBased(),
