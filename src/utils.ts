@@ -1,6 +1,7 @@
 import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
+import * as plugins from "./plugins/utils-plugins";
 
 export type nil = null | undefined;
 
@@ -634,3 +635,5 @@ export function animationFileName(move: Moves): string {
 export function camelCaseToKebabCase(str: string): string {
   return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
 }
+
+export { plugins };
