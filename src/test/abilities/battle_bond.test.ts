@@ -40,7 +40,7 @@ describe("Abilities - BATTLE BOND", () => {
   it("check if fainted pokemon switches to base form on arena reset", async () => {
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.GRENINJA ]);
 
-    const greninja = game.scene.getParty()[1];
+    const greninja = game.scene.getPlayerParty()[1];
     expect(greninja.formIndex).toBe(ashForm);
 
     greninja.hp = 0;

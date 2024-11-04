@@ -170,7 +170,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       if (!this.scene.showLevelUpStats) {
         return resolve();
       }
-      const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
+      const newStats = (this.scene as BattleScene).getPlayerParty()[partyMemberIndex].stats;
       let levelUpStatsValuesText = "";
       for (const s of PERMANENT_STATS) {
         levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;

@@ -223,7 +223,7 @@ export class EvolutionPhase extends Phase {
                           this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => {
                             const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
                             for (const lm of levelMoves) {
-                              this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this.pokemon), lm[1]));
+                              this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getPlayerParty().indexOf(this.pokemon), lm[1]));
                             }
                             this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 

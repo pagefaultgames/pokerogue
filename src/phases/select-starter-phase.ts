@@ -3,16 +3,15 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Gender } from "#app/data/gender";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Species } from "#app/enums/species";
-import { PlayerPokemon } from "#app/field/pokemon";
-import { overrideModifiers, overrideHeldItems } from "#app/modifier/modifier";
+import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
+import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
+import { TitlePhase } from "#app/phases/title-phase";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { Starter } from "#app/ui/starter-select-ui-handler";
 import { Mode } from "#app/ui/ui";
+import { Species } from "#enums/species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { TitlePhase } from "./title-phase";
-import Overrides from "#app/overrides";
 
 export class SelectStarterPhase extends Phase {
 
@@ -44,7 +43,7 @@ export class SelectStarterPhase extends Phase {
    * @param starters {@linkcode Pokemon} with which to start the first battle
    */
   initBattle(starters: Starter[]) {
-    const party = this.scene.getParty();
+    const party = this.scene.getPlayerParty();
     const loadPokemonAssets: Promise<void>[] = [];
     starters.forEach((starter: Starter, i: integer) => {
       if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
@@ -103,7 +102,7 @@ export class SelectStarterPhase extends Phase {
       this.scene.sessionPlayTime = 0;
       this.scene.lastSavePlayTime = 0;
       // Ensures Keldeo (or any future Pokemon that have this type of form change) starts in the correct form
-      this.scene.getParty().forEach((p: PlayerPokemon) => {
+      this.scene.getPlayerParty().forEach((p) => {
         this.scene.triggerPokemonFormChange(p, SpeciesFormChangeMoveLearnedTrigger);
       });
       this.end();

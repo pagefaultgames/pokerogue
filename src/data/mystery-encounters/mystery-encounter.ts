@@ -314,7 +314,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * @param pokemon
    */
   pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon): boolean {
-    return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getParty()).map(p => p.id).includes(pokemon.id));
+    return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getPlayerParty()).map(p => p.id).includes(pokemon.id));
   }
 
   /**
@@ -326,18 +326,18 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   private meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene): boolean {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
-      const activeMon = scene.getParty().filter(p => p.isActive(true));
+      const activeMon = scene.getPlayerParty().filter(p => p.isActive(true));
       if (activeMon.length > 0) {
         this.primaryPokemon = activeMon[0];
       } else {
-        this.primaryPokemon = scene.getParty().filter(p => p.isAllowedInBattle())[0];
+        this.primaryPokemon = scene.getPlayerParty().filter(p => p.isAllowedInBattle())[0];
       }
       return true;
     }
-    let qualified: PlayerPokemon[] = scene.getParty();
+    let qualified: PlayerPokemon[] = scene.getPlayerParty();
     for (const req of this.primaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
-        qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
+        qualified = qualified.filter(pkmn => req.queryParty(scene.getPlayerParty()).includes(pkmn));
       } else {
         this.primaryPokemon = undefined;
         return false;
@@ -394,10 +394,10 @@ export default class MysteryEncounter implements IMysteryEncounter {
       return true;
     }
 
-    let qualified: PlayerPokemon[] = scene.getParty();
+    let qualified: PlayerPokemon[] = scene.getPlayerParty();
     for (const req of this.secondaryPokemonRequirements) {
       if (req.meetsRequirement(scene)) {
-        qualified = qualified.filter(pkmn => req.queryParty(scene.getParty()).includes(pkmn));
+        qualified = qualified.filter(pkmn => req.queryParty(scene.getPlayerParty()).includes(pkmn));
       } else {
         this.secondaryPokemon = [];
         return false;
