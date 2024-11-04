@@ -6281,7 +6281,8 @@ export function initAbilities() {
     new Ability(Abilities.COMMANDER, 9)
       .attr(CommanderAbAttr)
       .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr),
+      .attr(UnswappableAbilityAbAttr)
+      .edgeCase(), // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
     new Ability(Abilities.ELECTROMORPHOSIS, 9)
       .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattlerTagType.CHARGED),
     new Ability(Abilities.PROTOSYNTHESIS, 9)
