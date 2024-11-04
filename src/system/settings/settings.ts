@@ -163,6 +163,11 @@ export const SettingKeys = {
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
 };
 
+export enum MusicPreference {
+  CONSISTENT,
+  MIXED
+}
+
 /**
  * All Settings not related to controls
  */
@@ -634,7 +639,7 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:mixed")
       }
     ],
-    default: 0,
+    default: MusicPreference.MIXED,
     type: SettingType.AUDIO,
     requireReload: true
   },

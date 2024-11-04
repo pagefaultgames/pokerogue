@@ -948,7 +948,7 @@ export class GameData {
       seed: scene.seed,
       playTime: scene.sessionPlayTime,
       gameMode: scene.gameMode.modeId,
-      party: scene.getParty().map(p => new PokemonData(p)),
+      party: scene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
       enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
@@ -1026,7 +1026,7 @@ export class GameData {
 
           const loadPokemonAssets: Promise<void>[] = [];
 
-          const party = scene.getParty();
+          const party = scene.getPlayerParty();
           party.splice(0, party.length);
 
           for (const p of sessionData.party) {
@@ -1830,17 +1830,40 @@ export class GameData {
     return starterCount;
   }
 
-  getSpeciesDefaultDexAttr(species: PokemonSpecies, forSeen: boolean = false, optimistic: boolean = false): bigint {
+  getSpeciesDefaultDexAttr(species: PokemonSpecies, _forSeen: boolean = false, optimistic: boolean = false): bigint {
     let ret = 0n;
     const dexEntry = this.dexData[species.speciesId];
     const attr = dexEntry.caughtAttr;
-    ret |= optimistic
-      ? attr & DexAttr.SHINY ? DexAttr.SHINY : DexAttr.NON_SHINY
-      : attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+    if (optimistic) {
+      if (attr & DexAttr.SHINY) {
+        ret |= DexAttr.SHINY;
+
+        if (attr & DexAttr.VARIANT_3) {
+          ret |= DexAttr.VARIANT_3;
+        } else if (attr & DexAttr.VARIANT_2) {
+          ret |= DexAttr.VARIANT_2;
+        } else {
+          ret |= DexAttr.DEFAULT_VARIANT;
+        }
+      } else {
+        ret |= DexAttr.NON_SHINY;
+        ret |= DexAttr.DEFAULT_VARIANT;
+      }
+    } else {
+      // Default to non shiny. Fallback to shiny if it's the only thing that's unlocked
+      ret |= (attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY)) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+
+      if (attr & DexAttr.DEFAULT_VARIANT) {
+        ret |= DexAttr.DEFAULT_VARIANT;
+      } else if (attr & DexAttr.VARIANT_2) {
+        ret |= DexAttr.VARIANT_2;
+      } else if (attr & DexAttr.VARIANT_3) {
+        ret |= DexAttr.VARIANT_3;
+      } else {
+        ret |= DexAttr.DEFAULT_VARIANT;
+      }
+    }
     ret |= attr & DexAttr.MALE || !(attr & DexAttr.FEMALE) ? DexAttr.MALE : DexAttr.FEMALE;
-    ret |= optimistic
-      ? attr & DexAttr.SHINY ? attr & DexAttr.VARIANT_3 ? DexAttr.VARIANT_3 : attr & DexAttr.VARIANT_2 ? DexAttr.VARIANT_2 : DexAttr.DEFAULT_VARIANT : DexAttr.DEFAULT_VARIANT
-      : attr & DexAttr.DEFAULT_VARIANT ? DexAttr.DEFAULT_VARIANT : attr & DexAttr.VARIANT_2 ? DexAttr.VARIANT_2 : attr & DexAttr.VARIANT_3 ? DexAttr.VARIANT_3 : DexAttr.DEFAULT_VARIANT;
     ret |= this.getFormAttr(this.getFormIndex(attr));
     return ret;
   }
@@ -1848,7 +1871,14 @@ export class GameData {
   getSpeciesDexAttrProps(species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
-    const variant = dexAttr & DexAttr.DEFAULT_VARIANT ? 0 : dexAttr & DexAttr.VARIANT_2 ? 1 : dexAttr & DexAttr.VARIANT_3 ? 2 : 0;
+    let variant: Variant = 0;
+    if (dexAttr & DexAttr.DEFAULT_VARIANT) {
+      variant = 0;
+    } else if (dexAttr & DexAttr.VARIANT_2) {
+      variant = 1;
+    } else if (dexAttr & DexAttr.VARIANT_3) {
+      variant = 2;
+    }
     const formIndex = this.getFormIndex(dexAttr);
 
     return {

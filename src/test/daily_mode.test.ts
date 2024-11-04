@@ -32,7 +32,7 @@ describe("Daily Mode", () => {
   it("should initialize properly", async () => {
     await game.dailyMode.runToSummon();
 
-    const party = game.scene.getParty();
+    const party = game.scene.getPlayerParty();
     expect(party).toHaveLength(3);
     party.forEach((pkm) => {
       expect(pkm.level).toBe(20);

@@ -1,8 +1,8 @@
 import { clientSessionId } from "#app/account";
 import { BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { trainerConfigs } from "#app/data/trainer-config";
 import Pokemon from "#app/field/pokemon";
@@ -66,7 +66,7 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.loadSession(this.scene, this.scene.sessionSlotId).then(() => {
               this.scene.pushPhase(new EncounterPhase(this.scene, true));
 
-              const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
+              const availablePartyMembers = this.scene.getPokemonAllowedInBattle().length;
 
               this.scene.pushPhase(new SummonPhase(this.scene, 0));
               if (this.scene.currentBattle.double && availablePartyMembers > 1) {
@@ -98,7 +98,7 @@ export class GameOverPhase extends BattlePhase {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
-            for (const pokemon of this.scene.getParty()) {
+            for (const pokemon of this.scene.getPlayerParty()) {
               this.awardRibbon(pokemon);
 
               if (pokemon.species.getRootSpeciesId() !== pokemon.species.getRootSpeciesId(true)) {
@@ -195,13 +195,13 @@ export class GameOverPhase extends BattlePhase {
       if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
       }
-      if (this.scene.getParty().filter(p => p.fusionSpecies).length && !this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
+      if (this.scene.getPlayerParty().filter(p => p.fusionSpecies).length && !this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.SPLICED_ENDLESS_MODE));
       }
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
       }
-      if (!this.scene.gameData.unlocks[Unlockables.EVIOLITE] && this.scene.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)) {
+      if (!this.scene.gameData.unlocks[Unlockables.EVIOLITE] && this.scene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)) {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.EVIOLITE));
       }
     }

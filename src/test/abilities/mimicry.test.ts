@@ -35,7 +35,7 @@ describe("Abilities - Mimicry", () => {
     game.override.enemyAbility(Abilities.MISTY_SURGE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.ABRA ]);
 
-    const [ playerPokemon1, playerPokemon2 ] = game.scene.getParty();
+    const [ playerPokemon1, playerPokemon2 ] = game.scene.getPlayerParty();
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
     expect(playerPokemon1.getTypes().includes(Type.FAIRY)).toBe(true);
