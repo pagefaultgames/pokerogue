@@ -441,25 +441,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.loadAssets(false, true).then(() => this.playAnim());
     } else {
       let availables: Species[] = [];
+      let randomIllusion: PokemonSpecies = this.scene.arena.randomSpecies(this.scene.currentBattle.waveIndex, this.level)
       if (this.isBoss()) {
         availables = [ Species.ENTEI, Species.RAIKOU, Species.SUICUNE ];
-      } else {
-        const area: Species[] = [
-          Species.HOUNDOUR, Species.SABLEYE, Species.PURRLOIN, Species.PAWNIARD, Species.NICKIT,
-          Species.IMPIDIMP, Species.MASCHIFF, Species.ABSOL, Species.SPIRITOMB, Species.DEINO,
-        ];
-
-        for (let species of area) {
-          for (const evolutionLevel of getPokemonSpecies(species).getEvolutionLevels()) {
-            if (evolutionLevel[1] && evolutionLevel[1] <= this.level) {
-              species = evolutionLevel[0];
-            }
-          }
-          availables.push(species);
-        }
-        availables.push(this.species.name === getPokemonSpecies(Species.ZORUA).name ? Species.MURKROW : Species.HONCHKROW);
+        randomIllusion = getPokemonSpecies(availables[this.randSeedInt(availables.length)]);
       }
-      const randomIllusion: PokemonSpecies = getPokemonSpecies(availables[this.randSeedInt(availables.length)]);
 
       this.battleData.illusion = {
         active: true,
