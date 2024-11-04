@@ -2999,7 +2999,7 @@ export default class BattleScene extends SceneBase {
    */
   getActiveKeys(): string[] {
     const keys: string[] = [];
-    let activePokemon: (PlayerPokemon | EnemyPokemon)[] = this.getParty();
+    let activePokemon: (PlayerPokemon | EnemyPokemon)[] = this.getPlayerParty();
     activePokemon = activePokemon.concat(this.getEnemyParty());
     activePokemon.forEach((p) => {
       keys.push(p.getSpriteKey(true));
