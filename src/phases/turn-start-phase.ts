@@ -113,7 +113,7 @@ export class TurnStartPhase extends FieldPhase {
           if (isSameBracket && battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
             return battlerBypassSpeed[a].value ? -1 : 1;
           }
-          return aPriority < bPriority ? 1 : -1;
+          return (aPriority < bPriority) ? 1 : -1;
         }
       }
 

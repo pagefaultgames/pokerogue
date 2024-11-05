@@ -1,10 +1,11 @@
+import { allMoves } from "#app/data/move";
 import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Upper Hand", () => {
   let phaserGame: Phaser.Game;
@@ -50,7 +51,7 @@ describe("Moves - Upper Hand", () => {
 
   it.each([
     { descriptor: "non-priority attack", move: Moves.TACKLE },
-    { descriptor: "status move", move: Moves.SPLASH }
+    { descriptor: "status move", move: Moves.BABY_DOLL_EYES }
   ])("should fail when the opponent selects a $descriptor", async ({ move }) => {
     game.override.enemyMoveset(move);
 
@@ -80,5 +81,20 @@ describe("Moves - Upper Hand", () => {
     expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(magikarp.isFullHp()).toBeFalsy();
     expect(feebas.isFullHp()).toBeTruthy();
+  });
+
+  it("should fail if the target has already moved", async () => {
+    game.override.enemyMoveset(Moves.TACKLE);
+    vi.spyOn(allMoves[Moves.TACKLE], "priority", "get").mockReturnValue(4);
+
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
+
+    const feebas = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.UPPER_HAND);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(feebas.isFullHp()).toBeFalsy();
   });
 });
