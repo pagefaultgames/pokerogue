@@ -1,6 +1,5 @@
 import { loggedInUser } from "#app/account";
 import { BattleType } from "#app/battle";
-import BattleScene from "#app/battle-scene";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
@@ -24,15 +23,9 @@ import { SummonPhase } from "./summon-phase";
 
 
 export class TitlePhase extends Phase {
-  private loaded: boolean;
+  private loaded: boolean = false;
   private lastSessionData: SessionSaveData;
   public gameMode: GameModes;
-
-  constructor(scene: BattleScene) {
-    super(scene);
-
-    this.loaded = false;
-  }
 
   start(): void {
     super.start();
@@ -133,7 +126,7 @@ export class TitlePhase extends Phase {
       label: i18next.t("menu:loadGame"),
       handler: () => {
         this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
-          (slotId: integer) => {
+          (slotId: number) => {
             if (slotId === -1) {
               return this.showOptions();
             }
@@ -166,7 +159,7 @@ export class TitlePhase extends Phase {
     this.scene.ui.setMode(Mode.TITLE, config);
   }
 
-  loadSaveSlot(slotId: integer): void {
+  loadSaveSlot(slotId: number): void {
     this.scene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
     this.scene.ui.setMode(Mode.MESSAGE);
     this.scene.ui.resetModeChain();
@@ -184,7 +177,7 @@ export class TitlePhase extends Phase {
   }
 
   initDailyRun(): void {
-    this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+    this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
       this.scene.clearPhaseQueue();
       if (slotId === -1) {
         this.scene.pushPhase(new TitlePhase(this.scene));

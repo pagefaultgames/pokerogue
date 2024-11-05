@@ -99,8 +99,8 @@ export class TurnStartPhase extends FieldPhase {
         const bMove = allMoves[bCommand!.move!.move];
 
         // The game now considers priority and applies the relevant move and ability attributes
-        const aPriority = new Utils.IntegerHolder(aMove.priority);
-        const bPriority = new Utils.IntegerHolder(bMove.priority);
+        const aPriority = new Utils.NumberHolder(aMove.priority);
+        const bPriority = new Utils.NumberHolder(bMove.priority);
 
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority);
         applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority);

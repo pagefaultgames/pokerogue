@@ -10,10 +10,10 @@ import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-pha
 import { LearnMovePhase } from "./learn-move-phase";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
-  private lastLevel: integer;
-  private level: integer;
+  private lastLevel: number;
+  private level: number;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, lastLevel: integer, level: integer) {
+  constructor(scene: BattleScene, partyMemberIndex: number, lastLevel: number, level: number) {
     super(scene, partyMemberIndex);
 
     this.lastLevel = lastLevel;

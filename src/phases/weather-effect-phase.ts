@@ -21,8 +21,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
     this.weather = this.scene?.arena?.weather;
 
     if (!this.weather) {
-      this.end();
-      return;
+      return this.end();
     }
 
     this.setAnimation(CommonAnim.SUNNY + (this.weather.weatherType - 1));
@@ -46,7 +45,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 
           const damage = Utils.toDmgValue(pokemon.getMaxHp() / 16);
 
-          this.scene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
+          this.scene.queueMessage(getWeatherDamageMessage(this.weather!.weatherType, pokemon) ?? "");
           pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, false, false, true);
         };
 
@@ -59,7 +58,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
       }
     }
 
-    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType)!, null, () => { // TODO: is this bang correct?
+    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType) ?? "", null, () => {
       this.executeForAll((pokemon: Pokemon) => applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather));
 
       super.start();

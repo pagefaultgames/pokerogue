@@ -6,15 +6,15 @@ import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class DamagePhase extends PokemonPhase {
-  private amount: integer;
+  private amount: number;
   private damageResult: DamageResult;
   private critical: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, amount: integer, damageResult?: DamageResult, critical: boolean = false) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, amount: number, damageResult: DamageResult = HitResult.EFFECTIVE, critical: boolean = false) {
     super(scene, battlerIndex);
 
     this.amount = amount;
-    this.damageResult = damageResult || HitResult.EFFECTIVE;
+    this.damageResult = damageResult;
     this.critical = critical;
   }
 
@@ -35,7 +35,7 @@ export class DamagePhase extends PokemonPhase {
     this.applyDamage();
   }
 
-  updateAmount(amount: integer): void {
+  updateAmount(amount: number): void {
     this.amount = amount;
   }
 

@@ -26,7 +26,7 @@ export class EggHatchPhase extends Phase {
   private eggHatchData: EggHatchData;
 
   /** The number of eggs that are hatching */
-  private eggsToHatchCount: integer;
+  private eggsToHatchCount: number;
   /** The container that lists how many eggs are hatching */
   private eggCounterContainer: EggCounterContainer;
 
@@ -57,7 +57,7 @@ export class EggHatchPhase extends Phase {
   /** The newly hatched {@link PlayerPokemon} */
   private pokemon: PlayerPokemon;
   /** The index of which egg move is unlocked. 0-2 is common, 3 is rare */
-  private eggMoveIndex: integer;
+  private eggMoveIndex: number;
   /** Internal booleans representing if the egg is hatched, able to be skipped, or skipped */
   private hatched: boolean;
   private canSkip: boolean;
@@ -66,7 +66,7 @@ export class EggHatchPhase extends Phase {
   private evolutionBgm: AnySound;
   private eggLapsePhase: EggLapsePhase;
 
-  constructor(scene: BattleScene, hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: integer) {
+  constructor(scene: BattleScene, hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: number) {
     super(scene);
     this.eggLapsePhase = hatchScene;
     this.egg = egg;
@@ -219,7 +219,7 @@ export class EggHatchPhase extends Phase {
    * @param count the current number of times this function has been called.
    * @returns nothing since it's a Promise<void>
    */
-  doEggShake(intensity: number, repeatCount?: integer, count?: integer): Promise<void> {
+  doEggShake(intensity: number, repeatCount?: number, count?: number): Promise<void> {
     return new Promise(resolve => {
       if (repeatCount === undefined) {
         repeatCount = 0;
@@ -376,7 +376,7 @@ export class EggHatchPhase extends Phase {
    * @param amplitude Scaling
    * @returns a number
    */
-  sin(index: integer, amplitude: integer): number {
+  sin(index: number, amplitude: number): number {
     return amplitude * Math.sin(index * (Math.PI / 128));
   }
 
@@ -385,7 +385,7 @@ export class EggHatchPhase extends Phase {
    * @param intensity number of times this is repeated (this is a badly named variable)
    * @param offsetY how much to offset the Y coordinates
    */
-  doSpray(intensity: integer, offsetY?: number) {
+  doSpray(intensity: number, offsetY?: number) {
     this.scene.tweens.addCounter({
       repeat: intensity,
       duration: Utils.getFrameMs(1),
@@ -400,7 +400,7 @@ export class EggHatchPhase extends Phase {
    * @param trigIndex Used to modify the particle's vertical speed, is a random number from 0-7
    * @param offsetY how much to offset the Y coordinate
    */
-  doSprayParticle(trigIndex: integer, offsetY: number) {
+  doSprayParticle(trigIndex: number, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
     const shardKey = !this.egg.isManaphyEgg() ? this.egg.tier.toString() : "1";

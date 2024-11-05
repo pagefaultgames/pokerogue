@@ -4,10 +4,9 @@ import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 
 export class CheckStatusEffectPhase extends Phase {
-  private order : BattlerIndex[];
-  constructor(scene : BattleScene, order : BattlerIndex[]) {
+  private order: BattlerIndex[];
+  constructor(scene: BattleScene, order: BattlerIndex[]) {
     super(scene);
-    this.scene = scene;
     this.order = order;
   }
 

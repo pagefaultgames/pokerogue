@@ -11,10 +11,10 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchType } from "#enums/switch-type";
 
 export class CheckSwitchPhase extends BattlePhase {
-  protected fieldIndex: integer;
+  protected fieldIndex: number;
   protected useName: boolean;
 
-  constructor(scene: BattleScene, fieldIndex: integer, useName: boolean) {
+  constructor(scene: BattleScene, fieldIndex: number, useName: boolean) {
     super(scene);
 
     this.fieldIndex = fieldIndex;

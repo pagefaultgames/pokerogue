@@ -23,7 +23,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   private pokeball: Phaser.GameObjects.Sprite;
   private originalY: number;
 
-  constructor(scene: BattleScene, targetIndex: integer, pokeballType: PokeballType) {
+  constructor(scene: BattleScene, targetIndex: number, pokeballType: PokeballType) {
     super(scene, BattlerIndex.ENEMY + targetIndex);
 
     this.pokeballType = pokeballType;
@@ -160,7 +160,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     });
   }
 
-  failCatch(shakeCount: integer) {
+  failCatch(shakeCount: number) {
     const pokemon = this.getPokemon();
 
     this.scene.playSound("se/pb_rel");
@@ -262,7 +262,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                   });
                 }, false);
               }, () => {
-                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: integer, _option: PartyOption) => {
+                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, this.fieldIndex, (slotIndex: number, _option: PartyOption) => {
                   this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
                       addToParty(slotIndex);

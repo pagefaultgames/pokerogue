@@ -4,12 +4,12 @@ import { EndCardPhase } from "./end-card-phase";
 import { TitlePhase } from "./title-phase";
 
 export class PostGameOverPhase extends Phase {
-  private endCardPhase: EndCardPhase | null;
+  private endCardPhase?: EndCardPhase;
 
   constructor(scene: BattleScene, endCardPhase?: EndCardPhase) {
     super(scene);
 
-    this.endCardPhase = endCardPhase!; // TODO: is this bang correct?
+    this.endCardPhase = endCardPhase;
   }
 
   start() {

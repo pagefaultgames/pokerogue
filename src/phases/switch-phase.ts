@@ -10,7 +10,7 @@ import { SwitchSummonPhase } from "./switch-summon-phase";
  * for the player (if a switch would be valid for the current battle state).
  */
 export class SwitchPhase extends BattlePhase {
-  protected readonly fieldIndex: integer;
+  protected readonly fieldIndex: number;
   private readonly switchType: SwitchType;
   private readonly isModal: boolean;
   private readonly doReturn: boolean;
@@ -25,7 +25,7 @@ export class SwitchPhase extends BattlePhase {
      * @param doReturn Indicates if the party member on the field should be
      * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
      */
-  constructor(scene: BattleScene, switchType: SwitchType, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
+  constructor(scene: BattleScene, switchType: SwitchType, fieldIndex: number, isModal: boolean, doReturn: boolean) {
     super(scene);
 
     this.switchType = switchType;
@@ -61,7 +61,7 @@ export class SwitchPhase extends BattlePhase {
     // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
     const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getPokemonAllowedInBattle().length > 1 ? this.fieldIndex : 0;
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
+    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: number, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
         const switchType = (option === PartyOption.PASS_BATON) ? SwitchType.BATON_PASS : this.switchType;
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, switchType, fieldIndex, slotIndex, this.doReturn));

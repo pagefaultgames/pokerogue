@@ -10,7 +10,7 @@ import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-pha
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   private expValue: number;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, expValue: number) {
+  constructor(scene: BattleScene, partyMemberIndex: number, expValue: number) {
     super(scene, partyMemberIndex);
 
     this.expValue = expValue;

@@ -44,7 +44,6 @@ export class TurnInitPhase extends FieldPhase {
       }
     });
 
-    //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
     this.scene.eventTarget.dispatchEvent(new TurnInitEvent());
 
     handleMysteryEncounterBattleStartEffects(this.scene);

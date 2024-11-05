@@ -11,10 +11,10 @@ import { UnavailablePhase } from "./unavailable-phase";
 export class LoginPhase extends Phase {
   private showText: boolean;
 
-  constructor(scene: BattleScene, showText?: boolean) {
+  constructor(scene: BattleScene, showText: boolean = true) {
     super(scene);
 
-    this.showText = showText === undefined || !!showText;
+    this.showText = showText;
   }
 
   start(): void {

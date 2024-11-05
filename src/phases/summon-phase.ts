@@ -17,7 +17,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 export class SummonPhase extends PartyMemberPokemonPhase {
   private loaded: boolean;
 
-  constructor(scene: BattleScene, fieldIndex: integer, player: boolean = true, loaded: boolean = false) {
+  constructor(scene: BattleScene, fieldIndex: number, player: boolean = true, loaded: boolean = false) {
     super(scene, fieldIndex, player);
 
     this.loaded = loaded;

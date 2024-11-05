@@ -13,10 +13,10 @@ import { FieldPhase } from "./field-phase";
  * @see {@linkcode EnemyPokemon.getNextMove}
  */
 export class EnemyCommandPhase extends FieldPhase {
-  protected fieldIndex: integer;
+  protected fieldIndex: number;
   protected skipTurn: boolean = false;
 
-  constructor(scene: BattleScene, fieldIndex: integer) {
+  constructor(scene: BattleScene, fieldIndex: number) {
     super(scene);
 
     this.fieldIndex = fieldIndex;

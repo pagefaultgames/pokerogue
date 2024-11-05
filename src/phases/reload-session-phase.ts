@@ -4,12 +4,12 @@ import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
 
 export class ReloadSessionPhase extends Phase {
-  private systemDataStr: string | null;
+  private systemDataStr?: string;
 
   constructor(scene: BattleScene, systemDataStr?: string) {
     super(scene);
 
-    this.systemDataStr = systemDataStr ?? null;
+    this.systemDataStr = systemDataStr;
   }
 
   start(): void {

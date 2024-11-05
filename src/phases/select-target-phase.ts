@@ -8,7 +8,7 @@ import i18next from "#app/plugins/i18n";
 import { allMoves } from "#app/data/move";
 
 export class SelectTargetPhase extends PokemonPhase {
-  constructor(scene: BattleScene, fieldIndex: integer) {
+  constructor(scene: BattleScene, fieldIndex: number) {
     super(scene, fieldIndex);
   }
 

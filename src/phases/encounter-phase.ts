@@ -40,10 +40,10 @@ import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mys
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
 
-  constructor(scene: BattleScene, loaded?: boolean) {
+  constructor(scene: BattleScene, loaded: boolean = false) {
     super(scene);
 
-    this.loaded = !!loaded;
+    this.loaded = loaded;
   }
 
   start() {
@@ -268,7 +268,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
       targets: [ this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer ].flat(),
-      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
+      x: (_target, _key, value, fieldIndex: number) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
       onComplete: () => {
         if (!this.tryOverrideForBattleSpec()) {

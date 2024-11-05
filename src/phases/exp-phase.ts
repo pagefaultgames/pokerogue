@@ -9,7 +9,7 @@ import { LevelUpPhase } from "./level-up-phase";
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {
   private expValue: number;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, expValue: number) {
+  constructor(scene: BattleScene, partyMemberIndex: number, expValue: number) {
     super(scene, partyMemberIndex);
 
     this.expValue = expValue;
