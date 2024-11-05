@@ -2374,10 +2374,8 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
    * @returns {boolean} True if an item was removed
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (move.id !== Moves.CORROSIVE_GAS) {
-      if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
-        return false;
-      }
+    if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
+      return false;
     }
 
     if (move.hitsSubstitute(user, target)) {
@@ -2409,8 +2407,6 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
       if (this.berriesOnly) {
         user.scene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
-      } else if (move.id === Moves.CORROSIVE_GAS) {
-        user.scene.queueMessage(i18next.t("moveTriggers:corrosiveGasItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
       } else {
         user.scene.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
       }
@@ -7506,6 +7502,59 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   }
 }
 
+/**
+ * Nullifies a Pokemon's held item until the battle ends.
+ * Simulates the item being removed, but it just neutralizes it until the next battle
+ * Used by: {@linkcode Moves.CORROSIVE_GAS | Corrosive Gas}
+ *
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
+export class NullifyHeldItemAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, { trigger: MoveEffectTrigger.HIT });
+  }
+
+  /**
+   *
+   * @param user {@linkcode Pokemon} that used the move
+   * @param target Target {@linkcode Pokemon} that the moves applies to
+   * @param move {@linkcode Move} that is used
+   * @param args N/A
+   * @returns {boolean} True if an item was nullified
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (move.hitsSubstitute(user, target)) {
+      return false;
+    }
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // Check for abilities that block item theft
+    if (cancelled.value === true) {
+      return false;
+    }
+
+    const heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable);
+
+    if (heldItems.length) {
+      const nullifiedItem = heldItems[user.randSeedInt(heldItems.length)];
+
+      nullifiedItem.nullify();
+      nullifiedItem.isTransferable = false;
+      target.scene.updateModifiers(target.isPlayer());
+
+      user.scene.queueMessage(i18next.t("moveTriggers:corrosiveGasItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: nullifiedItem.type.name }));
+
+    }
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, target, false);
+    return true;
+  }
+
+  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
+    return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+  }
+}
+
 
 const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
 
@@ -10038,7 +10087,7 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.CORROSIVE_GAS, Type.POISON, 100, 40, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .attr(RemoveHeldItemAttr, false),
+      .attr(NullifyHeldItemAttr),
     new StatusMove(Moves.COACHING, Type.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], 1)
       .target(MoveTarget.NEAR_ALLY),

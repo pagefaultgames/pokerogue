@@ -645,6 +645,7 @@ export class TerastallizeAccessModifier extends PersistentModifier {
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: number;
   public isTransferable: boolean = true;
+  public isNullified: boolean = false;
 
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, stackCount);
@@ -655,11 +656,19 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   abstract matchType(_modifier: Modifier): boolean;
 
   match(modifier: Modifier) {
-    return this.matchType(modifier) && (modifier as PokemonHeldItemModifier).pokemonId === this.pokemonId;
+    return this.matchType(modifier) && (modifier as PokemonHeldItemModifier).pokemonId === this.pokemonId && !this.isNullified;
   }
 
   getArgs(): any[] {
     return [ this.pokemonId ];
+  }
+
+  nullify() {
+    this.isNullified = true;
+  }
+
+  removeNullification() {
+    this.isNullified = false;
   }
 
   /**
@@ -676,7 +685,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
    * @returns if {@linkcode PokemonHeldItemModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, ..._args: unknown[]): boolean {
-    return !!pokemon && (this.pokemonId === -1 || pokemon.id === this.pokemonId);
+    return !this.isNullified && !!pokemon && (this.pokemonId === -1 || pokemon.id === this.pokemonId);
   }
 
   isIconVisible(scene: BattleScene): boolean {

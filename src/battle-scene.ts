@@ -2760,9 +2760,12 @@ export default class BattleScene extends SceneBase {
           modifiers.splice(modifiers.indexOf(modifier), 1);
         }
       }
+      const nullifiedModifiers = modifiers.filter(modifier =>
+        !(modifier instanceof PokemonHeldItemModifier) || !modifier.isNullified
+      );
 
       this.updatePartyForModifiers(player ? this.getPlayerParty() : this.getEnemyParty(), instant).then(() => {
-        (player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
+        (player ? this.modifierBar : this.enemyModifierBar).updateModifiers(nullifiedModifiers);
         if (!player) {
           this.updateUIPositions();
         }

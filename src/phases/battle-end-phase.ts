@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
-import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
+import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
 
@@ -43,6 +43,15 @@ export class BattleEndPhase extends BattlePhase {
 
     for (const pokemon of this.scene.getPokemonAllowedInBattle()) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+      const heldItems =  pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier) as PokemonHeldItemModifier[];
+      for (const item of heldItems) {
+        if (item.isNullified) {
+          item.removeNullification();
+          if (item.isTransferable === false) {
+            item.isTransferable = true;
+          }
+        }
+      }
     }
 
     if (this.scene.currentBattle.moneyScattered) {
