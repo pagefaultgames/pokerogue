@@ -25,6 +25,7 @@ import {
   applyFilteredMoveAttrs,
   applyMoveAttrs,
   AttackMove,
+  DelayedAttackAttr,
   FixedDamageAttr,
   HitsTagAttr,
   MissEffectAttr,
@@ -85,8 +86,13 @@ export class MoveEffectPhase extends PokemonPhase {
     /** All Pokemon targeted by this phase's invoked move */
     const targets = this.getTargets();
 
-    /** If the user was somehow removed from the field, end this phase */
-    if (!user?.isOnField()) {
+    if (!user) {
+      return super.end();
+    }
+
+    const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
+    /** If the user was somehow removed from the field and it's not a delayed attack, end this phase */
+    if (!user.isOnField() && !isDelayedAttack) {
       return super.end();
     }
 
@@ -142,9 +148,9 @@ export class MoveEffectPhase extends PokemonPhase {
       const hasActiveTargets = targets.some(t => t.isActive(true));
 
       /** Check if the target is immune via ability to the attacking move, and NOT in semi invulnerable state */
-      const isImmune = targets[0].hasAbilityWithAttr(TypeImmunityAbAttr)
-        && (targets[0].getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
-        && !targets[0].getTag(SemiInvulnerableTag);
+      const isImmune = targets[0]?.hasAbilityWithAttr(TypeImmunityAbAttr)
+        && (targets[0]?.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
+        && !targets[0]?.getTag(SemiInvulnerableTag);
 
       /**
        * If no targets are left for the move to hit (FAIL), or the invoked move is single-target
@@ -156,7 +162,7 @@ export class MoveEffectPhase extends PokemonPhase {
         if (hasActiveTargets) {
           this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getFirstTarget() ? getPokemonNameWithAffix(this.getFirstTarget()!) : "" }));
           moveHistoryEntry.result = MoveResult.MISS;
-          applyMoveAttrs(MissEffectAttr, user, null, move);
+          applyMoveAttrs(MissEffectAttr, user, null, this.move.getMove());
         } else {
           this.scene.queueMessage(i18next.t("battle:attackFailed"));
           moveHistoryEntry.result = MoveResult.FAIL;
