@@ -2829,7 +2829,7 @@ export class PowerTrickTag extends BattlerTag {
 
 export class GrudgeTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.GRUDGE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.TURN_END ], 1, Moves.GRUDGE);
+    super(BattlerTagType.GRUDGE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.PRE_MOVE ], 1, Moves.GRUDGE);
   }
 
   onAdd(pokemon: Pokemon) {
