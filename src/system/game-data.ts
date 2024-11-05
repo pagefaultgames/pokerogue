@@ -1791,6 +1791,35 @@ export class GameData {
     });
   }
 
+  /**
+   * @param {PokemonSpecies} species
+   * @returns {boolean} whether root species has been unlocked for given {@linkcode PokemonSpecies}
+   */
+  isRootSpeciesUnlocked(species: PokemonSpecies): boolean {
+    return !!this.dexData[species.getRootSpeciesId()]?.caughtAttr;
+  }
+
+  /**
+   * Unlocks nature for a given {@linkcode PokemonSpecies} and its prevolutions.
+   * Will fail silently if root species has not been unlocked
+   * @param {PokemonSpecies} species
+   * @param {Nature} nature
+   */
+  unlockSpeciesNature(species: PokemonSpecies, nature: Nature): void {
+    if (!this.isRootSpeciesUnlocked(species)) {
+      return;
+    }
+
+    //recursively unlock nature for species and prevolutions
+    const _unlockSpeciesNature = (speciesId: Species) => {
+      this.dexData[speciesId].natureAttr |= 1 << (nature + 1);
+      if (pokemonPrevolutions.hasOwnProperty(speciesId)) {
+        _unlockSpeciesNature(pokemonPrevolutions[speciesId]);
+      }
+    };
+    _unlockSpeciesNature(species.speciesId);
+  }
+
   updateSpeciesDexIvs(speciesId: Species, ivs: integer[]): void {
     let dexEntry: DexEntry;
     do {

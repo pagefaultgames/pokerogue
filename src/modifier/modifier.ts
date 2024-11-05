@@ -1,5 +1,5 @@
 import type BattleScene from "#app/battle-scene";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
 import { allMoves } from "#app/data/move";
@@ -2189,14 +2189,8 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.customPokemonData.nature = this.nature;
-    let speciesId = playerPokemon.species.speciesId;
-    playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
-
-    while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
-      speciesId = pokemonPrevolutions[speciesId];
-      playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
-    }
+    playerPokemon.setCustomNature(this.nature);
+    playerPokemon.scene.gameData.unlockSpeciesNature(playerPokemon.species, this.nature);
 
     return true;
   }
