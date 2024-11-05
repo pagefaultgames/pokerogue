@@ -2374,8 +2374,10 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
    * @returns {boolean} True if an item was removed
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
-      return false;
+    if (move.id !== Moves.CORROSIVE_GAS) {
+      if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
+        return false;
+      }
     }
 
     if (move.hitsSubstitute(user, target)) {
@@ -2407,6 +2409,8 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
       if (this.berriesOnly) {
         user.scene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
+      } else if (move.id === Moves.CORROSIVE_GAS) {
+        user.scene.queueMessage(i18next.t("moveTriggers:corrosiveGasItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
       } else {
         user.scene.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
       }
@@ -10034,7 +10038,7 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.CORROSIVE_GAS, Type.POISON, 100, 40, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .unimplemented(),
+      .attr(RemoveHeldItemAttr, false),
     new StatusMove(Moves.COACHING, Type.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], 1)
       .target(MoveTarget.NEAR_ALLY),
