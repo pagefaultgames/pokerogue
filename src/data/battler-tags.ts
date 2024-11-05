@@ -2842,7 +2842,7 @@ export class GrudgeTag extends BattlerTag {
       if (sourcePokemon.isActive()) {
         const lastMove = pokemon.turnData.attacksReceived[0];
         const lastMoveData = sourcePokemon.getMoveset().find(m => m?.moveId === lastMove.move);
-        if (lastMoveData) {
+        if (lastMoveData && lastMove.move !== Moves.STRUGGLE) {
           lastMoveData.ppUsed = lastMoveData.getMovePp();
           pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeOnLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: lastMoveData.getName() }));
         }
