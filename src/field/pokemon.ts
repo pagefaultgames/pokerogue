@@ -2916,7 +2916,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           // Destiny Bond will activate during FaintPhase
           this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo, destinyTag, source));
         } else {
-          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
+          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo, undefined, source));
         }
         this.destroySubstitute();
         this.lapseTag(BattlerTagType.COMMANDED);
