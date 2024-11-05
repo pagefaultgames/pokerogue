@@ -848,7 +848,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
       if (simulated) {
         return pokemon.scene.arena.terrain?.terrainType !== (this.terrainType || undefined);
       } else {
-        return pokemon.scene.arena.trySetTerrain(this.terrainType, true);
+        return pokemon.scene.arena.trySetTerrain(this.terrainType, pokemon);
       }
     }
 
@@ -1031,7 +1031,7 @@ export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
       if (simulated) {
         return pokemon.scene.arena.weather?.weatherType !== this.weatherType;
       }
-      return pokemon.scene.arena.trySetWeather(this.weatherType, true);
+      return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon);
     }
 
     return false;
@@ -2294,7 +2294,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
       if (simulated) {
         return pokemon.scene.arena.weather?.weatherType !== this.weatherType;
       } else {
-        return pokemon.scene.arena.trySetWeather(this.weatherType, true);
+        return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon);
       }
     }
 
@@ -2315,7 +2315,7 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
     if (simulated) {
       return pokemon.scene.arena.terrain?.terrainType !== this.terrainType;
     } else {
-      return pokemon.scene.arena.trySetTerrain(this.terrainType, true);
+      return pokemon.scene.arena.trySetTerrain(this.terrainType, pokemon);
     }
   }
 }
@@ -2658,7 +2658,7 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
     }
 
     if (turnOffWeather) {
-      pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+      pokemon.scene.arena.trySetWeather(WeatherType.NONE, pokemon);
       return true;
     }
 
@@ -3768,7 +3768,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
       if (simulated) {
         return pokemon.scene.arena.weather?.weatherType !== this.weatherType;
       } else {
-        return pokemon.scene.arena.trySetWeather(this.weatherType, true);
+        return pokemon.scene.arena.trySetWeather(this.weatherType, pokemon);
       }
     }
 
@@ -3789,7 +3789,7 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
     if (simulated) {
       return pokemon.scene.arena.terrain?.terrainType !== this.terrainType;
     } else {
-      return pokemon.scene.arena.trySetTerrain(this.terrainType, true);
+      return pokemon.scene.arena.trySetTerrain(this.terrainType, pokemon);
     }
   }
 }
@@ -4190,7 +4190,7 @@ export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
     }
 
     if (turnOffWeather) {
-      pokemon.scene.arena.trySetWeather(WeatherType.NONE, false);
+      pokemon.scene.arena.trySetWeather(WeatherType.NONE);
       return true;
     }
 

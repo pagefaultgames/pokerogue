@@ -1995,6 +1995,21 @@ export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   }
 }
 
+export abstract class FieldEffectModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
+    super(type, pokemonId, stackCount);
+  }
+
+  override apply(_pokemon: Pokemon, fieldDuration: NumberHolder): boolean {
+    fieldDuration.value += 2 * this.stackCount;
+    return true;
+  }
+
+  override getMaxHeldItemCount(_pokemon?: Pokemon): number {
+    return 2;
+  }
+}
+
 export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   public pokemonId: number;
 

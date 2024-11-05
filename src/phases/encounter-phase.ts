@@ -541,7 +541,7 @@ export class EncounterPhase extends BattlePhase {
    */
   trySetWeatherIfNewBiome(): void {
     if (!this.loaded) {
-      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena));
     }
   }
 }
