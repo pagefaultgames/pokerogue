@@ -243,7 +243,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!Utils.isLocal) {
+      if (!Utils.isLocal || Utils.isLocalServerConnected) {
         fetchDailyRunSeed().then(seed => {
           if (seed) {
             generateDaily(seed);

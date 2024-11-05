@@ -2101,7 +2101,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (weight === 1 && allMoves[levelMove[1]].power >= 80) {
         weight = 40;
       }
-      if (!movePool.some(m => m[0] === levelMove[1])) {
+      if (!movePool.some(m => m[0] === levelMove[1]) && !allMoves[levelMove[1]].name.endsWith(" (N)")) {
         movePool.push([ levelMove[1], weight ]);
       }
     }
