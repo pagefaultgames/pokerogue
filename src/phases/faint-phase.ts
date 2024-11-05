@@ -31,19 +31,19 @@ export class FaintPhase extends PokemonPhase {
   /**
    * Destiny Bond tag belonging to the currently fainting Pokemon, if applicable
    */
-  private destinyTag?: DestinyBondTag;
+  private destinyTag?: DestinyBondTag | null;
 
   /**
    * Grudge tag belonging to the currently fainting Pokemon, if applicable
    */
-  private grudgeTag?: GrudgeTag;
+  private grudgeTag?: GrudgeTag | null;
 
   /**
    * The source Pokemon that dealt fatal damage and should get KO'd by Destiny Bond, if applicable
    */
   private source?: Pokemon;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure: boolean = false, destinyTag?: DestinyBondTag, grudgeTag?: GrudgeTag, source?: Pokemon) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure: boolean = false, destinyTag?: DestinyBondTag | null, grudgeTag?: GrudgeTag | null, source?: Pokemon) {
     super(scene, battlerIndex);
 
     this.preventEndure = preventEndure;
