@@ -6285,6 +6285,7 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(Abilities.COMMANDER, 9)
       .attr(CommanderAbAttr)
+      .attr(DoubleBattleChanceAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .edgeCase(), // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
