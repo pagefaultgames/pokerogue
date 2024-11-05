@@ -2809,9 +2809,14 @@ export class GrudgeTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.FAINT) {
       if (pokemon.isFainted() && pokemon.turnData.attacksReceived.length > 0) {
-        const lastAttackSource = pokemon.scene.getPokemonById(pokemon.turnData.attacksReceived[0].sourceId);
+        const lastMove = pokemon.turnData.attacksReceived[0];
+        const lastAttackSource = pokemon.scene.getPokemonById(lastMove.sourceId);
         if (lastAttackSource && lastAttackSource?.isOnField()) {
-          lastAttackSource.summonData.moveset[0]?.getMovePp();
+          const lastMoveData = lastAttackSource.getMoveset().find(m => m?.moveId === lastMove.move);
+          if (lastMoveData) {
+            lastMoveData.ppUsed = lastMoveData.getMovePp();
+            pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeOnLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(lastAttackSource), moveName: lastMoveData.getName() }));
+          }
         }
       }
       return false;
