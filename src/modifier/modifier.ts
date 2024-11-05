@@ -31,6 +31,7 @@ import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
+import { applyAbAttrs, CommanderAbAttr } from "#app/data/ability";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -746,7 +747,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       return 0;
     }
     if (pokemon.isPlayer() && forThreshold) {
-      return scene.getParty().map(p => this.getMaxHeldItemCount(p)).reduce((stackCount: number, maxStackCount: number) => Math.max(stackCount, maxStackCount), 0);
+      return scene.getPlayerParty().map(p => this.getMaxHeldItemCount(p)).reduce((stackCount: number, maxStackCount: number) => Math.max(stackCount, maxStackCount), 0);
     }
     return this.getMaxHeldItemCount(pokemon);
   }
@@ -1767,10 +1768,10 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(pokemon: Pokemon): boolean {
-    if (pokemon.turnData.damageDealt && !pokemon.isFullHp()) {
+    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.turnData.damageDealt / 8) * this.stackCount, i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
+        toDmgValue(pokemon.turnData.totalDamageDealt / 8) * this.stackCount, i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
     }
 
     return true;
@@ -1937,10 +1938,16 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon): boolean {
+    // Restore the Pokemon to half HP
     pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
       toDmgValue(pokemon.getMaxHp() / 2), i18next.t("modifier:pokemonInstantReviveApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), false, false, true));
 
+    // Remove the Pokemon's FAINT status
     pokemon.resetStatus(true, false, true);
+
+    // Reapply Commander on the Pokemon's side of the field, if applicable
+    const field = pokemon.isPlayer() ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
+    field.forEach((p) => applyAbAttrs(CommanderAbAttr, p, null, false));
     return true;
   }
 
@@ -2022,7 +2029,7 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   abstract override apply(playerPokemon: PlayerPokemon, ...args: unknown[]): boolean | Promise<boolean>;
 
   getPokemon(scene: BattleScene) {
-    return scene.getParty().find(p => p.id === this.pokemonId);
+    return scene.getPlayerParty().find(p => p.id === this.pokemonId);
   }
 }
 
@@ -2224,7 +2231,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
 
     playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
 
-    playerPokemon.scene.unshiftPhase(new LevelUpPhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.level - levelCount.value, playerPokemon.level));
+    playerPokemon.scene.unshiftPhase(new LevelUpPhase(playerPokemon.scene, playerPokemon.scene.getPlayerParty().indexOf(playerPokemon), playerPokemon.level - levelCount.value, playerPokemon.level));
 
     return true;
   }
@@ -2244,7 +2251,7 @@ export class TmModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, LearnMoveType.TM));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getPlayerParty().indexOf(playerPokemon), this.type.moveId, LearnMoveType.TM));
 
     return true;
   }
@@ -2266,7 +2273,7 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon, cost?: number): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex], LearnMoveType.MEMORY, cost));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getPlayerParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex], LearnMoveType.MEMORY, cost));
 
     return true;
   }
@@ -2783,7 +2790,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     battleScene.addMoney(moneyAmount.value);
 
-    battleScene.getParty().map(p => {
+    battleScene.getPlayerParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
         p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p) as EvoTrackerModifier;

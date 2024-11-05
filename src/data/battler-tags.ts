@@ -1573,6 +1573,22 @@ export class AbilityBattlerTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag used by Unburden to double speed
+ * @extends AbilityBattlerTag
+ */
+export class UnburdenTag extends AbilityBattlerTag {
+  constructor() {
+    super(BattlerTagType.UNBURDEN, Abilities.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
+  }
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+  }
+}
+
 export class TruantTag extends AbilityBattlerTag {
   constructor() {
     super(BattlerTagType.TRUANT, Abilities.TRUANT, BattlerTagLapseType.MOVE, 1);
@@ -2076,6 +2092,37 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
 }
 
 /**
+ * Battler tag indicating a Tatsugiri with {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}
+ * has entered the tagged Pokemon's mouth.
+ */
+export class CommandedTag extends BattlerTag {
+  private _tatsugiriFormKey: string;
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.COMMANDED, BattlerTagLapseType.CUSTOM, 0, Moves.NONE, sourceId);
+  }
+
+  public get tatsugiriFormKey(): string {
+    return this._tatsugiriFormKey;
+  }
+
+  /** Caches the Tatsugiri's form key and sharply boosts the tagged Pokemon's stats */
+  override onAdd(pokemon: Pokemon): void {
+    this._tatsugiriFormKey = this.getSourcePokemon(pokemon.scene)?.getFormKey() ?? "curly";
+    pokemon.scene.unshiftPhase(new StatStageChangePhase(
+      pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2
+    ));
+  }
+
+  /** Triggers an {@linkcode PokemonAnimType | animation} of the tagged Pokemon "spitting out" Tatsugiri */
+  override onRemove(pokemon: Pokemon): void {
+    if (this.getSourcePokemon(pokemon.scene)?.isActive(true)) {
+      pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_REMOVE);
+    }
+  }
+}
+
+/**
  * Battler tag enabling the Stockpile mechanic. This tag handles:
  * - Stack tracking, including max limit enforcement (which is replicated in Stockpile for redundancy).
  *
@@ -2480,7 +2527,10 @@ export class SubstituteTag extends BattlerTag {
   onHit(pokemon: Pokemon): void {
     const moveEffectPhase = pokemon.scene.getCurrentPhase();
     if (moveEffectPhase instanceof MoveEffectPhase) {
-      const attacker = moveEffectPhase.getUserPokemon()!;
+      const attacker = moveEffectPhase.getUserPokemon();
+      if (!attacker) {
+        return;
+      }
       const move = moveEffectPhase.move.getMove();
       const firstHit = (attacker.turnData.hitCount === attacker.turnData.hitsLeft);
 
@@ -2913,6 +2963,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new IceFaceBlockDamageTag(tagType);
     case BattlerTagType.DISGUISE:
       return new FormBlockDamageTag(tagType);
+    case BattlerTagType.COMMANDED:
+      return new CommandedTag(sourceId);
     case BattlerTagType.STOCKPILING:
       return new StockpilingTag(sourceMove);
     case BattlerTagType.OCTOLOCK:
@@ -2934,6 +2986,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new ThroatChoppedTag();
     case BattlerTagType.GORILLA_TACTICS:
       return new GorillaTacticsTag();
+    case BattlerTagType.UNBURDEN:
+      return new UnburdenTag();
     case BattlerTagType.SUBSTITUTE:
       return new SubstituteTag(sourceMove, sourceId);
     case BattlerTagType.AUTOTOMIZED:

@@ -38,7 +38,7 @@ describe("Moves - Sparkly Swirl", () => {
       .battleType("double")
       .statusEffect(StatusEffect.BURN);
     await game.classicMode.startBattle([ Species.RATTATA, Species.RATTATA, Species.RATTATA ]);
-    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getParty();
+    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getPlayerParty();
     const leftOpp = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(leftPlayer, "resetStatus");

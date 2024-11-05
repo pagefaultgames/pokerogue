@@ -72,6 +72,31 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(1);
   });
 
+  /**
+   * Freeze drys forced super effectiveness should overwrite wonder guard
+   */
+  it("should deal 2x dmg against soaked wonder guard target", async () => {
+    game.override
+      .enemySpecies(Species.SHEDINJA)
+      .enemyMoveset(Moves.SPLASH)
+      .starterSpecies(Species.MAGIKARP)
+      .moveset([ Moves.SOAK, Moves.FREEZE_DRY ]);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.SOAK);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.toNextTurn();
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+  });
+
   // enable if this is ever fixed (lol)
   it.todo("should deal 2x damage to water types under Normalize", async () => {
     game.override.ability(Abilities.NORMALIZE);

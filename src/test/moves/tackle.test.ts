@@ -53,7 +53,7 @@ describe("Moves - Tackle", () => {
       Species.MIGHTYENA,
     ]);
     game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
-    game.scene.getParty()[0].stats[Stat.ATK] = 50;
+    game.scene.getPlayerParty()[0].stats[Stat.ATK] = 50;
 
 
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;

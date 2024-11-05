@@ -331,7 +331,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
 
         // Player gets different rewards depending on the number of bug types they have
-        const numBugTypes = scene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
+        const numBugTypes = scene.getPlayerParty().filter(p => p.isOfType(Type.BUG, true)).length;
         const numBugTypesText = i18next.t(`${namespace}:numBugTypes`, { count: numBugTypes });
         encounter.setDialogueToken("numBugTypes", numBugTypesText);
 

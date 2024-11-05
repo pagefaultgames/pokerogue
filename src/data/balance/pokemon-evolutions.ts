@@ -478,7 +478,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.NINCADA]: [
     new SpeciesEvolution(Species.NINJASK, 20, null, null),
-    new SpeciesEvolution(Species.SHEDINJA, 20, null, new SpeciesEvolutionCondition(p => p.scene.getParty().length < 6 && p.scene.pokeballCounts[PokeballType.POKEBALL] > 0))
+    new SpeciesEvolution(Species.SHEDINJA, 20, null, new SpeciesEvolutionCondition(p => p.scene.getPlayerParty().length < 6 && p.scene.pokeballCounts[PokeballType.POKEBALL] > 0))
   ],
   [Species.WHISMUR]: [
     new SpeciesEvolution(Species.LOUDRED, 20, null, null)
@@ -890,7 +890,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.GOGOAT, 32, null, null)
   ],
   [Species.PANCHAM]: [
-    new SpeciesEvolution(Species.PANGORO, 32, null, new SpeciesEvolutionCondition(p => !!p.scene.getParty().find(p => p.getTypes(false, false, true).indexOf(Type.DARK) > -1)), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.PANGORO, 32, null, new SpeciesEvolutionCondition(p => !!p.scene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(Type.DARK) > -1)), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.ESPURR]: [
     new SpeciesFormEvolution(Species.MEOWSTIC, "", "female", 25, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE)),
@@ -1443,7 +1443,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.ROCKRUFF]: [
     new SpeciesFormEvolution(Species.LYCANROC, "", "midday", 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY) && (p.formIndex === 0))),
-    new SpeciesFormEvolution(Species.LYCANROC, "", "dusk", 25, null, new SpeciesEvolutionCondition(p =>  p.formIndex === 1)),
+    new SpeciesFormEvolution(Species.LYCANROC, "own-tempo", "dusk", 25, null, new SpeciesEvolutionCondition(p =>  p.formIndex === 1)),
     new SpeciesFormEvolution(Species.LYCANROC, "", "midnight", 25, null, new SpeciesEvolutionCondition(p => (p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT) && (p.formIndex === 0)))
   ],
   [Species.STEENEE]: [
