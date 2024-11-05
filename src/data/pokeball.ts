@@ -106,7 +106,7 @@ export function getCriticalCaptureChance(scene: BattleScene, modifiedCatchRate: 
   return Math.floor(catchingCharmMultiplier.value * dexMultiplier * Math.min(255, modifiedCatchRate) / 6);
 }
 
-export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite, y1: number, y2: number, baseBounceDuration: integer, callback: Function, isCritical: boolean = false) {
+export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameObjects.Sprite, y1: number, y2: number, baseBounceDuration: number, callback: Function, isCritical: boolean = false) {
   let bouncePower = 1;
   let bounceYOffset = y1;
   let bounceY = y2;

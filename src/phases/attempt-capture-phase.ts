@@ -98,13 +98,13 @@ export class AttemptCapturePhase extends PokemonPhase {
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
             const doShake = () => {
-              // After the overall catch rate check, the game does 4 shake checks before confirming the catch.
+              // After the overall catch rate check, the game does 3 shake checks before confirming the catch.
               let shakeCount = 0;
               const pbX = this.pokeball.x;
               const shakeCounter = this.scene.tweens.addCounter({
                 from: 0,
                 to: 1,
-                repeat: isCritical ? 2 : 4, // Critical captures only perform 2 shake checks
+                repeat: isCritical ? 2 : 4, // Critical captures only perform 1 shake check
                 yoyo: true,
                 ease: "Cubic.easeOut",
                 duration: 250,
