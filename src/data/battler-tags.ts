@@ -2827,6 +2827,11 @@ export class PowerTrickTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag associated with the move Grudge.
+ * If this tag is active when the bearer faints from an opponent's move, the tag reduces that move's PP to 0.
+ * Otherwise, it lapses when the bearer makes another move.
+ */
 export class GrudgeTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.GRUDGE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.PRE_MOVE ], 1, Moves.GRUDGE);
@@ -2837,9 +2842,16 @@ export class GrudgeTag extends BattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
+  /**
+   * Activates Grudge's special effect on the attacking Pokemon and lapses the tag.
+   * @param pokemon
+   * @param lapseType
+   * @param sourcePokemon {@linkcode Pokemon} the source of the move that fainted the tag's bearer
+   * @returns `false` if Grudge activates its effect or lapses
+   */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM && sourcePokemon) {
-      if (sourcePokemon.isActive()) {
+      if (sourcePokemon.isActive() && pokemon.getOpponents().includes(sourcePokemon)) {
         const lastMove = pokemon.turnData.attacksReceived[0];
         const lastMoveData = sourcePokemon.getMoveset().find(m => m?.moveId === lastMove.move);
         if (lastMoveData && lastMove.move !== Moves.STRUGGLE) {
