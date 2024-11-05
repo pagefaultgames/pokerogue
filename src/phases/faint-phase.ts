@@ -1,7 +1,7 @@
 import { BattlerIndex, BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostVictoryAbAttrs, PostFaintAbAttr, PostKnockOutAbAttr, PostVictoryAbAttr } from "#app/data/ability";
-import { BattlerTagLapseType, DestinyBondTag } from "#app/data/battler-tags";
+import { BattlerTagLapseType, DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
@@ -34,15 +34,21 @@ export class FaintPhase extends PokemonPhase {
   private destinyTag?: DestinyBondTag;
 
   /**
+   * Grudge tag belonging to the currently fainting Pokemon, if applicable
+   */
+  private grudgeTag?: GrudgeTag;
+
+  /**
    * The source Pokemon that dealt fatal damage and should get KO'd by Destiny Bond, if applicable
    */
   private source?: Pokemon;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure: boolean = false, destinyTag?: DestinyBondTag, source?: Pokemon) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure: boolean = false, destinyTag?: DestinyBondTag, grudgeTag?: GrudgeTag, source?: Pokemon) {
     super(scene, battlerIndex);
 
     this.preventEndure = preventEndure;
     this.destinyTag = destinyTag;
+    this.grudgeTag = grudgeTag;
     this.source = source;
   }
 
@@ -51,6 +57,10 @@ export class FaintPhase extends PokemonPhase {
 
     if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
       this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
+    }
+
+    if (!isNullOrUndefined(this.grudgeTag) && !isNullOrUndefined(this.source)) {
+      this.grudgeTag.lapse(this.getPokemon(), BattlerTagLapseType.CUSTOM, this.source);
     }
 
     if (!this.preventEndure) {

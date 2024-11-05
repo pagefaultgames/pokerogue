@@ -2798,7 +2798,7 @@ export class PowerTrickTag extends BattlerTag {
 
 export class GrudgeTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.GRUDGE, [ BattlerTagLapseType.FAINT, BattlerTagLapseType.TURN_END ], 1);
+    super(BattlerTagType.GRUDGE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.TURN_END ], 1, Moves.GRUDGE);
   }
 
   onAdd(pokemon: Pokemon) {
@@ -2806,17 +2806,14 @@ export class GrudgeTag extends BattlerTag {
     pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.FAINT) {
-      if (pokemon.isFainted() && pokemon.turnData.attacksReceived.length > 0) {
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM && sourcePokemon) {
+      if (sourcePokemon.isActive()) {
         const lastMove = pokemon.turnData.attacksReceived[0];
-        const lastAttackSource = pokemon.scene.getPokemonById(lastMove.sourceId);
-        if (lastAttackSource && lastAttackSource?.isOnField()) {
-          const lastMoveData = lastAttackSource.getMoveset().find(m => m?.moveId === lastMove.move);
-          if (lastMoveData) {
-            lastMoveData.ppUsed = lastMoveData.getMovePp();
-            pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeOnLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(lastAttackSource), moveName: lastMoveData.getName() }));
-          }
+        const lastMoveData = sourcePokemon.getMoveset().find(m => m?.moveId === lastMove.move);
+        if (lastMoveData) {
+          lastMoveData.ppUsed = lastMoveData.getMovePp();
+          pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeOnLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: lastMoveData.getName() }));
         }
       }
       return false;
@@ -3005,6 +3002,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new TelekinesisTag(sourceMove);
     case BattlerTagType.POWER_TRICK:
       return new PowerTrickTag(sourceMove, sourceId);
+    case BattlerTagType.GRUDGE:
+      return new GrudgeTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
