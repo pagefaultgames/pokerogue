@@ -1563,6 +1563,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns `true` if the pokemon is trapped
    */
   public isTrapped(trappedAbMessages: string[] = [], simulated: boolean = true): boolean {
+    const commandedTag = this.getTag(BattlerTagType.COMMANDED);
+    if (commandedTag?.getSourcePokemon(this.scene)?.isActive(true)) {
+      return true;
+    }
+
     if (this.isOfType(Type.GHOST)) {
       return false;
     }
@@ -2915,6 +2920,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
         }
         this.destroySubstitute();
+        this.lapseTag(BattlerTagType.COMMANDED);
         this.resetSummonData();
       }
 
@@ -2963,6 +2969,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.scene.setPhaseQueueSplice();
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.destroySubstitute();
+      this.lapseTag(BattlerTagType.COMMANDED);
       this.resetSummonData();
     }
     return damage;
