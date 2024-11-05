@@ -7,7 +7,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag, GroundedTag } from "./battler-tags";
 import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr, WaterSuperEffectTypeMultiplierAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
@@ -511,17 +511,11 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(attacker.getMoveType(move), attacker) < 2) {
-      /**
-       * Forces supereffectiveness from moves with according move attributes {@linkcode WaterSuperEffectTypeMultiplierAttr}
-       *
-       * Note: edgeCase for NonSuperEffectiveImmunity interacting with forced supereffective moves.
-       * Future implementations of forced supereffective moves needs to be added here.
-       */
-      if (move.getAttrs(WaterSuperEffectTypeMultiplierAttr) && pokemon.getTypes().includes(Type.WATER)) {
-        return false;
-      }
+    const modifierValue = args.length > 0
+      ? (args[0] as Utils.NumberHolder).value
+      : pokemon.getAttackTypeEffectiveness(attacker.getMoveType(move), attacker);
 
+    if (move instanceof AttackMove && modifierValue < 2) {
       cancelled.value = true; // Suppresses "No Effect" message
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
