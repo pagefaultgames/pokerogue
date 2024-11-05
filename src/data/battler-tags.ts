@@ -2851,7 +2851,7 @@ export class GrudgeTag extends BattlerTag {
    */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM && sourcePokemon) {
-      if (sourcePokemon.isActive() && pokemon.getOpponents().includes(sourcePokemon)) {
+      if (sourcePokemon.isActive() && pokemon.isOpponent(sourcePokemon)) {
         const lastMove = pokemon.turnData.attacksReceived[0];
         const lastMoveData = sourcePokemon.getMoveset().find(m => m?.moveId === lastMove.move);
         if (lastMoveData && lastMove.move !== Moves.STRUGGLE) {
