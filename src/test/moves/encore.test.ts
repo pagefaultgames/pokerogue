@@ -25,12 +25,15 @@ describe("Moves - Encore", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
+      .moveset([ Moves.SPLASH, Moves.ENCORE ])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset([ Moves.SPLASH, Moves.TACKLE ])
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   it("should prevent the target from using any move except the last used move", async () => {
