@@ -38,7 +38,7 @@ import PokemonData from "#app/system/pokemon-data";
 import { Nature } from "#app/data/nature";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChange, SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger } from "#app/data/pokemon-forms";
 import { FormChangePhase } from "#app/phases/form-change-phase";
-import { getTypeRgb } from "#app/data/type";
+import { getTypeRgb, Type } from "#app/data/type";
 import PokemonSpriteSparkleHandler from "#app/field/pokemon-sprite-sparkle-handler";
 import CharSprite from "#app/ui/char-sprite";
 import DamageNumberHandler from "#app/field/damage-number-handler";
@@ -98,6 +98,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
+import { StatusEffect } from "#enums/status-effect";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -2982,12 +2983,21 @@ export default class BattleScene extends SceneBase {
 
   updateGameInfo(): void {
     const gameInfo = {
-      playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
+      playTime: this.sessionPlayTime ?? 0,
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : "",
-      wave: this.currentBattle?.waveIndex || 0,
-      party: this.party ? this.party.map(p => {
-        return { name: p.name, form: p.formIndex, types: p.getTypes(), tera: p.getTeraType(), level: p.level, currentHP: p.hp, maxHP: p.getMaxHp(), status: p.status };
+      wave: this.currentBattle?.waveIndex ?? 0,
+      party: this.party ? this.party.map((p) => {
+        return {
+          name: p.name,
+          form: p.getFormKey(),
+          types: p.getTypes().map((type) => Type[type]),
+          teraType: p.getTeraType() !== Type.UNKNOWN ? Type[p.getTeraType()] : "",
+          level: p.level,
+          currentHP: p.hp,
+          maxHP: p.getMaxHp(),
+          status: p.status?.effect ? StatusEffect[p.status.effect] : ""
+        };
       }) : [],
       modeChain: this.ui?.getModeChain() ?? [],
     };
