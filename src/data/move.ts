@@ -6749,7 +6749,7 @@ export class SketchAttr extends MoveEffectAttr {
     }
 
     const targetMove = target.getMoveHistory().filter(m => !m.virtual).at(-1);
-    if (!targetMove || (targetMove.result === MoveResult.FAIL || targetMove.result === MoveResult.OTHER)) {
+    if (!targetMove || (targetMove.result === MoveResult.FAIL || targetMove.result === MoveResult.OTHER) || targetMove.move === Moves.STRUGGLE) {
       return false;
     }
 
