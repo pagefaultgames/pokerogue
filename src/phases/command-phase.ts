@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { TurnCommand, BattleType } from "#app/battle";
-import { TrappedTag, EncoreTag } from "#app/data/battler-tags";
+import { TrappedTag } from "#app/data/battler-tags";
 import { MoveTargetSet, getMoveTargets } from "#app/data/move";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Abilities } from "#app/enums/abilities";
@@ -289,26 +289,6 @@ export class CommandPhase extends FieldPhase {
       this.scene.unshiftPhase(new CommandPhase(this.scene, 1));
       this.end();
     }
-  }
-
-  checkFightOverride(): boolean {
-    const pokemon = this.getPokemon();
-
-    const encoreTag = pokemon.getTag(EncoreTag) as EncoreTag;
-
-    if (!encoreTag) {
-      return false;
-    }
-
-    const moveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === encoreTag.moveId);
-
-    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex]!.isUsable(pokemon)) { // TODO: is this bang correct?
-      return false;
-    }
-
-    this.handleCommand(Command.FIGHT, moveIndex, false);
-
-    return true;
   }
 
   getFieldIndex(): integer {

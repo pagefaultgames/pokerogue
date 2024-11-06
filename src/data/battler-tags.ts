@@ -909,7 +909,7 @@ export class FrenzyTag extends BattlerTag {
   }
 }
 
-export class EncoreTag extends BattlerTag {
+export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
 
   constructor(sourceId: number) {
@@ -967,6 +967,17 @@ export class EncoreTag extends BattlerTag {
           new MovePhase(pokemon.scene, pokemon, lastMove.targets!, movesetMove)); // TODO: is this bang correct?
       }
     }
+  }
+
+  public isMoveRestricted(move: Moves, user?: Pokemon): boolean {
+    if (move !== this.moveId) {
+      return true;
+    }
+    return false;
+  }
+
+  selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -2360,7 +2371,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * Uses DisabledTag's selectionDeniedText() message
+   * Uses its own unique selectionDeniedText() message
    */
   override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveDisabledHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name, healBlockName: allMoves[Moves.HEAL_BLOCK].name });
