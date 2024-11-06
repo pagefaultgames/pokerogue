@@ -1,11 +1,11 @@
-import { allMoves } from "#app/data/move";
+import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Upper Hand", () => {
   let phaserGame: Phaser.Game;
@@ -84,14 +84,17 @@ describe("Moves - Upper Hand", () => {
   });
 
   it("should fail if the target has already moved", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    vi.spyOn(allMoves[Moves.TACKLE], "priority", "get").mockReturnValue(4);
+    game.override
+      .enemyMoveset(Moves.FAKE_OUT)
+      .enemyAbility(Abilities.SHEER_FORCE);
 
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     const feebas = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.UPPER_HAND);
+
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
