@@ -2914,7 +2914,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         // set splice index here, so future scene queues happen before FaintedPhase
         this.scene.setPhaseQueueSplice();
         if ((!isNullOrUndefined(destinyTag) || !isNullOrUndefined(grudgeTag)) && dmg) {
-          // Destiny Bond will activate during FaintPhase
+          // Destiny Bond and Grudge will activate during FaintPhase
           this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo, destinyTag ?? undefined, grudgeTag ?? undefined, source));
         } else {
           this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));

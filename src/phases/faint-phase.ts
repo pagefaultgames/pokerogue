@@ -39,7 +39,7 @@ export class FaintPhase extends PokemonPhase {
   private grudgeTag?: GrudgeTag;
 
   /**
-   * The source Pokemon that dealt fatal damage and should get KO'd by Destiny Bond, if applicable
+   * The source Pokemon that dealt fatal damage
    */
   private source?: Pokemon;
 
