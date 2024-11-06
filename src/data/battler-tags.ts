@@ -909,6 +909,10 @@ export class FrenzyTag extends BattlerTag {
   }
 }
 
+/**
+ * Applies the effects of the move Encore onto the target Pokemon
+ * Encore forces the target Pokemon to use its most-recent move for 3 turns
+ */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
 
