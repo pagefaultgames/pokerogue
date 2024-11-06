@@ -8087,8 +8087,8 @@ export function initMoves() {
     new StatusMove(Moves.WILL_O_WISP, Type.FIRE, 85, 15, -1, 0, 3)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.MEMENTO, Type.DARK, 100, 10, -1, 0, 3)
-      .attr(SacrificialAttrOnHit)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -2),
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -2)
+      .attr(SacrificialAttrOnHit),
     new AttackMove(Moves.FACADE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)

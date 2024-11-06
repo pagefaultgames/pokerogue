@@ -22,9 +22,10 @@ export class StatStageChangePhase extends PokemonPhase {
   private ignoreAbilities: boolean;
   private canBeCopied: boolean;
   private onChange: StatStageChangeCallback | null;
+  private comingFromMirrorArmorUser: boolean;
 
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], stages: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatStageChangeCallback | null = null) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], stages: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatStageChangeCallback | null = null, comingFromMirrorArmorUser: boolean = false) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
@@ -34,6 +35,7 @@ export class StatStageChangePhase extends PokemonPhase {
     this.ignoreAbilities = ignoreAbilities;
     this.canBeCopied = canBeCopied;
     this.onChange = onChange;
+    this.comingFromMirrorArmorUser = comingFromMirrorArmorUser;
   }
 
   start() {
@@ -42,7 +44,7 @@ export class StatStageChangePhase extends PokemonPhase {
     if (this.stats.length > 1) {
       for (let i = 0; i < this.stats.length; i++) {
         const stat = [ this.stats[i] ];
-        this.scene.unshiftPhase(new StatStageChangePhase(this.scene, this.battlerIndex, this.selfTarget, stat, this.stages, this.showMessage, this.ignoreAbilities, this.canBeCopied, this.onChange));
+        this.scene.unshiftPhase(new StatStageChangePhase(this.scene, this.battlerIndex, this.selfTarget, stat, this.stages, this.showMessage, this.ignoreAbilities, this.canBeCopied, this.onChange, this.comingFromMirrorArmorUser));
       }
       return this.end();
     }
@@ -62,6 +64,7 @@ export class StatStageChangePhase extends PokemonPhase {
       if (this.scene.currentBattle.double && this.scene.getEnemyField().length === 2) {
         opponentPokemon = this.scene.getEnemyField()[this.scene.currentBattle.lastEnemyInvolved];
       } else {
+        console.log("ENEMY POKEMANS", this.scene.getEnemyField());
         opponentPokemon = this.scene.getEnemyPokemon();
       }
     } else {
@@ -95,13 +98,13 @@ export class StatStageChangePhase extends PokemonPhase {
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {
         applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled, simulate);
 
-
         // TODO: CODE INTERACTION WITH MAGIC BOUNCE AS WELL
         // TODO: CODE INTERACTION WITH STICKY WEB
-        // TODO: PREVENT REFLECTION FROM OPPONENT MIRROR ARMOR FOR INFINITE LOOP
         // TODO: FIX INTERACTION WITH MEMENTO, SHOULD LOWER OPPONENT STATS THEN DIE
         /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
-        if (opponentPokemon !== undefined && !pokemon.findTag(t => t instanceof OctolockTag)) {
+        console.log("I AM HEREE", opponentPokemon);
+
+        if (opponentPokemon !== undefined && !pokemon.findTag(t => t instanceof OctolockTag) && !this.comingFromMirrorArmorUser) {
           applyPreStatStageChangeAbAttrs(ReflectStatStageChangeAbAttr, pokemon, stat, cancelled, simulate, opponentPokemon, this.stages);
         }
       }

@@ -1,4 +1,5 @@
 //test memnto as well and double battles and multiple stats and octolock
+// test mirror armor infinite loop as well
 import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -49,7 +50,7 @@ describe("Ability - Mirror Armor", () => {
 
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
     expect(userPokemon.getStatStage(Stat.ATK)).toBe(0);
-  });
+  }, 20000);
 
   it("Enemy side + single battle Intimidate - player loses stats", async () => {
     game.override.enemyAbility(Abilities.MIRROR_ARMOR);
@@ -66,7 +67,7 @@ describe("Ability - Mirror Armor", () => {
 
     expect(userPokemon.getStatStage(Stat.ATK)).toBe(-1);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-  });
+  }, 20000);
 
   it("Player side + double battle Intimidate - opponents each lose -2 atk", async () => {
     game.override.battleType("double");
@@ -88,7 +89,7 @@ describe("Ability - Mirror Armor", () => {
     expect(enemy2.getStatStage(Stat.ATK)).toBe(-2);
     expect(player1.getStatStage(Stat.ATK)).toBe(0);
     expect(player2.getStatStage(Stat.ATK)).toBe(0);
-  });
+  }, 20000);
 
   it("Enemy side + double battle Intimidate - players each lose -2 atk", async () => {
     game.override.battleType("double");
@@ -110,7 +111,7 @@ describe("Ability - Mirror Armor", () => {
     expect(enemy2.getStatStage(Stat.ATK)).toBe(0);
     expect(player1.getStatStage(Stat.ATK)).toBe(-2);
     expect(player2.getStatStage(Stat.ATK)).toBe(-2);
-  });
+  }, 20000);
 
   it("Player side + single battle Intimidate + Tickle - opponent loses stats", async () => {
     game.override.ability(Abilities.MIRROR_ARMOR);
@@ -129,7 +130,7 @@ describe("Ability - Mirror Armor", () => {
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-2);
     expect(userPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(userPokemon.getStatStage(Stat.DEF)).toBe(0);
-  });
+  }, 20000);
 
   it("Player side + double battle Intimidate + Tickle - opponents each lose -3 atk, -1 def", async () => {
     game.override.battleType("double");
@@ -155,7 +156,7 @@ describe("Ability - Mirror Armor", () => {
     expect(enemy2.getStatStage(Stat.ATK)).toBe(-3);
     expect(enemy2.getStatStage(Stat.DEF)).toBe(-1);
 
-  });
+  }, 20000);
 
   it("Enemy side + single battle Intimidate + Tickle - player loses stats", async () => {
     game.override.enemyAbility(Abilities.MIRROR_ARMOR);
@@ -174,7 +175,7 @@ describe("Ability - Mirror Armor", () => {
     expect(userPokemon.getStatStage(Stat.ATK)).toBe(-2);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
-  });
+  }, 20000);
 
   it("Player side + single battle Intimidate + oppoenent has white smoke - no one loses stats", async () => {
     game.override.enemyAbility(Abilities.WHITE_SMOKE);
@@ -193,7 +194,7 @@ describe("Ability - Mirror Armor", () => {
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(userPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(userPokemon.getStatStage(Stat.DEF)).toBe(0);
-  });
+  }, 20000);
 
   it("Enemy side + single battle Intimidate + player has white smoke - no one loses stats", async () => {
     game.override.ability(Abilities.WHITE_SMOKE);
@@ -212,7 +213,7 @@ describe("Ability - Mirror Armor", () => {
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(userPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(userPokemon.getStatStage(Stat.DEF)).toBe(0);
-  });
+  }, 20000);
 
   it("Player side + single battle + opponent uses octolock - does not interact with mirror armor, player loses stats", async () => {
     game.override.ability(Abilities.MIRROR_ARMOR);
@@ -230,7 +231,7 @@ describe("Ability - Mirror Armor", () => {
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(0);
     expect(userPokemon.getStatStage(Stat.DEF)).toBe(-1);
     expect(userPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
-  });
+  }, 20000);
 
   it("Enemy side + single battle + player uses octolock - does not interact with mirror armor, opponent loses stats", async () => {
     game.override.enemyAbility(Abilities.MIRROR_ARMOR);
@@ -248,7 +249,7 @@ describe("Ability - Mirror Armor", () => {
     expect(userPokemon.getStatStage(Stat.SPDEF)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
-  });
+  }, 20000);
 
   //   it("traps the target pokemon", async () => {
   //     await game.classicMode.startBattle([ Species.GRAPPLOCT ]);

@@ -2710,7 +2710,6 @@ export class PreStatStageChangeAbAttr extends AbAttr {
  */
 // TODO: CODE INTERACTION WITH MAGIC BOUNCE AS WELL
 // TODO: CODE INTERACTION WITH STICKY WEB
-// TODO: PREVENT REFLECTION FROM OPPONENT MIRROR ARMOR FOR INFINITE LOOP
 export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to reflect */
   private reflectedStat? : BattleStat;
@@ -2733,7 +2732,7 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
     const stages = _args[1];
     this.reflectedStat = stat;
     if (!_simulated) {
-      attacker.scene.unshiftPhase(new StatStageChangePhase(attacker.scene, attacker.getBattlerIndex(), false, [ stat ], stages));
+      attacker.scene.unshiftPhase(new StatStageChangePhase(attacker.scene, attacker.getBattlerIndex(), false, [ stat ], stages, true, false, true, null, true));
     }
     cancelled.value = true;
     return true;
