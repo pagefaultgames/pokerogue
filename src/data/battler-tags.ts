@@ -2092,6 +2092,37 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
 }
 
 /**
+ * Battler tag indicating a Tatsugiri with {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}
+ * has entered the tagged Pokemon's mouth.
+ */
+export class CommandedTag extends BattlerTag {
+  private _tatsugiriFormKey: string;
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.COMMANDED, BattlerTagLapseType.CUSTOM, 0, Moves.NONE, sourceId);
+  }
+
+  public get tatsugiriFormKey(): string {
+    return this._tatsugiriFormKey;
+  }
+
+  /** Caches the Tatsugiri's form key and sharply boosts the tagged Pokemon's stats */
+  override onAdd(pokemon: Pokemon): void {
+    this._tatsugiriFormKey = this.getSourcePokemon(pokemon.scene)?.getFormKey() ?? "curly";
+    pokemon.scene.unshiftPhase(new StatStageChangePhase(
+      pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2
+    ));
+  }
+
+  /** Triggers an {@linkcode PokemonAnimType | animation} of the tagged Pokemon "spitting out" Tatsugiri */
+  override onRemove(pokemon: Pokemon): void {
+    if (this.getSourcePokemon(pokemon.scene)?.isActive(true)) {
+      pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_REMOVE);
+    }
+  }
+}
+
+/**
  * Battler tag enabling the Stockpile mechanic. This tag handles:
  * - Stack tracking, including max limit enforcement (which is replicated in Stockpile for redundancy).
  *
@@ -2797,6 +2828,45 @@ export class PowerTrickTag extends BattlerTag {
 }
 
 /**
+ * Tag associated with the move Grudge.
+ * If this tag is active when the bearer faints from an opponent's move, the tag reduces that move's PP to 0.
+ * Otherwise, it lapses when the bearer makes another move.
+ */
+export class GrudgeTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.GRUDGE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.PRE_MOVE ], 1, Moves.GRUDGE);
+  }
+
+  onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * Activates Grudge's special effect on the attacking Pokemon and lapses the tag.
+   * @param pokemon
+   * @param lapseType
+   * @param sourcePokemon {@linkcode Pokemon} the source of the move that fainted the tag's bearer
+   * @returns `false` if Grudge activates its effect or lapses
+   */
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM && sourcePokemon) {
+      if (sourcePokemon.isActive() && pokemon.isOpponent(sourcePokemon)) {
+        const lastMove = pokemon.turnData.attacksReceived[0];
+        const lastMoveData = sourcePokemon.getMoveset().find(m => m?.moveId === lastMove.move);
+        if (lastMoveData && lastMove.move !== Moves.STRUGGLE) {
+          lastMoveData.ppUsed = lastMoveData.getMovePp();
+          pokemon.scene.queueMessage(i18next.t("battlerTags:grudgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: lastMoveData.getName() }));
+        }
+      }
+      return false;
+    } else {
+      return super.lapse(pokemon, lapseType);
+    }
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
  * @returns The corresponding {@linkcode BattlerTag} object.
@@ -2932,6 +3002,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new IceFaceBlockDamageTag(tagType);
     case BattlerTagType.DISGUISE:
       return new FormBlockDamageTag(tagType);
+    case BattlerTagType.COMMANDED:
+      return new CommandedTag(sourceId);
     case BattlerTagType.STOCKPILING:
       return new StockpilingTag(sourceMove);
     case BattlerTagType.OCTOLOCK:
@@ -2975,6 +3047,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new TelekinesisTag(sourceMove);
     case BattlerTagType.POWER_TRICK:
       return new PowerTrickTag(sourceMove, sourceId);
+    case BattlerTagType.GRUDGE:
+      return new GrudgeTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
