@@ -969,14 +969,20 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     }
   }
 
-  public isMoveRestricted(move: Moves, user?: Pokemon): boolean {
+  /**
+   * Checks if the move matches the moveId stored within the tag and returns a boolean value
+   * @param move {@linkcode Moves} the move selected
+   * @param user {@linkcode Pokemon}
+   * @returns `true` if the move does not match with the moveId stored and as a result, restricted
+   */
+  override isMoveRestricted(move: Moves, _user?: Pokemon): boolean {
     if (move !== this.moveId) {
       return true;
     }
     return false;
   }
 
-  selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
