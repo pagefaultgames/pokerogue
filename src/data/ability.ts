@@ -5544,8 +5544,7 @@ export function initAbilities() {
       .attr(EffectSporeAbAttr),
     new Ability(Abilities.SYNCHRONIZE, 3)
       .attr(SyncEncounterNatureAbAttr)
-      .attr(SynchronizeStatusAbAttr)
-      .partial(), // interaction with psycho shift needs work, keeping to old Gen interaction for now
+      .attr(SynchronizeStatusAbAttr),
     new Ability(Abilities.CLEAR_BODY, 3)
       .attr(ProtectStatAbAttr)
       .ignorable(),
@@ -6155,7 +6154,7 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(Abilities.CORROSION, 7)
       .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ Type.STEEL, Type.POISON ])
-      .edgeCase(), // Should interact correctly with magic coat/bounce (not yet implemented), fling with toxic orb (not implemented yet), and synchronize (not fully implemented yet)
+      .edgeCase(), // Should interact correctly with magic coat/bounce (not yet implemented) + fling with toxic orb (not implemented yet)
     new Ability(Abilities.COMATOSE, 7)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
