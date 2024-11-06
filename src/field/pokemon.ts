@@ -2914,6 +2914,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         // set splice index here, so future scene queues happen before FaintedPhase
         this.scene.setPhaseQueueSplice();
         this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo, destinyTag, grudgeTag, source));
+
         this.destroySubstitute();
         this.lapseTag(BattlerTagType.COMMANDED);
         this.resetSummonData();
