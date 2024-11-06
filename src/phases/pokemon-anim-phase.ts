@@ -1,8 +1,9 @@
 import BattleScene from "#app/battle-scene";
 import { SubstituteTag } from "#app/data/battler-tags";
-import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";
+import { isNullOrUndefined } from "#app/utils";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { Species } from "#enums/species";
 
 
@@ -51,7 +52,7 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doSubstituteAddAnim(): void {
     const substitute = this.pokemon.getTag(SubstituteTag);
-    if (substitute === null) {
+    if (isNullOrUndefined(substitute)) {
       return this.end();
     }
 

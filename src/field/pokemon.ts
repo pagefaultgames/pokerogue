@@ -7,7 +7,7 @@ import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, Varia
 import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
+import { Constructor, isNullOrUndefined, randSeedInt, type nil } from "#app/utils";
 import * as Utils from "#app/utils";
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { getLevelTotalExp } from "#app/data/exp";
@@ -2841,6 +2841,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
       const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
+      const grudgeTag = this.getTag(BattlerTagType.GRUDGE);
 
       const isOneHitKo = result === HitResult.ONE_HIT_KO;
 
@@ -2912,12 +2913,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.isFainted()) {
         // set splice index here, so future scene queues happen before FaintedPhase
         this.scene.setPhaseQueueSplice();
-        if (!isNullOrUndefined(destinyTag) && dmg) {
-          // Destiny Bond will activate during FaintPhase
-          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo, destinyTag, source));
-        } else {
-          this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo));
-        }
+        this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo, destinyTag, grudgeTag, source));
+
         this.destroySubstitute();
         this.lapseTag(BattlerTagType.COMMANDED);
         this.resetSummonData();
@@ -3051,19 +3048,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /** @overload */
-  getTag(tagType: BattlerTagType): BattlerTag | null;
+  getTag(tagType: BattlerTagType): BattlerTag | nil;
 
   /** @overload */
-  getTag<T extends BattlerTag>(tagType: Constructor<T>): T | null;
+  getTag<T extends BattlerTag>(tagType: Constructor<T>): T | nil;
 
-  getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | null {
+  getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | nil {
     if (!this.summonData) {
       return null;
     }
     return (tagType instanceof Function
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType)
-    )!; // TODO: is this bang correct?
+    );
   }
 
   findTag(tagFilter: ((tag: BattlerTag) => boolean)) {
