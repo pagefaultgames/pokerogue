@@ -112,8 +112,8 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
   let bounceY = y2;
   const yd = y2 - y1;
   const x0 = pokeball.x;
-  const x1 = x0 + 4;
-  const x2 = x0 - 4;
+  const x1 = x0 + 3;
+  const x2 = x0 - 3;
   let critShakes = 4;
 
   const doBounce = () => {
@@ -167,7 +167,7 @@ export function doPokeballBounceAnim(scene: BattleScene, pokeball: Phaser.GameOb
                 x: x0,
                 duration: 60,
                 ease: "Linear",
-                onComplete: () => doBounce()
+                onComplete: () => scene.time.delayedCall(500, doBounce)
               });
             }
           }
