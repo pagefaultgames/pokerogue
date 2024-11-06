@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { TurnCommand, BattleType } from "#app/battle";
-import { TrappedTag } from "#app/data/battler-tags";
+import { BattlerTagLapseType, TrappedTag, EncoreTag } from "#app/data/battler-tags";
 import { MoveTargetSet, getMoveTargets } from "#app/data/move";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Abilities } from "#app/enums/abilities";
@@ -59,6 +59,12 @@ export class CommandPhase extends FieldPhase {
     // If the Pokemon has applied Commander's effects to its ally, skip this command
     if (this.scene.currentBattle?.double && this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon(this.scene) === this.getPokemon()) {
       this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.FIGHT, move: { move: Moves.NONE, targets: []}, skip: true };
+    }
+
+    // Checks if the Pokemon is under the effects of Encore. If so, Encore can end early if the encored move has no more PP.
+    const encoreTag = this.getPokemon().getTag(BattlerTagType.ENCORE) as EncoreTag;
+    if (encoreTag && !encoreTag.lapse(this.getPokemon(), BattlerTagLapseType.CUSTOM)) {
+      this.getPokemon().removeTag(BattlerTagType.ENCORE);
     }
 
     if (this.scene.currentBattle.turnCommands[this.fieldIndex]?.skip) {
