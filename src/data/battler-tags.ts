@@ -18,7 +18,7 @@ import Move, {
   StatusCategoryOnAllyAttr
 } from "#app/data/move";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
-import { StatusEffect } from "#app/data/status-effect";
+import { getStatusEffectHealText, StatusEffect } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
 import { Type } from "#app/data/type";
 import { WeatherType } from "#app/data/weather";
@@ -2867,6 +2867,28 @@ export class GrudgeTag extends BattlerTag {
 }
 
 /**
+ * Tag used to heal the user of Psycho Shift of its status effect if Psycho Shift succeeds in transferring its status effect to the target Pokemon
+ */
+export class PsychoShiftTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.PSYCHO_SHIFT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.PSYCHO_SHIFT);
+  }
+
+  /**
+   * Heals Psycho Shift's user of its status effect after it uses a move
+   * @returns `false` to expire the tag immediately
+   */
+  override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+    if (pokemon.status && pokemon.isActive(true)) {
+      pokemon.scene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+      pokemon.resetStatus();
+      pokemon.updateInfo();
+    }
+    return false;
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
  * @returns The corresponding {@linkcode BattlerTag} object.
@@ -3049,6 +3071,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new PowerTrickTag(sourceMove, sourceId);
     case BattlerTagType.GRUDGE:
       return new GrudgeTag();
+    case BattlerTagType.PSYCHO_SHIFT:
+      return new PsychoShiftTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
