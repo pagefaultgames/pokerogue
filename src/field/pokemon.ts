@@ -1979,6 +1979,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.shiny = randSeedInt(65536) < shinyThreshold.value;
 
     if (this.shiny) {
+      this.variant = this.generateShinyVariant();
+      this.luck = this.variant + 1 + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.initShinySparkle();
     }
 

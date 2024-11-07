@@ -12,8 +12,7 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon
 import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import * as Utils from "#app/utils";
-import { IntegerHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
+import { NumberHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -229,7 +228,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
-              const shinyThreshold = new Utils.IntegerHolder(WONDER_TRADE_SHINY_CHANCE);
+              const shinyThreshold = new NumberHolder(WONDER_TRADE_SHINY_CHANCE);
               if (scene.eventManager.isEventActive()) {
                 shinyThreshold.value *= scene.eventManager.getShinyMultiplier();
               }
@@ -246,7 +245,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
             if (tradePokemon.species.abilityHidden) {
               if (tradePokemon.abilityIndex < hiddenIndex) {
-                const hiddenAbilityChance = new IntegerHolder(64);
+                const hiddenAbilityChance = new NumberHolder(64);
                 scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
                 const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
