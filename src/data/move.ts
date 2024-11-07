@@ -1,5 +1,5 @@
 import { ChargeAnim, initMoveAnim, loadMoveAnimAssets, MoveChargeAnim } from "./battle-anims";
-import { CommandedTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
+import { CommandedTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag, TypeImmuneTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect, StatusEffect } from "./status-effect";
@@ -7567,6 +7567,44 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   }
 }
 
+export class StealPositiveAndResetStatsAttr extends MoveEffectAttr {
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      if (!this.canApply(user, target, move)) {
+        return false;
+      }
+      const moveType = user.getMoveType(move);
+      for (const type of target.getTypes()) {
+        if (getTypeDamageMultiplier(moveType, type) === 0) {
+          return false;
+        }
+      }
+      const immuneTags = target.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
+      console.log(immuneTags);
+      for (const tag of immuneTags) {
+        if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
+          return false;
+        }
+      }
+
+      let messageTrigger = true;
+      for (const s of BATTLE_STATS) {
+        const targetStatStage = target.getStatStage(s);
+        if (targetStatStage > 0) {
+          if (messageTrigger) {
+            user.scene.queueMessage(i18next.t("moveTriggers:stealPositiveStats", { pokemonName: getPokemonNameWithAffix(user) }));
+            messageTrigger = false;
+          }
+          user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), true, [ s ], targetStatStage));
+          target.setStatStage(s, 0);
+          target.updateInfo();
+        }
+      }
+      return true;
+    };
+  }
+}
+
 
 const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
 
@@ -9775,7 +9813,8 @@ export function initMoves() {
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
       .ignoresSubstitute()
-      .partial(), // Does not steal stats
+      .attr(StealPositiveAndResetStatsAttr)
+      .partial(), // Will still steal stats if the move misses
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
       .edgeCase(), // Should not ignore abilities when called virtually (metronome)
