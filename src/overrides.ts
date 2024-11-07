@@ -31,7 +31,12 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {
+  OPP_MOVESET_OVERRIDE: [ Moves.GRASS_PLEDGE, Moves.WATERFALL, Moves.SKETCH, Moves.WATER_PLEDGE ],
+  STARTING_LEVEL_OVERRIDE: 100,
+  PASSIVE_ABILITY_OVERRIDE: Abilities.STALL,
+  ABILITY_OVERRIDE: Abilities.ICE_SCALES,
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}

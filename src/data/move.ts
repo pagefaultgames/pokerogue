@@ -6571,6 +6571,49 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 }
 
 /**
+ * Attribute used for moves that causes the target to repeat their last used move.
+ * Used for Instruct.
+*/
+export class RepeatMoveAttr extends OverrideMoveEffectAttr {
+  /**
+   * Forces the target to re-use their last used move again
+   *
+   * @param user {@linkcode Pokemon} that used the attack
+   * @param target {@linkcode Pokemon} targeted by the attack
+   * @param move {@linkcode Move} being used
+   * @param args N/A
+   * @returns {boolean} true if the move succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const lastMove = target.getLastXMoves().find(() => true);
+    const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
+    if (!movesetMove || movesetMove.virtual) {
+      user.scene.queueMessage(i18next.t("battle:attackFailed"));
+      return false;
+    }
+
+    const moveTargets = getMoveTargets(target, lastMove?.move!);
+    if (!moveTargets.targets.length) {
+      user.scene.queueMessage(i18next.t("battle:attackFailed"));
+      return false;
+    }
+
+    user.scene.queueMessage(i18next.t("moveTriggers:instructingMove", {
+      userPokemonName: getPokemonNameWithAffix(user),
+      targetPokemonName: getPokemonNameWithAffix(target)
+    }));
+    target.getMoveQueue().push({ move: lastMove?.move!, targets: moveTargets.targets, ignorePP: false });
+    target.scene.unshiftPhase(new MovePhase(target.scene, target as PlayerPokemon, moveTargets.targets, movesetMove, false, false));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return lastMoveCopiableCondition; // TODO: Make list of un-instructable moves
+  }
+}
+
+/**
  *  Attribute used for moves that reduce PP of the target's last used move.
  *  Used for Spite.
  */
@@ -9705,7 +9748,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
       .ignoresSubstitute()
-      .unimplemented(),
+      .attr(RepeatMoveAttr),
     new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()

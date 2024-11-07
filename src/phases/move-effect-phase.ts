@@ -292,7 +292,7 @@ export class MoveEffectPhase extends PokemonPhase {
           }
 
           /**
-           * Create a Promise that applys *all* effects from the invoked move's MoveEffectAttrs.
+           * Create a Promise that applies *all* effects from the invoked move's MoveEffectAttrs.
            * These are ordered by trigger type (see {@linkcode MoveEffectTrigger}), and each trigger
            * type requires different conditions to be met with respect to the move's hit result.
            */
