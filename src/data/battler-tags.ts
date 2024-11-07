@@ -975,8 +975,6 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 
   /**
    * If the encored move has run out of PP, Encore ends early. Otherwise, Encore lapses based on the AFTER_MOVE battler tag lapse type.
-   * @param pokemon
-   * @param lapseType
    * @returns `true` to persist | `false` to end and be removed
    */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -994,7 +992,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if the move matches the moveId stored within the tag and returns a boolean value
    * @param move {@linkcode Moves} the move selected
-   * @param user {@linkcode Pokemon}
+   * @param user N/A
    * @returns `true` if the move does not match with the moveId stored and as a result, restricted
    */
   override isMoveRestricted(move: Moves, _user?: Pokemon): boolean {
