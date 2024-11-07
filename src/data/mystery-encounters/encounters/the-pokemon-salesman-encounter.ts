@@ -71,13 +71,11 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
 
       let pokemon: PlayerPokemon;
       if (randSeedInt(SHINY_MAGIKARP_WEIGHT) === 0 || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) {
-        // If no HA mon found or you roll 1%, give shiny Magikarp
+        // If no HA mon found or you roll 1%, give shiny Magikarp with HA and random variant
         species = getPokemonSpecies(Species.MAGIKARP);
-        const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex, undefined, true, 0);
+        pokemon = new PlayerPokemon(scene, species, 5, 2, species.formIndex, undefined, true);
       } else {
-        const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(scene, species, 5, hiddenIndex, species.formIndex);
+        pokemon = new PlayerPokemon(scene, species, 5, 2, species.formIndex);
       }
       pokemon.generateAndPopulateMoveset();
 
