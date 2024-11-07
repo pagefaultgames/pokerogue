@@ -1954,6 +1954,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Function that tries to set a Pokemon shiny based on seed.
    * For manual use only, usually to roll a Pokemon's shiny chance a second time.
+   * If it rolls shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
@@ -4564,12 +4565,13 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
-  /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
+  /** To indicate if the instance was populated with a dataSource -> e.g. loaded & populated from session data */
   public readonly isPopulatedFromDataSource: boolean;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, dataSource?: PokemonData) {
-    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
-      dataSource?.gender, dataSource ? dataSource.shiny : false, dataSource ? dataSource.variant : undefined, undefined, dataSource ? dataSource.nature : undefined, dataSource);
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, shinyLock: boolean = false, dataSource?: PokemonData) {
+    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex, dataSource?.gender,
+      shinyLock ? false : (dataSource ? dataSource.shiny : false), shinyLock ? undefined : (dataSource ? dataSource.variant : undefined),
+      undefined, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
     this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource

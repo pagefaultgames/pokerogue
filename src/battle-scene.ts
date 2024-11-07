@@ -890,7 +890,7 @@ export default class BattleScene extends SceneBase {
     return pokemon;
   }
 
-  addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+  addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, shinyLock: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
     if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
       level = Overrides.OPP_LEVEL_OVERRIDE;
     }
@@ -900,7 +900,7 @@ export default class BattleScene extends SceneBase {
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
-    const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, shinyLock, dataSource);
     if (Overrides.OPP_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }

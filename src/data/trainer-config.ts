@@ -1173,7 +1173,7 @@ export function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: Tr
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength, scene.currentBattle.waveIndex);
     }
-    return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
+    return scene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, false, undefined, postProcess);
   };
 }
 
@@ -1181,7 +1181,7 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   const originalSpeciesFilter = speciesFilter;
   speciesFilter = (species: PokemonSpecies) => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
   return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
-    const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength, scene.currentBattle.waveIndex)), level, trainerSlot, undefined, undefined, postProcess);
+    const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength, scene.currentBattle.waveIndex)), level, trainerSlot, undefined, false, undefined, postProcess);
     return ret;
   };
 }
