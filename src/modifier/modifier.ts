@@ -2957,21 +2957,21 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 }
 
-export class CriticalCatchBoostModifier extends PersistentModifier {
+export class CriticalCatchChanceBoosterModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: number) {
     super(type, stackCount);
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof CriticalCatchBoostModifier;
+    return modifier instanceof CriticalCatchChanceBoosterModifier;
   }
 
-  clone(): CriticalCatchBoostModifier {
-    return new CriticalCatchBoostModifier(this.type, this.stackCount);
+  clone(): CriticalCatchChanceBoosterModifier {
+    return new CriticalCatchChanceBoosterModifier(this.type, this.stackCount);
   }
 
   /**
-   * Applies {@linkcode CriticalCatchBoostModifier}
+   * Applies {@linkcode CriticalCatchChanceBoosterModifier}
    * @param boost {@linkcode NumberHolder} holding the boost value
    * @returns always `true`
    */
@@ -2979,7 +2979,7 @@ export class CriticalCatchBoostModifier extends PersistentModifier {
     // 1 stack: 2x
     // 2 stack: 2.5x
     // 3 stack: 3x
-    boost.value *= 1.5 + 0.5 * this.getStackCount();
+    boost.value *= 1.5 + this.getStackCount() / 2;
 
     return true;
   }
