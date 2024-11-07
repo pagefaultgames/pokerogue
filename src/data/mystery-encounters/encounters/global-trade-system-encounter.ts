@@ -797,6 +797,14 @@ function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPoke
     receivedPokeballSprite.x = tradeBaseBg.displayWidth / 2;
     receivedPokeballSprite.y = tradeBaseBg.displayHeight / 2 - 100;
 
+    // Received pokemon sparkles
+    let pokemonShinySparkle: Phaser.GameObjects.Sprite;
+    if (receivedPokemon.shiny) {
+      pokemonShinySparkle = scene.add.sprite(receivedPokemonSprite.x, receivedPokemonSprite.y, "shiny");
+      pokemonShinySparkle.setVisible(false);
+      tradeContainer.add(pokemonShinySparkle);
+    }
+
     const BASE_ANIM_DURATION = 1000;
 
     // Pokeball falls to the screen
@@ -835,6 +843,12 @@ function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPoke
             scale: 1,
             alpha: 0,
             onComplete: () => {
+              if (receivedPokemon.shiny) {
+                scene.time.delayedCall(500, () => {
+                  pokemonShinySparkle.play(`sparkle${receivedPokemon.variant ? `_${receivedPokemon.variant + 1}` : ""}`);
+                  scene.playSound("se/sparkle");
+                });
+              }
               receivedPokeballSprite.destroy();
               scene.time.delayedCall(2000, () => resolve());
             }
