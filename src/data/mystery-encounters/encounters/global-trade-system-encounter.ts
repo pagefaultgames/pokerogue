@@ -367,10 +367,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const modifier = encounter.misc.chosenModifier;
+          const modifier = encounter.misc.chosenModifier as PokemonHeldItemModifier;
+          const party = scene.getPlayerParty();
 
           // Check tier of the traded item, the received item will be one tier up
-          const type = modifier.type.withTierFromPool();
+          const type = modifier.type.withTierFromPool(ModifierPoolType.PLAYER, party);
           let tier = type.tier ?? ModifierTier.GREAT;
           // Eggs and White Herb are not in the pool
           if (type.id === "WHITE_HERB") {
@@ -385,11 +386,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             tier++;
           }
 
-          regenerateModifierPoolThresholds(scene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
+          regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, 0);
           let item: ModifierTypeOption | null = null;
           // TMs excluded from possible rewards
           while (!item || item.type.id.includes("TM_")) {
-            item = getPlayerModifierTypeOptions(1, scene.getPlayerParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
+            item = getPlayerModifierTypeOptions(1, party, [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
           }
 
           encounter.setDialogueToken("itemName", item.type.name);

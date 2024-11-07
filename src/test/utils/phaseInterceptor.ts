@@ -12,6 +12,7 @@ import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
+import { FormChangePhase } from "#app/phases/form-change-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelCapPhase } from "#app/phases/level-cap-phase";
 import { LoginPhase } from "#app/phases/login-phase";
@@ -67,7 +68,6 @@ type PhaseClass =
   | typeof LoginPhase
   | typeof TitlePhase
   | typeof SelectGenderPhase
-  | typeof EncounterPhase
   | typeof NewBiomeEncounterPhase
   | typeof SelectStarterPhase
   | typeof PostSummonPhase
@@ -102,6 +102,7 @@ type PhaseClass =
   | typeof SwitchPhase
   | typeof SwitchSummonPhase
   | typeof PartyHealPhase
+  | typeof FormChangePhase
   | typeof EvolutionPhase
   | typeof EndEvolutionPhase
   | typeof LevelCapPhase
@@ -114,13 +115,13 @@ type PhaseClass =
   | typeof PostMysteryEncounterPhase
   | typeof ModifierRewardPhase
   | typeof PartyExpPhase
-  | typeof ExpPhase;
+  | typeof ExpPhase
+  | typeof EncounterPhase;
 
 type PhaseString =
   | "LoginPhase"
   | "TitlePhase"
   | "SelectGenderPhase"
-  | "EncounterPhase"
   | "NewBiomeEncounterPhase"
   | "SelectStarterPhase"
   | "PostSummonPhase"
@@ -155,6 +156,7 @@ type PhaseString =
   | "SwitchPhase"
   | "SwitchSummonPhase"
   | "PartyHealPhase"
+  | "FormChangePhase"
   | "EvolutionPhase"
   | "EndEvolutionPhase"
   | "LevelCapPhase"
@@ -167,7 +169,8 @@ type PhaseString =
   | "PostMysteryEncounterPhase"
   | "ModifierRewardPhase"
   | "PartyExpPhase"
-  | "ExpPhase";
+  | "ExpPhase"
+  | "EncounterPhase";
 
 type PhaseInterceptorPhase = PhaseClass | PhaseString;
 
@@ -187,12 +190,16 @@ export default class PhaseInterceptor {
 
   /**
    * List of phases with their corresponding start methods.
+   *
+   * CAUTION: If a phase and its subclasses (if any) both appear in this list,
+   * make sure that this list contains said phase AFTER all of its subclasses.
+   * This way, the phase's `prototype.start` is properly preserved during
+   * `initPhases()` so that its subclasses can use `super.start()` properly.
    */
   private PHASES = [
     [ LoginPhase, this.startPhase ],
     [ TitlePhase, this.startPhase ],
     [ SelectGenderPhase, this.startPhase ],
-    [ EncounterPhase, this.startPhase ],
     [ NewBiomeEncounterPhase, this.startPhase ],
     [ SelectStarterPhase, this.startPhase ],
     [ PostSummonPhase, this.startPhase ],
@@ -227,6 +234,7 @@ export default class PhaseInterceptor {
     [ SwitchPhase, this.startPhase ],
     [ SwitchSummonPhase, this.startPhase ],
     [ PartyHealPhase, this.startPhase ],
+    [ FormChangePhase, this.startPhase ],
     [ EvolutionPhase, this.startPhase ],
     [ EndEvolutionPhase, this.startPhase ],
     [ LevelCapPhase, this.startPhase ],
@@ -240,6 +248,7 @@ export default class PhaseInterceptor {
     [ ModifierRewardPhase, this.startPhase ],
     [ PartyExpPhase, this.startPhase ],
     [ ExpPhase, this.startPhase ],
+    [ EncounterPhase, this.startPhase ],
   ];
 
   private endBySetMode = [

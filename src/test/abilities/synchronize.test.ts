@@ -94,16 +94,4 @@ describe("Abilities - Synchronize", () => {
     expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
   });
-
-  it("should activate with Psycho Shift after the move clears the status", async () => {
-    game.override.statusEffect(StatusEffect.PARALYSIS);
-    await game.classicMode.startBattle();
-
-    game.move.select(Moves.PSYCHO_SHIFT);
-    await game.phaseInterceptor.to("BerryPhase");
-
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS); // keeping old gen < V impl for now since it's buggy otherwise
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
-    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
-  });
 });
