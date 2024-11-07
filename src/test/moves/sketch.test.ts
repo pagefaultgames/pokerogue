@@ -5,6 +5,8 @@ import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { StatusEffect } from "#app/enums/status-effect";
+import { BattlerIndex } from "#app/battle";
 
 describe("Moves - Sketch", () => {
   let phaserGame: Phaser.Game;
@@ -46,6 +48,30 @@ describe("Moves - Sketch", () => {
 
     await game.toNextTurn();
     game.move.select(Moves.SKETCH);
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(playerPokemon?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    // Can't verify if the player Pokemon's moveset was successfully changed because of overrides.
+  });
+
+  it("Sketch should retrieve the most recent valid move from its target history", async () => {
+    game.override
+      .moveset([ Moves.SKETCH, Moves.GROWL ])
+      .enemyStatusEffect(StatusEffect.PARALYSIS);
+
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
+    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon();
+
+    game.move.select(Moves.GROWL);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.move.forceStatusActivation(false);
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(enemyPokemon?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+
+    await game.toNextTurn();
+    game.move.select(Moves.SKETCH);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.move.forceStatusActivation(true);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     // Can't verify if the player Pokemon's moveset was successfully changed because of overrides.

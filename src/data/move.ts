@@ -6748,7 +6748,7 @@ export class SketchAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetMove = target.getLastXMoves()
+    const targetMove = target.getLastXMoves(target.battleSummonData.turnCount)
       .find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
     if (!targetMove) {
       return false;
