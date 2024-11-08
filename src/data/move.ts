@@ -1,7 +1,7 @@
 import { ChargeAnim, initMoveAnim, loadMoveAnimAssets, MoveChargeAnim } from "./battle-anims";
 import { CommandedTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
-import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
+import Pokemon, { AttackMoveResult, EnemyPokemon, FieldPosition, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect, StatusEffect } from "./status-effect";
 import { getTypeDamageMultiplier, Type } from "./type";
 import { Constructor, NumberHolder } from "#app/utils";
@@ -6977,6 +6977,34 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
   }
 }
 
+export class AllySwitchAttr extends MoveEffectAttr {
+  async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    const ally = user.getAlly();
+    const party = user.isPlayer() ? user.scene.getPlayerParty() : user.scene.getEnemyParty();
+    const userIndex = party.findIndex(x => x.id === user.id);
+    const allyIndex = party.findIndex(x => x.id === ally.id);
+    if (ally.isAllowedInBattle()) {
+      if (user.fieldPosition === FieldPosition.LEFT) {
+        user.setFieldPosition(FieldPosition.RIGHT);
+        ally.setFieldPosition(FieldPosition.LEFT);
+      } else {
+        user.setFieldPosition(FieldPosition.LEFT);
+        ally.setFieldPosition(FieldPosition.RIGHT);
+      }
+      if (user.isPlayer()) {
+        party[userIndex] = (party as PlayerPokemon[]).splice(allyIndex, 1, party[userIndex] as PlayerPokemon)[0];
+      } else {
+        party[userIndex] = (party as EnemyPokemon[]).splice(allyIndex, 1, party[userIndex] as EnemyPokemon)[0];
+      }
+      user.scene.queueMessage(i18next.t("moveTriggers:allySwitch", { user: getPokemonNameWithAffix(user), ally: getPokemonNameWithAffix(ally) }));
+      user.updateInfo();
+      ally.updateInfo();
+      return true;
+    }
+    return false;
+  }
+}
+
 export class TransformAttr extends MoveEffectAttr {
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     if (!super.apply(user, target, move, args)) {
@@ -9101,8 +9129,9 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.QUICK_GUARD, 1, true, true)
       .condition(failIfLastCondition),
     new SelfStatusMove(Moves.ALLY_SWITCH, Type.PSYCHIC, -1, 15, -1, 2, 5)
-      .ignoresProtect()
-      .unimplemented(),
+      .attr(AllySwitchAttr)
+      .condition(failIfSingleBattle)
+      .ignoresProtect(),
     new AttackMove(Moves.SCALD, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, 30, 0, 5)
       .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
