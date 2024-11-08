@@ -5260,26 +5260,6 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
-  heal(amount: integer): integer {
-    if (this.isBoss()) {
-      const amountRatio = amount / this.getMaxHp();
-      const segmentBypassCount = Math.floor(amountRatio / (1 / this.bossSegments));
-      const segmentSize = this.getMaxHp() / this.bossSegments;
-      for (let s = 1; s < this.bossSegments; s++) {
-        const hpThreshold = segmentSize * s;
-        if (this.hp <= Math.round(hpThreshold)) {
-          const healAmount = Math.min(amount, this.getMaxHp() - this.hp, Math.round(hpThreshold + (segmentSize * segmentBypassCount) - this.hp));
-          this.hp += healAmount;
-          return healAmount;
-        } else if (s >= this.bossSegmentIndex) {
-          return super.heal(amount);
-        }
-      }
-    }
-
-    return super.heal(amount);
-  }
-
   getFieldIndex(): integer {
     return this.scene.getEnemyField().indexOf(this);
   }
