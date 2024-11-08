@@ -2566,15 +2566,15 @@ export default class BattleScene extends SceneBase {
    * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
    * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
    * @param itemModifier {@linkcode PokemonHeldItemModifier} item to transfer (represents the whole stack)
-   * @param target {@linkcode Pokemon} pokemon recepient in this transfer
-   * @param playSound {boolean}
-   * @param transferQuantity {@linkcode integer} how many items of the stack to transfer. Optional, defaults to 1
-   * @param instant {boolean}
-   * @param ignoreUpdate {boolean}
-   * @param itemLost {boolean} If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
-   * @returns true if the transfer was successful
+   * @param target {@linkcode Pokemon} recepient in this transfer
+   * @param playSound `true` to play a sound when transferring the item
+   * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
+   * @param instant ??? (Optional)
+   * @param ignoreUpdate ??? (Optional)
+   * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
+   * @returns `true` if the transfer was successful
    */
-  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean, transferQuantity: integer = 1, instant?: boolean, ignoreUpdate?: boolean, itemLost: boolean = true): Promise<boolean> {
+  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean, transferQuantity: number = 1, instant?: boolean, ignoreUpdate?: boolean, itemLost: boolean = true): Promise<boolean> {
     return new Promise(resolve => {
       const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
       const cancelled = new Utils.BooleanHolder(false);
