@@ -61,6 +61,12 @@ export class CommandPhase extends FieldPhase {
       this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.FIGHT, move: { move: Moves.NONE, targets: []}, skip: true };
     }
 
+    // Checks if the Pokemon is under the effects of Encore. If so, Encore can end early if the encored move has no more PP.
+    const encoreTag = this.getPokemon().getTag(BattlerTagType.ENCORE) as EncoreTag;
+    if (encoreTag) {
+      this.getPokemon().lapseTag(BattlerTagType.ENCORE);
+    }
+
     if (this.scene.currentBattle.turnCommands[this.fieldIndex]?.skip) {
       return this.end();
     }
@@ -289,26 +295,6 @@ export class CommandPhase extends FieldPhase {
       this.scene.unshiftPhase(new CommandPhase(this.scene, 1));
       this.end();
     }
-  }
-
-  checkFightOverride(): boolean {
-    const pokemon = this.getPokemon();
-
-    const encoreTag = pokemon.getTag(EncoreTag) as EncoreTag;
-
-    if (!encoreTag) {
-      return false;
-    }
-
-    const moveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === encoreTag.moveId);
-
-    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex]!.isUsable(pokemon)) { // TODO: is this bang correct?
-      return false;
-    }
-
-    this.handleCommand(Command.FIGHT, moveIndex, false);
-
-    return true;
   }
 
   getFieldIndex(): integer {
