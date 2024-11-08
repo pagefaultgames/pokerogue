@@ -76,4 +76,28 @@ describe("Moves - Sketch", () => {
     expect(playerPokemon.moveset[0]?.moveId).toBe(Moves.SPLASH);
     expect(playerPokemon.moveset[1]?.moveId).toBe(Moves.GROWL);
   });
+
+  it("Sketch should retrieve the most recent valid move from its target history", async () => {
+    game.override
+      .moveset([ Moves.SKETCH, Moves.GROWL ])
+      .enemyStatusEffect(StatusEffect.PARALYSIS);
+
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
+    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.scene.getEnemyPokemon();
+
+    game.move.select(Moves.GROWL);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.move.forceStatusActivation(false);
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(enemyPokemon?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+
+    await game.toNextTurn();
+    game.move.select(Moves.SKETCH);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.move.forceStatusActivation(true);
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(playerPokemon?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    // Can't verify if the player Pokemon's moveset was successfully changed because of overrides.
+  });
 });
