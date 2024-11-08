@@ -6573,8 +6573,9 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 }
 
 /**
- * Attribute used for moves that causes the target to repeat their last used move.
- * Used for Instruct.
+ * Attribute used for moves that causes the target to repeat their last used move.4
+ *
+ * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/After_You_(move)).
 */
 export class RepeatMoveAttr extends OverrideMoveEffectAttr {
   /**
@@ -6587,7 +6588,7 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
    * @returns {boolean} true if the move succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const lastMove = target.getLastXMoves().find(() => true);
+    const lastMove = target.getLastXMoves().find(m => m.move !== Moves.NONE); // get the last move used, excluding status based fails
     const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
     const moveTargets = lastMove?.targets;
 
@@ -6603,32 +6604,40 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      const lastMove = target.getLastXMoves().find(() => true);
+      const lastMove = target.getLastXMoves().find(m => m.move !== Moves.NONE);
       const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
       const moveTargets = lastMove?.targets!;
       const unrepeatablemoves = [
+        // Locking/Continually Executed moves
         Moves.OUTRAGE,
         Moves.RAGING_FURY,
         Moves.ROLLOUT,
         Moves.PETAL_DANCE,
         Moves.THRASH,
         Moves.ICE_BALL,
+        // Multi-turn Moves
+        Moves.BIDE,
         Moves.SHELL_TRAP,
-        Moves.KINGS_SHIELD,
         Moves.BEAK_BLAST,
+        Moves.FOCUS_PUNCH,
+        // "First Turn Only" moves
+        Moves.FAKE_OUT,
+        Moves.FIRST_IMPRESSION,
+        Moves.MAT_BLOCK,
+        // Other moves
+        Moves.KINGS_SHIELD,
         Moves.SKETCH,
         Moves.TRANSFORM,
         Moves.MIMIC,
         Moves.STRUGGLE,
-        Moves.FOCUS_PUNCH,
         // TODO: Add Z-move blockage once zmoves are implemented
         // as well as actually blocking move calling moves
       ];
 
-      if (!movesetMove ||
-        !moveTargets.length ||
-        !targetMoveCopiableCondition(user, target, move) ||
-        unrepeatablemoves.includes(lastMove?.move!)) {
+      if (!targetMoveCopiableCondition(user, target, move) || // called move doesn't exist or is a charging/recharging move
+        !movesetMove || // called move not in target's moveset (dancer, forgetting the move, etc.)
+        !moveTargets.length || // called move has no targets
+        unrepeatablemoves.includes(lastMove?.move!)) { // called move is explicitly in the banlist
         return false;
       }
       return true;
