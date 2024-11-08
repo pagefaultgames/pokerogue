@@ -6589,29 +6589,50 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const lastMove = target.getLastXMoves().find(() => true);
     const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
-    if (!movesetMove || movesetMove.virtual) {
-      user.scene.queueMessage(i18next.t("battle:attackFailed"));
-      return false;
-    }
-
-    const moveTargets = getMoveTargets(target, lastMove?.move!);
-    if (!moveTargets.targets.length) {
-      user.scene.queueMessage(i18next.t("battle:attackFailed"));
-      return false;
-    }
+    const moveTargets = lastMove?.targets;
 
     user.scene.queueMessage(i18next.t("moveTriggers:instructingMove", {
       userPokemonName: getPokemonNameWithAffix(user),
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
-    target.getMoveQueue().push({ move: lastMove?.move!, targets: moveTargets.targets, ignorePP: false });
-    target.scene.unshiftPhase(new MovePhase(target.scene, target as PlayerPokemon, moveTargets.targets, movesetMove, false, false));
+    target.getMoveQueue().push({ move: lastMove?.move!, targets: moveTargets!, ignorePP: false });
+    target.scene.unshiftPhase(new MovePhase(target.scene, target as PlayerPokemon, moveTargets!, movesetMove!, false, false));
 
     return true;
   }
 
   getCondition(): MoveConditionFunc {
-    return lastMoveCopiableCondition; // TODO: Make list of un-instructable moves
+    return (user, target, move) => {
+      const lastMove = target.getLastXMoves().find(() => true);
+      const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
+      const moveTargets = lastMove?.targets!;
+      const unrepeatablemoves = [
+        Moves.OUTRAGE,
+        Moves.RAGING_FURY,
+        Moves.ROLLOUT,
+        Moves.PETAL_DANCE,
+        Moves.THRASH,
+        Moves.ICE_BALL,
+        Moves.SHELL_TRAP,
+        Moves.KINGS_SHIELD,
+        Moves.BEAK_BLAST,
+        Moves.SKETCH,
+        Moves.TRANSFORM,
+        Moves.MIMIC,
+        Moves.STRUGGLE,
+        Moves.FOCUS_PUNCH,
+        // TODO: Add Z-move blockage once zmoves are implemented
+        // as well as actually blocking move calling moves
+      ];
+
+      if (!movesetMove ||
+        !moveTargets.length ||
+        !targetMoveCopiableCondition(user, target, move) ||
+        unrepeatablemoves.includes(lastMove?.move!)) {
+        return false;
+      }
+      return true;
+    };
   }
 }
 
