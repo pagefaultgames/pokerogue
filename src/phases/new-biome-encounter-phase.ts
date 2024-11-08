@@ -44,6 +44,6 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
    * Set biome weather.
    */
   trySetWeatherIfNewBiome(): void {
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena));
   }
 }
