@@ -6607,6 +6607,7 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
       const lastMove = target.getLastXMoves().find(m => m.move !== Moves.NONE);
       const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
       const moveTargets = lastMove?.targets!;
+      // TODO: Add a way of adding moves to list procedurally
       const unrepeatablemoves = [
         // Locking/Continually Executed moves
         Moves.OUTRAGE,
@@ -6624,6 +6625,34 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
         Moves.FAKE_OUT,
         Moves.FIRST_IMPRESSION,
         Moves.MAT_BLOCK,
+        // Moves with a recharge turn
+        Moves.HYPER_BEAM,
+        Moves.ETERNABEAM,
+        Moves.FRENZY_PLANT,
+        Moves.BLAST_BURN,
+        Moves.HYDRO_CANNON,
+        Moves.GIGA_IMPACT,
+        Moves.PRISMATIC_LASER,
+        Moves.ROAR_OF_TIME,
+        Moves.ROCK_WRECKER,
+        Moves.METEOR_ASSAULT,
+        // Charging & 2-turn moves
+        Moves.DIG,
+        Moves.FLY,
+        Moves.BOUNCE,
+        Moves.SHADOW_FORCE,
+        Moves.PHANTOM_FORCE,
+        Moves.DIVE,
+        Moves.ELECTRO_SHOT,
+        Moves.ICE_BURN,
+        Moves.GEOMANCY,
+        Moves.FREEZE_SHOCK,
+        Moves.SKY_DROP,
+        Moves.SKY_ATTACK,
+        Moves.SKULL_BASH,
+        Moves.SOLAR_BEAM,
+        Moves.SOLAR_BLADE,
+        Moves.METEOR_BEAM,
         // Other moves
         Moves.KINGS_SHIELD,
         Moves.SKETCH,
@@ -6631,11 +6660,10 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
         Moves.MIMIC,
         Moves.STRUGGLE,
         // TODO: Add Z-move blockage once zmoves are implemented
-        // as well as actually blocking move calling moves
       ];
 
-      if (!targetMoveCopiableCondition(user, target, move) || // called move doesn't exist or is a charging/recharging move
-        !movesetMove || // called move not in target's moveset (dancer, forgetting the move, etc.)
+      if (!movesetMove || // called move not in target's moveset (dancer, forgetting the move, etc.)
+        allMoves[lastMove!.move].isChargingMove() || // called move is a charging/recharging move
         !moveTargets.length || // called move has no targets
         unrepeatablemoves.includes(lastMove?.move!)) { // called move is explicitly in the banlist
         return false;
