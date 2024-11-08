@@ -909,11 +909,15 @@ export class FrenzyTag extends BattlerTag {
   }
 }
 
-export class EncoreTag extends BattlerTag {
+/**
+ * Applies the effects of the move Encore onto the target Pokemon
+ * Encore forces the target Pokemon to use its most-recent move for 3 turns
+ */
+export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
+    super(BattlerTagType.ENCORE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.AFTER_MOVE ], 3, Moves.ENCORE, sourceId);
   }
 
   /**
@@ -967,6 +971,39 @@ export class EncoreTag extends BattlerTag {
           new MovePhase(pokemon.scene, pokemon, lastMove.targets!, movesetMove)); // TODO: is this bang correct?
       }
     }
+  }
+
+  /**
+   * If the encored move has run out of PP, Encore ends early. Otherwise, Encore lapses based on the AFTER_MOVE battler tag lapse type.
+   * @returns `true` to persist | `false` to end and be removed
+   */
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const encoredMove = pokemon.getMoveset().find(m => m?.moveId === this.moveId);
+      if (encoredMove && encoredMove?.getPpRatio() > 0) {
+        return true;
+      }
+      return false;
+    } else {
+      return super.lapse(pokemon, lapseType);
+    }
+  }
+
+  /**
+   * Checks if the move matches the moveId stored within the tag and returns a boolean value
+   * @param move {@linkcode Moves} the move selected
+   * @param user N/A
+   * @returns `true` if the move does not match with the moveId stored and as a result, restricted
+   */
+  override isMoveRestricted(move: Moves, _user?: Pokemon): boolean {
+    if (move !== this.moveId) {
+      return true;
+    }
+    return false;
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -2360,7 +2397,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * Uses DisabledTag's selectionDeniedText() message
+   * Uses its own unique selectionDeniedText() message
    */
   override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveDisabledHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name, healBlockName: allMoves[Moves.HEAL_BLOCK].name });
