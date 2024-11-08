@@ -1,5 +1,6 @@
 import { NumberHolder } from "#app/utils";
 import { PokeballType } from "#enums/pokeball";
+import Pokemon from "../field/pokemon";
 import BattleScene from "../battle-scene";
 import i18next from "i18next";
 
@@ -49,7 +50,7 @@ export function getPokeballName(type: PokeballType): string {
   return ret;
 }
 
-export function getPokeballCatchMultiplier(type: PokeballType): number {
+export function getPokeballCatchMultiplier(type: PokeballType, enemyPokemon?: Pokemon, getBoostedDescription?: boolean): number {
   switch (type) {
     case PokeballType.POKEBALL:
       return 1;
@@ -58,6 +59,12 @@ export function getPokeballCatchMultiplier(type: PokeballType): number {
     case PokeballType.ULTRA_BALL:
       return 2;
     case PokeballType.ROGUE_BALL:
+      /* making rogue balls have a higher chance to catch pokemon if they have a tinted pokeball (i.e. at least one thing is new for them)
+       * you can also get the boosted type for a description (i.e. for modifier-type)
+       */
+      if (enemyPokemon?.isTintedPokeball() || getBoostedDescription) {
+        return 5;
+      }
       return 3;
     case PokeballType.MASTER_BALL:
       return -1;
