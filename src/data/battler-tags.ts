@@ -18,10 +18,9 @@ import Move, {
   StatusCategoryOnAllyAttr
 } from "#app/data/move";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
-import { getStatusEffectHealText, StatusEffect } from "#app/data/status-effect";
+import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
-import { Type } from "#app/data/type";
-import { WeatherType } from "#app/data/weather";
+import { Type } from "#enums/type";
 import Pokemon, { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
@@ -38,6 +37,8 @@ import { Moves } from "#enums/moves";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { WeatherType } from "#enums/weather-type";
 
 export enum BattlerTagLapseType {
   FAINT,

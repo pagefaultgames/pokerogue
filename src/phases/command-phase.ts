@@ -7,7 +7,7 @@ import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
 import { Moves } from "#app/enums/moves";
-import { PokeballType } from "#app/enums/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Command } from "#app/ui/command-ui-handler";

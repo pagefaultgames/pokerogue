@@ -3,8 +3,6 @@ import { PokeballType } from "#enums/pokeball";
 import BattleScene from "../battle-scene";
 import i18next from "i18next";
 
-export { PokeballType };
-
 export const MAX_PER_TYPE_POKEBALLS: integer = 99;
 
 export function getPokeballAtlasKey(type: PokeballType): string {
