@@ -85,7 +85,9 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         fileRoot: fileRoot,
         hasShadow: true,
         repeat: true,
-        isPokemon: true
+        isPokemon: true,
+        isShiny: pokemon.shiny,
+        variant: pokemon.variant
       });
 
       const starterTier = speciesStarterCosts[species.speciesId];

@@ -204,6 +204,7 @@ export class EncounterPhase extends BattlePhase {
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = this.scene.getPlayerPokemon();
             if (playerPokemon?.visible) {
+              //TODO HERE
               this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
             }
             enemyPokemon.tint(0, 0.5);
@@ -383,6 +384,9 @@ export class EncounterPhase extends BattlePhase {
 
       if (encounter.onVisualsStart) {
         encounter.onVisualsStart(this.scene);
+      } else if (encounter.spriteConfigs && introVisuals) {
+        // If the encounter doesn't have any special visual intro, show sparkle for shiny Pokemon
+        introVisuals.playShinySparkles();
       }
 
       const doEncounter = () => {

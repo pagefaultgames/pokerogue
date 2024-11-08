@@ -5,6 +5,7 @@ import { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
+import { Variant, variantColorCache, variantData, VariantSet } from "#app/data/variant";
 
 type KnownFileRoot =
   | "arenas"
@@ -59,6 +60,9 @@ export class MysteryEncounterSpriteConfig {
   scale?: number;
   /** If you are using a Pokemon sprite, set to `true`. This will ensure variant, form, gender, shiny sprites are loaded properly */
   isPokemon?: boolean;
+  //TODO
+  isShiny?: boolean;
+  variant?: Variant;
   /** If you are using an item sprite, set to `true` */
   isItem?: boolean;
   /** The sprites alpha. `0` - `1` The lower the number, the more transparent */
@@ -74,9 +78,12 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   public encounter: MysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
   public enterFromRight: boolean;
+  private shinySparkleSprites: { sprite: Phaser.GameObjects.Sprite, variant: Variant }[];
 
   constructor(scene: BattleScene, encounter: MysteryEncounter) {
     super(scene, -72, 76);
+    this.shinySparkleSprites = [];
+
     this.encounter = encounter;
     this.enterFromRight = encounter.enterIntroVisualsFromRight ?? false;
     // Shallow copy configs to allow visual config updates at runtime without dirtying master copy of Encounter
@@ -86,7 +93,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       };
 
       if (!isNullOrUndefined(result.species)) {
-        const keys = getSpriteKeysFromSpecies(result.species);
+        const keys = getSpriteKeysFromSpecies(result.species, undefined, undefined, result.isShiny, result.variant);
         result.spriteKey = keys.spriteKey;
         result.fileRoot = keys.fileRoot;
         result.isPokemon = true;
@@ -120,18 +127,35 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     // Sprites with custom X or Y defined will not count for normal spacing requirements
     const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.filter(s => !s.x && !s.y).length, 1));
 
+    const shinySparkleSprites = scene.add.container(0, 0);
     this.spriteConfigs?.forEach((config) => {
-      const { spriteKey, isItem, hasShadow, scale, x, y, yShadow, alpha } = config;
+      const { spriteKey, isItem, hasShadow, scale, x, y, yShadow, alpha, isPokemon, isShiny, variant } = config;
 
       let sprite: GameObjects.Sprite;
       let tintSprite: GameObjects.Sprite;
+      let pokemonShinySparkle: Phaser.GameObjects.Sprite | undefined;
 
-      if (!isItem) {
-        sprite = getSprite(spriteKey, hasShadow, yShadow);
-        tintSprite = getSprite(spriteKey);
-      } else {
+      if (isItem) {
         sprite = getItemSprite(spriteKey, hasShadow, yShadow);
         tintSprite = getItemSprite(spriteKey);
+      } else {
+        sprite = getSprite(spriteKey, hasShadow, yShadow);
+        tintSprite = getSprite(spriteKey);
+        if (isPokemon && isShiny) {
+          // Set Pipeline for shiny variant
+          sprite.setPipelineData("spriteKey", spriteKey);
+          tintSprite.setPipelineData("spriteKey", spriteKey);
+          sprite.setPipelineData("shiny", true);
+          sprite.setPipelineData("variant", variant);
+          tintSprite.setPipelineData("shiny", true);
+          tintSprite.setPipelineData("variant", variant);
+          // Create Sprite for shiny Sparkle
+          pokemonShinySparkle = scene.add.sprite(sprite.x, sprite.y, "shiny");
+          pokemonShinySparkle.setOrigin(0.5, 1);
+          pokemonShinySparkle.setVisible(false);
+          this.shinySparkleSprites.push({ sprite: pokemonShinySparkle, variant: variant ?? 0 });
+          shinySparkleSprites.add(pokemonShinySparkle);
+        }
       }
 
       sprite.setVisible(!config.hidden);
@@ -165,6 +189,11 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         }
       }
 
+      if (!isNullOrUndefined(pokemonShinySparkle)) {
+        // Offset the sparkle to match the Pokemon's position
+        pokemonShinySparkle.setPosition(sprite.x, sprite.y);
+      }
+
       if (!isNullOrUndefined(alpha)) {
         sprite.setAlpha(alpha);
         tintSprite.setAlpha(alpha);
@@ -173,6 +202,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       this.add(sprite);
       this.add(tintSprite);
     });
+    this.add(shinySparkleSprites);
   }
 
   /**
@@ -187,6 +217,31 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       this.spriteConfigs.forEach((config) => {
         if (config.isPokemon) {
           this.scene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
+          if (config.isShiny) {
+            // Load variant assets
+            const useExpSprite = this.scene.experimentalSprites && this.scene.hasExpSprite(config.spriteKey);
+            if (useExpSprite) {
+              config.fileRoot = `exp/${config.fileRoot}`;
+            }
+            let variantConfig = variantData;
+            config.fileRoot.split("/").map(p => variantConfig ? variantConfig = variantConfig[p] : null);
+            const variantSet = variantConfig as VariantSet;
+            if (variantSet && (config.variant !== undefined && variantSet[config.variant] === 1)) {
+              const populateVariantColors = (key: string): Promise<void> => {
+                return new Promise(resolve => {
+                  if (variantColorCache.hasOwnProperty(key)) {
+                    return resolve();
+                  }
+                  this.scene.cachedFetch(`./images/pokemon/variant/${config.fileRoot}.json`).then(res => res.json()).then(c => {
+                    variantColorCache[key] = c;
+                    resolve();
+                  });
+                });
+              };
+              populateVariantColors(config.spriteKey);
+            }
+            // TODO load shiny sparkle?
+          }
         } else if (config.isItem) {
           this.scene.loadAtlas("items", "");
         } else {
@@ -286,6 +341,18 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     tintSprite.play(animConfig);
 
     return true;
+  }
+
+  /**
+   * Play shiny sparkle animations if there are shiny Pokemon
+   */
+  playShinySparkles() {
+    for (const sparkleConfig of this.shinySparkleSprites) {
+      this.scene.time.delayedCall(500, () => {
+        sparkleConfig.sprite.play(`sparkle${sparkleConfig.variant ? `_${sparkleConfig.variant + 1}` : ""}`);
+        this.scene.playSound("se/sparkle");
+      });
+    }
   }
 
   /**
