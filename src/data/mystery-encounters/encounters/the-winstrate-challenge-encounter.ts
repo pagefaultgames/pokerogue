@@ -23,6 +23,7 @@ import { ReturnPhase } from "#app/phases/return-phase";
 import i18next from "i18next";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theWinstrateChallenge";
@@ -187,9 +188,10 @@ function endTrainerBattleAndShowDialogue(scene: BattleScene): Promise<void> {
     } else {
       scene.arena.resetArenaEffects();
       const playerField = scene.getPlayerField();
+      playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
       playerField.forEach((_, p) => scene.unshiftPhase(new ReturnPhase(scene, p)));
 
-      for (const pokemon of scene.getParty()) {
+      for (const pokemon of scene.getPlayerParty()) {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {

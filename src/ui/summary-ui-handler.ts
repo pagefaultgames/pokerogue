@@ -184,7 +184,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyShadow.setTint(0x000000);
     this.candyShadow.setAlpha(0.50);
     this.candyShadow.setScale(0.8);
-    this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
+    this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.candyShadow);
 
     this.candyCountText = addTextObject(this.scene, 20, -146, "x0", TextStyle.WINDOW_ALT, { fontSize: "76px" });
@@ -203,7 +203,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.friendshipShadow.setTint(0x000000);
     this.friendshipShadow.setAlpha(0.50);
     this.friendshipShadow.setScale(0.8);
-    this.friendshipShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
+    this.friendshipShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.friendshipShadow);
 
     this.friendshipText = addTextObject(this.scene, 20, -66, "x0", TextStyle.WINDOW_ALT, { fontSize: "76px" });
@@ -554,7 +554,7 @@ export default class SummaryUiHandler extends UiHandler {
               break;
             }
             const isDown = button === Button.DOWN;
-            const party = this.scene.getParty();
+            const party = this.scene.getPlayerParty();
             const partyMemberIndex = this.pokemon ? party.indexOf(this.pokemon) : -1;
             if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
               const page = this.cursor;
