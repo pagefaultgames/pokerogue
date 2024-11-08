@@ -1,6 +1,6 @@
 import { Arena } from "#app/field/arena";
 import BattleScene from "#app/battle-scene";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
 import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "#app/data/move";
 import { getPokemonNameWithAffix } from "#app/messages";

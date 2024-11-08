@@ -5,7 +5,7 @@ import * as Utils from "#app/utils";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather } from "#app/data/weather";
 import { CommonAnim } from "#app/data/battle-anims";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import Move from "#app/data/move";
 import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
 import { BattlerIndex } from "#app/battle";

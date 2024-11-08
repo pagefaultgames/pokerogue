@@ -13,7 +13,7 @@ import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRu
 import { Moves } from "#enums/moves";
 import BattleScene from "#app/battle-scene";
 import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Status } from "#app/data/status-effect";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";

@@ -7,7 +7,7 @@ import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BattleType, FixedBattleConfig } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { GameMode } from "#app/game-mode";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";

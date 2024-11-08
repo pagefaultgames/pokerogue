@@ -20,7 +20,7 @@ import Move, {
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import Pokemon, { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";

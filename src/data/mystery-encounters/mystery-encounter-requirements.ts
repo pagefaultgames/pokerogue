@@ -4,7 +4,7 @@ import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evol
 import { Nature } from "#enums/nature";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import { StatusEffect } from "#enums/status-effect";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { WeatherType } from "#enums/weather-type";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";

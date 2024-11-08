@@ -6,7 +6,7 @@ import { PokeballType } from "#enums/pokeball";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies, PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { doubleBattleDialogue } from "#app/data/dialogue";
 import { PersistentModifier } from "#app/modifier/modifier";
 import { TrainerVariant } from "#app/field/trainer";

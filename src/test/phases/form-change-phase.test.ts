@@ -4,7 +4,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 

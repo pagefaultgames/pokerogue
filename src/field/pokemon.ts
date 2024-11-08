@@ -9,7 +9,8 @@ import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, spec
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { Constructor, isNullOrUndefined, randSeedInt, type nil } from "#app/utils";
 import * as Utils from "#app/utils";
-import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
+import { TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
+import { Type } from "#enums/type";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";

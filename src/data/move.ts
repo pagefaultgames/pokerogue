@@ -3,7 +3,8 @@ import { CommandedTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerab
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "./status-effect";
-import { getTypeDamageMultiplier, Type } from "./type";
+import { getTypeDamageMultiplier } from "./type";
+import { Type } from "#enums/type";
 import { Constructor, NumberHolder } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "#enums/weather-type";

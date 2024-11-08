@@ -4,7 +4,7 @@ import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { getEncounterText, queueEncounterMessage, showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { MessagePhase } from "#app/phases/message-phase";
 import GameManager from "#app/test/utils/gameManager";
 import { Species } from "#enums/species";

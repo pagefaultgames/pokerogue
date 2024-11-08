@@ -10,7 +10,7 @@ import { Abilities } from "#enums/abilities";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { Nature } from "#enums/nature";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";

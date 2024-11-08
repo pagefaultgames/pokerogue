@@ -8,7 +8,7 @@ import { AbilityRequirement, CombinationPokemonRequirement, TypeRequirement } fr
 import { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Gender } from "#app/data/gender";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { BattlerIndex } from "#app/battle";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";

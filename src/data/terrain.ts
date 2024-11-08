@@ -1,6 +1,6 @@
 import Pokemon from "../field/pokemon";
 import Move from "./move";
-import { Type } from "./type";
+import { Type } from "#enums/type";
 import * as Utils from "../utils";
 import { ChangeMovePriorityAbAttr, applyAbAttrs } from "./ability";
 import { ProtectAttr } from "./move";

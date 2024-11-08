@@ -16,7 +16,7 @@ import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#ap
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { GameModes } from "#app/game-mode";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";

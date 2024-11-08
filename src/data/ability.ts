@@ -1,5 +1,5 @@
 import Pokemon, { EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { Type } from "./type";
+import { Type } from "#enums/type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { getPokemonNameWithAffix } from "../messages";

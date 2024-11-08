@@ -12,7 +12,7 @@ import {
   SpeciesFormChangeItemTrigger,
 } from "#app/data/pokemon-forms";
 import { getStatusEffectDescriptor } from "#app/data/status-effect";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {

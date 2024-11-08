@@ -11,7 +11,7 @@ import { achvs } from "#app/system/achv";
 import { Mode } from "#app/ui/ui";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";

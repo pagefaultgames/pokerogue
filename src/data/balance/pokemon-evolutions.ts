@@ -1,7 +1,7 @@
 import { Gender } from "#app/data/gender";
 import { PokeballType } from "#enums/pokeball";
 import Pokemon from "#app/field/pokemon";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import * as Utils from "#app/utils";
 import { WeatherType } from "#enums/weather-type";
 import { Nature } from "#enums/nature";
