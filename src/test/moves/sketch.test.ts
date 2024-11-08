@@ -1,7 +1,7 @@
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult, PokemonMove } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -34,46 +34,46 @@ describe("Moves - Sketch", () => {
   });
 
   it("Sketch should not fail even if a previous Sketch failed to retrieve a valid move and ran out of PP", async () => {
-    game.override.moveset([ Moves.SKETCH, Moves.SKETCH ]);
-
     await game.classicMode.startBattle([ Species.REGIELEKI ]);
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    // can't use normal moveset override because we need to check moveset changes
+    playerPokemon.moveset = [ new PokemonMove(Moves.SKETCH), new PokemonMove(Moves.SKETCH) ];
 
     game.move.select(Moves.SKETCH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon?.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    const moveSlot0 = playerPokemon?.getMoveset()[0];
-    expect(moveSlot0?.moveId).toBe(Moves.SKETCH);
-    expect(moveSlot0?.getPpRatio()).toBe(0);
+    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    const moveSlot0 = playerPokemon.getMoveset()[0]!;
+    expect(moveSlot0.moveId).toBe(Moves.SKETCH);
+    expect(moveSlot0.getPpRatio()).toBe(0);
 
     await game.toNextTurn();
     game.move.select(Moves.SKETCH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    // Can't verify if the player Pokemon's moveset was successfully changed because of overrides.
+    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon.moveset[0]?.moveId).toBe(Moves.SPLASH);
+    expect(playerPokemon.moveset[1]?.moveId).toBe(Moves.SKETCH);
   });
 
   it("Sketch should retrieve the most recent valid move from its target history", async () => {
-    game.override
-      .moveset([ Moves.SKETCH, Moves.GROWL ])
-      .enemyStatusEffect(StatusEffect.PARALYSIS);
-
+    game.override.enemyStatusEffect(StatusEffect.PARALYSIS);
     await game.classicMode.startBattle([ Species.REGIELEKI ]);
-    const playerPokemon = game.scene.getPlayerPokemon();
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    playerPokemon.moveset = [ new PokemonMove(Moves.SKETCH), new PokemonMove(Moves.GROWL) ];
 
     game.move.select(Moves.GROWL);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.move.forceStatusActivation(false);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
     await game.toNextTurn();
     game.move.select(Moves.SKETCH);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.move.forceStatusActivation(true);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    // Can't verify if the player Pokemon's moveset was successfully changed because of overrides.
+    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon.moveset[0]?.moveId).toBe(Moves.SPLASH);
+    expect(playerPokemon.moveset[1]?.moveId).toBe(Moves.GROWL);
   });
 });
