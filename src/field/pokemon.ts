@@ -22,7 +22,7 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
 import { WeatherType } from "#app/data/weather";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, PostDamageForceSwitchAbAttr } from "#app/data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, PostDamageForceSwitchAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/ability";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -982,7 +982,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.status && this.status.effect === StatusEffect.PARALYSIS) {
           ret >>= 1;
         }
-        if (this.getTag(BattlerTagType.UNBURDEN) && !this.scene.getField(true).some(pokemon => pokemon !== this && pokemon.hasAbilityWithAttr(SuppressFieldAbilitiesAbAttr))) {
+        if (this.getTag(BattlerTagType.UNBURDEN) && this.hasAbility(Abilities.UNBURDEN)) {
           ret *= 2;
         }
         break;
@@ -4076,6 +4076,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     return false;
   }
+
+  /**
+   * Reduces one of this Pokemon's held item stacks by 1, and removes the item if applicable.
+   * Does nothing if this Pokemon is somehow not the owner of the held item.
+   * @param heldItem The item stack to be reduced by 1.
+   * @param forBattle If `false`, do not trigger in-battle effects (such as Unburden) from losing the item. For example, set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter. Default is `true`.
+   * @returns `true` if the item was removed successfully, `false` otherwise.
+   */
+  public loseHeldItem(heldItem: PokemonHeldItemModifier, forBattle: boolean = true): boolean {
+    if (heldItem.pokemonId === -1 || heldItem.pokemonId === this.id) {
+      heldItem.stackCount--;
+      if (heldItem.stackCount <= 0) {
+        this.scene.removeModifier(heldItem, !this.isPlayer());
+      }
+      if (forBattle) {
+        applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 export default interface Pokemon {
@@ -4518,7 +4540,7 @@ export class PlayerPokemon extends Pokemon {
         && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
       const transferModifiers: Promise<boolean>[] = [];
       for (const modifier of fusedPartyMemberHeldModifiers) {
-        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true));
+        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false));
       }
       Promise.allSettled(transferModifiers).then(() => {
         this.scene.updateModifiers(true, true).then(() => {

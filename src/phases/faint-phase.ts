@@ -1,6 +1,6 @@
 import { BattlerIndex, BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostVictoryAbAttrs, PostFaintAbAttr, PostKnockOutAbAttr, PostVictoryAbAttr } from "#app/data/ability";
+import { applyPostFaintAbAttrs, applyPostItemLostAbAttrs, applyPostKnockOutAbAttrs, applyPostVictoryAbAttrs, PostFaintAbAttr, PostItemLostAbAttr, PostKnockOutAbAttr, PostVictoryAbAttr } from "#app/data/ability";
 import { BattlerTagLapseType, DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
@@ -55,23 +55,36 @@ export class FaintPhase extends PokemonPhase {
   start() {
     super.start();
 
+    const faintPokemon = this.getPokemon();
+
     if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
       this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
     }
 
     if (!isNullOrUndefined(this.grudgeTag) && !isNullOrUndefined(this.source)) {
-      this.grudgeTag.lapse(this.getPokemon(), BattlerTagLapseType.CUSTOM, this.source);
+      this.grudgeTag.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
     if (!this.preventEndure) {
-      const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
+      const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, faintPokemon) as PokemonInstantReviveModifier;
 
       if (instantReviveModifier) {
-        if (!--instantReviveModifier.stackCount) {
-          this.scene.removeModifier(instantReviveModifier);
+
+        if (faintPokemon.loseHeldItem(instantReviveModifier)) {
+
+          if (faintPokemon.hp <= 0) {
+            // The code doesn't allow fainted Pokemon to apply their abilities, so we have
+            // to temporarily un-faint the Pokemon to apply `PostItemLostAbAttr`.
+            faintPokemon.hp = 1;
+            applyPostItemLostAbAttrs(PostItemLostAbAttr, faintPokemon, false);
+            faintPokemon.hp = 0;
+          } else {
+            applyPostItemLostAbAttrs(PostItemLostAbAttr, faintPokemon, false);
+          }
+
+          this.scene.updateModifiers(this.player);
+          return this.end();
         }
-        this.scene.updateModifiers(this.player);
-        return this.end();
       }
     }
 
