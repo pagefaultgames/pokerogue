@@ -1,7 +1,7 @@
 import { addTextObject, TextStyle } from "./text";
 import BattleScene from "#app/battle-scene";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { WeatherType } from "#app/data/weather";
+import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
 import { addWindow, WindowVariant } from "./ui-theme";
 import { ArenaEvent, ArenaEventType, TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";

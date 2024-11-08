@@ -10,7 +10,6 @@ import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 
-export { WeatherType };
 export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: integer;

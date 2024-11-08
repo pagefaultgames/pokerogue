@@ -3,7 +3,7 @@ import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPo
 import { Constructor } from "#app/utils";
 import * as Utils from "#app/utils";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
-import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "#app/data/weather";
+import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather } from "#app/data/weather";
 import { CommonAnim } from "#app/data/battle-anims";
 import { Type } from "#app/data/type";
 import Move from "#app/data/move";
@@ -31,6 +31,7 @@ import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { WeatherType } from "#enums/weather-type";
 
 export class Arena {
   public scene: BattleScene;

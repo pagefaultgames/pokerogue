@@ -5,7 +5,7 @@ import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
 import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "#app/data/move";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Pokemon, { HitResult, PokemonMove } from "#app/field/pokemon";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
 import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";

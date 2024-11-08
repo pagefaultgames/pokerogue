@@ -3,7 +3,7 @@ import { getLevelTotalExp, getLevelRelExp } from "../data/exp";
 import * as Utils from "../utils";
 import { addTextObject, TextStyle } from "./text";
 import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
-import { StatusEffect } from "../data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import BattleScene from "../battle-scene";
 import { Type, getTypeRgb } from "../data/type";
 import { getVariantTint } from "#app/data/variant";

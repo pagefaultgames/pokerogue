@@ -11,7 +11,7 @@ import { Type } from "#app/data/type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";

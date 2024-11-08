@@ -1,11 +1,11 @@
-import { Stat } from "#enums/stat";
-import { StatusEffect } from "#app/data/status-effect";
 import { Type } from "#app/data/type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
