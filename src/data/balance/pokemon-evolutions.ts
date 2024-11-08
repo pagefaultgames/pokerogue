@@ -1005,8 +1005,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.COSMOEM, 23, null, null)
   ],
   [Species.COSMOEM]: [
-    new SpeciesEvolution(Species.SOLGALEO, 53, EvolutionItem.SUN_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(Species.LUNALA, 53, EvolutionItem.MOON_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.SOLGALEO, 1, EvolutionItem.SUN_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(Species.LUNALA, 1, EvolutionItem.MOON_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MELTAN]: [
     new SpeciesEvolution(Species.MELMETAL, 48, null, null)
