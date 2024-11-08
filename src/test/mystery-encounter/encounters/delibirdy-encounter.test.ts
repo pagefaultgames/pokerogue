@@ -191,7 +191,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 2 Sitrus berries on party lead
       scene.modifiers = [];
       const sitrus = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ])!;
-      const sitrusMod = sitrus.newModifier(scene.getParty()[0]) as BerryModifier;
+      const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
       sitrusMod.stackCount = 2;
       await scene.addModifier(sitrusMod, true, false, false, true);
       await scene.updateModifiers(true);
@@ -206,13 +206,13 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(candyJarAfter?.stackCount).toBe(1);
     });
 
-    it("Should remove Reviver Seed and give the player a Healing Charm", async () => {
+    it("Should remove Reviver Seed and give the player a Berry Pouch", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
       // Set 1 Reviver Seed on party lead
       scene.modifiers = [];
       const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED)!;
-      const modifier = revSeed.newModifier(scene.getParty()[0]) as PokemonInstantReviveModifier;
+      const modifier = revSeed.newModifier(scene.getPlayerParty()[0]) as PokemonInstantReviveModifier;
       modifier.stackCount = 1;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -220,11 +220,11 @@ describe("Delibird-y - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
       const reviverSeedAfter = scene.findModifier(m => m instanceof PokemonInstantReviveModifier);
-      const healingCharmAfter = scene.findModifier(m => m instanceof HealingBoosterModifier);
+      const berryPouchAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
 
       expect(reviverSeedAfter).toBeUndefined();
-      expect(healingCharmAfter).toBeDefined();
-      expect(healingCharmAfter?.stackCount).toBe(1);
+      expect(berryPouchAfter).toBeDefined();
+      expect(berryPouchAfter?.stackCount).toBe(1);
     });
 
     it("Should give the player a Shell Bell if they have max stacks of Candy Jars", async () => {
@@ -238,7 +238,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       const sitrus = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ])!;
 
       // Sitrus berries on party
-      const sitrusMod = sitrus.newModifier(scene.getParty()[0]) as BerryModifier;
+      const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
       sitrusMod.stackCount = 2;
       await scene.addModifier(sitrusMod, true, false, false, true);
       await scene.updateModifiers(true);
@@ -256,18 +256,18 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(shellBellAfter?.stackCount).toBe(1);
     });
 
-    it("Should give the player a Shell Bell if they have max stacks of Healing Charms", async () => {
+    it("Should give the player a Shell Bell if they have max stacks of Berry Pouches", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
-      // 5 Healing Charms
+      // 3 Berry Pouches
       scene.modifiers = [];
-      const healingCharm = generateModifierType(scene, modifierTypes.HEALING_CHARM)!.newModifier() as HealingBoosterModifier;
-      healingCharm.stackCount = 5;
+      const healingCharm = generateModifierType(scene, modifierTypes.BERRY_POUCH)!.newModifier() as PreserveBerryModifier;
+      healingCharm.stackCount = 3;
       await scene.addModifier(healingCharm, true, false, false, true);
 
       // Set 1 Reviver Seed on party lead
       const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED)!;
-      const modifier = revSeed.newModifier(scene.getParty()[0]) as PokemonInstantReviveModifier;
+      const modifier = revSeed.newModifier(scene.getPlayerParty()[0]) as PokemonInstantReviveModifier;
       modifier.stackCount = 1;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -275,12 +275,12 @@ describe("Delibird-y - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
       const reviverSeedAfter = scene.findModifier(m => m instanceof PokemonInstantReviveModifier);
-      const healingCharmAfter = scene.findModifier(m => m instanceof HealingBoosterModifier);
+      const healingCharmAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
       const shellBellAfter = scene.findModifier(m => m instanceof HitHealModifier);
 
       expect(reviverSeedAfter).toBeUndefined();
       expect(healingCharmAfter).toBeDefined();
-      expect(healingCharmAfter?.stackCount).toBe(5);
+      expect(healingCharmAfter?.stackCount).toBe(3);
       expect(shellBellAfter).toBeDefined();
       expect(shellBellAfter?.stackCount).toBe(1);
     });
@@ -291,7 +291,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getParty()[0]);
+      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]);
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
@@ -319,7 +319,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Reviver Seed on party lead
       const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED)!;
-      const modifier = revSeed.newModifier(scene.getParty()[0]) as PokemonInstantReviveModifier;
+      const modifier = revSeed.newModifier(scene.getPlayerParty()[0]) as PokemonInstantReviveModifier;
       modifier.stackCount = 1;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -347,13 +347,13 @@ describe("Delibird-y - Mystery Encounter", () => {
       });
     });
 
-    it("Should decrease held item stacks and give the player a Berry Pouch", async () => {
+    it("Should decrease held item stacks and give the player a Healing Charm", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
       // Set 2 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 2;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -361,20 +361,20 @@ describe("Delibird-y - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
-      const berryPouchAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
+      const healingCharmAfter = scene.findModifier(m => m instanceof HealingBoosterModifier);
 
       expect(soulDewAfter?.stackCount).toBe(1);
-      expect(berryPouchAfter).toBeDefined();
-      expect(berryPouchAfter?.stackCount).toBe(1);
+      expect(healingCharmAfter).toBeDefined();
+      expect(healingCharmAfter?.stackCount).toBe(1);
     });
 
-    it("Should remove held item and give the player a Berry Pouch", async () => {
+    it("Should remove held item and give the player a Healing Charm", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -382,25 +382,25 @@ describe("Delibird-y - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
-      const berryPouchAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
+      const healingCharmAfter = scene.findModifier(m => m instanceof HealingBoosterModifier);
 
       expect(soulDewAfter).toBeUndefined();
-      expect(berryPouchAfter).toBeDefined();
-      expect(berryPouchAfter?.stackCount).toBe(1);
+      expect(healingCharmAfter).toBeDefined();
+      expect(healingCharmAfter?.stackCount).toBe(1);
     });
 
-    it("Should give the player a Shell Bell if they have max stacks of Berry Pouches", async () => {
+    it("Should give the player a Shell Bell if they have max stacks of Healing Charms", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
       // 5 Healing Charms
       scene.modifiers = [];
-      const healingCharm = generateModifierType(scene, modifierTypes.BERRY_POUCH)!.newModifier() as PreserveBerryModifier;
-      healingCharm.stackCount = 3;
+      const healingCharm = generateModifierType(scene, modifierTypes.HEALING_CHARM)!.newModifier() as HealingBoosterModifier;
+      healingCharm.stackCount = 5;
       await scene.addModifier(healingCharm, true, false, false, true);
 
       // Set 1 Soul Dew on party lead
       const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -408,12 +408,12 @@ describe("Delibird-y - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
-      const berryPouchAfter = scene.findModifier(m => m instanceof PreserveBerryModifier);
+      const healingCharmAfter = scene.findModifier(m => m instanceof HealingBoosterModifier);
       const shellBellAfter = scene.findModifier(m => m instanceof HitHealModifier);
 
       expect(soulDewAfter).toBeUndefined();
-      expect(berryPouchAfter).toBeDefined();
-      expect(berryPouchAfter?.stackCount).toBe(3);
+      expect(healingCharmAfter).toBeDefined();
+      expect(healingCharmAfter?.stackCount).toBe(5);
       expect(shellBellAfter).toBeDefined();
       expect(shellBellAfter?.stackCount).toBe(1);
     });
@@ -424,7 +424,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 1 Reviver Seed on party lead
       scene.modifiers = [];
       const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED)!;
-      const modifier = revSeed.newModifier(scene.getParty()[0]);
+      const modifier = revSeed.newModifier(scene.getPlayerParty()[0]);
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
@@ -453,7 +453,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);

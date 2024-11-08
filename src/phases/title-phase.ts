@@ -1,21 +1,21 @@
 import { loggedInUser } from "#app/account";
-import BattleScene from "#app/battle-scene";
 import { BattleType } from "#app/battle";
-import { getDailyRunStarters, fetchDailyRunSeed } from "#app/data/daily-run";
+import BattleScene from "#app/battle-scene";
+import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
-import { GameModes, GameMode, getGameMode } from "#app/game-mode";
-import { regenerateModifierPoolThresholds, ModifierPoolType, modifierTypes, getDailyRunStarterModifiers } from "#app/modifier/modifier-type";
+import { GameMode, GameModes, getGameMode } from "#app/game-mode";
+import { Modifier } from "#app/modifier/modifier";
+import { getDailyRunStarterModifiers, ModifierPoolType, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { Phase } from "#app/phase";
 import { SessionSaveData } from "#app/system/game-data";
 import { Unlockables } from "#app/system/unlockables";
 import { vouchers } from "#app/system/voucher";
-import { OptionSelectItem, OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
+import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
-import i18next from "i18next";
 import * as Utils from "#app/utils";
-import { Modifier } from "#app/modifier/modifier";
+import i18next from "i18next";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { EncounterPhase } from "./encounter-phase";
 import { SelectChallengePhase } from "./select-challenge-phase";
@@ -203,7 +203,7 @@ export class TitlePhase extends Phase {
         const starters = getDailyRunStarters(this.scene, seed);
         const startingLevel = this.scene.gameMode.getStartingLevel();
 
-        const party = this.scene.getParty();
+        const party = this.scene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
           const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
@@ -243,7 +243,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!Utils.isLocal) {
+      if (!Utils.isLocal || Utils.isLocalServerConnected) {
         fetchDailyRunSeed().then(seed => {
           if (seed) {
             generateDaily(seed);
@@ -276,7 +276,7 @@ export class TitlePhase extends Phase {
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
 
     if (this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => p.isAllowedInBattle()).length;
+      const availablePartyMembers = this.scene.getPokemonAllowedInBattle().length;
 
       this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
       if (this.scene.currentBattle.double && availablePartyMembers > 1) {

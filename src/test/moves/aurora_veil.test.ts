@@ -1,13 +1,13 @@
 import { ArenaTagSide } from "#app/data/arena-tag";
 import Move, { allMoves } from "#app/data/move";
-import { WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils";
+import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -111,7 +111,7 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
   if (defender.scene.arena.getTagOnSide(ArenaTagType.AURORA_VEIL, side)) {
-    defender.scene.arena.applyTagsForSide(ArenaTagType.AURORA_VEIL, side, false, move.category, multiplierHolder);
+    defender.scene.arena.applyTagsForSide(ArenaTagType.AURORA_VEIL, side, false, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

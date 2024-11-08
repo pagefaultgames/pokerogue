@@ -5,7 +5,7 @@ import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifyPlayerPokemonBST } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
@@ -14,7 +14,7 @@ import { BattlerIndex } from "#app/battle";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { Stat } from "#enums/stat";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
@@ -79,7 +79,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
-            mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ spriteScale: 1.25 }),
+            customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
             nature: Nature.BOLD,
             moveSet: [ Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER ],
             modifierConfigs: [
@@ -140,7 +140,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
 
         // -15 to all base stats of highest BST (halved for HP), +10 to all base stats of rest of party (halved for HP)
         // Sort party by bst
-        const sortedParty = scene.getParty().slice(0)
+        const sortedParty = scene.getPlayerParty().slice(0)
           .sort((pokemon1, pokemon2) => {
             const pokemon1Bst = pokemon1.calculateBaseStats().reduce((a, b) => a + b, 0);
             const pokemon2Bst = pokemon2.calculateBaseStats().reduce((a, b) => a + b, 0);

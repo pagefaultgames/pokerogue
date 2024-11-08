@@ -51,7 +51,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
       // Calculate boss mon
       // Level equal to 2 below highest party member
       const level = getHighestLevelPlayerPokemon(scene, false, true).level - 2;
-      const species = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
+      const species = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);
       const pokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, true);
 
       // Pokemon will always have one of its egg moves in its moveset
@@ -210,7 +210,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(CHARMING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
+        .withPrimaryPokemonRequirement(new MoveRequirement(CHARMING_MOVES, true)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.3.label`,
           buttonTooltip: `${namespace}:option.3.tooltip`,

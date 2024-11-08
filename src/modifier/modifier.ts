@@ -6,7 +6,7 @@ import { allMoves } from "#app/data/move";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { type FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -31,6 +31,7 @@ import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
+import { applyAbAttrs, CommanderAbAttr } from "#app/data/ability";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -404,6 +405,14 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     this.battleCount = this.maxBattles;
   }
 
+  /**
+   * Updates an existing modifier with a new `maxBattles` and `battleCount`.
+   */
+  setNewBattleCount(count: number): void {
+    this.maxBattles = count;
+    this.battleCount = count;
+  }
+
   getMaxBattles(): number {
     return this.maxBattles;
   }
@@ -738,7 +747,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       return 0;
     }
     if (pokemon.isPlayer() && forThreshold) {
-      return scene.getParty().map(p => this.getMaxHeldItemCount(p)).reduce((stackCount: number, maxStackCount: number) => Math.max(stackCount, maxStackCount), 0);
+      return scene.getPlayerParty().map(p => this.getMaxHeldItemCount(p)).reduce((stackCount: number, maxStackCount: number) => Math.max(stackCount, maxStackCount), 0);
     }
     return this.getMaxHeldItemCount(pokemon);
   }
@@ -960,7 +969,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 
     this.stackCount = pokemon
       ? pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
-        + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length
+        + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length
       : this.stackCount;
 
     const text = scene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
@@ -975,7 +984,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): number {
     this.stackCount = pokemon.evoCounter + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
-      + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier).length;
+      + pokemon.scene.findModifiers(m => m instanceof MoneyMultiplierModifier || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length;
     return 999;
   }
 }
@@ -1759,10 +1768,10 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(pokemon: Pokemon): boolean {
-    if (pokemon.turnData.damageDealt && !pokemon.isFullHp()) {
+    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.turnData.damageDealt / 8) * this.stackCount, i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
+        toDmgValue(pokemon.turnData.totalDamageDealt / 8) * this.stackCount, i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
     }
 
     return true;
@@ -1929,10 +1938,16 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon): boolean {
+    // Restore the Pokemon to half HP
     pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
       toDmgValue(pokemon.getMaxHp() / 2), i18next.t("modifier:pokemonInstantReviveApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), false, false, true));
 
+    // Remove the Pokemon's FAINT status
     pokemon.resetStatus(true, false, true);
+
+    // Reapply Commander on the Pokemon's side of the field, if applicable
+    const field = pokemon.isPlayer() ? pokemon.scene.getPlayerField() : pokemon.scene.getEnemyField();
+    field.forEach((p) => applyAbAttrs(CommanderAbAttr, p, null, false));
     return true;
   }
 
@@ -2014,7 +2029,7 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   abstract override apply(playerPokemon: PlayerPokemon, ...args: unknown[]): boolean | Promise<boolean>;
 
   getPokemon(scene: BattleScene) {
-    return scene.getParty().find(p => p.id === this.pokemonId);
+    return scene.getPlayerParty().find(p => p.id === this.pokemonId);
   }
 }
 
@@ -2158,7 +2173,7 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
   override apply(playerPokemon: PlayerPokemon): boolean {
     const move = playerPokemon.getMoveset()[this.moveIndex];
 
-    if (move) {
+    if (move && !move.maxPpOverride) {
       move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
     }
 
@@ -2181,7 +2196,7 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.natureOverride = this.nature;
+    playerPokemon.customPokemonData.nature = this.nature;
     let speciesId = playerPokemon.species.speciesId;
     playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
 
@@ -2216,7 +2231,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
 
     playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
 
-    playerPokemon.scene.unshiftPhase(new LevelUpPhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.level - levelCount.value, playerPokemon.level));
+    playerPokemon.scene.unshiftPhase(new LevelUpPhase(playerPokemon.scene, playerPokemon.scene.getPlayerParty().indexOf(playerPokemon), playerPokemon.level - levelCount.value, playerPokemon.level));
 
     return true;
   }
@@ -2236,7 +2251,7 @@ export class TmModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), this.type.moveId, LearnMoveType.TM));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getPlayerParty().indexOf(playerPokemon), this.type.moveId, LearnMoveType.TM));
 
     return true;
   }
@@ -2258,7 +2273,7 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
    */
   override apply(playerPokemon: PlayerPokemon, cost?: number): boolean {
 
-    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex], LearnMoveType.MEMORY, cost));
+    playerPokemon.scene.unshiftPhase(new LearnMovePhase(playerPokemon.scene, playerPokemon.scene.getPlayerParty().indexOf(playerPokemon), playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex], LearnMoveType.MEMORY, cost));
 
     return true;
   }
@@ -2775,7 +2790,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     battleScene.addMoney(moneyAmount.value);
 
-    battleScene.getParty().map(p => {
+    battleScene.getPlayerParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
         p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p) as EvoTrackerModifier;
@@ -3285,6 +3300,60 @@ export class ExtraModifierModifier extends PersistentModifier {
 
   getMaxStackCount(scene: BattleScene): number {
     return 3;
+  }
+}
+
+/**
+ * Modifier used for timed boosts to the player's shop item rewards.
+ * @extends LapsingPersistentModifier
+ * @see {@linkcode apply}
+ */
+export class TempExtraModifierModifier extends LapsingPersistentModifier {
+  constructor(type: ModifierType, maxBattles: number, battleCount?: number, stackCount?: number) {
+    super(type, maxBattles, battleCount, stackCount);
+  }
+
+  /**
+   * Goes through existing modifiers for any that match Silver Pokeball,
+   * which will then add the max count of the new item to the existing count of the current item.
+   * If no existing Silver Pokeballs are found, will add a new one.
+   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
+   * @param _virtual N/A
+   * @param scene
+   * @returns true if the modifier was successfully added or applied, false otherwise
+   */
+  add(modifiers: PersistentModifier[], _virtual: boolean, scene: BattleScene): boolean {
+    for (const modifier of modifiers) {
+      if (this.match(modifier)) {
+        const modifierInstance = modifier as TempExtraModifierModifier;
+        const newBattleCount = this.getMaxBattles() + modifierInstance.getBattleCount();
+
+        modifierInstance.setNewBattleCount(newBattleCount);
+        scene.playSound("se/restore");
+        return true;
+      }
+    }
+
+    modifiers.push(this);
+    return true;
+  }
+
+  clone() {
+    return new TempExtraModifierModifier(this.type, this.getMaxBattles(), this.getBattleCount(), this.stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return (modifier instanceof TempExtraModifierModifier);
+  }
+
+  /**
+   * Increases the current rewards in the battle by the `stackCount`.
+   * @returns `true` if the shop reward number modifier applies successfully
+   * @param count {@linkcode NumberHolder} that holds the resulting shop item reward count
+   */
+  apply(count: NumberHolder): boolean {
+    count.value += this.getStackCount();
+    return true;
   }
 }
 

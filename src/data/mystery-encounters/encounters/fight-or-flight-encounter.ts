@@ -56,7 +56,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
+      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);
       const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
       const config: EnemyPartyConfig = {
@@ -86,11 +86,11 @@ export const FightOrFlightEncounter: MysteryEncounter =
             : scene.currentBattle.waveIndex > 40
               ? ModifierTier.ULTRA
               : ModifierTier.GREAT;
-      regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
+      regenerateModifierPoolThresholds(scene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
       let item: ModifierTypeOption | null = null;
       // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
       while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
-        item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
+        item = getPlayerModifierTypeOptions(1, scene.getPlayerParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
       }
       encounter.setDialogueToken("itemName", item.type.name);
       encounter.misc = item;
@@ -145,7 +145,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
+        .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES, true)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
         .withDialogue({
           buttonLabel: `${namespace}:option.2.label`,
           buttonTooltip: `${namespace}:option.2.tooltip`,

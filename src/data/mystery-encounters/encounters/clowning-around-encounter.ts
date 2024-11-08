@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import BattleScene from "#app/battle-scene";
@@ -11,8 +11,8 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#enums/abilities";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { Type } from "#app/data/type";
+import { applyAbilityOverrideToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { Type } from "#enums/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { randSeedInt, randSeedShuffle } from "#app/utils";
@@ -28,7 +28,7 @@ import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#app/data/move";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
@@ -133,7 +133,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           },
           { // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
             species: getPokemonSpecies(Species.BLACEPHALON),
-            mysteryEncounterPokemonData: new MysteryEncounterPokemonData({ ability: ability, types: [ randSeedInt(18), randSeedInt(18) ]}),
+            customPokemonData: new CustomPokemonData({ ability: ability, types: [ randSeedInt(18), randSeedInt(18) ]}),
             isBoss: true,
             moveSet: [ Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN ]
           },
@@ -245,7 +245,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // So Vitamins, form change items, etc. are not included
           const encounter = scene.currentBattle.mysteryEncounter!;
 
-          const party = scene.getParty();
+          const party = scene.getPlayerParty();
           let mostHeldItemsPokemon = party[0];
           let count = mostHeldItemsPokemon.getHeldItems()
             .filter(m => m.isTransferable && !(m instanceof BerryModifier))
@@ -280,7 +280,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           let numRogue = 0;
           items.filter(m => m.isTransferable && !(m instanceof BerryModifier))
             .forEach(m => {
-              const type = m.type.withTierFromPool();
+              const type = m.type.withTierFromPool(ModifierPoolType.PLAYER, party);
               const tier = type.tier ?? ModifierTier.ULTRA;
               if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
                 numRogue += m.stackCount;
@@ -328,7 +328,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
         .withPreOptionPhase(async (scene: BattleScene) => {
           // Randomize the second type of all player's pokemon
           // If the pokemon does not normally have a second type, it will gain 1
-          for (const pokemon of scene.getParty()) {
+          for (const pokemon of scene.getPlayerParty()) {
             const originalTypes = pokemon.getTypes(false, false, true);
 
             // If the Pokemon has non-status moves that don't match the Pokemon's type, prioritizes those as the new type
@@ -353,15 +353,15 @@ export const ClowningAroundEncounter: MysteryEncounter =
             newTypes.push(secondType);
 
             // Apply the type changes (to both base and fusion, if pokemon is fused)
-            if (!pokemon.mysteryEncounterPokemonData) {
-              pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+            if (!pokemon.customPokemonData) {
+              pokemon.customPokemonData = new CustomPokemonData();
             }
-            pokemon.mysteryEncounterPokemonData.types = newTypes;
+            pokemon.customPokemonData.types = newTypes;
             if (pokemon.isFusion()) {
-              if (!pokemon.fusionMysteryEncounterPokemonData) {
-                pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
+              if (!pokemon.fusionCustomPokemonData) {
+                pokemon.fusionCustomPokemonData = new CustomPokemonData();
               }
-              pokemon.fusionMysteryEncounterPokemonData.types = newTypes;
+              pokemon.fusionCustomPokemonData.types = newTypes;
             }
           }
         })
@@ -425,17 +425,8 @@ function onYesAbilitySwap(scene: BattleScene, resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     const encounter = scene.currentBattle.mysteryEncounter!;
-    if (pokemon.isFusion()) {
-      if (!pokemon.fusionMysteryEncounterPokemonData) {
-        pokemon.fusionMysteryEncounterPokemonData = new MysteryEncounterPokemonData();
-      }
-      pokemon.fusionMysteryEncounterPokemonData.ability = encounter.misc.ability;
-    } else {
-      if (!pokemon.mysteryEncounterPokemonData) {
-        pokemon.mysteryEncounterPokemonData = new MysteryEncounterPokemonData();
-      }
-      pokemon.mysteryEncounterPokemonData.ability = encounter.misc.ability;
-    }
+
+    applyAbilityOverrideToPokemon(pokemon, encounter.misc.ability);
     encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
     scene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
   };

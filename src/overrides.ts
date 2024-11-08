@@ -1,20 +1,20 @@
+import { type PokeballCounts } from "#app/battle-scene";
+import { Gender } from "#app/data/gender";
+import { Variant } from "#app/data/variant";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
 import { Moves } from "#enums/moves";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { type PokeballCounts } from "./battle-scene";
-import { Gender } from "./data/gender";
-import { Variant } from "./data/variant";
-import { type ModifierOverride } from "./modifier/modifier-type";
-import { Unlockables } from "./system/unlockables";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Overrides that are using when testing different in game situations
@@ -75,6 +75,8 @@ class DefaultOverrides {
   readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
   /** Set to `true` to show all tutorials */
   readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
+  /** Set to `true` to force Paralysis and Freeze to always activate, or `false` to force them to not activate */
+  readonly STATUS_ACTIVATION_OVERRIDE: boolean | null = null;
 
   // ----------------
   // PLAYER OVERRIDES
@@ -113,8 +115,8 @@ class DefaultOverrides {
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly SHINY_OVERRIDE: boolean = false;
-  readonly VARIANT_OVERRIDE: Variant = 0;
+  readonly SHINY_OVERRIDE: boolean | null = null;
+  readonly VARIANT_OVERRIDE: Variant | null = null;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
@@ -134,8 +136,8 @@ class DefaultOverrides {
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
   readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly OPP_SHINY_OVERRIDE: boolean = false;
-  readonly OPP_VARIANT_OVERRIDE: Variant = 0;
+  readonly OPP_SHINY_OVERRIDE: boolean | null = null;
+  readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
   /**

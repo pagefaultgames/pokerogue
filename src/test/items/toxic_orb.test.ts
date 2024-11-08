@@ -1,13 +1,11 @@
-import { StatusEffect } from "#app/data/status-effect";
 import i18next from "#app/plugins/i18n";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-
-const TIMEOUT = 20 * 1000;
 
 describe("Items - Toxic orb", () => {
   let phaserGame: Phaser.Game;
@@ -27,10 +25,10 @@ describe("Items - Toxic orb", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .enemySpecies(Species.RATTATA)
+      .enemySpecies(Species.MAGIKARP)
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([ Moves.SPLASH ])
+      .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH)
       .startingHeldItems([{
         name: "TOXIC_ORB",
@@ -39,22 +37,19 @@ describe("Items - Toxic orb", () => {
     vi.spyOn(i18next, "t");
   });
 
-  it("badly poisons the holder", async () => {
-    await game.classicMode.startBattle([ Species.MIGHTYENA ]);
+  it("should badly poison the holder", async () => {
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
 
-    const player = game.scene.getPlayerField()[0];
+    const player = game.scene.getPlayerPokemon()!;
+    expect(player.getHeldItems()[0].type.id).toBe("TOXIC_ORB");
 
     game.move.select(Moves.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    // Toxic orb should trigger here
-    await game.phaseInterceptor.run("MessagePhase");
+    await game.phaseInterceptor.to("MessagePhase");
     expect(i18next.t).toHaveBeenCalledWith("statusEffect:toxic.obtainSource", expect.anything());
 
-    await game.toNextTurn();
-
     expect(player.status?.effect).toBe(StatusEffect.TOXIC);
-    // Damage should not have ticked yet.
-    expect(player.status?.turnCount).toBe(0);
-  }, TIMEOUT);
+    expect(player.status?.toxicTurnCount).toBe(0);
+  });
 });

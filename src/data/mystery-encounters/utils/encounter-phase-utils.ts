@@ -19,15 +19,15 @@ import i18next from "i18next";
 import BattleScene from "#app/battle-scene";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { Gender } from "#app/data/gender";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import PokemonSpecies from "#app/data/pokemon-species";
 import { Egg, IEggOptions } from "#app/data/egg";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import { MovePhase } from "#app/phases/move-phase";
 import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
@@ -37,6 +37,7 @@ import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { Variant } from "#app/data/variant";
+import { StatusEffect } from "#enums/status-effect";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -71,7 +72,7 @@ export interface EnemyPokemonConfig {
   nickname?: string;
   bossSegments?: number;
   bossSegmentModifier?: number; // Additive to the determined segment number
-  mysteryEncounterPokemonData?: MysteryEncounterPokemonData;
+  customPokemonData?: CustomPokemonData;
   formIndex?: number;
   abilityIndex?: number;
   level?: number;
@@ -145,7 +146,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
     newTrainer.setVisible(false);
     scene.field.add(newTrainer);
     scene.currentBattle.trainer = newTrainer;
-    loadEnemyAssets.push(newTrainer.loadAssets());
+    loadEnemyAssets.push(newTrainer.loadAssets().then(() => newTrainer.initSprite()));
 
     battle.enemyLevels = scene.currentBattle.trainer.getPartyLevels(scene.currentBattle.waveIndex);
   } else {
@@ -250,8 +251,8 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
       }
 
       // Set custom mystery encounter data fields (such as sprite scale, custom abilities, types, etc.)
-      if (!isNullOrUndefined(config.mysteryEncounterPokemonData)) {
-        enemyPokemon.mysteryEncounterPokemonData = config.mysteryEncounterPokemonData;
+      if (!isNullOrUndefined(config.customPokemonData)) {
+        enemyPokemon.customPokemonData = config.customPokemonData;
       }
 
       // Set Boss
@@ -418,9 +419,9 @@ export function generateModifierType(scene: BattleScene, modifier: () => Modifie
   // Populates item id and tier (order matters)
   result = result
     .withIdFromFunc(modifierTypes[modifierId])
-    .withTierFromPool();
+    .withTierFromPool(ModifierPoolType.PLAYER, scene.getPlayerParty());
 
-  return result instanceof ModifierTypeGenerator ? result.generateType(scene.getParty(), pregenArgs) : result;
+  return result instanceof ModifierTypeGenerator ? result.generateType(scene.getPlayerParty(), pregenArgs) : result;
 }
 
 /**
@@ -451,9 +452,9 @@ export function selectPokemonForOption(scene: BattleScene, onPokemonSelected: (p
 
     // Open party screen to choose pokemon
     scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
-      if (slotIndex < scene.getParty().length) {
+      if (slotIndex < scene.getPlayerParty().length) {
         scene.ui.setMode(modeToSetOnExit).then(() => {
-          const pokemon = scene.getParty()[slotIndex];
+          const pokemon = scene.getPlayerParty()[slotIndex];
           const secondaryOptions = onPokemonSelected(pokemon);
           if (!secondaryOptions) {
             scene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -563,7 +564,7 @@ export function selectOptionThenPokemon(scene: BattleScene, options: OptionSelec
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
       // Open party screen to choose a Pokemon
       scene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
-        if (slotIndex < scene.getParty().length) {
+        if (slotIndex < scene.getPlayerParty().length) {
           // Pokemon and option selected
           scene.ui.setMode(modeToSetOnExit).then(() => {
             const result: PokemonAndOptionSelected = { selectedPokemonIndex: slotIndex, selectedOptionIndex: selectedOptionIndex };
@@ -713,7 +714,7 @@ export function leaveEncounterWithoutBattle(scene: BattleScene, addHealPhase: bo
  * @param doNotContinue - default `false`. If set to true, will not end the battle and continue to next wave
  */
 export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: boolean = false, doNotContinue: boolean = false) {
-  const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  const allowedPkm = scene.getPlayerParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
     scene.clearPhaseQueue();
@@ -750,7 +751,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
  * @param addHealPhase
  */
 export function handleMysteryEncounterBattleFailed(scene: BattleScene, addHealPhase: boolean = false, doNotContinue: boolean = false) {
-  const allowedPkm = scene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  const allowedPkm = scene.getPlayerParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
     scene.clearPhaseQueue();

@@ -1,9 +1,9 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
-import * as Utils from "../utils";
 import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 
 interface LanguageSetting {
@@ -13,7 +13,7 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
-  "es":{
+  "es-ES": {
     inputFieldFontSize: "50px",
     errorMessageFontSize: "40px",
   }
@@ -22,10 +22,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 export default class RegistrationFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
     return i18next.t("menu:register");
-  }
-
-  getFields(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password"), i18next.t("menu:confirmPassword") ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -59,6 +55,14 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
     }
 
     return super.getReadableErrorMessage(error);
+  }
+
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    const inputFieldConfigs: InputFieldConfig[] = [];
+    inputFieldConfigs.push({ label: i18next.t("menu:username") });
+    inputFieldConfigs.push({ label: i18next.t("menu:password"), isPassword: true });
+    inputFieldConfigs.push({ label: i18next.t("menu:confirmPassword"), isPassword: true });
+    return inputFieldConfigs;
   }
 
   setup(): void {
@@ -106,27 +110,20 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         if (this.inputs[1].text !== this.inputs[2].text) {
           return onFail(i18next.t("menu:passwordNotMatchingConfirmPassword"));
         }
-        Utils.apiPost("account/register", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => response.text())
-          .then(response => {
-            if (!response) {
-              Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-                .then(response => {
-                  if (!response.ok) {
-                    return response.text();
-                  }
-                  return response.json();
-                })
-                .then(response => {
-                  if (response.hasOwnProperty("token")) {
-                    Utils.setCookie(Utils.sessionIdKey, response.token);
+        const [ usernameInput, passwordInput ] = this.inputs;
+        pokerogueApi.account.register({ username: usernameInput.text, password: passwordInput.text })
+          .then(registerError => {
+            if (!registerError) {
+              pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text })
+                .then(loginError => {
+                  if (!loginError) {
                     originalRegistrationAction && originalRegistrationAction();
                   } else {
-                    onFail(response);
+                    onFail(loginError);
                   }
                 });
             } else {
-              onFail(response);
+              onFail(registerError);
             }
           });
       };

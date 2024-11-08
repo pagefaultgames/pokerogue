@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
@@ -7,6 +7,7 @@ import BattleScene from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 interface BuildInteractableImageOpts {
   scale?: number;
@@ -17,9 +18,9 @@ interface BuildInteractableImageOpts {
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   private readonly ERR_USERNAME: string = "invalid username";
-  private readonly ERR_PASSWORD: string =  "invalid password";
-  private readonly ERR_ACCOUNT_EXIST: string =  "account doesn't exist";
-  private readonly ERR_PASSWORD_MATCH: string =  "password doesn't match";
+  private readonly ERR_PASSWORD: string = "invalid password";
+  private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
+  private readonly ERR_PASSWORD_MATCH: string = "password doesn't match";
   private readonly ERR_NO_SAVES: string = "No save files found";
   private readonly ERR_TOO_MANY_SAVES: string = "Too many save files found";
 
@@ -75,10 +76,6 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     return i18next.t("menu:login");
   }
 
-  override getFields(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
-  }
-
   override getWidth(_config?: ModalConfig): number {
     return 160;
   }
@@ -106,12 +103,19 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       case this.ERR_PASSWORD_MATCH:
         return i18next.t("menu:unmatchingPassword");
       case this.ERR_NO_SAVES:
-        return i18next.t("menu:noSaves");
+        return "P01: " + i18next.t("menu:noSaves");
       case this.ERR_TOO_MANY_SAVES:
-        return i18next.t("menu:tooManySaves");
+        return "P02: " + i18next.t("menu:tooManySaves");
     }
 
     return super.getReadableErrorMessage(error);
+  }
+
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    const inputFieldConfigs: InputFieldConfig[] = [];
+    inputFieldConfigs.push({ label: i18next.t("menu:username") });
+    inputFieldConfigs.push({ label: i18next.t("menu:password"), isPassword: true });
+    return inputFieldConfigs;
   }
 
   override show(args: any[]): boolean {
@@ -132,21 +136,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => {
-            if (!response.ok) {
-              return response.text();
-            }
-            return response.json();
-          })
-          .then(response => {
-            if (response.hasOwnProperty("token")) {
-              Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction && originalLoginAction();
-            } else {
-              onFail(response);
-            }
-          });
+
+        const [ usernameInput, passwordInput ] = this.inputs;
+
+        pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
+          if (!error) {
+            originalLoginAction && originalLoginAction();
+          } else {
+            onFail(error);
+          }
+        });
       };
 
       return true;
@@ -164,7 +163,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     [ this.discordImage, this.googleImage, this.usernameInfoImage ].forEach((img) => img.off("pointerdown"));
   }
 
-  private processExternalProvider(config: ModalConfig) : void {
+  private processExternalProvider(config: ModalConfig): void {
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
     this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);

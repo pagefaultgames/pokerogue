@@ -90,9 +90,6 @@ export default class CommandUiHandler extends UiHandler {
         switch (cursor) {
         // Fight
           case Command.FIGHT:
-            if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
-              return true;
-            }
             ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
             break;
