@@ -5,113 +5,19 @@ import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
 import { allMoves, AttackMove, selfStatLowerMoves } from "#app/data/move";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import {
-  FormChangeItem,
-  pokemonFormChanges,
-  SpeciesFormChangeCondition,
-  SpeciesFormChangeItemTrigger,
-} from "#app/data/pokemon-forms";
+import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeCondition, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectDescriptor } from "#app/data/status-effect";
 import { Type } from "#enums/type";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import {
-  AddPokeballModifier,
-  AddVoucherModifier,
-  AttackTypeBoosterModifier,
-  BaseStatModifier,
-  BerryModifier,
-  BoostBugSpawnModifier,
-  BypassSpeedChanceModifier,
-  ContactHeldItemTransferChanceModifier,
-  CritBoosterModifier,
-  DamageMoneyRewardModifier,
-  DoubleBattleChanceBoosterModifier,
-  EnemyAttackStatusEffectChanceModifier,
-  EnemyDamageBoosterModifier,
-  EnemyDamageReducerModifier,
-  EnemyEndureChanceModifier,
-  EnemyFusionChanceModifier,
-  EnemyStatusEffectHealChanceModifier,
-  EnemyTurnHealModifier,
-  EvolutionItemModifier,
-  EvolutionStatBoosterModifier,
-  EvoTrackerModifier,
-  ExpBalanceModifier,
-  ExpBoosterModifier,
-  ExpShareModifier,
-  ExtraModifierModifier,
-  FlinchChanceModifier,
-  FusePokemonModifier,
-  GigantamaxAccessModifier,
-  HealingBoosterModifier,
-  HealShopCostModifier,
-  HiddenAbilityRateBoosterModifier,
-  HitHealModifier,
-  IvScannerModifier,
-  LevelIncrementBoosterModifier,
-  LockModifierTiersModifier,
-  MapModifier,
-  MegaEvolutionAccessModifier,
-  MoneyInterestModifier,
-  MoneyMultiplierModifier,
-  MoneyRewardModifier,
-  MultipleParticipantExpBonusModifier,
-  PokemonAllMovePpRestoreModifier,
-  PokemonBaseStatFlatModifier,
-  PokemonBaseStatTotalModifier,
-  PokemonExpBoosterModifier,
-  PokemonFormChangeItemModifier,
-  PokemonFriendshipBoosterModifier,
-  PokemonHeldItemModifier,
-  PokemonHpRestoreModifier,
-  PokemonIncrementingStatModifier,
-  PokemonInstantReviveModifier,
-  PokemonLevelIncrementModifier,
-  PokemonMoveAccuracyBoosterModifier,
-  PokemonMultiHitModifier,
-  PokemonNatureChangeModifier,
-  PokemonNatureWeightModifier,
-  PokemonPpRestoreModifier,
-  PokemonPpUpModifier,
-  PokemonStatusHealModifier,
-  PreserveBerryModifier,
-  RememberMoveModifier,
-  ResetNegativeStatStageModifier,
-  ShinyRateBoosterModifier,
-  SpeciesCritBoosterModifier,
-  SpeciesStatBoosterModifier,
-  SurviveDamageModifier,
-  SwitchEffectTransferModifier,
-  TempCritBoosterModifier,
-  TempExtraModifierModifier,
-  TempStatStageBoosterModifier,
-  TerastallizeAccessModifier,
-  TerastallizeModifier,
-  TmModifier,
-  TurnHealModifier,
-  TurnHeldItemTransferModifier,
-  TurnStatusEffectModifier,
-  type EnemyPersistentModifier,
-  type Modifier,
-  type PersistentModifier,
-} from "#app/modifier/modifier";
+import { AddPokeballModifier, AddVoucherModifier, AttackTypeBoosterModifier, BaseStatModifier, BerryModifier, BoostBugSpawnModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, CritBoosterModifier, DamageMoneyRewardModifier, DoubleBattleChanceBoosterModifier, EnemyAttackStatusEffectChanceModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, EvolutionItemModifier, EvolutionStatBoosterModifier, EvoTrackerModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, GigantamaxAccessModifier, HealingBoosterModifier, HealShopCostModifier, HiddenAbilityRateBoosterModifier, HitHealModifier, IvScannerModifier, LevelIncrementBoosterModifier, LockModifierTiersModifier, MapModifier, MegaEvolutionAccessModifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, MultipleParticipantExpBonusModifier, PokemonAllMovePpRestoreModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, PokemonInstantReviveModifier, PokemonLevelIncrementModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PokemonNatureChangeModifier, PokemonNatureWeightModifier, PokemonPpRestoreModifier, PokemonPpUpModifier, PokemonStatusHealModifier, PreserveBerryModifier, RememberMoveModifier, ResetNegativeStatStageModifier, ShinyRateBoosterModifier, SpeciesCritBoosterModifier, SpeciesStatBoosterModifier, SurviveDamageModifier, SwitchEffectTransferModifier, TempCritBoosterModifier, TempStatStageBoosterModifier, TerastallizeAccessModifier, TerastallizeModifier, TmModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier, type EnemyPersistentModifier, type Modifier, type PersistentModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
 import { Unlockables } from "#app/system/unlockables";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
 import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { getModifierTierTextTint } from "#app/ui/text";
-import {
-  formatMoney,
-  getEnumKeys,
-  getEnumValues,
-  isNullOrUndefined,
-  NumberHolder,
-  padInt,
-  randSeedInt,
-  randSeedItem,
-} from "#app/utils";
+import { formatMoney, getEnumKeys, getEnumValues, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
