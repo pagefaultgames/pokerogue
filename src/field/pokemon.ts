@@ -1408,7 +1408,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (!types.length || !includeTeraType) {
 
-      const doIllusion: boolean = useIllusion === "AUTO" ? !forDefend : useIllusion;
+      const doIllusion: boolean = (useIllusion === "AUTO") ? !forDefend : useIllusion;
       if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0 && (!this.battleData?.illusion.active || !doIllusion)) {
         this.summonData.types.forEach(t => types.push(t));
       } else if (this.customPokemonData.types && this.customPokemonData.types.length > 0) {
