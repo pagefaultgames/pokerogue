@@ -1369,11 +1369,11 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
 
     if (move.canBeMultiStrikeEnhanced(pokemon)) {
       this.showAbility = !!hitCount?.value;
-      if (!!hitCount?.value) {
+      if (hitCount?.value) {
         hitCount.value += 1;
       }
 
-      if (!!multiplier?.value && pokemon.turnData.hitsLeft === 1) {
+      if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
         multiplier.value = this.damageMultiplier;
       }
       return true;
