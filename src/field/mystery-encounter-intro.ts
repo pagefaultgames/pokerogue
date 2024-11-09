@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
-import { Variant, variantColorCache, variantData, VariantSet } from "#app/data/variant";
+import { Variant } from "#app/data/variant";
 import { doShinySparkleAnim } from "#app/field/anims";
 
 type KnownFileRoot =
@@ -61,8 +61,9 @@ export class MysteryEncounterSpriteConfig {
   scale?: number;
   /** If you are using a Pokemon sprite, set to `true`. This will ensure variant, form, gender, shiny sprites are loaded properly */
   isPokemon?: boolean;
-  //TODO
+  /** If using a Pokemon shiny sprite, needs to be set to ensure the correct variant assets get loaded and displayed */
   isShiny?: boolean;
+  /** If using a Pokemon shiny sprite, needs to be set to ensure the correct variant assets get loaded and displayed */
   variant?: Variant;
   /** If you are using an item sprite, set to `true` */
   isItem?: boolean;
@@ -219,29 +220,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         if (config.isPokemon) {
           this.scene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
           if (config.isShiny) {
-            // Load variant assets
-            const useExpSprite = this.scene.experimentalSprites && this.scene.hasExpSprite(config.spriteKey);
-            if (useExpSprite) {
-              config.fileRoot = `exp/${config.fileRoot}`;
-            }
-            let variantConfig = variantData;
-            config.fileRoot.split("/").map(p => variantConfig ? variantConfig = variantConfig[p] : null);
-            const variantSet = variantConfig as VariantSet;
-            if (variantSet && (config.variant !== undefined && variantSet[config.variant] === 1)) {
-              const populateVariantColors = (key: string): Promise<void> => {
-                return new Promise(resolve => {
-                  if (variantColorCache.hasOwnProperty(key)) {
-                    return resolve();
-                  }
-                  this.scene.cachedFetch(`./images/pokemon/variant/${config.fileRoot}.json`).then(res => res.json()).then(c => {
-                    variantColorCache[key] = c;
-                    resolve();
-                  });
-                });
-              };
-              populateVariantColors(config.spriteKey);
-            }
-            // TODO load shiny sparkle?
+            this.scene.loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant);
           }
         } else if (config.isItem) {
           this.scene.loadAtlas("items", "");

@@ -15,7 +15,7 @@ import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPr
 import { Type } from "#enums/type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { Stat } from "#enums/stat";
-import { Variant, VariantSet, variantColorCache, variantData } from "#app/data/variant";
+import { Variant, VariantSet, variantData } from "#app/data/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
@@ -505,29 +505,8 @@ export abstract class PokemonSpeciesForm {
         } else {
           scene.anims.get(spriteKey).frameRate = 12;
         }
-        let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
-        const useExpSprite = scene.experimentalSprites && scene.hasExpSprite(spriteKey);
-        if (useExpSprite) {
-          spritePath = `exp/${spritePath}`;
-        }
-        let config = variantData;
-        spritePath.split("/").map(p => config ? config = config[p] : null);
-        const variantSet = config as VariantSet;
-        if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
-          const populateVariantColors = (key: string): Promise<void> => {
-            return new Promise(resolve => {
-              if (variantColorCache.hasOwnProperty(key)) {
-                return resolve();
-              }
-              scene.cachedFetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
-                variantColorCache[key] = c;
-                resolve();
-              });
-            });
-          };
-          populateVariantColors(spriteKey).then(() => resolve());
-          return;
-        }
+        const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
+        scene.loadPokemonVariantAssets(spriteKey, spritePath, variant);
         resolve();
       });
       if (startLoad) {
