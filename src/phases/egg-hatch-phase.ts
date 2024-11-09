@@ -14,6 +14,7 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import * as Utils from "#app/utils";
 import { EggLapsePhase } from "./egg-lapse-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
+import { doShinySparkleAnim } from "#app/field/anims";
 
 
 /**
@@ -341,9 +342,7 @@ export class EggHatchPhase extends Phase {
       this.pokemon.cry();
       if (isShiny) {
         this.scene.time.delayedCall(Utils.fixedInt(500), () => {
-          // TODO
-          this.pokemonShinySparkle.play(`sparkle${this.pokemon.variant ? `_${this.pokemon.variant + 1}` : ""}`);
-          this.scene.playSound("se/sparkle");
+          doShinySparkleAnim(this.scene, this.pokemonShinySparkle, this.pokemon.variant);
         });
       }
       this.scene.time.delayedCall(Utils.fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {

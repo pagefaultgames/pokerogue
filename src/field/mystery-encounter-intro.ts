@@ -1,11 +1,12 @@
 import { GameObjects } from "phaser";
-import BattleScene from "../battle-scene";
-import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
+import BattleScene from "#app/battle-scene";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 import { Variant, variantColorCache, variantData, VariantSet } from "#app/data/variant";
+import { doShinySparkleAnim } from "#app/field/anims";
 
 type KnownFileRoot =
   | "arenas"
@@ -294,12 +295,18 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
 
     this.getSprites().map((sprite, i) => {
       if (!this.spriteConfigs[i].isItem) {
-        sprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
+        sprite.setTexture(this.spriteConfigs[i].spriteKey);
+        // Show the first frame for a smooth transition when the animation starts.
+        const firstFrame = sprite.texture.frames["0001.png"];
+        sprite.setFrame(firstFrame ?? 0);
       }
     });
     this.getTintSprites().map((tintSprite, i) => {
       if (!this.spriteConfigs[i].isItem) {
-        tintSprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
+        tintSprite.setTexture(this.spriteConfigs[i].spriteKey);
+        // Show the first frame for a smooth transition when the animation starts.
+        const firstFrame = tintSprite.texture.frames["0001.png"];
+        tintSprite.setFrame(firstFrame ?? 0);
       }
     });
 
@@ -349,8 +356,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   playShinySparkles() {
     for (const sparkleConfig of this.shinySparkleSprites) {
       this.scene.time.delayedCall(500, () => {
-        sparkleConfig.sprite.play(`sparkle${sparkleConfig.variant ? `_${sparkleConfig.variant + 1}` : ""}`);
-        this.scene.playSound("se/sparkle");
+        doShinySparkleAnim(this.scene, sparkleConfig.sprite, sparkleConfig.variant);
       });
     }
   }

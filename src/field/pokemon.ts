@@ -69,6 +69,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#app/data/balance/rates";
 import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
+import { doShinySparkleAnim } from "#app/field/anims";
 
 export enum FieldPosition {
   CENTER,
@@ -668,22 +669,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   initShinySparkle(): void {
-    // TODO
-    const keySuffix = this.variant ? `_${this.variant + 1}` : "";
-    const key = `shiny${keySuffix}`;
-    const shinySparkle = this.scene.addFieldSprite(0, 0, key);
+    const shinySparkle = this.scene.addFieldSprite(0, 0, "shiny");
     shinySparkle.setVisible(false);
     shinySparkle.setOrigin(0.5, 1);
-    const frameNames = this.scene.anims.generateFrameNames(key, { suffix: ".png", end: 34 });
-    if (!(this.scene.anims.exists(`sparkle${keySuffix}`))) {
-      this.scene.anims.create({
-        key: `sparkle${keySuffix}`,
-        frames: frameNames,
-        frameRate: 32,
-        showOnStart: true,
-        hideOnComplete: true,
-      });
-    }
     this.add(shinySparkle);
 
     this.shinySparkle = shinySparkle;
@@ -3746,8 +3734,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   sparkle(): void {
     if (this.shinySparkle) {
-      this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
-      this.scene.playSound("se/sparkle");
+      doShinySparkleAnim(this.scene, this.shinySparkle, this.variant);
     }
   }
 

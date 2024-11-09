@@ -26,6 +26,7 @@ import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import type { PokeballType } from "#enums/pokeball";
+import { doShinySparkleAnim } from "#app/field/anims";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -846,8 +847,7 @@ function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPoke
             onComplete: () => {
               if (receivedPokemon.shiny) {
                 scene.time.delayedCall(500, () => {
-                  pokemonShinySparkle.play(`sparkle${receivedPokemon.variant ? `_${receivedPokemon.variant + 1}` : ""}`);
-                  scene.playSound("se/sparkle");
+                  doShinySparkleAnim(scene, pokemonShinySparkle, receivedPokemon.variant);
                 });
               }
               receivedPokeballSprite.destroy();
