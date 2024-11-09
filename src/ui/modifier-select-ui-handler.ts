@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
-import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
+import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
@@ -15,6 +15,7 @@ import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import { IntegerHolder } from "./../utils";
 import Phaser from "phaser";
+import type { PokeballType } from "#enums/pokeball";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;

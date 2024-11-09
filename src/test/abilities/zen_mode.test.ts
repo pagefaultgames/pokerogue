@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { DamagePhase } from "#app/phases/damage-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { Mode } from "#app/ui/ui";
@@ -7,6 +7,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";

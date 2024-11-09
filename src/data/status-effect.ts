@@ -2,8 +2,6 @@ import { randIntRange } from "#app/utils";
 import { StatusEffect } from "#enums/status-effect";
 import i18next, { ParseKeys } from "i18next";
 
-export { StatusEffect };
-
 export class Status {
   public effect: StatusEffect;
   /** Toxic damage is `1/16 max HP * toxicTurnCount` */

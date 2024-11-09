@@ -1,17 +1,17 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "#app/test/utils/gameManager";
-import Phaser from "phaser";
-import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
-import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
-import { StatusEffect } from "#app/data/status-effect";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Type } from "#app/data/type";
-import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { getEncounterText, queueEncounterMessage, showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { Type } from "#enums/type";
 import { MessagePhase } from "#app/phases/message-phase";
+import GameManager from "#app/test/utils/gameManager";
+import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
+import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Mystery Encounter Utils", () => {
   let phaserGame: Phaser.Game;

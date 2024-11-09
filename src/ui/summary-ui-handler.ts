@@ -5,16 +5,17 @@ import * as Utils from "#app/utils";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
-import { Type, getTypeRgb } from "#app/data/type";
+import { getTypeRgb } from "#app/data/type";
+import { Type } from "#enums/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
 import Move, { MoveCategory } from "#app/data/move";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import { getBiomeName } from "#app/data/balance/biomes";
-import { Nature, getNatureName, getNatureStatMultiplier } from "#app/data/nature";
+import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { loggedInUser } from "#app/account";
 import { Variant, getVariantTint } from "#app/data/variant";
 import { Button } from "#enums/buttons";
@@ -23,6 +24,7 @@ import i18next from "i18next";
 import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
+import { Nature } from "#enums/nature";
 
 enum Page {
   PROFILE,
