@@ -242,7 +242,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param battleType battle type to set
    * @returns `this`
    */
-  public battleType(battleType: "single" | "double" | null): this {
+  public battleType(battleType: "single" | "double" | "even-doubles" | "odd-doubles" | null): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
     this.log(`Battle type set to ${battleType} only!`);
     return this;

@@ -47,7 +47,18 @@ class DefaultOverrides {
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
-  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
+  /**
+   * If `null`, ignore this override.
+   *
+   * If `"single"`, set every non-trainer battle to be a single battle.
+   *
+   * If `"double"`, set every battle (including trainer battles) to be a double battle.
+   *
+   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers, and follow the `"single"` rule on odd wave numbers.
+   *
+   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
+   */
+  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | "even-doubles" | "odd-doubles" | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
