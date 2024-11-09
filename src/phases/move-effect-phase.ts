@@ -43,7 +43,7 @@ import {
   VariableTargetAttr,
 } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import Pokemon, { HitResult, MoveResult, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {

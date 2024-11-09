@@ -8,7 +8,7 @@ import * as Utils from "#app/utils";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "#app/modifier/modifier";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
 import { getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { addWindow } from "#app/ui/ui-theme";

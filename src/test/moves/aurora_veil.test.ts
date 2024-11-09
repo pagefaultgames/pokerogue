@@ -1,13 +1,13 @@
 import { ArenaTagSide } from "#app/data/arena-tag";
 import Move, { allMoves } from "#app/data/move";
-import { WeatherType } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils";
+import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

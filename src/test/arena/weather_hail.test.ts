@@ -1,10 +1,10 @@
-import { WeatherType } from "#app/data/weather";
+import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#app/battle";
 
 describe("Weather - Hail", () => {
   let phaserGame: Phaser.Game;
