@@ -123,9 +123,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
         yoyo: true,
         y: "-=20",
         loop: 1,
-        onComplete: () => {
-          encounter.introVisuals?.playShinySparkles();
-        }
+        onComplete: () => encounter.introVisuals?.playShinySparkles()
       });
 
       scene.time.delayedCall(500, () => scene.playSound("battle_anims/PRSFX- Spotlight2"));

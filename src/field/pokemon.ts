@@ -665,6 +665,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   initShinySparkle(): void {
+    // TODO
     const keySuffix = this.variant ? `_${this.variant + 1}` : "";
     const key = `shiny${keySuffix}`;
     const shinySparkle = this.scene.addFieldSprite(0, 0, key);
