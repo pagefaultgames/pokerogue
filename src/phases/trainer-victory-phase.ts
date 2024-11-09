@@ -4,7 +4,7 @@ import { TrainerType } from "#app/enums/trainer-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { vouchers } from "#app/system/voucher";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { randSeedItem } from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
@@ -43,7 +43,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     this.scene.ui.showText(i18next.t("battle:trainerDefeated", { trainerName: this.scene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) }), null, () => {
       const victoryMessages = this.scene.currentBattle.trainer?.getVictoryMessages()!; // TODO: is this bang correct?
       let message: string;
-      this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
+      this.scene.executeWithSeedOffset(() => message = randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
       message = message!; // tell TS compiler it's defined now
 
       const showMessage = () => {

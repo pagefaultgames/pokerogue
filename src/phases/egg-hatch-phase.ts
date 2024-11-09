@@ -11,7 +11,7 @@ import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import * as Utils from "#app/utils";
+import { fixedInt, getFrameMs, randInt } from "#app/utils";
 import { EggLapsePhase } from "./egg-lapse-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
 
@@ -285,15 +285,15 @@ export class EggHatchPhase extends Phase {
     this.canSkip = false;
     this.hatched = true;
     if (this.evolutionBgm) {
-      SoundFade.fadeOut(this.scene, this.evolutionBgm, Utils.fixedInt(100));
+      SoundFade.fadeOut(this.scene, this.evolutionBgm, fixedInt(100));
     }
     for (let e = 0; e < 5; e++) {
-      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound("se/egg_hatch", { volume: 1 - (e * 0.2) }));
+      this.scene.time.delayedCall(fixedInt(375 * e), () => this.scene.playSound("se/egg_hatch", { volume: 1 - (e * 0.2) }));
     }
     this.eggLightraysOverlay.setVisible(true);
     this.eggLightraysOverlay.play("egg_lightrays");
     this.scene.tweens.add({
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       targets: this.eggHatchOverlay,
       alpha: 1,
       ease: "Cubic.easeIn",
@@ -302,7 +302,7 @@ export class EggHatchPhase extends Phase {
         this.canSkip = true;
       }
     });
-    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
+    this.scene.time.delayedCall(fixedInt(1500), () => {
       this.canSkip = false;
       if (!this.skipped) {
         this.doReveal();
@@ -335,17 +335,17 @@ export class EggHatchPhase extends Phase {
     this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
     this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
     this.pokemonSprite.setVisible(true);
-    this.scene.time.delayedCall(Utils.fixedInt(250), () => {
+    this.scene.time.delayedCall(fixedInt(250), () => {
       this.eggsToHatchCount--;
       this.eggHatchHandler.eventTarget.dispatchEvent(new EggCountChangedEvent(this.eggsToHatchCount));
       this.pokemon.cry();
       if (isShiny) {
-        this.scene.time.delayedCall(Utils.fixedInt(500), () => {
+        this.scene.time.delayedCall(fixedInt(500), () => {
           this.pokemonShinySparkle.play(`sparkle${this.pokemon.variant ? `_${this.pokemon.variant + 1}` : ""}`);
           this.scene.playSound("se/sparkle");
         });
       }
-      this.scene.time.delayedCall(Utils.fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
+      this.scene.time.delayedCall(fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
         this.scene.playSoundWithoutBgm("evolution_fanfare");
@@ -363,7 +363,7 @@ export class EggHatchPhase extends Phase {
       });
     });
     this.scene.tweens.add({
-      duration: Utils.fixedInt(this.skipped ? 500 : 3000),
+      duration: fixedInt(this.skipped ? 500 : 3000),
       targets: this.eggHatchOverlay,
       alpha: 0,
       ease: "Cubic.easeOut"
@@ -388,9 +388,9 @@ export class EggHatchPhase extends Phase {
   doSpray(intensity: number, offsetY?: number) {
     this.scene.tweens.addCounter({
       repeat: intensity,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
-        this.doSprayParticle(Utils.randInt(8), offsetY || 0);
+        this.doSprayParticle(randInt(8), offsetY || 0);
       }
     });
   }
@@ -409,12 +409,12 @@ export class EggHatchPhase extends Phase {
 
     let f = 0;
     let yOffset = 0;
-    const speed = 3 - Utils.randInt(8);
-    const amp = 24 + Utils.randInt(32);
+    const speed = 3 - randInt(8);
+    const amp = 24 + randInt(32);
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }

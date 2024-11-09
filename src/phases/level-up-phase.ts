@@ -5,7 +5,7 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { LevelAchv } from "#app/system/achv";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 import { LearnMovePhase } from "./learn-move-phase";
 
@@ -28,7 +28,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       this.scene.gameData.gameStats.highestLevel = this.level;
     }
 
-    this.scene.validateAchvs(LevelAchv, new Utils.NumberHolder(this.level));
+    this.scene.validateAchvs(LevelAchv, new NumberHolder(this.level));
 
     const pokemon = this.getPokemon();
     const prevStats = pokemon.stats.slice(0);

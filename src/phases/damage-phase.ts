@@ -1,8 +1,8 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { BattleSpec } from "#app/enums/battle-spec";
+import { BattleSpec } from "#enums/battle-spec";
 import { DamageResult, HitResult } from "#app/field/pokemon";
-import * as Utils from "#app/utils";
+import { fixedInt } from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class DamagePhase extends PokemonPhase {
@@ -25,7 +25,7 @@ export class DamagePhase extends PokemonPhase {
       if (this.scene.moveAnimations) {
         this.scene.toggleInvert(true);
       }
-      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
+      this.scene.time.delayedCall(fixedInt(1000), () => {
         this.scene.toggleInvert(false);
         this.applyDamage();
       });

@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import * as Utils from "#app/utils";
+import { fixedInt } from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 
 export class PartyHealPhase extends BattlePhase {
@@ -28,7 +28,7 @@ export class PartyHealPhase extends BattlePhase {
         pokemon.updateInfo(true);
       }
       const healSong = this.scene.playSoundWithoutBgm("heal");
-      this.scene.time.delayedCall(Utils.fixedInt(healSong.totalDuration * 1000), () => {
+      this.scene.time.delayedCall(fixedInt(healSong.totalDuration * 1000), () => {
         healSong.destroy();
         if (this.resumeBgm && bgmPlaying) {
           this.scene.playBgm();
