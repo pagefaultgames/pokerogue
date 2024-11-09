@@ -728,10 +728,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   //Applies to items with chance of activating secondary effects ie Kings Rock
   getSecondaryChanceMultiplier(pokemon: Pokemon): number {
     // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
-    if (!pokemon.getLastXMoves(0)[0]) {
+    if (!pokemon.getLastXMoves()[0]) {
       return 1;
     }
-    const sheerForceAffected = allMoves[pokemon.getLastXMoves(0)[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
+    const sheerForceAffected = allMoves[pokemon.getLastXMoves()[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
 
     if (sheerForceAffected) {
       return 0;

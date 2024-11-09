@@ -801,7 +801,7 @@ export default class BattleScene extends SceneBase {
 
   /**
    * @returns An array of {@linkcode PlayerPokemon} filtered from the player's party
-   * that are {@linkcode PlayerPokemon.isAllowedInBattle | allowed in battle}.
+   * that are {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
    */
   public getPokemonAllowedInBattle(): PlayerPokemon[] {
     return this.getPlayerParty().filter(p => p.isAllowedInBattle());
@@ -1270,14 +1270,20 @@ export default class BattleScene extends SceneBase {
 
     const lastBattle = this.currentBattle;
 
-    if (lastBattle?.double && !newDouble) {
-      this.tryRemovePhase(p => p instanceof SwitchPhase);
-    }
-
     const maxExpLevel = this.getMaxExpLevel();
 
     this.lastEnemyTrainer = lastBattle?.trainer ?? null;
     this.lastMysteryEncounter = lastBattle?.mysteryEncounter;
+
+    if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+      // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
+      newDouble = false;
+    }
+
+    if (lastBattle?.double && !newDouble) {
+      this.tryRemovePhase(p => p instanceof SwitchPhase);
+      this.getPlayerField().forEach(p => p.lapseTag(BattlerTagType.COMMANDED));
+    }
 
     this.executeWithSeedOffset(() => {
       this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
@@ -1285,8 +1291,6 @@ export default class BattleScene extends SceneBase {
     this.currentBattle.incrementTurn(this);
 
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
-      // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
-      this.currentBattle.double = false;
       // Will generate the actual Mystery Encounter during NextEncounterPhase, to ensure it uses proper biome
       this.currentBattle.mysteryEncounterType = mysteryEncounterType;
     }
