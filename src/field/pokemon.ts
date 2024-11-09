@@ -4561,7 +4561,7 @@ export class EnemyPokemon extends Pokemon {
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, shinyLock: boolean = false, dataSource?: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex, dataSource?.gender,
-      shinyLock ? false : (dataSource ? dataSource.shiny : false), shinyLock ? undefined : (dataSource ? dataSource.variant : undefined),
+      (!shinyLock && dataSource) ? dataSource.shiny : false, (!shinyLock && dataSource) ? dataSource.variant : undefined,
       undefined, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
@@ -4591,12 +4591,15 @@ export class EnemyPokemon extends Pokemon {
     if (!dataSource) {
       this.generateAndPopulateMoveset();
 
-      this.trySetShiny();
-      if (Overrides.OPP_SHINY_OVERRIDE) {
+      if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
+        this.shiny = false;
+      } else {
+        this.trySetShiny();
+      }
+
+      if (!this.shiny && Overrides.OPP_SHINY_OVERRIDE) {
         this.shiny = true;
         this.initShinySparkle();
-      } else if (Overrides.OPP_SHINY_OVERRIDE === false) {
-        this.shiny = false;
       }
 
       if (this.shiny) {
