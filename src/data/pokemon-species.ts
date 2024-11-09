@@ -888,17 +888,24 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter {
     const hasEvolution = pokemonEvolutions.hasOwnProperty(this.speciesId);
     const hasPrevolution = pokemonPrevolutions.hasOwnProperty(this.speciesId);
-    const pseudoLegendary = this.subLegendary;
+    const subLegendary = this.subLegendary;
     const legendary = this.legendary;
     const mythical = this.mythical;
     return species => {
-      return (pseudoLegendary || legendary || mythical ||
-        (pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
-        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution))
-        && species.subLegendary === pseudoLegendary
+      return (
+        subLegendary
+        || legendary
+        || mythical
+        || (
+          pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
+          && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution
+        )
+      )
+        && species.subLegendary === subLegendary
         && species.legendary === legendary
         && species.mythical === mythical
-        && (this.isTrainerForbidden() || !species.isTrainerForbidden());
+        && (this.isTrainerForbidden() || !species.isTrainerForbidden())
+        && species.speciesId !== Species.DITTO;
     };
   }
 
