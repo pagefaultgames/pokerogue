@@ -36,7 +36,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -484,7 +483,6 @@ export class EncounterPhase extends BattlePhase {
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          this.scene.getPlayerField().forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
           this.scene.pushPhase(new ReturnPhase(this.scene, 1));
         }
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
