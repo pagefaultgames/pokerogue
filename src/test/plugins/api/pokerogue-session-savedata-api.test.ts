@@ -6,7 +6,6 @@ import type {
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
 } from "#app/@types/PokerogueSessionSavedataApi";
-import { GameModes } from "#app/game-mode";
 import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-savedata-api";
 import type { SessionSaveData } from "#app/system/game-data";
 import { getApiBaseUrl } from "#app/test/utils/testUtils";
@@ -30,8 +29,7 @@ describe("Pokerogue Session Savedata API", () => {
     const params: NewClearSessionSavedataRequest = {
       clientSessionId: "test-session-id",
       slot: 3,
-      result: true,
-      gameMode: GameModes.CLASSIC
+      result: true
     };
 
     it("should return true on SUCCESS", async () => {

@@ -178,7 +178,7 @@ export class GameOverPhase extends BattlePhase {
       If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
     if (this.victory) {
       if (!Utils.isLocal || Utils.isLocalServerConnected) {
-        pokerogueApi.savedata.session.newclear({ slot: this.scene.sessionSlotId, clientSessionId, result: this.victory, gameMode: this.scene.gameMode.modeId })
+        pokerogueApi.savedata.session.newclear({ slot: this.scene.sessionSlotId, clientSessionId, result: this.victory })
           .then((success) => doGameOver(!!success));
       } else {
         this.scene.gameData.offlineNewClear(this.scene).then(result => {

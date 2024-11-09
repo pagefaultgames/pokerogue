@@ -1,5 +1,3 @@
-import { GameModes } from "#app/game-mode";
-
 export class UpdateSessionSavedataRequest {
   slot: number;
   trainerId: number;
@@ -12,7 +10,6 @@ export interface NewClearSessionSavedataRequest {
   slot: number;
   clientSessionId: string;
   result: boolean;
-  gameMode: GameModes;
 }
 
 export interface GetSessionSavedataRequest {
