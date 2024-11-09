@@ -4,12 +4,12 @@ import GameManager from "#app/test/utils/gameManager";
 import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { Gender } from "../../data/gender";
-import { PokeballType } from "../../data/pokeball";
 import {
   TurnEndPhase,
 } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
+import { PokeballType } from "#app/enums/pokeball";
 
 describe("Abilities - Illusion", () => {
   let phaserGame: Phaser.Game;
