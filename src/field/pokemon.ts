@@ -1391,7 +1391,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param includeTeraType - `true` to include tera-formed type; Default: `false`
    * @param forDefend - `true` if the pokemon is defending from an attack; Default: `false`
    * @param ignoreOverride - If `true`, ignore ability changing effects; Default: `false`
-   * @param useIllusion - `true` to return the types of the illusion instead of the actual types; Default: "AUTO"
+   * @param useIllusion - `true` to return the types of the illusion instead of the actual types; "AUTO" will depend on forDefend param; Default: "AUTO"
    * @returns array of {@linkcode Type}
    */
   getTypes(includeTeraType = false, forDefend: boolean = false, ignoreOverride?: boolean, useIllusion: boolean | "AUTO" = "AUTO"): Type[] {
