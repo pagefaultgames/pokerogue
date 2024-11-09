@@ -1234,16 +1234,31 @@ export default class BattleScene extends SceneBase {
     }
 
     if (!isNullOrUndefined(Overrides.BATTLE_TYPE_OVERRIDE)) {
-      if (Overrides.BATTLE_TYPE_OVERRIDE === "double"
-        || (Overrides.BATTLE_TYPE_OVERRIDE === "odd-doubles" && (newWaveIndex % 2))
-        || (Overrides.BATTLE_TYPE_OVERRIDE === "even-doubles" && !(newWaveIndex % 2))
-      ) {
+      let doubleOverrideForWave: "single" | "double" | null = null;
+
+      switch (Overrides.BATTLE_TYPE_OVERRIDE) {
+        case "double":
+          doubleOverrideForWave = "double";
+          break;
+        case "single":
+          doubleOverrideForWave = "single";
+          break;
+        case "even-doubles":
+          doubleOverrideForWave = (newWaveIndex % 2) ? "single" : "double";
+          break;
+        case "odd-doubles":
+          doubleOverrideForWave = (newWaveIndex % 2) ? "double" : "single";
+          break;
+      }
+
+      if (doubleOverrideForWave === "double") {
         newDouble = true;
-      } else if (newBattleType !== BattleType.TRAINER) {
-        /**
-         * Override battles into single only if not fighting with trainers.
-         * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 | GitHub Issue #1948}
-         */
+      }
+      /**
+       * Override battles into single only if not fighting with trainers.
+       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 | GitHub Issue #1948}
+       */
+      if (newBattleType !== BattleType.TRAINER && doubleOverrideForWave === "single") {
         newDouble = false;
       }
     }
