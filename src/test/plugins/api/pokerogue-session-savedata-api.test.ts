@@ -28,7 +28,7 @@ describe("Pokerogue Session Savedata API", () => {
   describe("Newclear", () => {
     const params: NewClearSessionSavedataRequest = {
       clientSessionId: "test-session-id",
-      result: true,
+      isVictory: true,
       slot: 3
     };
 

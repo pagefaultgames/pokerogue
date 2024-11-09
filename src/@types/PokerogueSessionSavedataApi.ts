@@ -8,7 +8,7 @@ export class UpdateSessionSavedataRequest {
 /** This is **NOT** similar to {@linkcode ClearSessionSavedataRequest}  */
 export interface NewClearSessionSavedataRequest {
   slot: number;
-  result: boolean;
+  isVictory: boolean;
   clientSessionId: string;
 }
 
