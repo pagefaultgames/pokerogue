@@ -71,7 +71,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
 
       let pokemon: PlayerPokemon;
       if (randSeedInt(SHINY_MAGIKARP_WEIGHT) === 0 || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) {
-        // If no HA mon found or you roll 1%, give shiny Magikarp with HA and random variant
+        // If no HA mon found or you roll 1%, give shiny Magikarp with random variant
         species = getPokemonSpecies(Species.MAGIKARP);
         pokemon = new PlayerPokemon(scene, species, 5, 2, species.formIndex, undefined, true);
       } else {

@@ -84,8 +84,6 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
 
   constructor(scene: BattleScene, encounter: MysteryEncounter) {
     super(scene, -72, 76);
-    this.shinySparkleSprites = [];
-
     this.encounter = encounter;
     this.enterFromRight = encounter.enterIntroVisualsFromRight ?? false;
     // Shallow copy configs to allow visual config updates at runtime without dirtying master copy of Encounter
@@ -129,6 +127,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     // Sprites with custom X or Y defined will not count for normal spacing requirements
     const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.filter(s => !s.x && !s.y).length, 1));
 
+    this.shinySparkleSprites = [];
     const shinySparkleSprites = scene.add.container(0, 0);
     this.spriteConfigs?.forEach((config) => {
       const { spriteKey, isItem, hasShadow, scale, x, y, yShadow, alpha, isPokemon, isShiny, variant } = config;
@@ -274,18 +273,22 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
 
     this.getSprites().map((sprite, i) => {
       if (!this.spriteConfigs[i].isItem) {
-        sprite.setTexture(this.spriteConfigs[i].spriteKey);
-        // Show the first frame for a smooth transition when the animation starts.
-        const firstFrame = sprite.texture.frames["0001.png"];
-        sprite.setFrame(firstFrame ?? 0);
+        sprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
+        if (sprite.texture.frameTotal > 1) {
+          // Show the first animation frame for a smooth transition when the animation starts.
+          const firstFrame = sprite.texture.frames["0001.png"];
+          sprite.setFrame(firstFrame ?? 0);
+        }
       }
     });
     this.getTintSprites().map((tintSprite, i) => {
       if (!this.spriteConfigs[i].isItem) {
-        tintSprite.setTexture(this.spriteConfigs[i].spriteKey);
-        // Show the first frame for a smooth transition when the animation starts.
-        const firstFrame = tintSprite.texture.frames["0001.png"];
-        tintSprite.setFrame(firstFrame ?? 0);
+        tintSprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
+        if (tintSprite.texture.frameTotal > 1) {
+          // Show the first frame for a smooth transition when the animation starts.
+          const firstFrame = tintSprite.texture.frames["0001.png"];
+          tintSprite.setFrame(firstFrame ?? 0);
+        }
       }
     });
 

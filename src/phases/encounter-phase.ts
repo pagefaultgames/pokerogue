@@ -204,7 +204,6 @@ export class EncounterPhase extends BattlePhase {
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = this.scene.getPlayerPokemon();
             if (playerPokemon?.visible) {
-              //TODO HERE
               this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
             }
             enemyPokemon.tint(0, 0.5);
