@@ -5,7 +5,7 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } f
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "#app/utils";
 import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
-import { PokeballType } from "#app/data/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "#app/data/battle-anims";
 import { Phase } from "#app/phase";
 import { initGameSpeed } from "#app/system/game-speed";
@@ -35,10 +35,11 @@ import { Gender } from "#app/data/gender";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "#app/ui/ui-theme";
 import PokemonData from "#app/system/pokemon-data";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChange, SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger } from "#app/data/pokemon-forms";
 import { FormChangePhase } from "#app/phases/form-change-phase";
 import { getTypeRgb } from "#app/data/type";
+import { Type } from "#enums/type";
 import PokemonSpriteSparkleHandler from "#app/field/pokemon-sprite-sparkle-handler";
 import CharSprite from "#app/ui/char-sprite";
 import DamageNumberHandler from "#app/field/damage-number-handler";
@@ -96,7 +97,9 @@ import { ExpPhase } from "#app/phases/exp-phase";
 import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
+import { StatusEffect } from "#enums/status-effect";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1275,6 +1278,8 @@ export default class BattleScene extends SceneBase {
       }
       if (resetArenaState) {
         this.arena.resetArenaEffects();
+
+        playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
 
         playerField.forEach((pokemon, p) => {
           if (pokemon.isOnField()) {
@@ -2977,12 +2982,21 @@ export default class BattleScene extends SceneBase {
 
   updateGameInfo(): void {
     const gameInfo = {
-      playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
+      playTime: this.sessionPlayTime ?? 0,
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : "",
-      wave: this.currentBattle?.waveIndex || 0,
-      party: this.party ? this.party.map(p => {
-        return { name: p.name, level: p.level };
+      wave: this.currentBattle?.waveIndex ?? 0,
+      party: this.party ? this.party.map((p) => {
+        return {
+          name: p.name,
+          form: p.getFormKey(),
+          types: p.getTypes().map((type) => Type[type]),
+          teraType: p.getTeraType() !== Type.UNKNOWN ? Type[p.getTeraType()] : "",
+          level: p.level,
+          currentHP: p.hp,
+          maxHP: p.getMaxHp(),
+          status: p.status?.effect ? StatusEffect[p.status.effect] : ""
+        };
       }) : [],
       modeChain: this.ui?.getModeChain() ?? [],
     };
