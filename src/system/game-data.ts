@@ -22,7 +22,7 @@ import { vouchers, VoucherType } from "#app/system/voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "#app/ui/ui";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { GameStats } from "#app/system/game-stats";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
@@ -33,7 +33,7 @@ import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/
 import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import * as Modifier from "#app/modifier/modifier";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import ChallengeData from "#app/system/challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";

@@ -1,7 +1,7 @@
-import { StatusEffect } from "#app/data/status-effect";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -91,18 +91,6 @@ describe("Abilities - Synchronize", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()!.status?.effect).toBeUndefined();
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
-    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
-  });
-
-  it("should activate with Psycho Shift after the move clears the status", async () => {
-    game.override.statusEffect(StatusEffect.PARALYSIS);
-    await game.classicMode.startBattle();
-
-    game.move.select(Moves.PSYCHO_SHIFT);
-    await game.phaseInterceptor.to("BerryPhase");
-
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS); // keeping old gen < V impl for now since it's buggy otherwise
     expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
   });

@@ -12,7 +12,7 @@ import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate } from "#app/data/exp";
 import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { Stat } from "#enums/stat";
 import { Variant, VariantSet, variantColorCache, variantData } from "#app/data/variant";

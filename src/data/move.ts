@@ -1,14 +1,15 @@
 import { ChargeAnim, initMoveAnim, loadMoveAnimAssets, MoveChargeAnim } from "./battle-anims";
-import { EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
+import { CommandedTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerableTag, ShellTrapTag, StockpilingTag, SubstituteTag, TrappedTag, TypeBoostTag } from "./battler-tags";
 import { getPokemonNameWithAffix } from "../messages";
 import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
-import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect, StatusEffect } from "./status-effect";
-import { getTypeDamageMultiplier, Type } from "./type";
+import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "./status-effect";
+import { getTypeDamageMultiplier } from "./type";
+import { Type } from "#enums/type";
 import { Constructor, NumberHolder } from "#app/utils";
 import * as Utils from "../utils";
-import { WeatherType } from "./weather";
+import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPostItemLostAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, InfiltratorAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, PostDamageForceSwitchAbAttr, PostItemLostAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
+import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPostItemLostAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ChangeMovePriorityAbAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, InfiltratorAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, PostDamageForceSwitchAbAttr, PostItemLostAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
 import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
 import { TerrainType } from "./terrain";
@@ -38,6 +39,7 @@ import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
 import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
 import { SwitchType } from "#enums/switch-type";
+import { StatusEffect } from "enums/status-effect";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -714,6 +716,10 @@ export default class Move implements Localizable {
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = 0;
 
+    if (target.getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon(target.scene) === target) {
+      return 20 * (target.isPlayer() === user.isPlayer() ? -1 : 1); // always -20 with how the AI handles this score
+    }
+
     for (const attr of this.attrs) {
       // conditionals to check if the move is self targeting (if so then you are applying the move to yourself, not the target)
       score += attr.getTargetBenefitScore(user, !attr.selfTarget ? target : user, move) * (target !== user && attr.selfTarget ? -1 : 1);
@@ -824,6 +830,15 @@ export default class Move implements Localizable {
     }
 
     return power.value;
+  }
+
+  getPriority(user: Pokemon, simulated: boolean = true) {
+    const priority = new Utils.NumberHolder(this.priority);
+
+    applyMoveAttrs(IncrementMovePriorityAttr, user, null, this, priority);
+    applyAbAttrs(ChangeMovePriorityAbAttr, user, null, simulated, this, priority);
+
+    return priority.value;
   }
 }
 
@@ -2266,24 +2281,26 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     super(false, { trigger: MoveEffectTrigger.HIT });
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * Applies the effect of Psycho Shift to its target
+   * Psycho Shift takes the user's status effect and passes it onto the target. The user is then healed after the move has been successfully executed.
+   * @returns `true` if Psycho Shift's effect is able to be applied to the target
+   */
+  apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const statusToApply: StatusEffect | undefined = user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
 
     if (target.status) {
       return false;
     } else {
       const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
+      const trySetStatus = canSetStatus ? target.trySetStatus(statusToApply, true, user) : false;
 
-      if (canSetStatus) {
-        if (user.status) {
-          user.scene.queueMessage(getStatusEffectHealText(user.status.effect, getPokemonNameWithAffix(user)));
-        }
-        user.resetStatus();
-        user.updateInfo();
-        target.trySetStatus(statusToApply, true, user);
+      if (trySetStatus && user.status) {
+        // PsychoShiftTag is added to the user if move succeeds so that the user is healed of its status effect after its move
+        user.addTag(BattlerTagType.PSYCHO_SHIFT);
       }
 
-      return canSetStatus;
+      return trySetStatus;
     }
   }
 
@@ -3242,6 +3259,41 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, _target, _move) => user.getHpRatio() > 1 / this.cutRatio && this.stats.some(s => user.getStatStage(s) < 6);
+  }
+}
+
+/**
+ * Attribute implementing the stat boosting effect of {@link https://bulbapedia.bulbagarden.net/wiki/Order_Up_(move) | Order Up}.
+ * If the user has a Pokemon with {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander} in their mouth,
+ * one of the user's stats are increased by 1 stage, depending on the "commanding" Pokemon's form. This effect does not respect
+ * effect chance, but Order Up itself may be boosted by Sheer Force.
+ */
+export class OrderUpStatBoostAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, { trigger: MoveEffectTrigger.HIT });
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    const commandedTag = user.getTag(CommandedTag);
+    if (!commandedTag) {
+      return false;
+    }
+
+    let increasedStat: EffectiveStat = Stat.ATK;
+    switch (commandedTag.tatsugiriFormKey) {
+      case "curly":
+        increasedStat = Stat.ATK;
+        break;
+      case "droopy":
+        increasedStat = Stat.DEF;
+        break;
+      case "stretchy":
+        increasedStat = Stat.SPD;
+        break;
+    }
+
+    user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [ increasedStat ], 1));
+    return true;
   }
 }
 
@@ -5852,7 +5904,13 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       return false;
     }
 
+    /** The {@linkcode Pokemon} to be switched out with this effect */
     const switchOutTarget = this.selfSwitch ? user : target;
+
+    // If the switch-out target is a Dondozo with a Tatsugiri in its mouth
+    // (e.g. when it uses Flip Turn), make it spit out the Tatsugiri before switching out.
+    switchOutTarget.lapseTag(BattlerTagType.COMMANDED);
+
     if (switchOutTarget instanceof PlayerPokemon) {
       /**
       * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
@@ -5952,6 +6010,12 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!this.selfSwitch) {
         if (move.hitsSubstitute(user, target)) {
+          return false;
+        }
+
+        // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
+        const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
+        if (commandedTag?.getSourcePokemon(switchOutTarget.scene)?.isActive(true)) {
           return false;
         }
 
@@ -6309,10 +6373,17 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
 }
 
 export class RandomMoveAttr extends OverrideMoveEffectAttr {
+  /**
+   * This function exists solely to allow tests to override the randomly selected move by mocking this function.
+   */
+  public getMoveOverride(): Moves | null {
+    return null;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL) && !allMoves[m].name.endsWith(" (N)"));
-      const moveId = moveIds[user.randSeedInt(moveIds.length)];
+      const moveId = this.getMoveOverride() ?? moveIds[user.randSeedInt(moveIds.length)];
 
       const moveTargets = getMoveTargets(user, moveId);
       if (!moveTargets.targets.length) {
@@ -6695,7 +6766,8 @@ export class SketchAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetMove = target.getMoveHistory().filter(m => !m.virtual).at(-1);
+    const targetMove = target.getLastXMoves(-1)
+      .find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
     if (!targetMove) {
       return false;
     }
@@ -7395,6 +7467,27 @@ export class FirstMoveCondition extends MoveCondition {
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     return this.apply(user, target, move) ? 10 : -20;
+  }
+}
+
+/**
+ * Condition used by the move {@link https://bulbapedia.bulbagarden.net/wiki/Upper_Hand_(move) | Upper Hand}.
+ * Moves with this condition are only successful when the target has selected
+ * a high-priority attack (after factoring in priority-boosting effects) and
+ * hasn't moved yet this turn.
+ */
+export class UpperHandCondition extends MoveCondition {
+  constructor() {
+    super((user, target, move) => {
+      const targetCommand = user.scene.currentBattle.turnCommands[target.getBattlerIndex()];
+
+      return !!targetCommand
+        && targetCommand.command === Command.FIGHT
+        && !target.turnData.acted
+        && !!targetCommand.move?.move
+        && allMoves[targetCommand.move.move].category !== MoveCategory.STATUS
+        && allMoves[targetCommand.move.move].getPriority(target) > 0;
+    });
   }
 }
 
@@ -8438,7 +8531,7 @@ export function initMoves() {
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
       .condition((user, target, move) => !!user.status && (user.status.effect === StatusEffect.PARALYSIS || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.BURN)),
     new SelfStatusMove(Moves.GRUDGE, Type.GHOST, -1, 5, -1, 0, 3)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.GRUDGE, true, undefined, 1),
     new SelfStatusMove(Moves.SNATCH, Type.DARK, -1, 10, -1, 4, 3)
       .unimplemented(),
     new AttackMove(Moves.SECRET_POWER, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
@@ -10300,8 +10393,8 @@ export function initMoves() {
     new AttackMove(Moves.LUMINA_CRASH, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -2),
     new AttackMove(Moves.ORDER_UP, Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 9)
-      .makesContact(false)
-      .partial(), // No effect implemented (requires Commander)
+      .attr(OrderUpStatBoostAttr)
+      .makesContact(false),
     new AttackMove(Moves.JET_PUNCH, Type.WATER, MoveCategory.PHYSICAL, 60, 100, 15, -1, 1, 9)
       .punchingMove(),
     new StatusMove(Moves.SPICY_EXTRACT, Type.GRASS, -1, 15, -1, 0, 9)
@@ -10515,8 +10608,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, false, 2),
     new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
       .attr(FlinchAttr)
-      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].category !== MoveCategory.STATUS && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move!].priority > 0 ) // TODO: is this bang correct?
-      .partial(), // Should also apply when target move priority increased by ability ex. gale wings
+      .condition(new UpperHandCondition()),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );

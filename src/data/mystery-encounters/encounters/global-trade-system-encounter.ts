@@ -21,11 +21,12 @@ import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
 import { Gender, getGenderSymbol } from "#app/data/gender";
 import { getNatureName } from "#app/data/nature";
-import { getPokeballAtlasKey, getPokeballTintColor, PokeballType } from "#app/data/pokeball";
+import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import type { PokeballType } from "#enums/pokeball";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -367,10 +368,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const modifier = encounter.misc.chosenModifier;
+          const modifier = encounter.misc.chosenModifier as PokemonHeldItemModifier;
+          const party = scene.getPlayerParty();
 
           // Check tier of the traded item, the received item will be one tier up
-          const type = modifier.type.withTierFromPool();
+          const type = modifier.type.withTierFromPool(ModifierPoolType.PLAYER, party);
           let tier = type.tier ?? ModifierTier.GREAT;
           // Eggs and White Herb are not in the pool
           if (type.id === "WHITE_HERB") {
@@ -385,11 +387,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             tier++;
           }
 
-          regenerateModifierPoolThresholds(scene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
+          regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, 0);
           let item: ModifierTypeOption | null = null;
           // TMs excluded from possible rewards
           while (!item || item.type.id.includes("TM_")) {
-            item = getPlayerModifierTypeOptions(1, scene.getPlayerParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
+            item = getPlayerModifierTypeOptions(1, party, [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
           }
 
           encounter.setDialogueToken("itemName", item.type.name);
