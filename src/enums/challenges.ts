@@ -5,4 +5,5 @@ export enum Challenges {
     LOWER_STARTER_POINTS,
     FRESH_START,
     INVERSE_BATTLE,
+    TRICK_ROOM,
 }

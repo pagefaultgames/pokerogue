@@ -591,6 +591,9 @@ export default class RunInfoUiHandler extends UiHandler {
           case Challenges.INVERSE_BATTLE:
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
+          case Challenges.TRICK_ROOM:
+            rules.push(i18next.t("challenges:trickRoom.shortName"));
+            break;
           default:
             const localisationKey = Challenges[this.runInfo.challenges[i].id].split("_").map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
             rules.push(i18next.t(`challenges:${localisationKey}.name`));

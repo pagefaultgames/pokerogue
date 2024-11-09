@@ -37,6 +37,7 @@ import { Species } from "#enums/species";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -434,6 +435,7 @@ export class EncounterPhase extends BattlePhase {
         });
       }
     }
+    applyChallenges(this.scene.gameMode, ChallengeType.ARENA_TAG, this.scene.arena);
   }
 
   end() {
