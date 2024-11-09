@@ -36,7 +36,7 @@ import {
   HeldItemRequirement,
   TypeRequirement
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { AttackTypeBoosterModifierType, ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import {
   AttackTypeBoosterModifier,
