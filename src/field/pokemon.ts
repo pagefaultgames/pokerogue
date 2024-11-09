@@ -3223,13 +3223,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Returns a list of the most recent move entries in this Pokemon's move history.
    * The retrieved move entries are sorted in order from NEWEST to OLDEST.
-   * @param turnCount The number of move entries to retrieve. If negative, retrieve the Pokemon's entire move history. Default is `1`.
+   * @param moveCount The number of move entries to retrieve.
+   *   If negative, retrieve the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   *   Default is `1`.
    * @returns A list of {@linkcode TurnMove}, as specified above.
    */
-  getLastXMoves(turnCount: number = 1): TurnMove[] {
+  getLastXMoves(moveCount: number = 1): TurnMove[] {
     const moveHistory = this.getMoveHistory();
-    if (turnCount >= 0) {
-      return moveHistory.slice(Math.max(moveHistory.length - turnCount, 0)).reverse();
+    if (moveCount >= 0) {
+      return moveHistory.slice(Math.max(moveHistory.length - moveCount, 0)).reverse();
     } else {
       return moveHistory.slice(0).reverse();
     }
