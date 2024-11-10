@@ -4,7 +4,7 @@ import { Abilities } from "#app/enums/abilities";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type";
-import Overrides from "#app/overrides";
+import Overrides, { DoubleType } from "#app/overrides";
 import { Unlockables } from "#app/system/unlockables";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
@@ -238,11 +238,12 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the battle type (single or double)
+   * Override the battle type (e.g., single or double).
+   * @see {@linkcode Overrides.BATTLE_TYPE_OVERRIDE}
    * @param battleType battle type to set
    * @returns `this`
    */
-  public battleType(battleType: "single" | "double" | "even-doubles" | "odd-doubles" | null): this {
+  public battleType(battleType: DoubleType): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
     this.log(`Battle type set to ${battleType} only!`);
     return this;
