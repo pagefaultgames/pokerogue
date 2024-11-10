@@ -6588,7 +6588,8 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
    * @returns {boolean} true if the move succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const lastMove = target.getLastXMoves().find(m => m.move !== Moves.NONE); // get the last move used, excluding status based fails
+    // get the last move used (excluding status based failures) as well as the corresponding moveset slot
+    const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE);
     const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
     const moveTargets = lastMove?.targets;
 
@@ -6597,17 +6598,18 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
     target.getMoveQueue().push({ move: lastMove?.move!, targets: moveTargets!, ignorePP: false });
-    target.scene.unshiftPhase(new MovePhase(target.scene, target as PlayerPokemon, moveTargets!, movesetMove!, false, false));
+    target.scene.unshiftPhase(new MovePhase(target.scene, target, moveTargets!, movesetMove!, false, false));
 
     return true;
   }
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      const lastMove = target.getLastXMoves().find(m => m.move !== Moves.NONE);
+      // TODO: Confirm behavior of instructing move known by target but called by another move
+      const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE);
       const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
       const moveTargets = lastMove?.targets!;
-      // TODO: Add a way of adding moves to list procedurally
+      // TODO: Add a way of adding moves to list procedurally rather than a pre-defined blacklist
       const unrepeatablemoves = [
         // Locking/Continually Executed moves
         Moves.OUTRAGE,
@@ -6659,10 +6661,11 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
         Moves.TRANSFORM,
         Moves.MIMIC,
         Moves.STRUGGLE,
-        // TODO: Add Z-move blockage once zmoves are implemented
+        // TODO: Add Z-move & Max Move blockage if/when they are implemented
       ];
 
       if (!movesetMove || // called move not in target's moveset (dancer, forgetting the move, etc.)
+        movesetMove.ppUsed === movesetMove.getMovePp() || // move out of pp
         allMoves[lastMove!.move].isChargingMove() || // called move is a charging/recharging move
         !moveTargets.length || // called move has no targets
         unrepeatablemoves.includes(lastMove?.move!)) { // called move is explicitly in the banlist
