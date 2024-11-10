@@ -4152,7 +4152,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
     if (!simulated && postBattleLoot.length) {
       const randItem = Utils.randSeedItem(postBattleLoot);
       //@ts-ignore - TODO see below
-      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true)) { // TODO: fix. This is a promise!?
+      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) { // TODO: fix. This is a promise!?
         postBattleLoot.splice(postBattleLoot.indexOf(randItem), 1);
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: randItem.type.name }));
         return true;
@@ -5616,7 +5616,9 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN),
+      .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN)
+      .bypassFaint() // Allows reviver seed to activate Unburden
+      .edgeCase(), // Should not restore Unburden boost if Pokemon loses then regains Unburden ability
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReduceBurnDamageAbAttr, 0.5)
