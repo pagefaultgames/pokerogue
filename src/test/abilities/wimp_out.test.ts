@@ -296,7 +296,9 @@ describe("Abilities - Wimp Out", () => {
       Species.TYRUNT
     ]);
 
-    game.move.select(Moves.SPLASH);
+    game.scene.getPlayerPokemon()!.hp *= 0.51;
+
+    game.move.select(Moves.ENDURE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     confirmNoSwitch();

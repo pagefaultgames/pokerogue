@@ -23,7 +23,7 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, PostDamageForceSwitchAbAttr } from "#app/data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, PostDamageForceSwitchAbAttr, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/ability";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -985,7 +985,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.status && this.status.effect === StatusEffect.PARALYSIS) {
           ret >>= 1;
         }
-        if (this.getTag(BattlerTagType.UNBURDEN) && !this.scene.getField(true).some(pokemon => pokemon !== this && pokemon.hasAbilityWithAttr(SuppressFieldAbilitiesAbAttr))) {
+        if (this.getTag(BattlerTagType.UNBURDEN) && this.hasAbility(Abilities.UNBURDEN)) {
           ret *= 2;
         }
         break;
@@ -2030,15 +2030,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
     const randAbilityIndex = Utils.randSeedInt(2);
 
-    const filter = !forStarter ? this.species.getCompatibleFusionSpeciesFilter()
-      : species => {
+    const filter = !forStarter ?
+      this.species.getCompatibleFusionSpeciesFilter()
+      : (species: PokemonSpecies) => {
         return pokemonEvolutions.hasOwnProperty(species.speciesId)
-      && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
-      && !species.pseudoLegendary
-      && !species.legendary
-      && !species.mythical
-      && !species.isTrainerForbidden()
-      && species.speciesId !== this.species.speciesId;
+          && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+          && !species.subLegendary
+          && !species.legendary
+          && !species.mythical
+          && !species.isTrainerForbidden()
+          && species.speciesId !== this.species.speciesId
+          && species.speciesId !== Species.DITTO;
       };
 
     let fusionOverride: PokemonSpecies | undefined = undefined;
@@ -3082,7 +3084,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   lapseTag(tagType: BattlerTagType): boolean {
-    const tags = this.summonData.tags;
+    const tags = this.summonData?.tags;
+    if (isNullOrUndefined(tags)) {
+      return false;
+    }
     const tag = tags.find(t => t.tagType === tagType);
     if (tag && !(tag.lapse(this, BattlerTagLapseType.CUSTOM))) {
       tag.onRemove(this);
@@ -3224,9 +3229,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.getMoveHistory().push(turnMove);
   }
 
-  getLastXMoves(turnCount: integer = 0): TurnMove[] {
+  /**
+   * Returns a list of the most recent move entries in this Pokemon's move history.
+   * The retrieved move entries are sorted in order from NEWEST to OLDEST.
+   * @param moveCount The number of move entries to retrieve.
+   *   If negative, retrieve the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   *   Default is `1`.
+   * @returns A list of {@linkcode TurnMove}, as specified above.
+   */
+  getLastXMoves(moveCount: number = 1): TurnMove[] {
     const moveHistory = this.getMoveHistory();
-    return moveHistory.slice(turnCount >= 0 ? Math.max(moveHistory.length - (turnCount || 1), 0) : 0, moveHistory.length).reverse();
+    if (moveCount >= 0) {
+      return moveHistory.slice(Math.max(moveHistory.length - moveCount, 0)).reverse();
+    } else {
+      return moveHistory.slice(0).reverse();
+    }
   }
 
   getMoveQueue(): QueuedMove[] {
@@ -3647,6 +3664,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.triggerPokemonBattleAnim(this, PokemonAnimType.SUBSTITUTE_ADD);
         this.getTag(SubstituteTag)!.sourceInFocus = false;
       }
+
+      // If this Pokemon has Commander and Dondozo as an active ally, hide this Pokemon's sprite.
+      if (this.hasAbilityWithAttr(CommanderAbAttr)
+          && this.scene.currentBattle.double
+          && this.getAlly()?.species.speciesId === Species.DONDOZO) {
+        this.setVisible(false);
+      }
       this.summonDataPrimer = null;
     }
     this.updateInfo();
@@ -4030,8 +4054,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.resetTurnData();
     if (clearEffects) {
       this.destroySubstitute();
-      this.resetSummonData();
-      this.resetBattleData();
+      this.resetSummonData(); // this also calls `resetBattleSummonData`
     }
     if (hideInfo) {
       this.hideInfo();
@@ -4079,6 +4102,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Reduces one of this Pokemon's held item stacks by 1, and removes the item if applicable.
+   * Does nothing if this Pokemon is somehow not the owner of the held item.
+   * @param heldItem The item stack to be reduced by 1.
+   * @param forBattle If `false`, do not trigger in-battle effects (such as Unburden) from losing the item. For example, set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter. Default is `true`.
+   * @returns `true` if the item was removed successfully, `false` otherwise.
+   */
+  public loseHeldItem(heldItem: PokemonHeldItemModifier, forBattle: boolean = true): boolean {
+    if (heldItem.pokemonId === -1 || heldItem.pokemonId === this.id) {
+      heldItem.stackCount--;
+      if (heldItem.stackCount <= 0) {
+        this.scene.removeModifier(heldItem, !this.isPlayer());
+      }
+      if (forBattle) {
+        applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
@@ -4522,7 +4567,7 @@ export class PlayerPokemon extends Pokemon {
         && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
       const transferModifiers: Promise<boolean>[] = [];
       for (const modifier of fusedPartyMemberHeldModifiers) {
-        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true));
+        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false));
       }
       Promise.allSettled(transferModifiers).then(() => {
         this.scene.updateModifiers(true, true).then(() => {
@@ -5093,7 +5138,7 @@ export class EnemyPokemon extends Pokemon {
 
   /**
    * Add a new pokemon to the player's party (at `slotIndex` if set).
-   * If the first slot is replaced, the new pokemon's visibility will be set to `false`.
+   * The new pokemon's visibility will be set to `false`.
    * @param pokeballType the type of pokeball the pokemon was caught with
    * @param slotIndex an optional index to place the pokemon in the party
    * @returns the pokemon that was added or null if the pokemon could not be added
@@ -5111,13 +5156,13 @@ export class EnemyPokemon extends Pokemon {
       const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this);
 
       if (Utils.isBetween(slotIndex, 0, PLAYER_PARTY_MAX_SIZE - 1)) {
-        if (slotIndex === 0) {
-          newPokemon.setVisible(false); // Hide if replaced with first pokemon
-        }
         party.splice(slotIndex, 0, newPokemon);
       } else {
         party.push(newPokemon);
       }
+
+      // Hide the Pokemon since it is not on the field
+      newPokemon.setVisible(false);
 
       ret = newPokemon;
       this.scene.triggerPokemonFormChange(newPokemon, SpeciesFormChangeActiveTrigger, true);
