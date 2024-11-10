@@ -4956,7 +4956,7 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
         }
 
         /**
-         * If move is of type electric or grass it already has super effectiveness against water types and multiplier does not need to recalculate its value.
+         * If move is of type electric it already has super effectiveness against water types and multiplier does not need to recalculate its value.
          */
         if (user.getMoveType(move) !== Type.ELECTRIC) {
           multiplier.value *= 2 / effectivenessAgainstWater.value;
