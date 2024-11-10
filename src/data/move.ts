@@ -4945,7 +4945,22 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
       const effectivenessAgainstWater = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, Type.WATER));
       applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstWater);
       if (effectivenessAgainstWater.value !== 0) {
-        multiplier.value *= 2 / effectivenessAgainstWater.value;
+        /**
+         * During Normalize the given multiplier value against water Pkm is 1x but should be 2x.
+         *
+         * For more information about special interactions visit [Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Freeze-Dry_(move))
+         */
+        if (user.getAbility().id === Abilities.NORMALIZE) {
+          multiplier.value *= 2;
+          return true;
+        }
+
+        /**
+         * If move is of type electric or grass it already has super effectiveness against water types and multiplier does not need to recalculate its value.
+         */
+        if (user.getMoveType(move) !== Type.ELECTRIC) {
+          multiplier.value *= 2 / effectivenessAgainstWater.value;
+        }
         return true;
       }
     }

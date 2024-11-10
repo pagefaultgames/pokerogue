@@ -97,8 +97,7 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
-  // enable if this is ever fixed (lol)
-  it.todo("should deal 2x damage to water types under Normalize", async () => {
+  it("should deal 2x damage to water types under Normalize", async () => {
     game.override.ability(Abilities.NORMALIZE);
     await game.classicMode.startBattle();
 
@@ -112,8 +111,23 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
   });
 
-  // enable once Electrify is implemented (and the interaction is fixed, as above)
-  it.todo("should deal 2x damage to water types under Electrify", async () => {
+  it("should deal 0.25x damage to rock AND steel type Pkm under Normalize", async () => {
+    game.override
+      .ability(Abilities.NORMALIZE)
+      .enemySpecies(Species.SHIELDON);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0.25);
+  });
+
+  it("should deal 2x damage to water types under Electrify", async () => {
     game.override.enemyMoveset([ Moves.ELECTRIFY ]);
     await game.classicMode.startBattle();
 
@@ -125,5 +139,37 @@ describe("Moves - Freeze-Dry", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
+  });
+
+  it("should deal 4x damage to water/flying types under Electrify", async () => {
+    game.override
+      .enemyMoveset([ Moves.ELECTRIFY ])
+      .enemySpecies(Species.GYARADOS);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
+  });
+
+  it("should deal 0.25x damage to Grass/Dragon types under Electrify", async () => {
+    game.override
+      .enemyMoveset([ Moves.ELECTRIFY ])
+      .enemySpecies(Species.FLAPPLE);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0.25);
   });
 });
