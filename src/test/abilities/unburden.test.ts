@@ -1,3 +1,4 @@
+import { BattlerIndex } from "#app/battle";
 import { PostItemLostAbAttr } from "#app/data/ability";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
 import Pokemon from "#app/field/pokemon";
@@ -60,6 +61,8 @@ describe("Abilities - Unburden", () => {
         { name: "BERRY", type: BerryType.SITRUS, count: 1 },
         { name: "BERRY", type: BerryType.LUM, count: 1 },
       ]);
+    // For the various tests that use Thief, give it a 100% steal rate
+    vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([ new StealHeldItemChanceAttr(1.0) ]);
   });
 
   it("should activate when a berry is eaten", async () => {
@@ -165,7 +168,6 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when an item is stolen via move", async () => {
-    vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([ new StealHeldItemChanceAttr(1.0) ]); // give Thief 100% steal rate
     game.override.moveset(Moves.THIEF)
       .startingHeldItems([]); // Remove player's full stacks of held items so it can steal opponent's held items
     await game.classicMode.startBattle([ Species.TREECKO ]);
@@ -345,5 +347,55 @@ describe("Abilities - Unburden", () => {
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+  });
+
+  // test for `.bypassFaint()` - singles
+  it("shouldn't persist when revived normally if activated while fainting", async () => {
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.THIEF ]);
+    await game.classicMode.startBattle([ Species.TREECKO, Species.FEEBAS ]);
+
+    const treecko = game.scene.getPlayerPokemon()!;
+    const treeckoInitialHeldItems = getHeldItemCount(treecko);
+    const initialSpeed = treecko.getStat(Stat.SPD);
+
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.THIEF);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    game.doRevivePokemon(1);
+    game.doSwitchPokemon(1);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerPokemon()!).toBe(treecko);
+    expect(getHeldItemCount(treecko)).toBeLessThan(treeckoInitialHeldItems);
+    expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialSpeed);
+  });
+
+  // test for `.bypassFaint()` - doubles
+  it("shouldn't persist when revived by revival blessing if activated while fainting", async () => {
+    game.override
+      .battleType("double")
+      .enemyMoveset([ Moves.SPLASH, Moves.THIEF ])
+      .moveset([ Moves.SPLASH, Moves.REVIVAL_BLESSING ])
+      .startingHeldItems([{ name: "WIDE_LENS" }]);
+    await game.classicMode.startBattle([ Species.TREECKO, Species.FEEBAS, Species.MILOTIC ]);
+
+    const treecko = game.scene.getPlayerField()[0];
+    const treeckoInitialHeldItems = getHeldItemCount(treecko);
+    const initialSpeed = treecko.getStat(Stat.SPD);
+
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.REVIVAL_BLESSING, 1);
+    await game.forceEnemyMove(Moves.THIEF, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2 ]);
+    game.doSelectPartyPokemon(0, "MoveEffectPhase");
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerField()[0]).toBe(treecko);
+    expect(getHeldItemCount(treecko)).toBeLessThan(treeckoInitialHeldItems);
+    expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialSpeed);
   });
 });

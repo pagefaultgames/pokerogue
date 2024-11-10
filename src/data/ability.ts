@@ -5603,6 +5603,7 @@ export function initAbilities() {
       .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
       .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN)
+      .bypassFaint() // Allows reviver seed to activate Unburden
       .edgeCase(), // Should not restore Unburden boost if Pokemon loses then regains Unburden ability
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
