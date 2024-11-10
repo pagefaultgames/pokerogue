@@ -1,12 +1,11 @@
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Type } from "#enums/type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Forest's Curse", () => {
+describe("Abilities - Corrosion", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -23,25 +22,25 @@ describe("Moves - Forest's Curse", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.FORESTS_CURSE, Moves.TRICK_OR_TREAT ])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([ Moves.SPLASH ])
       .battleType("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(Species.GRIMER)
+      .enemyAbility(Abilities.CORROSION)
+      .enemyMoveset(Moves.TOXIC);
   });
 
-  it("will replace the added type from Trick Or Treat", async () => {
+  it("If a Poison- or Steel-type Pokémon with this Ability poisons a target with Synchronize, Synchronize does not gain the ability to poison Poison- or Steel-type Pokémon.", async () => {
+    game.override.ability(Abilities.SYNCHRONIZE);
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
+    const playerPokemon = game.scene.getPlayerPokemon();
     const enemyPokemon = game.scene.getEnemyPokemon();
-    game.move.select(Moves.TRICK_OR_TREAT);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon!.summonData.addedType).toBe(Type.GHOST);
+    expect(playerPokemon!.status).toBeUndefined();
 
-    game.move.select(Moves.FORESTS_CURSE);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon?.summonData.addedType).toBe(Type.GRASS);
+    game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(playerPokemon!.status).toBeDefined();
+    expect(enemyPokemon!.status).toBeUndefined();
   });
 });

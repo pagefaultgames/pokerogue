@@ -1,5 +1,5 @@
 import { Gender } from "#app/data/gender";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { allSpecies } from "#app/data/pokemon-species";
 import { GameModes } from "#app/game-mode";
 import { EncounterPhase } from "#app/phases/encounter-phase";

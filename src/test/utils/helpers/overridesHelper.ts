@@ -1,19 +1,20 @@
-import { StatusEffect } from "#app/data/status-effect";
-import { Weather, WeatherType } from "#app/data/weather";
+import { Variant } from "#app/data/variant";
+import { Weather } from "#app/data/weather";
 import { Abilities } from "#app/enums/abilities";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
 import * as GameMode from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierOverride } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
+import { Unlockables } from "#app/system/unlockables";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
+import type { WeatherType } from "#enums/weather-type";
 import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
-import { Unlockables } from "#app/system/unlockables";
-import { Variant } from "#app/data/variant";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Helper to handle overrides in tests

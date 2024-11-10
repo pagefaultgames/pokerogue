@@ -1,12 +1,12 @@
+import { StatusEffect } from "#app/enums/status-effect";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Type } from "#enums/type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Forest's Curse", () => {
+describe("Moves - Psycho Shift", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -23,25 +23,27 @@ describe("Moves - Forest's Curse", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.FORESTS_CURSE, Moves.TRICK_OR_TREAT ])
+      .moveset([ Moves.PSYCHO_SHIFT ])
       .ability(Abilities.BALL_FETCH)
+      .statusEffect(StatusEffect.POISON)
       .battleType("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyLevel(20)
+      .enemyAbility(Abilities.SYNCHRONIZE)
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("will replace the added type from Trick Or Treat", async () => {
+  it("If Psycho Shift is used on a Pokémon with Synchronize, the user of Psycho Shift will already be afflicted with a status condition when Synchronize activates", async () => {
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
+    const playerPokemon = game.scene.getPlayerPokemon();
     const enemyPokemon = game.scene.getEnemyPokemon();
-    game.move.select(Moves.TRICK_OR_TREAT);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon!.summonData.addedType).toBe(Type.GHOST);
+    expect(enemyPokemon?.status).toBeUndefined();
 
-    game.move.select(Moves.FORESTS_CURSE);
+    game.move.select(Moves.PSYCHO_SHIFT);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon?.summonData.addedType).toBe(Type.GRASS);
+    expect(playerPokemon?.status).toBeNull();
+    expect(enemyPokemon?.status).toBeDefined();
   });
 });
