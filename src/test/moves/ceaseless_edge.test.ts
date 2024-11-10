@@ -92,7 +92,7 @@ describe("Moves - Ceaseless Edge", () => {
     "trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage",
     async () => {
       game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
-      game.override.startingWave(5);
+      game.override.startingWave(25);
 
       await game.classicMode.startBattle([ Species.ILLUMISE ]);
 
@@ -102,7 +102,7 @@ describe("Moves - Ceaseless Edge", () => {
       const tagBefore = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
       expect(tagBefore instanceof ArenaTrapTag).toBeFalsy();
 
-      await game.phaseInterceptor.to(TurnEndPhase, false);
+      await game.toNextTurn();
       const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
       expect(tagAfter instanceof ArenaTrapTag).toBeTruthy();
       expect(tagAfter.layers).toBe(2);
