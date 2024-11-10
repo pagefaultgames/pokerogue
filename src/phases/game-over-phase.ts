@@ -179,12 +179,10 @@ export class GameOverPhase extends BattlePhase {
     if (!Utils.isLocal || Utils.isLocalServerConnected) {
       pokerogueApi.savedata.session.newclear({ slot: this.scene.sessionSlotId, isVictory: this.isVictory, clientSessionId: clientSessionId })
         .then((success) => doGameOver(!!success));
-    } else {
-      if (this.isVictory) {
-        this.scene.gameData.offlineNewClear(this.scene).then(result => {
-          doGameOver(result);
-        });
-      }
+    } else if (this.isVictory) {
+      this.scene.gameData.offlineNewClear(this.scene).then(result => {
+        doGameOver(result);
+      });
     }
   }
 
