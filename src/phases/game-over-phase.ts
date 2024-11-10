@@ -32,7 +32,7 @@ export class GameOverPhase extends BattlePhase {
   constructor(scene: BattleScene, isVictory: boolean = false) {
     super(scene);
 
-    this.isVictory = victory;
+    this.isVictory = isVictory;
   }
 
   start() {
