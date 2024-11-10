@@ -6388,10 +6388,17 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
 }
 
 export class RandomMoveAttr extends OverrideMoveEffectAttr {
+  /**
+   * This function exists solely to allow tests to override the randomly selected move by mocking this function.
+   */
+  public getMoveOverride(): Moves | null {
+    return null;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL) && !allMoves[m].name.endsWith(" (N)"));
-      const moveId = moveIds[user.randSeedInt(moveIds.length)];
+      const moveId = this.getMoveOverride() ?? moveIds[user.randSeedInt(moveIds.length)];
 
       const moveTargets = getMoveTargets(user, moveId);
       if (!moveTargets.targets.length) {
@@ -6774,7 +6781,7 @@ export class SketchAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetMove = target.getLastXMoves(target.battleSummonData.turnCount)
+    const targetMove = target.getLastXMoves(-1)
       .find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
     if (!targetMove) {
       return false;
@@ -7003,6 +7010,9 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Used by Transform
+ */
 export class TransformAttr extends MoveEffectAttr {
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     if (!super.apply(user, target, move, args)) {
@@ -7011,10 +7021,8 @@ export class TransformAttr extends MoveEffectAttr {
 
     const promises: Promise<void>[] = [];
     user.summonData.speciesForm = target.getSpeciesForm();
-    user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
     user.summonData.ability = target.getAbility().id;
     user.summonData.gender = target.getGender();
-    user.summonData.fusionGender = target.getFusionGender();
 
     // Power Trick's effect will not preserved after using Transform
     user.removeTag(BattlerTagType.POWER_TRICK);
@@ -8085,7 +8093,8 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.TRANSFORM, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
-      .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
+      // transforming from or into fusion pokemon causes various problems (such as crashes)
+      .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
       .ignoresProtect(),
     new AttackMove(Moves.BUBBLE, Type.WATER, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
