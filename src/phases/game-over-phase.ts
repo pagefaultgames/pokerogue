@@ -29,10 +29,10 @@ export class GameOverPhase extends BattlePhase {
   private isVictory: boolean;
   private firstRibbons: PokemonSpecies[] = [];
 
-  constructor(scene: BattleScene, victory?: boolean) {
+  constructor(scene: BattleScene, victory: boolean = false) {
     super(scene);
 
-    this.isVictory = !!victory;
+    this.isVictory = victory;
   }
 
   start() {
