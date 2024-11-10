@@ -6656,6 +6656,7 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
         Moves.SOLAR_BLADE,
         Moves.METEOR_BEAM,
         // Other moves
+        Moves.INSTRUCT,
         Moves.KINGS_SHIELD,
         Moves.SKETCH,
         Moves.TRANSFORM,
