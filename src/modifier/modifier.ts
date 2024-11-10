@@ -2690,10 +2690,10 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * For each stack, converts 25 percent
+   * For each stack, converts 25 percent of attack damage into an additional strike.
    * @param pokemon The {@linkcode Pokemon} using the move
-   * @param move The {@linkcode Move} being used
-   * @param count {@linkcode NumberHolder} holding the number of items
+   * @param moveId The {@linkcode Moves | identifier} for the move being used
+   * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
    * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
    * @returns always `true`
    */
