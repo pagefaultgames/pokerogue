@@ -40,6 +40,9 @@ import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
 import { SwitchType } from "#enums/switch-type";
 import { StatusEffect } from "enums/status-effect";
+import { Mode } from "#app/ui/ui";
+import PartyUiHandler, { PartyUiMode, type PartyOption } from "#app/ui/party-ui-handler";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -5828,30 +5831,63 @@ export class AddPledgeEffectAttr extends AddArenaTagAttr {
  * @see {@linkcode apply}
  */
 export class RevivalBlessingAttr extends MoveEffectAttr {
-  constructor(user?: boolean) {
+  constructor() {
     super(true);
   }
 
   /**
-   *
    * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
+   * @param target N/A
+   * @param move N/A
    * @param args N/A
    * @returns Promise, true if function succeeds.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    const revivePlayer = (): Promise<void> => {
+      return new Promise(resolve => {
+        user.scene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, user.getFieldIndex(), (slotIndex: number, option: PartyOption) => {
+          if (slotIndex >= 0 && slotIndex < 6) {
+            const pokemon = user.scene.getPlayerParty()[slotIndex];
+            if (!pokemon || !pokemon.isFainted()) {
+              resolve();
+            }
+
+            pokemon.resetTurnData();
+            pokemon.resetStatus();
+            pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
+            user.scene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: pokemon.name }), 0, true);
+
+            if (user.scene.currentBattle.double && user.scene.getPlayerParty().length > 1) {
+              const allyPokemon = user.getAlly();
+              if (slotIndex <= 1) {
+                // Revived ally pokemon
+                user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, true));
+                user.scene.unshiftPhase(new ToggleDoublePositionPhase(user.scene, true));
+              } else if (allyPokemon.isFainted()) {
+                // Revived party pokemon, and ally pokemon is fainted
+                user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, true));
+                user.scene.unshiftPhase(new ToggleDoublePositionPhase(user.scene, true));
+              }
+            }
+
+          }
+          user.scene.ui.setMode(Mode.MESSAGE).then(() => resolve());
+        }, PartyUiHandler.FilterFainted);
+      });
+    };
+
     return new Promise(resolve => {
       // If user is player, checks if the user has fainted pokemon
-      if (user instanceof PlayerPokemon
-        && user.scene.getPlayerParty().findIndex(p => p.isFainted()) > -1) {
-        (user as PlayerPokemon).revivalBlessing().then(() => {
+      if (user instanceof PlayerPokemon && user.scene.getPlayerParty().findIndex(p => p.isFainted()) > -1) {
+        revivePlayer().then(() => {
           resolve(true);
         });
       // If user is enemy, checks that it is a trainer, and it has fainted non-boss pokemon in party
-      } else if (user instanceof EnemyPokemon
+      } else if (
+        user instanceof EnemyPokemon
         && user.hasTrainer()
-        && user.scene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1) {
+        && user.scene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1
+      ) {
         // Selects a random fainted pokemon
         const faintedPokemon = user.scene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
         const pokemon = faintedPokemon[user.randSeedInt(faintedPokemon.length)];
