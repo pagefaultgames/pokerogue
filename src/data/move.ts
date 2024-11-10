@@ -8484,7 +8484,8 @@ export function initMoves() {
     new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .ignoresSubstitute()
-      .target(MoveTarget.NEAR_ALLY),
+      .target(MoveTarget.NEAR_ALLY)
+      .condition(failIfSingleBattle),
     new StatusMove(Moves.TRICK, Type.PSYCHIC, 100, 10, -1, 0, 3)
       .unimplemented(),
     new StatusMove(Moves.ROLE_PLAY, Type.PSYCHIC, -1, 10, -1, 0, 3)
