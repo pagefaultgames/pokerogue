@@ -58,7 +58,7 @@ class DefaultOverrides {
    *
    * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
    */
-  readonly BATTLE_TYPE_OVERRIDE: DoubleType | null = null;
+  readonly BATTLE_TYPE_OVERRIDE: SingleOrDoubleType | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
@@ -241,4 +241,4 @@ export default {
   ...overrides
 } satisfies InstanceType<typeof DefaultOverrides>;
 
-export type DoubleType = "double" | "single" | "even-doubles" | "odd-doubles";
+export type SingleOrDoubleType = "double" | "single" | "even-doubles" | "odd-doubles";
