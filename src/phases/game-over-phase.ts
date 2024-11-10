@@ -173,16 +173,18 @@ export class GameOverPhase extends BattlePhase {
       });
     };
 
-    /* Added a local check to see if the game is running offline on victory
+    /* Added a local check to see if the game is running offline
       If Online, execute apiFetch as intended
-      If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
+      If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks */
     if (!Utils.isLocal || Utils.isLocalServerConnected) {
       pokerogueApi.savedata.session.newclear({ slot: this.scene.sessionSlotId, isVictory: this.isVictory, clientSessionId: clientSessionId })
         .then((success) => doGameOver(!!success));
     } else {
-      this.scene.gameData.offlineNewClear(this.scene).then(result => {
-        doGameOver(result);
-      });
+      if (this.isVictory) {
+        this.scene.gameData.offlineNewClear(this.scene).then(result => {
+          doGameOver(result);
+        });
+      }
     }
   }
 
