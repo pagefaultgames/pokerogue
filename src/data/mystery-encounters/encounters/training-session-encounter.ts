@@ -1,6 +1,6 @@
 import { Ability, allAbilities } from "#app/data/ability";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getNatureName, Nature } from "#app/data/nature";
+import { getNatureName } from "#app/data/nature";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -21,6 +21,7 @@ import i18next from "i18next";
 import { getStatKey } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import type { Nature } from "#enums/nature";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounters/trainingSession";

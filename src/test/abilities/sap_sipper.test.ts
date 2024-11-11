@@ -8,7 +8,8 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { allMoves, RandomMoveAttr } from "#app/data/move";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
@@ -27,20 +28,20 @@ describe("Abilities - Sap Sipper", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.disableCrits();
+    game.override.battleType("single")
+      .disableCrits()
+      .ability(Abilities.SAP_SIPPER)
+      .enemySpecies(Species.RATTATA)
+      .enemyAbility(Abilities.SAP_SIPPER)
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("raises ATK stat stage by 1 and block effects when activated against a grass attack", async() => {
     const moveToUse = Moves.LEAFAGE;
-    const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.DUSKULL);
-    game.override.enemyAbility(enemyAbility);
+    game.override.moveset(moveToUse);
 
-    await game.startBattle();
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const initialEnemyHp = enemyPokemon.hp;
@@ -55,14 +56,10 @@ describe("Abilities - Sap Sipper", () => {
 
   it("raises ATK stat stage by 1 and block effects when activated against a grass status move", async() => {
     const moveToUse = Moves.SPORE;
-    const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(enemyAbility);
+    game.override.moveset(moveToUse);
 
-    await game.startBattle();
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -76,14 +73,10 @@ describe("Abilities - Sap Sipper", () => {
 
   it("do not activate against status moves that target the field", async () => {
     const moveToUse = Moves.GRASSY_TERRAIN;
-    const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(enemyAbility);
+    game.override.moveset(moveToUse);
 
-    await game.startBattle();
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
     game.move.select(moveToUse);
 
@@ -96,14 +89,10 @@ describe("Abilities - Sap Sipper", () => {
 
   it("activate once against multi-hit grass attacks", async () => {
     const moveToUse = Moves.BULLET_SEED;
-    const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(enemyAbility);
+    game.override.moveset(moveToUse);
 
-    await game.startBattle();
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const initialEnemyHp = enemyPokemon.hp;
@@ -118,15 +107,10 @@ describe("Abilities - Sap Sipper", () => {
 
   it("do not activate against status moves that target the user", async () => {
     const moveToUse = Moves.SPIKY_SHIELD;
-    const ability = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
-    game.override.ability(ability);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.NONE);
+    game.override.moveset(moveToUse);
 
-    await game.startBattle();
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -142,18 +126,15 @@ describe("Abilities - Sap Sipper", () => {
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
-  // TODO Add METRONOME outcome override
-  // To run this testcase, manually modify the METRONOME move to always give SAP_SIPPER, then uncomment
-  it.todo("activate once against multi-hit grass attacks (metronome)", async () => {
+  it("activate once against multi-hit grass attacks (metronome)", async () => {
     const moveToUse = Moves.METRONOME;
-    const enemyAbility = Abilities.SAP_SIPPER;
 
-    game.override.moveset([ moveToUse ]);
-    game.override.enemyMoveset([ Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE ]);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(enemyAbility);
+    const randomMoveAttr = allMoves[Moves.METRONOME].findAttr(attr => attr instanceof RandomMoveAttr) as RandomMoveAttr;
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.BULLET_SEED);
 
-    await game.startBattle();
+    game.override.moveset(moveToUse);
+
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const initialEnemyHp = enemyPokemon.hp;
@@ -168,11 +149,8 @@ describe("Abilities - Sap Sipper", () => {
 
   it("still activates regardless of accuracy check", async () => {
     game.override.moveset(Moves.LEAF_BLADE);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.SAP_SIPPER);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 

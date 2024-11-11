@@ -2,7 +2,7 @@ import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounte
 import { Moves } from "#app/enums/moves";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import BattleScene from "#app/battle-scene";
-import { Type } from "../type";
+import { Type } from "#enums/type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";

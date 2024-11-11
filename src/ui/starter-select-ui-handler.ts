@@ -10,13 +10,13 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { allMoves } from "#app/data/move";
-import { Nature, getNatureName } from "#app/data/nature";
+import { getNatureName } from "#app/data/nature";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { GameModes } from "#app/game-mode";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
@@ -50,6 +50,7 @@ import { TitlePhase } from "#app/phases/title-phase";
 import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 import { BooleanHolder, capitalizeString, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
+import type { Nature } from "#enums/nature";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 

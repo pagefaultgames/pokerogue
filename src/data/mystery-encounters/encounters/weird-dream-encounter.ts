@@ -1,4 +1,4 @@
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import BattleScene from "#app/battle-scene";
@@ -312,6 +312,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
           pokemon.levelExp = 0;
 
           pokemon.calculateStats();
+          pokemon.getBattleInfo().setLevel(pokemon.level);
           await pokemon.updateInfo();
         }
 

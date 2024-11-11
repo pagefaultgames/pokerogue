@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Challenges } from "#enums/challenges";

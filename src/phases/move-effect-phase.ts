@@ -43,7 +43,7 @@ import {
   VariableTargetAttr,
 } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import Pokemon, { HitResult, MoveResult, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
@@ -211,11 +211,14 @@ export class MoveEffectPhase extends PokemonPhase {
             && (target.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
             && !target.getTag(SemiInvulnerableTag);
 
+          /** Is the target hidden by the effects of its Commander ability? */
+          const isCommanding = this.scene.currentBattle.double && target.getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon(this.scene) === target;
+
           /**
            * If the move missed a target, stop all future hits against that target
            * and move on to the next target (if there is one).
            */
-          if (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()]) {
+          if (isCommanding || (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()])) {
             this.stopMultiHit(target);
             this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
             if (moveHistoryEntry.result === MoveResult.PENDING) {
