@@ -26,7 +26,6 @@ import {
   applyMoveAttrs,
   AttackMove,
   DelayedAttackAttr,
-  FixedDamageAttr,
   HitsTagAttr,
   MissEffectAttr,
   MoveAttr,
@@ -122,12 +121,10 @@ export class MoveEffectPhase extends PokemonPhase {
         const hitCount = new NumberHolder(1);
         // Assume single target for multi hit
         applyMoveAttrs(MultiHitAttr, user, this.getFirstTarget() ?? null, move, hitCount);
-        // If Parental Bond is applicable, double the hit count
-        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, false, targets.length, hitCount, new NumberHolder(0));
-        // If Multi-Lens is applicable, multiply the hit count by 1 + the number of Multi-Lenses held by the user
-        if (move instanceof AttackMove && !move.hasAttr(FixedDamageAttr)) {
-          this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new NumberHolder(0));
-        }
+        // If Parental Bond is applicable, add another hit
+        applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, false, hitCount, null);
+        // If Multi-Lens is applicable, add hits equal to the number of held Multi-Lenses
+        this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, move.id, hitCount);
         // Set the user's relevant turnData fields to reflect the final hit count
         user.turnData.hitCount = hitCount.value;
         user.turnData.hitsLeft = hitCount.value;

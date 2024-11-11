@@ -6,7 +6,6 @@ import { allMoves } from "#app/data/move";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { type FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
-import { Type } from "#enums/type";
 import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -22,11 +21,13 @@ import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } 
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { Type } from "#enums/type";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
@@ -2689,32 +2690,57 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Applies {@linkcode PokemonMultiHitModifier}
-   * @param _pokemon The {@linkcode Pokemon} using the move
-   * @param count {@linkcode NumberHolder} holding the number of items
-   * @param power {@linkcode NumberHolder} holding the power of the move
+   * For each stack, converts 25 percent of attack damage into an additional strike.
+   * @param pokemon The {@linkcode Pokemon} using the move
+   * @param moveId The {@linkcode Moves | identifier} for the move being used
+   * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
+   * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, count: NumberHolder, power: NumberHolder): boolean {
-    count.value *= (this.getStackCount() + 1);
-
-    switch (this.getStackCount()) {
-      case 1:
-        power.value *= 0.4;
-        break;
-      case 2:
-        power.value *= 0.25;
-        break;
-      case 3:
-        power.value *= 0.175;
-        break;
+  override apply(pokemon: Pokemon, moveId: Moves, count: NumberHolder | null = null, damageMultiplier: NumberHolder | null = null): boolean {
+    const move = allMoves[moveId];
+    /**
+     * The move must meet Parental Bond's restrictions for this item
+     * to apply. This means
+     * - Only attacks are boosted
+     * - Multi-strike moves, charge moves, and self-sacrificial moves are not boosted
+     *   (though Multi-Lens can still affect moves boosted by Parental Bond)
+     * - Multi-target moves are not boosted *unless* they can only hit a single Pokemon
+     * - Fling, Uproar, Rollout, Ice Ball, and Endeavor are not boosted
+     */
+    if (!move.canBeMultiStrikeEnhanced(pokemon)) {
+      return false;
     }
 
+    if (!isNullOrUndefined(count)) {
+      return this.applyHitCountBoost(count);
+    } else if (!isNullOrUndefined(damageMultiplier)) {
+      return this.applyPowerModifier(pokemon, damageMultiplier);
+    }
+
+    return false;
+  }
+
+  /** Adds strikes to a move equal to the number of stacked Multi-Lenses */
+  private applyHitCountBoost(count: NumberHolder): boolean {
+    count.value += this.getStackCount();
+    return true;
+  }
+
+  /**
+   * If applied to the first hit of a move, sets the damage multiplier
+   * equal to (1 - the number of stacked Multi-Lenses).
+   * Additional strikes beyond that are given a 0.25x damage multiplier
+   */
+  private applyPowerModifier(pokemon: Pokemon, damageMultiplier: NumberHolder): boolean {
+    damageMultiplier.value = (pokemon.turnData.hitsLeft === pokemon.turnData.hitCount)
+      ? (1 - (0.25 * this.getStackCount()))
+      : 0.25;
     return true;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): number {
-    return 3;
+    return 2;
   }
 }
 
