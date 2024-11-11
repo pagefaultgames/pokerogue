@@ -5,7 +5,7 @@ import { addTextObject, TextStyle } from "../text";
 import { Button } from "#enums/buttons";
 import { NavigationManager } from "#app/ui/settings/navigationMenu";
 import i18next from "i18next";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 type CancelFn = (succes?: boolean) => boolean;
 
@@ -61,8 +61,8 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
      */
   setup() {
     const ui = this.getUi();
-    this.optionSelectContainer = gScene.add.container(0, 0);
-    this.actionsContainer = gScene.add.container(0, 0);
+    this.optionSelectContainer = globalScene.add.container(0, 0);
+    this.actionsContainer = globalScene.add.container(0, 0);
     // Initially, containers are not visible.
     this.optionSelectContainer.setVisible(false);
     this.actionsContainer.setVisible(false);
@@ -72,11 +72,11 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     ui.add(this.actionsContainer);
 
     // Setup backgrounds and text objects for UI.
-    this.titleBg = addWindow((gScene.game.canvas.width / 6) - this.getWindowWidth(), -(gScene.game.canvas.height / 6) + 28 + 21, this.getWindowWidth(), 24);
+    this.titleBg = addWindow((globalScene.game.canvas.width / 6) - this.getWindowWidth(), -(globalScene.game.canvas.height / 6) + 28 + 21, this.getWindowWidth(), 24);
     this.titleBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.titleBg);
 
-    this.actionBg = addWindow((gScene.game.canvas.width / 6) - this.getWindowWidth(), -(gScene.game.canvas.height / 6) + this.getWindowHeight() + 28 + 21 + 21, this.getWindowWidth(), 24);
+    this.actionBg = addWindow((globalScene.game.canvas.width / 6) - this.getWindowWidth(), -(globalScene.game.canvas.height / 6) + this.getWindowHeight() + 28 + 21 + 21, this.getWindowWidth(), 24);
     this.actionBg.setOrigin(0.5);
     this.actionsContainer.add(this.actionBg);
 
@@ -91,7 +91,7 @@ export default abstract class AbstractBindingUiHandler extends UiHandler {
     this.timerText.setPositionRelative(this.unlockText, (this.unlockText.width / 6) + 5, 0);
     this.optionSelectContainer.add(this.timerText);
 
-    this.optionSelectBg = addWindow((gScene.game.canvas.width / 6) - this.getWindowWidth(), -(gScene.game.canvas.height / 6) + this.getWindowHeight() + 28, this.getWindowWidth(), this.getWindowHeight());
+    this.optionSelectBg = addWindow((globalScene.game.canvas.width / 6) - this.getWindowWidth(), -(globalScene.game.canvas.height / 6) + this.getWindowHeight() + 28, this.getWindowWidth(), this.getWindowHeight());
     this.optionSelectBg.setOrigin(0.5);
     this.optionSelectContainer.add(this.optionSelectBg);
 

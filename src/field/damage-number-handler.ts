@@ -2,7 +2,7 @@ import { TextStyle, addTextObject } from "../ui/text";
 import Pokemon, { DamageResult, HitResult } from "./pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 type TextAndShadowArr = [ string | null, string | null ];
 
@@ -14,13 +14,13 @@ export default class DamageNumberHandler {
   }
 
   add(target: Pokemon, amount: integer, result: DamageResult | HitResult.HEAL = HitResult.EFFECTIVE, critical: boolean = false): void {
-    if (!gScene?.damageNumbersMode) {
+    if (!globalScene?.damageNumbersMode) {
       return;
     }
 
     const battlerIndex = target.getBattlerIndex();
     const baseScale = target.getSpriteScale() / 6;
-    const damageNumber = addTextObject(target.x, -(gScene.game.canvas.height / 6) + target.y - target.getSprite().height / 2, Utils.formatStat(amount, true), TextStyle.SUMMARY);
+    const damageNumber = addTextObject(target.x, -(globalScene.game.canvas.height / 6) + target.y - target.getSprite().height / 2, Utils.formatStat(amount, true), TextStyle.SUMMARY);
     damageNumber.setName("text-damage-number");
     damageNumber.setOrigin(0.5, 1);
     damageNumber.setScale(baseScale);
@@ -57,7 +57,7 @@ export default class DamageNumberHandler {
       }
     }
 
-    gScene.fieldUI.add(damageNumber);
+    globalScene.fieldUI.add(damageNumber);
 
     if (!this.damageNumbers.has(battlerIndex)) {
       this.damageNumbers.set(battlerIndex, []);
@@ -70,14 +70,14 @@ export default class DamageNumberHandler {
 
     this.damageNumbers.get(battlerIndex)!.push(damageNumber);
 
-    if (gScene.damageNumbersMode === 1) {
-      gScene.tweens.add({
+    if (globalScene.damageNumbersMode === 1) {
+      globalScene.tweens.add({
         targets: damageNumber,
         duration: Utils.fixedInt(750),
         alpha: 1,
         y: "-=32"
       });
-      gScene.tweens.add({
+      globalScene.tweens.add({
         delay: 375,
         targets: damageNumber,
         duration: Utils.fixedInt(625),
@@ -93,7 +93,7 @@ export default class DamageNumberHandler {
 
     damageNumber.setAlpha(0);
 
-    gScene.tweens.chain({
+    globalScene.tweens.chain({
       targets: damageNumber,
       tweens: [
         {

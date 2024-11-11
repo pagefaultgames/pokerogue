@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene"; // ?
+import { globalScene } from "#app/battle-scene";
 import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "#app/data/balance/biomes";
 import { Constructor } from "#app/utils";
 import * as Utils from "#app/utils";
@@ -59,12 +59,12 @@ export class Arena {
   init() {
     const biomeKey = getBiomeKey(this.biomeType);
 
-    gScene.arenaPlayer.setBiome(this.biomeType);
-    gScene.arenaPlayerTransition.setBiome(this.biomeType);
-    gScene.arenaEnemy.setBiome(this.biomeType);
-    gScene.arenaNextEnemy.setBiome(this.biomeType);
-    gScene.arenaBg.setTexture(`${biomeKey}_bg`);
-    gScene.arenaBgTransition.setTexture(`${biomeKey}_bg`);
+    globalScene.arenaPlayer.setBiome(this.biomeType);
+    globalScene.arenaPlayerTransition.setBiome(this.biomeType);
+    globalScene.arenaEnemy.setBiome(this.biomeType);
+    globalScene.arenaNextEnemy.setBiome(this.biomeType);
+    globalScene.arenaBg.setTexture(`${biomeKey}_bg`);
+    globalScene.arenaBgTransition.setTexture(`${biomeKey}_bg`);
 
     // Redo this on initialize because during save/load the current wave isn't always
     // set correctly during construction
@@ -83,12 +83,12 @@ export class Arena {
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer, luckValue?: integer, isBoss?: boolean): PokemonSpecies {
-    const overrideSpecies = gScene.gameMode.getOverrideSpecies(waveIndex);
+    const overrideSpecies = globalScene.gameMode.getOverrideSpecies(waveIndex);
     if (overrideSpecies) {
       return overrideSpecies;
     }
-    const isBossSpecies = !!gScene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
-      && (this.biomeType !== Biome.END || gScene.gameMode.isClassic || gScene.gameMode.isWaveFinal(waveIndex));
+    const isBossSpecies = !!globalScene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
+      && (this.biomeType !== Biome.END || globalScene.gameMode.isClassic || globalScene.gameMode.isWaveFinal(waveIndex));
     const randVal = isBossSpecies ? 64 : 512;
     // luck influences encounter rarity
     let luckModifier = 0;
@@ -108,7 +108,7 @@ export class Arena {
     let ret: PokemonSpecies;
     let regen = false;
     if (!tierPool.length) {
-      ret = gScene.randomSpecies(waveIndex, level);
+      ret = globalScene.randomSpecies(waveIndex, level);
     } else {
       const entry = tierPool[Utils.randSeedInt(tierPool.length)];
       let species: Species;
@@ -155,7 +155,7 @@ export class Arena {
       return this.randomSpecies(waveIndex, level, (attempt || 0) + 1);
     }
 
-    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, gScene.gameMode);
+    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, globalScene.gameMode);
     if (newSpeciesId !== ret.speciesId) {
       console.log("Replaced", Species[ret.speciesId], "with", Species[newSpeciesId]);
       ret = getPokemonSpecies(newSpeciesId);
@@ -165,7 +165,7 @@ export class Arena {
 
   randomTrainerType(waveIndex: integer, isBoss: boolean = false): TrainerType {
     const isTrainerBoss = !!this.trainerPool[BiomePoolTier.BOSS].length
-      && (gScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, gScene.offsetGym) || isBoss);
+      && (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
     const tierValue = Utils.randSeedInt(!isTrainerBoss ? 512 : 64);
     let tier = !isTrainerBoss
@@ -300,8 +300,8 @@ export class Arena {
    */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
-    gScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
-    gScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+    globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
+    globalScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     return true;
   }
 
@@ -326,13 +326,13 @@ export class Arena {
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!)); // TODO: is this bang correct?
 
     if (this.weather) {
-      gScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1), true));
-      gScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+      globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1), true));
+      globalScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     } else {
-      gScene.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
+      globalScene.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
-    gScene.getField(true).filter(p => p.isOnField()).map(pokemon => {
+    globalScene.getField(true).filter(p => p.isOnField()).map(pokemon => {
       pokemon.findAndRemoveTags(t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
       applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
     });
@@ -344,13 +344,13 @@ export class Arena {
    * Function to trigger all weather based form changes
    */
   triggerWeatherBasedFormChanges(): void {
-    gScene.getField(true).forEach( p => {
+    globalScene.getField(true).forEach( p => {
       const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM);
       const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM);
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
         new ShowAbilityPhase(p.getBattlerIndex());
-        gScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
+        globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
     });
   }
@@ -359,13 +359,13 @@ export class Arena {
    * Function to trigger all weather based form changes back into their normal forms
    */
   triggerWeatherBasedFormChangesToNormal(): void {
-    gScene.getField(true).forEach( p => {
+    globalScene.getField(true).forEach( p => {
       const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM);
       const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM);
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
         new ShowAbilityPhase(p.getBattlerIndex());
-        return gScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
+        return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
     });
   }
@@ -382,14 +382,14 @@ export class Arena {
 
     if (this.terrain) {
       if (!ignoreAnim) {
-        gScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
+        globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
       }
-      gScene.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
+      globalScene.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
     } else {
-      gScene.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
+      globalScene.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
     }
 
-    gScene.getField(true).filter(p => p.isOnField()).map(pokemon => {
+    globalScene.getField(true).filter(p => p.isOnField()).map(pokemon => {
       pokemon.findAndRemoveTags(t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
       applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
       applyAbAttrs(TerrainEventTypeChangeAbAttr, pokemon, null, false);
@@ -478,7 +478,7 @@ export class Arena {
         return TimeOfDay.NIGHT;
     }
 
-    const waveCycle = ((gScene.currentBattle?.waveIndex || 0) + gScene.waveCycleOffset) % 40;
+    const waveCycle = ((globalScene.currentBattle?.waveIndex || 0) + globalScene.waveCycleOffset) % 40;
 
     if (waveCycle < 15) {
       return TimeOfDay.DAY;
@@ -748,7 +748,7 @@ export class Arena {
   }
 
   preloadBgm(): void {
-    gScene.loadBgm(this.bgm);
+    globalScene.loadBgm(this.bgm);
   }
 
   getBgmLoopPoint(): number {
@@ -873,16 +873,16 @@ export class ArenaBase extends Phaser.GameObjects.Container {
   public props: Phaser.GameObjects.Sprite[];
 
   constructor(player: boolean) {
-    super(gScene, 0, 0);
+    super(globalScene, 0, 0);
 
     this.player = player;
 
-    this.base = gScene.addFieldSprite(0, 0, "plains_a", undefined, 1);
+    this.base = globalScene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = gScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
+        const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;
@@ -898,9 +898,9 @@ export class ArenaBase extends Phaser.GameObjects.Container {
       this.base.setTexture(baseKey);
 
       if (this.base.texture.frameTotal > 1) {
-        const baseFrameNames = gScene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
-        if (!(gScene.anims.exists(baseKey))) {
-          gScene.anims.create({
+        const baseFrameNames = globalScene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
+        if (!(globalScene.anims.exists(baseKey))) {
+          globalScene.anims.create({
             key: baseKey,
             frames: baseFrameNames,
             frameRate: 12,
@@ -916,7 +916,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     }
 
     if (!this.player) {
-      gScene.executeWithSeedOffset(() => {
+      globalScene.executeWithSeedOffset(() => {
         this.propValue = propValue === undefined
           ? hasProps ? Utils.randSeedInt(8) : 0
           : propValue;
@@ -925,9 +925,9 @@ export class ArenaBase extends Phaser.GameObjects.Container {
           prop.setTexture(propKey);
 
           if (hasProps && prop.texture.frameTotal > 1) {
-            const propFrameNames = gScene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
-            if (!(gScene.anims.exists(propKey))) {
-              gScene.anims.create({
+            const propFrameNames = globalScene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
+            if (!(globalScene.anims.exists(propKey))) {
+              globalScene.anims.create({
                 key: propKey,
                 frames: propFrameNames,
                 frameRate: 12,
@@ -942,7 +942,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
           prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
           this.add(prop);
         });
-      }, gScene.currentBattle?.waveIndex || 0, gScene.waveSeed);
+      }, globalScene.currentBattle?.waveIndex || 0, globalScene.waveSeed);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";
@@ -31,13 +31,13 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(false, () => {
-          gScene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
+          globalScene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
           this.end();
         });
         return;
       }
     } else if (pokemon.status?.effect === this.statusEffect) {
-      gScene.queueMessage(getStatusEffectOverlapText(this.statusEffect ?? StatusEffect.NONE, getPokemonNameWithAffix(pokemon)));
+      globalScene.queueMessage(getStatusEffectOverlapText(this.statusEffect ?? StatusEffect.NONE, getPokemonNameWithAffix(pokemon)));
     }
     this.end();
   }

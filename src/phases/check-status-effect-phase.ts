@@ -1,7 +1,7 @@
 import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
 import { Phase } from "#app/phase";
 import { BattlerIndex } from "#app/battle";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export class CheckStatusEffectPhase extends Phase {
   private order : BattlerIndex[];
@@ -11,10 +11,10 @@ export class CheckStatusEffectPhase extends Phase {
   }
 
   start() {
-    const field = gScene.getField();
+    const field = globalScene.getField();
     for (const o of this.order) {
       if (field[o].status && field[o].status.isPostTurn()) {
-        gScene.unshiftPhase(new PostTurnStatusEffectPhase(o));
+        globalScene.unshiftPhase(new PostTurnStatusEffectPhase(o));
       }
     }
     this.end();

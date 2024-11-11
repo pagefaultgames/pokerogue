@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import * as Utils from "../utils";
 
 export default class SavingIconHandler extends Phaser.GameObjects.Container {
@@ -8,11 +8,11 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
   private shown: boolean;
 
   constructor() {
-    super(gScene, gScene.game.canvas.width / 6 - 4, gScene.game.canvas.height / 6 - 4);
+    super(globalScene, globalScene.game.canvas.width / 6 - 4, globalScene.game.canvas.height / 6 - 4);
   }
 
   setup(): void {
-    this.icon = gScene.add.sprite(0, 0, "saving_icon");
+    this.icon = globalScene.add.sprite(0, 0, "saving_icon");
     this.icon.setOrigin(1, 1);
 
     this.add(this.icon);
@@ -33,13 +33,13 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
 
     this.animActive = true;
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this,
       alpha: 1,
       duration: Utils.fixedInt(250),
       ease: "Sine.easeInOut",
       onComplete: () => {
-        gScene.time.delayedCall(Utils.fixedInt(500), () => {
+        globalScene.time.delayedCall(Utils.fixedInt(500), () => {
           this.animActive = false;
           if (!this.shown) {
             this.hide();
@@ -61,7 +61,7 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
 
     this.animActive = true;
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this,
       alpha: 0,
       duration: Utils.fixedInt(250),

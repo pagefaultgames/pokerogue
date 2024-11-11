@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { PokemonPhase } from "./pokemon-phase";
 
@@ -17,7 +17,7 @@ export class ShowAbilityPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
 
     if (pokemon) {
-      gScene.abilityBar.showAbility(pokemon, this.passive);
+      globalScene.abilityBar.showAbility(pokemon, this.passive);
 
       if (pokemon?.battleData) {
         pokemon.battleData.abilityRevealed = true;

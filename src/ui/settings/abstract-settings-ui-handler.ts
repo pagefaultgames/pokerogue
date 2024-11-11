@@ -9,7 +9,7 @@ import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handl
 import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
 import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
 import i18next from "i18next";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 
 /**
@@ -55,22 +55,22 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.settingsContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
+    this.settingsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
     this.settingsContainer.setName(`settings-${this.title}`);
-    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6 - 20), Phaser.Geom.Rectangle.Contains);
+    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6 - 20), Phaser.Geom.Rectangle.Contains);
 
     this.navigationIcons = {};
 
     this.navigationContainer = new NavigationMenu(0, 0);
 
-    this.optionsBg = addWindow(0, this.navigationContainer.height, (gScene.game.canvas.width / 6) - 2, (gScene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
+    this.optionsBg = addWindow(0, this.navigationContainer.height, (globalScene.game.canvas.width / 6) - 2, (globalScene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
     this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
-    const actionsBg = addWindow(0, (gScene.game.canvas.height / 6) - this.navigationContainer.height, (gScene.game.canvas.width / 6) - 2, 22);
+    const actionsBg = addWindow(0, (globalScene.game.canvas.height / 6) - this.navigationContainer.height, (globalScene.game.canvas.width / 6) - 2, 22);
     actionsBg.setOrigin(0, 0);
 
-    const iconAction = gScene.add.sprite(0, 0, "keyboard");
+    const iconAction = globalScene.add.sprite(0, 0, "keyboard");
     iconAction.setOrigin(0, -0.1);
     iconAction.setPositionRelative(actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
@@ -79,7 +79,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     actionText.setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width / 6 - 2, 0);
 
-    const iconCancel = gScene.add.sprite(0, 0, "keyboard");
+    const iconCancel = globalScene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
     iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
@@ -88,7 +88,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width / 6 - 2, 0);
 
-    this.optionsContainer = gScene.add.container(0, 0);
+    this.optionsContainer = globalScene.add.container(0, 0);
 
     this.settingLabels = [];
     this.optionValueLabels = [];
@@ -163,9 +163,9 @@ export default class AbstractSettingsUiHandler extends UiHandler {
         this.navigationIcons[settingName].alpha = 1;
         continue;
       }
-      const icon = gScene.inputController?.getIconForLatestInputRecorded(settingName);
+      const icon = globalScene.inputController?.getIconForLatestInputRecorded(settingName);
       if (icon) {
-        const type = gScene.inputController?.getLastSourceType();
+        const type = globalScene.inputController?.getLastSourceType();
         this.navigationIcons[settingName].setTexture(type);
         this.navigationIcons[settingName].setFrame(icon);
         this.navigationIcons[settingName].alpha = 1;
@@ -220,7 +220,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       success = true;
       NavigationManager.getInstance().reset();
       // Reverts UI to its previous state on cancel.
-      gScene.ui.revertMode();
+      globalScene.ui.revertMode();
     } else {
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
@@ -296,7 +296,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   activateSetting(setting: Setting): boolean {
     switch (setting.key) {
       case SettingKeys.Move_Touch_Controls:
-        gScene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), gScene);
+        globalScene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), globalScene);
         return true;
     }
     return false;
@@ -312,8 +312,8 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      const cursorWidth = (gScene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
-      this.cursorObj = gScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
+      const cursorWidth = (globalScene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
+      this.cursorObj = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }
@@ -352,7 +352,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
-      gScene.gameData.saveSetting(setting.key, cursor);
+      globalScene.gameData.saveSetting(setting.key, cursor);
       if (this.reloadSettings.includes(setting)) {
         this.reloadRequired = true;
       }
@@ -405,10 +405,10 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.settingsContainer.setVisible(false);
     this.setScrollCursor(0);
     this.eraseCursor();
-    this.getUi().bgmBar.toggleBgmBar(gScene.showBgmBar);
+    this.getUi().bgmBar.toggleBgmBar(globalScene.showBgmBar);
     if (this.reloadRequired) {
       this.reloadRequired = false;
-      gScene.reset(true, false, true);
+      globalScene.reset(true, false, true);
     }
   }
 

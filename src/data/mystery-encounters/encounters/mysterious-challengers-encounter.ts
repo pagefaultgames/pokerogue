@@ -13,7 +13,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import * as Utils from "#app/utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -38,11 +38,11 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       },
     ])
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       // Calculates what trainers are available for battle in the encounter
 
       // Normal difficulty trainer is randomly pulled from biome
-      const normalTrainerType = gScene.arena.randomTrainerType(gScene.currentBattle.waveIndex);
+      const normalTrainerType = globalScene.arena.randomTrainerType(globalScene.currentBattle.waveIndex);
       const normalConfig = trainerConfigs[normalTrainerType].clone();
       let female = false;
       if (normalConfig.hasGenders) {
@@ -57,16 +57,16 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
       // Hard difficulty trainer is another random trainer, but with AVERAGE_BALANCED config
       // Number of mons is based off wave: 1-20 is 2, 20-40 is 3, etc. capping at 6 after wave 100
       let retries = 0;
-      let hardTrainerType = gScene.arena.randomTrainerType(gScene.currentBattle.waveIndex);
+      let hardTrainerType = globalScene.arena.randomTrainerType(globalScene.currentBattle.waveIndex);
       while (retries < 5 && hardTrainerType === normalTrainerType) {
         // Will try to use a different trainer from the normal trainer type
-        hardTrainerType = gScene.arena.randomTrainerType(gScene.currentBattle.waveIndex);
+        hardTrainerType = globalScene.arena.randomTrainerType(globalScene.currentBattle.waveIndex);
         retries++;
       }
       const hardTemplate = new TrainerPartyCompoundTemplate(
         new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true),
         new TrainerPartyTemplate(
-          Math.min(Math.ceil(gScene.currentBattle.waveIndex / 20), 5),
+          Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 20), 5),
           PartyMemberStrength.AVERAGE,
           false,
           true
@@ -87,8 +87,8 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
       // Brutal trainer is pulled from pool of boss trainers (gym leaders) for the biome
       // They are given an E4 template team, so will be stronger than usual boss encounter and always have 6 mons
-      const brutalTrainerType = gScene.arena.randomTrainerType(
-        gScene.currentBattle.waveIndex,
+      const brutalTrainerType = globalScene.arena.randomTrainerType(
+        globalScene.currentBattle.waveIndex,
         true
       );
       const e4Template = trainerPartyTemplates.ELITE_FOUR;
@@ -146,7 +146,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         ],
       },
       async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         // Spawn standard trainer battle with memory mushroom reward
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
@@ -154,9 +154,9 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let initBattlePromise: Promise<void>;
-        gScene.executeWithSeedOffset(() => {
+        globalScene.executeWithSeedOffset(() => {
           initBattlePromise = initBattleWithEnemyConfig(config);
-        }, gScene.currentBattle.waveIndex * 10);
+        }, globalScene.currentBattle.waveIndex * 10);
         await initBattlePromise!;
       }
     )
@@ -171,7 +171,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         ],
       },
       async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         // Spawn hard fight
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
@@ -179,9 +179,9 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let initBattlePromise: Promise<void>;
-        gScene.executeWithSeedOffset(() => {
+        globalScene.executeWithSeedOffset(() => {
           initBattlePromise = initBattleWithEnemyConfig(config);
-        }, gScene.currentBattle.waveIndex * 100);
+        }, globalScene.currentBattle.waveIndex * 100);
         await initBattlePromise!;
       }
     )
@@ -196,7 +196,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
         ],
       },
       async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         // Spawn brutal fight
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[2];
 
@@ -207,9 +207,9 @@ export const MysteriousChallengersEncounter: MysteryEncounter =
 
         // Seed offsets to remove possibility of different trainers having exact same teams
         let initBattlePromise: Promise<void>;
-        gScene.executeWithSeedOffset(() => {
+        globalScene.executeWithSeedOffset(() => {
           initBattlePromise = initBattleWithEnemyConfig(config);
-        }, gScene.currentBattle.waveIndex * 1000);
+        }, globalScene.currentBattle.waveIndex * 1000);
         await initBattlePromise!;
       }
     )

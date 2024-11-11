@@ -1,4 +1,4 @@
-import { gScene, InfoToggle } from "#app/battle-scene";
+import { globalScene, InfoToggle } from "#app/battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
@@ -50,7 +50,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     if (options?.onSide) {
       options.top = false;
     }
-    super(gScene, options?.x, options?.y);
+    super(globalScene, options?.x, options?.y);
     const scale = options?.scale || 1; // set up the scale
     this.setScale(scale);
     this.options = options || {};
@@ -71,13 +71,13 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
       y: (options?.y || 0),
     };
     if (maskPointOrigin.x < 0) {
-      maskPointOrigin.x += gScene.game.canvas.width / GLOBAL_SCALE;
+      maskPointOrigin.x += globalScene.game.canvas.width / GLOBAL_SCALE;
     }
     if (maskPointOrigin.y < 0) {
-      maskPointOrigin.y += gScene.game.canvas.height / GLOBAL_SCALE;
+      maskPointOrigin.y += globalScene.game.canvas.height / GLOBAL_SCALE;
     }
 
-    const moveDescriptionTextMaskRect = gScene.make.graphics();
+    const moveDescriptionTextMaskRect = globalScene.make.graphics();
     moveDescriptionTextMaskRect.fillStyle(0xFF0000);
     moveDescriptionTextMaskRect.fillRect(
       maskPointOrigin.x + ((options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER) * scale, maskPointOrigin.y + ((options?.top ? EFF_HEIGHT : 0) + BORDER - 2) * scale,
@@ -89,18 +89,18 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.desc.setMask(moveDescriptionTextMask);
 
     // prepare the effect box
-    this.val = new Phaser.GameObjects.Container(gScene, options?.right ? width - EFF_WIDTH : 0,  options?.top || options?.onSide ? 0 : DESC_HEIGHT);
+    this.val = new Phaser.GameObjects.Container(globalScene, options?.right ? width - EFF_WIDTH : 0,  options?.top || options?.onSide ? 0 : DESC_HEIGHT);
     this.add(this.val);
 
     const valuesBg = addWindow(0, 0, EFF_WIDTH, EFF_HEIGHT);
     valuesBg.setOrigin(0, 0);
     this.val.add(valuesBg);
 
-    this.typ = gScene.add.sprite(25, EFF_HEIGHT - 35, Utils.getLocalizedSpriteKey("types"), "unknown");
+    this.typ = globalScene.add.sprite(25, EFF_HEIGHT - 35, Utils.getLocalizedSpriteKey("types"), "unknown");
     this.typ.setScale(0.8);
     this.val.add(this.typ);
 
-    this.cat = gScene.add.sprite(57, EFF_HEIGHT - 35, "categories", "physical");
+    this.cat = globalScene.add.sprite(57, EFF_HEIGHT - 35, "categories", "physical");
     this.val.add(this.cat);
 
     const ppTxt = addTextObject(12, EFF_HEIGHT - 25, "PP", TextStyle.MOVE_INFO_CONTENT);
@@ -144,7 +144,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
 
   // show this component with infos for the specific move
   show(move : Move):boolean {
-    if (!gScene.enableMoveInfo) {
+    if (!globalScene.enableMoveInfo) {
       return false; // move infos have been disabled // TODO:: is `false` correct? i used to be `undeefined`
     }
     this.move = move;
@@ -167,7 +167,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     const moveDescriptionLineCount = Math.floor(this.desc.displayHeight * (96 / 72) / 14.83);
     if (moveDescriptionLineCount > 3) {
       // generate scrolling effects
-      this.descScroll = gScene.tweens.add({
+      this.descScroll = globalScene.tweens.add({
         targets: this.desc,
         delay: Utils.fixedInt(2000),
         loop: -1,
@@ -193,7 +193,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     if (visible) {
       this.setVisible(true);
     }
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this.desc,
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
@@ -210,7 +210,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
 
   // width of this element
   static getWidth(scale:number):number {
-    return gScene.game.canvas.width / GLOBAL_SCALE / 2;
+    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
   }
 
   // height of this element

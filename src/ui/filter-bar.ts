@@ -3,7 +3,7 @@ import { StarterContainer } from "./starter-container";
 import { addTextObject, getTextColor, TextStyle } from "./text";
 import { UiTheme } from "#enums/ui-theme";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export enum DropDownColumn {
   GEN,
@@ -26,7 +26,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
   private uiTheme: UiTheme;
 
   constructor(x: number, y: number, width: number, height: number) {
-    super(gScene, x, y);
+    super(globalScene, x, y);
 
     this.width = width;
     this.height = height;
@@ -34,13 +34,13 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.window = addWindow(0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(this.window);
 
-    this.cursorObj = gScene.add.image(1, 1, "cursor");
+    this.cursorObj = globalScene.add.image(1, 1, "cursor");
     this.cursorObj.setScale(0.5);
     this.cursorObj.setVisible(false);
     this.cursorObj.setOrigin(0, 0);
     this.add(this.cursorObj);
 
-    this.uiTheme = gScene.uiTheme;
+    this.uiTheme = globalScene.uiTheme;
   }
 
   /**

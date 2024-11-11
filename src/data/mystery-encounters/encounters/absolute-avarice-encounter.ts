@@ -3,7 +3,7 @@ import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { BerryModifierType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
@@ -171,17 +171,17 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
-      gScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
-      gScene.loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
+      globalScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
+      globalScene.loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
 
       // Get all player berry items, remove from party, and store reference
-      const berryItems = gScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+      const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
 
       // Sort berries by party member ID to more easily re-add later if necessary
       const berryItemsMap = new Map<number, BerryModifier[]>();
-      gScene.getParty().forEach(pokemon => {
+      globalScene.getParty().forEach(pokemon => {
         const pokemonBerries = berryItems.filter(b => b.pokemonId === pokemon.id);
         if (pokemonBerries?.length > 0) {
           berryItemsMap.set(pokemon.id, pokemonBerries);
@@ -204,7 +204,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
       // Do NOT remove the real berries yet or else it will be persisted in the session data
 
       // SpDef buff below wave 50, +1 to all stats otherwise
-      const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = gScene.currentBattle.waveIndex < 50 ?
+      const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = globalScene.currentBattle.waveIndex < 50 ?
         [ Stat.SPDEF ] :
         [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
 
@@ -221,7 +221,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
               queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
-              gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
+              globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
             }
           }
         ],
@@ -238,12 +238,12 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
 
       // Remove the berries from the party
       // Session has been safely saved at this point, so data won't be lost
-      const berryItems = gScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+      const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
       berryItems.forEach(berryMod => {
-        gScene.removeModifier(berryMod);
+        globalScene.removeModifier(berryMod);
       });
 
-      gScene.updateModifiers(true);
+      globalScene.updateModifiers(true);
 
       return true;
     })
@@ -261,18 +261,18 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Pick battle
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
 
           // Provides 1x Reviver Seed to each party member at end of battle
           const revSeed = generateModifierType(modifierTypes.REVIVER_SEED);
           encounter.setDialogueToken("foodReward", revSeed?.name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"));
           const givePartyPokemonReviverSeeds = () => {
-            const party = gScene.getParty();
+            const party = globalScene.getParty();
             party.forEach(p => {
               const heldItems = p.getHeldItems();
               if (revSeed && !heldItems.some(item => item instanceof PokemonInstantReviveModifier)) {
                 const seedModifier = revSeed.newModifier(p);
-                gScene.addModifier(seedModifier, false, false, false, true);
+                globalScene.addModifier(seedModifier, false, false, false, true);
               }
             });
             queueEncounterMessage(`${namespace}:option.1.food_stash`);
@@ -304,11 +304,11 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           ],
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const berryMap = encounter.misc.berryItemsMap;
 
           // Returns 2/5 of the berries stolen to each Pokemon
-          const party = gScene.getParty();
+          const party = globalScene.getParty();
           party.forEach(pokemon => {
             const stolenBerries: BerryModifier[] = berryMap.get(pokemon.id);
             const berryTypesAsArray: BerryType[] = [];
@@ -326,7 +326,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
               }
             }
           });
-          await gScene.updateModifiers(true);
+          await globalScene.updateModifiers(true);
 
           await transitionMysteryEncounterIntroVisuals(true, true, 500);
           leaveEncounterWithoutBattle(true);
@@ -371,10 +371,10 @@ function doGreedentSpriteSteal() {
   const shakeDelay = 50;
   const slideDelay = 500;
 
-  const greedentSprites = gScene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
+  const greedentSprites = globalScene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
 
-  gScene.playSound("battle_anims/Follow Me");
-  gScene.tweens.chain({
+  globalScene.playSound("battle_anims/Follow Me");
+  globalScene.tweens.chain({
     targets: greedentSprites,
     tweens: [
       { // Slide Greedent diagonally
@@ -445,9 +445,9 @@ function doGreedentSpriteSteal() {
 }
 
 function doGreedentEatBerries() {
-  const greedentSprites = gScene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
+  const greedentSprites = globalScene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
   let index = 1;
-  gScene.tweens.add({
+  globalScene.tweens.add({
     targets: greedentSprites,
     duration: 150,
     ease: "Cubic.easeOut",
@@ -455,11 +455,11 @@ function doGreedentEatBerries() {
     y: "-=8",
     loop: 5,
     onStart: () => {
-      gScene.playSound("battle_anims/PRSFX- Bug Bite");
+      globalScene.playSound("battle_anims/PRSFX- Bug Bite");
     },
     onLoop: () => {
       if (index % 2 === 0) {
-        gScene.playSound("battle_anims/PRSFX- Bug Bite");
+        globalScene.playSound("battle_anims/PRSFX- Bug Bite");
       }
       index++;
     }
@@ -477,7 +477,7 @@ function doBerrySpritePile(isEat: boolean = false) {
   if (isEat) {
     animationOrder = animationOrder.reverse();
   }
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   animationOrder.forEach((berry, i) => {
     const introVisualsIndex = encounter.spriteConfigs.findIndex(config => config.spriteKey?.includes(berry));
     let sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite;
@@ -486,7 +486,7 @@ function doBerrySpritePile(isEat: boolean = false) {
       sprite = sprites[0];
       tintSprite = sprites[1];
     }
-    gScene.time.delayedCall(berryAddDelay * i + 400, () => {
+    globalScene.time.delayedCall(berryAddDelay * i + 400, () => {
       if (sprite) {
         sprite.setVisible(!isEat);
       }
@@ -496,7 +496,7 @@ function doBerrySpritePile(isEat: boolean = false) {
 
       // Animate Petaya berry falling off the pile
       if (berry === "petaya" && sprite && tintSprite && !isEat) {
-        gScene.time.delayedCall(200, () => {
+        globalScene.time.delayedCall(200, () => {
           doBerryBounce([ sprite, tintSprite ], 30, 500);
         });
       }
@@ -509,7 +509,7 @@ function doBerryBounce(berrySprites: Phaser.GameObjects.Sprite[], yd: number, ba
   let bounceYOffset = yd;
 
   const doBounce = () => {
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: berrySprites,
       y: "+=" + bounceYOffset,
       x: { value: "+=" + (bouncePower * bouncePower * 10), ease: "Linear" },
@@ -521,7 +521,7 @@ function doBerryBounce(berrySprites: Phaser.GameObjects.Sprite[], yd: number, ba
         if (bouncePower) {
           bounceYOffset = bounceYOffset * bouncePower;
 
-          gScene.tweens.add({
+          globalScene.tweens.add({
             targets: berrySprites,
             y: "-=" + bounceYOffset,
             x: { value: "+=" + (bouncePower * bouncePower * 10), ease: "Linear" },

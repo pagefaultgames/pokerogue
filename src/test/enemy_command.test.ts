@@ -9,14 +9,14 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-let gScene: BattleScene;
+let globalScene: BattleScene;
 const NUM_TRIALS = 300;
 
 type MoveChoiceSet = { [key: number]: number };
 
 function getEnemyMoveChoices(pokemon: EnemyPokemon, moveChoices: MoveChoiceSet): void {
   // Use an unseeded random number generator in place of the mocked-out randBattleSeedInt
-  vi.spyOn(gScene, "randBattleSeedInt").mockImplementation((range, min?) => {
+  vi.spyOn(globalScene, "randBattleSeedInt").mockImplementation((range, min?) => {
     return randSeedInt(range, min);
   });
   for (let i = 0; i < NUM_TRIALS; i++) {
@@ -45,7 +45,7 @@ describe("Enemy Commands - Move Selection", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    gScene = game.scene;
+    globalScene = game.scene;
 
     game.override
       .ability(Abilities.BALL_FETCH)

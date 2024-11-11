@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene"; // todo?
+import { globalScene } from "#app/battle-scene"; // todo?
 import { SwitchType } from "#enums/switch-type";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
@@ -38,7 +38,7 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (this.isModal && !gScene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    if (this.isModal && !globalScene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
@@ -49,24 +49,24 @@ export class SwitchPhase extends BattlePhase {
      * if the mon should have already been returned but is still alive and well
      * on the field. see also; battle.test.ts
      */
-    if (this.isModal && !this.doReturn && !gScene.getParty()[this.fieldIndex].isFainted()) {
+    if (this.isModal && !this.doReturn && !globalScene.getParty()[this.fieldIndex].isFainted()) {
       return super.end();
     }
 
     // Check if there is any space still in field
-    if (this.isModal && gScene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= gScene.currentBattle.getBattlerCount()) {
+    if (this.isModal && globalScene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= globalScene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
     // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
-    const fieldIndex = gScene.currentBattle.getBattlerCount() === 1 || gScene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
+    const fieldIndex = globalScene.currentBattle.getBattlerCount() === 1 || globalScene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
 
-    gScene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
-      if (slotIndex >= gScene.currentBattle.getBattlerCount() && slotIndex < 6) {
+    globalScene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
+      if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
         const switchType = (option === PartyOption.PASS_BATON) ? SwitchType.BATON_PASS : this.switchType;
-        gScene.unshiftPhase(new SwitchSummonPhase(switchType, fieldIndex, slotIndex, this.doReturn));
+        globalScene.unshiftPhase(new SwitchSummonPhase(switchType, fieldIndex, slotIndex, this.doReturn));
       }
-      gScene.ui.setMode(Mode.MESSAGE).then(() => super.end());
+      globalScene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
   }
 }

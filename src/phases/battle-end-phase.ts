@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
 import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
@@ -18,50 +18,50 @@ export class BattleEndPhase extends BattlePhase {
     super.start();
 
     if (this.isVictory) {
-      gScene.currentBattle.addBattleScore();
+      globalScene.currentBattle.addBattleScore();
 
-      gScene.gameData.gameStats.battles++;
-      if (gScene.currentBattle.trainer) {
-        gScene.gameData.gameStats.trainersDefeated++;
+      globalScene.gameData.gameStats.battles++;
+      if (globalScene.currentBattle.trainer) {
+        globalScene.gameData.gameStats.trainersDefeated++;
       }
-      if (gScene.gameMode.isEndless && gScene.currentBattle.waveIndex + 1 > gScene.gameData.gameStats.highestEndlessWave) {
-        gScene.gameData.gameStats.highestEndlessWave = gScene.currentBattle.waveIndex + 1;
+      if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave) {
+        globalScene.gameData.gameStats.highestEndlessWave = globalScene.currentBattle.waveIndex + 1;
       }
     }
 
     // Endless graceful end
-    if (gScene.gameMode.isEndless && gScene.currentBattle.waveIndex >= 5850) {
-      gScene.clearPhaseQueue();
-      gScene.unshiftPhase(new GameOverPhase(true));
+    if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex >= 5850) {
+      globalScene.clearPhaseQueue();
+      globalScene.unshiftPhase(new GameOverPhase(true));
     }
 
-    for (const pokemon of gScene.getField()) {
+    for (const pokemon of globalScene.getField()) {
       if (pokemon && pokemon.battleSummonData) {
         pokemon.battleSummonData.waveTurnCount = 1;
       }
     }
 
-    for (const pokemon of gScene.getParty().filter(p => p.isAllowedInBattle())) {
+    for (const pokemon of globalScene.getParty().filter(p => p.isAllowedInBattle())) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }
 
-    if (gScene.currentBattle.moneyScattered) {
-      gScene.currentBattle.pickUpScatteredMoney();
+    if (globalScene.currentBattle.moneyScattered) {
+      globalScene.currentBattle.pickUpScatteredMoney();
     }
 
-    gScene.clearEnemyHeldItemModifiers();
+    globalScene.clearEnemyHeldItemModifiers();
 
-    const lapsingModifiers = gScene.findModifiers(m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
+    const lapsingModifiers = globalScene.findModifiers(m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
     for (const m of lapsingModifiers) {
       const args: any[] = [];
       if (m instanceof LapsingPokemonHeldItemModifier) {
-        args.push(gScene.getPokemonById(m.pokemonId));
+        args.push(globalScene.getPokemonById(m.pokemonId));
       }
       if (!m.lapse(...args)) {
-        gScene.removeModifier(m);
+        globalScene.removeModifier(m);
       }
     }
 
-    gScene.updateModifiers().then(() => this.end());
+    globalScene.updateModifiers().then(() => this.end());
   }
 }

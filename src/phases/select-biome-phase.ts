@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
 import { Biome } from "#app/enums/biome";
 import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";
@@ -17,51 +17,51 @@ export class SelectBiomePhase extends BattlePhase {
   start() {
     super.start();
 
-    const currentBiome = gScene.arena.biomeType;
+    const currentBiome = globalScene.arena.biomeType;
 
     const setNextBiome = (nextBiome: Biome) => {
-      if (gScene.currentBattle.waveIndex % 10 === 1) {
-        gScene.applyModifiers(MoneyInterestModifier, true);
-        gScene.unshiftPhase(new PartyHealPhase(false));
+      if (globalScene.currentBattle.waveIndex % 10 === 1) {
+        globalScene.applyModifiers(MoneyInterestModifier, true);
+        globalScene.unshiftPhase(new PartyHealPhase(false));
       }
-      gScene.unshiftPhase(new SwitchBiomePhase(nextBiome));
+      globalScene.unshiftPhase(new SwitchBiomePhase(nextBiome));
       this.end();
     };
 
-    if ((gScene.gameMode.isClassic && gScene.gameMode.isWaveFinal(gScene.currentBattle.waveIndex + 9))
-        || (gScene.gameMode.isDaily && gScene.gameMode.isWaveFinal(gScene.currentBattle.waveIndex))
-        || (gScene.gameMode.hasShortBiomes && !(gScene.currentBattle.waveIndex % 50))) {
+    if ((globalScene.gameMode.isClassic && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex + 9))
+        || (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex))
+        || (globalScene.gameMode.hasShortBiomes && !(globalScene.currentBattle.waveIndex % 50))) {
       setNextBiome(Biome.END);
-    } else if (gScene.gameMode.hasRandomBiomes) {
+    } else if (globalScene.gameMode.hasRandomBiomes) {
       setNextBiome(this.generateNextBiome());
     } else if (Array.isArray(biomeLinks[currentBiome])) {
       let biomes: Biome[] = [];
-      gScene.executeWithSeedOffset(() => {
+      globalScene.executeWithSeedOffset(() => {
         biomes = (biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
           .filter(b => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
           .map(b => !Array.isArray(b) ? b : b[0]);
-      }, gScene.currentBattle.waveIndex);
-      if (biomes.length > 1 && gScene.findModifier(m => m instanceof MapModifier)) {
+      }, globalScene.currentBattle.waveIndex);
+      if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
         let biomeChoices: Biome[] = [];
-        gScene.executeWithSeedOffset(() => {
+        globalScene.executeWithSeedOffset(() => {
           biomeChoices = (!Array.isArray(biomeLinks[currentBiome])
             ? [ biomeLinks[currentBiome] as Biome ]
             : biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
             .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
             .map(b => Array.isArray(b) ? b[0] : b);
-        }, gScene.currentBattle.waveIndex);
+        }, globalScene.currentBattle.waveIndex);
         const biomeSelectItems = biomeChoices.map(b => {
           const ret: OptionSelectItem = {
             label: getBiomeName(b),
             handler: () => {
-              gScene.ui.setMode(Mode.MESSAGE);
+              globalScene.ui.setMode(Mode.MESSAGE);
               setNextBiome(b);
               return true;
             }
           };
           return ret;
         });
-        gScene.ui.setMode(Mode.OPTION_SELECT, {
+        globalScene.ui.setMode(Mode.OPTION_SELECT, {
           options: biomeSelectItems,
           delay: 1000
         });
@@ -76,9 +76,9 @@ export class SelectBiomePhase extends BattlePhase {
   }
 
   generateNextBiome(): Biome {
-    if (!(gScene.currentBattle.waveIndex % 50)) {
+    if (!(globalScene.currentBattle.waveIndex % 50)) {
       return Biome.END;
     }
-    return gScene.generateRandomBiome(gScene.currentBattle.waveIndex);
+    return globalScene.generateRandomBiome(globalScene.currentBattle.waveIndex);
   }
 }

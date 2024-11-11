@@ -2,7 +2,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { EggHatchPhase } from "#app/phases/egg-hatch-phase";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export default class EggHatchSceneHandler extends UiHandler {
   public eggHatchContainer: Phaser.GameObjects.Container;
@@ -20,12 +20,12 @@ export default class EggHatchSceneHandler extends UiHandler {
   }
 
   setup() {
-    this.eggHatchContainer = gScene.add.container(0, -gScene.game.canvas.height / 6);
-    gScene.fieldUI.add(this.eggHatchContainer);
+    this.eggHatchContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    globalScene.fieldUI.add(this.eggHatchContainer);
 
-    const eggLightraysAnimFrames = gScene.anims.generateFrameNames("egg_lightrays", { start: 0, end: 3 });
-    if (!(gScene.anims.exists("egg_lightrays"))) {
-      gScene.anims.create({
+    const eggLightraysAnimFrames = globalScene.anims.generateFrameNames("egg_lightrays", { start: 0, end: 3 });
+    if (!(globalScene.anims.exists("egg_lightrays"))) {
+      globalScene.anims.create({
         key: "egg_lightrays",
         frames: eggLightraysAnimFrames,
         frameRate: 32
@@ -38,20 +38,20 @@ export default class EggHatchSceneHandler extends UiHandler {
 
     this.getUi().showText("", 0);
 
-    gScene.setModifiersVisible(false);
+    globalScene.setModifiersVisible(false);
 
     return true;
   }
 
   processInput(button: Button): boolean {
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const phase = gScene.getCurrentPhase();
+      const phase = globalScene.getCurrentPhase();
       if (phase instanceof EggHatchPhase && phase.trySkip()) {
         return true;
       }
     }
 
-    return gScene.ui.getMessageHandler().processInput(button);
+    return globalScene.ui.getMessageHandler().processInput(button);
   }
 
   setCursor(_cursor: integer): boolean {

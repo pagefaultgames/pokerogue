@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { bypassLogin, gScene, PokeballCounts } from "#app/battle-scene";
+import { bypassLogin, globalScene, PokeballCounts } from "#app/battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys } from "#app/data/pokemon-species";
@@ -364,7 +364,7 @@ export class GameData {
       voucherUnlocks: this.voucherUnlocks,
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
-      gameVersion: gScene.game.config.gameVersion,
+      gameVersion: globalScene.game.config.gameVersion,
       timestamp: new Date().getTime(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0)
@@ -385,7 +385,7 @@ export class GameData {
 
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      gScene.ui.savingIcon.show();
+      globalScene.ui.savingIcon.show();
       const data = this.getSystemSaveData();
 
       const maxIntAttrValue = 0x80000000;
@@ -397,11 +397,11 @@ export class GameData {
         Utils.apiPost(`savedata/system/update?clientSessionId=${clientSessionId}`, systemData, undefined, true)
           .then(response => response.text())
           .then(error => {
-            gScene.ui.savingIcon.hide();
+            globalScene.ui.savingIcon.hide();
             if (error) {
               if (error.startsWith("session out of date")) {
-                gScene.clearPhaseQueue();
-                gScene.unshiftPhase(new ReloadSessionPhase());
+                globalScene.clearPhaseQueue();
+                globalScene.unshiftPhase(new ReloadSessionPhase());
               }
               console.error(error);
               return resolve(false);
@@ -409,7 +409,7 @@ export class GameData {
             resolve(true);
           });
       } else {
-        gScene.ui.savingIcon.hide();
+        globalScene.ui.savingIcon.hide();
 
         resolve(true);
       }
@@ -430,10 +430,10 @@ export class GameData {
           .then(response => {
             if (!response.length || response[0] !== "{") {
               if (response.startsWith("sql: no rows in result set")) {
-                gScene.queueMessage("Save data could not be found. If this is a new account, you can safely ignore this message.", null, true);
+                globalScene.queueMessage("Save data could not be found. If this is a new account, you can safely ignore this message.", null, true);
                 return resolve(true);
               } else if (response.indexOf("Too many connections") > -1) {
-                gScene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
+                globalScene.queueMessage("Too many people are trying to connect and the server is overloaded. Please try again later.", null, true);
                 return resolve(false);
               }
               console.error(response);
@@ -704,8 +704,8 @@ export class GameData {
       .then(response => response.json());
 
     if (!response.valid) {
-      gScene.clearPhaseQueue();
-      gScene.unshiftPhase(new ReloadSessionPhase(JSON.stringify(response.systemData)));
+      globalScene.clearPhaseQueue();
+      globalScene.unshiftPhase(new ReloadSessionPhase(JSON.stringify(response.systemData)));
       this.clearLocalData();
       return false;
     }
@@ -738,7 +738,7 @@ export class GameData {
     setSetting(setting, valueIndex);
 
     settings[setting] = valueIndex;
-    settings["gameVersion"] = gScene.game.config.gameVersion;
+    settings["gameVersion"] = globalScene.game.config.gameVersion;
 
     localStorage.setItem("settings", JSON.stringify(settings));
 
@@ -784,7 +784,7 @@ export class GameData {
     const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!);  // Parse the existing 'mappingConfigs' from localStorage // TODO: is this bang correct?
 
     for (const key of Object.keys(mappingConfigs)) {// Iterate over the keys of the mapping configurations
-      gScene.inputController.injectConfig(key, mappingConfigs[key]);
+      globalScene.inputController.injectConfig(key, mappingConfigs[key]);
     }  // Inject each configuration into the input controller for the corresponding key
 
     return true;  // Return true to indicate the operation was successful
@@ -795,7 +795,7 @@ export class GameData {
       return false;
     }  // If 'mappingConfigs' does not exist, return false
     localStorage.removeItem("mappingConfigs");
-    gScene.inputController.resetConfigs();
+    globalScene.inputController.resetConfigs();
     return true; // TODO: is `true` the correct return value?
   }
 
@@ -942,25 +942,25 @@ export class GameData {
 
   public getSessionSaveData(): SessionSaveData {
     return {
-      seed: gScene.seed,
-      playTime: gScene.sessionPlayTime,
-      gameMode: gScene.gameMode.modeId,
-      party: gScene.getParty().map(p => new PokemonData(p)),
-      enemyParty: gScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: gScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: gScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
-      arena: new ArenaData(gScene.arena),
-      pokeballCounts: gScene.pokeballCounts,
-      money: Math.floor(gScene.money),
-      score: gScene.score,
-      waveIndex: gScene.currentBattle.waveIndex,
-      battleType: gScene.currentBattle.battleType,
-      trainer: gScene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(gScene.currentBattle.trainer) : null,
-      gameVersion: gScene.game.config.gameVersion,
+      seed: globalScene.seed,
+      playTime: globalScene.sessionPlayTime,
+      gameMode: globalScene.gameMode.modeId,
+      party: globalScene.getParty().map(p => new PokemonData(p)),
+      enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
+      modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      arena: new ArenaData(globalScene.arena),
+      pokeballCounts: globalScene.pokeballCounts,
+      money: Math.floor(globalScene.money),
+      score: globalScene.score,
+      waveIndex: globalScene.currentBattle.waveIndex,
+      battleType: globalScene.currentBattle.battleType,
+      trainer: globalScene.currentBattle.battleType === BattleType.TRAINER ? new TrainerData(globalScene.currentBattle.trainer) : null,
+      gameVersion: globalScene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: gScene.gameMode.challenges.map(c => new ChallengeData(c)),
-      mysteryEncounterType: gScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
-      mysteryEncounterSaveData: gScene.mysteryEncounterSaveData
+      challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
+      mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 
@@ -1009,22 +1009,22 @@ export class GameData {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
           console.debug(sessionData);
 
-          gScene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
+          globalScene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
           if (sessionData.challenges) {
-            gScene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+            globalScene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
           }
 
-          gScene.setSeed(sessionData.seed || gScene.game.config.seed[0]);
-          gScene.resetSeed();
+          globalScene.setSeed(sessionData.seed || globalScene.game.config.seed[0]);
+          globalScene.resetSeed();
 
-          console.log("Seed:", gScene.seed);
+          console.log("Seed:", globalScene.seed);
 
-          gScene.sessionPlayTime = sessionData.playTime || 0;
-          gScene.lastSavePlayTime = 0;
+          globalScene.sessionPlayTime = sessionData.playTime || 0;
+          globalScene.lastSavePlayTime = 0;
 
           const loadPokemonAssets: Promise<void>[] = [];
 
-          const party = gScene.getParty();
+          const party = globalScene.getParty();
           party.splice(0, party.length);
 
           for (const p of sessionData.party) {
@@ -1034,34 +1034,34 @@ export class GameData {
             party.push(pokemon);
           }
 
-          Object.keys(gScene.pokeballCounts).forEach((key: string) => {
-            gScene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
+          Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
+            globalScene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
           });
           if (Overrides.POKEBALL_OVERRIDE.active) {
-            gScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+            globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
           }
 
-          gScene.money = Math.floor(sessionData.money || 0);
-          gScene.updateMoneyText();
+          globalScene.money = Math.floor(sessionData.money || 0);
+          globalScene.updateMoneyText();
 
-          if (gScene.money > this.gameStats.highestMoney) {
-            this.gameStats.highestMoney = gScene.money;
+          if (globalScene.money > this.gameStats.highestMoney) {
+            this.gameStats.highestMoney = globalScene.money;
           }
 
-          gScene.score = sessionData.score;
-          gScene.updateScoreText();
+          globalScene.score = sessionData.score;
+          globalScene.updateScoreText();
 
-          gScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
+          globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
 
-          gScene.newArena(sessionData.arena.biome);
+          globalScene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
           const mysteryEncounterType = sessionData.mysteryEncounterType !== -1 ? sessionData.mysteryEncounterType : undefined;
-          const battle = gScene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterType)!; // TODO: is this bang correct?
+          const battle = globalScene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1, mysteryEncounterType)!; // TODO: is this bang correct?
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
-          gScene.arena.init();
+          globalScene.arena.init();
 
           sessionData.enemyParty.forEach((enemyData, e) => {
             const enemyPokemon = enemyData.toPokemon(battleType, e, sessionData.trainer?.variant === TrainerVariant.DOUBLE) as EnemyPokemon;
@@ -1073,20 +1073,20 @@ export class GameData {
             loadPokemonAssets.push(enemyPokemon.loadAssets());
           });
 
-          gScene.arena.weather = sessionData.arena.weather;
-          gScene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE, gScene.arena.weather?.weatherType!, gScene.arena.weather?.turnsLeft!)); // TODO: is this bang correct?
+          globalScene.arena.weather = sessionData.arena.weather;
+          globalScene.arena.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE, globalScene.arena.weather?.weatherType!, globalScene.arena.weather?.turnsLeft!)); // TODO: is this bang correct?
 
-          gScene.arena.terrain = sessionData.arena.terrain;
-          gScene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, gScene.arena.terrain?.terrainType!, gScene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
+          globalScene.arena.terrain = sessionData.arena.terrain;
+          globalScene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, globalScene.arena.terrain?.terrainType!, globalScene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
 
-          gScene.arena.tags = sessionData.arena.tags;
-          if (gScene.arena.tags) {
-            for (const tag of gScene.arena.tags) {
+          globalScene.arena.tags = sessionData.arena.tags;
+          if (globalScene.arena.tags) {
+            for (const tag of globalScene.arena.tags) {
               if (tag instanceof ArenaTrapTag) {
                 const { tagType, side, turnCount, layers, maxLayers } = tag as ArenaTrapTag;
-                gScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+                globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
               } else {
-                gScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+                globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
               }
             }
           }
@@ -1094,20 +1094,20 @@ export class GameData {
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(Modifier[modifierData.className]);
             if (modifier) {
-              gScene.addModifier(modifier, true);
+              globalScene.addModifier(modifier, true);
             }
           }
 
-          gScene.updateModifiers(true);
+          globalScene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
             const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
             if (modifier) {
-              gScene.addEnemyModifier(modifier, true);
+              globalScene.addEnemyModifier(modifier, true);
             }
           }
 
-          gScene.updateModifiers(false);
+          globalScene.updateModifiers(false);
 
           Promise.all(loadPokemonAssets).then(() => resolve(true));
         };
@@ -1155,8 +1155,8 @@ export class GameData {
         }).then(error => {
           if (error) {
             if (error.startsWith("session out of date")) {
-              gScene.clearPhaseQueue();
-              gScene.unshiftPhase(new ReloadSessionPhase());
+              globalScene.clearPhaseQueue();
+              globalScene.unshiftPhase(new ReloadSessionPhase());
             }
             console.error(error);
             resolve(false);
@@ -1224,8 +1224,8 @@ export class GameData {
         result = [ true, jsonResponse.success ?? false ];
       } else {
         if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
-          gScene.clearPhaseQueue();
-          gScene.unshiftPhase(new ReloadSessionPhase());
+          globalScene.clearPhaseQueue();
+          globalScene.unshiftPhase(new ReloadSessionPhase());
         }
 
         console.error(jsonResponse);
@@ -1240,12 +1240,6 @@ export class GameData {
 
   parseSessionData(dataStr: string): SessionSaveData {
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      /*const versions = [ gScene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
-
-      if (versions[0] !== versions[1]) {
-        const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
-      }*/
-
       if (k === "party" || k === "enemyParty") {
         const ret: PokemonData[] = [];
         if (v === null) {
@@ -1317,10 +1311,10 @@ export class GameData {
           return resolve(false);
         }
         if (sync) {
-          gScene.ui.savingIcon.show();
+          globalScene.ui.savingIcon.show();
         }
         const sessionData = useCachedSession ?
-          this.parseSessionData(decrypt(localStorage.getItem(`sessionData${gScene.sessionSlotId ? gScene.sessionSlotId : ""}_${loggedInUser?.username}`)!, bypassLogin)) // TODO: is this bang correct?
+          this.parseSessionData(decrypt(localStorage.getItem(`sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`)!, bypassLogin)) // TODO: is this bang correct?
           : this.getSessionSaveData();
 
         const maxIntAttrValue = 0x80000000;
@@ -1329,13 +1323,13 @@ export class GameData {
         const request = {
           system: systemData,
           session: sessionData,
-          sessionSlotId: gScene.sessionSlotId,
+          sessionSlotId: globalScene.sessionSlotId,
           clientSessionId: clientSessionId
         };
 
         localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(JSON.stringify(systemData, (k: any, v: any) => typeof v === "bigint" ? v <= maxIntAttrValue ? Number(v) : v.toString() : v), bypassLogin));
 
-        localStorage.setItem(`sessionData${gScene.sessionSlotId ? gScene.sessionSlotId : ""}_${loggedInUser?.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
+        localStorage.setItem(`sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`, encrypt(JSON.stringify(sessionData), bypassLogin));
 
         console.debug("Session data saved");
 
@@ -1344,13 +1338,13 @@ export class GameData {
             .then(response => response.text())
             .then(error => {
               if (sync) {
-                gScene.lastSavePlayTime = 0;
-                gScene.ui.savingIcon.hide();
+                globalScene.lastSavePlayTime = 0;
+                globalScene.ui.savingIcon.hide();
               }
               if (error) {
                 if (error.startsWith("session out of date")) {
-                  gScene.clearPhaseQueue();
-                  gScene.unshiftPhase(new ReloadSessionPhase());
+                  globalScene.clearPhaseQueue();
+                  globalScene.unshiftPhase(new ReloadSessionPhase());
                 }
                 console.error(error);
                 return resolve(false);
@@ -1359,7 +1353,7 @@ export class GameData {
             });
         } else {
           this.verify().then(success => {
-            gScene.ui.savingIcon.hide();
+            globalScene.ui.savingIcon.hide();
             resolve(success);
           });
         }
@@ -1459,15 +1453,15 @@ export class GameData {
               console.error(ex);
             }
 
-            const displayError = (error: string) => gScene.ui.showText(error, null, () => gScene.ui.showText("", 0), Utils.fixedInt(1500));
+            const displayError = (error: string) => globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), Utils.fixedInt(1500));
             dataName = dataName!; // tell TS compiler that dataName is defined!
 
             if (!valid) {
-              return gScene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => gScene.ui.showText("", 0), Utils.fixedInt(1500));
+              return globalScene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => globalScene.ui.showText("", 0), Utils.fixedInt(1500));
             }
 
-            gScene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
-              gScene.ui.setOverlayMode(Mode.CONFIRM, () => {
+            globalScene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
+              globalScene.ui.setOverlayMode(Mode.CONFIRM, () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
@@ -1495,8 +1489,8 @@ export class GameData {
                   window.location = window.location;
                 }
               }, () => {
-                gScene.ui.revertMode();
-                gScene.ui.showText("", 0);
+                globalScene.ui.revertMode();
+                globalScene.ui.showText("", 0);
               }, false, -98);
             });
           };
@@ -1506,9 +1500,6 @@ export class GameData {
       }
     );
     saveFile.click();
-    /*(gScene.plugins.get('rexfilechooserplugin') as FileChooserPlugin).open({ accept: '.prsv' })
-      .then(result => {
-    });*/
   }
 
   private initDexData(): void {
@@ -1524,7 +1515,7 @@ export class GameData {
 
     const defaultStarterNatures: Nature[] = [];
 
-    gScene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
       for (let s = 0; s < defaultStarterSpecies.length; s++) {
         defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
@@ -1568,7 +1559,7 @@ export class GameData {
 
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true, trainer: boolean = false): void {
     // Some Mystery Encounters block updates to these stats
-    if (gScene.currentBattle?.isBattleMysteryEncounter() && gScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates) {
+    if (globalScene.currentBattle?.isBattleMysteryEncounter() && globalScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates) {
       return;
     }
     const dexEntry = this.dexData[pokemon.species.speciesId];
@@ -1601,7 +1592,7 @@ export class GameData {
     // If incrementCount === false (not a catch scenario), only update the pokemon's dex data if the Pokemon has already been marked as caught in dex
     // Prevents form changes, nature changes, etc. from unintentionally updating the dex data of a "rental" pokemon
     const speciesRootForm = pokemon.species.getRootSpeciesId();
-    if (!incrementCount && !gScene.gameData.dexData[speciesRootForm].caughtAttr) {
+    if (!incrementCount && !globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
       return Promise.resolve(false);
     } else {
       return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount, fromEgg, showMessage);
@@ -1674,7 +1665,7 @@ export class GameData {
           }
         }
 
-        if (!hasPrevolution && (!gScene.gameMode.isDaily || hasNewAttr || fromEgg)) {
+        if (!hasPrevolution && (!globalScene.gameMode.isDaily || hasNewAttr || fromEgg)) {
           this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * (1 << (pokemon.variant ?? 0)) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
         }
       }
@@ -1693,8 +1684,8 @@ export class GameData {
           resolve(true);
           return;
         }
-        gScene.playSound("level_up_fanfare");
-        gScene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(true), null, true);
+        globalScene.playSound("level_up_fanfare");
+        globalScene.ui.showText(i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), null, () => checkPrevolution(true), null, true);
       } else {
         checkPrevolution(false);
       }
@@ -1709,25 +1700,25 @@ export class GameData {
     }
 
     if (!this.starterData[speciesIdToIncrement].classicWinCount) {
-      gScene.gameData.gameStats.ribbonsOwned++;
+      globalScene.gameData.gameStats.ribbonsOwned++;
     }
 
-    const ribbonsInStats: integer = gScene.gameData.gameStats.ribbonsOwned;
+    const ribbonsInStats: integer = globalScene.gameData.gameStats.ribbonsOwned;
 
     if (ribbonsInStats >= 100) {
-      gScene.validateAchv(achvs._100_RIBBONS);
+      globalScene.validateAchv(achvs._100_RIBBONS);
     }
     if (ribbonsInStats >= 75) {
-      gScene.validateAchv(achvs._75_RIBBONS);
+      globalScene.validateAchv(achvs._75_RIBBONS);
     }
     if (ribbonsInStats >= 50) {
-      gScene.validateAchv(achvs._50_RIBBONS);
+      globalScene.validateAchv(achvs._50_RIBBONS);
     }
     if (ribbonsInStats >= 25) {
-      gScene.validateAchv(achvs._25_RIBBONS);
+      globalScene.validateAchv(achvs._25_RIBBONS);
     }
     if (ribbonsInStats >= 10) {
-      gScene.validateAchv(achvs._10_RIBBONS);
+      globalScene.validateAchv(achvs._10_RIBBONS);
     }
 
     return ++this.starterData[speciesIdToIncrement].classicWinCount;
@@ -1742,8 +1733,8 @@ export class GameData {
   addStarterCandy(species: PokemonSpecies, count: integer): void {
     // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
     const speciesRootForm = species.getRootSpeciesId();
-    if (gScene.gameData.dexData[speciesRootForm].caughtAttr) {
-      gScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
+    if (globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
+      globalScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
       this.starterData[species.speciesId].candyCount += count;
     }
   }
@@ -1779,19 +1770,19 @@ export class GameData {
         resolve(true);
         return;
       }
-      gScene.playSound("level_up_fanfare");
+      globalScene.playSound("level_up_fanfare");
       const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
       let message = prependSpeciesToMessage ? species.getName() + " " : "";
       message += eggMoveIndex === 3 ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName }) : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
 
-      gScene.ui.showText(message, null, () => resolve(true), null, true);
+      globalScene.ui.showText(message, null, () => resolve(true), null, true);
     });
   }
 
   updateSpeciesDexIvs(speciesId: Species, ivs: integer[]): void {
     let dexEntry: DexEntry;
     do {
-      dexEntry = gScene.gameData.dexData[speciesId];
+      dexEntry = globalScene.gameData.dexData[speciesId];
       const dexIvs = dexEntry.ivs;
       for (let i = 0; i < dexIvs.length; i++) {
         if (dexIvs[i] < ivs[i]) {
@@ -1799,7 +1790,7 @@ export class GameData {
         }
       }
       if (dexIvs.filter(iv => iv === 31).length === 6) {
-        gScene.validateAchv(achvs.PERFECT_IVS);
+        globalScene.validateAchv(achvs.PERFECT_IVS);
       }
     } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
   }
@@ -1907,7 +1898,7 @@ export class GameData {
     }
 
     const cost = new Utils.NumberHolder(value);
-    applyChallenges(gScene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
+    applyChallenges(globalScene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
 
     return cost.value;
   }

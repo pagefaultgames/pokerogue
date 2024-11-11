@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { TerrainType, getTerrainColor } from "../data/terrain";
 import * as Utils from "../utils";
 
@@ -232,16 +232,16 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
     const ignoreTimeTint = data["ignoreTimeTint"] as boolean;
     const terrainColorRatio = data["terrainColorRatio"] as number || 0;
 
-    const time = gScene.currentBattle?.waveIndex
-      ? ((gScene.currentBattle.waveIndex + gScene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
+    const time = globalScene.currentBattle?.waveIndex
+      ? ((globalScene.currentBattle.waveIndex + globalScene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
       : Utils.getCurrentTime();
     this.set1f("time", time);
     this.set1i("ignoreTimeTint", ignoreTimeTint ? 1 : 0);
-    this.set1i("isOutside", gScene.arena.isOutside() ? 1 : 0);
-    this.set3fv("dayTint", gScene.arena.getDayTint().map(c => c / 255));
-    this.set3fv("duskTint", gScene.arena.getDuskTint().map(c => c / 255));
-    this.set3fv("nightTint", gScene.arena.getNightTint().map(c => c / 255));
-    this.set3fv("terrainColor", getTerrainColor(gScene.arena.terrain?.terrainType || TerrainType.NONE).map(c => c / 255));
+    this.set1i("isOutside", globalScene.arena.isOutside() ? 1 : 0);
+    this.set3fv("dayTint", globalScene.arena.getDayTint().map(c => c / 255));
+    this.set3fv("duskTint", globalScene.arena.getDuskTint().map(c => c / 255));
+    this.set3fv("nightTint", globalScene.arena.getNightTint().map(c => c / 255));
+    this.set3fv("terrainColor", getTerrainColor(globalScene.arena.terrain?.terrainType || TerrainType.NONE).map(c => c / 255));
     this.set1f("terrainColorRatio", terrainColorRatio);
   }
 

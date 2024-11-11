@@ -5,7 +5,7 @@ import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import * as Utils from "../utils";
 import { Button } from "#enums/buttons";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
@@ -77,7 +77,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.formLabels.push(label);
       this.modalContainer.add(this.formLabels[this.formLabels.length - 1]);
 
-      const inputContainer = gScene.add.container(70, (hasTitle ? 28 : 2) + 20 * f);
+      const inputContainer = globalScene.add.container(70, (hasTitle ? 28 : 2) + 20 * f);
       inputContainer.setVisible(false);
 
       const inputBg = addWindow(0, 0, 80, 16, false, false, 0, 0, WindowVariant.XTHIN);
@@ -119,7 +119,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.modalContainer.y += 24;
       this.modalContainer.setAlpha(0);
 
-      this.tween = gScene.tweens.add({
+      this.tween = globalScene.tweens.add({
         targets: this.modalContainer,
         duration: Utils.fixedInt(1000),
         ease: "Sine.easeInOut",

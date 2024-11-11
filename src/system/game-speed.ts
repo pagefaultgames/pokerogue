@@ -1,7 +1,7 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import FadeIn from "phaser3-rex-plugins/plugins/audio/fade/FadeIn";
 import FadeOut from "phaser3-rex-plugins/plugins/audio/fade/FadeOut";
-import BattleScene, { gScene } from "#app/battle-scene";
+import BattleScene, { globalScene } from "#app/battle-scene";
 import * as Utils from "../utils";
 
 type FadeIn = typeof FadeIn;
@@ -98,7 +98,7 @@ export function initGameSpeed() {
     sound: Phaser.Sound.BaseSound,
     duration: number,
     destroy?: boolean
-  ) => originalFadeOut(gScene, sound, transformValue(duration), destroy)) as FadeOut;
+  ) => originalFadeOut(globalScene, sound, transformValue(duration), destroy)) as FadeOut;
 
   const originalFadeIn = SoundFade.fadeIn;
   SoundFade.fadeIn = ((
@@ -107,5 +107,5 @@ export function initGameSpeed() {
     duration: number,
     endVolume?: number,
     startVolume?: number
-  ) => originalFadeIn(gScene, sound, transformValue(duration), endVolume, startVolume)) as FadeIn;
+  ) => originalFadeIn(globalScene, sound, transformValue(duration), endVolume, startVolume)) as FadeIn;
 }

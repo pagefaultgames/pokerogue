@@ -17,7 +17,7 @@ import {
   regenerateModifierPoolThresholds,
 } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -53,11 +53,11 @@ export const FightOrFlightEncounter: MysteryEncounter =
       },
     ])
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = gScene.arena.randomSpecies(gScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(gScene.getParty()), true);
+      const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getParty()), true);
       const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
       const config: EnemyPartyConfig = {
@@ -71,7 +71,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
             queueEncounterMessage(`${namespace}:option.1.stat_boost`);
             // Randomly boost 1 stat 2 stages
             // Cannot boost Spd, Acc, or Evasion
-            gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ randSeedInt(4, 1) ], 2));
+            globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ randSeedInt(4, 1) ], 2));
           }
         }],
       };
@@ -80,18 +80,18 @@ export const FightOrFlightEncounter: MysteryEncounter =
       // Calculate item
       // Waves 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
       const tier =
-        gScene.currentBattle.waveIndex > 160
+        globalScene.currentBattle.waveIndex > 160
           ? ModifierTier.MASTER
-          : gScene.currentBattle.waveIndex > 120
+          : globalScene.currentBattle.waveIndex > 120
             ? ModifierTier.ROGUE
-            : gScene.currentBattle.waveIndex > 40
+            : globalScene.currentBattle.waveIndex > 40
               ? ModifierTier.ULTRA
               : ModifierTier.GREAT;
-      regenerateModifierPoolThresholds(gScene.getParty(), ModifierPoolType.PLAYER, 0);
+      regenerateModifierPoolThresholds(globalScene.getParty(), ModifierPoolType.PLAYER, 0);
       let item: ModifierTypeOption | null = null;
       // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
       while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
-        item = getPlayerModifierTypeOptions(1, gScene.getParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
+        item = getPlayerModifierTypeOptions(1, globalScene.getParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
       }
       encounter.setDialogueToken("itemName", item.type.name);
       encounter.misc = item;
@@ -138,9 +138,9 @@ export const FightOrFlightEncounter: MysteryEncounter =
       async () => {
         // Pick battle
         // Pokemon will randomly boost 1 stat by 2 stages
-        const item = gScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
+        const item = globalScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
         setEncounterRewards({ guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
-        await initBattleWithEnemyConfig(gScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
+        await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
       }
     )
     .withOption(
@@ -159,8 +159,8 @@ export const FightOrFlightEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Pick steal
-          const encounter = gScene.currentBattle.mysteryEncounter!;
-          const item = gScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
+          const item = globalScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
           setEncounterRewards({ guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
 
           // Use primaryPokemon to execute the thievery

@@ -1,4 +1,4 @@
-import { gScene, startingWave } from "#app/battle-scene";
+import { globalScene, startingWave } from "#app/battle-scene";
 import { ModifierTypeFunc, modifierTypes } from "#app/modifier/modifier-type";
 import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
@@ -842,7 +842,7 @@ export class TrainerConfig {
     this.setBattleBgm("battle_unova_gym");
     this.setVictoryBgm("victory_gym");
     this.setGenModifiersFunc(party => {
-      const waveIndex = gScene.currentBattle.waveIndex;
+      const waveIndex = globalScene.currentBattle.waveIndex;
       return getRandomTeraModifiers(party, waveIndex >= 100 ? 1 : 0, specialtyTypes.length ? specialtyTypes : undefined);
     });
 
@@ -1016,23 +1016,23 @@ export class TrainerConfig {
       const isDouble = variant === TrainerVariant.DOUBLE;
       const trainerKey = this.getSpriteKey(variant === TrainerVariant.FEMALE, false);
       const partnerTrainerKey = this.getSpriteKey(true, true);
-      gScene.loadAtlas(trainerKey, "trainer");
+      globalScene.loadAtlas(trainerKey, "trainer");
       if (isDouble) {
-        gScene.loadAtlas(partnerTrainerKey, "trainer");
+        globalScene.loadAtlas(partnerTrainerKey, "trainer");
       }
-      gScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
         console.warn = () => {
         };
-        const frameNames = gScene.anims.generateFrameNames(trainerKey, {
+        const frameNames = globalScene.anims.generateFrameNames(trainerKey, {
           zeroPad: 4,
           suffix: ".png",
           start: 1,
           end: 128
         });
         const partnerFrameNames = isDouble
-          ? gScene.anims.generateFrameNames(partnerTrainerKey, {
+          ? globalScene.anims.generateFrameNames(partnerTrainerKey, {
             zeroPad: 4,
             suffix: ".png",
             start: 1,
@@ -1040,16 +1040,16 @@ export class TrainerConfig {
           })
           : "";
         console.warn = originalWarn;
-        if (!(gScene.anims.exists(trainerKey))) {
-          gScene.anims.create({
+        if (!(globalScene.anims.exists(trainerKey))) {
+          globalScene.anims.create({
             key: trainerKey,
             frames: frameNames,
             frameRate: 24,
             repeat: -1
           });
         }
-        if (isDouble && !(gScene.anims.exists(partnerTrainerKey))) {
-          gScene.anims.create({
+        if (isDouble && !(globalScene.anims.exists(partnerTrainerKey))) {
+          globalScene.anims.create({
             key: partnerTrainerKey,
             frames: partnerFrameNames,
             frameRate: 24,
@@ -1058,8 +1058,8 @@ export class TrainerConfig {
         }
         resolve();
       });
-      if (!gScene.load.isLoading()) {
-        gScene.load.start();
+      if (!globalScene.load.isLoading()) {
+        globalScene.load.start();
       }
     });
   }
@@ -1137,7 +1137,7 @@ interface TrainerConfigs {
  * @returns the correct TrainerPartyTemplate
  */
 function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
-  const waveIndex = gScene.currentBattle?.waveIndex;
+  const waveIndex = globalScene.currentBattle?.waveIndex;
   if (waveIndex < 40) {
     return trainerPartyTemplates.TWO_AVG;
   } else if (waveIndex < 63) {
@@ -1152,7 +1152,7 @@ function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
 }
 
 function getWavePartyTemplate(...templates: TrainerPartyTemplate[]) {
-  return templates[Math.min(Math.max(Math.ceil((gScene.gameMode.getWaveForDifficulty(gScene.currentBattle?.waveIndex || startingWave, true) - 20) / 30), 0), templates.length - 1)];
+  return templates[Math.min(Math.max(Math.ceil((globalScene.gameMode.getWaveForDifficulty(globalScene.currentBattle?.waveIndex || startingWave, true) - 20) / 30), 0), templates.length - 1)];
 }
 
 function getGymLeaderPartyTemplate() {
@@ -1161,7 +1161,7 @@ function getGymLeaderPartyTemplate() {
 
 /**
  * Randomly selects one of the `Species` from `speciesPool`, determines its evolution, level, and strength.
- * Then adds Pokemon to gScene.
+ * Then adds Pokemon to globalScene.
  * @param speciesPool
  * @param trainerSlot
  * @param ignoreEvolution
@@ -1171,9 +1171,9 @@ export function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: Tr
   return (level: number, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
     if (!ignoreEvolution) {
-      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength, gScene.currentBattle.waveIndex);
+      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex);
     }
-    return gScene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
+    return globalScene.addEnemyPokemon(getPokemonSpecies(species), level, trainerSlot, undefined, undefined, postProcess);
   };
 }
 
@@ -1181,7 +1181,7 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   const originalSpeciesFilter = speciesFilter;
   speciesFilter = (species: PokemonSpecies) => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
   return (level: integer, strength: PartyMemberStrength) => {
-    const ret = gScene.addEnemyPokemon(getPokemonSpecies(gScene.randomSpecies(gScene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength, gScene.currentBattle.waveIndex)), level, trainerSlot, undefined, undefined, postProcess);
+    const ret = globalScene.addEnemyPokemon(getPokemonSpecies(globalScene.randomSpecies(globalScene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex)), level, trainerSlot, undefined, undefined, postProcess);
     return ret;
   };
 }

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { PokemonPhase } from "./pokemon-phase";
@@ -16,7 +16,7 @@ export class MoveEndPhase extends PokemonPhase {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
     }
 
-    gScene.arena.setIgnoreAbilities(false);
+    globalScene.arena.setIgnoreAbilities(false);
 
     this.end();
   }

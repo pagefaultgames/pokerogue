@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { DexEntry, StarterDataEntry } from "#app/system/game-data";
 
@@ -36,8 +36,8 @@ export class EggHatchData {
      * Used before updating the dex, so comparing the pokemon to these entries will show the new attributes
      */
   setDex() {
-    const currDexEntry = gScene.gameData.dexData[this.pokemon.species.speciesId];
-    const currStarterDataEntry = gScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
+    const currDexEntry = globalScene.gameData.dexData[this.pokemon.species.speciesId];
+    const currStarterDataEntry = globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
     this.dexEntryBeforeUpdate = {
       seenAttr: currDexEntry.seenAttr,
       caughtAttr: currDexEntry.caughtAttr,
@@ -83,9 +83,9 @@ export class EggHatchData {
      */
   updatePokemon(showMessage : boolean = false) {
     return new Promise<void>(resolve => {
-      gScene.gameData.setPokemonCaught(this.pokemon, true, true, showMessage).then(() => {
-        gScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-        gScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then((value) => {
+      globalScene.gameData.setPokemonCaught(this.pokemon, true, true, showMessage).then(() => {
+        globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+        globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then((value) => {
           this.setEggMoveUnlocked(value);
           resolve();
         });

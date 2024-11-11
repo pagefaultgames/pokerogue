@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { FieldPosition } from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
 
@@ -14,11 +14,11 @@ export class ToggleDoublePositionPhase extends BattlePhase {
   start() {
     super.start();
 
-    const playerPokemon = gScene.getPlayerField().find(p => p.isActive(true));
+    const playerPokemon = globalScene.getPlayerField().find(p => p.isActive(true));
     if (playerPokemon) {
-      playerPokemon.setFieldPosition(this.double && gScene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
+      playerPokemon.setFieldPosition(this.double && globalScene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
         if (playerPokemon.getFieldIndex() === 1) {
-          const party = gScene.getParty();
+          const party = globalScene.getParty();
           party[1] = party[0];
           party[0] = playerPokemon;
         }

@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import { PokemonPhase } from "./pokemon-phase";
 
@@ -21,7 +21,7 @@ export class CommonAnimPhase extends PokemonPhase {
   }
 
   start() {
-    const target = this.targetIndex !== undefined ? (this.player ? gScene.getEnemyField() : gScene.getPlayerField())[this.targetIndex] : this.getPokemon();
+    const target = this.targetIndex !== undefined ? (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField())[this.targetIndex] : this.getPokemon();
     new CommonBattleAnim(this.anim, this.getPokemon(), target).play(false, () => {
       this.end();
     });

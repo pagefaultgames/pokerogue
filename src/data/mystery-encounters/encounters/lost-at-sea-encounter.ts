@@ -2,7 +2,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { leaveEncounterWithoutBattle, setEncounterExp } from "../utils/encounter-phase-utils";
@@ -42,7 +42,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   ])
   .withIntroDialogue([{ text: `${namespace}:intro` }])
   .withOnInit(() => {
-    const encounter = gScene.currentBattle.mysteryEncounter!;
+    const encounter = globalScene.currentBattle.mysteryEncounter!;
 
     encounter.setDialogueToken("damagePercentage", String(DAMAGE_PERCENTAGE));
     encounter.setDialogueToken("option1RequiredMove", new PokemonMove(OPTION_1_REQUIRED_MOVE).getName());
@@ -104,7 +104,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       ],
     },
     async () => {
-      const allowedPokemon = gScene.getParty().filter((p) => p.isAllowedInBattle());
+      const allowedPokemon = globalScene.getParty().filter((p) => p.isAllowedInBattle());
 
       for (const pkm of allowedPokemon) {
         const percentage = DAMAGE_PERCENTAGE / 100;
@@ -131,7 +131,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  */
 function handlePokemonGuidingYouPhase() {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
-  const { mysteryEncounter } = gScene.currentBattle;
+  const { mysteryEncounter } = globalScene.currentBattle;
 
   if (mysteryEncounter?.selectedOption?.primaryPokemon?.id) {
     setEncounterExp(mysteryEncounter.selectedOption.primaryPokemon.id, laprasSpecies.baseExp, true);

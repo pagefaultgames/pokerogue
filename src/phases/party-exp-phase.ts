@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 
 /**
@@ -24,7 +24,7 @@ export class PartyExpPhase extends Phase {
   start() {
     super.start();
 
-    gScene.applyPartyExp(this.expValue, false, this.useWaveIndexMultiplier, this.pokemonParticipantIds);
+    globalScene.applyPartyExp(this.expValue, false, this.useWaveIndexMultiplier, this.pokemonParticipantIds);
 
     this.end();
   }

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import * as Utils from "../utils";
 
 export default class CharSprite extends Phaser.GameObjects.Container {
@@ -10,12 +10,12 @@ export default class CharSprite extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(gScene, (gScene.game.canvas.width / 6) + 32, -42);
+    super(globalScene, (globalScene.game.canvas.width / 6) + 32, -42);
   }
 
   setup(): void {
     [ this.sprite, this.transitionSprite ] = new Array(2).fill(null).map(() => {
-      const ret = gScene.add.sprite(0, 0, "", "");
+      const ret = globalScene.add.sprite(0, 0, "", "");
       ret.setOrigin(0.5, 1);
       this.add(ret);
       return ret;
@@ -45,11 +45,11 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
       this.sprite.setTexture(key, variant);
 
-      gScene.fieldUI.bringToTop(this);
+      globalScene.fieldUI.bringToTop(this);
 
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: this,
-        x: (gScene.game.canvas.width / 6) - 102,
+        x: (globalScene.game.canvas.width / 6) - 102,
         duration: 750,
         ease: "Cubic.easeOut",
         onComplete: () => {
@@ -57,7 +57,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
         }
       });
 
-      this.setVisible(gScene.textures.get(key).key !== Utils.MissingTextureKey);
+      this.setVisible(globalScene.textures.get(key).key !== Utils.MissingTextureKey);
       this.shown = true;
 
       this.key = key;
@@ -67,12 +67,12 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
   setVariant(variant: string): Promise<void> {
     return new Promise(resolve => {
-      gScene.fieldUI.bringToTop(this);
+      globalScene.fieldUI.bringToTop(this);
 
       this.transitionSprite.setTexture(this.key, variant);
       this.transitionSprite.setAlpha(0);
       this.transitionSprite.setVisible(true);
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: this.transitionSprite,
         alpha: 1,
         duration: 250,
@@ -93,9 +93,9 @@ export default class CharSprite extends Phaser.GameObjects.Container {
         return resolve();
       }
 
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: this,
-        x: (gScene.game.canvas.width / 6) + 32,
+        x: (globalScene.game.canvas.width / 6) + 32,
         duration: 750,
         ease: "Cubic.easeIn",
         onComplete: () => {

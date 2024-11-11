@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
@@ -12,13 +12,13 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
-      gScene.addModifier(newModifier).then(() => {
+      globalScene.addModifier(newModifier).then(() => {
         // Sound loaded into game as is
-        gScene.playSound("level_up_fanfare");
-        gScene.ui.setMode(Mode.MESSAGE);
-        gScene.ui.fadeIn(250).then(() => {
-          gScene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }), null, () => {
-            gScene.time.delayedCall(1500, () => gScene.arenaBg.setVisible(true));
+        globalScene.playSound("level_up_fanfare");
+        globalScene.ui.setMode(Mode.MESSAGE);
+        globalScene.ui.fadeIn(250).then(() => {
+          globalScene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }), null, () => {
+            globalScene.time.delayedCall(1500, () => globalScene.arenaBg.setVisible(true));
             resolve();
           }, null, true, 1500);
         });

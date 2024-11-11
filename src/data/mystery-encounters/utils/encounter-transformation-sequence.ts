@@ -2,7 +2,7 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import { getFrameMs } from "#app/utils";
 import { cos, sin } from "#app/field/anims";
 import { getTypeRgb } from "#app/data/type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export enum TransformationScreenPosition {
   CENTER,
@@ -19,8 +19,8 @@ export enum TransformationScreenPosition {
  */
 export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, transformPokemon: PlayerPokemon, screenPosition: TransformationScreenPosition) {
   return new Promise<void>(resolve => {
-    const transformationContainer = gScene.fieldUI.getByName("Dream Background") as Phaser.GameObjects.Container;
-    const transformationBaseBg = gScene.add.image(0, 0, "default_bg");
+    const transformationContainer = globalScene.fieldUI.getByName("Dream Background") as Phaser.GameObjects.Container;
+    const transformationBaseBg = globalScene.add.image(0, 0, "default_bg");
     transformationBaseBg.setOrigin(0, 0);
     transformationBaseBg.setVisible(false);
     transformationContainer.add(transformationBaseBg);
@@ -36,8 +36,8 @@ export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, 
     const yOffset = screenPosition !== TransformationScreenPosition.CENTER ? -15 : 0;
 
     const getPokemonSprite = () => {
-      const ret = gScene.addPokemonSprite(previousPokemon, transformationBaseBg.displayWidth / 2 + xOffset, transformationBaseBg.displayHeight / 2 + yOffset, "pkmn__sub");
-      ret.setPipeline(gScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
+      const ret = globalScene.addPokemonSprite(previousPokemon, transformationBaseBg.displayWidth / 2 + xOffset, transformationBaseBg.displayHeight / 2 + yOffset, "pkmn__sub");
+      ret.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       return ret;
     };
 
@@ -55,7 +55,7 @@ export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, 
 
     [ pokemonSprite, pokemonTintSprite, pokemonEvoSprite, pokemonEvoTintSprite ].map(sprite => {
       sprite.play(previousPokemon.getSpriteKey(true));
-      sprite.setPipeline(gScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(previousPokemon.getTeraType()) });
+      sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(previousPokemon.getTeraType()) });
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", previousPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", previousPokemon.shiny);
@@ -82,14 +82,14 @@ export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, 
       });
     });
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: pokemonSprite,
       alpha: 1,
       ease: "Cubic.easeInOut",
       duration: 2000,
       onComplete: () => {
         doSpiralUpward(transformationBaseBg, transformationContainer, xOffset, yOffset);
-        gScene.tweens.addCounter({
+        globalScene.tweens.addCounter({
           from: 0,
           to: 1,
           duration: 1000,
@@ -98,26 +98,26 @@ export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, 
           },
           onComplete: () => {
             pokemonSprite.setVisible(false);
-            gScene.time.delayedCall(700, () => {
+            globalScene.time.delayedCall(700, () => {
               doArcDownward(transformationBaseBg, transformationContainer, xOffset, yOffset);
-              gScene.time.delayedCall(1000, () => {
+              globalScene.time.delayedCall(1000, () => {
                 pokemonEvoTintSprite.setScale(0.25);
                 pokemonEvoTintSprite.setVisible(true);
                 doCycle(1.5, 6, pokemonTintSprite, pokemonEvoTintSprite).then(() => {
                   pokemonEvoSprite.setVisible(true);
                   doCircleInward(transformationBaseBg, transformationContainer, xOffset, yOffset);
 
-                  gScene.time.delayedCall(900, () => {
-                    gScene.tweens.add({
+                  globalScene.time.delayedCall(900, () => {
+                    globalScene.tweens.add({
                       targets: pokemonEvoTintSprite,
                       alpha: 0,
                       duration: 1500,
                       delay: 150,
                       easing: "Sine.easeIn",
                       onComplete: () => {
-                        gScene.time.delayedCall(3000, () => {
+                        globalScene.time.delayedCall(3000, () => {
                           resolve();
-                          gScene.tweens.add({
+                          globalScene.tweens.add({
                             targets: pokemonEvoSprite,
                             alpha: 0,
                             duration: 2000,
@@ -154,7 +154,7 @@ export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, 
 function doSpiralUpward(transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   let f = 0;
 
-  gScene.tweens.addCounter({
+  globalScene.tweens.addCounter({
     repeat: 64,
     duration: getFrameMs(1),
     onRepeat: () => {
@@ -181,7 +181,7 @@ function doSpiralUpward(transformationBaseBg: Phaser.GameObjects.Image, transfor
 function doArcDownward(transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   let f = 0;
 
-  gScene.tweens.addCounter({
+  globalScene.tweens.addCounter({
     repeat: 96,
     duration: getFrameMs(1),
     onRepeat: () => {
@@ -208,14 +208,14 @@ function doArcDownward(transformationBaseBg: Phaser.GameObjects.Image, transform
 function doCycle(l: number, lastCycle: number, pokemonTintSprite: Phaser.GameObjects.Sprite, pokemonEvoTintSprite: Phaser.GameObjects.Sprite): Promise<boolean> {
   return new Promise(resolve => {
     const isLastCycle = l === lastCycle;
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: pokemonTintSprite,
       scale: 0.25,
       ease: "Cubic.easeInOut",
       duration: 500 / l,
       yoyo: !isLastCycle
     });
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: pokemonEvoTintSprite,
       scale: 1,
       ease: "Cubic.easeInOut",
@@ -244,7 +244,7 @@ function doCycle(l: number, lastCycle: number, pokemonTintSprite: Phaser.GameObj
 function doCircleInward(transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   let f = 0;
 
-  gScene.tweens.addCounter({
+  globalScene.tweens.addCounter({
     repeat: 48,
     duration: getFrameMs(1),
     onRepeat: () => {
@@ -273,13 +273,13 @@ function doCircleInward(transformationBaseBg: Phaser.GameObjects.Image, transfor
  */
 function doSpiralUpwardParticle(trigIndex: number, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
-  const particle = gScene.add.image(initialX, 0, "evo_sparkle");
+  const particle = globalScene.add.image(initialX, 0, "evo_sparkle");
   transformationContainer.add(particle);
 
   let f = 0;
   let amp = 48;
 
-  const particleTimer = gScene.tweens.addCounter({
+  const particleTimer = globalScene.tweens.addCounter({
     repeat: -1,
     duration: getFrameMs(1),
     onRepeat: () => {
@@ -318,14 +318,14 @@ function doSpiralUpwardParticle(trigIndex: number, transformationBaseBg: Phaser.
  */
 function doArcDownParticle(trigIndex: number, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
-  const particle = gScene.add.image(initialX, 0, "evo_sparkle");
+  const particle = globalScene.add.image(initialX, 0, "evo_sparkle");
   particle.setScale(0.5);
   transformationContainer.add(particle);
 
   let f = 0;
   let amp = 8;
 
-  const particleTimer = gScene.tweens.addCounter({
+  const particleTimer = globalScene.tweens.addCounter({
     repeat: -1,
     duration: getFrameMs(1),
     onRepeat: () => {
@@ -362,12 +362,12 @@ function doArcDownParticle(trigIndex: number, transformationBaseBg: Phaser.GameO
 function doCircleInwardParticle(trigIndex: number, speed: number, transformationBaseBg: Phaser.GameObjects.Image, transformationContainer: Phaser.GameObjects.Container, xOffset: number, yOffset: number) {
   const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
   const initialY = transformationBaseBg.displayHeight / 2 + yOffset;
-  const particle = gScene.add.image(initialX, initialY, "evo_sparkle");
+  const particle = globalScene.add.image(initialX, initialY, "evo_sparkle");
   transformationContainer.add(particle);
 
   let amp = 120;
 
-  const particleTimer = gScene.tweens.addCounter({
+  const particleTimer = globalScene.tweens.addCounter({
     repeat: -1,
     duration: getFrameMs(1),
     onRepeat: () => {

@@ -11,7 +11,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 /**
  * Handles all the UI for choosing optional challenges.
@@ -54,18 +54,18 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.widestTextBox = 0;
 
-    this.challengesContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
+    this.challengesContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
     this.challengesContainer.setName("challenges");
 
-    this.challengesContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.challengesContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    const bgOverlay = gScene.add.rectangle(-1, -1, gScene.scaledCanvas.width, gScene.scaledCanvas.height, 0x424242, 0.8);
+    const bgOverlay = globalScene.add.rectangle(-1, -1, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0x424242, 0.8);
     bgOverlay.setName("rect-challenge-overlay");
     bgOverlay.setOrigin(0, 0);
     this.challengesContainer.add(bgOverlay);
 
     // TODO: Change this back to /9 when adding in difficulty
-    const headerBg = addWindow(0, 0, (gScene.game.canvas.width / 6), 24);
+    const headerBg = addWindow(0, 0, (globalScene.game.canvas.width / 6), 24);
     headerBg.setName("window-header-bg");
     headerBg.setOrigin(0, 0);
 
@@ -74,29 +74,17 @@ export default class GameChallengesUiHandler extends UiHandler {
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    // const difficultyBg = addWindow(0, 0, (gScene.game.canvas.width / 18) - 2, 24);
-    // difficultyBg.setOrigin(0, 0);
-    // difficultyBg.setPositionRelative(headerBg, headerBg.width, 0);
-
-    // this.difficultyText = addTextObject(0, 0, "0", TextStyle.SETTINGS_LABEL);
-    // this.difficultyText.setOrigin(0, 0);
-    // this.difficultyText.setPositionRelative(difficultyBg, 8, 4);
-
-    // const difficultyName = addTextObject(0, 0, i18next.t("challenges:points"), TextStyle.SETTINGS_LABEL);
-    // difficultyName.setOrigin(0, 0);
-    // difficultyName.setPositionRelative(difficultyBg, difficultyBg.width - difficultyName.displayWidth - 8, 4);
-
-    this.optionsWidth = gScene.scaledCanvas.width * 0.6;
-    this.optionsBg = addWindow(0, headerBg.height, this.optionsWidth, gScene.scaledCanvas.height - headerBg.height - 2);
+    this.optionsWidth = globalScene.scaledCanvas.width * 0.6;
+    this.optionsBg = addWindow(0, headerBg.height, this.optionsWidth, globalScene.scaledCanvas.height - headerBg.height - 2);
     this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
-    const descriptionBg = addWindow(0, headerBg.height, gScene.scaledCanvas.width - this.optionsWidth, gScene.scaledCanvas.height - headerBg.height - 26);
+    const descriptionBg = addWindow(0, headerBg.height, globalScene.scaledCanvas.width - this.optionsWidth, globalScene.scaledCanvas.height - headerBg.height - 26);
     descriptionBg.setName("window-desc-bg");
     descriptionBg.setOrigin(0, 0);
     descriptionBg.setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
-    this.descriptionText = new BBCodeText(gScene, descriptionBg.x + 6, descriptionBg.y + 4, "", {
+    this.descriptionText = new BBCodeText(globalScene, descriptionBg.x + 6, descriptionBg.y + 4, "", {
       fontFamily: "emerald",
       fontSize: 84,
       color: Color.ORANGE,
@@ -109,7 +97,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       }
     });
     this.descriptionText.setName("text-desc");
-    gScene.add.existing(this.descriptionText);
+    globalScene.add.existing(this.descriptionText);
     this.descriptionText.setScale(1 / 6);
     this.descriptionText.setShadow(4, 5, ShadowColor.ORANGE);
     this.descriptionText.setOrigin(0, 0);
@@ -124,13 +112,13 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.startText.setOrigin(0, 0);
     this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
 
-    this.startCursor = gScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, descriptionBg.width - 8, 16, 1, 1, 1, 1);
+    this.startCursor = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, descriptionBg.width - 8, 16, 1, 1, 1, 1);
     this.startCursor.setName("9s-start-cursor");
     this.startCursor.setOrigin(0, 0);
     this.startCursor.setPositionRelative(this.startBg, 4, 3);
     this.startCursor.setVisible(false);
 
-    this.valuesContainer = gScene.add.container(0, 0);
+    this.valuesContainer = globalScene.add.container(0, 0);
     this.valuesContainer.setName("values");
 
     this.challengeLabels = [];
@@ -142,14 +130,14 @@ export default class GameChallengesUiHandler extends UiHandler {
 
       this.valuesContainer.add(label);
 
-      const leftArrow = gScene.add.image(0, 0, "cursor_reverse");
+      const leftArrow = globalScene.add.image(0, 0, "cursor_reverse");
       leftArrow.setName(`challenge-left-arrow-${i}`);
       leftArrow.setOrigin(0, 0);
       leftArrow.setVisible(false);
       leftArrow.setScale(0.75);
       this.valuesContainer.add(leftArrow);
 
-      const rightArrow = gScene.add.image(0, 0, "cursor");
+      const rightArrow = globalScene.add.image(0, 0, "cursor");
       rightArrow.setName(`challenge-right-arrow-${i}`);
       rightArrow.setOrigin(0, 0);
       rightArrow.setScale(0.75);
@@ -169,7 +157,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       };
     }
 
-    this.monoTypeValue = gScene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
+    this.monoTypeValue = globalScene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
     this.monoTypeValue.setName("challenge-value-monotype-sprite");
     this.monoTypeValue.setScale(0.86);
     this.monoTypeValue.setVisible(false);
@@ -209,10 +197,10 @@ export default class GameChallengesUiHandler extends UiHandler {
    * init all challenge labels
    */
   initLabels(): void {
-    this.setDescription(gScene.gameMode.challenges[0].getDescription());
+    this.setDescription(globalScene.gameMode.challenges[0].getDescription());
     this.widestTextBox = 0;
     for (let i = 0; i < 9; i++) {
-      if (i < gScene.gameMode.challenges.length) {
+      if (i < globalScene.gameMode.challenges.length) {
         this.challengeLabels[i].label.setVisible(true);
         this.challengeLabels[i].value.setVisible(true);
         this.challengeLabels[i].leftArrow.setVisible(true);
@@ -220,9 +208,9 @@ export default class GameChallengesUiHandler extends UiHandler {
 
         const tempText = addTextObject(0, 0, "", TextStyle.SETTINGS_LABEL); // this is added here to get the widest text object for this language, which will be used for the arrow placement
 
-        for (let j = 0; j <= gScene.gameMode.challenges[i].maxValue; j++) { // this goes through each challenge's value to find out what the max width will be
-          if (gScene.gameMode.challenges[i].id !== Challenges.SINGLE_TYPE) {
-            tempText.setText(gScene.gameMode.challenges[i].getValue(j));
+        for (let j = 0; j <= globalScene.gameMode.challenges[i].maxValue; j++) { // this goes through each challenge's value to find out what the max width will be
+          if (globalScene.gameMode.challenges[i].id !== Challenges.SINGLE_TYPE) {
+            tempText.setText(globalScene.gameMode.challenges[i].getValue(j));
             if (tempText.displayWidth > this.widestTextBox) {
               this.widestTextBox = tempText.displayWidth;
             }
@@ -240,8 +228,8 @@ export default class GameChallengesUiHandler extends UiHandler {
   updateText(): void {
     this.setDescription(this.getActiveChallenge().getDescription());
     let monoTypeVisible = false;
-    for (let i = 0; i < Math.min(9, gScene.gameMode.challenges.length); i++) {
-      const challenge = gScene.gameMode.challenges[this.scrollCursor + i];
+    for (let i = 0; i < Math.min(9, globalScene.gameMode.challenges.length); i++) {
+      const challenge = globalScene.gameMode.challenges[this.scrollCursor + i];
       const challengeLabel = this.challengeLabels[i];
       challengeLabel.label.setText(challenge.getName());
       challengeLabel.leftArrow.setPositionRelative(challengeLabel.label, this.leftArrowGap, 4.5);
@@ -276,7 +264,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     }
 
     // This checks if a challenge has been selected by the user and updates the text/its opacity accordingly.
-    this.hasSelectedChallenge = gScene.gameMode.challenges.some(c => c.value !== 0);
+    this.hasSelectedChallenge = globalScene.gameMode.challenges.some(c => c.value !== 0);
     if (this.hasSelectedChallenge) {
 
       this.startText.setText(i18next.t("common:start"));
@@ -289,11 +277,6 @@ export default class GameChallengesUiHandler extends UiHandler {
       this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
     }
     this.challengesContainer.update();
-
-    // const totalDifficulty = gScene.gameMode.challenges.reduce((v, c) => v + c.getDifficulty(), 0);
-    // const totalMinDifficulty = gScene.gameMode.challenges.reduce((v, c) => v + c.getMinDifficulty(), 0);
-    // this.difficultyText.text = `${totalDifficulty}` + (totalMinDifficulty ? `/${totalMinDifficulty}` : "");
-    // this.difficultyText.updateText();
   }
 
   show(args: any[]): boolean {
@@ -303,7 +286,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.updateChallengeArrows(false);
     this.challengesContainer.setVisible(true);
     // Should always be false at the start
-    this.hasSelectedChallenge = gScene.gameMode.challenges.some(c => c.value !== 0);
+    this.hasSelectedChallenge = globalScene.gameMode.challenges.some(c => c.value !== 0);
     this.setCursor(0);
 
     this.initLabels();
@@ -319,7 +302,7 @@ export default class GameChallengesUiHandler extends UiHandler {
   /* This code updates the challenge starter arrows to be tinted/not tinted when the start button is selected to show they can't be changed
    */
   updateChallengeArrows(tinted: boolean) {
-    for (let i = 0; i < Math.min(9, gScene.gameMode.challenges.length); i++) {
+    for (let i = 0; i < Math.min(9, globalScene.gameMode.challenges.length); i++) {
       const challengeLabel = this.challengeLabels[i];
       if (tinted) {
         challengeLabel.leftArrow.setTint(0x808080);
@@ -354,16 +337,16 @@ export default class GameChallengesUiHandler extends UiHandler {
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
-        gScene.clearPhaseQueue();
-        gScene.pushPhase(new TitlePhase());
-        gScene.getCurrentPhase()?.end();
+        globalScene.clearPhaseQueue();
+        globalScene.pushPhase(new TitlePhase());
+        globalScene.getCurrentPhase()?.end();
       }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
       if (this.hasSelectedChallenge) {
         if (this.startCursor.visible) {
-          gScene.unshiftPhase(new SelectStarterPhase());
-          gScene.getCurrentPhase()?.end();
+          globalScene.unshiftPhase(new SelectStarterPhase());
+          globalScene.getCurrentPhase()?.end();
         } else {
           this.startCursor.setVisible(true);
           this.cursorObj?.setVisible(false);
@@ -380,14 +363,14 @@ export default class GameChallengesUiHandler extends UiHandler {
             if (this.cursor === 0) {
               if (this.scrollCursor === 0) {
               // When at the top of the menu and pressing UP, move to the bottommost item.
-                if (gScene.gameMode.challenges.length > rowsToDisplay) { // If there are more than 9 challenges, scroll to the bottom
+                if (globalScene.gameMode.challenges.length > rowsToDisplay) { // If there are more than 9 challenges, scroll to the bottom
                 // First, set the cursor to the last visible element, preparing for the scroll to the end.
                   const successA = this.setCursor(rowsToDisplay - 1);
                   // Then, adjust the scroll to display the bottommost elements of the menu.
-                  const successB = this.setScrollCursor(gScene.gameMode.challenges.length - rowsToDisplay);
+                  const successB = this.setScrollCursor(globalScene.gameMode.challenges.length - rowsToDisplay);
                   success = successA && successB; // success is just there to play the little validation sound effect
                 } else { // If there are 9 or less challenges, just move to the bottom one
-                  success = this.setCursor(gScene.gameMode.challenges.length - 1);
+                  success = this.setCursor(globalScene.gameMode.challenges.length - 1);
                 }
               } else {
                 success = this.setScrollCursor(this.scrollCursor - 1);
@@ -401,7 +384,7 @@ export default class GameChallengesUiHandler extends UiHandler {
             break;
           case Button.DOWN:
             if (this.cursor === rowsToDisplay - 1) {
-              if (this.scrollCursor < gScene.gameMode.challenges.length - rowsToDisplay) {
+              if (this.scrollCursor < globalScene.gameMode.challenges.length - rowsToDisplay) {
               // When at the bottom and pressing DOWN, scroll if possible.
                 success = this.setScrollCursor(this.scrollCursor + 1);
               } else {
@@ -412,7 +395,7 @@ export default class GameChallengesUiHandler extends UiHandler {
                 const successB = this.setScrollCursor(0);
                 success = successA && successB; // success is just there to play the little validation sound effect
               }
-            } else if (gScene.gameMode.challenges.length < rowsToDisplay && this.cursor === gScene.gameMode.challenges.length - 1) {
+            } else if (globalScene.gameMode.challenges.length < rowsToDisplay && this.cursor === globalScene.gameMode.challenges.length - 1) {
             // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
               success = this.setCursor(0);
             } else {
@@ -451,7 +434,7 @@ export default class GameChallengesUiHandler extends UiHandler {
     let ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = gScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, this.optionsWidth - 8, 16, 1, 1, 1, 1);
+      this.cursorObj = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, this.optionsWidth - 8, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.valuesContainer.add(this.cursorObj);
     }
@@ -477,7 +460,7 @@ export default class GameChallengesUiHandler extends UiHandler {
   }
 
   getActiveChallenge(): Challenge {
-    return gScene.gameMode.challenges[this.cursor + this.scrollCursor];
+    return globalScene.gameMode.challenges[this.cursor + this.scrollCursor];
   }
 
   clear() {

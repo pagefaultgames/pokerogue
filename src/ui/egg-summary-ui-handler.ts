@@ -9,7 +9,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
 import ScrollableGridUiHandler from "./scrollable-grid-handler";
 import { HatchedPokemonContainer } from "./hatched-pokemon-container";
 import { ScrollBar } from "#app/ui/scroll-bar";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 const iconContainerX = 112;
 const iconContainerY = 9;
@@ -60,27 +60,27 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.summaryContainer = gScene.add.container(0, -gScene.game.canvas.height / 6);
+    this.summaryContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
     this.summaryContainer.setVisible(false);
     ui.add(this.summaryContainer);
 
-    this.eggHatchContainer = gScene.add.container(0, -gScene.game.canvas.height / 6);
+    this.eggHatchContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
     this.eggHatchContainer.setVisible(false);
     ui.add(this.eggHatchContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup();
 
-    this.eggHatchBg = gScene.add.image(0, 0, "egg_summary_bg");
+    this.eggHatchBg = globalScene.add.image(0, 0, "egg_summary_bg");
     this.eggHatchBg.setOrigin(0, 0);
     this.eggHatchContainer.add(this.eggHatchBg);
 
-    this.cursorObj = gScene.add.image(0, 0, "select_cursor");
+    this.cursorObj = globalScene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
     this.summaryContainer.add(this.cursorObj);
 
     this.pokemonContainers = [];
-    this.pokemonIconsContainer = gScene.add.container(iconContainerX, iconContainerY);
+    this.pokemonIconsContainer = globalScene.add.container(iconContainerX, iconContainerY);
     this.summaryContainer.add(this.pokemonIconsContainer);
 
     this.infoContainer = new PokemonHatchInfoContainer(this.summaryContainer);
@@ -89,7 +89,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.infoContainer.setVisible(true);
     this.summaryContainer.add(this.infoContainer);
 
-    const scrollBar = new ScrollBar(iconContainerX + numCols * iconSize, iconContainerY + 3, 4, gScene.game.canvas.height / 6 - 20, numRows);
+    const scrollBar = new ScrollBar(iconContainerX + numCols * iconSize, iconContainerY + 3, 4, globalScene.game.canvas.height / 6 - 20, numRows);
     this.summaryContainer.add(scrollBar);
 
     this.scrollGridHandler = new ScrollableGridUiHandler(this, numRows, numCols)
@@ -112,19 +112,19 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.getUi().hideTooltip();
 
     // Note: Questions on garbage collection go to @frutescens
-    const activeKeys = gScene.getActiveKeys();
+    const activeKeys = globalScene.getActiveKeys();
     // Removing unnecessary sprites from animation manager
-    const animKeys = Object.keys(gScene.anims["anims"]["entries"]);
+    const animKeys = Object.keys(globalScene.anims["anims"]["entries"]);
     animKeys.forEach(key => {
       if (key.startsWith("pkmn__") && !activeKeys.includes(key)) {
-        gScene.anims.remove(key);
+        globalScene.anims.remove(key);
       }
     });
     // Removing unnecessary cries from audio cache
-    const audioKeys = Object.keys(gScene.cache.audio.entries.entries);
+    const audioKeys = Object.keys(globalScene.cache.audio.entries.entries);
     audioKeys.forEach(key => {
       if (key.startsWith("cry/") && !activeKeys.includes(key)) {
-        delete gScene.cache.audio.entries.entries[key];
+        delete globalScene.cache.audio.entries.entries[key];
       }
     });
     // Clears eggHatchData in EggSummaryUiHandler
@@ -170,13 +170,13 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.updatePokemonIcons();
     this.setCursor(0);
 
-    gScene.playSoundWithoutBgm("evolution_fanfare");
+    globalScene.playSoundWithoutBgm("evolution_fanfare");
 
     // Prevent exiting the egg summary for 2 seconds if the egg hatching
     // was skipped automatically and for 1 second otherwise
-    const exitBlockingDuration = (gScene.eggSkipPreference === 2) ? 2000 : 1000;
+    const exitBlockingDuration = (globalScene.eggSkipPreference === 2) ? 2000 : 1000;
     this.blockExit = true;
-    gScene.time.delayedCall(exitBlockingDuration, () => this.blockExit = false);
+    globalScene.time.delayedCall(exitBlockingDuration, () => this.blockExit = false);
 
     return true;
   }
@@ -216,7 +216,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     let error = false;
     if (button === Button.CANCEL) {
       if (!this.blockExit) {
-        const phase = gScene.getCurrentPhase();
+        const phase = globalScene.getCurrentPhase();
         if (phase instanceof EggSummaryPhase) {
           phase.end();
         }

@@ -6,7 +6,7 @@ import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
 import { CommandPhase } from "#app/phases/command-phase";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
@@ -24,17 +24,17 @@ export default class BallUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, gScene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
 
     let optionsTextContent = "";
 
-    for (let pb = 0; pb < Object.keys(gScene.pokeballCounts).length; pb++) {
+    for (let pb = 0; pb < Object.keys(globalScene.pokeballCounts).length; pb++) {
       optionsTextContent += `${getPokeballName(pb)}\n`;
     }
     optionsTextContent += "Cancel";
     const optionsText = addTextObject(0, 0, optionsTextContent, TextStyle.WINDOW, { align: "right", maxLines: 6 });
     const optionsTextWidth = optionsText.displayWidth;
-    this.pokeballSelectContainer = gScene.add.container((gScene.game.canvas.width / 6) - 51 - Math.max(64, optionsTextWidth), -49);
+    this.pokeballSelectContainer = globalScene.add.container((globalScene.game.canvas.width / 6) - 51 - Math.max(64, optionsTextWidth), -49);
     this.pokeballSelectContainer.setVisible(false);
     ui.add(this.pokeballSelectContainer);
 
@@ -69,16 +69,16 @@ export default class BallUiHandler extends UiHandler {
 
     let success = false;
 
-    const pokeballTypeCount = Object.keys(gScene.pokeballCounts).length;
+    const pokeballTypeCount = Object.keys(globalScene.pokeballCounts).length;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const commandPhase = gScene.getCurrentPhase() as CommandPhase;
+      const commandPhase = globalScene.getCurrentPhase() as CommandPhase;
       success = true;
       if (button === Button.ACTION && this.cursor < pokeballTypeCount) {
-        if (gScene.pokeballCounts[this.cursor]) {
+        if (globalScene.pokeballCounts[this.cursor]) {
           if (commandPhase.handleCommand(Command.BALL, this.cursor)) {
-            gScene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
-            gScene.ui.setMode(Mode.MESSAGE);
+            globalScene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
+            globalScene.ui.setMode(Mode.MESSAGE);
             success = true;
           }
         } else {
@@ -107,14 +107,14 @@ export default class BallUiHandler extends UiHandler {
   }
 
   updateCounts() {
-    this.countsText.setText(Object.values(gScene.pokeballCounts).map(c => `x${c}`).join("\n"));
+    this.countsText.setText(Object.values(globalScene.pokeballCounts).map(c => `x${c}`).join("\n"));
   }
 
   setCursor(cursor: integer): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = gScene.add.image(0, 0, "cursor");
+      this.cursorObj = globalScene.add.image(0, 0, "cursor");
       this.pokeballSelectContainer.add(this.cursorObj);
     }
 

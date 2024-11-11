@@ -12,7 +12,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-let gScene: BattleScene;
+let globalScene: BattleScene;
 
 describe("Moves - Reflect", () => {
   let phaserGame: Phaser.Game;
@@ -32,7 +32,7 @@ describe("Moves - Reflect", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    gScene = game.scene;
+    globalScene = game.scene;
     game.override.battleType("single");
     game.override.ability(Abilities.NONE);
     game.override.moveset([ Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE ]);
@@ -96,8 +96,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (gScene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
-    gScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
+  if (globalScene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
+    globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { PokeballType } from "#enums/pokeball";
 import i18next from "i18next";
 
@@ -89,13 +89,13 @@ export function doPokeballBounceAnim(pokeball: Phaser.GameObjects.Sprite, y1: nu
   const yd = y2 - y1;
 
   const doBounce = () => {
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: pokeball,
       y: y2,
       duration: bouncePower * baseBounceDuration,
       ease: "Cubic.easeIn",
       onComplete: () => {
-        gScene.playSound("se/pb_bounce_1", { volume: bouncePower });
+        globalScene.playSound("se/pb_bounce_1", { volume: bouncePower });
 
         bouncePower = bouncePower > 0.01 ? bouncePower * 0.5 : 0;
 
@@ -103,7 +103,7 @@ export function doPokeballBounceAnim(pokeball: Phaser.GameObjects.Sprite, y1: nu
           bounceYOffset = yd * bouncePower;
           bounceY = y2 - bounceYOffset;
 
-          gScene.tweens.add({
+          globalScene.tweens.add({
             targets: pokeball,
             y: bounceY,
             duration: bouncePower * baseBounceDuration,

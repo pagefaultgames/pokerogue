@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { EndCardPhase } from "./end-card-phase";
 import { TitlePhase } from "./title-phase";
@@ -16,24 +16,24 @@ export class PostGameOverPhase extends Phase {
     super.start();
 
     const saveAndReset = () => {
-      gScene.gameData.saveAll(true, true, true).then(success => {
+      globalScene.gameData.saveAll(true, true, true).then(success => {
         if (!success) {
-          return gScene.reset(true);
+          return globalScene.reset(true);
         }
-        gScene.gameData.tryClearSession(gScene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
+        globalScene.gameData.tryClearSession(globalScene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
           if (!success[0]) {
-            return gScene.reset(true);
+            return globalScene.reset(true);
           }
-          gScene.reset();
-          gScene.unshiftPhase(new TitlePhase());
+          globalScene.reset();
+          globalScene.unshiftPhase(new TitlePhase());
           this.end();
         });
       });
     };
 
     if (this.endCardPhase) {
-      gScene.ui.fadeOut(500).then(() => {
-        gScene.ui.getMessageHandler().bg.setVisible(true);
+      globalScene.ui.fadeOut(500).then(() => {
+        globalScene.ui.getMessageHandler().bg.setVisible(true);
 
         this.endCardPhase?.endCard.destroy();
         this.endCardPhase?.text.destroy();

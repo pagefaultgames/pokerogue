@@ -10,7 +10,7 @@ import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { isNullOrUndefined, randSeedShuffle } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -71,7 +71,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             encounter.misc = {
               playerPokemon: pokemon,
@@ -86,18 +86,18 @@ export const TrainingSessionEncounter: MysteryEncounter =
           return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const playerPokemon: PlayerPokemon = encounter.misc.playerPokemon;
 
           // Spawn light training session with chosen pokemon
           // Every 50 waves, add +1 boss segment, capping at 5
           const segments = Math.min(
-            2 + Math.floor(gScene.currentBattle.waveIndex / 50),
+            2 + Math.floor(globalScene.currentBattle.waveIndex / 50),
             5
           );
           const modifiers = new ModifiersHolder();
           const config = getEnemyConfig(playerPokemon, segments, modifiers);
-          gScene.removePokemonFromPlayerParty(playerPokemon, false);
+          globalScene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
             encounter.setDialogueToken("stat1", "-");
@@ -147,17 +147,17 @@ export const TrainingSessionEncounter: MysteryEncounter =
 
             if (improvedCount > 0) {
               playerPokemon.calculateStats();
-              gScene.gameData.updateSpeciesDexIvs(playerPokemon.species.getRootSpeciesId(true), playerPokemon.ivs);
-              gScene.gameData.setPokemonCaught(playerPokemon, false);
+              globalScene.gameData.updateSpeciesDexIvs(playerPokemon.species.getRootSpeciesId(true), playerPokemon.ivs);
+              globalScene.gameData.setPokemonCaught(playerPokemon, false);
             }
 
             // Add pokemon and mods back
-            gScene.getParty().push(playerPokemon);
+            globalScene.getParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
-              gScene.addModifier(mod, true, false, false, true);
+              globalScene.addModifier(mod, true, false, false, true);
             }
-            gScene.updateModifiers(true);
+            globalScene.updateModifiers(true);
             queueEncounterMessage(`${namespace}:option.1.finished`);
           };
 
@@ -183,13 +183,13 @@ export const TrainingSessionEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
           // Open menu for selecting pokemon and Nature
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const natures = new Array(25).fill(null).map((val, i) => i as Nature);
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for nature selection
             return natures.map((nature: Nature) => {
               const option: OptionSelectItem = {
-                label: getNatureName(nature, true, true, true, gScene.uiTheme),
+                label: getNatureName(nature, true, true, true, globalScene.uiTheme),
                 handler: () => {
                   // Pokemon and second option selected
                   encounter.setDialogueToken("nature", getNatureName(nature));
@@ -212,29 +212,29 @@ export const TrainingSessionEncounter: MysteryEncounter =
           return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const playerPokemon: PlayerPokemon = encounter.misc.playerPokemon;
 
           // Spawn medium training session with chosen pokemon
           // Every 40 waves, add +1 boss segment, capping at 6
-          const segments = Math.min(2 + Math.floor(gScene.currentBattle.waveIndex / 40), 6);
+          const segments = Math.min(2 + Math.floor(globalScene.currentBattle.waveIndex / 40), 6);
           const modifiers = new ModifiersHolder();
           const config = getEnemyConfig(playerPokemon, segments, modifiers);
-          gScene.removePokemonFromPlayerParty(playerPokemon, false);
+          globalScene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
             queueEncounterMessage(`${namespace}:option.2.finished`);
             // Add the pokemon back to party with Nature change
             playerPokemon.setNature(encounter.misc.chosenNature);
-            gScene.gameData.setPokemonCaught(playerPokemon, false);
+            globalScene.gameData.setPokemonCaught(playerPokemon, false);
 
             // Add pokemon and modifiers back
-            gScene.getParty().push(playerPokemon);
+            globalScene.getParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
-              gScene.addModifier(mod, true, false, false, true);
+              globalScene.addModifier(mod, true, false, false, true);
             }
-            gScene.updateModifiers(true);
+            globalScene.updateModifiers(true);
           };
 
           setEncounterRewards({ fillRemaining: true }, undefined, onBeforeRewardsPhase);
@@ -259,7 +259,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
           // Open menu for selecting pokemon and ability to learn
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for ability selection
             const speciesForm = !!pokemon.getFusionSpeciesForm()
@@ -303,19 +303,19 @@ export const TrainingSessionEncounter: MysteryEncounter =
           return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const playerPokemon: PlayerPokemon = encounter.misc.playerPokemon;
 
           // Spawn hard training session with chosen pokemon
           // Every 30 waves, add +1 boss segment, capping at 6
           // Also starts with +1 to all stats
-          const segments = Math.min(2 + Math.floor(gScene.currentBattle.waveIndex / 30), 6);
+          const segments = Math.min(2 + Math.floor(globalScene.currentBattle.waveIndex / 30), 6);
           const modifiers = new ModifiersHolder();
           const config = getEnemyConfig(playerPokemon, segments, modifiers);
           config.pokemonConfigs![0].tags = [
             BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON,
           ];
-          gScene.removePokemonFromPlayerParty(playerPokemon, false);
+          globalScene.removePokemonFromPlayerParty(playerPokemon, false);
 
           const onBeforeRewardsPhase = () => {
             queueEncounterMessage(`${namespace}:option.3.finished`);
@@ -329,8 +329,8 @@ export const TrainingSessionEncounter: MysteryEncounter =
               const rootFusionSpecies = playerPokemon.fusionSpecies?.getRootSpeciesId();
               if (!isNullOrUndefined(rootFusionSpecies)
                 && speciesStarterCosts.hasOwnProperty(rootFusionSpecies)
-                && !!gScene.gameData.dexData[rootFusionSpecies].caughtAttr) {
-                gScene.gameData.starterData[rootFusionSpecies].abilityAttr |= playerPokemon.fusionAbilityIndex !== 1 || playerPokemon.fusionSpecies?.ability2
+                && !!globalScene.gameData.dexData[rootFusionSpecies].caughtAttr) {
+                globalScene.gameData.starterData[rootFusionSpecies].abilityAttr |= playerPokemon.fusionAbilityIndex !== 1 || playerPokemon.fusionSpecies?.ability2
                   ? 1 << playerPokemon.fusionAbilityIndex
                   : AbilityAttr.ABILITY_HIDDEN;
               }
@@ -339,15 +339,15 @@ export const TrainingSessionEncounter: MysteryEncounter =
             }
 
             playerPokemon.calculateStats();
-            gScene.gameData.setPokemonCaught(playerPokemon, false);
+            globalScene.gameData.setPokemonCaught(playerPokemon, false);
 
             // Add pokemon and mods back
-            gScene.getParty().push(playerPokemon);
+            globalScene.getParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
-              gScene.addModifier(mod, true, false, false, true);
+              globalScene.addModifier(mod, true, false, false, true);
             }
-            gScene.updateModifiers(true);
+            globalScene.updateModifiers(true);
           };
 
           setEncounterRewards({ fillRemaining: true }, undefined, onBeforeRewardsPhase);

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { TextStyle, getTextColor } from "./text";
 import { Mode } from "./ui";
 import { Button } from "#enums/buttons";
@@ -30,11 +30,11 @@ export default abstract class UiHandler {
   abstract processInput(button: Button): boolean;
 
   getUi() {
-    return gScene.ui;
+    return globalScene.ui;
   }
 
   getTextColor(style: TextStyle, shadow: boolean = false): string {
-    return getTextColor(style, shadow, gScene.uiTheme);
+    return getTextColor(style, shadow, globalScene.uiTheme);
   }
 
   getCursor(): integer {
@@ -56,7 +56,7 @@ export default abstract class UiHandler {
    * @param cursorStyle cursor style to apply
    */
   protected setMouseCursorStyle(cursorStyle: "pointer" | "default") {
-    gScene.input.manager.canvas.style.cursor = cursorStyle;
+    globalScene.input.manager.canvas.style.cursor = cursorStyle;
   }
 
   clear() {

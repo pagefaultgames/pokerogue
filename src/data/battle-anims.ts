@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
 import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
@@ -327,11 +327,11 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     const soundConfig = { rate: (this.pitch * 0.01), volume: (this.volume * 0.01) };
     if (this.resourceName) {
       try {
-        gScene.playSound(`battle_anims/${this.resourceName}`, soundConfig);
+        globalScene.playSound(`battle_anims/${this.resourceName}`, soundConfig);
       } catch (err) {
         console.error(err);
       }
-      return Math.ceil((gScene.sound.get(`battle_anims/${this.resourceName}`).totalDuration * 1000) / 33.33);
+      return Math.ceil((globalScene.sound.get(`battle_anims/${this.resourceName}`).totalDuration * 1000) / 33.33);
     } else {
       return Math.ceil((battleAnim.user!.cry(soundConfig).totalDuration * 1000) / 33.33); // TODO: is the bang behind user correct?
     }
@@ -397,7 +397,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
       tweenProps["alpha"] = (this.opacity || 0) / 255;
     }
     if (Object.keys(tweenProps).length) {
-      gScene.tweens.add(Object.assign({
+      globalScene.tweens.add(Object.assign({
         targets: moveAnim.bgSprite,
         duration: Utils.getFrameMs(this.duration * 3)
       }, tweenProps));
@@ -420,20 +420,20 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
       moveAnim.bgSprite.destroy();
     }
     moveAnim.bgSprite = this.resourceName
-      ? gScene.add.tileSprite(this.bgX - 320, this.bgY - 284, 896, 576, this.resourceName)
-      : gScene.add.rectangle(this.bgX - 320, this.bgY - 284, 896, 576, 0);
+      ? globalScene.add.tileSprite(this.bgX - 320, this.bgY - 284, 896, 576, this.resourceName)
+      : globalScene.add.rectangle(this.bgX - 320, this.bgY - 284, 896, 576, 0);
     moveAnim.bgSprite.setOrigin(0, 0);
     moveAnim.bgSprite.setScale(1.25);
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
-    gScene.field.add(moveAnim.bgSprite);
-    const fieldPokemon = gScene.getNonSwitchedEnemyPokemon() || gScene.getNonSwitchedPlayerPokemon();
+    globalScene.field.add(moveAnim.bgSprite);
+    const fieldPokemon = globalScene.getNonSwitchedEnemyPokemon() || globalScene.getNonSwitchedPlayerPokemon();
     if (!isNullOrUndefined(priority)) {
-      gScene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
+      globalScene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
     } else if (fieldPokemon?.isOnField()) {
-      gScene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
+      globalScene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
     }
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: moveAnim.bgSprite,
       duration: Utils.getFrameMs(this.duration * 3)
     });
@@ -458,7 +458,7 @@ export function initCommonAnims(): Promise<void> {
     const commonAnimFetches: Promise<Map<CommonAnim, AnimConfig>>[] = [];
     for (let ca = 0; ca < commonAnimIds.length; ca++) {
       const commonAnimId = commonAnimIds[ca];
-      commonAnimFetches.push(gScene.cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/\_/g, "-")}.json`)
+      commonAnimFetches.push(globalScene.cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/\_/g, "-")}.json`)
         .then(response => response.json())
         .then(cas => commonAnims.set(commonAnimId, new AnimConfig(cas))));
     }
@@ -491,7 +491,7 @@ export function initMoveAnim(move: Moves): Promise<void> {
       const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
 
       const fetchAnimAndResolve = (move: Moves) => {
-        gScene.cachedFetch(`./battle-anims/${Utils.animationFileName(move)}.json`)
+        globalScene.cachedFetch(`./battle-anims/${Utils.animationFileName(move)}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
@@ -565,7 +565,7 @@ export async function initEncounterAnims(encounterAnim: EncounterAnim | Encounte
     if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
       continue;
     }
-    encounterAnimFetches.push(gScene.cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/\_/g, "-")}.json`)
+    encounterAnimFetches.push(globalScene.cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/\_/g, "-")}.json`)
       .then(response => response.json())
       .then(cas => encounterAnims.set(anim, new AnimConfig(cas))));
   }
@@ -587,7 +587,7 @@ export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
       }
     } else {
       chargeAnims.set(chargeAnim, null);
-      gScene.cachedFetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/\_/g, "-")}.json`)
+      globalScene.cachedFetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/\_/g, "-")}.json`)
         .then(response => response.json())
         .then(ca => {
           if (Array.isArray(ca)) {
@@ -673,19 +673,19 @@ function loadAnimAssets(anims: AnimConfig[], startLoad?: boolean): Promise<void>
         backgrounds.add(abg);
       }
       if (a.graphic) {
-        gScene.loadSpritesheet(a.graphic, "battle_anims", 96);
+        globalScene.loadSpritesheet(a.graphic, "battle_anims", 96);
       }
     }
     for (const bg of backgrounds) {
-      gScene.loadImage(bg, "battle_anims");
+      globalScene.loadImage(bg, "battle_anims");
     }
     for (const s of sounds) {
-      gScene.loadSe(s, "battle_anims", s);
+      globalScene.loadSe(s, "battle_anims", s);
     }
     if (startLoad) {
-      gScene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
-      if (!gScene.load.isLoading()) {
-        gScene.load.start();
+      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
+      if (!globalScene.load.isLoading()) {
+        globalScene.load.start();
       }
     } else {
       resolve();
@@ -904,7 +904,7 @@ export abstract class BattleAnim {
         }
       };
 
-      if (!gScene.moveAnimations && !this.playRegardlessOfIssues) {
+      if (!globalScene.moveAnimations && !this.playRegardlessOfIssues) {
         return cleanUpAndComplete();
       }
 
@@ -921,7 +921,7 @@ export abstract class BattleAnim {
       let r = anim?.frames.length ?? 0;
       let f = 0;
 
-      gScene.tweens.addCounter({
+      globalScene.tweens.addCounter({
         duration: Utils.getFrameMs(3),
         repeat: anim?.frames.length ?? 0,
         onRepeat: () => {
@@ -947,19 +947,19 @@ export abstract class BattleAnim {
               const spriteSource = isUser ? userSprite : targetSprite;
               if ((isUser ? u : t) === sprites.length) {
                 if (isUser || !targetSubstitute) {
-                  const sprite = gScene.addPokemonSprite(isUser ? user! : target, 0, 0, spriteSource!.texture, spriteSource!.frame.name, true); // TODO: are those bangs correct?
+                  const sprite = globalScene.addPokemonSprite(isUser ? user! : target, 0, 0, spriteSource!.texture, spriteSource!.frame.name, true); // TODO: are those bangs correct?
                   [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = (isUser ? user! : target).getSprite().pipelineData[k]); // TODO: are those bangs correct?
                   sprite.setPipelineData("spriteKey", (isUser ? user! : target).getBattleSpriteKey());
                   sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
                   sprite.setPipelineData("variant", (isUser ? user : target).variant);
                   sprite.setPipelineData("ignoreFieldPos", true);
                   spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
-                  gScene.field.add(sprite);
+                  globalScene.field.add(sprite);
                   sprites.push(sprite);
                 } else {
-                  const sprite = gScene.addFieldSprite(spriteSource.x, spriteSource.y, spriteSource.texture);
+                  const sprite = globalScene.addFieldSprite(spriteSource.x, spriteSource.y, spriteSource.texture);
                   spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
-                  gScene.field.add(sprite);
+                  globalScene.field.add(sprite);
                   sprites.push(sprite);
                 }
               }
@@ -984,9 +984,9 @@ export abstract class BattleAnim {
             } else {
               const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
               if (g === sprites.length) {
-                const newSprite: Phaser.GameObjects.Sprite = gScene.addFieldSprite(0, 0, anim!.graphic, 1); // TODO: is the bang correct?
+                const newSprite: Phaser.GameObjects.Sprite = globalScene.addFieldSprite(0, 0, anim!.graphic, 1); // TODO: is the bang correct?
                 sprites.push(newSprite);
-                gScene.field.add(newSprite);
+                globalScene.field.add(newSprite);
                 spritePriorities.push(1);
               }
 
@@ -997,22 +997,22 @@ export abstract class BattleAnim {
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
                     case 0:
-                      gScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, gScene.getNonSwitchedEnemyPokemon() || gScene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
+                      globalScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, globalScene.getNonSwitchedEnemyPokemon() || globalScene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
                       break;
                     case 1:
-                      gScene.field.moveTo(moveSprite, gScene.field.getAll().length - 1);
+                      globalScene.field.moveTo(moveSprite, globalScene.field.getAll().length - 1);
                       break;
                     case 2:
                       switch (frame.focus) {
                         case AnimFocus.USER:
                           if (this.bgSprite) {
-                            gScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.bgSprite);
+                            globalScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.bgSprite);
                           } else {
-                            gScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
+                            globalScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
                           }
                           break;
                         case AnimFocus.TARGET:
-                          gScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
+                          globalScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
                           break;
                         default:
                           setSpritePriority(1);
@@ -1022,10 +1022,10 @@ export abstract class BattleAnim {
                     case 3:
                       switch (frame.focus) {
                         case AnimFocus.USER:
-                          gScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
+                          globalScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
                           break;
                         case AnimFocus.TARGET:
-                          gScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
+                          globalScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
                           break;
                         default:
                           setSpritePriority(1);
@@ -1083,7 +1083,7 @@ export abstract class BattleAnim {
             }
           }
           if (r) {
-            gScene.tweens.addCounter({
+            globalScene.tweens.addCounter({
               duration: Utils.getFrameMs(r),
               onComplete: () => cleanUpAndComplete()
             });
@@ -1153,7 +1153,7 @@ export abstract class BattleAnim {
         }
       };
 
-      if (!gScene.moveAnimations && !this.playRegardlessOfIssues) {
+      if (!globalScene.moveAnimations && !this.playRegardlessOfIssues) {
         return cleanUpAndComplete();
       }
 
@@ -1165,13 +1165,13 @@ export abstract class BattleAnim {
       let totalFrames = anim!.frames.length;
       let frameCount = 0;
 
-      let existingFieldSprites = gScene.field.getAll().slice(0);
+      let existingFieldSprites = globalScene.field.getAll().slice(0);
 
-      gScene.tweens.addCounter({
+      globalScene.tweens.addCounter({
         duration: Utils.getFrameMs(3) * frameTimeMult,
         repeat: anim!.frames.length,
         onRepeat: () => {
-          existingFieldSprites = gScene.field.getAll().slice(0);
+          existingFieldSprites = globalScene.field.getAll().slice(0);
           const spriteFrames = anim!.frames[frameCount];
           const frameData = this.getGraphicFrameDataWithoutTarget(anim!.frames[frameCount], targetInitialX, targetInitialY);
           let graphicFrameCount = 0;
@@ -1183,9 +1183,9 @@ export abstract class BattleAnim {
 
             const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
             if (graphicFrameCount === sprites.length) {
-              const newSprite: Phaser.GameObjects.Sprite = gScene.addFieldSprite(0, 0, anim!.graphic, 1);
+              const newSprite: Phaser.GameObjects.Sprite = globalScene.addFieldSprite(0, 0, anim!.graphic, 1);
               sprites.push(newSprite);
-              gScene.field.add(newSprite);
+              globalScene.field.add(newSprite);
             }
 
             const graphicIndex = graphicFrameCount++;
@@ -1194,11 +1194,11 @@ export abstract class BattleAnim {
               const setSpritePriority = (priority: integer) => {
                 if (existingFieldSprites.length > priority) {
                   // Move to specified priority index
-                  const index = gScene.field.getIndex(existingFieldSprites[priority]);
-                  gScene.field.moveTo(moveSprite, index);
+                  const index = globalScene.field.getIndex(existingFieldSprites[priority]);
+                  globalScene.field.moveTo(moveSprite, index);
                 } else {
                   // Move to top of scene
-                  gScene.field.moveTo(moveSprite, gScene.field.getAll().length - 1);
+                  globalScene.field.moveTo(moveSprite, globalScene.field.getAll().length - 1);
                 }
               };
               setSpritePriority(frame.priority);
@@ -1245,7 +1245,7 @@ export abstract class BattleAnim {
             }
           }
           if (totalFrames) {
-            gScene.tweens.addCounter({
+            globalScene.tweens.addCounter({
               duration: Utils.getFrameMs(totalFrames),
               onComplete: () => cleanUpAndComplete()
             });
@@ -1279,7 +1279,7 @@ export class MoveAnim extends BattleAnim {
   public move: Moves;
 
   constructor(move: Moves, user: Pokemon, target: BattlerIndex, playOnEmptyField: boolean = false) {
-    super(user, gScene.getField()[target], playOnEmptyField);
+    super(user, globalScene.getField()[target], playOnEmptyField);
 
     this.move = move;
   }

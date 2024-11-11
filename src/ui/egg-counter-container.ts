@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { addWindow } from "./ui-theme";
 import { addTextObject, TextStyle } from "./text";
 import { EggCountChangedEvent, EggEventType } from "#app/events/egg";
@@ -22,10 +22,10 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
    * @param eggCount - The number of eggs to hatch.
    */
   constructor(eggCount: number) {
-    super(gScene, 0, 0);
+    super(globalScene, 0, 0);
     this.eggCount = eggCount;
 
-    const uiHandler = gScene.ui.getHandler() as EggHatchSceneHandler;
+    const uiHandler = globalScene.ui.getHandler() as EggHatchSceneHandler;
 
     uiHandler.eventTarget.addEventListener(EggEventType.EGG_COUNT_CHANGED, this.onEggCountChangedEvent);
     this.setup();
@@ -42,7 +42,7 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
 
     this.add(this.eggCountWindow);
 
-    const eggSprite = gScene.add.sprite(19, 18, "egg", "egg_0");
+    const eggSprite = globalScene.add.sprite(19, 18, "egg", "egg_0");
     eggSprite.setScale(0.32);
 
     this.eggCountText = addTextObject(28, 13, `${this.eggCount}`, TextStyle.MESSAGE, { fontSize: "66px" });

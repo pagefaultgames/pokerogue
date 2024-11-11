@@ -8,7 +8,7 @@ import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export enum GameModes {
   CLASSIC,
@@ -118,7 +118,7 @@ export class GameMode implements GameModeConfig {
   getStartingBiome(): Biome {
     switch (this.modeId) {
       case GameModes.DAILY:
-        return gScene.generateRandomBiome(this.getWaveForDifficulty(1));
+        return globalScene.generateRandomBiome(this.getWaveForDifficulty(1));
       default:
         return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
@@ -146,7 +146,7 @@ export class GameMode implements GameModeConfig {
     if (this.isDaily) {
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
-    if ((waveIndex % 30) === (gScene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
+    if ((waveIndex % 30) === (globalScene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
       return true;
     } else if (waveIndex % 10 !== 1 && waveIndex % 10) {
       /**
@@ -163,11 +163,11 @@ export class GameMode implements GameModeConfig {
           if (w === waveIndex) {
             continue;
           }
-          if ((w % 30) === (gScene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
+          if ((w % 30) === (globalScene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
             allowTrainerBattle = false;
             break;
           } else if (w < waveIndex) {
-            gScene.executeWithSeedOffset(() => {
+            globalScene.executeWithSeedOffset(() => {
               const waveTrainerChance = arena.getTrainerChance();
               if (!Utils.randSeedInt(waveTrainerChance)) {
                 allowTrainerBattle = false;

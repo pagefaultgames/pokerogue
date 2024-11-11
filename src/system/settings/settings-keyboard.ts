@@ -2,7 +2,7 @@ import { Button } from "#enums/buttons";
 import { Mode } from "#app/ui/ui";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import i18next from "i18next";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export enum SettingKeyboard {
     // Default_Layout = "DEFAULT_LAYOUT",
@@ -169,40 +169,19 @@ export function setSettingKeyboard(setting: SettingKeyboard, value: integer): bo
     case SettingKeyboard.Alt_Button_Slow_Down:
     case SettingKeyboard.Alt_Button_Submit:
       if (value) {
-        if (gScene.ui) {
+        if (globalScene.ui) {
           const cancelHandler = (success: boolean = false) : boolean => {
-            gScene.ui.revertMode();
-            (gScene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
+            globalScene.ui.revertMode();
+            (globalScene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
             return success;
           };
-          gScene.ui.setOverlayMode(Mode.KEYBOARD_BINDING, {
+          globalScene.ui.setOverlayMode(Mode.KEYBOARD_BINDING, {
             target: setting,
             cancelHandler: cancelHandler,
           });
         }
       }
       break;
-        // case SettingKeyboard.Default_Layout:
-        //     if (value && gScene.ui) {
-        //             const cancelHandler = () => {
-        //                 gScene.ui.revertMode();
-        //                 (gScene.ui.getHandler() as SettingsKeyboardUiHandler).setOptionCursor(Object.values(SettingKeyboard).indexOf(SettingKeyboard.Default_Layout), 0, true);
-        //                 (gScene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
-        //                 return false;
-        //             };
-        //             const changeKeyboardHandler = (keyboardLayout: string) => {
-        //                 gScene.inputController.setChosenKeyboardLayout(keyboardLayout);
-        //                 cancelHandler();
-        //                 return true;
-        //             };
-        //             gScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-        //                 options: [{
-        //                     label: 'Default',
-        //                     handler: changeKeyboardHandler,
-        //                 }]
-        //             });
-        //             return false;
-        //     }
   }
   return true;
 

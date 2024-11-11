@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -37,7 +37,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
     ])
     .withAutoHideIntroVisuals(false)
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Randomly pick from 1 of the 5 stat trainers to spawn
       let trainerType: TrainerType;
@@ -139,7 +139,7 @@ export const ATrainersTestEncounter: MysteryEncounter =
         buttonTooltip: `${namespace}:option.1.tooltip`
       },
       async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         // Battle the stat trainer for an Egg and great rewards
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
@@ -162,9 +162,9 @@ export const ATrainersTestEncounter: MysteryEncounter =
         buttonTooltip: `${namespace}:option.2.tooltip`
       },
       async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         // Full heal party
-        gScene.unshiftPhase(new PartyHealPhase(true));
+        globalScene.unshiftPhase(new PartyHealPhase(true));
 
         const eggOptions: IEggOptions = {
           pulled: false,

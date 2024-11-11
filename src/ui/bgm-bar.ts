@@ -1,7 +1,7 @@
 import { addTextObject, TextStyle } from "./text";
 import i18next from "i18next";
 import * as Utils from "#app/utils";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 const hiddenX = -150;
 const shownX = 0;
@@ -17,14 +17,14 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(gScene, hiddenX, baseY);
+    super(globalScene, hiddenX, baseY);
   }
 
   setup(): void {
     this.defaultWidth = 230;
     this.defaultHeight = 100;
 
-    this.bg = gScene.add.nineslice(-5, -5, "bgm_bar", undefined, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
+    this.bg = globalScene.add.nineslice(-5, -5, "bgm_bar", undefined, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -52,7 +52,7 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     this.bg.width = Math.min(this.defaultWidth, this.musicText.displayWidth + 23);
     this.bg.height = Math.min(this.defaultHeight, this.musicText.displayHeight + 20);
 
-    gScene.fieldUI.bringToTop(this);
+    globalScene.fieldUI.bringToTop(this);
 
     this.y = baseY;
   }
@@ -72,11 +72,11 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    if (!gScene.showBgmBar) {
+    if (!globalScene.showBgmBar) {
       this.setVisible(false);
       return;
     }
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this,
       x: visible ? shownX : hiddenX,
       duration: 500,

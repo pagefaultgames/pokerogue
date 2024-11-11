@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Mode } from "#app/ui/ui";
 import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
 import { addTextObject, setTextStyle, TextStyle } from "#app/ui/text";
@@ -68,7 +68,7 @@ export class NavigationManager {
     } else {
       this.selectedMode = this.modes[pos + increment];
     }
-    gScene.ui.setMode(this.selectedMode);
+    globalScene.ui.setMode(this.selectedMode);
     this.updateNavigationMenus();
   }
 
@@ -103,7 +103,7 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
    * @param y The y position of the NavigationMenu.
    */
   constructor(x: number, y: number) {
-    super(gScene, x, y);
+    super(globalScene, x, y);
 
     this.setup();
   }
@@ -113,7 +113,7 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
    */
   setup() {
     const navigationManager = NavigationManager.getInstance();
-    const headerBg = addWindow(0, 0, (gScene.game.canvas.width / 6) - 2, 24);
+    const headerBg = addWindow(0, 0, (globalScene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
     this.add(headerBg);
     this.width = headerBg.width;
@@ -121,12 +121,12 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
 
     this.navigationIcons = {};
 
-    const iconPreviousTab = gScene.add.sprite(8, 4, "keyboard");
+    const iconPreviousTab = globalScene.add.sprite(8, 4, "keyboard");
     iconPreviousTab.setOrigin(0, -0.1);
     iconPreviousTab.setPositionRelative(headerBg, 8, 4);
     this.navigationIcons["BUTTON_CYCLE_FORM"] = iconPreviousTab;
 
-    const iconNextTab = gScene.add.sprite(0, 0, "keyboard");
+    const iconNextTab = globalScene.add.sprite(0, 0, "keyboard");
     iconNextTab.setOrigin(0, -0.1);
     iconNextTab.setPositionRelative(headerBg, headerBg.width - 20, 4);
     this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
@@ -176,9 +176,9 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
         this.navigationIcons[settingName].alpha = 1;
         continue;
       }
-      const icon = gScene.inputController?.getIconForLatestInputRecorded(settingName);
+      const icon = globalScene.inputController?.getIconForLatestInputRecorded(settingName);
       if (icon) {
-        const type = gScene.inputController?.getLastSourceType();
+        const type = globalScene.inputController?.getLastSourceType();
         this.navigationIcons[settingName].setTexture(type);
         this.navigationIcons[settingName].setFrame(icon);
         this.navigationIcons[settingName].alpha = 1;

@@ -1,7 +1,7 @@
 import { leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
@@ -58,7 +58,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       let species = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
       let tries = 0;
@@ -100,7 +100,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}:description_shiny`;
         encounter.options[0].dialogue!.buttonTooltip = `${namespace}:option.1.tooltip_shiny`;
       }
-      const price = gScene.getWaveMoneyAmount(priceMultiplier);
+      const price = globalScene.getWaveMoneyAmount(priceMultiplier);
       encounter.setDialogueToken("purchasePokemon", pokemon.getNameToRender());
       encounter.setDialogueToken("price", price.toString());
       encounter.misc = {
@@ -127,7 +127,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
           ],
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const price = encounter.misc.price;
           const purchasedPokemon = encounter.misc.pokemon as PlayerPokemon;
 

@@ -1,4 +1,4 @@
-import BattleScene, { gScene } from "#app/battle-scene";
+import BattleScene, { globalScene } from "#app/battle-scene";
 import { GameModes } from "../game-mode";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
@@ -47,27 +47,27 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   override setup() {
     const ui = this.getUi();
 
-    this.runSelectContainer = gScene.add.container(0, 0);
+    this.runSelectContainer = globalScene.add.container(0, 0);
     this.runSelectContainer.setVisible(false);
     ui.add(this.runSelectContainer);
 
-    const loadSessionBg = gScene.add.rectangle(0, 0, gScene.game.canvas.width / 6, -gScene.game.canvas.height / 6, 0x006860);
+    const loadSessionBg = globalScene.add.rectangle(0, 0, globalScene.game.canvas.width / 6, -globalScene.game.canvas.height / 6, 0x006860);
     loadSessionBg.setOrigin(0, 0);
     this.runSelectContainer.add(loadSessionBg);
 
-    this.runContainerInitialY = -gScene.game.canvas.height / 6 + 8;
+    this.runContainerInitialY = -globalScene.game.canvas.height / 6 + 8;
 
-    this.runsContainer = gScene.add.container(8, this.runContainerInitialY);
+    this.runsContainer = globalScene.add.container(8, this.runContainerInitialY);
     this.runSelectContainer.add(this.runsContainer);
 
     this.runs = [];
 
-    gScene.loadImage("hall_of_fame_red", "ui");
-    gScene.loadImage("hall_of_fame_blue", "ui");
+    globalScene.loadImage("hall_of_fame_red", "ui");
+    globalScene.loadImage("hall_of_fame_blue", "ui");
     // For some reason, the game deletes/unloads the rival sprites. As a result, Run Info cannot access the rival sprites.
     // The rivals are loaded here to have some way of accessing those sprites.
-    gScene.loadAtlas("rival_f", "trainer");
-    gScene.loadAtlas("rival_m", "trainer");
+    globalScene.loadAtlas("rival_f", "trainer");
+    globalScene.loadAtlas("rival_m", "trainer");
   }
 
   override show(args: any[]): boolean {
@@ -105,7 +105,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor]) {
-          gScene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
+          globalScene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
         } else {
           return false;
         }
@@ -114,7 +114,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       } else {
         this.runSelectCallback = null;
         success = true;
-        gScene.ui.revertMode();
+        globalScene.ui.revertMode();
       }
     } else if (this.runs.length > 0) {
       switch (button) {
@@ -157,7 +157,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
    * In the for loop, each run is processed to create an RunEntryContainer used to display and store the run's unique information
    */
   private async populateRuns() {
-    const response = await gScene.gameData.getRunHistoryData();
+    const response = await globalScene.gameData.getRunHistoryData();
     const timestamps = Object.keys(response);
     if (timestamps.length === 0) {
       this.showEmpty();
@@ -170,7 +170,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const entryCount = timestamps.length;
     for (let s = 0; s < entryCount; s++) {
       const entry = new RunEntryContainer(response[timestampsNo[s]], s);
-      gScene.add.existing(entry);
+      globalScene.add.existing(entry);
       this.runsContainer.add(entry);
       this.runs.push(entry);
     }
@@ -195,7 +195,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = gScene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 46, 6, 6, 6, 6);
+      this.cursorObj = globalScene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 46, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.runsContainer.add(this.cursorObj);
     }
@@ -209,7 +209,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     if (changed) {
       this.scrollCursor = scrollCursor;
       this.setCursor(this.cursor);
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: this.runsContainer,
         y: this.runContainerInitialY - 56 * scrollCursor,
         duration: Utils.fixedInt(325),
@@ -255,7 +255,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
   public entryData: RunEntry;
 
   constructor(entryData: RunEntry, slotId: number) {
-    super(gScene, 0, slotId * 56);
+    super(globalScene, 0, slotId * 56);
 
     this.slotId = slotId;
     this.entryData = entryData;
@@ -277,7 +277,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
   private setup(run: RunEntry) {
 
     const victory = run.isVictory;
-    const data = gScene.gameData.parseSessionData(JSON.stringify(run.entry));
+    const data = globalScene.gameData.parseSessionData(JSON.stringify(run.entry));
 
     const slotWindow = addWindow(0, 0, 304, 52);
     this.add(slotWindow);
@@ -287,20 +287,20 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       const gameOutcomeLabel = addTextObject(8, 5, `${i18next.t("runHistory:victory")}`, TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
     } else { // Run Result: Defeats
-      const genderIndex = gScene.gameData.gender ?? PlayerGender.UNSET;
+      const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       // Defeats from wild Pokemon battles will show the Pokemon responsible by the text of the run result.
       if (data.battleType === BattleType.WILD || (data.battleType === BattleType.MYSTERY_ENCOUNTER && !data.trainer)) {
-        const enemyContainer = gScene.add.container(8, 5);
+        const enemyContainer = globalScene.add.container(8, 5);
         const gameOutcomeLabel = addTextObject(0, 0, `${i18next.t("runHistory:defeatedWild", { context: genderStr })}`, TextStyle.WINDOW);
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
-          const enemyIconContainer = gScene.add.container(65 + (e * 25), -8);
+          const enemyIconContainer = globalScene.add.container(65 + (e * 25), -8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
           enemyData["player"] = true;
           const enemy = enemyData.toPokemon();
-          const enemyIcon = gScene.addPokemonIcon(enemy, 0, 0, 0, 0);
+          const enemyIcon = globalScene.addPokemonIcon(enemy, 0, 0, 0, 0);
           const enemyLevel = addTextObject(32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
           enemyLevel.setShadow(0, 0, undefined);
           enemyLevel.setStroke("#424242", 14);
@@ -348,7 +348,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     }
     gameModeLabel.appendText(mode, false);
     if (data.gameMode === GameModes.SPLICED_ENDLESS) {
-      const splicedIcon = gScene.add.image(0, 0, "icon_spliced");
+      const splicedIcon = globalScene.add.image(0, 0, "icon_spliced");
       splicedIcon.setScale(0.75);
       const coords = gameModeLabel.getTopRight();
       splicedIcon.setPosition(coords.x + 5, 27);
@@ -367,13 +367,13 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     // pokemonIconsContainer holds the run's party Pokemon icons and levels
     // Icons should be level with each other here, but there are significant number of icons that have a center axis / position far from the norm.
     // The code here does not account for icon weirdness.
-    const pokemonIconsContainer = gScene.add.container(140, 17);
+    const pokemonIconsContainer = globalScene.add.container(140, 17);
 
     data.party.forEach((p: PokemonData, i: number) => {
-      const iconContainer = gScene.add.container(26 * i, 0);
+      const iconContainer = globalScene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
       const pokemon = p.toPokemon();
-      const icon = gScene.addPokemonIcon(pokemon, 0, 0, 0, 0);
+      const icon = globalScene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
       const text = addTextObject(32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
       text.setShadow(0, 0, undefined);

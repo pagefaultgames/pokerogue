@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -59,7 +59,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       const bossSpecies = getPokemonSpecies(Species.GARBODOR);
@@ -80,8 +80,8 @@ export const TrashToTreasureEncounter: MysteryEncounter =
       // Load animations/sfx for Garbodor fight start moves
       loadCustomMovesForEncounter([ Moves.TOXIC, Moves.AMNESIA ]);
 
-      gScene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
-      gScene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
+      globalScene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
+      globalScene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
 
       encounter.setDialogueToken("costMultiplier", SHOP_ITEM_COST_MULTIPLIER.toString());
 
@@ -111,8 +111,8 @@ export const TrashToTreasureEncounter: MysteryEncounter =
           const blackSludge = generateModifierType(modifierTypes.MYSTERY_ENCOUNTER_BLACK_SLUDGE, [ SHOP_ITEM_COST_MULTIPLIER ]);
           const modifier = blackSludge?.newModifier();
           if (modifier) {
-            await gScene.addModifier(modifier, false, false, false, true);
-            gScene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
+            await globalScene.addModifier(modifier, false, false, false, true);
+            globalScene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
             await showEncounterText(i18next.t("battle:rewardGain", { modifierName: modifier.type.name }), null, undefined, true);
           }
 
@@ -134,11 +134,11 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Investigate garbage, battle Gmax Garbodor
-          gScene.setFieldScale(0.75);
+          globalScene.setFieldScale(0.75);
           await showEncounterText(`${namespace}:option.2.selected_2`);
           await transitionMysteryEncounterIntroVisuals();
 
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
 
           setEncounterRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT ], fillRemaining: true });
           encounter.startOfBattleEffects.push(
@@ -164,12 +164,12 @@ async function tryApplyDigRewardItems() {
   const shellBell = generateModifierType(modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
   const leftovers = generateModifierType(modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType;
 
-  const party = gScene.getParty();
+  const party = globalScene.getParty();
 
   // Iterate over the party until an item was successfully given
   // First leftovers
   for (const pokemon of party) {
-    const heldItems = gScene.findModifiers(m => m instanceof PokemonHeldItemModifier
+    const heldItems = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
       && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
     const existingLeftovers = heldItems.find(m => m instanceof TurnHealModifier) as TurnHealModifier;
 
@@ -181,7 +181,7 @@ async function tryApplyDigRewardItems() {
 
   // Second leftovers
   for (const pokemon of party) {
-    const heldItems = gScene.findModifiers(m => m instanceof PokemonHeldItemModifier
+    const heldItems = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
       && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
     const existingLeftovers = heldItems.find(m => m instanceof TurnHealModifier) as TurnHealModifier;
 
@@ -191,12 +191,12 @@ async function tryApplyDigRewardItems() {
     }
   }
 
-  gScene.playSound("item_fanfare");
+  globalScene.playSound("item_fanfare");
   await showEncounterText(i18next.t("battle:rewardGainCount", { modifierName: leftovers.name, count: 2 }), null, undefined, true);
 
   // First Shell bell
   for (const pokemon of party) {
-    const heldItems = gScene.findModifiers(m => m instanceof PokemonHeldItemModifier
+    const heldItems = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
       && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
     const existingShellBell = heldItems.find(m => m instanceof HitHealModifier) as HitHealModifier;
 
@@ -208,7 +208,7 @@ async function tryApplyDigRewardItems() {
 
   // Second Shell bell
   for (const pokemon of party) {
-    const heldItems = gScene.findModifiers(m => m instanceof PokemonHeldItemModifier
+    const heldItems = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
       && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
     const existingShellBell = heldItems.find(m => m instanceof HitHealModifier) as HitHealModifier;
 
@@ -218,17 +218,17 @@ async function tryApplyDigRewardItems() {
     }
   }
 
-  gScene.playSound("item_fanfare");
+  globalScene.playSound("item_fanfare");
   await showEncounterText(i18next.t("battle:rewardGainCount", { modifierName: shellBell.name, count: 2 }), null, undefined, true);
 }
 
 function doGarbageDig() {
-  gScene.playSound("battle_anims/PRSFX- Dig2");
-  gScene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
-    gScene.playSound("battle_anims/PRSFX- Dig2");
-    gScene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
+  globalScene.playSound("battle_anims/PRSFX- Dig2");
+  globalScene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
+    globalScene.playSound("battle_anims/PRSFX- Dig2");
+    globalScene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
   });
-  gScene.time.delayedCall(SOUND_EFFECT_WAIT_TIME * 2, () => {
-    gScene.playSound("battle_anims/PRSFX- Dig2");
+  globalScene.time.delayedCall(SOUND_EFFECT_WAIT_TIME * 2, () => {
+    globalScene.playSound("battle_anims/PRSFX- Dig2");
   });
 }

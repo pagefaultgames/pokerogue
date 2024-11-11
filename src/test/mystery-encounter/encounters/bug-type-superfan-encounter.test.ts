@@ -388,6 +388,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(PHYSICAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[0].label)).toBe(true);
       expect(SPECIAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[1].label)).toBe(true);
       expect(STATUS_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[2].label)).toBe(true);
+      expect(MISC_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[3].label)).toBe(true);
     });
   });
 

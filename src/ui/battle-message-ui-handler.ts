@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
 import { Mode } from "./ui";
 import MessageUiHandler from "./message-ui-handler";
@@ -32,7 +32,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.textTimer = null;
     this.textCallbackTimer = null;
 
-    this.bg = gScene.add.sprite(0, 0, "bg", gScene.windowType);
+    this.bg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType);
     this.bg.setName("sprite-battle-msg-bg");
     this.bg.setOrigin(0, 1);
     ui.add(this.bg);
@@ -43,7 +43,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.commandWindow.setVisible(false);
     ui.add(this.commandWindow);
 
-    this.movesWindowContainer = gScene.add.container(0, 0);
+    this.movesWindowContainer = globalScene.add.container(0, 0);
     this.movesWindowContainer.setName("moves-bg");
     this.movesWindowContainer.setVisible(false);
 
@@ -58,7 +58,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.movesWindowContainer.add([ movesWindow, moveDetailsWindow ]);
     ui.add(this.movesWindowContainer);
 
-    const messageContainer = gScene.add.container(12, -39);
+    const messageContainer = globalScene.add.container(12, -39);
     ui.add(messageContainer);
 
     const message = addTextObject(0, 0, "", TextStyle.MESSAGE, {
@@ -71,10 +71,10 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.message = message;
 
-    this.nameBoxContainer = gScene.add.container(0, -16);
+    this.nameBoxContainer = globalScene.add.container(0, -16);
     this.nameBoxContainer.setVisible(false);
 
-    this.nameBox = gScene.add.nineslice(0, 0, "namebox", gScene.windowType, 72, 16, 8, 8, 5, 5);
+    this.nameBox = globalScene.add.nineslice(0, 0, "namebox", globalScene.windowType, 72, 16, 8, 8, 5, 5);
     this.nameBox.setOrigin(0, 0);
 
     this.nameText = addTextObject(8, 0, "Rival", TextStyle.MESSAGE, { maxLines: 1 });
@@ -85,13 +85,13 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.initPromptSprite(messageContainer);
 
-    const levelUpStatsContainer = gScene.add.container(0, 0);
+    const levelUpStatsContainer = globalScene.add.container(0, 0);
     levelUpStatsContainer.setVisible(false);
     ui.add(levelUpStatsContainer);
 
     this.levelUpStatsContainer = levelUpStatsContainer;
 
-    const levelUpStatsLabelsContent = addTextObject((gScene.game.canvas.width / 6) - 73, -94, "", TextStyle.WINDOW, { maxLines: 6 });
+    const levelUpStatsLabelsContent = addTextObject((globalScene.game.canvas.width / 6) - 73, -94, "", TextStyle.WINDOW, { maxLines: 6 });
     levelUpStatsLabelsContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     let levelUpStatsLabelText = "";
 
@@ -101,19 +101,19 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsLabelsContent.text = levelUpStatsLabelText;
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;
 
-    const levelUpStatsBg = addWindow((gScene.game.canvas.width / 6), -100, 80 + levelUpStatsLabelsContent.displayWidth, 100);
+    const levelUpStatsBg = addWindow((globalScene.game.canvas.width / 6), -100, 80 + levelUpStatsLabelsContent.displayWidth, 100);
     levelUpStatsBg.setOrigin(1, 0);
     levelUpStatsContainer.add(levelUpStatsBg);
 
     levelUpStatsContainer.add(levelUpStatsLabelsContent);
 
-    const levelUpStatsIncrContent = addTextObject((gScene.game.canvas.width / 6) - 50, -94, "+\n+\n+\n+\n+\n+", TextStyle.WINDOW, { maxLines: 6 });
+    const levelUpStatsIncrContent = addTextObject((globalScene.game.canvas.width / 6) - 50, -94, "+\n+\n+\n+\n+\n+", TextStyle.WINDOW, { maxLines: 6 });
     levelUpStatsIncrContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsContainer.add(levelUpStatsIncrContent);
 
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
 
-    const levelUpStatsValuesContent = addBBCodeTextObject((gScene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6, lineSpacing: 5 });
+    const levelUpStatsValuesContent = addBBCodeTextObject((globalScene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6, lineSpacing: 5 });
     levelUpStatsValuesContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsValuesContent.setOrigin(1, 0);
     levelUpStatsValuesContent.setAlign("right");
@@ -167,10 +167,10 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
   promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean): Promise<void> {
     return new Promise(resolve => {
-      if (!gScene.showLevelUpStats) {
+      if (!globalScene.showLevelUpStats) {
         return resolve();
       }
-      const newStats = gScene.getParty()[partyMemberIndex].stats;
+      const newStats = globalScene.getParty()[partyMemberIndex].stats;
       let levelUpStatsValuesText = "";
       for (const s of PERMANENT_STATS) {
         levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;
@@ -192,7 +192,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
   promptIvs(pokemonId: integer, ivs: integer[], shownIvsCount: integer): Promise<void> {
     return new Promise(resolve => {
-      gScene.executeWithSeedOffset(() => {
+      globalScene.executeWithSeedOffset(() => {
         let levelUpStatsValuesText = "";
         const shownStats = this.getTopIvs(ivs, shownIvsCount);
         for (const s of PERMANENT_STATS) {
@@ -226,9 +226,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   }
 
   getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string {
-    const starterSpecies = gScene.getPokemonById(pokemonId)!.species.getRootSpeciesId(); // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
-    const starterIvs: number[] = gScene.gameData.dexData[starterSpecies].ivs;
-    const uiTheme = gScene.uiTheme; // Assuming uiTheme is accessible
+    const starterSpecies = globalScene.getPokemonById(pokemonId)!.species.getRootSpeciesId(); // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
+    const starterIvs: number[] = globalScene.gameData.dexData[starterSpecies].ivs;
+    const uiTheme = globalScene.uiTheme; // Assuming uiTheme is accessible
 
     // Function to wrap text in color based on comparison
     const coloredText = (text: string, isBetter: boolean, ivValue) => {

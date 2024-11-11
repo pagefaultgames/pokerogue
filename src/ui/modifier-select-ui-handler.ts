@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
@@ -58,12 +58,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.modifierContainer = gScene.add.container(0, 0);
+    this.modifierContainer = globalScene.add.container(0, 0);
     ui.add(this.modifierContainer);
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    const styleOptions = getTextStyleOptions(TextStyle.PARTY, gScene.uiTheme).styleOptions;
+    const styleOptions = getTextStyleOptions(TextStyle.PARTY, globalScene.uiTheme).styleOptions;
 
     if (context) {
       context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
@@ -71,7 +71,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
     }
 
-    this.transferButtonContainer = gScene.add.container((gScene.game.canvas.width - this.checkButtonWidth) / 6 - 21, OPTION_BUTTON_YPOSITION);
+    this.transferButtonContainer = globalScene.add.container((globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 21, OPTION_BUTTON_YPOSITION);
     this.transferButtonContainer.setName("transfer-btn");
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
@@ -81,7 +81,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
-    this.checkButtonContainer = gScene.add.container((gScene.game.canvas.width) / 6 - 1, OPTION_BUTTON_YPOSITION);
+    this.checkButtonContainer = globalScene.add.container((globalScene.game.canvas.width) / 6 - 1, OPTION_BUTTON_YPOSITION);
     this.checkButtonContainer.setName("use-btn");
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
@@ -91,7 +91,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     checkButtonText.setOrigin(1, 0);
     this.checkButtonContainer.add(checkButtonText);
 
-    this.rerollButtonContainer = gScene.add.container(16, OPTION_BUTTON_YPOSITION);
+    this.rerollButtonContainer = globalScene.add.container(16, OPTION_BUTTON_YPOSITION);
     this.rerollButtonContainer.setName("reroll-brn");
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
@@ -107,7 +107,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
 
-    this.lockRarityButtonContainer = gScene.add.container(16, OPTION_BUTTON_YPOSITION);
+    this.lockRarityButtonContainer = globalScene.add.container(16, OPTION_BUTTON_YPOSITION);
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
@@ -115,7 +115,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
-    this.continueButtonContainer = gScene.add.container((gScene.game.canvas.width / 12), -(gScene.game.canvas.height / 12));
+    this.continueButtonContainer = globalScene.add.container((globalScene.game.canvas.width / 12), -(globalScene.game.canvas.height / 12));
     this.continueButtonContainer.setVisible(false);
     ui.add(this.continueButtonContainer);
 
@@ -133,16 +133,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       right: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
-      width: (gScene.game.canvas.width / 6) - 2,
+      width: (globalScene.game.canvas.width / 6) - 2,
     });
     ui.add(this.moveInfoOverlay);
     // register the overlay to receive toggle events
-    gScene.addInfoToggle(this.moveInfoOverlay);
+    globalScene.addInfoToggle(this.moveInfoOverlay);
   }
 
   show(args: any[]): boolean {
 
-    gScene.disableMenu = false;
+    globalScene.disableMenu = false;
 
     if (this.active) {
       if (args.length >= 3) {
@@ -163,8 +163,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.player = args[0];
 
-    const partyHasHeldItem = this.player && !!gScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length;
-    const canLockRarities = !!gScene.findModifier(m => m instanceof LockModifierTiersModifier);
+    const partyHasHeldItem = this.player && !!globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length;
+    const canLockRarities = !!globalScene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
@@ -188,19 +188,19 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.updateRerollCostText();
 
     const typeOptions = args[1] as ModifierTypeOption[];
-    const removeHealShop = gScene.gameMode.hasNoShop;
-    const baseShopCost = new IntegerHolder(gScene.getWaveMoneyAmount(1));
-    gScene.applyModifier(HealShopCostModifier, true, baseShopCost);
+    const removeHealShop = globalScene.gameMode.hasNoShop;
+    const baseShopCost = new IntegerHolder(globalScene.getWaveMoneyAmount(1));
+    globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);
     const shopTypeOptions = !removeHealShop
-      ? getPlayerShopModifierTypeOptionsForWave(gScene.currentBattle.waveIndex, baseShopCost.value)
+      ? getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)
       : [];
     const optionsYOffset = shopTypeOptions.length > SHOP_OPTIONS_ROW_LIMIT ? -SINGLE_SHOP_ROW_YOFFSET : -DOUBLE_SHOP_ROW_YOFFSET;
 
     for (let m = 0; m < typeOptions.length; m++) {
-      const sliceWidth = (gScene.game.canvas.width / 6) / (typeOptions.length + 2);
-      const option = new ModifierOption(sliceWidth * (m + 1) + (sliceWidth * 0.5), -gScene.game.canvas.height / 12 + optionsYOffset, typeOptions[m]);
+      const sliceWidth = (globalScene.game.canvas.width / 6) / (typeOptions.length + 2);
+      const option = new ModifierOption(sliceWidth * (m + 1) + (sliceWidth * 0.5), -globalScene.game.canvas.height / 12 + optionsYOffset, typeOptions[m]);
       option.setScale(0.5);
-      gScene.add.existing(option);
+      globalScene.add.existing(option);
       this.modifierContainer.add(option);
       this.options.push(option);
     }
@@ -214,10 +214,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       const row = m < SHOP_OPTIONS_ROW_LIMIT ? 0 : 1;
       const col = m < SHOP_OPTIONS_ROW_LIMIT ? m : m - SHOP_OPTIONS_ROW_LIMIT;
       const rowOptions = shopTypeOptions.slice(row ? SHOP_OPTIONS_ROW_LIMIT : 0, row ? undefined : SHOP_OPTIONS_ROW_LIMIT);
-      const sliceWidth = (gScene.game.canvas.width / 6) / (rowOptions.length + 2);
-      const option = new ModifierOption(sliceWidth * (col + 1) + (sliceWidth * 0.5), ((-gScene.game.canvas.height / 12) - (gScene.game.canvas.height / 32) - (42 - (28 * row - 1))), shopTypeOptions[m]);
+      const sliceWidth = (globalScene.game.canvas.width / 6) / (rowOptions.length + 2);
+      const option = new ModifierOption(sliceWidth * (col + 1) + (sliceWidth * 0.5), ((-globalScene.game.canvas.height / 12) - (globalScene.game.canvas.height / 32) - (42 - (28 * row - 1))), shopTypeOptions[m]);
       option.setScale(0.375);
-      gScene.add.existing(option);
+      globalScene.add.existing(option);
       this.modifierContainer.add(option);
 
       if (row >= this.shopOptionsRows.length) {
@@ -229,17 +229,17 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
     /* Force updateModifiers without pokemonSpecificModifiers */
-    gScene.getModifierBar().updateModifiers(gScene.modifiers, true);
+    globalScene.getModifierBar().updateModifiers(globalScene.modifiers, true);
 
     /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
-    gScene.showShopOverlay(750 * gScene.gameSpeed);
-    gScene.updateAndShowText(750);
-    gScene.updateBiomeWaveText();
-    gScene.updateMoneyText();
+    globalScene.showShopOverlay(750 * globalScene.gameSpeed);
+    globalScene.updateAndShowText(750);
+    globalScene.updateBiomeWaveText();
+    globalScene.updateMoneyText();
 
     let i = 0;
 
-    gScene.tweens.addCounter({
+    globalScene.tweens.addCounter({
       ease: "Sine.easeIn",
       duration: 1250,
       onUpdate: t => {
@@ -253,17 +253,17 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
     });
 
-    gScene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
+    globalScene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
       for (const shopOption of this.shopOptionsRows.flat()) {
         shopOption.show(0, 0);
       }
     });
 
-    gScene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
+    globalScene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
       if (partyHasHeldItem) {
         this.transferButtonContainer.setAlpha(0);
         this.transferButtonContainer.setVisible(true);
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: this.transferButtonContainer,
           alpha: 1,
           duration: 250
@@ -279,27 +279,27 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.continueButtonContainer.setVisible(this.rerollCost < 0);
       this.lockRarityButtonContainer.setVisible(canLockRarities);
 
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: [ this.checkButtonContainer, this.continueButtonContainer ],
         alpha: 1,
         duration: 250
       });
 
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer ],
         alpha: this.rerollCost < 0 ? 0.5 : 1,
         duration: 250
       });
 
       const updateCursorTarget = () => {
-        if (gScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+        if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
           this.setRowCursor(0);
           this.setCursor(2);
-        } else if ((gScene.shopCursorTarget === ShopCursorTarget.SHOP) && gScene.gameMode.hasNoShop) {
+        } else if ((globalScene.shopCursorTarget === ShopCursorTarget.SHOP) && globalScene.gameMode.hasNoShop) {
           this.setRowCursor(ShopCursorTarget.REWARDS);
           this.setCursor(0);
         } else {
-          this.setRowCursor(gScene.shopCursorTarget);
+          this.setRowCursor(globalScene.shopCursorTarget);
           this.setCursor(0);
         }
       };
@@ -445,7 +445,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = gScene.add.image(0, 0, "cursor");
+      this.cursorObj = globalScene.add.image(0, 0, "cursor");
       this.modifierContainer.add(this.cursorObj);
     }
 
@@ -459,18 +459,18 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       if (this.rowCursor === 1 && options.length === 0) {
         // Continue button when no shop items
         this.cursorObj.setScale(1.25);
-        this.cursorObj.setPosition((gScene.game.canvas.width / 18) + 23, (-gScene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2));
+        this.cursorObj.setPosition((globalScene.game.canvas.width / 18) + 23, (-globalScene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2));
         ui.showText(i18next.t("modifierSelectUiHandler:continueNextWaveDescription"));
         return ret;
       }
 
-      const sliceWidth = (gScene.game.canvas.width / 6) / (options.length + 2);
+      const sliceWidth = (globalScene.game.canvas.width / 6) / (options.length + 2);
       if (this.rowCursor < 2) {
         // Cursor on free items
-        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-gScene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2));
+        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-globalScene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2));
       } else {
         // Cursor on paying items
-        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-gScene.game.canvas.height / 12 - gScene.game.canvas.height / 32) - (-14 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
+        this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-globalScene.game.canvas.height / 12 - globalScene.game.canvas.height / 32) - (-14 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
       }
 
       const type = options[this.cursor].modifierTypeOption.type;
@@ -483,10 +483,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 8 : OPTION_BUTTON_YPOSITION + 4);
       ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
-      this.cursorObj.setPosition((gScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30, OPTION_BUTTON_YPOSITION + 4);
+      this.cursorObj.setPosition((globalScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30, OPTION_BUTTON_YPOSITION + 4);
       ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
     } else if (cursor === 2) {
-      this.cursorObj.setPosition((gScene.game.canvas.width - this.checkButtonWidth) / 6 - 10, OPTION_BUTTON_YPOSITION + 4);
+      this.cursorObj.setPosition((globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 10, OPTION_BUTTON_YPOSITION + 4);
       ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
       this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 4);
@@ -557,9 +557,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     } else {
       this.rerollCostText.setVisible(true);
     }
-    const canReroll = gScene.money >= this.rerollCost;
+    const canReroll = globalScene.money >= this.rerollCost;
 
-    const formattedMoney = Utils.formatMoney(gScene.moneyFormat, this.rerollCost);
+    const formattedMoney = Utils.formatMoney(globalScene.moneyFormat, this.rerollCost);
 
     this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
@@ -567,7 +567,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   updateLockRaritiesText(): void {
-    const textStyle = gScene.lockModifierTiers ? TextStyle.SUMMARY_BLUE : TextStyle.PARTY;
+    const textStyle = globalScene.lockModifierTiers ? TextStyle.SUMMARY_BLUE : TextStyle.PARTY;
     this.lockRarityButtonText.setColor(this.getTextColor(textStyle));
     this.lockRarityButtonText.setShadowColor(this.getTextColor(textStyle, true));
   }
@@ -587,17 +587,17 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rowCursor = 0;
 
     /* Multiplies the fade time duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
-    gScene.hideShopOverlay(750 * gScene.gameSpeed);
-    gScene.hideLuckText(250);
+    globalScene.hideShopOverlay(750 * globalScene.gameSpeed);
+    globalScene.hideLuckText(250);
 
     /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
-    gScene.getModifierBar().updateModifiers(gScene.modifiers);
+    globalScene.getModifierBar().updateModifiers(globalScene.modifiers);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);
     this.shopOptionsRows.splice(0, this.shopOptionsRows.length);
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: options,
       scale: 0.01,
       duration: 250,
@@ -607,7 +607,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     [ this.rerollButtonContainer, this.checkButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer, this.continueButtonContainer ].forEach(container => {
       if (container.visible) {
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: container,
           alpha: 0,
           duration: 250,
@@ -643,7 +643,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   private itemCostText: Phaser.GameObjects.Text;
 
   constructor(x: number, y: number, modifierTypeOption: ModifierTypeOption) {
-    super(gScene, x, y);
+    super(globalScene, x, y);
 
     this.modifierTypeOption = modifierTypeOption;
 
@@ -653,7 +653,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   setup() {
     if (!this.modifierTypeOption.cost) {
       const getPb = (): Phaser.GameObjects.Sprite => {
-        const pb = gScene.add.sprite(0, -182, "pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount));
+        const pb = globalScene.add.sprite(0, -182, "pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount));
         pb.setScale(2);
         return pb;
       };
@@ -666,13 +666,13 @@ class ModifierOption extends Phaser.GameObjects.Container {
       this.add(this.pbTint);
     }
 
-    this.itemContainer = gScene.add.container(0, 0);
+    this.itemContainer = globalScene.add.container(0, 0);
     this.itemContainer.setScale(0.5);
     this.itemContainer.setAlpha(0);
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = gScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.iconImage);
+      const item = globalScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.iconImage);
       return item;
     };
 
@@ -704,7 +704,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
   show(remainingDuration: integer, upgradeCountOffset: integer) {
     if (!this.modifierTypeOption.cost) {
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: this.pb,
         y: 0,
         duration: 1250,
@@ -715,18 +715,18 @@ class ModifierOption extends Phaser.GameObjects.Container {
       let bounceCount = 0;
       let bounce = false;
 
-      gScene.tweens.addCounter({
+      globalScene.tweens.addCounter({
         from: 1,
         to: 0,
         duration: 1250,
         ease: "Bounce.Out",
         onUpdate: t => {
-          if (!gScene) {
+          if (!globalScene) {
             return;
           }
           const value = t.getValue();
           if (!bounce && value > lastValue) {
-            gScene.playSound("se/pb_bounce_1", { volume: 1 / ++bounceCount });
+            globalScene.playSound("se/pb_bounce_1", { volume: 1 / ++bounceCount });
             bounce = true;
           } else if (bounce && value < lastValue) {
             bounce = false;
@@ -737,20 +737,20 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
         const upgradeIndex = u;
-        gScene.time.delayedCall(remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)), () => {
-          gScene.playSound("se/upgrade", { rate: 1 + 0.25 * upgradeIndex });
+        globalScene.time.delayedCall(remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)), () => {
+          globalScene.playSound("se/upgrade", { rate: 1 + 0.25 * upgradeIndex });
           this.pbTint.setPosition(this.pb.x, this.pb.y);
           this.pbTint.setTintFill(0xFFFFFF);
           this.pbTint.setAlpha(0);
           this.pbTint.setVisible(true);
-          gScene.tweens.add({
+          globalScene.tweens.add({
             targets: this.pbTint,
             alpha: 1,
             duration: 1000,
             ease: "Sine.easeIn",
             onComplete: () => {
               this.pb.setTexture("pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (upgradeIndex + 1)));
-              gScene.tweens.add({
+              globalScene.tweens.add({
                 targets: this.pbTint,
                 alpha: 0,
                 duration: 750,
@@ -765,16 +765,16 @@ class ModifierOption extends Phaser.GameObjects.Container {
       }
     }
 
-    gScene.time.delayedCall(remainingDuration + 2000, () => {
-      if (!gScene) {
+    globalScene.time.delayedCall(remainingDuration + 2000, () => {
+      if (!globalScene) {
         return;
       }
 
       if (!this.modifierTypeOption.cost) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
-        gScene.playSound("se/pb_rel");
+        globalScene.playSound("se/pb_rel");
 
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: this.pb,
           duration: 500,
           delay: 250,
@@ -784,7 +784,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         });
       }
 
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: this.itemContainer,
         duration: 500,
         ease: "Elastic.Out",
@@ -792,7 +792,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         alpha: 1
       });
       if (!this.modifierTypeOption.cost) {
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: this.itemTint,
           alpha: 0,
           duration: 500,
@@ -800,7 +800,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           onComplete: () => this.itemTint.destroy()
         });
       }
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: this.itemText,
         duration: 500,
         alpha: 1,
@@ -808,7 +808,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         ease: "Cubic.easeInOut"
       });
       if (this.itemCostText) {
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: this.itemCostText,
           duration: 500,
           alpha: 1,
@@ -825,12 +825,12 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
   updateCostText(): void {
     const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
-    const textStyle = cost <= gScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
+    const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    const formattedMoney = Utils.formatMoney(gScene.moneyFormat, cost);
+    const formattedMoney = Utils.formatMoney(globalScene.moneyFormat, cost);
 
     this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
-    this.itemCostText.setColor(getTextColor(textStyle, false, gScene.uiTheme));
-    this.itemCostText.setShadowColor(getTextColor(textStyle, true, gScene.uiTheme));
+    this.itemCostText.setColor(getTextColor(textStyle, false, globalScene.uiTheme));
+    this.itemCostText.setShadowColor(getTextColor(textStyle, true, globalScene.uiTheme));
   }
 }

@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import BattleScene, { gScene } from "#app/battle-scene";
+import BattleScene, { globalScene } from "#app/battle-scene";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
@@ -34,7 +34,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   private _isUpdating: boolean;
 
   constructor(x: number, y: number) {
-    super(gScene, x, y);
+    super(globalScene, x, y);
 
     this._isUpdating = false;
     this.setup();
@@ -69,14 +69,14 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     const window = addWindow(0, 17, 114, 118, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(window);
 
-    this.rankingsContainer = gScene.add.container(6, 21);
+    this.rankingsContainer = globalScene.add.container(6, 21);
     this.add(this.rankingsContainer);
 
     this.loadingLabel = addTextObject(window.displayWidth / 2, window.displayHeight / 2 + 16, "", TextStyle.WINDOW);
     this.loadingLabel.setOrigin(0.5, 0.5);
     this.loadingLabel.setVisible(false);
 
-    this.prevCategoryButton = gScene.add.sprite(4, 4, "cursor_reverse");
+    this.prevCategoryButton = globalScene.add.sprite(4, 4, "cursor_reverse");
     this.prevCategoryButton.setOrigin(0, 0);
     this.add(this.prevCategoryButton);
 
@@ -85,7 +85,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       this.update(this.category ? this.category - 1 : Utils.getEnumKeys(ScoreboardCategory).length - 1);
     });
 
-    this.nextCategoryButton = gScene.add.sprite(window.displayWidth - 4, 4, "cursor");
+    this.nextCategoryButton = globalScene.add.sprite(window.displayWidth - 4, 4, "cursor");
     this.nextCategoryButton.setOrigin(1, 0);
     this.add(this.nextCategoryButton);
 
@@ -94,7 +94,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       this.update(this.category < Utils.getEnumKeys(ScoreboardCategory).length - 1 ? this.category + 1 : 0);
     });
 
-    this.prevPageButton = gScene.add.sprite(window.displayWidth / 2 - 16, titleWindow.displayHeight + window.displayHeight - 15, "cursor_reverse");
+    this.prevPageButton = globalScene.add.sprite(window.displayWidth / 2 - 16, titleWindow.displayHeight + window.displayHeight - 15, "cursor_reverse");
     this.prevPageButton.setOrigin(0, 0);
     this.prevPageButton.setAlpha(0.5);
     this.add(this.prevPageButton);
@@ -110,7 +110,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     this.pageNumberLabel.setOrigin(0.5, 0);
     this.add(this.pageNumberLabel);
 
-    this.nextPageButton = gScene.add.sprite(window.displayWidth / 2 + 16, titleWindow.displayHeight + window.displayHeight - 15, "cursor");
+    this.nextPageButton = globalScene.add.sprite(window.displayWidth / 2 + 16, titleWindow.displayHeight + window.displayHeight - 15, "cursor");
     this.nextPageButton.setOrigin(1, 0);
     this.nextPageButton.setAlpha(0.5);
     this.add(this.nextPageButton);
@@ -130,7 +130,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
   updateRankings(rankings: RankingEntry[]) {
     const getEntry = (rank: string, username: string, score: string, wave: string) => {
-      const entryContainer = gScene.add.container(0, 0);
+      const entryContainer = globalScene.add.container(0, 0);
 
       const rankLabel = addTextObject(0, 0, rank, TextStyle.WINDOW, { fontSize: "54px" });
       entryContainer.add(rankLabel);

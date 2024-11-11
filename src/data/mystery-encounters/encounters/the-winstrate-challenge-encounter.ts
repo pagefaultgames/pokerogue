@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, generateModifierType, generateModifierTypeOption, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
@@ -83,7 +83,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
     ])
     .withAutoHideIntroVisuals(false)
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Loaded back to front for pop() operations
       encounter.enemyPartyConfigs.push(getVitoTrainerConfig());
@@ -111,7 +111,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
       },
       async () => {
         // Spawn 5 trainer battles back to back with Macho Brace in rewards
-        gScene.currentBattle.mysteryEncounter!.doContinueEncounter = async () => {
+        globalScene.currentBattle.mysteryEncounter!.doContinueEncounter = async () => {
           await endTrainerBattleAndShowDialogue();
         };
         await transitionMysteryEncounterIntroVisuals(true, false);
@@ -131,7 +131,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
       },
       async () => {
         // Refuse the challenge, they full heal the party and give the player a Rarer Candy
-        gScene.unshiftPhase(new PartyHealPhase(true));
+        globalScene.unshiftPhase(new PartyHealPhase(true));
         setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.RARER_CANDY ], fillRemaining: false });
         leaveEncounterWithoutBattle();
       }
@@ -139,7 +139,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter =
     .build();
 
 async function spawnNextTrainerOrEndEncounter() {
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   const nextConfig = encounter.enemyPartyConfigs.pop();
   if (!nextConfig) {
     await transitionMysteryEncounterIntroVisuals(false, false);
@@ -147,12 +147,12 @@ async function spawnNextTrainerOrEndEncounter() {
 
     // Give 10x Voucher
     const newModifier = modifierTypes.VOUCHER_PREMIUM().newModifier();
-    await gScene.addModifier(newModifier);
-    gScene.playSound("item_fanfare");
+    await globalScene.addModifier(newModifier);
+    globalScene.playSound("item_fanfare");
     await showEncounterText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
 
     await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
-    gScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
+    globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
     const machoBrace = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
     machoBrace.type.tier = ModifierTier.MASTER;
     setEncounterRewards({ guaranteedModifierTypeOptions: [ machoBrace ], fillRemaining: false });
@@ -165,11 +165,11 @@ async function spawnNextTrainerOrEndEncounter() {
 
 function endTrainerBattleAndShowDialogue(): Promise<void> {
   return new Promise(async resolve => {
-    if (gScene.currentBattle.mysteryEncounter!.enemyPartyConfigs.length === 0) {
+    if (globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs.length === 0) {
       // Battle is over
-      const trainer = gScene.currentBattle.trainer;
+      const trainer = globalScene.currentBattle.trainer;
       if (trainer) {
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: trainer,
           x: "+=16",
           y: "-=16",
@@ -177,7 +177,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
           ease: "Sine.easeInOut",
           duration: 750,
           onComplete: () => {
-            gScene.field.remove(trainer, true);
+            globalScene.field.remove(trainer, true);
           }
         });
       }
@@ -185,29 +185,29 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
       await spawnNextTrainerOrEndEncounter();
       resolve(); // Wait for all dialogue/post battle stuff to complete before resolving
     } else {
-      gScene.arena.resetArenaEffects();
-      const playerField = gScene.getPlayerField();
-      playerField.forEach((_, p) => gScene.unshiftPhase(new ReturnPhase(p)));
+      globalScene.arena.resetArenaEffects();
+      const playerField = globalScene.getPlayerField();
+      playerField.forEach((_, p) => globalScene.unshiftPhase(new ReturnPhase(p)));
 
-      for (const pokemon of gScene.getParty()) {
+      for (const pokemon of globalScene.getParty()) {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
-          gScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+          globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
         }
 
         pokemon.resetBattleData();
         applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
       }
 
-      gScene.unshiftPhase(new ShowTrainerPhase());
+      globalScene.unshiftPhase(new ShowTrainerPhase());
       // Hide the trainer and init next battle
-      const trainer = gScene.currentBattle.trainer;
+      const trainer = globalScene.currentBattle.trainer;
       // Unassign previous trainer from battle so it isn't destroyed before animation completes
-      gScene.currentBattle.trainer = null;
+      globalScene.currentBattle.trainer = null;
       await spawnNextTrainerOrEndEncounter();
       if (trainer) {
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: trainer,
           x: "+=16",
           y: "-=16",
@@ -215,7 +215,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
           ease: "Sine.easeInOut",
           duration: 750,
           onComplete: () => {
-            gScene.field.remove(trainer, true);
+            globalScene.field.remove(trainer, true);
             resolve();
           }
         });

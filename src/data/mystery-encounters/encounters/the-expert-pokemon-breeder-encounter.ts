@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, generateModifierType, handleMysteryEncounterBattleFailed, initBattleWithEnemyConfig, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { randSeedShuffle } from "#app/utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -95,8 +95,8 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       },
     ])
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
-      const waveIndex = gScene.currentBattle.waveIndex;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
+      const waveIndex = globalScene.currentBattle.waveIndex;
       // Calculates what trainers are available for battle in the encounter
 
       // If player is in space biome, uses special "Space" version of the trainer
@@ -126,7 +126,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       ];
 
       // Determine the 3 pokemon the player can battle with
-      let partyCopy = gScene.getParty().slice(0);
+      let partyCopy = globalScene.getParty().slice(0);
       partyCopy = partyCopy
         .filter(p => p.isAllowedInBattle())
         .sort((a, b) => a.friendship - b.friendship);
@@ -214,7 +214,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           ],
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           // Spawn battle with first pokemon
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
@@ -266,7 +266,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           ],
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           // Spawn battle with second pokemon
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
@@ -318,7 +318,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           ],
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           // Spawn battle with third pokemon
           const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
@@ -367,7 +367,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
 
 function getPartyConfig(): EnemyPartyConfig {
   // Bug type superfan trainer config
-  const waveIndex = gScene.currentBattle.waveIndex;
+  const waveIndex = globalScene.currentBattle.waveIndex;
   const breederConfig = trainerConfigs[TrainerType.EXPERT_POKEMON_BREEDER].clone();
   breederConfig.name = i18next.t(trainerNameKey);
 
@@ -394,7 +394,7 @@ function getPartyConfig(): EnemyPartyConfig {
     ]
   };
 
-  if (gScene.arena.biomeType === Biome.SPACE) {
+  if (globalScene.arena.biomeType === Biome.SPACE) {
     // All 3 members always Cleffa line, but different configs
     baseConfig.pokemonConfigs!.push({
       nickname: i18next.t(`${namespace}:cleffa_2_nickname`, { speciesName: getPokemonSpecies(cleffaSpecies).getName() }),
@@ -506,41 +506,41 @@ function getEggOptions(commonEggs: number, rareEggs: number) {
 }
 
 function removePokemonFromPartyAndStoreHeldItems(encounter: MysteryEncounter, chosenPokemon: PlayerPokemon) {
-  const party = gScene.getParty();
+  const party = globalScene.getParty();
   const chosenIndex = party.indexOf(chosenPokemon);
   party[chosenIndex] = party[0];
   party[0] = chosenPokemon;
-  encounter.misc.originalParty = gScene.getParty().slice(1);
+  encounter.misc.originalParty = globalScene.getParty().slice(1);
   encounter.misc.originalPartyHeldItems = encounter.misc.originalParty
     .map(p => p.getHeldItems());
-  gScene["party"] = [
+  globalScene["party"] = [
     chosenPokemon
   ];
 }
 
 function checkAchievement() {
-  if (gScene.arena.biomeType === Biome.SPACE) {
-    gScene.validateAchv(achvs.BREEDERS_IN_SPACE);
+  if (globalScene.arena.biomeType === Biome.SPACE) {
+    globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);
   }
 }
 
 function restorePartyAndHeldItems() {
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   // Restore original party
-  gScene.getParty().push(...encounter.misc.originalParty);
+  globalScene.getParty().push(...encounter.misc.originalParty);
 
   // Restore held items
   const originalHeldItems = encounter.misc.originalPartyHeldItems;
   originalHeldItems.forEach((pokemonHeldItemsList: PokemonHeldItemModifier[]) => {
     pokemonHeldItemsList.forEach(heldItem => {
-      gScene.addModifier(heldItem, true, false, false, true);
+      globalScene.addModifier(heldItem, true, false, false, true);
     });
   });
-  gScene.updateModifiers(true);
+  globalScene.updateModifiers(true);
 }
 
 function onGameOver() {
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
 
   encounter.dialogue.outro = [
     {
@@ -561,33 +561,33 @@ function onGameOver() {
   encounter.misc.encounterFailed = true;
 
   // Revert BGM
-  gScene.playBgm(gScene.arena.bgm);
+  globalScene.playBgm(globalScene.arena.bgm);
 
   // Clear any leftover battle phases
-  gScene.clearPhaseQueue();
-  gScene.clearPhaseQueueSplice();
+  globalScene.clearPhaseQueue();
+  globalScene.clearPhaseQueueSplice();
 
   // Return enemy Pokemon
-  const pokemon = gScene.getEnemyPokemon();
+  const pokemon = globalScene.getEnemyPokemon();
   if (pokemon) {
-    gScene.playSound("se/pb_rel");
+    globalScene.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: pokemon,
       duration: 250,
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        gScene.field.remove(pokemon, true);
+        globalScene.field.remove(pokemon, true);
       }
     });
   }
 
   // Show the enemy trainer
-  gScene.time.delayedCall(250, () => {
-    const sprites = gScene.currentBattle.trainer?.getSprites();
-    const tintSprites = gScene.currentBattle.trainer?.getTintSprites();
+  globalScene.time.delayedCall(250, () => {
+    const sprites = globalScene.currentBattle.trainer?.getSprites();
+    const tintSprites = globalScene.currentBattle.trainer?.getTintSprites();
     if (sprites && tintSprites) {
       for (let i = 0; i < sprites.length; i++) {
         sprites[i].setVisible(true);
@@ -596,8 +596,8 @@ function onGameOver() {
         tintSprites[i].clearTint();
       }
     }
-    gScene.tweens.add({
-      targets: gScene.currentBattle.trainer,
+    globalScene.tweens.add({
+      targets: globalScene.currentBattle.trainer,
       x: "-=16",
       y: "+=16",
       alpha: 1,
@@ -613,7 +613,7 @@ function onGameOver() {
 }
 
 function doPostEncounterCleanup() {
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   if (!encounter.misc.encounterFailed) {
     // Give achievement if in Space biome
     checkAchievement();

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
@@ -13,12 +13,12 @@ export class ReloadSessionPhase extends Phase {
   }
 
   start(): void {
-    gScene.ui.setMode(Mode.SESSION_RELOAD);
+    globalScene.ui.setMode(Mode.SESSION_RELOAD);
 
     let delayElapsed = false;
     let loaded = false;
 
-    gScene.time.delayedCall(Utils.fixedInt(1500), () => {
+    globalScene.time.delayedCall(Utils.fixedInt(1500), () => {
       if (loaded) {
         this.end();
       } else {
@@ -26,9 +26,9 @@ export class ReloadSessionPhase extends Phase {
       }
     });
 
-    gScene.gameData.clearLocalData();
+    globalScene.gameData.clearLocalData();
 
-    (this.systemDataStr ? gScene.gameData.initSystem(this.systemDataStr) : gScene.gameData.loadSystem()).then(() => {
+    (this.systemDataStr ? globalScene.gameData.initSystem(this.systemDataStr) : globalScene.gameData.loadSystem()).then(() => {
       if (delayElapsed) {
         this.end();
       } else {

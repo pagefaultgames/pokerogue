@@ -99,7 +99,7 @@ import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
-export let gScene: BattleScene;
+export let globalScene: BattleScene;
 
 const DEBUG_RNG = false;
 
@@ -326,7 +326,7 @@ export default class BattleScene extends SceneBase {
     this.phaseQueuePrependSpliceIndex = -1;
     this.nextCommandPhaseQueue = [];
     this.updateGameInfo();
-    gScene = this;
+    globalScene = this;
   }
 
   loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
@@ -348,10 +348,10 @@ export default class BattleScene extends SceneBase {
       const originalRealInRange = Phaser.Math.RND.realInRange;
       Phaser.Math.RND.realInRange = function (min: number, max: number): number {
         const ret = originalRealInRange.apply(this, [ min, max ]);
-        const args = [ "RNG", ++gScene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
-        args.push(`seed: ${gScene.rngSeedOverride || gScene.waveSeed || gScene.seed}`);
-        if (gScene.rngOffset) {
-          args.push(`offset: ${gScene.rngOffset}`);
+        const args = [ "RNG", ++globalScene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
+        args.push(`seed: ${globalScene.rngSeedOverride || globalScene.waveSeed || globalScene.seed}`);
+        if (globalScene.rngOffset) {
+          args.push(`offset: ${globalScene.rngOffset}`);
         }
         console.log(...args);
         return ret;
@@ -364,7 +364,7 @@ export default class BattleScene extends SceneBase {
   }
 
   create() {
-    gScene.scene.remove(LoadingScene.KEY);
+    globalScene.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController();
     this.uiInputs = new UiInputs(this.inputController);
@@ -2822,7 +2822,7 @@ export default class BattleScene extends SceneBase {
    */
   applyShuffledModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T[] {
     let modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
-    gScene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       const shuffleModifiers = mods => {
         if (mods.length < 1) {
           return mods;
@@ -2831,7 +2831,7 @@ export default class BattleScene extends SceneBase {
         return [ mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand)) ];
       };
       modifiers = shuffleModifiers(modifiers);
-    }, gScene.currentBattle.turn << 4, gScene.waveSeed);
+    }, globalScene.currentBattle.turn << 4, globalScene.waveSeed);
     return this.applyModifiersInternal(modifiers, player, args);
   }
 

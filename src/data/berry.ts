@@ -9,7 +9,7 @@ import { BerryType } from "#enums/berry-type";
 import { Stat, type BattleStat } from "#app/enums/stat";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export function getBerryName(berryType: BerryType): string {
   return i18next.t(`berry:${BerryType[berryType]}.name`);
@@ -74,7 +74,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         }
         const hpHealed = new Utils.NumberHolder(Utils.toDmgValue(pokemon.getMaxHp() / 4));
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, hpHealed);
-        gScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
+        globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
           hpHealed.value, i18next.t("battle:hpHealBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: getBerryName(berryType) }), true));
       };
     case BerryType.LUM:
@@ -83,7 +83,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           pokemon.battleData.berriesEaten.push(berryType);
         }
         if (pokemon.status) {
-          gScene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+          globalScene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
         }
         pokemon.resetStatus(true, true);
         pokemon.updateInfo();
@@ -101,7 +101,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         const stat: BattleStat = berryType - BerryType.ENIGMA;
         const statStages = new Utils.NumberHolder(1);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, statStages);
-        gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ stat ], statStages.value));
+        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ stat ], statStages.value));
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
@@ -118,7 +118,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         const randStat = Utils.randSeedInt(Stat.SPD, Stat.ATK);
         const stages = new Utils.NumberHolder(2);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, stages);
-        gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ randStat ], stages.value));
+        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ randStat ], stages.value));
       };
     case BerryType.LEPPA:
       return (pokemon: Pokemon) => {
@@ -128,7 +128,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         const ppRestoreMove = pokemon.getMoveset().find(m => !m?.getPpRatio()) ? pokemon.getMoveset().find(m => !m?.getPpRatio()) : pokemon.getMoveset().find(m => m!.getPpRatio() < 1); // TODO: is this bang correct?
         if (ppRestoreMove !== undefined) {
         ppRestoreMove!.ppUsed = Math.max(ppRestoreMove!.ppUsed - 10, 0);
-        gScene.queueMessage(i18next.t("battle:ppHealBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: ppRestoreMove!.getName(), berryName: getBerryName(berryType) }));
+        globalScene.queueMessage(i18next.t("battle:ppHealBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: ppRestoreMove!.getName(), berryName: getBerryName(berryType) }));
         }
       };
   }

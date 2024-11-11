@@ -1,4 +1,4 @@
-import { gScene, InfoToggle } from "#app/battle-scene";
+import { globalScene, InfoToggle } from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { getTypeDamageMultiplierColor, Type } from "../data/type";
 import { Command } from "./command-ui-handler";
@@ -39,51 +39,51 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   setup() {
     const ui = this.getUi();
 
-    this.movesContainer = gScene.add.container(18, -38.7);
+    this.movesContainer = globalScene.add.container(18, -38.7);
     this.movesContainer.setName(FightUiHandler.MOVES_CONTAINER_NAME);
     ui.add(this.movesContainer);
 
-    this.moveInfoContainer = gScene.add.container(1, 0);
+    this.moveInfoContainer = globalScene.add.container(1, 0);
     this.moveInfoContainer.setName("move-info");
     ui.add(this.moveInfoContainer);
 
-    this.typeIcon = gScene.add.sprite(gScene.scaledCanvas.width - 57, -36, Utils.getLocalizedSpriteKey("types"), "unknown");
+    this.typeIcon = globalScene.add.sprite(globalScene.scaledCanvas.width - 57, -36, Utils.getLocalizedSpriteKey("types"), "unknown");
     this.typeIcon.setVisible(false);
     this.moveInfoContainer.add(this.typeIcon);
 
-    this.moveCategoryIcon = gScene.add.sprite(gScene.scaledCanvas.width - 25, -36, "categories", "physical");
+    this.moveCategoryIcon = globalScene.add.sprite(globalScene.scaledCanvas.width - 25, -36, "categories", "physical");
     this.moveCategoryIcon.setVisible(false);
     this.moveInfoContainer.add(this.moveCategoryIcon);
 
-    this.ppLabel = addTextObject(gScene.scaledCanvas.width - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
+    this.ppLabel = addTextObject(globalScene.scaledCanvas.width - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
     this.ppLabel.setOrigin(0.0, 0.5);
     this.ppLabel.setVisible(false);
     this.ppLabel.setText(i18next.t("fightUiHandler:pp"));
     this.moveInfoContainer.add(this.ppLabel);
 
-    this.ppText = addTextObject(gScene.scaledCanvas.width - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
+    this.ppText = addTextObject(globalScene.scaledCanvas.width - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
     this.ppText.setOrigin(1, 0.5);
     this.ppText.setVisible(false);
     this.moveInfoContainer.add(this.ppText);
 
-    this.powerLabel = addTextObject(gScene.scaledCanvas.width - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
+    this.powerLabel = addTextObject(globalScene.scaledCanvas.width - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
     this.powerLabel.setOrigin(0.0, 0.5);
     this.powerLabel.setVisible(false);
     this.powerLabel.setText(i18next.t("fightUiHandler:power"));
     this.moveInfoContainer.add(this.powerLabel);
 
-    this.powerText = addTextObject(gScene.scaledCanvas.width - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.powerText = addTextObject(globalScene.scaledCanvas.width - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
     this.powerText.setOrigin(1, 0.5);
     this.powerText.setVisible(false);
     this.moveInfoContainer.add(this.powerText);
 
-    this.accuracyLabel = addTextObject(gScene.scaledCanvas.width - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
+    this.accuracyLabel = addTextObject(globalScene.scaledCanvas.width - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
     this.accuracyLabel.setOrigin(0.0, 0.5);
     this.accuracyLabel.setVisible(false);
     this.accuracyLabel.setText(i18next.t("fightUiHandler:accuracy"));
     this.moveInfoContainer.add(this.accuracyLabel);
 
-    this.accuracyText = addTextObject(gScene.scaledCanvas.width - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);
+    this.accuracyText = addTextObject(globalScene.scaledCanvas.width - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);
     this.accuracyText.setOrigin(1, 0.5);
     this.accuracyText.setVisible(false);
     this.moveInfoContainer.add(this.accuracyText);
@@ -97,14 +97,14 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       right: true,
       x: 0,
       y: -MoveInfoOverlay.getHeight(overlayScale, true),
-      width: (gScene.game.canvas.width / 6) + 4,
+      width: (globalScene.game.canvas.width / 6) + 4,
       hideEffectBox: true,
       hideBg: true
     });
     ui.add(this.moveInfoOverlay);
     // register the overlay to receive toggle events
-    gScene.addInfoToggle(this.moveInfoOverlay);
-    gScene.addInfoToggle(this);
+    globalScene.addInfoToggle(this.moveInfoOverlay);
+    globalScene.addInfoToggle(this);
   }
 
   show(args: any[]): boolean {
@@ -116,7 +116,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     messageHandler.bg.setVisible(false);
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
-    const pokemon = (gScene.getCurrentPhase() as CommandPhase).getPokemon();
+    const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
     if (pokemon.battleSummonData.turnCount <= 1) {
       this.setCursor(0);
     } else {
@@ -137,14 +137,14 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     if (button === Button.CANCEL || button === Button.ACTION) {
       if (button === Button.ACTION) {
-        if ((gScene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, cursor, false)) {
+        if ((globalScene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, cursor, false)) {
           success = true;
         } else {
           ui.playError();
         }
       } else {
         // Cannot back out of fight menu if skipToFightInput is enabled
-        const { battleType, mysteryEncounter } = gScene.currentBattle;
+        const { battleType, mysteryEncounter } = globalScene.currentBattle;
         if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
           ui.setMode(Mode.COMMAND, this.fieldIndex);
           success = true;
@@ -187,7 +187,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       this.movesContainer.setVisible(false);
       this.cursorObj?.setVisible(false);
     }
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: [ this.movesContainer, this.cursorObj ],
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
@@ -221,11 +221,11 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     }
 
     if (!this.cursorObj) {
-      this.cursorObj = gScene.add.image(0, 0, "cursor");
+      this.cursorObj = globalScene.add.image(0, 0, "cursor");
       ui.add(this.cursorObj);
     }
 
-    const pokemon = (gScene.getCurrentPhase() as CommandPhase).getPokemon();
+    const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
     const moveset = pokemon.getMoveset();
 
     const hasMove = cursor < moveset.length;
@@ -299,7 +299,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   }
 
   displayMoves() {
-    const pokemon = (gScene.getCurrentPhase() as CommandPhase).getPokemon();
+    const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
     const moveset = pokemon.getMoveset();
 
     for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
@@ -323,7 +323,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
    * @returns A color or undefined if the default color should be used
    */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
-    if (!gScene.typeHints) {
+    if (!globalScene.typeHints) {
       return undefined;
     }
 
@@ -361,7 +361,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   clearMoves() {
     this.movesContainer.removeAll(true);
 
-    const opponents = (gScene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
+    const opponents = (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
     opponents.forEach((opponent) => {
       opponent.updateEffectiveness(undefined);
     });

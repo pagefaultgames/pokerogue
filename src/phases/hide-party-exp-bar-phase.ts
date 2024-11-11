@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlePhase } from "./battle-phase";
 
 export class HidePartyExpBarPhase extends BattlePhase {
@@ -9,6 +9,6 @@ export class HidePartyExpBarPhase extends BattlePhase {
   start() {
     super.start();
 
-    gScene.partyExpBar.hide().then(() => this.end());
+    globalScene.partyExpBar.hide().then(() => this.end());
   }
 }

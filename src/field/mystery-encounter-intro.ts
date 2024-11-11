@@ -1,5 +1,5 @@
 import { GameObjects } from "phaser";
-import BattleScene, { gScene } from "#app/battle-scene";
+import BattleScene, { globalScene } from "#app/battle-scene";
 import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 import { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
@@ -76,7 +76,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   public enterFromRight: boolean;
 
   constructor(encounter: MysteryEncounter) {
-    super(gScene, -72, 76);
+    super(globalScene, -72, 76);
     this.encounter = encounter;
     this.enterFromRight = encounter.enterIntroVisualsFromRight ?? false;
     // Shallow copy configs to allow visual config updates at runtime without dirtying master copy of Encounter
@@ -99,16 +99,16 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     }
 
     const getSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
-      const ret = gScene.addFieldSprite(0, 0, spriteKey);
+      const ret = globalScene.addFieldSprite(0, 0, spriteKey);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(gScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
+      ret.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
       return ret;
     };
 
     const getItemSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
-      const icon = gScene.add.sprite(-19, 2, "items", spriteKey);
+      const icon = globalScene.add.sprite(-19, 2, "items", spriteKey);
       icon.setOrigin(0.5, 1);
-      icon.setPipeline(gScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
+      icon.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
       return icon;
     };
 
@@ -186,15 +186,15 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
 
       this.spriteConfigs.forEach((config) => {
         if (config.isPokemon) {
-          gScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
+          globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
         } else if (config.isItem) {
-          gScene.loadAtlas("items", "");
+          globalScene.loadAtlas("items", "");
         } else {
-          gScene.loadAtlas(config.spriteKey, config.fileRoot);
+          globalScene.loadAtlas(config.spriteKey, config.fileRoot);
         }
       });
 
-      gScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         this.spriteConfigs.every((config) => {
           if (config.isItem) {
             return true;
@@ -205,11 +205,11 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           // Ignore warnings for missing frames, because there will be a lot
           console.warn = () => {
           };
-          const frameNames = gScene.anims.generateFrameNames(config.spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 128 });
+          const frameNames = globalScene.anims.generateFrameNames(config.spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 128 });
 
           console.warn = originalWarn;
-          if (!(gScene.anims.exists(config.spriteKey))) {
-            gScene.anims.create({
+          if (!(globalScene.anims.exists(config.spriteKey))) {
+            globalScene.anims.create({
               key: config.spriteKey,
               frames: frameNames,
               frameRate: 12,
@@ -223,8 +223,8 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         resolve();
       });
 
-      if (!gScene.load.isLoading()) {
-        gScene.load.start();
+      if (!globalScene.load.isLoading()) {
+        globalScene.load.start();
       }
     });
   }
@@ -374,7 +374,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     if (duration) {
       sprite.setAlpha(0);
 
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: sprite,
         alpha: alpha || 1,
         duration: duration,
@@ -407,7 +407,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
    */
   private untint(sprite, duration: integer, ease?: string): void {
     if (duration) {
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: sprite,
         alpha: 0,
         duration: duration,

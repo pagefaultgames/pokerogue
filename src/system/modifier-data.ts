@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { PersistentModifier } from "#app/modifier/modifier";
 import { GeneratedPersistentModifierType, ModifierType, ModifierTypeGenerator, getModifierTypeFuncById } from "#app/modifier/modifier-type";
 
@@ -38,7 +38,7 @@ export default class ModifierData {
       type.id = this.typeId;
 
       if (type instanceof ModifierTypeGenerator) {
-        type = (type as ModifierTypeGenerator).generateType(this.player ? gScene.getParty() : gScene.getEnemyField(), this.typePregenArgs);
+        type = (type as ModifierTypeGenerator).generateType(this.player ? globalScene.getParty() : globalScene.getEnemyField(), this.typePregenArgs);
       }
 
       const ret = Reflect.construct(constructor, ([ type ] as any[]).concat(this.args).concat(this.stackCount)) as PersistentModifier;

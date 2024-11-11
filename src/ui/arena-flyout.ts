@@ -1,5 +1,5 @@
 import { addTextObject, TextStyle } from "./text";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { WeatherType } from "#app/data/weather";
 import { TerrainType } from "#app/data/terrain";
@@ -96,18 +96,18 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   private readonly onFieldEffectChangedEvent = (event: Event) => this.onFieldEffectChanged(event);
 
   constructor() {
-    super(gScene, 0, 0);
+    super(globalScene, 0, 0);
     this.setName("arena-flyout");
 
     this.translationX = this.flyoutWidth;
     this.anchorX = 0;
     this.anchorY = -98;
 
-    this.flyoutParent = gScene.add.container(this.anchorX - this.translationX, this.anchorY);
+    this.flyoutParent = globalScene.add.container(this.anchorX - this.translationX, this.anchorY);
     this.flyoutParent.setAlpha(0);
     this.add(this.flyoutParent);
 
-    this.flyoutContainer = gScene.add.container(0, 0);
+    this.flyoutContainer = globalScene.add.container(0, 0);
     this.flyoutParent.add(this.flyoutContainer);
 
     this.flyoutWindow = addWindow(0, 0, this.flyoutWidth, this.flyoutHeight, false, false, 0, 0, WindowVariant.THIN);
@@ -177,18 +177,18 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutParent.name = "Fight Flyout Parent";
 
     // Subscribes to required events available on game start
-    gScene.eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
-    gScene.eventTarget.addEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
+    globalScene.eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
+    globalScene.eventTarget.addEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
   }
 
   private onNewArena(event: Event) {
     this.fieldEffectInfo.length = 0;
 
     // Subscribes to required events available on battle start
-    gScene.arena.eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent);
-    gScene.arena.eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
-    gScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
-    gScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
+    globalScene.arena.eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent);
+    globalScene.arena.eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
+    globalScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
+    globalScene.arena.eventTarget.addEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
   }
 
 
@@ -251,7 +251,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     switch (arenaEffectChangedEvent.constructor) {
       case TagAddedEvent:
         const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
-        const isArenaTrapTag = gScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof ArenaTrapTag;
+        const isArenaTrapTag = globalScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof ArenaTrapTag;
         let arenaEffectType: ArenaEffectType;
 
         if (tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH) {
@@ -363,7 +363,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param visible Should the flyout be shown?
    */
   public toggleFlyout(visible: boolean): void {
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
       duration: Utils.fixedInt(125),
@@ -374,13 +374,13 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
   public destroy(fromScene?: boolean): void {
-    gScene.eventTarget.removeEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
-    gScene.eventTarget.removeEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArenaEvent);
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.TURN_END,  this.onTurnEndEvent);
 
-    gScene.arena.eventTarget.removeEventListener(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent);
-    gScene.arena.eventTarget.removeEventListener(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
-    gScene.arena.eventTarget.removeEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
-    gScene.arena.eventTarget.removeEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
+    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.WEATHER_CHANGED, this.onFieldEffectChangedEvent);
+    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.TERRAIN_CHANGED, this.onFieldEffectChangedEvent);
+    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.TAG_ADDED,       this.onFieldEffectChangedEvent);
+    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.TAG_REMOVED,     this.onFieldEffectChangedEvent);
 
     super.destroy(fromScene);
   }

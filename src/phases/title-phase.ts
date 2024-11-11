@@ -20,7 +20,7 @@ import { EncounterPhase } from "./encounter-phase";
 import { SelectChallengePhase } from "./select-challenge-phase";
 import { SelectStarterPhase } from "./select-starter-phase";
 import { SummonPhase } from "./summon-phase";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 
 export class TitlePhase extends Phase {
@@ -37,17 +37,17 @@ export class TitlePhase extends Phase {
   start(): void {
     super.start();
 
-    gScene.ui.clearText();
-    gScene.ui.fadeIn(250);
+    globalScene.ui.clearText();
+    globalScene.ui.fadeIn(250);
 
-    gScene.playBgm("title", true);
+    globalScene.playBgm("title", true);
 
-    gScene.gameData.getSession(loggedInUser?.lastSessionSlot ?? -1).then(sessionData => {
+    globalScene.gameData.getSession(loggedInUser?.lastSessionSlot ?? -1).then(sessionData => {
       if (sessionData) {
         this.lastSessionData = sessionData;
         const biomeKey = getBiomeKey(sessionData.arena.biome);
         const bgTexture = `${biomeKey}_bg`;
-        gScene.arenaBg.setTexture(bgTexture);
+        globalScene.arenaBg.setTexture(bgTexture);
       }
       this.showOptions();
     }).catch(err => {
@@ -72,11 +72,11 @@ export class TitlePhase extends Phase {
       handler: () => {
         const setModeAndEnd = (gameMode: GameModes) => {
           this.gameMode = gameMode;
-          gScene.ui.setMode(Mode.MESSAGE);
-          gScene.ui.clearText();
+          globalScene.ui.setMode(Mode.MESSAGE);
+          globalScene.ui.clearText();
           this.end();
         };
-        const { gameData } = gScene;
+        const { gameData } = globalScene;
         if (gameData.isUnlocked(Unlockables.ENDLESS_MODE)) {
           const options: OptionSelectItem[] = [
             {
@@ -113,17 +113,17 @@ export class TitlePhase extends Phase {
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              gScene.clearPhaseQueue();
-              gScene.pushPhase(new TitlePhase());
+              globalScene.clearPhaseQueue();
+              globalScene.pushPhase(new TitlePhase());
               super.end();
               return true;
             }
           });
-          gScene.ui.showText(i18next.t("menu:selectGameMode"), null, () => gScene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+          globalScene.ui.showText(i18next.t("menu:selectGameMode"), null, () => globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
         } else {
           this.gameMode = GameModes.CLASSIC;
-          gScene.ui.setMode(Mode.MESSAGE);
-          gScene.ui.clearText();
+          globalScene.ui.setMode(Mode.MESSAGE);
+          globalScene.ui.clearText();
           this.end();
         }
         return true;
@@ -132,7 +132,7 @@ export class TitlePhase extends Phase {
     {
       label: i18next.t("menu:loadGame"),
       handler: () => {
-        gScene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
+        globalScene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
           (slotId: integer) => {
             if (slotId === -1) {
               return this.showOptions();
@@ -153,7 +153,7 @@ export class TitlePhase extends Phase {
     {
       label: i18next.t("menu:settings"),
       handler: () => {
-        gScene.ui.setOverlayMode(Mode.SETTINGS);
+        globalScene.ui.setOverlayMode(Mode.SETTINGS);
         return true;
       },
       keepOpen: true
@@ -163,55 +163,55 @@ export class TitlePhase extends Phase {
       noCancel: true,
       yOffset: 47
     };
-    gScene.ui.setMode(Mode.TITLE, config);
+    globalScene.ui.setMode(Mode.TITLE, config);
   }
 
   loadSaveSlot(slotId: integer): void {
-    gScene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
-    gScene.ui.setMode(Mode.MESSAGE);
-    gScene.ui.resetModeChain();
-    gScene.gameData.loadSession(slotId, slotId === -1 ? this.lastSessionData : undefined).then((success: boolean) => {
+    globalScene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
+    globalScene.ui.setMode(Mode.MESSAGE);
+    globalScene.ui.resetModeChain();
+    globalScene.gameData.loadSession(slotId, slotId === -1 ? this.lastSessionData : undefined).then((success: boolean) => {
       if (success) {
         this.loaded = true;
-        gScene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
+        globalScene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
       } else {
         this.end();
       }
     }).catch(err => {
       console.error(err);
-      gScene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
+      globalScene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
     });
   }
 
   initDailyRun(): void {
-    gScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
-      gScene.clearPhaseQueue();
+    globalScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+      globalScene.clearPhaseQueue();
       if (slotId === -1) {
-        gScene.pushPhase(new TitlePhase());
+        globalScene.pushPhase(new TitlePhase());
         return super.end();
       }
-      gScene.sessionSlotId = slotId;
+      globalScene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {
-        gScene.gameMode = getGameMode(GameModes.DAILY);
+        globalScene.gameMode = getGameMode(GameModes.DAILY);
 
-        gScene.setSeed(seed);
-        gScene.resetSeed(0);
+        globalScene.setSeed(seed);
+        globalScene.resetSeed(0);
 
-        gScene.money = gScene.gameMode.getStartingMoney();
+        globalScene.money = globalScene.gameMode.getStartingMoney();
 
         const starters = getDailyRunStarters(seed);
-        const startingLevel = gScene.gameMode.getStartingLevel();
+        const startingLevel = globalScene.gameMode.getStartingLevel();
 
-        const party = gScene.getParty();
+        const party = globalScene.getParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
-          const starterProps = gScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+          const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
           const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
           const starterGender = starter.species.malePercent !== null
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
             : Gender.GENDERLESS;
-          const starterPokemon = gScene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
+          const starterPokemon = globalScene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
           starterPokemon.setVisible(false);
           party.push(starterPokemon);
           loadPokemonAssets.push(starterPokemon.loadAssets());
@@ -226,18 +226,18 @@ export class TitlePhase extends Phase {
           .filter((m) => m !== null);
 
         for (const m of modifiers) {
-          gScene.addModifier(m, true, false, false, true);
+          globalScene.addModifier(m, true, false, false, true);
         }
-        gScene.updateModifiers(true, true);
+        globalScene.updateModifiers(true, true);
 
         Promise.all(loadPokemonAssets).then(() => {
-          gScene.time.delayedCall(500, () => gScene.playBgm());
-          gScene.gameData.gameStats.dailyRunSessionsPlayed++;
-          gScene.newArena(gScene.gameMode.getStartingBiome());
-          gScene.newBattle();
-          gScene.arena.init();
-          gScene.sessionPlayTime = 0;
-          gScene.lastSavePlayTime = 0;
+          globalScene.time.delayedCall(500, () => globalScene.playBgm());
+          globalScene.gameData.gameStats.dailyRunSessionsPlayed++;
+          globalScene.newArena(globalScene.gameMode.getStartingBiome());
+          globalScene.newBattle();
+          globalScene.arena.init();
+          globalScene.sessionPlayTime = 0;
+          globalScene.lastSavePlayTime = 0;
           this.end();
         });
       };
@@ -260,43 +260,43 @@ export class TitlePhase extends Phase {
   }
 
   end(): void {
-    if (!this.loaded && !gScene.gameMode.isDaily) {
-      gScene.arena.preloadBgm();
-      gScene.gameMode = getGameMode(this.gameMode);
+    if (!this.loaded && !globalScene.gameMode.isDaily) {
+      globalScene.arena.preloadBgm();
+      globalScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {
-        gScene.pushPhase(new SelectChallengePhase());
+        globalScene.pushPhase(new SelectChallengePhase());
       } else {
-        gScene.pushPhase(new SelectStarterPhase());
+        globalScene.pushPhase(new SelectStarterPhase());
       }
-      gScene.newArena(gScene.gameMode.getStartingBiome());
+      globalScene.newArena(globalScene.gameMode.getStartingBiome());
     } else {
-      gScene.playBgm();
+      globalScene.playBgm();
     }
 
-    gScene.pushPhase(new EncounterPhase(this.loaded));
+    globalScene.pushPhase(new EncounterPhase(this.loaded));
 
     if (this.loaded) {
-      const availablePartyMembers = gScene.getParty().filter(p => p.isAllowedInBattle()).length;
+      const availablePartyMembers = globalScene.getParty().filter(p => p.isAllowedInBattle()).length;
 
-      gScene.pushPhase(new SummonPhase(0, true, true));
-      if (gScene.currentBattle.double && availablePartyMembers > 1) {
-        gScene.pushPhase(new SummonPhase(1, true, true));
+      globalScene.pushPhase(new SummonPhase(0, true, true));
+      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+        globalScene.pushPhase(new SummonPhase(1, true, true));
       }
 
-      if (gScene.currentBattle.battleType !== BattleType.TRAINER && (gScene.currentBattle.waveIndex > 1 || !gScene.gameMode.isDaily)) {
-        const minPartySize = gScene.currentBattle.double ? 2 : 1;
+      if (globalScene.currentBattle.battleType !== BattleType.TRAINER && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)) {
+        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {
-          gScene.pushPhase(new CheckSwitchPhase(0, gScene.currentBattle.double));
-          if (gScene.currentBattle.double) {
-            gScene.pushPhase(new CheckSwitchPhase(1, gScene.currentBattle.double));
+          globalScene.pushPhase(new CheckSwitchPhase(0, globalScene.currentBattle.double));
+          if (globalScene.currentBattle.double) {
+            globalScene.pushPhase(new CheckSwitchPhase(1, globalScene.currentBattle.double));
           }
         }
       }
     }
 
-    for (const achv of Object.keys(gScene.gameData.achvUnlocks)) {
+    for (const achv of Object.keys(globalScene.gameData.achvUnlocks)) {
       if (vouchers.hasOwnProperty(achv) && achv !== "CLASSIC_VICTORY") {
-        gScene.validateVoucher(vouchers[achv]);
+        globalScene.validateVoucher(vouchers[achv]);
       }
     }
 

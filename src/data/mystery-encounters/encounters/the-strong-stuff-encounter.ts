@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes, PokemonHeldItemModifierType, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Species } from "#enums/species";
@@ -68,7 +68,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
       },
     ])
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
@@ -103,7 +103,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
               queueEncounterMessage(`${namespace}:option.2.stat_boost`);
-              gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.DEF, Stat.SPDEF ], 2));
+              globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.DEF, Stat.SPDEF ], 2));
             }
           }
         ],
@@ -132,15 +132,15 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         ]
       },
       async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         // Do blackout and hide intro visuals during blackout
-        gScene.time.delayedCall(750, () => {
+        globalScene.time.delayedCall(750, () => {
           transitionMysteryEncounterIntroVisuals(true, true, 50);
         });
 
         // -15 to all base stats of highest BST (halved for HP), +10 to all base stats of rest of party (halved for HP)
         // Sort party by bst
-        const sortedParty = gScene.getParty().slice(0)
+        const sortedParty = globalScene.getParty().slice(0)
           .sort((pokemon1, pokemon2) => {
             const pokemon1Bst = pokemon1.calculateBaseStats().reduce((a, b) => a + b, 0);
             const pokemon2Bst = pokemon2.calculateBaseStats().reduce((a, b) => a + b, 0);
@@ -184,7 +184,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
       },
       async () => {
         // Pick battle
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.SOUL_DEW ], fillRemaining: true });
         encounter.startOfBattleEffects.push(
           {

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { DamageResult, HitResult } from "#app/field/pokemon";
@@ -22,11 +22,11 @@ export class DamagePhase extends PokemonPhase {
     super.start();
 
     if (this.damageResult === HitResult.ONE_HIT_KO) {
-      if (gScene.moveAnimations) {
-        gScene.toggleInvert(true);
+      if (globalScene.moveAnimations) {
+        globalScene.toggleInvert(true);
       }
-      gScene.time.delayedCall(Utils.fixedInt(1000), () => {
-        gScene.toggleInvert(false);
+      globalScene.time.delayedCall(Utils.fixedInt(1000), () => {
+        globalScene.toggleInvert(false);
         this.applyDamage();
       });
       return;
@@ -42,23 +42,23 @@ export class DamagePhase extends PokemonPhase {
   applyDamage() {
     switch (this.damageResult) {
       case HitResult.EFFECTIVE:
-        gScene.playSound("se/hit");
+        globalScene.playSound("se/hit");
         break;
       case HitResult.SUPER_EFFECTIVE:
       case HitResult.ONE_HIT_KO:
-        gScene.playSound("se/hit_strong");
+        globalScene.playSound("se/hit_strong");
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
-        gScene.playSound("se/hit_weak");
+        globalScene.playSound("se/hit_weak");
         break;
     }
 
     if (this.amount) {
-      gScene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
+      globalScene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
     }
 
     if (this.damageResult !== HitResult.OTHER && this.amount > 0) {
-      const flashTimer = gScene.time.addEvent({
+      const flashTimer = globalScene.time.addEvent({
         delay: 100,
         repeat: 5,
         startAt: 200,
@@ -75,8 +75,8 @@ export class DamagePhase extends PokemonPhase {
   }
 
   override end() {
-    if (gScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      gScene.initFinalBossPhaseTwo(this.getPokemon());
+    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      globalScene.initFinalBossPhaseTwo(this.getPokemon());
     } else {
       super.end();
     }

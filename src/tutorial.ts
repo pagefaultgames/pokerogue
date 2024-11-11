@@ -1,4 +1,4 @@
-import { gScene } from "./battle-scene"; // ?
+import { globalScene } from "./battle-scene";
 import AwaitableUiHandler from "./ui/awaitable-ui-handler";
 import UiHandler from "./ui/ui-handler";
 import { Mode } from "./ui/ui";
@@ -19,48 +19,48 @@ export enum Tutorial {
 const tutorialHandlers = {
   [Tutorial.Intro]: () => {
     return new Promise<void>(resolve => {
-      gScene.ui.showText(i18next.t("tutorial:intro"), null, () => resolve(), null, true);
+      globalScene.ui.showText(i18next.t("tutorial:intro"), null, () => resolve(), null, true);
     });
   },
   [Tutorial.Access_Menu]: () => {
     return new Promise<void>(resolve => {
-      if (gScene.enableTouchControls) {
+      if (globalScene.enableTouchControls) {
         return resolve();
       }
-      gScene.showFieldOverlay(1000).then(() => gScene.ui.showText(i18next.t("tutorial:accessMenu"), null, () => gScene.hideFieldOverlay(1000).then(() => resolve()), null, true));
+      globalScene.showFieldOverlay(1000).then(() => globalScene.ui.showText(i18next.t("tutorial:accessMenu"), null, () => globalScene.hideFieldOverlay(1000).then(() => resolve()), null, true));
     });
   },
   [Tutorial.Menu]: () => {
     return new Promise<void>(resolve => {
-      gScene.gameData.saveTutorialFlag(Tutorial.Access_Menu, true);
-      gScene.ui.showText(i18next.t("tutorial:menu"), null, () => gScene.ui.showText("", null, () => resolve()), null, true);
+      globalScene.gameData.saveTutorialFlag(Tutorial.Access_Menu, true);
+      globalScene.ui.showText(i18next.t("tutorial:menu"), null, () => globalScene.ui.showText("", null, () => resolve()), null, true);
     });
   },
   [Tutorial.Starter_Select]: () => {
     return new Promise<void>(resolve => {
-      gScene.ui.showText(i18next.t("tutorial:starterSelect"), null, () => gScene.ui.showText("", null, () => resolve()), null, true);
+      globalScene.ui.showText(i18next.t("tutorial:starterSelect"), null, () => globalScene.ui.showText("", null, () => resolve()), null, true);
     });
   },
   [Tutorial.Pokerus]: () => {
     return new Promise<void>(resolve => {
-      gScene.ui.showText(i18next.t("tutorial:pokerus"), null, () => gScene.ui.showText("", null, () => resolve()), null, true);
+      globalScene.ui.showText(i18next.t("tutorial:pokerus"), null, () => globalScene.ui.showText("", null, () => resolve()), null, true);
     });
   },
   [Tutorial.Stat_Change]: () => {
     return new Promise<void>(resolve => {
-      gScene.showFieldOverlay(1000).then(() => gScene.ui.showText(i18next.t("tutorial:statChange"), null, () => gScene.ui.showText("", null, () => gScene.hideFieldOverlay(1000).then(() => resolve())), null, true));
+      globalScene.showFieldOverlay(1000).then(() => globalScene.ui.showText(i18next.t("tutorial:statChange"), null, () => globalScene.ui.showText("", null, () => globalScene.hideFieldOverlay(1000).then(() => resolve())), null, true));
     });
   },
   [Tutorial.Select_Item]: () => {
     return new Promise<void>(resolve => {
-      gScene.ui.setModeWithoutClear(Mode.MESSAGE).then(() => {
-        gScene.ui.showText(i18next.t("tutorial:selectItem"), null, () => gScene.ui.showText("", null, () => gScene.ui.setModeWithoutClear(Mode.MODIFIER_SELECT).then(() => resolve())), null, true);
+      globalScene.ui.setModeWithoutClear(Mode.MESSAGE).then(() => {
+        globalScene.ui.showText(i18next.t("tutorial:selectItem"), null, () => globalScene.ui.showText("", null, () => globalScene.ui.setModeWithoutClear(Mode.MODIFIER_SELECT).then(() => resolve())), null, true);
       });
     });
   },
   [Tutorial.Egg_Gacha]: () => {
     return new Promise<void>(resolve => {
-      gScene.ui.showText(i18next.t("tutorial:eggGacha"), null, () => gScene.ui.showText("", null, () => resolve()), null, true);
+      globalScene.ui.showText(i18next.t("tutorial:eggGacha"), null, () => globalScene.ui.showText("", null, () => resolve()), null, true);
     });
   },
 };
@@ -74,19 +74,19 @@ const tutorialHandlers = {
  * @returns a promise with result `true` if the tutorial was run and finished, `false` otherwise
  */
 export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
-  if (!gScene.enableTutorials && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
+  if (!globalScene.enableTutorials && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
     return false;
   }
 
-  if (gScene.gameData.getTutorialFlags()[tutorial] && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
+  if (globalScene.gameData.getTutorialFlags()[tutorial] && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
     return false;
   }
 
-  const handler = gScene.ui.getHandler();
-  const isMenuDisabled = gScene.disableMenu;
+  const handler = globalScene.ui.getHandler();
+  const isMenuDisabled = globalScene.disableMenu;
 
   // starting tutorial, disable menu
-  gScene.disableMenu = true;
+  globalScene.disableMenu = true;
   if (handler instanceof AwaitableUiHandler) {
     handler.tutorialActive = true;
   }
@@ -96,8 +96,8 @@ export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
   await hideTutorialOverlay(handler);
 
   // tutorial finished and overlay gone, re-enable menu, save tutorial as seen
-  gScene.disableMenu = isMenuDisabled;
-  gScene.gameData.saveTutorialFlag(tutorial, true);
+  globalScene.disableMenu = isMenuDisabled;
+  globalScene.gameData.saveTutorialFlag(tutorial, true);
   if (handler instanceof AwaitableUiHandler) {
     handler.tutorialActive = false;
   }
@@ -113,7 +113,7 @@ export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
  */
 async function showTutorialOverlay(handler: UiHandler) {
   if (handler instanceof AwaitableUiHandler && handler.tutorialOverlay) {
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: handler.tutorialOverlay,
       alpha: 0.5,
       duration: 750,
@@ -135,7 +135,7 @@ async function showTutorialOverlay(handler: UiHandler) {
  */
 async function hideTutorialOverlay(handler: UiHandler) {
   if (handler instanceof AwaitableUiHandler && handler.tutorialOverlay) {
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: handler.tutorialOverlay,
       alpha: 0,
       duration: 500,

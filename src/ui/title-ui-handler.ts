@@ -6,7 +6,7 @@ import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -30,24 +30,24 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    this.titleContainer = gScene.add.container(0, -(gScene.game.canvas.height / 6));
+    this.titleContainer = globalScene.add.container(0, -(globalScene.game.canvas.height / 6));
     this.titleContainer.setName("title");
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = gScene.add.image((gScene.game.canvas.width / 6) / 2, 8, "logo");
+    const logo = globalScene.add.image((globalScene.game.canvas.width / 6) / 2, 8, "logo");
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
-    if (gScene.eventManager.isEventActive()) {
-      this.eventDisplay = new TimedEventDisplay(0, 0, gScene.eventManager.activeEvent());
+    if (globalScene.eventManager.isEventActive()) {
+      this.eventDisplay = new TimedEventDisplay(0, 0, globalScene.eventManager.activeEvent());
       this.eventDisplay.setup();
       this.titleContainer.add(this.eventDisplay);
     }
 
     this.playerCountLabel = addTextObject(
-      (gScene.game.canvas.width / 6) - 2,
-      (gScene.game.canvas.height / 6) - 13 - 576 * getTextStyleOptions(TextStyle.WINDOW, gScene.uiTheme).scale,
+      (globalScene.game.canvas.width / 6) - 2,
+      (globalScene.game.canvas.height / 6) - 13 - 576 * getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale,
       `? ${i18next.t("menu:playersOnline")}`,
       TextStyle.MESSAGE,
       { fontSize: "54px" }
@@ -62,7 +62,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const originalSplashMessageScale = this.splashMessageText.scale;
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this.splashMessageText,
       duration: Utils.fixedInt(350),
       scale: originalSplashMessageScale * 1.25,
@@ -101,8 +101,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       const ui = this.getUi();
 
-      if (gScene.eventManager.isEventActive()) {
-        this.eventDisplay.setWidth(gScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
+      if (globalScene.eventManager.isEventActive()) {
+        this.eventDisplay.setWidth(globalScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
         this.eventDisplay.show();
       }
 
@@ -112,7 +112,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
         this.updateTitleStats();
       }, 60000);
 
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],
         duration: Utils.fixedInt(325),
         alpha: (target: any) => target === this.titleContainer ? 1 : 0,
@@ -133,7 +133,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleStatsTimer && clearInterval(this.titleStatsTimer);
     this.titleStatsTimer = null;
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: [ this.titleContainer, ui.getMessageHandler().bg ],
       duration: Utils.fixedInt(325),
       alpha: (target: any) => target === this.titleContainer ? 0 : 1,

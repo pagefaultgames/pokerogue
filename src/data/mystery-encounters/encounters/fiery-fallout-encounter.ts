@@ -2,7 +2,7 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { EnemyPartyConfig, initBattleWithEnemyConfig, loadCustomMovesForEncounter, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals, generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { AttackTypeBoosterModifierType, modifierTypes, } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { AbilityRequirement, CombinationPokemonRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { Species } from "#enums/species";
@@ -59,7 +59,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       },
     ])
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mons
       const volcaronaSpecies = getPokemonSpecies(Species.VOLCARONA);
@@ -71,7 +71,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             gender: Gender.MALE,
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
+              globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
             }
           },
           {
@@ -80,7 +80,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             gender: Gender.FEMALE,
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
             mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-              gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
+              globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.SPDEF, Stat.SPD ], 1));
             }
           }
         ],
@@ -115,7 +115,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       // Load animations/sfx for Volcarona moves
       loadCustomMovesForEncounter([ Moves.FIRE_SPIN, Moves.QUIVER_DANCE ]);
 
-      gScene.arena.trySetWeather(WeatherType.SUNNY, true);
+      globalScene.arena.trySetWeather(WeatherType.SUNNY, true);
 
       encounter.setDialogueToken("volcaronaName", getPokemonSpecies(Species.VOLCARONA).getName());
 
@@ -123,14 +123,14 @@ export const FieryFalloutEncounter: MysteryEncounter =
     })
     .withOnVisualsStart(() => {
       // Play animations
-      const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, gScene.getPlayerPokemon()!, gScene.getPlayerPokemon());
+      const background = new EncounterBattleAnim(EncounterAnim.MAGMA_BG, globalScene.getPlayerPokemon()!, globalScene.getPlayerPokemon());
       background.playWithoutTargets(200, 70, 2, 3);
-      const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, gScene.getPlayerPokemon()!, gScene.getPlayerPokemon());
+      const animation = new EncounterBattleAnim(EncounterAnim.MAGMA_SPOUT, globalScene.getPlayerPokemon()!, globalScene.getPlayerPokemon());
       animation.playWithoutTargets(80, 100, 2);
-      gScene.time.delayedCall(600, () => {
+      globalScene.time.delayedCall(600, () => {
         animation.playWithoutTargets(-20, 100, 2);
       });
-      gScene.time.delayedCall(1200, () => {
+      globalScene.time.delayedCall(1200, () => {
         animation.playWithoutTargets(140, 150, 2);
       });
 
@@ -152,7 +152,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       },
       async () => {
         // Pick battle
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         setEncounterRewards({ fillRemaining: true }, undefined, () => giveLeadPokemonAttackTypeBoostItem());
 
         encounter.startOfBattleEffects.push(
@@ -168,7 +168,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
             move: new PokemonMove(Moves.FIRE_SPIN),
             ignorePp: true
           });
-        await initBattleWithEnemyConfig(gScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
+        await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
       }
     )
     .withSimpleOption(
@@ -183,8 +183,8 @@ export const FieryFalloutEncounter: MysteryEncounter =
       },
       async () => {
         // Damage non-fire types and burn 1 random non-fire type member + give it Heatproof
-        const encounter = gScene.currentBattle.mysteryEncounter!;
-        const nonFireTypes = gScene.getParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(Type.FIRE));
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
+        const nonFireTypes = globalScene.getParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(Type.FIRE));
 
         for (const pkm of nonFireTypes) {
           const percentage = DAMAGE_PERCENTAGE / 100;
@@ -237,7 +237,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Fire types help calm the Volcarona
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           await transitionMysteryEncounterIntroVisuals();
           setEncounterRewards(
             { fillRemaining: true },
@@ -257,7 +257,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
 
 function giveLeadPokemonAttackTypeBoostItem() {
   // Give first party pokemon attack type boost item for free at end of battle
-  const leadPokemon = gScene.getParty()?.[0];
+  const leadPokemon = globalScene.getParty()?.[0];
   if (leadPokemon) {
     // Generate type booster held item, default to Charcoal if item fails to generate
     let boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
@@ -266,7 +266,7 @@ function giveLeadPokemonAttackTypeBoostItem() {
     }
     applyModifierTypeToPlayerPokemon(leadPokemon, boosterModifierType);
 
-    const encounter = gScene.currentBattle.mysteryEncounter!;
+    const encounter = globalScene.currentBattle.mysteryEncounter!;
     encounter.setDialogueToken("itemName", boosterModifierType.name);
     encounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
     queueEncounterMessage(`${namespace}:found_item`);

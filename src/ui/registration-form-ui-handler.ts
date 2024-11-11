@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 
 interface LanguageSetting {
@@ -93,10 +93,10 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalRegistrationAction;
         this.sanitizeInputs();
-        gScene.ui.setMode(Mode.LOADING, { buttonActions: []});
+        globalScene.ui.setMode(Mode.LOADING, { buttonActions: []});
         const onFail = error => {
-          gScene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-          gScene.ui.playError();
+          globalScene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+          globalScene.ui.playError();
           const errorMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.errorMessageFontSize;
           if (errorMessageFontSize) {
             this.errorMessage.setFontSize(errorMessageFontSize);

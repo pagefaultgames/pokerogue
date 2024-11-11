@@ -4,7 +4,7 @@ import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#app/data/mystery
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -66,7 +66,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       const config: EnemyPartyConfig = {
@@ -107,7 +107,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
         })
         .withPreOptionPhase(async () => {
           // Play animation
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const introVisuals = encounter.introVisuals!;
 
           // Determine roll first
@@ -129,7 +129,7 @@ export const MysteriousChestEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Open the chest
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const roll = encounter.misc.roll;
           if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT) {
             // Choose between 2 COMMON / 2 GREAT tier items (20%)
@@ -177,11 +177,11 @@ export const MysteriousChestEncounter: MysteryEncounter =
             await showEncounterText(`${namespace}:option.1.bad`);
 
             // Handle game over edge case
-            const allowedPokemon = gScene.getParty().filter(p => p.isAllowedInBattle());
+            const allowedPokemon = globalScene.getParty().filter(p => p.isAllowedInBattle());
             if (allowedPokemon.length === 0) {
               // If there are no longer any legal pokemon in the party, game over.
-              gScene.clearPhaseQueue();
-              gScene.unshiftPhase(new GameOverPhase());
+              globalScene.clearPhaseQueue();
+              globalScene.unshiftPhase(new GameOverPhase());
             } else {
               // Show which Pokemon was KOed, then start battle against Gimmighoul
               await transitionMysteryEncounterIntroVisuals(true, true, 500);

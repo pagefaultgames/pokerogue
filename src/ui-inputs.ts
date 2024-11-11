@@ -8,7 +8,7 @@ import SettingsUiHandler from "./ui/settings/settings-ui-handler";
 import { Button } from "#enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
-import { gScene } from "./battle-scene";
+import { globalScene } from "./battle-scene";
 import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
 import RunInfoUiHandler from "./ui/run-info-ui-handler";
@@ -33,12 +33,12 @@ export class UiInputs {
     if (evt.controller_type === "keyboard") {
       //if the touch property is present and defined, then this is a simulated keyboard event from the touch screen
       if (evt.hasOwnProperty("isTouch") && evt.isTouch) {
-        gScene.inputMethod = "touch";
+        globalScene.inputMethod = "touch";
       } else {
-        gScene.inputMethod = "keyboard";
+        globalScene.inputMethod = "keyboard";
       }
     } else if (evt.controller_type === "gamepad") {
-      gScene.inputMethod = "gamepad";
+      globalScene.inputMethod = "gamepad";
     }
   }
 
@@ -63,7 +63,7 @@ export class UiInputs {
   }
 
   doVibration(inputSuccess: boolean, vibrationLength: number): void {
-    if (inputSuccess && gScene.enableVibration && typeof navigator.vibrate !== "undefined") {
+    if (inputSuccess && globalScene.enableVibration && typeof navigator.vibrate !== "undefined") {
       navigator.vibrate(vibrationLength);
     }
   }
@@ -115,59 +115,59 @@ export class UiInputs {
   }
 
   buttonDirection(direction: Button): void {
-    const inputSuccess = gScene.ui.processInput(direction);
+    const inputSuccess = globalScene.ui.processInput(direction);
     const vibrationLength = 5;
     this.doVibration(inputSuccess, vibrationLength);
   }
 
   buttonAb(button: Button): void {
-    gScene.ui.processInput(button);
+    globalScene.ui.processInput(button);
   }
 
   buttonTouch(): void {
-    gScene.ui.processInput(Button.SUBMIT) || gScene.ui.processInput(Button.ACTION);
+    globalScene.ui.processInput(Button.SUBMIT) || globalScene.ui.processInput(Button.ACTION);
   }
 
   buttonStats(pressed: boolean = true): void {
     // allow access to Button.STATS as a toggle for other elements
-    for (const t of gScene.getInfoToggles(true)) {
+    for (const t of globalScene.getInfoToggles(true)) {
       t.toggleInfo(pressed);
     }
     // handle normal pokemon battle ui
-    for (const p of gScene.getField().filter(p => p?.isActive(true))) {
+    for (const p of globalScene.getField().filter(p => p?.isActive(true))) {
       p.toggleStats(pressed);
     }
   }
 
   buttonGoToFilter(button: Button): void {
     const whitelist = [ StarterSelectUiHandler ];
-    const uiHandler = gScene.ui?.getHandler();
+    const uiHandler = globalScene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
-      gScene.ui.processInput(button);
+      globalScene.ui.processInput(button);
     } else {
       this.buttonStats(true);
     }
   }
 
   buttonInfo(pressed: boolean = true): void {
-    if (gScene.showMovesetFlyout ) {
-      for (const p of gScene.getField().filter(p => p?.isActive(true))) {
+    if (globalScene.showMovesetFlyout ) {
+      for (const p of globalScene.getField().filter(p => p?.isActive(true))) {
         p.toggleFlyout(pressed);
       }
     }
 
-    if (gScene.showArenaFlyout) {
-      gScene.ui.processInfoButton(pressed);
+    if (globalScene.showArenaFlyout) {
+      globalScene.ui.processInfoButton(pressed);
     }
   }
 
   buttonMenu(): void {
-    if (gScene.disableMenu) {
+    if (globalScene.disableMenu) {
       return;
     }
-    switch (gScene.ui?.getMode()) {
+    switch (globalScene.ui?.getMode()) {
       case Mode.MESSAGE:
-        const messageHandler = gScene.ui.getHandler<MessageUiHandler>();
+        const messageHandler = globalScene.ui.getHandler<MessageUiHandler>();
         if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
           return;
         }
@@ -175,14 +175,14 @@ export class UiInputs {
       case Mode.COMMAND:
       case Mode.MODIFIER_SELECT:
       case Mode.MYSTERY_ENCOUNTER:
-        gScene.ui.setOverlayMode(Mode.MENU);
+        globalScene.ui.setOverlayMode(Mode.MENU);
         break;
       case Mode.STARTER_SELECT:
         this.buttonTouch();
         break;
       case Mode.MENU:
-        gScene.ui.revertMode();
-        gScene.playSound("ui/select");
+        globalScene.ui.revertMode();
+        globalScene.playSound("ui/select");
         break;
       default:
         return;
@@ -191,9 +191,9 @@ export class UiInputs {
 
   buttonCycleOption(button: Button): void {
     const whitelist = [ StarterSelectUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler ];
-    const uiHandler = gScene.ui?.getHandler();
+    const uiHandler = globalScene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
-      gScene.ui.processInput(button);
+      globalScene.ui.processInput(button);
     } else if (button === Button.V) {
       this.buttonInfo(true);
     }
@@ -201,15 +201,15 @@ export class UiInputs {
 
   buttonSpeedChange(up = true): void {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
-    if (up && gScene.gameSpeed < 5) {
-      gScene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.findIndex((item) => item.label === `${gScene.gameSpeed}x`) + 1);
-      if (gScene.ui?.getMode() === Mode.SETTINGS) {
-        (gScene.ui.getHandler() as SettingsUiHandler).show([]);
+    if (up && globalScene.gameSpeed < 5) {
+      globalScene.gameData.saveSetting(SettingKeys.Game_Speed, Setting[settingGameSpeed].options.findIndex((item) => item.label === `${globalScene.gameSpeed}x`) + 1);
+      if (globalScene.ui?.getMode() === Mode.SETTINGS) {
+        (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
       }
-    } else if (!up && gScene.gameSpeed > 1) {
-      gScene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.findIndex((item) => item.label === `${gScene.gameSpeed}x`) - 1, 0));
-      if (gScene.ui?.getMode() === Mode.SETTINGS) {
-        (gScene.ui.getHandler() as SettingsUiHandler).show([]);
+    } else if (!up && globalScene.gameSpeed > 1) {
+      globalScene.gameData.saveSetting(SettingKeys.Game_Speed, Math.max(Setting[settingGameSpeed].options.findIndex((item) => item.label === `${globalScene.gameSpeed}x`) - 1, 0));
+      if (globalScene.ui?.getMode() === Mode.SETTINGS) {
+        (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
       }
     }
   }

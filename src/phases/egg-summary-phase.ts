@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { Mode } from "#app/ui/ui";
 import { EggHatchData } from "#app/data/egg-hatch-data";
@@ -22,8 +22,8 @@ export class EggSummaryPhase extends Phase {
     // updates next pokemon once the current update has been completed
     const updateNextPokemon = (i: number) => {
       if (i >= this.eggHatchData.length) {
-        gScene.ui.setModeForceTransition(Mode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
-          gScene.fadeOutBgm(undefined, false);
+        globalScene.ui.setModeForceTransition(Mode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
+          globalScene.fadeOutBgm(undefined, false);
         });
 
       } else {
@@ -40,8 +40,8 @@ export class EggSummaryPhase extends Phase {
   }
 
   end() {
-    gScene.time.delayedCall(250, () => gScene.setModifiersVisible(true));
-    gScene.ui.setModeForceTransition(Mode.MESSAGE).then(() => {
+    globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
+    globalScene.ui.setModeForceTransition(Mode.MESSAGE).then(() => {
       super.end();
     });
   }

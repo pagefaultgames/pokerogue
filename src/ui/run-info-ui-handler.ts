@@ -24,7 +24,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -71,11 +71,11 @@ export default class RunInfoUiHandler extends UiHandler {
   }
 
   override async setup() {
- 		this.runContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
+ 		this.runContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
     this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
-    gScene.loadImage("encounter_exclaim", "mystery-encounters");
+    globalScene.loadImage("encounter_exclaim", "mystery-encounters");
  	}
 
   /**
@@ -92,14 +92,14 @@ export default class RunInfoUiHandler extends UiHandler {
  	override show(args: any[]): boolean {
  		super.show(args);
 
-    const gameStatsBg = gScene.add.rectangle(0, 0, gScene.game.canvas.width, gScene.game.canvas.height, 0x006860);
+    const gameStatsBg = globalScene.add.rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height, 0x006860);
     gameStatsBg.setOrigin(0, 0);
     this.runContainer.add(gameStatsBg);
 
     const run = args[0];
     this.runDisplayMode = args[1];
     if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
-      this.runInfo = gScene.gameData.parseSessionData(JSON.stringify(run.entry));
+      this.runInfo = globalScene.gameData.parseSessionData(JSON.stringify(run.entry));
       this.isVictory = run.isVictory ?? false;
     } else if (this.runDisplayMode === RunDisplayMode.SESSION_PREVIEW) {
       this.runInfo = args[0];
@@ -111,10 +111,10 @@ export default class RunInfoUiHandler extends UiHandler {
     // Creates Header and adds to this.runContainer
     this.addHeader();
 
-    this.statsBgWidth = ((gScene.game.canvas.width / 6) - 2) / 3;
+    this.statsBgWidth = ((globalScene.game.canvas.width / 6) - 2) / 3;
 
     // Creates Run Result Container
-    this.runResultContainer = gScene.add.container(0, 24);
+    this.runResultContainer = globalScene.add.container(0, 24);
     const runResultWindow = addWindow(0, 0, this.statsBgWidth - 11, 65);
     runResultWindow.setOrigin(0, 0);
     this.runResultContainer.add(runResultWindow);
@@ -125,18 +125,18 @@ export default class RunInfoUiHandler extends UiHandler {
     }
 
     // Creates Run Info Container
-    this.runInfoContainer = gScene.add.container(0, 89);
+    this.runInfoContainer = globalScene.add.container(0, 89);
     const runInfoWindow = addWindow(0, 0, this.statsBgWidth - 11, 90);
     const runInfoWindowCoords = runInfoWindow.getBottomRight();
     this.runInfoContainer.add(runInfoWindow);
  		this.parseRunInfo(runInfoWindowCoords.x, runInfoWindowCoords.y);
 
     // Creates Player Party Container
-    this.partyContainer = gScene.add.container(this.statsBgWidth - 10, 23);
+    this.partyContainer = globalScene.add.container(this.statsBgWidth - 10, 23);
     this.parsePartyInfo();
     this.showParty(true);
 
-    this.runContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.runContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
     this.getUi().bringToTop(this.runContainer);
     this.runContainer.setVisible(true);
 
@@ -161,19 +161,19 @@ export default class RunInfoUiHandler extends UiHandler {
    * It does not check if the run has any PokemonHeldItemModifiers though.
    */
   private addHeader() {
-    const headerBg = addWindow(0, 0, (gScene.game.canvas.width / 6) - 2, 24);
+    const headerBg = addWindow(0, 0, (globalScene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
     this.runContainer.add(headerBg);
     if (this.runInfo.modifiers.length !== 0) {
       const headerBgCoords = headerBg.getTopRight();
-      const abilityButtonContainer = gScene.add.container(0, 0);
+      const abilityButtonContainer = globalScene.add.container(0, 0);
       const abilityButtonText = addTextObject(8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, { fontSize:"34px" });
       const gamepadType = this.getUi().getGamepadType();
       let abilityButtonElement: Phaser.GameObjects.Sprite;
       if (gamepadType === "touch") {
-        abilityButtonElement = new Phaser.GameObjects.Sprite(gScene, 0, 2, "keyboard", "E.png");
+        abilityButtonElement = new Phaser.GameObjects.Sprite(globalScene, 0, 2, "keyboard", "E.png");
       } else {
-        abilityButtonElement = new Phaser.GameObjects.Sprite(gScene, 0, 2, gamepadType, gScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability));
+        abilityButtonElement = new Phaser.GameObjects.Sprite(globalScene, 0, 2, gamepadType, globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability));
       }
       abilityButtonContainer.add([ abilityButtonText, abilityButtonElement ]);
       abilityButtonContainer.setPosition(headerBgCoords.x - abilityButtonText.displayWidth - abilityButtonElement.displayWidth - 8, 10);
@@ -194,25 +194,25 @@ export default class RunInfoUiHandler extends UiHandler {
    *
    */
   private async parseRunResult() {
-    const genderIndex = gScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
     const genderStr = PlayerGender[genderIndex];
     const runResultTextStyle = this.isVictory ? TextStyle.PERFECT_IV : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory ? i18next.t("runHistory:victory") : i18next.t("runHistory:defeated", { context: genderStr });
     const runResultText = addTextObject(6, 5, `${runResultTitle} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, runResultTextStyle, { fontSize : "65px", lineSpacing: 0.1 });
 
     if (this.isVictory) {
-      const hallofFameInstructionContainer = gScene.add.container(0, 0);
+      const hallofFameInstructionContainer = globalScene.add.container(0, 0);
       const shinyButtonText = addTextObject(8, 0, i18next.t("runHistory:viewHallOfFame"), TextStyle.WINDOW, { fontSize:"65px" });
       const formButtonText = addTextObject(8, 12, i18next.t("runHistory:viewEndingSplash"), TextStyle.WINDOW, { fontSize:"65px" });
       const gamepadType = this.getUi().getGamepadType();
       let shinyButtonElement: Phaser.GameObjects.Sprite;
       let formButtonElement: Phaser.GameObjects.Sprite;
       if (gamepadType === "touch") {
-        shinyButtonElement = new Phaser.GameObjects.Sprite(gScene, 0, 4, "keyboard", "R.png");
-        formButtonElement = new Phaser.GameObjects.Sprite(gScene, 0, 16, "keyboard", "F.png");
+        shinyButtonElement = new Phaser.GameObjects.Sprite(globalScene, 0, 4, "keyboard", "R.png");
+        formButtonElement = new Phaser.GameObjects.Sprite(globalScene, 0, 16, "keyboard", "F.png");
       } else {
-        shinyButtonElement = new Phaser.GameObjects.Sprite(gScene, 0, 4, gamepadType, gScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny));
-        formButtonElement = new Phaser.GameObjects.Sprite(gScene, 0, 16, gamepadType, gScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form));
+        shinyButtonElement = new Phaser.GameObjects.Sprite(globalScene, 0, 4, gamepadType, globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny));
+        formButtonElement = new Phaser.GameObjects.Sprite(globalScene, 0, 16, gamepadType, globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form));
       }
       hallofFameInstructionContainer.add([ shinyButtonText, shinyButtonElement ]);
 
@@ -225,7 +225,7 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runResultContainer.add(runResultText);
 
     if (!this.isVictory) {
-      const enemyContainer = gScene.add.container(0, 0);
+      const enemyContainer = globalScene.add.container(0, 0);
       // Wild - Single and Doubles
       if (this.runInfo.battleType === BattleType.WILD || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)) {
         switch (this.runInfo.enemyParty.length) {
@@ -255,7 +255,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private parseRunStatus() {
     const runStatusText = addTextObject(6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize : "65px", lineSpacing: 0.1 });
 
-    const enemyContainer = gScene.add.container(0, 0);
+    const enemyContainer = globalScene.add.container(0, 0);
     this.runResultContainer.add(enemyContainer);
     if (this.runInfo.battleType === BattleType.WILD) {
       if (this.runInfo.enemyParty.length === 1) {
@@ -267,7 +267,7 @@ export default class RunInfoUiHandler extends UiHandler {
       this.showTrainerSprites(enemyContainer);
       const row_limit = 3;
       this.runInfo.enemyParty.forEach((p, i) => {
-        const pokeball = gScene.add.sprite(0, 0, "pb");
+        const pokeball = globalScene.add.sprite(0, 0, "pb");
         pokeball.setFrame(getPokeballAtlasKey(p.pokeball));
         pokeball.setScale(0.5);
         pokeball.setPosition(52 + ((i % row_limit) * 8), (i <= 2) ? 18 : 25);
@@ -282,20 +282,20 @@ export default class RunInfoUiHandler extends UiHandler {
         trainerName = trainerObj.getName(0, true);
       }
       const boxString = i18next.t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", { trainerName: trainerName }).replace(/\n/g, " ");
-      const descContainer = gScene.add.container(0, 0);
+      const descContainer = globalScene.add.container(0, 0);
       const textBox = addTextObject(0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: { width: 200 }});
       descContainer.add(textBox);
       descContainer.setPosition(52, 29);
       this.runResultContainer.add(descContainer);
     } else if (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER) {
-      const encounterExclaim = gScene.add.sprite(0, 0, "encounter_exclaim");
+      const encounterExclaim = globalScene.add.sprite(0, 0, "encounter_exclaim");
       encounterExclaim.setPosition(34, 26);
       encounterExclaim.setScale(0.65);
-      const subSprite = gScene.add.sprite(56, -106, "pkmn__sub");
+      const subSprite = globalScene.add.sprite(56, -106, "pkmn__sub");
       subSprite.setScale(0.65);
       subSprite.setPosition(34, 46);
-      const mysteryEncounterTitle = i18next.t(gScene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true).localizationKey + ":title");
-      const descContainer = gScene.add.container(0, 0);
+      const mysteryEncounterTitle = i18next.t(globalScene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true).localizationKey + ":title");
+      const descContainer = globalScene.add.container(0, 0);
       const textBox = addTextObject(0, 0, mysteryEncounterTitle, TextStyle.WINDOW, { fontSize : "45px", wordWrap: { width: 160 }});
       descContainer.add(textBox);
       descContainer.setPosition(47, 37);
@@ -311,14 +311,14 @@ export default class RunInfoUiHandler extends UiHandler {
    * @param enemyContainer - container holding enemy visual and level information
    */
   private parseWildSingleDefeat(enemyContainer: Phaser.GameObjects.Container) {
-    const enemyIconContainer = gScene.add.container(0, 0);
+    const enemyIconContainer = globalScene.add.container(0, 0);
     const enemyData = this.runInfo.enemyParty[0];
     const bossStatus = enemyData.boss;
     enemyData.boss = false;
     enemyData["player"] = true;
     //addPokemonIcon() throws an error if the Pokemon used is a boss
     const enemy = enemyData.toPokemon();
-    const enemyIcon = gScene.addPokemonIcon(enemy, 0, 0, 0, 0);
+    const enemyIcon = globalScene.addPokemonIcon(enemy, 0, 0, 0, 0);
     const enemyLevelStyle = bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY;
     const enemyLevel = addTextObject(36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, enemyLevelStyle, { fontSize: "44px", color: "#f8f8f8" });
     enemyLevel.setShadow(0, 0, undefined);
@@ -338,12 +338,12 @@ export default class RunInfoUiHandler extends UiHandler {
    */
   private parseWildDoubleDefeat(enemyContainer: Phaser.GameObjects.Container) {
     this.runInfo.enemyParty.forEach((enemyData, e) => {
-      const enemyIconContainer = gScene.add.container(0, 0);
+      const enemyIconContainer = globalScene.add.container(0, 0);
       const bossStatus = enemyData.boss;
       enemyData.boss = false;
       enemyData["player"] = true;
       const enemy = enemyData.toPokemon();
-      const enemyIcon = gScene.addPokemonIcon(enemy, 0, 0, 0, 0);
+      const enemyIcon = globalScene.addPokemonIcon(enemy, 0, 0, 0, 0);
       const enemyLevel = addTextObject(36, 26, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "44px", color: "#f8f8f8" });
       enemyLevel.setShadow(0, 0, undefined);
       enemyLevel.setStroke("#424242", 14);
@@ -368,12 +368,12 @@ export default class RunInfoUiHandler extends UiHandler {
     // Loads trainer assets on demand, as they are not loaded by default in the scene
     tObj.config.loadAssets(this.runInfo.trainer.variant).then(() => {
       const tObjSpriteKey = tObj.config.getSpriteKey(this.runInfo.trainer.variant === TrainerVariant.FEMALE, false);
-      const tObjSprite = gScene.add.sprite(0, 5, tObjSpriteKey);
+      const tObjSprite = globalScene.add.sprite(0, 5, tObjSpriteKey);
       if (this.runInfo.trainer.variant === TrainerVariant.DOUBLE && !tObj.config.doubleOnly) {
-        const doubleContainer = gScene.add.container(5, 8);
+        const doubleContainer = globalScene.add.container(5, 8);
         tObjSprite.setPosition(-3, -3);
         const tObjPartnerSpriteKey = tObj.config.getSpriteKey(true, true);
-        const tObjPartnerSprite = gScene.add.sprite(5, -3, tObjPartnerSpriteKey);
+        const tObjPartnerSprite = globalScene.add.sprite(5, -3, tObjPartnerSpriteKey);
         // Double Trainers have smaller sprites than Single Trainers
         if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
           tObjPartnerSprite.setScale(0.20);
@@ -424,16 +424,16 @@ export default class RunInfoUiHandler extends UiHandler {
 
     // Creates the Pokemon icons + level information and adds it to enemyContainer
     // 2 Rows x 3 Columns
-    const enemyPartyContainer = gScene.add.container(0, 0);
+    const enemyPartyContainer = globalScene.add.container(0, 0);
     this.runInfo.enemyParty.forEach((enemyData, e) => {
       const pokemonRowHeight = Math.floor(e / 3);
-      const enemyIconContainer = gScene.add.container(0, 0);
+      const enemyIconContainer = globalScene.add.container(0, 0);
       enemyIconContainer.setScale(0.6);
       const isBoss = enemyData.boss;
       enemyData.boss = false;
       enemyData["player"] = true;
       const enemy = enemyData.toPokemon();
-      const enemyIcon = gScene.addPokemonIcon(enemy, 0, 0, 0, 0);
+      const enemyIcon = globalScene.addPokemonIcon(enemy, 0, 0, 0, 0);
       // Applying Terastallizing Type tint to Pokemon icon
       // If the Pokemon is a fusion, it has two sprites and so, the tint has to be applied to each icon separately
       const enemySprite1 = enemyIcon.list[0] as Phaser.GameObjects.Sprite;
@@ -504,19 +504,19 @@ export default class RunInfoUiHandler extends UiHandler {
     }
 
     // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
-    if ((this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS) && this.runInfo.waveIndex === gScene.gameData.gameStats.highestEndlessWave) {
+    if ((this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS) && this.runInfo.waveIndex === globalScene.gameData.gameStats.highestEndlessWave) {
       modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
       modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
 
     // Duration + Money
-    const runInfoTextContainer = gScene.add.container(0, 0);
+    const runInfoTextContainer = globalScene.add.container(0, 0);
     // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
     const lineSpacing = (i18next.resolvedLanguage === "ja") ? 12 : 3;
     const runInfoText = addBBCodeTextObject(7, 0, "", TextStyle.WINDOW, { fontSize: "50px", lineSpacing: lineSpacing });
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
-    const runMoney = Utils.formatMoney(gScene.moneyFormat, this.runInfo.money);
+    const runMoney = Utils.formatMoney(globalScene.moneyFormat, this.runInfo.money);
     runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]${i18next.t("battleScene:moneyOwned", { formattedMoney : runMoney })}[/color]`);
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);
@@ -539,7 +539,7 @@ export default class RunInfoUiHandler extends UiHandler {
     if (this.runInfo.modifiers.length) {
       let visibleModifierIndex = 0;
 
-      const modifierIconsContainer = gScene.add.container(8, (this.runInfo.gameMode === GameModes.CHALLENGE) ? 20 : 15);
+      const modifierIconsContainer = globalScene.add.container(8, (this.runInfo.gameMode === GameModes.CHALLENGE) ? 20 : 15);
       modifierIconsContainer.setScale(0.45);
       for (const m of this.runInfo.modifiers) {
         const modifier = m.toModifier(this.modifiersModule[m.className]);
@@ -608,13 +608,13 @@ export default class RunInfoUiHandler extends UiHandler {
  	private parsePartyInfo(): void {
     const party = this.runInfo.party;
     const currentLanguage = i18next.resolvedLanguage ?? "en";
- 		const windowHeight = ((gScene.game.canvas.height / 6) - 23) / 6;
+ 		const windowHeight = ((globalScene.game.canvas.height / 6) - 23) / 6;
 
  		party.forEach((p: PokemonData, i: integer) => {
-      const pokemonInfoWindow = new RoundRectangle(gScene, 0, 14, (this.statsBgWidth * 2) + 10, windowHeight - 2, 3);
+      const pokemonInfoWindow = new RoundRectangle(globalScene, 0, 14, (this.statsBgWidth * 2) + 10, windowHeight - 2, 3);
 
  			const pokemon = p.toPokemon();
- 			const pokemonInfoContainer = gScene.add.container(this.statsBgWidth + 5, (windowHeight - 0.5) * i);
+ 			const pokemonInfoContainer = globalScene.add.container(this.statsBgWidth + 5, (windowHeight - 0.5) * i);
 
  			const types = pokemon.getTypes();
  			const type1 = getTypeRgb(types[0]);
@@ -623,8 +623,8 @@ export default class RunInfoUiHandler extends UiHandler {
  			const bgColor = type1Color.clone().darken(45);
       pokemonInfoWindow.setFillStyle(bgColor.color);
 
-      const iconContainer = gScene.add.container(0, 0);
-      const icon = gScene.addPokemonIcon(pokemon, 0, 0, 0, 0);
+      const iconContainer = globalScene.add.container(0, 0);
+      const icon = globalScene.addPokemonIcon(pokemon, 0, 0, 0, 0);
       icon.setScale(0.75);
       icon.setPosition(-99, 1);
       const type2 = types[1] ? getTypeRgb(types[1]) : undefined;
@@ -634,7 +634,7 @@ export default class RunInfoUiHandler extends UiHandler {
       this.getUi().bringToTop(icon);
 
       // Contains Name, Level + Nature, Ability, Passive
-      const pokeInfoTextContainer = gScene.add.container(-85, 3.5);
+      const pokeInfoTextContainer = globalScene.add.container(-85, 3.5);
       const textContainerFontSize = "34px";
       // This checks if the Pokemon's nature has been overwritten during the run and displays the change accurately
       const pNature = pokemon.getNature();
@@ -661,7 +661,7 @@ export default class RunInfoUiHandler extends UiHandler {
 
       // Pokemon Stats
       // Colored Arrows (Red/Blue) are placed by stats that are boosted from natures
-      const pokeStatTextContainer = gScene.add.container(-35, 6);
+      const pokeStatTextContainer = globalScene.add.container(-35, 6);
       const pStats : string[] = [];
       pokemon.stats.forEach((element) => pStats.push(Utils.formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
@@ -688,9 +688,9 @@ export default class RunInfoUiHandler extends UiHandler {
       pokeStatTextContainer.add(pokeStatText2);
 
       // Shiny + Fusion Status
-      const marksContainer = gScene.add.container(0, 0);
+      const marksContainer = globalScene.add.container(0, 0);
       if (pokemon.fusionSpecies) {
-        const splicedIcon = gScene.add.image(0, 0, "icon_spliced");
+        const splicedIcon = globalScene.add.image(0, 0, "icon_spliced");
         splicedIcon.setScale(0.35);
         splicedIcon.setOrigin(0, 0);
         pokemon.isShiny() ? splicedIcon.setPositionRelative(pokeInfoTextContainer, 35, 0) : splicedIcon.setPositionRelative(pokeInfoTextContainer, 28, 0);
@@ -699,7 +699,7 @@ export default class RunInfoUiHandler extends UiHandler {
       }
       if (pokemon.isShiny()) {
         const doubleShiny = pokemon.isFusion() && pokemon.shiny && pokemon.fusionShiny;
-        const shinyStar = gScene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
+        const shinyStar = globalScene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
         shinyStar.setOrigin(0, 0);
         shinyStar.setScale(0.65);
         shinyStar.setPositionRelative(pokeInfoTextContainer, 28, 0);
@@ -707,7 +707,7 @@ export default class RunInfoUiHandler extends UiHandler {
         marksContainer.add(shinyStar);
         this.getUi().bringToTop(shinyStar);
         if (doubleShiny) {
-          const fusionShinyStar = gScene.add.image(0, 0, "shiny_star_small_2");
+          const fusionShinyStar = globalScene.add.image(0, 0, "shiny_star_small_2");
           fusionShinyStar.setOrigin(0, 0);
           fusionShinyStar.setScale(0.5);
           fusionShinyStar.setPosition(shinyStar.x + 1, shinyStar.y + 1);
@@ -720,14 +720,14 @@ export default class RunInfoUiHandler extends UiHandler {
       // Pokemon Moveset
       // Need to check if dynamically typed moves
       const pokemonMoveset = pokemon.getMoveset();
-      const movesetContainer = gScene.add.container(70, -29);
+      const movesetContainer = globalScene.add.container(70, -29);
       const pokemonMoveBgs : Phaser.GameObjects.NineSlice[] = [];
       const pokemonMoveLabels : Phaser.GameObjects.Text[] = [];
       const movePos = [[ -6.5, 35.5 ], [ 37, 35.5 ], [ -6.5, 43.5 ], [ 37, 43.5 ]];
       for (let m = 0; m < pokemonMoveset?.length; m++) {
-      	const moveContainer = gScene.add.container(movePos[m][0], movePos[m][1]);
+      	const moveContainer = globalScene.add.container(movePos[m][0], movePos[m][1]);
         moveContainer.setScale(0.5);
-      	const moveBg = gScene.add.nineslice(0, 0, "type_bgs", "unknown", 85, 15, 2, 2, 2, 2);
+      	const moveBg = globalScene.add.nineslice(0, 0, "type_bgs", "unknown", 85, 15, 2, 2, 2, 2);
       	moveBg.setOrigin(1, 0);
       	const moveLabel = addTextObject(-moveBg.width / 2, 2, "-", TextStyle.PARTY);
       	moveLabel.setOrigin(0.5, 0);
@@ -745,7 +745,7 @@ export default class RunInfoUiHandler extends UiHandler {
       // Pokemon Held Items - not displayed by default
       // Endless/Endless Spliced have a different scale because Pokemon tend to accumulate more items in these runs.
       const heldItemsScale = (this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS) ? 0.25 : 0.5;
-      const heldItemsContainer = gScene.add.container(-82, 2);
+      const heldItemsContainer = globalScene.add.container(-82, 2);
       const heldItemsList : Modifier.PokemonHeldItemModifier[] = [];
       if (this.runInfo.modifiers.length) {
         for (const m of this.runInfo.modifiers) {
@@ -822,13 +822,13 @@ export default class RunInfoUiHandler extends UiHandler {
    * Shows the ending art.
    */
   private createVictorySplash(): void {
-    this.endCardContainer = gScene.add.container(0, 0);
-    const genderIndex = gScene.gameData.gender ?? PlayerGender.UNSET;
+    this.endCardContainer = globalScene.add.container(0, 0);
+    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
     const isFemale = genderIndex === PlayerGender.FEMALE;
-    const endCard = gScene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
+    const endCard = globalScene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setScale(0.5);
-    const text = addTextObject(gScene.game.canvas.width / 12, (gScene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
+    const text = addTextObject(globalScene.game.canvas.width / 12, (globalScene.game.canvas.height / 6) - 16, i18next.t("battle:congratulations"), TextStyle.SUMMARY, { fontSize: "128px" });
     text.setOrigin(0.5);
     this.endCardContainer.add(endCard);
     this.endCardContainer.add(text);
@@ -839,22 +839,22 @@ export default class RunInfoUiHandler extends UiHandler {
    * This could be adapted into a public-facing method for victory screens. Perhaps.
    */
   private createHallofFame(): void {
-    const genderIndex = gScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
     const isFemale = genderIndex === PlayerGender.FEMALE;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
     // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?
     // As an alternative, the icons of the second/bottom fused Pokemon have been placed next to their fellow fused Pokemon in Hall of Fame
-    this.hallofFameContainer = gScene.add.container(0, 0);
+    this.hallofFameContainer = globalScene.add.container(0, 0);
     // Thank you Hayuna for the code
-    const endCard = gScene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
+    const endCard = globalScene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
     endCard.setOrigin(0);
     endCard.setPosition(-1, -1);
     endCard.setScale(0.5);
     const endCardCoords = endCard.getBottomCenter();
     const overlayColor = isFemale ? "red" : "blue";
-    const hallofFameBg = gScene.add.image(0, 0, "hall_of_fame_" + overlayColor);
+    const hallofFameBg = globalScene.add.image(0, 0, "hall_of_fame_" + overlayColor);
     hallofFameBg.setPosition(159, 89);
-    hallofFameBg.setSize(gScene.game.canvas.width, gScene.game.canvas.height + 10);
+    hallofFameBg.setSize(globalScene.game.canvas.width, globalScene.game.canvas.height + 10);
     hallofFameBg.setAlpha(0.8);
     this.hallofFameContainer.add(endCard);
     this.hallofFameContainer.add(hallofFameBg);
@@ -870,8 +870,8 @@ export default class RunInfoUiHandler extends UiHandler {
       const formIndex = pkmn.formIndex;
       const variant = pkmn.variant;
       const species = pkmn.getSpeciesForm();
-      const pokemonSprite: Phaser.GameObjects.Sprite = gScene.add.sprite(60 + 40 * i, 40 + row  * 80, "pkmn__sub");
-      pokemonSprite.setPipeline(gScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
+      const pokemonSprite: Phaser.GameObjects.Sprite = globalScene.add.sprite(60 + 40 * i, 40 + row  * 80, "pkmn__sub");
+      pokemonSprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       this.hallofFameContainer.add(pokemonSprite);
       const speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
       speciesLoaded.set(id, false);
@@ -886,7 +886,7 @@ export default class RunInfoUiHandler extends UiHandler {
         pokemonSprite.setVisible(true);
       });
       if (pkmn.isFusion()) {
-        const fusionIcon = gScene.add.sprite(80 + 40 * i, 50 + row  * 80, pkmn.getFusionIconAtlasKey());
+        const fusionIcon = globalScene.add.sprite(80 + 40 * i, 50 + row  * 80, pkmn.getFusionIconAtlasKey());
         fusionIcon.setName("sprite-fusion-icon");
         fusionIcon.setOrigin(0.5, 0);
         fusionIcon.setFrame(pkmn.getFusionIconId(true));

@@ -1,5 +1,5 @@
 import { updateUserInfo } from "#app/account";
-import { bypassLogin, gScene } from "#app/battle-scene";
+import { bypassLogin, globalScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { Mode } from "#app/ui/ui";
@@ -22,50 +22,50 @@ export class LoginPhase extends Phase {
 
     const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
-    gScene.ui.setMode(Mode.LOADING, { buttonActions: []});
+    globalScene.ui.setMode(Mode.LOADING, { buttonActions: []});
     Utils.executeIf(bypassLogin || hasSession, updateUserInfo).then(response => {
       const success = response ? response[0] : false;
       const statusCode = response ? response[1] : null;
       if (!success) {
         if (!statusCode || statusCode === 400) {
           if (this.showText) {
-            gScene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
+            globalScene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
           }
 
-          gScene.playSound("menu_open");
+          globalScene.playSound("menu_open");
 
           const loadData = () => {
             updateUserInfo().then(success => {
               if (!success[0]) {
                 Utils.removeCookie(Utils.sessionIdKey);
-                gScene.reset(true, true);
+                globalScene.reset(true, true);
                 return;
               }
-              gScene.gameData.loadSystem().then(() => this.end());
+              globalScene.gameData.loadSystem().then(() => this.end());
             });
           };
 
-          gScene.ui.setMode(Mode.LOGIN_FORM, {
+          globalScene.ui.setMode(Mode.LOGIN_FORM, {
             buttonActions: [
               () => {
-                gScene.ui.playSelect();
+                globalScene.ui.playSelect();
                 loadData();
               }, () => {
-                gScene.playSound("menu_open");
-                gScene.ui.setMode(Mode.REGISTRATION_FORM, {
+                globalScene.playSound("menu_open");
+                globalScene.ui.setMode(Mode.REGISTRATION_FORM, {
                   buttonActions: [
                     () => {
-                      gScene.ui.playSelect();
+                      globalScene.ui.playSelect();
                       updateUserInfo().then(success => {
                         if (!success[0]) {
                           Utils.removeCookie(Utils.sessionIdKey);
-                          gScene.reset(true, true);
+                          globalScene.reset(true, true);
                           return;
                         }
                         this.end();
                       } );
                     }, () => {
-                      gScene.unshiftPhase(new LoginPhase(false));
+                      globalScene.unshiftPhase(new LoginPhase(false));
                       this.end();
                     }
                   ]
@@ -85,19 +85,19 @@ export class LoginPhase extends Phase {
           });
         } else if (statusCode === 401) {
           Utils.removeCookie(Utils.sessionIdKey);
-          gScene.reset(true, true);
+          globalScene.reset(true, true);
         } else {
-          gScene.unshiftPhase(new UnavailablePhase());
+          globalScene.unshiftPhase(new UnavailablePhase());
           super.end();
         }
         return null;
       } else {
-        gScene.gameData.loadSystem().then(success => {
+        globalScene.gameData.loadSystem().then(success => {
           if (success || bypassLogin) {
             this.end();
           } else {
-            gScene.ui.setMode(Mode.MESSAGE);
-            gScene.ui.showText(t("menu:failedToLoadSaveData"));
+            globalScene.ui.setMode(Mode.MESSAGE);
+            globalScene.ui.showText(t("menu:failedToLoadSaveData"));
           }
         });
       }
@@ -105,10 +105,10 @@ export class LoginPhase extends Phase {
   }
 
   end(): void {
-    gScene.ui.setMode(Mode.MESSAGE);
+    globalScene.ui.setMode(Mode.MESSAGE);
 
-    if (!gScene.gameData.gender) {
-      gScene.unshiftPhase(new SelectGenderPhase());
+    if (!globalScene.gameData.gender) {
+      globalScene.unshiftPhase(new SelectGenderPhase());
     }
 
     handleTutorial(Tutorial.Intro).then(() => super.end());

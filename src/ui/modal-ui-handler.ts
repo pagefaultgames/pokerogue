@@ -3,7 +3,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export interface ModalConfig {
   buttonActions: Function[];
@@ -42,9 +42,9 @@ export abstract class ModalUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.modalContainer = gScene.add.container(0, 0);
+    this.modalContainer = globalScene.add.container(0, 0);
 
-    this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.modalContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
     this.modalBg = addWindow(0, 0, 0, 0);
 
@@ -75,7 +75,7 @@ export abstract class ModalUiHandler extends UiHandler {
     buttonBg.setOrigin(0.5, 0);
     buttonBg.setInteractive(new Phaser.Geom.Rectangle(0, 0, buttonBg.width, buttonBg.height), Phaser.Geom.Rectangle.Contains);
 
-    const buttonContainer = gScene.add.container(0, buttonTopMargin);
+    const buttonContainer = globalScene.add.container(0, buttonTopMargin);
 
     this.buttonLabels.push(buttonLabel);
     this.buttonBgs.push(buttonBg);
@@ -95,7 +95,7 @@ export abstract class ModalUiHandler extends UiHandler {
       if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
         const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin();
 
-        const overlay = gScene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6, 0);
+        const overlay = globalScene.add.rectangle(( this.getWidth() + marginLeft + marginRight) / 2, (this.getHeight() + marginTop + marginBottom) / 2, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6, 0);
         overlay.setOrigin(0.5, 0.5);
         overlay.setName("rect-ui-overlay-modal");
         overlay.setAlpha(0);
@@ -103,7 +103,7 @@ export abstract class ModalUiHandler extends UiHandler {
         this.modalContainer.add(overlay);
         this.modalContainer.moveTo(overlay, 0);
 
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: overlay,
           alpha: 1,
           duration: 250,
@@ -136,7 +136,7 @@ export abstract class ModalUiHandler extends UiHandler {
     const [ marginTop, marginRight, marginBottom, marginLeft ] = this.getMargin(config);
 
     const [ width, height ] = [ this.getWidth(config), this.getHeight(config) ];
-    this.modalContainer.setPosition((((gScene.game.canvas.width / 6) - (width + (marginRight - marginLeft))) / 2), (((-gScene.game.canvas.height / 6) - (height + (marginBottom - marginTop))) / 2));
+    this.modalContainer.setPosition((((globalScene.game.canvas.width / 6) - (width + (marginRight - marginLeft))) / 2), (((-globalScene.game.canvas.height / 6) - (height + (marginBottom - marginTop))) / 2));
 
     this.modalBg.setSize(width, height);
 

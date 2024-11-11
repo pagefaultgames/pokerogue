@@ -1,7 +1,7 @@
 import { default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from "../utils";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import Move from "#app/data/move";
 import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
 import { BerryType } from "#enums/berry-type";
@@ -61,7 +61,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   private readonly onBerryUsedEvent = (event: Event) => this.onBerryUsed(event);
 
   constructor(player: boolean) {
-    super(gScene, 0, 0);
+    super(globalScene, 0, 0);
 
     // Note that all player based flyouts are disabled. This is included in case of future development
     this.player = player;
@@ -70,17 +70,17 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.anchorX = (this.player ? -130 : -40);
     this.anchorY = -2.5 + (this.player ? -18.5 : -13);
 
-    this.flyoutParent = gScene.add.container(this.anchorX - this.translationX, this.anchorY);
+    this.flyoutParent = globalScene.add.container(this.anchorX - this.translationX, this.anchorY);
     this.flyoutParent.setAlpha(0);
     this.add(this.flyoutParent);
 
     // Load the background image
-    this.flyoutBackground = gScene.add.sprite(0, 0, "pbinfo_enemy_boss_stats");
+    this.flyoutBackground = globalScene.add.sprite(0, 0, "pbinfo_enemy_boss_stats");
     this.flyoutBackground.setOrigin(0, 0);
 
     this.flyoutParent.add(this.flyoutBackground);
 
-    this.flyoutContainer = gScene.add.container(44 + (this.player ? -this.flyoutWidth : 0), 2);
+    this.flyoutContainer = globalScene.add.container(44 + (this.player ? -this.flyoutWidth : 0), 2);
     this.flyoutParent.add(this.flyoutContainer);
 
     // Loops through and sets the position of each text object according to the width and height of the flyout
@@ -97,9 +97,9 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.flyoutContainer.add(this.flyoutText);
 
     this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(gScene, this.flyoutWidth / 2, 0, 1, this.flyoutHeight + (gScene.uiTheme === UiTheme.LEGACY ? 1 : 0), 0x212121).setOrigin(0.5, 0));
+      new Phaser.GameObjects.Rectangle(globalScene, this.flyoutWidth / 2, 0, 1, this.flyoutHeight + (globalScene.uiTheme === UiTheme.LEGACY ? 1 : 0), 0x212121).setOrigin(0.5, 0));
     this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(gScene, 0, this.flyoutHeight / 2, this.flyoutWidth + 6, 1, 0x212121).setOrigin(0, 0.5));
+      new Phaser.GameObjects.Rectangle(globalScene, 0, this.flyoutHeight / 2, this.flyoutWidth + 6, 1, 0x212121).setOrigin(0, 0.5));
   }
 
   /**
@@ -112,8 +112,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;
     this.flyoutParent.name = `Flyout Parent ${getPokemonNameWithAffix(this.pokemon)}`;
 
-    gScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
-    gScene.eventTarget.addEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
+    globalScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
+    globalScene.eventTarget.addEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
   }
 
   /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
@@ -171,7 +171,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   toggleFlyout(visible: boolean): void {
     this.flyoutVisible = visible;
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
       duration: Utils.fixedInt(125),
@@ -181,8 +181,8 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   }
 
   destroy(fromScene?: boolean): void {
-    gScene.eventTarget.removeEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
-    gScene.eventTarget.removeEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
 
     super.destroy(fromScene);
   }

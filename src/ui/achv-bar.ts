@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
@@ -20,20 +20,20 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(gScene, gScene.game.canvas.width / 6, 0);
-    this.playerGender = gScene.gameData.gender;
+    super(globalScene, globalScene.game.canvas.width / 6, 0);
+    this.playerGender = globalScene.gameData.gender;
   }
 
   setup(): void {
     this.defaultWidth = 200;
     this.defaultHeight = 40;
 
-    this.bg = gScene.add.nineslice(0, 0, "achv_bar", undefined, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
+    this.bg = globalScene.add.nineslice(0, 0, "achv_bar", undefined, this.defaultWidth, this.defaultHeight, 41, 6, 16, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.icon = gScene.add.sprite(4, 4, "items");
+    this.icon = globalScene.add.sprite(4, 4, "items");
     this.icon.setOrigin(0, 0);
     this.add(this.icon);
 
@@ -90,16 +90,16 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.bg.height = Math.max(this.defaultHeight, this.titleText.displayHeight + this.descriptionText.displayHeight + 8);
     this.icon.y = (this.bg.height / 2) - (this.icon.height / 2);
 
-    gScene.playSound("se/achv");
+    globalScene.playSound("se/achv");
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this,
-      x: (gScene.game.canvas.width / 6) - (this.bg.width / 2),
+      x: (globalScene.game.canvas.width / 6) - (this.bg.width / 2),
       duration: 500,
       ease: "Sine.easeOut"
     });
 
-    gScene.time.delayedCall(10000, () => this.hide(this.playerGender));
+    globalScene.time.delayedCall(10000, () => this.hide(this.playerGender));
 
     this.setVisible(true);
     this.shown = true;
@@ -110,9 +110,9 @@ export default class AchvBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this,
-      x: (gScene.game.canvas.width / 6),
+      x: (globalScene.game.canvas.width / 6),
       duration: 500,
       ease: "Sine.easeIn",
       onComplete: () => {

@@ -15,7 +15,7 @@ import i18next from "i18next";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -54,19 +54,19 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   override setup() {
     const ui = this.getUi();
 
-    this.cursorContainer = gScene.add.container(18, -38.7);
+    this.cursorContainer = globalScene.add.container(18, -38.7);
     this.cursorContainer.setVisible(false);
     ui.add(this.cursorContainer);
-    this.optionsContainer = gScene.add.container(12, -38.7);
+    this.optionsContainer = globalScene.add.container(12, -38.7);
     this.optionsContainer.setVisible(false);
     ui.add(this.optionsContainer);
-    this.dexProgressContainer = gScene.add.container(214, -43);
+    this.dexProgressContainer = globalScene.add.container(214, -43);
     this.dexProgressContainer.setVisible(false);
     ui.add(this.dexProgressContainer);
-    this.descriptionContainer = gScene.add.container(0, -152);
+    this.descriptionContainer = globalScene.add.container(0, -152);
     this.descriptionContainer.setVisible(false);
     ui.add(this.descriptionContainer);
-    this.tooltipContainer = gScene.add.container(210, -48);
+    this.tooltipContainer = globalScene.add.container(210, -48);
     this.tooltipContainer.setVisible(false);
     ui.add(this.tooltipContainer);
 
@@ -81,11 +81,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.dexProgressWindow = addWindow(0, 0, 24, 28, false, false, 0, 0, WindowVariant.THIN);
     this.dexProgressContainer.add(this.dexProgressWindow);
 
-    this.rarityBall = gScene.add.sprite(141, 9, "pb");
+    this.rarityBall = globalScene.add.sprite(141, 9, "pb");
     this.rarityBall.setScale(0.75);
     this.descriptionContainer.add(this.rarityBall);
 
-    const dexProgressIndicator = gScene.add.sprite(12, 10, "encounter_radar");
+    const dexProgressIndicator = globalScene.add.sprite(12, 10, "encounter_radar");
     dexProgressIndicator.setScale(0.80);
     this.dexProgressContainer.add(dexProgressIndicator);
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
@@ -138,8 +138,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
             ...this.overrideSettings,
             slideInDescription: false
           };
-          gScene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
-            gScene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
+          globalScene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
+            globalScene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
             setTimeout(() => {
               this.setCursor(this.viewPartyIndex);
               this.unblockInput();
@@ -148,7 +148,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         } else if (this.blockInput || (!this.optionsMeetsReqs[cursor] && (selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL))) {
           success = false;
         } else {
-          if ((gScene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
+          if ((globalScene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
             success = true;
           } else {
             ui.playError();
@@ -315,7 +315,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.viewPartyIndex = this.optionsContainer.getAll()?.length - 1;
 
     if (!this.cursorObj) {
-      this.cursorObj = gScene.add.image(0, 0, "cursor");
+      this.cursorObj = globalScene.add.image(0, 0, "cursor");
       this.cursorContainer.add(this.cursorObj);
     }
 
@@ -334,7 +334,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   displayEncounterOptions(slideInDescription: boolean = true): void {
     this.getUi().clearText();
-    const mysteryEncounter = gScene.currentBattle.mysteryEncounter!;
+    const mysteryEncounter = globalScene.currentBattle.mysteryEncounter!;
     this.encounterOptions = this.overrideSettings?.overrideOptions ?? mysteryEncounter.options;
     this.optionsMeetsReqs = [];
 
@@ -387,7 +387,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       // Sets up the mask that hides the option text to give an illusion of scrolling
       const nonScrollWidth = 90;
-      const optionTextMaskRect = gScene.make.graphics({});
+      const optionTextMaskRect = globalScene.make.graphics({});
       optionTextMaskRect.setScale(6);
       optionTextMaskRect.fillStyle(0xFFFFFF);
       optionTextMaskRect.beginPath();
@@ -406,7 +406,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       // Animates the option text scrolling sideways
       if (optionTextWidth > nonScrollWidth) {
-        this.optionScrollTweens[i] = gScene.tweens.add({
+        this.optionScrollTweens[i] = globalScene.tweens.add({
           targets: optionText,
           delay: Utils.fixedInt(2000),
           loop: -1,
@@ -420,7 +420,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // View Party Button
-    const viewPartyText = addBBCodeTextObject((gScene.game.canvas.width) / 6, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
+    const viewPartyText = addBBCodeTextObject((globalScene.game.canvas.width) / 6, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
     this.optionsContainer.add(viewPartyText);
     viewPartyText.x -= (viewPartyText.displayWidth + 16);
     this.viewPartyXPosition = viewPartyText.x - 10;
@@ -441,7 +441,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const descriptionTextObject = addBBCodeTextObject(6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
-    const descriptionTextMaskRect = gScene.make.graphics({});
+    const descriptionTextMaskRect = globalScene.make.graphics({});
     descriptionTextMaskRect.setScale(6);
     descriptionTextMaskRect.fillStyle(0xFFFFFF);
     descriptionTextMaskRect.beginPath();
@@ -460,7 +460,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Animates the description text moving upwards
     if (descriptionLineCount > 6) {
-      this.descriptionScrollTween = gScene.tweens.add({
+      this.descriptionScrollTween = globalScene.tweens.add({
         targets: descriptionTextObject,
         delay: Utils.fixedInt(2000),
         loop: -1,
@@ -479,7 +479,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     // Slide in description container
     if (slideInDescription) {
       this.descriptionContainer.x -= 150;
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: this.descriptionContainer,
         x: "+=150",
         ease: "Sine.easeInOut",
@@ -528,7 +528,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       this.tooltipContainer.add(tooltipTextObject);
 
       // Sets up the mask that hides the description text to give an illusion of scrolling
-      const tooltipTextMaskRect = gScene.make.graphics({});
+      const tooltipTextMaskRect = globalScene.make.graphics({});
       tooltipTextMaskRect.setScale(6);
       tooltipTextMaskRect.fillStyle(0xFFFFFF);
       tooltipTextMaskRect.beginPath();
@@ -546,7 +546,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       // Animates the tooltip text moving upwards
       if (tooltipLineCount > 3) {
-        this.tooltipScrollTween = gScene.tweens.add({
+        this.tooltipScrollTween = globalScene.tweens.add({
           targets: tooltipTextObject,
           delay: Utils.fixedInt(1200),
           loop: -1,
@@ -593,25 +593,25 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private showHideDexProgress(show: boolean) {
     if (show && !this.showDexProgress) {
       this.showDexProgress = true;
-      gScene.tweens.killTweensOf(this.dexProgressContainer);
-      gScene.tweens.add({
+      globalScene.tweens.killTweensOf(this.dexProgressContainer);
+      globalScene.tweens.add({
         targets: this.dexProgressContainer,
         y: -63,
         ease: "Sine.easeInOut",
         duration: 750,
         onComplete: () => {
           this.dexProgressContainer.on("pointerover", () => {
-            gScene.ui.showTooltip("", i18next.t("mysteryEncounterMessages:affects_pokedex"), true);
+            globalScene.ui.showTooltip("", i18next.t("mysteryEncounterMessages:affects_pokedex"), true);
           });
           this.dexProgressContainer.on("pointerout", () => {
-            gScene.ui.hideTooltip();
+            globalScene.ui.hideTooltip();
           });
         }
       });
     } else if (!show && this.showDexProgress) {
       this.showDexProgress = false;
-      gScene.tweens.killTweensOf(this.dexProgressContainer);
-      gScene.tweens.add({
+      globalScene.tweens.killTweensOf(this.dexProgressContainer);
+      globalScene.tweens.add({
         targets: this.dexProgressContainer,
         y: -43,
         ease: "Sine.easeInOut",

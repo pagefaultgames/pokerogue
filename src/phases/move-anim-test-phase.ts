@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { initMoveAnim, loadMoveAnimAssets, MoveAnim } from "#app/data/battle-anims";
 import { allMoves, SelfStatusMove } from "#app/data/move";
 import { Moves } from "#app/enums/moves";
@@ -31,8 +31,8 @@ export class MoveAnimTestPhase extends BattlePhase {
     initMoveAnim(moveId).then(() => {
       loadMoveAnimAssets([ moveId ], true)
         .then(() => {
-          const user = player ? gScene.getPlayerPokemon()! : gScene.getEnemyPokemon()!;
-          const target = (player !== (allMoves[moveId] instanceof SelfStatusMove)) ? gScene.getEnemyPokemon()! : gScene.getPlayerPokemon()!;
+          const user = player ? globalScene.getPlayerPokemon()! : globalScene.getEnemyPokemon()!;
+          const target = (player !== (allMoves[moveId] instanceof SelfStatusMove)) ? globalScene.getEnemyPokemon()! : globalScene.getPlayerPokemon()!;
           new MoveAnim(moveId, user, target.getBattlerIndex()).play(allMoves[moveId].hitsSubstitute(user, target), () => { // TODO: are the bangs correct here?
             if (player) {
               this.playMoveAnim(moveQueue, false);

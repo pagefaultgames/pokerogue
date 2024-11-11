@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/ability";
 import { getRandomWeatherType } from "#app/data/weather";
 import { NextEncounterPhase } from "./next-encounter-phase";
@@ -9,26 +9,26 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   }
 
   doEncounter(): void {
-    gScene.playBgm(undefined, true);
+    globalScene.playBgm(undefined, true);
 
-    for (const pokemon of gScene.getParty()) {
+    for (const pokemon of globalScene.getParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
       }
     }
 
-    for (const pokemon of gScene.getParty().filter(p => p.isOnField())) {
+    for (const pokemon of globalScene.getParty().filter(p => p.isOnField())) {
       applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
     }
 
-    const enemyField = gScene.getEnemyField();
-    const moveTargets: any[]  = [ gScene.arenaEnemy, enemyField ];
-    const mysteryEncounter = gScene.currentBattle?.mysteryEncounter?.introVisuals;
+    const enemyField = globalScene.getEnemyField();
+    const moveTargets: any[]  = [ globalScene.arenaEnemy, enemyField ];
+    const mysteryEncounter = globalScene.currentBattle?.mysteryEncounter?.introVisuals;
     if (mysteryEncounter) {
       moveTargets.push(mysteryEncounter);
     }
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: moveTargets.flat(),
       x: "+=300",
       duration: 2000,
@@ -44,6 +44,6 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
    * Set biome weather.
    */
   trySetWeatherIfNewBiome(): void {
-    gScene.arena.trySetWeather(getRandomWeatherType(gScene.arena), false);
+    globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena), false);
   }
 }

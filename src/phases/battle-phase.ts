@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { Phase } from "#app/phase";
 
@@ -8,8 +8,8 @@ export class BattlePhase extends Phase {
   }
 
   showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
-    const sprites = gScene.currentBattle.trainer?.getSprites()!; // TODO: is this bang correct?
-    const tintSprites = gScene.currentBattle.trainer?.getTintSprites()!; // TODO: is this bang correct?
+    const sprites = globalScene.currentBattle.trainer?.getSprites()!; // TODO: is this bang correct?
+    const tintSprites = globalScene.currentBattle.trainer?.getTintSprites()!; // TODO: is this bang correct?
     for (let i = 0; i < sprites.length; i++) {
       const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
       [ sprites[i], tintSprites[i] ].map(sprite => {
@@ -24,8 +24,8 @@ export class BattlePhase extends Phase {
       sprites[i].clearTint();
       tintSprites[i].clearTint();
     }
-    gScene.tweens.add({
-      targets: gScene.currentBattle.trainer,
+    globalScene.tweens.add({
+      targets: globalScene.currentBattle.trainer,
       x: "-=16",
       y: "+=16",
       alpha: 1,
@@ -35,8 +35,8 @@ export class BattlePhase extends Phase {
   }
 
   hideEnemyTrainer(): void {
-    gScene.tweens.add({
-      targets: gScene.currentBattle.trainer,
+    globalScene.tweens.add({
+      targets: globalScene.currentBattle.trainer,
       x: "+=16",
       y: "-=16",
       alpha: 0,

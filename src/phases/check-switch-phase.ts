@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattleStyle } from "#app/enums/battle-style";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -24,20 +24,20 @@ export class CheckSwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    const pokemon = gScene.getPlayerField()[this.fieldIndex];
+    const pokemon = globalScene.getPlayerField()[this.fieldIndex];
 
-    if (gScene.battleStyle === BattleStyle.SET) {
+    if (globalScene.battleStyle === BattleStyle.SET) {
       super.end();
       return;
     }
 
-    if (gScene.field.getAll().indexOf(pokemon) === -1) {
-      gScene.unshiftPhase(new SummonMissingPhase(this.fieldIndex));
+    if (globalScene.field.getAll().indexOf(pokemon) === -1) {
+      globalScene.unshiftPhase(new SummonMissingPhase(this.fieldIndex));
       super.end();
       return;
     }
 
-    if (!gScene.getParty().slice(1).filter(p => p.isActive()).length) {
+    if (!globalScene.getParty().slice(1).filter(p => p.isActive()).length) {
       super.end();
       return;
     }
@@ -47,14 +47,14 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    gScene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
-      gScene.ui.setMode(Mode.CONFIRM, () => {
-        gScene.ui.setMode(Mode.MESSAGE);
-        gScene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
-        gScene.unshiftPhase(new SwitchPhase(SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
+    globalScene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
+      globalScene.ui.setMode(Mode.CONFIRM, () => {
+        globalScene.ui.setMode(Mode.MESSAGE);
+        globalScene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
+        globalScene.unshiftPhase(new SwitchPhase(SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
         this.end();
       }, () => {
-        gScene.ui.setMode(Mode.MESSAGE);
+        globalScene.ui.setMode(Mode.MESSAGE);
         this.end();
       });
     });

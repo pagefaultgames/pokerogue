@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import { updateUserInfo } from "#app/account";
 import * as Utils from "#app/utils";
 import i18next from "i18next";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
   private reconnectTimer: NodeJS.Timeout | null;
@@ -55,11 +55,11 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
       if (response[0] || [ 200, 400 ].includes(response[1])) {
         this.reconnectTimer = null;
         this.reconnectDuration = this.minTime;
-        gScene.playSound("se/pb_bounce_1");
+        globalScene.playSound("se/pb_bounce_1");
         this.reconnectCallback();
       } else if (response[1] === 401) {
         Utils.removeCookie(Utils.sessionIdKey);
-        gScene.reset(true, true);
+        globalScene.reset(true, true);
       } else {
         this.reconnectDuration = Math.min(this.reconnectDuration * 2, this.maxTime); // Set a max delay so it isn't infinite
         this.reconnectTimer =

@@ -1,13 +1,13 @@
-import { gScene } from "./battle-scene";
+import { globalScene } from "./battle-scene";
 
 export class Phase {
   start() {
-    if (gScene.abilityBar.shown) {
-      gScene.abilityBar.resetAutoHideTimer();
+    if (globalScene.abilityBar.shown) {
+      globalScene.abilityBar.resetAutoHideTimer();
     }
   }
 
   end() {
-    gScene.shiftPhase();
+    globalScene.shiftPhase();
   }
 }

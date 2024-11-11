@@ -1,6 +1,6 @@
 import { initSubsequentOptionSelect, leaveEncounterWithoutBattle, transitionMysteryEncounterIntroVisuals, updatePlayerMoney, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#app/data/trainer-config";
@@ -59,7 +59,7 @@ export const SafariZoneEncounter: MysteryEncounter =
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
     .withOnInit(() => {
-      gScene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
+      globalScene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
       return true;
     })
     .withOption(MysteryEncounterOptionBuilder
@@ -76,20 +76,20 @@ export const SafariZoneEncounter: MysteryEncounter =
       })
       .withOptionPhase(async () => {
         // Start safari encounter
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         encounter.continuousEncounter = true;
         encounter.misc = {
           safariPokemonRemaining: NUM_SAFARI_ENCOUNTERS
         };
         updatePlayerMoney(-(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Load bait/mud assets
-        gScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
-        gScene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
-        gScene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
-        gScene.loadAtlas("safari_zone_bait", "mystery-encounters");
-        gScene.loadAtlas("safari_zone_mud", "mystery-encounters");
+        globalScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
+        globalScene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
+        globalScene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
+        globalScene.loadAtlas("safari_zone_bait", "mystery-encounters");
+        globalScene.loadAtlas("safari_zone_mud", "mystery-encounters");
         // Clear enemy party
-        gScene.currentBattle.enemyParty = [];
+        globalScene.currentBattle.enemyParty = [];
         await transitionMysteryEncounterIntroVisuals();
         await summonSafariPokemon();
         initSubsequentOptionSelect({ overrideOptions: safariZoneGameOptions, hideDescription: true });
@@ -144,7 +144,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .withOptionPhase(async () => {
       // Throw a ball option
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       const pokemon = encounter.misc.pokemon;
       const catchResult = await throwPokeball(pokemon);
 
@@ -179,7 +179,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .withOptionPhase(async () => {
       // Throw bait option
-      const pokemon = gScene.currentBattle.mysteryEncounter!.misc.pokemon;
+      const pokemon = globalScene.currentBattle.mysteryEncounter!.misc.pokemon;
       await throwBait(pokemon);
 
       // 100% chance to increase catch stage +2
@@ -209,7 +209,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .withOptionPhase(async () => {
       // Throw mud option
-      const pokemon = gScene.currentBattle.mysteryEncounter!.misc.pokemon;
+      const pokemon = globalScene.currentBattle.mysteryEncounter!.misc.pokemon;
       await throwMud(pokemon);
       // 100% chance to decrease flee stage -2
       tryChangeFleeStage(-2);
@@ -233,7 +233,7 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
     })
     .withOptionPhase(async () => {
       // Flee option
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       const pokemon = encounter.misc.pokemon;
       await doPlayerFlee(pokemon);
       // Check how many safari pokemon left
@@ -251,20 +251,20 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
 ];
 
 async function summonSafariPokemon() {
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   // Message pokemon remaining
   encounter.setDialogueToken("remainingCount", encounter.misc.safariPokemonRemaining);
-  gScene.queueMessage(getEncounterText(`${namespace}:safari.remaining_count`) ?? "", null, true);
+  globalScene.queueMessage(getEncounterText(`${namespace}:safari.remaining_count`) ?? "", null, true);
 
   // Generate pokemon using safariPokemonRemaining so they are always the same pokemon no matter how many turns are taken
   // Safari pokemon roll twice on shiny and HA chances, but are otherwise normal
   let enemySpecies;
   let pokemon;
-  gScene.executeWithSeedOffset(() => {
+  globalScene.executeWithSeedOffset(() => {
     enemySpecies = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
-    const level = gScene.currentBattle.getLevelForWave();
-    enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, gScene.gameMode));
-    pokemon = gScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
+    const level = globalScene.currentBattle.getLevelForWave();
+    enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode));
+    pokemon = globalScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
 
     // Roll shiny twice
     if (!pokemon.shiny) {
@@ -276,7 +276,7 @@ async function summonSafariPokemon() {
       const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
       if (pokemon.abilityIndex < hiddenIndex) {
         const hiddenAbilityChance = new IntegerHolder(256);
-        gScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+        globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
         const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
@@ -288,10 +288,10 @@ async function summonSafariPokemon() {
 
     pokemon.calculateStats();
 
-    gScene.currentBattle.enemyParty.unshift(pokemon);
-  }, gScene.currentBattle.waveIndex * 1000 * encounter.misc.safariPokemonRemaining);
+    globalScene.currentBattle.enemyParty.unshift(pokemon);
+  }, globalScene.currentBattle.waveIndex * 1000 * encounter.misc.safariPokemonRemaining);
 
-  gScene.gameData.setPokemonSeen(pokemon, true);
+  globalScene.gameData.setPokemonSeen(pokemon, true);
   await pokemon.loadAssets();
 
   // Reset safari catch and flee rates
@@ -300,7 +300,7 @@ async function summonSafariPokemon() {
   encounter.misc.pokemon = pokemon;
   encounter.misc.safariPokemonRemaining -= 1;
 
-  gScene.unshiftPhase(new SummonPhase(0, false));
+  globalScene.unshiftPhase(new SummonPhase(0, false));
 
   encounter.setDialogueToken("pokemonName", getPokemonNameWithAffix(pokemon));
 
@@ -309,16 +309,16 @@ async function summonSafariPokemon() {
   // shows up and the IV scanner breaks. For now, we place the IV scanner code
   // separately so that at least the IV scanner works.
 
-  const ivScannerModifier = gScene.findModifier(m => m instanceof IvScannerModifier);
+  const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
   if (ivScannerModifier) {
-    gScene.pushPhase(new ScanIvsPhase(pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
+    globalScene.pushPhase(new ScanIvsPhase(pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
   }
 }
 
 function throwPokeball(pokemon: EnemyPokemon): Promise<boolean> {
   const baseCatchRate = pokemon.species.catchRate;
   // Catch stage ranges from -6 to +6 (like stat boost stages)
-  const safariCatchStage = gScene.currentBattle.mysteryEncounter!.misc.catchStage;
+  const safariCatchStage = globalScene.currentBattle.mysteryEncounter!.misc.catchStage;
   // Catch modifier ranges from 2/8 (-6 stage) to 8/2 (+6)
   const safariModifier = (2 + Math.min(Math.max(safariCatchStage, 0), 6)) / (2 - Math.max(Math.min(safariCatchStage, 0), -6));
   // Catch rate same as safari ball
@@ -332,26 +332,26 @@ async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const bait: Phaser.GameObjects.Sprite = gScene.addFieldSprite(16 + 75, 80 + 25, "safari_zone_bait", "0001.png");
+  const bait: Phaser.GameObjects.Sprite = globalScene.addFieldSprite(16 + 75, 80 + 25, "safari_zone_bait", "0001.png");
   bait.setOrigin(0.5, 0.625);
-  gScene.field.add(bait);
+  globalScene.field.add(bait);
 
   return new Promise(resolve => {
-    gScene.trainer.setTexture(`trainer_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
-    gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
-      gScene.playSound("se/pb_throw");
+    globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+    globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
+      globalScene.playSound("se/pb_throw");
 
       // Trainer throw frames
-      gScene.trainer.setFrame("2");
-      gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
-        gScene.trainer.setFrame("3");
-        gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
-          gScene.trainer.setTexture(`trainer_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+      globalScene.trainer.setFrame("2");
+      globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
+        globalScene.trainer.setFrame("3");
+        globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
+          globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
         });
       });
 
       // Pokeball move and catch logic
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: bait,
         x: { value: 210 + fpOffset[0], ease: "Linear" },
         y: { value: 55 + fpOffset[1], ease: "Cubic.easeOut" },
@@ -359,8 +359,8 @@ async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
         onComplete: () => {
 
           let index = 1;
-          gScene.time.delayedCall(768, () => {
-            gScene.tweens.add({
+          globalScene.time.delayedCall(768, () => {
+            globalScene.tweens.add({
               targets: pokemon,
               duration: 150,
               ease: "Cubic.easeOut",
@@ -368,12 +368,12 @@ async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
               y: originalY - 5,
               loop: 6,
               onStart: () => {
-                gScene.playSound("battle_anims/PRSFX- Bug Bite");
+                globalScene.playSound("battle_anims/PRSFX- Bug Bite");
                 bait.setFrame("0002.png");
               },
               onLoop: () => {
                 if (index % 2 === 0) {
-                  gScene.playSound("battle_anims/PRSFX- Bug Bite");
+                  globalScene.playSound("battle_anims/PRSFX- Bug Bite");
                 }
                 if (index === 4) {
                   bait.setFrame("0003.png");
@@ -381,7 +381,7 @@ async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
                 index++;
               },
               onComplete: () => {
-                gScene.time.delayedCall(256, () => {
+                globalScene.time.delayedCall(256, () => {
                   bait.destroy();
                   resolve(true);
                 });
@@ -398,51 +398,51 @@ async function throwMud(pokemon: EnemyPokemon): Promise<boolean> {
   const originalY: number = pokemon.y;
 
   const fpOffset = pokemon.getFieldPositionOffset();
-  const mud: Phaser.GameObjects.Sprite = gScene.addFieldSprite(16 + 75, 80 + 35, "safari_zone_mud", "0001.png");
+  const mud: Phaser.GameObjects.Sprite = globalScene.addFieldSprite(16 + 75, 80 + 35, "safari_zone_mud", "0001.png");
   mud.setOrigin(0.5, 0.625);
-  gScene.field.add(mud);
+  globalScene.field.add(mud);
 
   return new Promise(resolve => {
-    gScene.trainer.setTexture(`trainer_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
-    gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
-      gScene.playSound("se/pb_throw");
+    globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+    globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
+      globalScene.playSound("se/pb_throw");
 
       // Trainer throw frames
-      gScene.trainer.setFrame("2");
-      gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
-        gScene.trainer.setFrame("3");
-        gScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
-          gScene.trainer.setTexture(`trainer_${gScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+      globalScene.trainer.setFrame("2");
+      globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
+        globalScene.trainer.setFrame("3");
+        globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
+          globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
         });
       });
 
       // Mud throw and splat
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: mud,
         x: { value: 230 + fpOffset[0], ease: "Linear" },
         y: { value: 55 + fpOffset[1], ease: "Cubic.easeOut" },
         duration: 500,
         onComplete: () => {
           // Mud frame 2
-          gScene.playSound("battle_anims/PRSFX- Sludge Bomb2");
+          globalScene.playSound("battle_anims/PRSFX- Sludge Bomb2");
           mud.setFrame("0002.png");
           // Mud splat
-          gScene.time.delayedCall(200, () => {
+          globalScene.time.delayedCall(200, () => {
             mud.setFrame("0003.png");
-            gScene.time.delayedCall(400, () => {
+            globalScene.time.delayedCall(400, () => {
               mud.setFrame("0004.png");
             });
           });
 
           // Fade mud then angry animation
-          gScene.tweens.add({
+          globalScene.tweens.add({
             targets: mud,
             alpha: 0,
             ease: "Cubic.easeIn",
             duration: 1000,
             onComplete: () => {
               mud.destroy();
-              gScene.tweens.add({
+              globalScene.tweens.add({
                 targets: pokemon,
                 duration: 300,
                 ease: "Cubic.easeOut",
@@ -450,10 +450,10 @@ async function throwMud(pokemon: EnemyPokemon): Promise<boolean> {
                 y: originalY - 20,
                 loop: 1,
                 onStart: () => {
-                  gScene.playSound("battle_anims/PRSFX- Taunt2");
+                  globalScene.playSound("battle_anims/PRSFX- Taunt2");
                 },
                 onLoop: () => {
-                  gScene.playSound("battle_anims/PRSFX- Taunt2");
+                  globalScene.playSound("battle_anims/PRSFX- Taunt2");
                 },
                 onComplete: () => {
                   resolve(true);
@@ -481,8 +481,8 @@ function tryChangeFleeStage(change: number, chance?: number): boolean {
   if (chance && randSeedInt(10) >= chance) {
     return false;
   }
-  const currentFleeStage = gScene.currentBattle.mysteryEncounter!.misc.fleeStage ?? 0;
-  gScene.currentBattle.mysteryEncounter!.misc.fleeStage = Math.min(Math.max(currentFleeStage + change, -6), 6);
+  const currentFleeStage = globalScene.currentBattle.mysteryEncounter!.misc.fleeStage ?? 0;
+  globalScene.currentBattle.mysteryEncounter!.misc.fleeStage = Math.min(Math.max(currentFleeStage + change, -6), 6);
   return true;
 }
 
@@ -490,23 +490,23 @@ function tryChangeCatchStage(change: number, chance?: number): boolean {
   if (chance && randSeedInt(10) >= chance) {
     return false;
   }
-  const currentCatchStage = gScene.currentBattle.mysteryEncounter!.misc.catchStage ?? 0;
-  gScene.currentBattle.mysteryEncounter!.misc.catchStage = Math.min(Math.max(currentCatchStage + change, -6), 6);
+  const currentCatchStage = globalScene.currentBattle.mysteryEncounter!.misc.catchStage ?? 0;
+  globalScene.currentBattle.mysteryEncounter!.misc.catchStage = Math.min(Math.max(currentCatchStage + change, -6), 6);
   return true;
 }
 
 async function doEndTurn(cursorIndex: number) {
   // First cleanup and destroy old Pokemon objects that were left in the enemyParty
   // They are left in enemyParty temporarily so that VictoryPhase properly handles EXP
-  const party = gScene.getEnemyParty();
+  const party = globalScene.getEnemyParty();
   if (party.length > 1) {
     for (let i = 1; i < party.length; i++) {
       party[i].destroy();
     }
-    gScene.currentBattle.enemyParty = party.slice(0, 1);
+    globalScene.currentBattle.enemyParty = party.slice(0, 1);
   }
 
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   const pokemon = encounter.misc.pokemon;
   const isFlee = isPokemonFlee(pokemon, encounter.misc.fleeStage);
   if (isFlee) {
@@ -522,7 +522,7 @@ async function doEndTurn(cursorIndex: number) {
       leaveEncounterWithoutBattle(true);
     }
   } else {
-    gScene.queueMessage(getEncounterText(`${namespace}:safari.watching`) ?? "", 0, null, 1000);
+    globalScene.queueMessage(getEncounterText(`${namespace}:safari.watching`) ?? "", 0, null, 1000);
     initSubsequentOptionSelect({ overrideOptions: safariZoneGameOptions, startingCursorIndex: cursorIndex, hideDescription: true });
   }
 }

@@ -36,33 +36,33 @@ import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { Variant } from "#app/data/variant";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
  * @param scene
  */
 export function doTrainerExclamation() {
-  const exclamationSprite = gScene.add.sprite(0, 0, "encounter_exclaim");
+  const exclamationSprite = globalScene.add.sprite(0, 0, "encounter_exclaim");
   exclamationSprite.setName("exclamation");
-  gScene.field.add(exclamationSprite);
-  gScene.field.moveTo(exclamationSprite, gScene.field.getAll().length - 1);
+  globalScene.field.add(exclamationSprite);
+  globalScene.field.moveTo(exclamationSprite, globalScene.field.getAll().length - 1);
   exclamationSprite.setVisible(true);
   exclamationSprite.setPosition(110, 68);
-  gScene.tweens.add({
+  globalScene.tweens.add({
     targets: exclamationSprite,
     y: "-=25",
     ease: "Cubic.easeOut",
     duration: 300,
     yoyo: true,
     onComplete: () => {
-      gScene.time.delayedCall(800, () => {
-        gScene.field.remove(exclamationSprite, true);
+      globalScene.time.delayedCall(800, () => {
+        globalScene.field.remove(exclamationSprite, true);
       });
     }
   });
 
-  gScene.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
+  globalScene.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
 }
 
 export interface EnemyPokemonConfig {
@@ -120,7 +120,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   const loaded: boolean = false;
   const loadEnemyAssets: Promise<void>[] = [];
 
-  const battle: Battle = gScene.currentBattle;
+  const battle: Battle = globalScene.currentBattle;
 
   let doubleBattle: boolean = partyConfig?.doubleBattle ?? false;
 
@@ -129,10 +129,10 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   const partyTrainerConfig = partyConfig?.trainerConfig;
   let trainerConfig: TrainerConfig;
   if (!isNullOrUndefined(trainerType) || partyTrainerConfig) {
-    gScene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.TRAINER_BATTLE;
-    if (gScene.currentBattle.trainer) {
-      gScene.currentBattle.trainer.setVisible(false);
-      gScene.currentBattle.trainer.destroy();
+    globalScene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.TRAINER_BATTLE;
+    if (globalScene.currentBattle.trainer) {
+      globalScene.currentBattle.trainer.setVisible(false);
+      globalScene.currentBattle.trainer.destroy();
     }
 
     trainerConfig = partyTrainerConfig ? partyTrainerConfig : trainerConfigs[trainerType!];
@@ -143,20 +143,20 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     const newTrainer = new Trainer(trainerConfig.trainerType, doubleTrainer ? TrainerVariant.DOUBLE : trainerFemale ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT, undefined, undefined, undefined, trainerConfig);
     newTrainer.x += 300;
     newTrainer.setVisible(false);
-    gScene.field.add(newTrainer);
-    gScene.currentBattle.trainer = newTrainer;
+    globalScene.field.add(newTrainer);
+    globalScene.currentBattle.trainer = newTrainer;
     loadEnemyAssets.push(newTrainer.loadAssets().then(() => newTrainer.initSprite()));
 
-    battle.enemyLevels = gScene.currentBattle.trainer.getPartyLevels(gScene.currentBattle.waveIndex);
+    battle.enemyLevels = globalScene.currentBattle.trainer.getPartyLevels(globalScene.currentBattle.waveIndex);
   } else {
     // Wild
-    gScene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.WILD_BATTLE;
+    globalScene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.WILD_BATTLE;
     const numEnemies = partyConfig?.pokemonConfigs && partyConfig.pokemonConfigs.length > 0 ? partyConfig?.pokemonConfigs?.length : doubleBattle ? 2 : 1;
-    battle.enemyLevels = new Array(numEnemies).fill(null).map(() => gScene.currentBattle.getLevelForWave());
+    battle.enemyLevels = new Array(numEnemies).fill(null).map(() => globalScene.currentBattle.getLevelForWave());
   }
 
-  gScene.getEnemyParty().forEach(enemyPokemon => {
-    gScene.field.remove(enemyPokemon, true);
+  globalScene.getEnemyParty().forEach(enemyPokemon => {
+    globalScene.field.remove(enemyPokemon, true);
   });
   battle.enemyParty = [];
   battle.double = doubleBattle;
@@ -167,7 +167,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   // levelAdditiveModifier value of 0.5 will halve the modifier scaling, 2 will double it, etc.
   // Leaving null/undefined will disable level scaling
   const mult: number = !isNullOrUndefined(partyConfig.levelAdditiveModifier) ? partyConfig.levelAdditiveModifier : 0;
-  const additive = Math.max(Math.round((gScene.currentBattle.waveIndex / 10) * mult), 0);
+  const additive = Math.max(Math.round((globalScene.currentBattle.waveIndex / 10) * mult), 0);
   battle.enemyLevels = battle.enemyLevels.map(level => level + additive);
 
   battle.enemyLevels.forEach((level, e) => {
@@ -183,7 +183,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           dataSource = config.dataSource;
           enemySpecies = config.species;
           isBoss = config.isBoss;
-          battle.enemyParty[e] = gScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, dataSource);
+          battle.enemyParty[e] = globalScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, dataSource);
         } else {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         }
@@ -195,17 +195,17 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           enemySpecies = config.species;
           isBoss = config.isBoss;
           if (isBoss) {
-            gScene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.BOSS_BATTLE;
+            globalScene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.BOSS_BATTLE;
           }
         } else {
-          enemySpecies = gScene.randomSpecies(battle.waveIndex, level, true);
+          enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
         }
 
-        battle.enemyParty[e] = gScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss, dataSource);
+        battle.enemyParty[e] = globalScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss, dataSource);
       }
     }
 
-    const enemyPokemon = gScene.getEnemyParty()[e];
+    const enemyPokemon = globalScene.getEnemyParty()[e];
 
     // Make sure basic data is clean
     enemyPokemon.hp = enemyPokemon.getMaxHp();
@@ -218,7 +218,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     }
 
     if (!loaded && isNullOrUndefined(partyConfig.countAsSeen) || partyConfig.countAsSeen) {
-      gScene.gameData.setPokemonSeen(enemyPokemon, true, !!(trainerType || trainerConfig));
+      globalScene.gameData.setPokemonSeen(enemyPokemon, true, !!(trainerType || trainerConfig));
     }
 
     if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
@@ -256,7 +256,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
       // Set Boss
       if (config.isBoss) {
-        let segments = !isNullOrUndefined(config.bossSegments) ? config.bossSegments! : gScene.getEncounterBossSegments(gScene.currentBattle.waveIndex, level, enemySpecies, true);
+        let segments = !isNullOrUndefined(config.bossSegments) ? config.bossSegments! : globalScene.getEncounterBossSegments(globalScene.currentBattle.waveIndex, level, enemySpecies, true);
         if (!isNullOrUndefined(config.bossSegmentModifier)) {
           segments += config.bossSegmentModifier;
         }
@@ -342,7 +342,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     console.log(`Pokemon: ${enemyPokemon.name}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
   });
 
-  gScene.pushPhase(new MysteryEncounterBattlePhase(partyConfig.disableSwitch));
+  globalScene.pushPhase(new MysteryEncounterBattlePhase(partyConfig.disableSwitch));
 
   await Promise.all(loadEnemyAssets);
   battle.enemyParty.forEach((enemyPokemon_2, e_1) => {
@@ -356,11 +356,11 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     }
   });
   if (!loaded) {
-    regenerateModifierPoolThresholds(gScene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
+    regenerateModifierPoolThresholds(globalScene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
     const customModifierTypes = partyConfig?.pokemonConfigs
       ?.filter(config => config?.modifierConfigs)
       .map(config => config.modifierConfigs!);
-    gScene.generateEnemyModifiers(customModifierTypes);
+    globalScene.generateEnemyModifiers(customModifierTypes);
   }
 }
 
@@ -386,17 +386,17 @@ export function loadCustomMovesForEncounter(moves: Moves | Moves[]) {
  * @param showMessage
  */
 export function updatePlayerMoney(changeValue: number, playSound: boolean = true, showMessage: boolean = true) {
-  gScene.money = Math.min(Math.max(gScene.money + changeValue, 0), Number.MAX_SAFE_INTEGER);
-  gScene.updateMoneyText();
-  gScene.animateMoneyChanged(false);
+  globalScene.money = Math.min(Math.max(globalScene.money + changeValue, 0), Number.MAX_SAFE_INTEGER);
+  globalScene.updateMoneyText();
+  globalScene.animateMoneyChanged(false);
   if (playSound) {
-    gScene.playSound("se/buy");
+    globalScene.playSound("se/buy");
   }
   if (showMessage) {
     if (changeValue < 0) {
-      gScene.queueMessage(i18next.t("mysteryEncounterMessages:paid_money", { amount: -changeValue }), null, true);
+      globalScene.queueMessage(i18next.t("mysteryEncounterMessages:paid_money", { amount: -changeValue }), null, true);
     } else {
-      gScene.queueMessage(i18next.t("mysteryEncounterMessages:receive_money", { amount: changeValue }), null, true);
+      globalScene.queueMessage(i18next.t("mysteryEncounterMessages:receive_money", { amount: changeValue }), null, true);
     }
   }
 }
@@ -420,7 +420,7 @@ export function generateModifierType(modifier: () => ModifierType, pregenArgs?: 
     .withIdFromFunc(modifierTypes[modifierId])
     .withTierFromPool();
 
-  return result instanceof ModifierTypeGenerator ? result.generateType(gScene.getParty(), pregenArgs) : result;
+  return result instanceof ModifierTypeGenerator ? result.generateType(globalScene.getParty(), pregenArgs) : result;
 }
 
 /**
@@ -447,22 +447,22 @@ export function generateModifierTypeOption(modifier: () => ModifierType, pregenA
  */
 export function selectPokemonForOption(onPokemonSelected: (pokemon: PlayerPokemon) => void | OptionSelectItem[], onPokemonNotSelected?: () => void, selectablePokemonFilter?: PokemonSelectFilter): Promise<boolean> {
   return new Promise(resolve => {
-    const modeToSetOnExit = gScene.ui.getMode();
+    const modeToSetOnExit = globalScene.ui.getMode();
 
     // Open party screen to choose pokemon
-    gScene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
-      if (slotIndex < gScene.getParty().length) {
-        gScene.ui.setMode(modeToSetOnExit).then(() => {
-          const pokemon = gScene.getParty()[slotIndex];
+    globalScene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
+      if (slotIndex < globalScene.getParty().length) {
+        globalScene.ui.setMode(modeToSetOnExit).then(() => {
+          const pokemon = globalScene.getParty()[slotIndex];
           const secondaryOptions = onPokemonSelected(pokemon);
           if (!secondaryOptions) {
-            gScene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
+            globalScene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
             resolve(true);
             return;
           }
 
           // There is a second option to choose after selecting the Pokemon
-          gScene.ui.setMode(Mode.MESSAGE).then(() => {
+          globalScene.ui.setMode(Mode.MESSAGE).then(() => {
             const displayOptions = () => {
               // Always appends a cancel option to bottom of options
               const fullOptions = secondaryOptions.map(option => {
@@ -470,7 +470,7 @@ export function selectPokemonForOption(onPokemonSelected: (pokemon: PlayerPokemo
                 const onSelect = option.handler;
                 option.handler = () => {
                   onSelect();
-                  gScene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
+                  globalScene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
                   resolve(true);
                   return true;
                 };
@@ -478,8 +478,8 @@ export function selectPokemonForOption(onPokemonSelected: (pokemon: PlayerPokemo
               }).concat({
                 label: i18next.t("menu:cancel"),
                 handler: () => {
-                  gScene.ui.clearText();
-                  gScene.ui.setMode(modeToSetOnExit);
+                  globalScene.ui.clearText();
+                  globalScene.ui.setMode(modeToSetOnExit);
                   resolve(false);
                   return true;
                 },
@@ -499,10 +499,10 @@ export function selectPokemonForOption(onPokemonSelected: (pokemon: PlayerPokemo
               if (fullOptions[0].onHover) {
                 fullOptions[0].onHover();
               }
-              gScene.ui.setModeWithoutClear(Mode.OPTION_SELECT, config, null, true);
+              globalScene.ui.setModeWithoutClear(Mode.OPTION_SELECT, config, null, true);
             };
 
-            const textPromptKey = gScene.currentBattle.mysteryEncounter?.selectedOption?.dialogue?.secondOptionPrompt;
+            const textPromptKey = globalScene.currentBattle.mysteryEncounter?.selectedOption?.dialogue?.secondOptionPrompt;
             if (!textPromptKey) {
               displayOptions();
             } else {
@@ -511,7 +511,7 @@ export function selectPokemonForOption(onPokemonSelected: (pokemon: PlayerPokemo
           });
         });
       } else {
-        gScene.ui.setMode(modeToSetOnExit).then(() => {
+        globalScene.ui.setMode(modeToSetOnExit).then(() => {
           if (onPokemonNotSelected) {
             onPokemonNotSelected();
           }
@@ -538,23 +538,23 @@ interface PokemonAndOptionSelected {
  */
 export function selectOptionThenPokemon(options: OptionSelectItem[], optionSelectPromptKey: string, selectablePokemonFilter?: PokemonSelectFilter, onHoverOverCancelOption?: () => void): Promise<PokemonAndOptionSelected | null> {
   return new Promise<PokemonAndOptionSelected | null>(resolve => {
-    const modeToSetOnExit = gScene.ui.getMode();
+    const modeToSetOnExit = globalScene.ui.getMode();
 
     const displayOptions = (config: OptionSelectConfig) => {
-      gScene.ui.setMode(Mode.MESSAGE).then(() => {
+      globalScene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!optionSelectPromptKey) {
           // Do hover over the starting selection option
           if (fullOptions[0].onHover) {
             fullOptions[0].onHover();
           }
-          gScene.ui.setMode(Mode.OPTION_SELECT, config);
+          globalScene.ui.setMode(Mode.OPTION_SELECT, config);
         } else {
           showEncounterText(optionSelectPromptKey).then(() => {
             // Do hover over the starting selection option
             if (fullOptions[0].onHover) {
               fullOptions[0].onHover();
             }
-            gScene.ui.setMode(Mode.OPTION_SELECT, config);
+            globalScene.ui.setMode(Mode.OPTION_SELECT, config);
           });
         }
       });
@@ -562,10 +562,10 @@ export function selectOptionThenPokemon(options: OptionSelectItem[], optionSelec
 
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
       // Open party screen to choose a Pokemon
-      gScene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
-        if (slotIndex < gScene.getParty().length) {
+      globalScene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
+        if (slotIndex < globalScene.getParty().length) {
           // Pokemon and option selected
-          gScene.ui.setMode(modeToSetOnExit).then(() => {
+          globalScene.ui.setMode(modeToSetOnExit).then(() => {
             const result: PokemonAndOptionSelected = { selectedPokemonIndex: slotIndex, selectedOptionIndex: selectedOptionIndex };
             resolve(result);
           });
@@ -589,8 +589,8 @@ export function selectOptionThenPokemon(options: OptionSelectItem[], optionSelec
     }).concat({
       label: i18next.t("menu:cancel"),
       handler: () => {
-        gScene.ui.clearText();
-        gScene.ui.setMode(modeToSetOnExit);
+        globalScene.ui.clearText();
+        globalScene.ui.setMode(modeToSetOnExit);
         resolve(null);
         return true;
       },
@@ -622,15 +622,15 @@ export function selectOptionThenPokemon(options: OptionSelectItem[], optionSelec
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before {@linkcode MysteryEncounterRewardsPhase})
  */
 export function setEncounterRewards(customShopRewards?: CustomModifierSettings, eggRewards?: IEggOptions[], preRewardsCallback?: Function) {
-  gScene.currentBattle.mysteryEncounter!.doEncounterRewards = () => {
+  globalScene.currentBattle.mysteryEncounter!.doEncounterRewards = () => {
     if (preRewardsCallback) {
       preRewardsCallback();
     }
 
     if (customShopRewards) {
-      gScene.unshiftPhase(new SelectModifierPhase(0, undefined, customShopRewards));
+      globalScene.unshiftPhase(new SelectModifierPhase(0, undefined, customShopRewards));
     } else {
-      gScene.tryRemovePhase(p => p instanceof SelectModifierPhase);
+      globalScene.tryRemovePhase(p => p instanceof SelectModifierPhase);
     }
 
     if (eggRewards) {
@@ -665,8 +665,8 @@ export function setEncounterRewards(customShopRewards?: CustomModifierSettings, 
 export function setEncounterExp(participantId: number | number[], baseExpValue: number, useWaveIndex: boolean = true) {
   const participantIds = Array.isArray(participantId) ? participantId : [ participantId ];
 
-  gScene.currentBattle.mysteryEncounter!.doEncounterExp = () => {
-    gScene.unshiftPhase(new PartyExpPhase(baseExpValue, useWaveIndex, new Set(participantIds)));
+  globalScene.currentBattle.mysteryEncounter!.doEncounterExp = () => {
+    globalScene.unshiftPhase(new PartyExpPhase(baseExpValue, useWaveIndex, new Set(participantIds)));
 
     return true;
   };
@@ -689,7 +689,7 @@ export class OptionSelectSettings {
  * @param optionSelectSettings
  */
 export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSettings) {
-  gScene.pushPhase(new MysteryEncounterPhase(optionSelectSettings));
+  globalScene.pushPhase(new MysteryEncounterPhase(optionSelectSettings));
 }
 
 /**
@@ -700,9 +700,9 @@ export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSet
  * @param encounterMode - Can set custom encounter mode if necessary (may be required for forcing Pokemon to return before next phase)
  */
 export function leaveEncounterWithoutBattle(addHealPhase: boolean = false, encounterMode: MysteryEncounterMode = MysteryEncounterMode.NO_BATTLE) {
-  gScene.currentBattle.mysteryEncounter!.encounterMode = encounterMode;
-  gScene.clearPhaseQueue();
-  gScene.clearPhaseQueueSplice();
+  globalScene.currentBattle.mysteryEncounter!.encounterMode = encounterMode;
+  globalScene.clearPhaseQueue();
+  globalScene.clearPhaseQueueSplice();
   handleMysteryEncounterVictory(addHealPhase);
 }
 
@@ -713,32 +713,32 @@ export function leaveEncounterWithoutBattle(addHealPhase: boolean = false, encou
  * @param doNotContinue - default `false`. If set to true, will not end the battle and continue to next wave
  */
 export function handleMysteryEncounterVictory(addHealPhase: boolean = false, doNotContinue: boolean = false) {
-  const allowedPkm = gScene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  const allowedPkm = globalScene.getParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    gScene.clearPhaseQueue();
-    gScene.unshiftPhase(new GameOverPhase());
+    globalScene.clearPhaseQueue();
+    globalScene.unshiftPhase(new GameOverPhase());
     return;
   }
 
   // If in repeated encounter variant, do nothing
   // Variant must eventually be swapped in order to handle "true" end of the encounter
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   if (encounter.continuousEncounter || doNotContinue) {
     return;
   } else if (encounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
-    gScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
-    gScene.pushPhase(new EggLapsePhase());
-  } else if (!gScene.getEnemyParty().find(p => encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
-    gScene.pushPhase(new BattleEndPhase());
+    globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
+    globalScene.pushPhase(new EggLapsePhase());
+  } else if (!globalScene.getEnemyParty().find(p => encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
+    globalScene.pushPhase(new BattleEndPhase());
     if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
-      gScene.pushPhase(new TrainerVictoryPhase());
+      globalScene.pushPhase(new TrainerVictoryPhase());
     }
-    if (gScene.gameMode.isEndless || !gScene.gameMode.isWaveFinal(gScene.currentBattle.waveIndex)) {
-      gScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
+    if (globalScene.gameMode.isEndless || !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
+      globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
       if (!encounter.doContinueEncounter) {
         // Only lapse eggs once for multi-battle encounters
-        gScene.pushPhase(new EggLapsePhase());
+        globalScene.pushPhase(new EggLapsePhase());
       }
     }
   }
@@ -750,28 +750,28 @@ export function handleMysteryEncounterVictory(addHealPhase: boolean = false, doN
  * @param addHealPhase
  */
 export function handleMysteryEncounterBattleFailed(addHealPhase: boolean = false, doNotContinue: boolean = false) {
-  const allowedPkm = gScene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  const allowedPkm = globalScene.getParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    gScene.clearPhaseQueue();
-    gScene.unshiftPhase(new GameOverPhase());
+    globalScene.clearPhaseQueue();
+    globalScene.unshiftPhase(new GameOverPhase());
     return;
   }
 
   // If in repeated encounter variant, do nothing
   // Variant must eventually be swapped in order to handle "true" end of the encounter
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   if (encounter.continuousEncounter || doNotContinue) {
     return;
   } else if (encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE) {
-    gScene.pushPhase(new BattleEndPhase(false));
+    globalScene.pushPhase(new BattleEndPhase(false));
   }
 
-  gScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
+  globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
 
   if (!encounter.doContinueEncounter) {
     // Only lapse eggs once for multi-battle encounters
-    gScene.pushPhase(new EggLapsePhase());
+    globalScene.pushPhase(new EggLapsePhase());
   }
 }
 
@@ -784,10 +784,10 @@ export function handleMysteryEncounterBattleFailed(addHealPhase: boolean = false
  */
 export function transitionMysteryEncounterIntroVisuals(hide: boolean = true, destroy: boolean = true, duration: number = 750): Promise<boolean> {
   return new Promise(resolve => {
-    const introVisuals = gScene.currentBattle.mysteryEncounter!.introVisuals;
-    const enemyPokemon = gScene.getEnemyField();
+    const introVisuals = globalScene.currentBattle.mysteryEncounter!.introVisuals;
+    const enemyPokemon = globalScene.getEnemyField();
     if (enemyPokemon) {
-      gScene.currentBattle.enemyParty = [];
+      globalScene.currentBattle.enemyParty = [];
     }
     if (introVisuals) {
       if (!hide) {
@@ -799,7 +799,7 @@ export function transitionMysteryEncounterIntroVisuals(hide: boolean = true, des
       }
 
       // Transition
-      gScene.tweens.add({
+      globalScene.tweens.add({
         targets: [ introVisuals, enemyPokemon ],
         x: `${hide ? "+" : "-"}=16`,
         y: `${hide ? "-" : "+"}=16`,
@@ -808,13 +808,13 @@ export function transitionMysteryEncounterIntroVisuals(hide: boolean = true, des
         duration,
         onComplete: () => {
           if (hide && destroy) {
-            gScene.field.remove(introVisuals, true);
+            globalScene.field.remove(introVisuals, true);
 
             enemyPokemon.forEach(pokemon => {
-              gScene.field.remove(pokemon, true);
+              globalScene.field.remove(pokemon, true);
             });
 
-            gScene.currentBattle.mysteryEncounter!.introVisuals = undefined;
+            globalScene.currentBattle.mysteryEncounter!.introVisuals = undefined;
           }
           resolve(true);
         }
@@ -831,8 +831,8 @@ export function transitionMysteryEncounterIntroVisuals(hide: boolean = true, des
  * @param scene
  */
 export function handleMysteryEncounterBattleStartEffects() {
-  const encounter = gScene.currentBattle.mysteryEncounter;
-  if (gScene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
+  const encounter = globalScene.currentBattle.mysteryEncounter;
+  if (globalScene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE && !encounter.startOfBattleEffectsComplete) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
       let source;
@@ -840,24 +840,24 @@ export function handleMysteryEncounterBattleStartEffects() {
         source = effect.sourcePokemon;
       } else if (!isNullOrUndefined(effect.sourceBattlerIndex)) {
         if (effect.sourceBattlerIndex === BattlerIndex.ATTACKER) {
-          source = gScene.getEnemyField()[0];
+          source = globalScene.getEnemyField()[0];
         } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY) {
-          source = gScene.getEnemyField()[0];
+          source = globalScene.getEnemyField()[0];
         } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY_2) {
-          source = gScene.getEnemyField()[1];
+          source = globalScene.getEnemyField()[1];
         } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER) {
-          source = gScene.getPlayerField()[0];
+          source = globalScene.getPlayerField()[0];
         } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER_2) {
-          source = gScene.getPlayerField()[1];
+          source = globalScene.getPlayerField()[1];
         }
       } else {
-        source = gScene.getEnemyField()[0];
+        source = globalScene.getEnemyField()[0];
       }
-      gScene.pushPhase(new MovePhase(source, effect.targets, effect.move, effect.followUp, effect.ignorePp));
+      globalScene.pushPhase(new MovePhase(source, effect.targets, effect.move, effect.followUp, effect.ignorePp));
     });
 
     // Pseudo turn end phase to reset flinch states, Endure, etc.
-    gScene.pushPhase(new MysteryEncounterBattleStartCleanupPhase());
+    globalScene.pushPhase(new MysteryEncounterBattleStartCleanupPhase());
 
     encounter.startOfBattleEffectsComplete = true;
   }
@@ -870,8 +870,8 @@ export function handleMysteryEncounterBattleStartEffects() {
  * @return boolean - if true, will skip the remainder of the {@linkcode TurnInitPhase}
  */
 export function handleMysteryEncounterTurnStartEffects(): boolean {
-  const encounter = gScene.currentBattle.mysteryEncounter;
-  if (gScene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.onTurnStart) {
+  const encounter = globalScene.currentBattle.mysteryEncounter;
+  if (globalScene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.onTurnStart) {
     return encounter.onTurnStart();
   }
 
@@ -897,9 +897,9 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
     const encountersByBiome = new Map<string, number>(biomes.map(b => [ b, 0 ]));
     const validMEfloorsByBiome = new Map<string, number>(biomes.map(b => [ b, 0 ]));
     let currentBiome = Biome.TOWN;
-    let currentArena = gScene.newArena(currentBiome);
-    gScene.setSeed(Utils.randomString(24));
-    gScene.resetSeed();
+    let currentArena = globalScene.newArena(currentBiome);
+    globalScene.setSeed(Utils.randomString(24));
+    globalScene.resetSeed();
     for (let i = 10; i < 180; i++) {
       // Boss
       if (i % 10 === 0) {
@@ -910,7 +910,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
       if (i % 10 === 1) {
         if (Array.isArray(biomeLinks[currentBiome])) {
           let biomes: Biome[];
-          gScene.executeWithSeedOffset(() => {
+          globalScene.executeWithSeedOffset(() => {
             biomes = (biomeLinks[currentBiome] as (Biome | [Biome, number])[])
               .filter(b => {
                 return !Array.isArray(b) || !Utils.randSeedInt(b[1]);
@@ -931,20 +931,20 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
           if (!(i % 50)) {
             currentBiome = Biome.END;
           } else {
-            currentBiome = gScene.generateRandomBiome(i);
+            currentBiome = globalScene.generateRandomBiome(i);
           }
         }
 
-        currentArena = gScene.newArena(currentBiome);
+        currentArena = globalScene.newArena(currentBiome);
       }
 
       // Fixed battle
-      if (gScene.gameMode.isFixedBattle(i)) {
+      if (globalScene.gameMode.isFixedBattle(i)) {
         continue;
       }
 
       // Trainer
-      if (gScene.gameMode.isWaveTrainer(i, currentArena)) {
+      if (globalScene.gameMode.isWaveTrainer(i, currentArena)) {
         continue;
       }
 
@@ -994,7 +994,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
   const encountersByBiomeRuns: Map<string, number>[] = [];
   const validFloorsByBiome: Map<string, number>[] = [];
   while (run < numRuns) {
-    gScene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       const [ numEncounters, encountersByBiome, validMEfloorsByBiome ] = calculateNumEncounters();
       encounterRuns.push(numEncounters);
       encountersByBiomeRuns.push(encountersByBiome);
@@ -1055,8 +1055,8 @@ export function calculateRareSpawnAggregateStats(luckValue: number) {
 
   const calculateNumRareEncounters = (): any[] => {
     const bossEncountersByRarity = [ 0, 0, 0, 0 ];
-    gScene.setSeed(Utils.randomString(24));
-    gScene.resetSeed();
+    globalScene.setSeed(Utils.randomString(24));
+    globalScene.resetSeed();
     // There are 12 wild boss floors
     for (let i = 0; i < 12; i++) {
       // Roll boss tier
@@ -1090,7 +1090,7 @@ export function calculateRareSpawnAggregateStats(luckValue: number) {
 
   const encounterRuns: number[][] = [];
   while (run < numRuns) {
-    gScene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       const bossEncountersByRarity = calculateNumRareEncounters();
       encounterRuns.push(bossEncountersByRarity);
     }, 1000 * run);

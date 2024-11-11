@@ -2,7 +2,7 @@ import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requir
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { StatusEffect } from "#app/data/status-effect";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
@@ -52,7 +52,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       },
     ])
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       console.log(encounter);
 
       // Calculate boss mon
@@ -104,7 +104,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       },
       async () => {
         // Pick battle
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.LEFTOVERS ], fillRemaining: true });
         encounter.startOfBattleEffects.push(
           {
@@ -135,7 +135,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       async () => {
         // Fall asleep waiting for Snorlax
         // Full heal party
-        gScene.unshiftPhase(new PartyHealPhase(true));
+        globalScene.unshiftPhase(new PartyHealPhase(true));
         queueEncounterMessage(`${namespace}:option.2.rest_result`);
         leaveEncounterWithoutBattle();
       }
@@ -156,7 +156,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Steal the Snorlax's Leftovers
-          const instance = gScene.currentBattle.mysteryEncounter!;
+          const instance = globalScene.currentBattle.mysteryEncounter!;
           setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.LEFTOVERS ], fillRemaining: false });
           // Snorlax exp to Pokemon that did the stealing
           setEncounterExp(instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);

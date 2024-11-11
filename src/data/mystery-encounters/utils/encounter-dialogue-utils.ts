@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { getTextWithColors, TextStyle } from "#app/ui/text";
 import { UiTheme } from "#enums/ui-theme";
 import { isNullOrUndefined } from "#app/utils";
@@ -29,12 +29,12 @@ export function getEncounterText(keyOrString?: string, primaryStyle?: TextStyle,
 }
 
 /**
- * Helper function to inject {@linkcode gScene.currentBattle.mysteryEncounter.dialogueTokens} into a given content string
+ * Helper function to inject {@linkcode globalScene.currentBattle.mysteryEncounter.dialogueTokens} into a given content string
  * @param scene
  * @param keyOrString
  */
 function getTextWithDialogueTokens(keyOrString: string): string | null {
-  const tokens = gScene.currentBattle?.mysteryEncounter?.dialogueTokens;
+  const tokens = globalScene.currentBattle?.mysteryEncounter?.dialogueTokens;
 
   if (i18next.exists(keyOrString, tokens)) {
     return i18next.t(keyOrString, tokens) as string;
@@ -50,7 +50,7 @@ function getTextWithDialogueTokens(keyOrString: string): string | null {
  */
 export function queueEncounterMessage(contentKey: string): void {
   const text: string | null = getEncounterText(contentKey);
-  gScene.queueMessage(text ?? "", null, true);
+  globalScene.queueMessage(text ?? "", null, true);
 }
 
 /**
@@ -65,7 +65,7 @@ export function queueEncounterMessage(contentKey: string): void {
 export function showEncounterText(contentKey: string, delay: number | null = null, callbackDelay: number = 0, prompt: boolean = true, promptDelay: number | null = null): Promise<void> {
   return new Promise<void>(resolve => {
     const text: string | null = getEncounterText(contentKey);
-    gScene.ui.showText(text ?? "", delay, () => resolve(), callbackDelay, prompt, promptDelay);
+    globalScene.ui.showText(text ?? "", delay, () => resolve(), callbackDelay, prompt, promptDelay);
   });
 }
 
@@ -81,6 +81,6 @@ export function showEncounterDialogue(textContentKey: string, speakerContentKey:
   return new Promise<void>(resolve => {
     const text: string | null = getEncounterText(textContentKey);
     const speaker: string | null = getEncounterText(speakerContentKey);
-    gScene.ui.showDialogue(text ?? "", speaker ?? "", delay, () => resolve(), callbackDelay);
+    globalScene.ui.showDialogue(text ?? "", speaker ?? "", delay, () => resolve(), callbackDelay);
   });
 }

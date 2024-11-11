@@ -19,7 +19,7 @@ import { CheckStatusEffectPhase } from "#app/phases/check-status-effect-phase";
 import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export class TurnStartPhase extends FieldPhase {
   constructor() {
@@ -32,20 +32,20 @@ export class TurnStartPhase extends FieldPhase {
    * @returns {@linkcode BattlerIndex[]} the battle indices of all pokemon on the field ordered by speed
    */
   getSpeedOrder(): BattlerIndex[] {
-    const playerField = gScene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
-    const enemyField = gScene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
+    const playerField = globalScene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
+    const enemyField = globalScene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
     // We shuffle the list before sorting so speed ties produce random results
     let orderedTargets: Pokemon[] = playerField.concat(enemyField);
     // We seed it with the current turn to prevent an inconsistency where it
     // was varying based on how long since you last reloaded
-    gScene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       orderedTargets = Utils.randSeedShuffle(orderedTargets);
-    }, gScene.currentBattle.turn, gScene.waveSeed);
+    }, globalScene.currentBattle.turn, globalScene.waveSeed);
 
     // Next, a check for Trick Room is applied to determine sort order.
     const speedReversed = new Utils.BooleanHolder(false);
-    gScene.arena.applyTags(TrickRoomTag, false, speedReversed);
+    globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
 
     // Adjust the sort function based on whether Trick Room is active.
     orderedTargets.sort((a: Pokemon, b: Pokemon) => {
@@ -70,13 +70,13 @@ export class TurnStartPhase extends FieldPhase {
     // This occurs before the main loop because of battles with more than two Pokemon
     const battlerBypassSpeed = {};
 
-    gScene.getField(true).filter(p => p.summonData).map(p => {
+    globalScene.getField(true).filter(p => p.summonData).map(p => {
       const bypassSpeed = new Utils.BooleanHolder(false);
       const canCheckHeldItems = new Utils.BooleanHolder(true);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
       applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
       if (canCheckHeldItems.value) {
-        gScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+        globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
       }
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });
@@ -85,8 +85,8 @@ export class TurnStartPhase extends FieldPhase {
     // Non-FIGHT commands (SWITCH, BALL, RUN) have a higher command priority and will always occur before any FIGHT commands.
     moveOrder = moveOrder.slice(0);
     moveOrder.sort((a, b) => {
-      const aCommand = gScene.currentBattle.turnCommands[a];
-      const bCommand = gScene.currentBattle.turnCommands[b];
+      const aCommand = globalScene.currentBattle.turnCommands[a];
+      const bCommand = globalScene.currentBattle.turnCommands[b];
 
       if (aCommand?.command !== bCommand?.command) {
         if (aCommand?.command === Command.FIGHT) {
@@ -102,11 +102,11 @@ export class TurnStartPhase extends FieldPhase {
         const aPriority = new Utils.IntegerHolder(aMove.priority);
         const bPriority = new Utils.IntegerHolder(bMove.priority);
 
-        applyMoveAttrs(IncrementMovePriorityAttr, gScene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority);
-        applyMoveAttrs(IncrementMovePriorityAttr, gScene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority);
+        applyMoveAttrs(IncrementMovePriorityAttr, globalScene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority);
+        applyMoveAttrs(IncrementMovePriorityAttr, globalScene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority);
 
-        applyAbAttrs(ChangeMovePriorityAbAttr, gScene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, false, aMove, aPriority);
-        applyAbAttrs(ChangeMovePriorityAbAttr, gScene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, false, bMove, bPriority);
+        applyAbAttrs(ChangeMovePriorityAbAttr, globalScene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, false, aMove, aPriority);
+        applyAbAttrs(ChangeMovePriorityAbAttr, globalScene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, false, bMove, bPriority);
 
         // The game now checks for differences in priority levels.
         // If the moves share the same original priority bracket, it can check for differences in battlerBypassSpeed and return the result.
@@ -137,7 +137,7 @@ export class TurnStartPhase extends FieldPhase {
   start() {
     super.start();
 
-    const field = gScene.getField();
+    const field = globalScene.getField();
     const moveOrder = this.getCommandOrder();
 
     let orderIndex = 0;
@@ -145,7 +145,7 @@ export class TurnStartPhase extends FieldPhase {
     for (const o of moveOrder) {
 
       const pokemon = field[o];
-      const turnCommand = gScene.currentBattle.turnCommands[o];
+      const turnCommand = globalScene.currentBattle.turnCommands[o];
 
       if (turnCommand?.skip) {
         continue;
@@ -160,29 +160,29 @@ export class TurnStartPhase extends FieldPhase {
           }
           const move = pokemon.getMoveset().find(m => m?.moveId === queuedMove.move && m?.ppUsed < m?.getMovePp()) || new PokemonMove(queuedMove.move);
           if (move.getMove().hasAttr(MoveHeaderAttr)) {
-            gScene.unshiftPhase(new MoveHeaderPhase(pokemon, move));
+            globalScene.unshiftPhase(new MoveHeaderPhase(pokemon, move));
           }
           if (pokemon.isPlayer()) {
             if (turnCommand.cursor === -1) {
-              gScene.pushPhase(new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
+              globalScene.pushPhase(new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move));//TODO: is the bang correct here?
             } else {
               const playerPhase = new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP);//TODO: is the bang correct here?
-              gScene.pushPhase(playerPhase);
+              globalScene.pushPhase(playerPhase);
             }
           } else {
-            gScene.pushPhase(new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
+            globalScene.pushPhase(new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, false, queuedMove.ignorePP));//TODO: is the bang correct here?
           }
           break;
         case Command.BALL:
-          gScene.unshiftPhase(new AttemptCapturePhase(turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
+          globalScene.unshiftPhase(new AttemptCapturePhase(turnCommand.targets![0] % 2, turnCommand.cursor!));//TODO: is the bang correct here?
           break;
         case Command.POKEMON:
           const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
-          gScene.unshiftPhase(new SwitchSummonPhase(switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()));
+          globalScene.unshiftPhase(new SwitchSummonPhase(switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()));
           break;
         case Command.RUN:
           let runningPokemon = pokemon;
-          if (gScene.currentBattle.double) {
+          if (globalScene.currentBattle.double) {
             const playerActivePokemon = field.filter(pokemon => {
               if (!!pokemon) {
                 return pokemon.isPlayer() && pokemon.isActive();
@@ -199,18 +199,18 @@ export class TurnStartPhase extends FieldPhase {
               runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
             }
           }
-          gScene.unshiftPhase(new AttemptRunPhase(runningPokemon.getFieldIndex()));
+          globalScene.unshiftPhase(new AttemptRunPhase(runningPokemon.getFieldIndex()));
           break;
       }
     }
 
-    gScene.pushPhase(new WeatherEffectPhase());
-    gScene.pushPhase(new BerryPhase());
+    globalScene.pushPhase(new WeatherEffectPhase());
+    globalScene.pushPhase(new BerryPhase());
 
     /** Add a new phase to check who should be taking status damage */
-    gScene.pushPhase(new CheckStatusEffectPhase(moveOrder));
+    globalScene.pushPhase(new CheckStatusEffectPhase(moveOrder));
 
-    gScene.pushPhase(new TurnEndPhase());
+    globalScene.pushPhase(new TurnEndPhase());
 
     /**
        * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front

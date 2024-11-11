@@ -3,7 +3,7 @@ import { UiTheme } from "#enums/ui-theme";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
 import i18next from "#app/plugins/i18n";
 
@@ -50,9 +50,9 @@ export interface TextStyleOptions {
 }
 
 export function addTextObject(x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
-  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, gScene.uiTheme, extraStyleOptions);
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
 
-  const ret = gScene.add.text(x, y, content, styleOptions);
+  const ret = globalScene.add.text(x, y, content, styleOptions);
   ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
@@ -67,7 +67,7 @@ export function addTextObject(x: number, y: number, content: string, style: Text
 }
 
 export function setTextStyle(obj: Phaser.GameObjects.Text, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
-  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, gScene.uiTheme, extraStyleOptions);
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
   obj.setScale(scale);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
@@ -80,10 +80,10 @@ export function setTextStyle(obj: Phaser.GameObjects.Text, style: TextStyle, ext
 }
 
 export function addBBCodeTextObject(x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
-  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, gScene.uiTheme, extraStyleOptions);
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
 
-  const ret = new BBCodeText(gScene, x, y, content, styleOptions as BBCodeText.TextStyle);
-  gScene.add.existing(ret);
+  const ret = new BBCodeText(globalScene, x, y, content, styleOptions as BBCodeText.TextStyle);
+  globalScene.add.existing(ret);
   ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
@@ -98,10 +98,10 @@ export function addBBCodeTextObject(x: number, y: number, content: string, style
 }
 
 export function addTextInputObject(x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText {
-  const { scale, styleOptions } = getTextStyleOptions(style, gScene.uiTheme, extraStyleOptions);
+  const { scale, styleOptions } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
 
-  const ret = new InputText(gScene, x, y, width, height, styleOptions as InputText.IConfig);
-  gScene.add.existing(ret);
+  const ret = new InputText(globalScene, x, y, width, height, styleOptions as InputText.IConfig);
+  globalScene.add.existing(ret);
   ret.setScale(scale);
 
   return ret;

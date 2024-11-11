@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import * as Utils from "../utils";
 
 export enum PokemonIconAnimMode {
@@ -26,7 +26,7 @@ export default class PokemonIconAnimHandler {
         i.y += delta * (this.toggled ? 1 : -1);
       }
     };
-    gScene.tweens.addCounter({
+    globalScene.tweens.addCounter({
       duration: Utils.fixedInt(200),
       from: 0,
       to: 1,

@@ -2,7 +2,7 @@ import { Type } from "#app/data/type";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
@@ -145,9 +145,9 @@ export const DarkDealEncounter: MysteryEncounter =
 
           // Get all the pokemon's held items
           const modifiers = removedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
-          gScene.removePokemonFromPlayerParty(removedPokemon);
+          globalScene.removePokemonFromPlayerParty(removedPokemon);
 
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           encounter.setDialogueToken("pokeName", removedPokemon.getNameToRender());
 
           // Store removed pokemon types
@@ -158,14 +158,14 @@ export const DarkDealEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Give the player 5 Rogue Balls
-          const encounter = gScene.currentBattle.mysteryEncounter!;
-          gScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.ROGUE_BALL));
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
+          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.ROGUE_BALL));
 
           // Start encounter with random legendary (7-10 starter strength) that has level additive
           // If this is a mono-type challenge, always ensure the required type is filtered for
           let bossTypes: Type[] = encounter.misc.removedTypes;
-          const singleTypeChallenges = gScene.gameMode.challenges.filter(c => c.value && c.id === Challenges.SINGLE_TYPE);
-          if (gScene.gameMode.isChallenge && singleTypeChallenges.length > 0) {
+          const singleTypeChallenges = globalScene.gameMode.challenges.filter(c => c.value && c.id === Challenges.SINGLE_TYPE);
+          if (globalScene.gameMode.isChallenge && singleTypeChallenges.length > 0) {
             bossTypes = singleTypeChallenges.map(c => (c.value - 1) as Type);
           }
 

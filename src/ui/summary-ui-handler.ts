@@ -1,4 +1,4 @@
-import { gScene, starterColors } from "#app/battle-scene";
+import { globalScene, starterColors } from "#app/battle-scene";
 import { Mode } from "#app/ui/ui";
 import UiHandler from "#app/ui/ui-handler";
 import * as Utils from "#app/utils";
@@ -116,15 +116,15 @@ export default class SummaryUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.summaryContainer = gScene.add.container(0, 0);
+    this.summaryContainer = globalScene.add.container(0, 0);
     this.summaryContainer.setVisible(false);
     ui.add(this.summaryContainer);
 
-    const summaryBg = gScene.add.image(0, 0, "summary_bg");
+    const summaryBg = globalScene.add.image(0, 0, "summary_bg");
     summaryBg.setOrigin(0, 1);
     this.summaryContainer.add(summaryBg);
 
-    this.tabSprite = gScene.add.sprite(134, (-summaryBg.displayHeight) + 16, "summary_tabs_1");
+    this.tabSprite = globalScene.add.sprite(134, (-summaryBg.displayHeight) + 16, "summary_tabs_1");
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
 
@@ -132,7 +132,7 @@ export default class SummaryUiHandler extends UiHandler {
     summaryLabel.setOrigin(0, 1);
     this.summaryContainer.add(summaryLabel);
 
-    this.shinyOverlay = gScene.add.image(6, -54, "summary_overlay_shiny");
+    this.shinyOverlay = globalScene.add.image(6, -54, "summary_overlay_shiny");
     this.shinyOverlay.setOrigin(0, 1);
     this.shinyOverlay.setVisible(false);
     this.summaryContainer.add(this.shinyOverlay);
@@ -141,46 +141,46 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setOrigin(0, 1);
     this.summaryContainer.add(this.numberText);
 
-    this.pokemonSprite = gScene.initPokemonSprite(gScene.add.sprite(56, -106, "pkmn__sub"), undefined, false, true);
+    this.pokemonSprite = globalScene.initPokemonSprite(globalScene.add.sprite(56, -106, "pkmn__sub"), undefined, false, true);
     this.summaryContainer.add(this.pokemonSprite);
 
     this.nameText = addTextObject(6, -54, "", TextStyle.SUMMARY);
     this.nameText.setOrigin(0, 0);
     this.summaryContainer.add(this.nameText);
 
-    this.splicedIcon = gScene.add.sprite(0, -54, "icon_spliced");
+    this.splicedIcon = globalScene.add.sprite(0, -54, "icon_spliced");
     this.splicedIcon.setVisible(false);
     this.splicedIcon.setOrigin(0, 0);
     this.splicedIcon.setScale(0.75);
     this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.splicedIcon);
 
-    this.shinyIcon = gScene.add.image(0, -54, "shiny_star");
+    this.shinyIcon = globalScene.add.image(0, -54, "shiny_star");
     this.shinyIcon.setVisible(false);
     this.shinyIcon.setOrigin(0, 0);
     this.shinyIcon.setScale(0.75);
     this.shinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.shinyIcon);
 
-    this.fusionShinyIcon = gScene.add.image(0, 0, "shiny_star_2");
+    this.fusionShinyIcon = globalScene.add.image(0, 0, "shiny_star_2");
     this.fusionShinyIcon.setVisible(false);
     this.fusionShinyIcon.setOrigin(0, 0);
     this.fusionShinyIcon.setScale(0.75);
     this.summaryContainer.add(this.fusionShinyIcon);
 
-    this.pokeball = gScene.add.sprite(6, -19, "pb");
+    this.pokeball = globalScene.add.sprite(6, -19, "pb");
     this.pokeball.setOrigin(0, 1);
     this.summaryContainer.add(this.pokeball);
 
-    this.candyIcon = gScene.add.sprite(13, -140, "candy");
+    this.candyIcon = globalScene.add.sprite(13, -140, "candy");
     this.candyIcon.setScale(0.8);
     this.summaryContainer.add(this.candyIcon);
 
-    this.candyOverlay = gScene.add.sprite(13, -140, "candy_overlay");
+    this.candyOverlay = globalScene.add.sprite(13, -140, "candy_overlay");
     this.candyOverlay.setScale(0.8);
     this.summaryContainer.add(this.candyOverlay);
 
-    this.candyShadow = gScene.add.sprite(13, -140, "candy");
+    this.candyShadow = globalScene.add.sprite(13, -140, "candy");
     this.candyShadow.setTint(0x000000);
     this.candyShadow.setAlpha(0.50);
     this.candyShadow.setScale(0.8);
@@ -191,15 +191,15 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyCountText.setOrigin(0, 0);
     this.summaryContainer.add(this.candyCountText);
 
-    this.friendshipIcon = gScene.add.sprite(13, -60, "friendship");
+    this.friendshipIcon = globalScene.add.sprite(13, -60, "friendship");
     this.friendshipIcon.setScale(0.8);
     this.summaryContainer.add(this.friendshipIcon);
 
-    this.friendshipOverlay = gScene.add.sprite(13, -60, "friendship_overlay");
+    this.friendshipOverlay = globalScene.add.sprite(13, -60, "friendship_overlay");
     this.friendshipOverlay.setScale(0.8);
     this.summaryContainer.add(this.friendshipOverlay);
 
-    this.friendshipShadow = gScene.add.sprite(13, -60, "friendship");
+    this.friendshipShadow = globalScene.add.sprite(13, -60, "friendship");
     this.friendshipShadow.setTint(0x000000);
     this.friendshipShadow.setAlpha(0.50);
     this.friendshipShadow.setScale(0.8);
@@ -210,7 +210,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.friendshipText.setOrigin(0, 0);
     this.summaryContainer.add(this.friendshipText);
 
-    this.championRibbon = gScene.add.image(88, -146, "champion_ribbon");
+    this.championRibbon = globalScene.add.image(88, -146, "champion_ribbon");
     this.championRibbon.setOrigin(0, 0);
     //this.championRibbon.setScale(0.8);
     this.championRibbon.setScale(1.25);
@@ -225,9 +225,9 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText.setOrigin(0, 1);
     this.summaryContainer.add(this.genderText);
 
-    this.statusContainer = gScene.add.container(-106, -16);
+    this.statusContainer = globalScene.add.container(-106, -16);
 
-    const statusBg = gScene.add.image(0, 0, "summary_status");
+    const statusBg = globalScene.add.image(0, 0, "summary_status");
     statusBg.setOrigin(0, 0);
 
     this.statusContainer.add(statusBg);
@@ -237,18 +237,18 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.statusContainer.add(statusLabel);
 
-    this.status = gScene.add.sprite(91, 4, Utils.getLocalizedSpriteKey("statuses"));
+    this.status = globalScene.add.sprite(91, 4, Utils.getLocalizedSpriteKey("statuses"));
     this.status.setOrigin(0.5, 0);
 
     this.statusContainer.add(this.status);
 
     this.summaryContainer.add(this.statusContainer);
 
-    this.moveEffectContainer = gScene.add.container(106, -62);
+    this.moveEffectContainer = globalScene.add.container(106, -62);
 
     this.summaryContainer.add(this.moveEffectContainer);
 
-    const moveEffectBg = gScene.add.image(0, 0, "summary_moves_effect");
+    const moveEffectBg = globalScene.add.image(0, 0, "summary_moves_effect");
     moveEffectBg.setOrigin(0, 0);
     this.moveEffectContainer.add(moveEffectBg);
 
@@ -266,20 +266,20 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveAccuracyText.setOrigin(1, 1);
     this.moveEffectContainer.add(this.moveAccuracyText);
 
-    this.moveCategoryIcon = gScene.add.sprite(99, 57, "categories");
+    this.moveCategoryIcon = globalScene.add.sprite(99, 57, "categories");
     this.moveCategoryIcon.setOrigin(1, 1);
     this.moveEffectContainer.add(this.moveCategoryIcon);
 
     const getSummaryPageBg = () => {
-      const ret = gScene.add.sprite(0, 0, this.getPageKey(0));
+      const ret = globalScene.add.sprite(0, 0, this.getPageKey(0));
       ret.setOrigin(0, 1);
       return ret;
     };
 
-    this.summaryContainer.add((this.summaryPageContainer = gScene.add.container(106, 0)));
+    this.summaryContainer.add((this.summaryPageContainer = globalScene.add.container(106, 0)));
     this.summaryPageContainer.add(getSummaryPageBg());
     this.summaryPageContainer.setVisible(false);
-    this.summaryContainer.add((this.summaryPageTransitionContainer = gScene.add.container(106, 0)));
+    this.summaryContainer.add((this.summaryPageTransitionContainer = globalScene.add.container(106, 0)));
     this.summaryPageTransitionContainer.add(getSummaryPageBg());
     this.summaryPageTransitionContainer.setVisible(false);
   }
@@ -304,7 +304,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemon = args[0] as PlayerPokemon;
     this.summaryUiMode = args.length > 1 ? args[1] as SummaryUiMode : SummaryUiMode.DEFAULT;
     this.playerParty = args[4] ?? true;
-    gScene.ui.bringToTop(this.summaryContainer);
+    globalScene.ui.bringToTop(this.summaryContainer);
 
     this.summaryContainer.setVisible(true);
     this.cursor = -1;
@@ -342,17 +342,17 @@ export default class SummaryUiHandler extends UiHandler {
     this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + 2, 3);
     this.splicedIcon.setVisible(isFusion);
     if (this.splicedIcon.visible) {
-      this.splicedIcon.on("pointerover", () => gScene.ui.showTooltip("", `${this.pokemon?.species.getName(this.pokemon.formIndex)}/${this.pokemon?.fusionSpecies?.getName(this.pokemon?.fusionFormIndex)}`, true));
-      this.splicedIcon.on("pointerout", () => gScene.ui.hideTooltip());
+      this.splicedIcon.on("pointerover", () => globalScene.ui.showTooltip("", `${this.pokemon?.species.getName(this.pokemon.formIndex)}/${this.pokemon?.fusionSpecies?.getName(this.pokemon?.fusionFormIndex)}`, true));
+      this.splicedIcon.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
-    if (gScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && gScene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
+    if (globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
       this.championRibbon.setVisible(true);
     } else {
       this.championRibbon.setVisible(false);
     }
 
-    let currentFriendship = gScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].friendship;
+    let currentFriendship = globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].friendship;
     if (!currentFriendship || currentFriendship === undefined) {
       currentFriendship = 0;
     }
@@ -361,17 +361,17 @@ export default class SummaryUiHandler extends UiHandler {
     const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
     if (this.candyShadow.visible) {
-      this.candyShadow.on("pointerover", () => gScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true));
-      this.candyShadow.on("pointerout", () => gScene.ui.hideTooltip());
+      this.candyShadow.on("pointerover", () => globalScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true));
+      this.candyShadow.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
-    this.candyCountText.setText(`x${gScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`);
+    this.candyCountText.setText(`x${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`);
 
     this.candyShadow.setCrop(0, 0, 16, candyCropY);
 
     if (this.friendshipShadow.visible) {
-      this.friendshipShadow.on("pointerover", () => gScene.ui.showTooltip("", `${i18next.t("pokemonSummary:friendship")}`, true));
-      this.friendshipShadow.on("pointerout", () => gScene.ui.hideTooltip());
+      this.friendshipShadow.on("pointerover", () => globalScene.ui.showTooltip("", `${i18next.t("pokemonSummary:friendship")}`, true));
+      this.friendshipShadow.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
     this.friendshipText.setText(`${this.pokemon?.friendship || "0"} / 255`);
@@ -389,8 +389,8 @@ export default class SummaryUiHandler extends UiHandler {
       const shinyDescriptor = doubleShiny || baseVariant ?
         `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : this.pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
         : "";
-      this.shinyIcon.on("pointerover", () => gScene.ui.showTooltip("", `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
-      this.shinyIcon.on("pointerout", () => gScene.ui.hideTooltip());
+      this.shinyIcon.on("pointerover", () => globalScene.ui.showTooltip("", `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
+      this.shinyIcon.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
@@ -554,7 +554,7 @@ export default class SummaryUiHandler extends UiHandler {
               break;
             }
             const isDown = button === Button.DOWN;
-            const party = gScene.getParty();
+            const party = globalScene.getParty();
             const partyMemberIndex = this.pokemon ? party.indexOf(this.pokemon) : -1;
             if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
               const page = this.cursor;
@@ -615,7 +615,7 @@ export default class SummaryUiHandler extends UiHandler {
       }
 
       if (moveDescriptionLineCount > 3) {
-        this.descriptionScrollTween = gScene.tweens.add({
+        this.descriptionScrollTween = globalScene.tweens.add({
           targets: this.moveDescriptionText,
           delay: Utils.fixedInt(2000),
           loop: -1,
@@ -626,7 +626,7 @@ export default class SummaryUiHandler extends UiHandler {
       }
 
       if (!this.moveCursorObj) {
-        this.moveCursorObj = gScene.add.sprite(-2, 0, "summary_moves_cursor", "highlight");
+        this.moveCursorObj = globalScene.add.sprite(-2, 0, "summary_moves_cursor", "highlight");
         this.moveCursorObj.setOrigin(0, 1);
         this.movesContainer.add(this.moveCursorObj);
       }
@@ -637,12 +637,12 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveCursorBlinkTimer.destroy();
       }
       this.moveCursorObj.setVisible(true);
-      this.moveCursorBlinkTimer = gScene.time.addEvent({
+      this.moveCursorBlinkTimer = globalScene.time.addEvent({
         loop: true,
         delay: Utils.fixedInt(600),
         callback: () => {
           this.moveCursorObj?.setVisible(false);
-          gScene.time.delayedCall(Utils.fixedInt(100), () => {
+          globalScene.time.delayedCall(Utils.fixedInt(100), () => {
             if (!this.moveCursorObj) {
               return;
             }
@@ -652,7 +652,7 @@ export default class SummaryUiHandler extends UiHandler {
       });
       if (this.selectedMoveIndex > -1) {
         if (!this.selectedMoveCursorObj) {
-          this.selectedMoveCursorObj = gScene.add.sprite(-2, 0, "summary_moves_cursor", "select");
+          this.selectedMoveCursorObj = globalScene.add.sprite(-2, 0, "summary_moves_cursor", "select");
           this.selectedMoveCursorObj.setOrigin(0, 1);
           this.movesContainer.add(this.selectedMoveCursorObj);
           this.movesContainer.moveBelow(this.selectedMoveCursorObj, this.moveCursorObj);
@@ -678,7 +678,7 @@ export default class SummaryUiHandler extends UiHandler {
           } else {
             this.populatePageContainer(this.summaryPageContainer);
           }
-          gScene.tweens.add({
+          globalScene.tweens.add({
             targets: this.summaryPageTransitionContainer,
             x: forward ? "-=214" : "+=214",
             duration: 250,
@@ -731,15 +731,15 @@ export default class SummaryUiHandler extends UiHandler {
 
     switch (page) {
       case Page.PROFILE:
-        const profileContainer = gScene.add.container(0, -pageBg.height);
+        const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
-        const trainerText = addBBCodeTextObject(7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), gScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
+        const trainerText = addBBCodeTextObject(7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
         trainerText.setOrigin(0, 0);
         profileContainer.add(trainerText);
 
-        const trainerIdText = addTextObject(174, 12, gScene.gameData.trainerId.toString(), TextStyle.SUMMARY_ALT);
+        const trainerIdText = addTextObject(174, 12, globalScene.gameData.trainerId.toString(), TextStyle.SUMMARY_ALT);
         trainerIdText.setOrigin(0, 0);
         profileContainer.add(trainerIdText);
 
@@ -750,8 +750,8 @@ export default class SummaryUiHandler extends UiHandler {
         const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
           const typeIcon = !tera
-            ? gScene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), Type[type].toLowerCase())
-            : gScene.add.sprite(xCoord, 42, "type_tera");
+            ? globalScene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), Type[type].toLowerCase())
+            : globalScene.add.sprite(xCoord, 42, "type_tera");
           if (tera) {
             typeIcon.setScale(0.5);
             const typeRgb = getTypeRgb(type);
@@ -782,7 +782,7 @@ export default class SummaryUiHandler extends UiHandler {
         }
 
         this.abilityContainer = {
-          labelImage: gScene.add.image(0, 0, "summary_profile_ability"),
+          labelImage: globalScene.add.image(0, 0, "summary_profile_ability"),
           ability: this.pokemon?.getAbility(true)!, // TODO: is this bang correct?
           nameText: null,
           descriptionText: null };
@@ -791,14 +791,14 @@ export default class SummaryUiHandler extends UiHandler {
         // Only add to the array and set up displaying a passive if it's unlocked
         if (this.pokemon?.hasPassive()) {
           this.passiveContainer = {
-            labelImage: gScene.add.image(0, 0, "summary_profile_passive"),
+            labelImage: globalScene.add.image(0, 0, "summary_profile_passive"),
             ability: this.pokemon.getPassiveAbility(),
             nameText: null,
             descriptionText: null };
           allAbilityInfo.push(this.passiveContainer);
 
           // Sets up the pixel button prompt image
-          this.abilityPrompt = gScene.add.image(0, 0, !gScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
+          this.abilityPrompt = globalScene.add.image(0, 0, !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
           this.abilityPrompt.setPosition(8, 43);
           this.abilityPrompt.setVisible(true);
           this.abilityPrompt.setOrigin(0, 0);
@@ -820,7 +820,7 @@ export default class SummaryUiHandler extends UiHandler {
           profileContainer.add(abilityInfo.descriptionText);
 
           // Sets up the mask that hides the description text to give an illusion of scrolling
-          const descriptionTextMaskRect = gScene.make.graphics({});
+          const descriptionTextMaskRect = globalScene.make.graphics({});
           descriptionTextMaskRect.setScale(6);
           descriptionTextMaskRect.fillStyle(0xFFFFFF);
           descriptionTextMaskRect.beginPath();
@@ -835,7 +835,7 @@ export default class SummaryUiHandler extends UiHandler {
           // Animates the description text moving upwards
           if (abilityDescriptionLineCount > 2) {
             abilityInfo.descriptionText.setY(69);
-            this.descriptionScrollTween = gScene.tweens.add({
+            this.descriptionScrollTween = globalScene.tweens.add({
               targets: abilityInfo.descriptionText,
               delay: Utils.fixedInt(2000),
               loop: -1,
@@ -868,7 +868,7 @@ export default class SummaryUiHandler extends UiHandler {
         profileContainer.add(memoText);
         break;
       case Page.STATS:
-        const statsContainer = gScene.add.container(0, -pageBg.height);
+        const statsContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(statsContainer);
 
         PERMANENT_STATS.forEach((stat, s) => {
@@ -891,7 +891,7 @@ export default class SummaryUiHandler extends UiHandler {
           statsContainer.add(statValue);
         });
 
-        const itemModifiers = (gScene.findModifiers(m => m instanceof PokemonHeldItemModifier
+        const itemModifiers = (globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && m.pokemonId === this.pokemon?.id, this.playerParty) as PokemonHeldItemModifier[])
           .sort(modifierSortFunc);
 
@@ -902,8 +902,8 @@ export default class SummaryUiHandler extends UiHandler {
           statsContainer.add(icon);
 
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
-          icon.on("pointerover", () => gScene.ui.showTooltip(item.type.name, item.type.getDescription(), true));
-          icon.on("pointerout", () => gScene.ui.hideTooltip());
+          icon.on("pointerover", () => globalScene.ui.showTooltip(item.type.name, item.type.getDescription(), true));
+          icon.on("pointerout", () => globalScene.ui.hideTooltip());
         });
 
         const pkmLvl = this.pokemon?.level!; // TODO: is this bang correct?
@@ -911,7 +911,7 @@ export default class SummaryUiHandler extends UiHandler {
         const pkmExp = this.pokemon?.exp!; // TODO: is this bang correct?
         const pkmSpeciesGrowthRate = this.pokemon?.species.growthRate!; // TODO: is this bang correct?
         const relLvExp = getLevelRelExp(pkmLvl + 1, pkmSpeciesGrowthRate);
-        const expRatio = pkmLvl < gScene.getMaxExpLevel() ? pkmLvlExp / relLvExp : 0;
+        const expRatio = pkmLvl < globalScene.getMaxExpLevel() ? pkmLvlExp / relLvExp : 0;
 
         const expLabel = addTextObject(6, 112, i18next.t("pokemonSummary:expPoints"), TextStyle.SUMMARY);
         expLabel.setOrigin(0, 0);
@@ -925,18 +925,18 @@ export default class SummaryUiHandler extends UiHandler {
         expText.setOrigin(1, 0);
         statsContainer.add(expText);
 
-        const nextLvExp = pkmLvl < gScene.getMaxExpLevel()
+        const nextLvExp = pkmLvl < globalScene.getMaxExpLevel()
           ? getLevelTotalExp(pkmLvl + 1, pkmSpeciesGrowthRate) - pkmExp
           : 0;
         const nextLvExpText = addTextObject(208, 128, nextLvExp.toString(), TextStyle.WINDOW_ALT);
         nextLvExpText.setOrigin(1, 0);
         statsContainer.add(nextLvExpText);
 
-        const expOverlay = gScene.add.image(140, 145, "summary_stats_overlay_exp");
+        const expOverlay = globalScene.add.image(140, 145, "summary_stats_overlay_exp");
         expOverlay.setOrigin(0, 0);
         statsContainer.add(expOverlay);
 
-        const expMaskRect = gScene.make.graphics({});
+        const expMaskRect = globalScene.make.graphics({});
         expMaskRect.setScale(6);
         expMaskRect.fillStyle(0xFFFFFF);
         expMaskRect.beginPath();
@@ -947,14 +947,14 @@ export default class SummaryUiHandler extends UiHandler {
         expOverlay.setMask(expMask);
         break;
       case Page.MOVES:
-        this.movesContainer = gScene.add.container(5, -pageBg.height + 26);
+        this.movesContainer = globalScene.add.container(5, -pageBg.height + 26);
         pageContainer.add(this.movesContainer);
 
-        this.extraMoveRowContainer = gScene.add.container(0, 64);
+        this.extraMoveRowContainer = globalScene.add.container(0, 64);
         this.extraMoveRowContainer.setVisible(false);
         this.movesContainer.add(this.extraMoveRowContainer);
 
-        const extraRowOverlay = gScene.add.image(-2, 1, "summary_moves_overlay_row");
+        const extraRowOverlay = globalScene.add.image(-2, 1, "summary_moves_overlay_row");
         extraRowOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowOverlay);
 
@@ -969,11 +969,11 @@ export default class SummaryUiHandler extends UiHandler {
           if (this.newMove && this.pokemon) {
             const spriteKey = Utils.getLocalizedSpriteKey("types");
             const moveType = this.pokemon.getMoveType(this.newMove);
-            const newMoveTypeIcon = gScene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+            const newMoveTypeIcon = globalScene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
             newMoveTypeIcon.setOrigin(0, 1);
             this.extraMoveRowContainer.add(newMoveTypeIcon);
           }
-          const ppOverlay = gScene.add.image(163, -1, "summary_moves_overlay_pp");
+          const ppOverlay = globalScene.add.image(163, -1, "summary_moves_overlay_pp");
           ppOverlay.setOrigin(0, 1);
           this.extraMoveRowContainer.add(ppOverlay);
 
@@ -983,18 +983,18 @@ export default class SummaryUiHandler extends UiHandler {
           this.extraMoveRowContainer.add(ppText);
         }
 
-        this.moveRowsContainer = gScene.add.container(0, 0);
+        this.moveRowsContainer = globalScene.add.container(0, 0);
         this.movesContainer.add(this.moveRowsContainer);
 
         for (let m = 0; m < 4; m++) {
           const move: PokemonMove | null = this.pokemon && this.pokemon.moveset.length > m ? this.pokemon?.moveset[m] : null;
-          const moveRowContainer = gScene.add.container(0, 16 * m);
+          const moveRowContainer = globalScene.add.container(0, 16 * m);
           this.moveRowsContainer.add(moveRowContainer);
 
           if (move && this.pokemon) {
             const spriteKey = Utils.getLocalizedSpriteKey("types");
             const moveType = this.pokemon.getMoveType(move.getMove());
-            const typeIcon = gScene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+            const typeIcon = globalScene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
             typeIcon.setOrigin(0, 1);
             moveRowContainer.add(typeIcon);
           }
@@ -1003,7 +1003,7 @@ export default class SummaryUiHandler extends UiHandler {
           moveText.setOrigin(0, 1);
           moveRowContainer.add(moveText);
 
-          const ppOverlay = gScene.add.image(163, -1, "summary_moves_overlay_pp");
+          const ppOverlay = globalScene.add.image(163, -1, "summary_moves_overlay_pp");
           ppOverlay.setOrigin(0, 1);
           moveRowContainer.add(ppOverlay);
 
@@ -1022,7 +1022,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveDescriptionText = addTextObject(2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 }});
         this.movesContainer.add(this.moveDescriptionText);
 
-        const moveDescriptionTextMaskRect = gScene.make.graphics({});
+        const moveDescriptionTextMaskRect = globalScene.make.graphics({});
         moveDescriptionTextMaskRect.setScale(6);
         moveDescriptionTextMaskRect.fillStyle(0xFFFFFF);
         moveDescriptionTextMaskRect.beginPath();
@@ -1040,7 +1040,7 @@ export default class SummaryUiHandler extends UiHandler {
       return;
     }
     this.statusVisible = true;
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this.statusContainer,
       x: 0,
       duration: instant ? 0 : 250,
@@ -1053,7 +1053,7 @@ export default class SummaryUiHandler extends UiHandler {
       return;
     }
     this.statusVisible = false;
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this.statusContainer,
       x: -106,
       duration: instant ? 0 : 250,
@@ -1116,7 +1116,7 @@ export default class SummaryUiHandler extends UiHandler {
       return;
     }
     this.moveEffectsVisible = true;
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this.moveEffectContainer,
       x: 6,
       duration: instant ? 0 : 250,
@@ -1129,7 +1129,7 @@ export default class SummaryUiHandler extends UiHandler {
       return;
     }
     this.moveEffectsVisible = false;
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: this.moveEffectContainer,
       x: 106,
       duration: instant ? 0 : 250,

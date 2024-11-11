@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { nil } from "#app/utils";
 import i18next from "i18next";
@@ -95,8 +95,8 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   private eventTimer: NodeJS.Timeout | null;
 
   constructor(x: number, y: number, event?: TimedEvent) {
-    super(gScene, x, y);
-    this.availableWidth = gScene.scaledCanvas.width;
+    super(globalScene, x, y);
+    this.availableWidth = globalScene.scaledCanvas.width;
     this.event = event;
     this.setVisible(false);
   }
@@ -132,8 +132,8 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       console.log(this.event.bannerKey);
       const padding = 5;
       const showTimer = this.event.eventType !== EventType.NO_TIMER_DISPLAY;
-      const yPosition = gScene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
-      this.banner = new Phaser.GameObjects.Image(gScene, this.availableWidth / 2, yPosition - padding, key);
+      const yPosition = globalScene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
+      this.banner = new Phaser.GameObjects.Image(globalScene, this.availableWidth / 2, yPosition - padding, key);
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.5, 1);
       this.banner.setScale(this.event.scale ?? 0.18);

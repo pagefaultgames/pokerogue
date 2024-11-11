@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { MoveChargeAnim } from "#app/data/battle-anims";
 import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/move";
@@ -61,9 +61,9 @@ export class MoveChargePhase extends PokemonPhase {
 
       if (instantCharge.value) {
         // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
-        gScene.tryRemovePhase((phase) => phase instanceof MoveEndPhase && phase.getPokemon() === user);
+        globalScene.tryRemovePhase((phase) => phase instanceof MoveEndPhase && phase.getPokemon() === user);
         // queue a new MovePhase for this move's attack phase
-        gScene.unshiftPhase(new MovePhase(user, [ this.targetIndex ], this.move, false));
+        globalScene.unshiftPhase(new MovePhase(user, [ this.targetIndex ], this.move, false));
       } else {
         user.getMoveQueue().push({ move: move.id, targets: [ this.targetIndex ]});
       }
@@ -75,10 +75,10 @@ export class MoveChargePhase extends PokemonPhase {
   }
 
   public getUserPokemon(): Pokemon {
-    return (this.player ? gScene.getPlayerField() : gScene.getEnemyField())[this.fieldIndex];
+    return (this.player ? globalScene.getPlayerField() : globalScene.getEnemyField())[this.fieldIndex];
   }
 
   public getTargetPokemon(): Pokemon | undefined {
-    return gScene.getField(true).find((p) => this.targetIndex === p.getBattlerIndex());
+    return globalScene.getField(true).find((p) => this.targetIndex === p.getBattlerIndex());
   }
 }

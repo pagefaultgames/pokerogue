@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Egg, EGG_SEED } from "#app/data/egg";
 import { Phase } from "#app/phase";
 import i18next from "i18next";
@@ -24,18 +24,18 @@ export class EggLapsePhase extends Phase {
 
   start() {
     super.start();
-    const eggsToHatch: Egg[] = gScene.gameData.eggs.filter((egg: Egg) => {
+    const eggsToHatch: Egg[] = globalScene.gameData.eggs.filter((egg: Egg) => {
       return Overrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
     const eggsToHatchCount: number = eggsToHatch.length;
     this.eggHatchData = [];
 
     if (eggsToHatchCount > 0) {
-      if (eggsToHatchCount >= this.minEggsToSkip && gScene.eggSkipPreference === 1) {
-        gScene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
+      if (eggsToHatchCount >= this.minEggsToSkip && globalScene.eggSkipPreference === 1) {
+        globalScene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
           // show prompt for skip, blocking inputs for 1 second
-          gScene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
-          gScene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+          globalScene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
+          globalScene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
             this.hatchEggsSkipped(eggsToHatch);
             this.showSummary();
           }, () => {
@@ -45,13 +45,13 @@ export class EggLapsePhase extends Phase {
           null, null, null, 1000, true
           );
         }, 100, true);
-      } else if (eggsToHatchCount >= this.minEggsToSkip && gScene.eggSkipPreference === 2) {
-        gScene.queueMessage(i18next.t("battle:eggHatching"));
+      } else if (eggsToHatchCount >= this.minEggsToSkip && globalScene.eggSkipPreference === 2) {
+        globalScene.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsSkipped(eggsToHatch);
         this.showSummary();
       } else {
         // regular hatches, no summary
-        gScene.queueMessage(i18next.t("battle:eggHatching"));
+        globalScene.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsRegular(eggsToHatch);
         this.end();
       }
@@ -67,7 +67,7 @@ export class EggLapsePhase extends Phase {
   hatchEggsRegular(eggsToHatch: Egg[]) {
     let eggsToHatchCount: number = eggsToHatch.length;
     for (const egg of eggsToHatch) {
-      gScene.unshiftPhase(new EggHatchPhase(this, egg, eggsToHatchCount));
+      globalScene.unshiftPhase(new EggHatchPhase(this, egg, eggsToHatchCount));
       eggsToHatchCount--;
     }
   }
@@ -83,7 +83,7 @@ export class EggLapsePhase extends Phase {
   }
 
   showSummary() {
-    gScene.unshiftPhase(new EggSummaryPhase(this.eggHatchData));
+    globalScene.unshiftPhase(new EggSummaryPhase(this.eggHatchData));
     this.end();
   }
 
@@ -93,11 +93,11 @@ export class EggLapsePhase extends Phase {
    * @param egg egg to hatch
    */
   hatchEggSilently(egg: Egg) {
-    const eggIndex = gScene.gameData.eggs.findIndex(e => e.id === egg.id);
+    const eggIndex = globalScene.gameData.eggs.findIndex(e => e.id === egg.id);
     if (eggIndex === -1) {
       return this.end();
     }
-    gScene.gameData.eggs.splice(eggIndex, 1);
+    globalScene.gameData.eggs.splice(eggIndex, 1);
 
     const data = this.generatePokemon(egg);
     const pokemon = data.pokemon;
@@ -106,16 +106,16 @@ export class EggLapsePhase extends Phase {
     }
 
     if (pokemon.species.subLegendary) {
-      gScene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
+      globalScene.validateAchv(achvs.HATCH_SUB_LEGENDARY);
     }
     if (pokemon.species.legendary) {
-      gScene.validateAchv(achvs.HATCH_LEGENDARY);
+      globalScene.validateAchv(achvs.HATCH_LEGENDARY);
     }
     if (pokemon.species.mythical) {
-      gScene.validateAchv(achvs.HATCH_MYTHICAL);
+      globalScene.validateAchv(achvs.HATCH_MYTHICAL);
     }
     if (pokemon.isShiny()) {
-      gScene.validateAchv(achvs.HATCH_SHINY);
+      globalScene.validateAchv(achvs.HATCH_SHINY);
     }
 
   }
@@ -128,7 +128,7 @@ export class EggLapsePhase extends Phase {
   generatePokemon(egg: Egg): EggHatchData {
     let ret: PlayerPokemon;
     let newHatchData: EggHatchData;
-    gScene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       ret = egg.generatePlayerPokemon();
       newHatchData = new EggHatchData(ret, egg.eggMoveIndex);
       newHatchData.setDex();

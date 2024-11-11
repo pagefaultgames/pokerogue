@@ -3,20 +3,20 @@ import { Mode } from "../ui";
 import { Device } from "#enums/devices";
 import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/configHandler";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
 
   constructor(mode: Mode | null = null) {
     super(mode);
-    gScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
+    globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
   }
   setup() {
     super.setup();
 
     // New button icon setup.
-    this.newButtonIcon = gScene.add.sprite(0, 0, "xbox");
+    this.newButtonIcon = globalScene.add.sprite(0, 0, "xbox");
     this.newButtonIcon.setPositionRelative(this.optionSelectBg, 78, 16);
     this.newButtonIcon.setOrigin(0.5);
     this.newButtonIcon.setVisible(false);
@@ -26,7 +26,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     this.swapText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
     this.swapText.setVisible(false);
 
-    this.targetButtonIcon = gScene.add.sprite(0, 0, "xbox");
+    this.targetButtonIcon = globalScene.add.sprite(0, 0, "xbox");
     this.targetButtonIcon.setPositionRelative(this.optionSelectBg, 78, 48);
     this.targetButtonIcon.setOrigin(0.5);
     this.targetButtonIcon.setVisible(false);
@@ -42,7 +42,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
   }
 
   getSelectedDevice() {
-    return gScene.inputController?.selectedDevice[Device.GAMEPAD];
+    return globalScene.inputController?.selectedDevice[Device.GAMEPAD];
   }
 
   gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
@@ -51,7 +51,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     if (!this.listening || pad.id.toLowerCase() !== this.getSelectedDevice() || blacklist.includes(button.index) || this.buttonPressed !== null) {
       return;
     }
-    const activeConfig = gScene.inputController.getActiveConfig(Device.GAMEPAD);
+    const activeConfig = globalScene.inputController.getActiveConfig(Device.GAMEPAD);
     const type = activeConfig.padType;
     const key = getKeyWithKeycode(activeConfig, button.index);
     const buttonIcon = activeConfig.icons[key];
@@ -64,9 +64,9 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
   }
 
   swapAction(): boolean {
-    const activeConfig = gScene.inputController.getActiveConfig(Device.GAMEPAD);
-    if (gScene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
-      gScene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
+    const activeConfig = globalScene.inputController.getActiveConfig(Device.GAMEPAD);
+    if (globalScene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
+      globalScene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
       return true;
     }
     return false;

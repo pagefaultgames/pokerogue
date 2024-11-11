@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Button } from "#enums/buttons";
 import EventEmitter = Phaser.Events.EventEmitter;
 
@@ -14,7 +14,7 @@ export default class TouchControl {
   private finishedLastTouch: boolean = false;
 
   constructor() {
-    this.events = gScene.game.events;
+    this.events = globalScene.game.events;
     this.init();
   }
 

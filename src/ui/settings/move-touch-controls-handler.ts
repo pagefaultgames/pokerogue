@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import TouchControl from "#app/touch-controls";
 import UI from "#app/ui/ui";
 import { Scene } from "phaser";
@@ -323,8 +323,8 @@ export default class MoveTouchControlsHandler {
    * @param scene The scene of the game.
    */
   private createOverlay(ui: UI, scene: Scene) {
-    const container = new Phaser.GameObjects.Container(gScene, 0, 0);
-    const overlay = new Phaser.GameObjects.Rectangle(gScene, 0, 0, gScene.game.canvas.width, gScene.game.canvas.height, 0x000000, 0.5);
+    const container = new Phaser.GameObjects.Container(globalScene, 0, 0);
+    const overlay = new Phaser.GameObjects.Rectangle(globalScene, 0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height, 0x000000, 0.5);
     overlay.setInteractive();
     container.add(overlay);
     ui.add(container);

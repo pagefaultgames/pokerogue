@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 
@@ -14,12 +14,12 @@ export class PartyHealPhase extends BattlePhase {
   start() {
     super.start();
 
-    const bgmPlaying = gScene.isBgmPlaying();
+    const bgmPlaying = globalScene.isBgmPlaying();
     if (bgmPlaying) {
-      gScene.fadeOutBgm(1000, false);
+      globalScene.fadeOutBgm(1000, false);
     }
-    gScene.ui.fadeOut(1000).then(() => {
-      for (const pokemon of gScene.getParty()) {
+    globalScene.ui.fadeOut(1000).then(() => {
+      for (const pokemon of globalScene.getParty()) {
         pokemon.hp = pokemon.getMaxHp();
         pokemon.resetStatus();
         for (const move of pokemon.moveset) {
@@ -27,13 +27,13 @@ export class PartyHealPhase extends BattlePhase {
         }
         pokemon.updateInfo(true);
       }
-      const healSong = gScene.playSoundWithoutBgm("heal");
-      gScene.time.delayedCall(Utils.fixedInt(healSong.totalDuration * 1000), () => {
+      const healSong = globalScene.playSoundWithoutBgm("heal");
+      globalScene.time.delayedCall(Utils.fixedInt(healSong.totalDuration * 1000), () => {
         healSong.destroy();
         if (this.resumeBgm && bgmPlaying) {
-          gScene.playBgm();
+          globalScene.playBgm();
         }
-        gScene.ui.fadeIn(500).then(() => this.end());
+        globalScene.ui.fadeIn(500).then(() => this.end());
       });
     });
   }

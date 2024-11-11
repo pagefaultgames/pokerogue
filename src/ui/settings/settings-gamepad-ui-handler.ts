@@ -15,7 +15,7 @@ import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-
 import { Device } from "#enums/devices";
 import { truncateString } from "#app/utils";
 import i18next from "i18next";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 /**
  * Class representing the settings UI handler for gamepads.
@@ -53,7 +53,7 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
     super.setup();
     // If no gamepads are detected, set up a default UI prompt in the settings container.
     this.layout["noGamepads"] = new Map();
-    const optionsContainer = gScene.add.container(0, 0);
+    const optionsContainer = globalScene.add.container(0, 0);
     optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
     const label = addTextObject(8, 28, i18next.t("settings:gamepadPleasePlug"), TextStyle.SETTINGS_LABEL);
     label.setOrigin(0, 0);
@@ -107,7 +107,7 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
 
           // Update the text of the first option label under the current setting to the name of the chosen gamepad,
           // truncating the name to 30 characters if necessary.
-          this.layout[_key].optionValueLabels[index][0].setText(truncateString(gScene.inputController.selectedDevice[Device.GAMEPAD], 20));
+          this.layout[_key].optionValueLabels[index][0].setText(truncateString(globalScene.inputController.selectedDevice[Device.GAMEPAD], 20));
         }
       }
     }
@@ -121,7 +121,7 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
      */
   saveSettingToLocalStorage(settingName, cursor): void {
     if (this.setting[settingName] !== this.setting.Controller) {
-      gScene.gameData.saveControlSetting(this.device, this.localStoragePropertyName, settingName, this.settingDeviceDefaults, cursor);
+      globalScene.gameData.saveControlSetting(this.device, this.localStoragePropertyName, settingName, this.settingDeviceDefaults, cursor);
     }
   }
 }

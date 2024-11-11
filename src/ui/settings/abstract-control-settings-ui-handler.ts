@@ -9,7 +9,7 @@ import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMe
 import { Device } from "#enums/devices";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;
@@ -99,21 +99,21 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     const ui = this.getUi();
     this.navigationIcons = {};
 
-    this.settingsContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
+    this.settingsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
     this.settingsContainer.setName(`settings-${this.titleSelected}`);
 
-    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
     this.navigationContainer = new NavigationMenu(0, 0);
 
-    this.optionsBg = addWindow(0, this.navigationContainer.height, (gScene.game.canvas.width / 6) - 2, (gScene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
+    this.optionsBg = addWindow(0, this.navigationContainer.height, (globalScene.game.canvas.width / 6) - 2, (globalScene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
     this.optionsBg.setOrigin(0, 0);
 
 
-    this.actionsBg = addWindow(0, (gScene.game.canvas.height / 6) - this.navigationContainer.height, (gScene.game.canvas.width / 6) - 2, 22);
+    this.actionsBg = addWindow(0, (globalScene.game.canvas.height / 6) - this.navigationContainer.height, (globalScene.game.canvas.width / 6) - 2, 22);
     this.actionsBg.setOrigin(0, 0);
 
-    const iconAction = gScene.add.sprite(0, 0, "keyboard");
+    const iconAction = globalScene.add.sprite(0, 0, "keyboard");
     iconAction.setOrigin(0, -0.1);
     iconAction.setPositionRelative(this.actionsBg, this.navigationContainer.width - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
@@ -122,7 +122,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     actionText.setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width / 6 - 2, 0);
 
-    const iconCancel = gScene.add.sprite(0, 0, "keyboard");
+    const iconCancel = globalScene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
     iconCancel.setPositionRelative(this.actionsBg, this.navigationContainer.width - 100, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
@@ -131,7 +131,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     cancelText.setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width / 6 - 2, 0);
 
-    const iconReset = gScene.add.sprite(0, 0, "keyboard");
+    const iconReset = globalScene.add.sprite(0, 0, "keyboard");
     iconReset.setOrigin(0, -0.1);
     iconReset.setPositionRelative(this.actionsBg, this.navigationContainer.width - 180, 4);
     this.navigationIcons["BUTTON_HOME"] = iconReset;
@@ -156,7 +156,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
       this.layout[config.padType] = new Map();
       // Create a container for gamepad options in the scene, initially hidden.
 
-      const optionsContainer = gScene.add.container(0, 0);
+      const optionsContainer = globalScene.add.container(0, 0);
       optionsContainer.setVisible(false);
 
       // Gather all binding settings from the configuration.
@@ -185,7 +185,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         // Convert the setting key from format 'Key_Name' to 'Key name' for display.
         const settingName = setting.replace(/\_/g, " ");
 
-        // Create and add a text object for the setting name to the gScene.
+        // Create and add a text object for the setting name to the scene.
         const isLock = this.settingBlacklisted.includes(this.setting[setting]);
         const labelStyle = isLock ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL;
         let labelText: string;
@@ -215,7 +215,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
               continue;
             }
             // For null options, add an icon for the key.
-            const icon = gScene.add.sprite(0, 0, this.textureOverride ? this.textureOverride : config.padType);
+            const icon = globalScene.add.sprite(0, 0, this.textureOverride ? this.textureOverride : config.padType);
             icon.setOrigin(0, -0.15);
             inputsIcons[this.setting[setting]] = icon;
             optionsContainer.add(icon);
@@ -289,7 +289,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
    * @returns The active configuration for current device
    */
   getActiveConfig(): InterfaceConfig {
-    return gScene.inputController.getActiveConfig(this.device);
+    return globalScene.inputController.getActiveConfig(this.device);
   }
 
   /**
@@ -349,9 +349,9 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
         this.navigationIcons[settingName].alpha = 1;
         continue;
       }
-      const icon = gScene.inputController?.getIconForLatestInputRecorded(settingName);
+      const icon = globalScene.inputController?.getIconForLatestInputRecorded(settingName);
       if (icon) {
-        const type = gScene.inputController?.getLastSourceType();
+        const type = globalScene.inputController?.getLastSourceType();
         this.navigationIcons[settingName].setTexture(type);
         this.navigationIcons[settingName].setFrame(icon);
         this.navigationIcons[settingName].alpha = 1;
@@ -444,7 +444,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
       // Handle cancel button press, reverting UI mode to previous state.
       success = true;
       NavigationManager.getInstance().reset();
-      gScene.ui.revertMode();
+      globalScene.ui.revertMode();
     } else {
       const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
       const setting = this.setting[Object.keys(this.setting)[cursor]];
@@ -556,8 +556,8 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     // Check if the cursor object exists, if not, create it.
     if (!this.cursorObj) {
-      const cursorWidth = (gScene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
-      this.cursorObj = gScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
+      const cursorWidth = (globalScene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
+      this.cursorObj = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0); // Set the origin to the top-left corner.
       this.optionsContainer.add(this.cursorObj); // Add the cursor to the options container.
     }

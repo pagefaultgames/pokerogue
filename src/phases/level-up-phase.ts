@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { ExpNotification } from "#app/enums/exp-notification";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -23,35 +23,35 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   start() {
     super.start();
 
-    if (this.level > gScene.gameData.gameStats.highestLevel) {
-      gScene.gameData.gameStats.highestLevel = this.level;
+    if (this.level > globalScene.gameData.gameStats.highestLevel) {
+      globalScene.gameData.gameStats.highestLevel = this.level;
     }
 
-    gScene.validateAchvs(LevelAchv, new Utils.NumberHolder(this.level));
+    globalScene.validateAchvs(LevelAchv, new Utils.NumberHolder(this.level));
 
     const pokemon = this.getPokemon();
     const prevStats = pokemon.stats.slice(0);
     pokemon.calculateStats();
     pokemon.updateInfo();
-    if (gScene.expParty === ExpNotification.DEFAULT) {
-      gScene.playSound("level_up_fanfare");
-      gScene.ui.showText(i18next.t("battle:levelUp", { pokemonName: getPokemonNameWithAffix(this.getPokemon()), level: this.level }), null, () => gScene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
-    } else if (gScene.expParty === ExpNotification.SKIP) {
+    if (globalScene.expParty === ExpNotification.DEFAULT) {
+      globalScene.playSound("level_up_fanfare");
+      globalScene.ui.showText(i18next.t("battle:levelUp", { pokemonName: getPokemonNameWithAffix(this.getPokemon()), level: this.level }), null, () => globalScene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
+    } else if (globalScene.expParty === ExpNotification.SKIP) {
       this.end();
     } else {
       // we still want to display the stats if activated
-      gScene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
+      globalScene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
     }
     if (this.lastLevel < 100) { // this feels like an unnecessary optimization
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
-        gScene.unshiftPhase(new LearnMovePhase(this.partyMemberIndex, lm[1]));
+        globalScene.unshiftPhase(new LearnMovePhase(this.partyMemberIndex, lm[1]));
       }
     }
     if (!pokemon.pauseEvolutions) {
       const evolution = pokemon.getEvolution();
       if (evolution) {
-        gScene.unshiftPhase(new EvolutionPhase(pokemon as PlayerPokemon, evolution, this.lastLevel));
+        globalScene.unshiftPhase(new EvolutionPhase(pokemon as PlayerPokemon, evolution, this.lastLevel));
       }
     }
   }

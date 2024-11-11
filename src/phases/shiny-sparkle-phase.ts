@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { PokemonPhase } from "./pokemon-phase";
 
@@ -11,6 +11,6 @@ export class ShinySparklePhase extends PokemonPhase {
     super.start();
 
     this.getPokemon().sparkle();
-    gScene.time.delayedCall(1000, () => this.end());
+    globalScene.time.delayedCall(1000, () => this.end());
   }
 }

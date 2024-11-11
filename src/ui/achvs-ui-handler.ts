@@ -8,7 +8,7 @@ import { Mode } from "#app/ui/ui";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { PlayerGender } from "#enums/player-gender";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 enum Page {
   ACHIEVEMENTS,
@@ -68,17 +68,17 @@ export default class AchvsUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.mainContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
+    this.mainContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
 
-    this.mainContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.mainContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.headerBg = addWindow(0, 0, (gScene.game.canvas.width / 6) - 2, 24);
+    this.headerBg = addWindow(0, 0, (globalScene.game.canvas.width / 6) - 2, 24);
     this.headerBg.setOrigin(0, 0);
 
     this.headerText = addTextObject(0, 0, "", TextStyle.SETTINGS_LABEL);
     this.headerText.setOrigin(0, 0);
     this.headerText.setPositionRelative(this.headerBg, 8, 4);
-    this.headerActionButton = new Phaser.GameObjects.Sprite(gScene, 0, 0, "keyboard", "ACTION.png");
+    this.headerActionButton = new Phaser.GameObjects.Sprite(globalScene, 0, 0, "keyboard", "ACTION.png");
     this.headerActionButton.setOrigin(0, 0);
     this.headerActionButton.setPositionRelative(this.headerBg, 236, 6);
     this.headerActionText = addTextObject(0, 0, "", TextStyle.WINDOW, { fontSize:"60px" });
@@ -86,19 +86,19 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionText.setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = gScene.gameData.gender ?? PlayerGender.MALE;
+    const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     this.achvsName = i18next.t("achv:Achievements.name", { context: genderStr });
     this.vouchersName = i18next.t("voucher:vouchers");
 
-    this.iconsBg = addWindow(0, this.headerBg.height, (gScene.game.canvas.width / 6) - 2, (gScene.game.canvas.height / 6) - this.headerBg.height - 68);
+    this.iconsBg = addWindow(0, this.headerBg.height, (globalScene.game.canvas.width / 6) - 2, (globalScene.game.canvas.height / 6) - this.headerBg.height - 68);
     this.iconsBg.setOrigin(0, 0);
 
     const yOffset = 6;
     this.scrollBar = new ScrollBar(this.iconsBg.width - 9, this.iconsBg.y + yOffset, 4, this.iconsBg.height - yOffset * 2, this.ROWS);
 
-    this.iconsContainer = gScene.add.container(5, this.headerBg.height + 8);
+    this.iconsContainer = globalScene.add.container(5, this.headerBg.height + 8);
 
     this.icons = [];
 
@@ -106,7 +106,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
       const x = (a % this.COLS) * 18;
       const y = Math.floor(a / this.COLS) * 18;
 
-      const icon = gScene.add.sprite(x, y, "items", "unknown");
+      const icon = globalScene.add.sprite(x, y, "items", "unknown");
       icon.setOrigin(0, 0);
       icon.setScale(0.5);
 
@@ -126,7 +126,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.titleText.setOrigin(0.5, 0.5);
     this.titleText.setPosition(titleBgCenterX, titleBgCenterY);
 
-    this.scoreContainer = gScene.add.container(titleBg.x + titleBg.width, titleBg.y);
+    this.scoreContainer = globalScene.add.container(titleBg.x + titleBg.width, titleBg.y);
     const scoreBg = addWindow(0, 0, 46, 24);
     scoreBg.setOrigin(0, 0);
     this.scoreContainer.add(scoreBg);
@@ -142,7 +142,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.unlockText.setOrigin(0.5, 0.5);
     this.unlockText.setPositionRelative(unlockBg, unlockBg.width / 2, unlockBg.height / 2);
 
-    const descriptionBg = addWindow(0, titleBg.y + titleBg.height, (gScene.game.canvas.width / 6) - 2, 42);
+    const descriptionBg = addWindow(0, titleBg.y + titleBg.height, (globalScene.game.canvas.width / 6) - 2, 42);
     descriptionBg.setOrigin(0, 0);
 
     const descriptionText = addTextObject(0, 0, "", TextStyle.WINDOW, { maxLines: 2 });
@@ -195,12 +195,12 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
   protected showAchv(achv: Achv) {
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = gScene.gameData.gender ?? PlayerGender.MALE;
+    const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     achv.name = i18next.t(`achv:${achv.localizationKey}.name`, { context: genderStr });
     achv.description = getAchievementDescription(achv.localizationKey);
-    const achvUnlocks = gScene.gameData.achvUnlocks;
+    const achvUnlocks = globalScene.gameData.achvUnlocks;
     const unlocked = achvUnlocks.hasOwnProperty(achv.id);
     const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
     this.titleText.setText(unlocked ? achv.name : "???");
@@ -210,7 +210,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   }
 
   protected showVoucher(voucher: Voucher) {
-    const voucherUnlocks = gScene.gameData.voucherUnlocks;
+    const voucherUnlocks = globalScene.gameData.voucherUnlocks;
     const unlocked = voucherUnlocks.hasOwnProperty(voucher.id);
 
     this.titleText.setText(getVoucherTypeName(voucher.voucherType));
@@ -240,7 +240,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     }
     if (button === Button.CANCEL) {
       success = true;
-      gScene.ui.revertMode();
+      globalScene.ui.revertMode();
     } else {
       const rowIndex = Math.floor(this.cursor / this.COLS);
       const itemOffset = (this.scrollCursor * this.COLS);
@@ -306,7 +306,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     let update = ret;
 
     if (!this.cursorObj) {
-      this.cursorObj = gScene.add.nineslice(0, 0, "select_cursor_highlight", undefined, 16, 16, 1, 1, 1, 1);
+      this.cursorObj = globalScene.add.nineslice(0, 0, "select_cursor_highlight", undefined, 16, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.iconsContainer.add(this.cursorObj);
       update = true;
@@ -382,7 +382,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionText.setX(textPosition);
     this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 4);
 
-    const achvUnlocks = gScene.gameData.achvUnlocks;
+    const achvUnlocks = globalScene.gameData.achvUnlocks;
 
     const itemOffset = this.scrollCursor * this.COLS;
     const itemLimit = this.ROWS * this.COLS;
@@ -422,7 +422,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.headerActionText.setX(textPosition);
     this.headerActionButton.setX(textPosition - this.headerActionButton.displayWidth - 4);
 
-    const voucherUnlocks = gScene.gameData.voucherUnlocks;
+    const voucherUnlocks = globalScene.gameData.voucherUnlocks;
 
     const itemOffset = this.scrollCursor * this.COLS;
     const itemLimit = this.ROWS * this.COLS;

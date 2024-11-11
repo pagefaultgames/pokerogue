@@ -5,7 +5,7 @@ import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -65,7 +65,7 @@ export const FieldTripEncounter: MysteryEncounter =
           secondOptionPrompt: `${namespace}:second_option_prompt`,
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for Pokemon move valid for this option
             return pokemon.moveset.map((move: PokemonMove) => {
@@ -85,7 +85,7 @@ export const FieldTripEncounter: MysteryEncounter =
           return selectPokemonForOption(onPokemonSelected);
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
               generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [ Stat.ATK ])!,
@@ -111,7 +111,7 @@ export const FieldTripEncounter: MysteryEncounter =
           secondOptionPrompt: `${namespace}:second_option_prompt`,
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for Pokemon move valid for this option
             return pokemon.moveset.map((move: PokemonMove) => {
@@ -131,7 +131,7 @@ export const FieldTripEncounter: MysteryEncounter =
           return selectPokemonForOption(onPokemonSelected);
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
               generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [ Stat.SPATK ])!,
@@ -157,7 +157,7 @@ export const FieldTripEncounter: MysteryEncounter =
           secondOptionPrompt: `${namespace}:second_option_prompt`,
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Return the options for Pokemon move valid for this option
             return pokemon.moveset.map((move: PokemonMove) => {
@@ -177,7 +177,7 @@ export const FieldTripEncounter: MysteryEncounter =
           return selectPokemonForOption(onPokemonSelected);
         })
         .withOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           if (encounter.misc.correctMove) {
             const modifiers = [
               generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [ Stat.ACC ])!,
@@ -197,7 +197,7 @@ export const FieldTripEncounter: MysteryEncounter =
     .build();
 
 function pokemonAndMoveChosen(pokemon: PlayerPokemon, move: PokemonMove, correctMoveCategory: MoveCategory) {
-  const encounter = gScene.currentBattle.mysteryEncounter!;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
   const correctMove = move.getMove().category === correctMoveCategory;
   encounter.setDialogueToken("pokeName", pokemon.getNameToRender());
   encounter.setDialogueToken("move", move.getName());
@@ -214,7 +214,7 @@ function pokemonAndMoveChosen(pokemon: PlayerPokemon, move: PokemonMove, correct
         text: `${namespace}:incorrect_exp`,
       },
     ];
-    setEncounterExp(gScene.getParty().map((p) => p.id), 50);
+    setEncounterExp(globalScene.getParty().map((p) => p.id), 50);
   } else {
     encounter.selectedOption!.dialogue!.selected = [
       {

@@ -4,7 +4,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
@@ -80,7 +80,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Update money
             updatePlayerMoney(-(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
@@ -114,7 +114,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Choose Cheap Option
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
           const modifiers = encounter.misc.modifiers;
 
@@ -126,7 +126,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         })
         .withPostOptionPhase(async () => {
           // Damage and status applied after dealer leaves (to make thematic sense)
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon as PlayerPokemon;
 
           // Pokemon takes half max HP damage and nature is randomized (does not update dex)
@@ -160,7 +160,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Update money
             updatePlayerMoney(-(encounter.options[1].requirements[0] as MoneyRequirement).requiredMoney);
@@ -186,7 +186,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Choose Expensive Option
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
           const modifiers = encounter.misc.modifiers;
 
@@ -198,7 +198,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
         })
         .withPostOptionPhase(async () => {
           // Status applied after dealer leaves (to make thematic sense)
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const chosenPokemon = encounter.misc.chosenPokemon;
 
           queueEncounterMessage(`${namespace}:no_bad_effects`);

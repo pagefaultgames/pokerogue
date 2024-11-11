@@ -15,7 +15,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { GameModes } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;
@@ -314,7 +314,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * @param pokemon
    */
   pokemonMeetsPrimaryRequirements(pokemon: Pokemon): boolean {
-    return !this.primaryPokemonRequirements.some(req => !req.queryParty(gScene.getParty()).map(p => p.id).includes(pokemon.id));
+    return !this.primaryPokemonRequirements.some(req => !req.queryParty(globalScene.getParty()).map(p => p.id).includes(pokemon.id));
   }
 
   /**
@@ -326,18 +326,18 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   private meetsPrimaryRequirementAndPrimaryPokemonSelected(): boolean {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
-      const activeMon = gScene.getParty().filter(p => p.isActive(true));
+      const activeMon = globalScene.getParty().filter(p => p.isActive(true));
       if (activeMon.length > 0) {
         this.primaryPokemon = activeMon[0];
       } else {
-        this.primaryPokemon = gScene.getParty().filter(p => p.isAllowedInBattle())[0];
+        this.primaryPokemon = globalScene.getParty().filter(p => p.isAllowedInBattle())[0];
       }
       return true;
     }
-    let qualified: PlayerPokemon[] = gScene.getParty();
+    let qualified: PlayerPokemon[] = globalScene.getParty();
     for (const req of this.primaryPokemonRequirements) {
       if (req.meetsRequirement()) {
-        qualified = qualified.filter(pkmn => req.queryParty(gScene.getParty()).includes(pkmn));
+        qualified = qualified.filter(pkmn => req.queryParty(globalScene.getParty()).includes(pkmn));
       } else {
         this.primaryPokemon = undefined;
         return false;
@@ -394,10 +394,10 @@ export default class MysteryEncounter implements IMysteryEncounter {
       return true;
     }
 
-    let qualified: PlayerPokemon[] = gScene.getParty();
+    let qualified: PlayerPokemon[] = globalScene.getParty();
     for (const req of this.secondaryPokemonRequirements) {
       if (req.meetsRequirement()) {
-        qualified = qualified.filter(pkmn => req.queryParty(gScene.getParty()).includes(pkmn));
+        qualified = qualified.filter(pkmn => req.queryParty(globalScene.getParty()).includes(pkmn));
       } else {
         this.secondaryPokemon = [];
         return false;
@@ -521,7 +521,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * @param scene
    */
   updateSeedOffset() {
-    const currentOffset = this.seedOffset ?? gScene.currentBattle.waveIndex * 1000;
+    const currentOffset = this.seedOffset ?? globalScene.currentBattle.waveIndex * 1000;
     this.seedOffset = currentOffset + 512;
   }
 }

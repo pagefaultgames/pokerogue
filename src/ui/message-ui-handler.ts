@@ -1,7 +1,7 @@
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
@@ -23,7 +23,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
    */
   initPromptSprite(container: Phaser.GameObjects.Container) {
     if (!this.prompt) {
-      const promptSprite = gScene.add.sprite(0, 0, "prompt");
+      const promptSprite = globalScene.add.sprite(0, 0, "prompt");
       promptSprite.setVisible(false);
       promptSprite.setOrigin(0, 0);
       this.prompt = promptSprite;
@@ -108,7 +108,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       callback = () => {
         const showPrompt = () => this.showPrompt(originalCallback, callbackDelay);
         if (promptDelay) {
-          gScene.time.delayedCall(promptDelay, showPrompt);
+          globalScene.time.delayedCall(promptDelay, showPrompt);
         } else {
           showPrompt();
         }
@@ -119,7 +119,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       if (prompt) {
         this.pendingPrompt = true;
       }
-      this.textTimer = gScene.time.addEvent({
+      this.textTimer = globalScene.time.addEvent({
         delay: delay,
         callback: () => {
           const charIndex = text.length - (this.textTimer?.repeatCount!); // TODO: is this bang correct?
@@ -130,14 +130,14 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           this.message.setText(text.slice(0, charIndex));
           const advance = () => {
             if (charVar) {
-              gScene.charSprite.setVariant(charVar);
+              globalScene.charSprite.setVariant(charVar);
             }
             if (charSound) {
-              gScene.playSound(charSound);
+              globalScene.playSound(charSound);
             }
             if (callback && !this.textTimer?.repeatCount) {
               if (callbackDelay && !prompt) {
-                this.textCallbackTimer = gScene.time.delayedCall(callbackDelay, () => {
+                this.textCallbackTimer = globalScene.time.delayedCall(callbackDelay, () => {
                   if (this.textCallbackTimer) {
                     this.textCallbackTimer.destroy();
                     this.textCallbackTimer = null;
@@ -151,7 +151,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           };
           if (charDelay) {
             this.textTimer!.paused = true; // TODO: is the bang correct?
-            gScene.tweens.addCounter({
+            globalScene.tweens.addCounter({
               duration: Utils.getFrameMs(charDelay),
               onComplete: () => {
                 this.textTimer!.paused = false; // TODO: is the bang correct?
@@ -160,11 +160,11 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
             });
           } else if (charFade) {
             this.textTimer!.paused = true;
-            gScene.time.delayedCall(150, () => {
-              gScene.ui.fadeOut(750).then(() => {
+            globalScene.time.delayedCall(150, () => {
+              globalScene.ui.fadeOut(750).then(() => {
                 const delay = Utils.getFrameMs(charFade);
-                gScene.time.delayedCall(delay, () => {
-                  gScene.ui.fadeIn(500).then(() => {
+                globalScene.time.delayedCall(delay, () => {
+                  globalScene.ui.fadeIn(500).then(() => {
                     this.textTimer!.paused = false;
                     advance();
                   });
@@ -192,7 +192,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
-    const lastLineTest = gScene.add.text(0, 0, lastTextLine, { font: "96px emerald" });
+    const lastLineTest = globalScene.add.text(0, 0, lastTextLine, { font: "96px emerald" });
     lastLineTest.setScale(this.message.scale);
     const lastLineWidth = lastLineTest.displayWidth;
     lastLineTest.destroy();
@@ -209,7 +209,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       }
       if (callback) {
         if (callbackDelay) {
-          this.textCallbackTimer = gScene.time.delayedCall(callbackDelay, () => {
+          this.textCallbackTimer = globalScene.time.delayedCall(callbackDelay, () => {
             if (this.textCallbackTimer) {
               this.textCallbackTimer.destroy();
               this.textCallbackTimer = null;

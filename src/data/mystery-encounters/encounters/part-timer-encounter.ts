@@ -1,7 +1,7 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -54,18 +54,18 @@ export const PartTimerEncounter: MysteryEncounter =
     ])
     .withOnInit(() => {
       // Load sfx
-      gScene.loadSe("PRSFX- Horn Drill1", "battle_anims", "PRSFX- Horn Drill1.wav");
-      gScene.loadSe("PRSFX- Horn Drill3", "battle_anims", "PRSFX- Horn Drill3.wav");
-      gScene.loadSe("PRSFX- Guillotine2", "battle_anims", "PRSFX- Guillotine2.wav");
-      gScene.loadSe("PRSFX- Heavy Slam2", "battle_anims", "PRSFX- Heavy Slam2.wav");
+      globalScene.loadSe("PRSFX- Horn Drill1", "battle_anims", "PRSFX- Horn Drill1.wav");
+      globalScene.loadSe("PRSFX- Horn Drill3", "battle_anims", "PRSFX- Horn Drill3.wav");
+      globalScene.loadSe("PRSFX- Guillotine2", "battle_anims", "PRSFX- Guillotine2.wav");
+      globalScene.loadSe("PRSFX- Heavy Slam2", "battle_anims", "PRSFX- Heavy Slam2.wav");
 
-      gScene.loadSe("PRSFX- Agility", "battle_anims", "PRSFX- Agility.wav");
-      gScene.loadSe("PRSFX- Extremespeed1", "battle_anims", "PRSFX- Extremespeed1.wav");
-      gScene.loadSe("PRSFX- Accelerock1", "battle_anims", "PRSFX- Accelerock1.wav");
+      globalScene.loadSe("PRSFX- Agility", "battle_anims", "PRSFX- Agility.wav");
+      globalScene.loadSe("PRSFX- Extremespeed1", "battle_anims", "PRSFX- Extremespeed1.wav");
+      globalScene.loadSe("PRSFX- Accelerock1", "battle_anims", "PRSFX- Accelerock1.wav");
 
-      gScene.loadSe("PRSFX- Captivate", "battle_anims", "PRSFX- Captivate.wav");
-      gScene.loadSe("PRSFX- Attract2", "battle_anims", "PRSFX- Attract2.wav");
-      gScene.loadSe("PRSFX- Aurora Veil2", "battle_anims", "PRSFX- Aurora Veil2.wav");
+      globalScene.loadSe("PRSFX- Captivate", "battle_anims", "PRSFX- Captivate.wav");
+      globalScene.loadSe("PRSFX- Attract2", "battle_anims", "PRSFX- Attract2.wav");
+      globalScene.loadSe("PRSFX- Aurora Veil2", "battle_anims", "PRSFX- Aurora Veil2.wav");
 
       return true;
     })
@@ -85,7 +85,7 @@ export const PartTimerEncounter: MysteryEncounter =
         ]
       })
       .withPreOptionPhase(async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -129,7 +129,7 @@ export const PartTimerEncounter: MysteryEncounter =
         // Bring visuals back in
         await transitionMysteryEncounterIntroVisuals(false, false);
 
-        const moneyMultiplier = gScene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
+        const moneyMultiplier = globalScene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
@@ -137,7 +137,7 @@ export const PartTimerEncounter: MysteryEncounter =
         } else {
           await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
         }
-        const moneyChange = gScene.getWaveMoneyAmount(moneyMultiplier);
+        const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
         await showEncounterText(`${namespace}:pokemon_tired`);
@@ -159,7 +159,7 @@ export const PartTimerEncounter: MysteryEncounter =
         ]
       })
       .withPreOptionPhase(async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -206,7 +206,7 @@ export const PartTimerEncounter: MysteryEncounter =
         // Bring visuals back in
         await transitionMysteryEncounterIntroVisuals(false, false);
 
-        const moneyMultiplier = gScene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
+        const moneyMultiplier = globalScene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
@@ -214,7 +214,7 @@ export const PartTimerEncounter: MysteryEncounter =
         } else {
           await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
         }
-        const moneyChange = gScene.getWaveMoneyAmount(moneyMultiplier);
+        const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
         await showEncounterText(`${namespace}:pokemon_tired`);
@@ -239,7 +239,7 @@ export const PartTimerEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async () => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const selectedPokemon = encounter.selectedOption?.primaryPokemon!;
           encounter.setDialogueToken("selectedPokemon", selectedPokemon.getNameToRender());
 
@@ -266,7 +266,7 @@ export const PartTimerEncounter: MysteryEncounter =
 
           // Give money and do dialogue
           await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
-          const moneyChange = gScene.getWaveMoneyAmount(2.5);
+          const moneyChange = globalScene.getWaveMoneyAmount(2.5);
           updatePlayerMoney(moneyChange, true, false);
           await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
           await showEncounterText(`${namespace}:pokemon_tired`);
@@ -285,50 +285,50 @@ export const PartTimerEncounter: MysteryEncounter =
     .build();
 
 function doStrongWorkSfx() {
-  gScene.playSound("battle_anims/PRSFX- Horn Drill1");
-  gScene.playSound("battle_anims/PRSFX- Horn Drill1");
+  globalScene.playSound("battle_anims/PRSFX- Horn Drill1");
+  globalScene.playSound("battle_anims/PRSFX- Horn Drill1");
 
-  gScene.time.delayedCall(1000, () => {
-    gScene.playSound("battle_anims/PRSFX- Guillotine2");
+  globalScene.time.delayedCall(1000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Guillotine2");
   });
 
-  gScene.time.delayedCall(2000, () => {
-    gScene.playSound("battle_anims/PRSFX- Heavy Slam2");
+  globalScene.time.delayedCall(2000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Heavy Slam2");
   });
 
-  gScene.time.delayedCall(2500, () => {
-    gScene.playSound("battle_anims/PRSFX- Guillotine2");
+  globalScene.time.delayedCall(2500, () => {
+    globalScene.playSound("battle_anims/PRSFX- Guillotine2");
   });
 }
 
 function doDeliverySfx() {
-  gScene.playSound("battle_anims/PRSFX- Accelerock1");
+  globalScene.playSound("battle_anims/PRSFX- Accelerock1");
 
-  gScene.time.delayedCall(1500, () => {
-    gScene.playSound("battle_anims/PRSFX- Extremespeed1");
+  globalScene.time.delayedCall(1500, () => {
+    globalScene.playSound("battle_anims/PRSFX- Extremespeed1");
   });
 
-  gScene.time.delayedCall(2000, () => {
-    gScene.playSound("battle_anims/PRSFX- Extremespeed1");
+  globalScene.time.delayedCall(2000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Extremespeed1");
   });
 
-  gScene.time.delayedCall(2250, () => {
-    gScene.playSound("battle_anims/PRSFX- Agility");
+  globalScene.time.delayedCall(2250, () => {
+    globalScene.playSound("battle_anims/PRSFX- Agility");
   });
 }
 
 function doSalesSfx() {
-  gScene.playSound("battle_anims/PRSFX- Captivate");
+  globalScene.playSound("battle_anims/PRSFX- Captivate");
 
-  gScene.time.delayedCall(1500, () => {
-    gScene.playSound("battle_anims/PRSFX- Attract2");
+  globalScene.time.delayedCall(1500, () => {
+    globalScene.playSound("battle_anims/PRSFX- Attract2");
   });
 
-  gScene.time.delayedCall(2000, () => {
-    gScene.playSound("battle_anims/PRSFX- Aurora Veil2");
+  globalScene.time.delayedCall(2000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Aurora Veil2");
   });
 
-  gScene.time.delayedCall(3000, () => {
-    gScene.playSound("battle_anims/PRSFX- Attract2");
+  globalScene.time.delayedCall(3000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Attract2");
   });
 }

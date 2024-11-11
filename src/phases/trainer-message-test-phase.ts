@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { TrainerType } from "#app/enums/trainer-type";
 import { BattlePhase } from "./battle-phase";
@@ -33,7 +33,7 @@ export class TrainerMessageTestPhase extends BattlePhase {
     }
 
     for (const message of testMessages) {
-      gScene.pushPhase(new TestMessagePhase(message));
+      globalScene.pushPhase(new TestMessagePhase(message));
     }
 
     this.end();

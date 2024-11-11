@@ -1,7 +1,7 @@
 import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
 import { Moves } from "#app/enums/moves";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Type } from "../type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
@@ -88,7 +88,7 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
    * @param pokemon
    */
   pokemonMeetsPrimaryRequirements(pokemon: Pokemon): boolean {
-    return !this.primaryPokemonRequirements.some(req => !req.queryParty(gScene.getParty()).map(p => p.id).includes(pokemon.id));
+    return !this.primaryPokemonRequirements.some(req => !req.queryParty(globalScene.getParty()).map(p => p.id).includes(pokemon.id));
   }
 
   /**
@@ -102,10 +102,10 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
       return true;
     }
-    let qualified: PlayerPokemon[] = gScene.getParty();
+    let qualified: PlayerPokemon[] = globalScene.getParty();
     for (const req of this.primaryPokemonRequirements) {
       if (req.meetsRequirement()) {
-        const queryParty = req.queryParty(gScene.getParty());
+        const queryParty = req.queryParty(globalScene.getParty());
         qualified = qualified.filter(pkmn => queryParty.includes(pkmn));
       } else {
         this.primaryPokemon = undefined;
@@ -162,10 +162,10 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
       return true;
     }
 
-    let qualified: PlayerPokemon[] = gScene.getParty();
+    let qualified: PlayerPokemon[] = globalScene.getParty();
     for (const req of this.secondaryPokemonRequirements) {
       if (req.meetsRequirement()) {
-        const queryParty = req.queryParty(gScene.getParty());
+        const queryParty = req.queryParty(globalScene.getParty());
         qualified = qualified.filter(pkmn => queryParty.includes(pkmn));
       } else {
         this.secondaryPokemon = [];

@@ -1,4 +1,4 @@
-import BattleScene, { gScene } from "#app/battle-scene";
+import BattleScene, { globalScene } from "#app/battle-scene";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { VariantTier } from "#enums/variant-tier";
@@ -233,7 +233,7 @@ export class Egg {
       }
 
       // This function has way to many optional parameters
-      ret = gScene.addPlayerPokemon(pokemonSpecies, 1, abilityIndex, undefined, undefined, false);
+      ret = globalScene.addPlayerPokemon(pokemonSpecies, 1, abilityIndex, undefined, undefined, false);
       ret.shiny = this._isShiny;
       ret.variant = this._variantTier;
 
@@ -245,7 +245,7 @@ export class Egg {
     };
 
     ret = ret!;  // Tell TS compiler it's defined now
-    gScene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       generatePlayerPokemonHelper();
     }, this._id, EGG_SEED.toString());
 
@@ -254,7 +254,7 @@ export class Egg {
 
   // Doesn't need to be called if the egg got pulled by a gacha machiene
   public addEggToGameData(): void {
-    gScene.gameData.eggs.push(this);
+    globalScene.gameData.eggs.push(this);
   }
 
   public getEggDescriptor(): string {
@@ -352,7 +352,7 @@ export class Egg {
   }
 
   private rollSpecies(): Species | null {
-    if (!gScene) {
+    if (!globalScene) {
       return null;
     }
     /**
@@ -405,8 +405,8 @@ export class Egg {
       .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
 
     // If this is the 10th egg without unlocking something new, attempt to force it.
-    if (gScene.gameData.unlockPity[this.tier] >= 9) {
-      const lockedPool = speciesPool.filter(s => !gScene.gameData.dexData[s].caughtAttr && !gScene.gameData.eggs.some(e => e.species === s));
+    if (globalScene.gameData.unlockPity[this.tier] >= 9) {
+      const lockedPool = speciesPool.filter(s => !globalScene.gameData.dexData[s].caughtAttr && !globalScene.gameData.eggs.some(e => e.species === s));
       if (lockedPool.length) { // Skip this if everything is unlocked
         speciesPool = lockedPool;
       }
@@ -453,10 +453,10 @@ export class Egg {
     }
     species = species!; // tell TS compiled it's defined now!
 
-    if (gScene.gameData.dexData[species].caughtAttr || gScene.gameData.eggs.some(e => e.species === species)) {
-      gScene.gameData.unlockPity[this.tier] = Math.min(gScene.gameData.unlockPity[this.tier] + 1, 10);
+    if (globalScene.gameData.dexData[species].caughtAttr || globalScene.gameData.eggs.some(e => e.species === species)) {
+      globalScene.gameData.unlockPity[this.tier] = Math.min(globalScene.gameData.unlockPity[this.tier] + 1, 10);
     } else {
-      gScene.gameData.unlockPity[this.tier] = 0;
+      globalScene.gameData.unlockPity[this.tier] = 0;
     }
 
     return species;
@@ -502,36 +502,36 @@ export class Egg {
 
   private checkForPityTierOverrides(): void {
     const tierValueOffset = this._sourceType === EggSourceType.GACHA_LEGENDARY ? GACHA_LEGENDARY_UP_THRESHOLD_OFFSET : 0;
-    gScene.gameData.eggPity[EggTier.RARE] += 1;
-    gScene.gameData.eggPity[EggTier.EPIC] += 1;
-    gScene.gameData.eggPity[EggTier.LEGENDARY] += 1 + tierValueOffset;
+    globalScene.gameData.eggPity[EggTier.RARE] += 1;
+    globalScene.gameData.eggPity[EggTier.EPIC] += 1;
+    globalScene.gameData.eggPity[EggTier.LEGENDARY] += 1 + tierValueOffset;
     // These numbers are roughly the 80% mark. That is, 80% of the time you'll get an egg before this gets triggered.
-    if (gScene.gameData.eggPity[EggTier.LEGENDARY] >= EGG_PITY_LEGENDARY_THRESHOLD && this._tier === EggTier.COMMON) {
+    if (globalScene.gameData.eggPity[EggTier.LEGENDARY] >= EGG_PITY_LEGENDARY_THRESHOLD && this._tier === EggTier.COMMON) {
       this._tier = EggTier.LEGENDARY;
-    } else if (gScene.gameData.eggPity[EggTier.EPIC] >= EGG_PITY_EPIC_THRESHOLD && this._tier === EggTier.COMMON) {
+    } else if (globalScene.gameData.eggPity[EggTier.EPIC] >= EGG_PITY_EPIC_THRESHOLD && this._tier === EggTier.COMMON) {
       this._tier = EggTier.EPIC;
-    } else if (gScene.gameData.eggPity[EggTier.RARE] >= EGG_PITY_RARE_THRESHOLD && this._tier === EggTier.COMMON) {
+    } else if (globalScene.gameData.eggPity[EggTier.RARE] >= EGG_PITY_RARE_THRESHOLD && this._tier === EggTier.COMMON) {
       this._tier = EggTier.RARE;
     }
-    gScene.gameData.eggPity[this._tier] = 0;
+    globalScene.gameData.eggPity[this._tier] = 0;
   }
 
   private increasePullStatistic(): void {
-    gScene.gameData.gameStats.eggsPulled++;
+    globalScene.gameData.gameStats.eggsPulled++;
     if (this.isManaphyEgg()) {
-      gScene.gameData.gameStats.manaphyEggsPulled++;
+      globalScene.gameData.gameStats.manaphyEggsPulled++;
       this._hatchWaves = this.getEggTierDefaultHatchWaves(EggTier.EPIC);
       return;
     }
     switch (this.tier) {
       case EggTier.RARE:
-        gScene.gameData.gameStats.rareEggsPulled++;
+        globalScene.gameData.gameStats.rareEggsPulled++;
         break;
       case EggTier.EPIC:
-        gScene.gameData.gameStats.epicEggsPulled++;
+        globalScene.gameData.gameStats.epicEggsPulled++;
         break;
       case EggTier.LEGENDARY:
-        gScene.gameData.gameStats.legendaryEggsPulled++;
+        globalScene.gameData.gameStats.legendaryEggsPulled++;
         break;
     }
   }
@@ -563,7 +563,7 @@ export function getLegendaryGachaSpeciesForTimestamp(timestamp: number): Species
   const offset = Math.floor(Math.floor(dayTimestamp / 86400000) / legendarySpecies.length); // Cycle number
   const index = Math.floor(dayTimestamp / 86400000) % legendarySpecies.length; // Index within cycle
 
-  gScene.executeWithSeedOffset(() => {
+  globalScene.executeWithSeedOffset(() => {
     ret = Phaser.Math.RND.shuffle(legendarySpecies)[index];
   }, offset, EGG_SEED.toString());
   ret = ret!; // tell TS compiler it's

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { Unlockables, getUnlockableName } from "#app/system/unlockables";
 import { Mode } from "#app/ui/ui";
@@ -14,13 +14,13 @@ export class UnlockPhase extends Phase {
   }
 
   start(): void {
-    gScene.time.delayedCall(2000, () => {
-      gScene.gameData.unlocks[this.unlockable] = true;
+    globalScene.time.delayedCall(2000, () => {
+      globalScene.gameData.unlocks[this.unlockable] = true;
       // Sound loaded into game as is
-      gScene.playSound("level_up_fanfare");
-      gScene.ui.setMode(Mode.MESSAGE);
-      gScene.ui.showText(i18next.t("battle:unlockedSomething", { unlockedThing: getUnlockableName(this.unlockable) }), null, () => {
-        gScene.time.delayedCall(1500, () => gScene.arenaBg.setVisible(true));
+      globalScene.playSound("level_up_fanfare");
+      globalScene.ui.setMode(Mode.MESSAGE);
+      globalScene.ui.showText(i18next.t("battle:unlockedSomething", { unlockedThing: getUnlockableName(this.unlockable) }), null, () => {
+        globalScene.time.delayedCall(1500, () => globalScene.arenaBg.setVisible(true));
         this.end();
       }, null, true, 1500);
     });

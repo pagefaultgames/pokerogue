@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -59,7 +59,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.optionSelectContainer = gScene.add.container((gScene.game.canvas.width / 6) - 1, -48);
+    this.optionSelectContainer = globalScene.add.container((globalScene.game.canvas.width / 6) - 1, -48);
     this.optionSelectContainer.setName(`option-select-${this.mode ? Mode[this.mode] : "UNKNOWN"}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
@@ -71,7 +71,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectIcons = [];
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, gScene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
 
     this.setCursor(0);
   }
@@ -84,7 +84,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     // for performance reasons, this limits how many options we can see at once. Without this, it would try to make text options for every single options
     // which makes the performance take a hit. If there's not enough options to do this (set to 10 at the moment) and the ui mode !== Mode.AUTO_COMPLETE,
     // this is ignored and the original code is untouched, with the options array being all the options from the config
-    if (configOptions.length >= 10 && gScene.ui.getMode() === Mode.AUTO_COMPLETE) {
+    if (configOptions.length >= 10 && globalScene.ui.getMode() === Mode.AUTO_COMPLETE) {
       const optionsScrollTotal = configOptions.length;
       const optionStartIndex = this.scrollCursor;
       const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config?.maxOptions! - 1) >= optionsScrollTotal ? this.config?.maxOptions! - 1 : this.config?.maxOptions! - 2));
@@ -106,7 +106,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectText.setName("text-option-select");
     this.optionSelectText.setLineSpacing(12);
     this.optionSelectContainer.add(this.optionSelectText);
-    this.optionSelectContainer.setPosition((gScene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
+    this.optionSelectContainer.setPosition((globalScene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 
@@ -120,7 +120,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     options.forEach((option: OptionSelectItem, i: integer) => {
       if (option.item) {
-        const itemIcon = gScene.add.sprite(0, 0, "items", option.item);
+        const itemIcon = globalScene.add.sprite(0, 0, "items", option.item);
         itemIcon.setScale(3 * this.scale);
         this.optionSelectIcons.push(itemIcon);
 
@@ -129,7 +129,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         itemIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
         if (option.item === "candy") {
-          const itemOverlayIcon = gScene.add.sprite(0, 0, "items", "candy_overlay");
+          const itemOverlayIcon = globalScene.add.sprite(0, 0, "items", "candy_overlay");
           itemOverlayIcon.setScale(3 * this.scale);
           this.optionSelectIcons.push(itemOverlayIcon);
 
@@ -156,7 +156,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.config = args[0] as OptionSelectConfig;
     this.setupOptions();
 
-    gScene.ui.bringToTop(this.optionSelectContainer);
+    globalScene.ui.bringToTop(this.optionSelectContainer);
 
     this.optionSelectContainer.setVisible(true);
     this.scrollCursor = 0;
@@ -166,7 +166,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.blockInput = true;
       this.optionSelectText.setAlpha(0.5);
       this.cursorObj?.setAlpha(0.8);
-      gScene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
+      globalScene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
     }
 
     return true;
@@ -332,7 +332,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     if (!this.cursorObj) {
-      this.cursorObj = gScene.add.image(0, 0, "cursor");
+      this.cursorObj = globalScene.add.image(0, 0, "cursor");
       this.optionSelectContainer.add(this.cursorObj);
     }
 

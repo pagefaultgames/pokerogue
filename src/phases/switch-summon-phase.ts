@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene"; // todo?
+import { globalScene } from "#app/battle-scene"; // todo?
 import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
 import { getPokeballTintColor } from "#app/data/pokeball";
@@ -46,29 +46,29 @@ export class SwitchSummonPhase extends SummonPhase {
     if (!this.player) {
       if (this.slotIndex === -1) {
         //@ts-ignore
-        this.slotIndex = gScene.currentBattle.trainer?.getNextSummonIndex(!this.fieldIndex ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER); // TODO: what would be the default trainer-slot fallback?
+        this.slotIndex = globalScene.currentBattle.trainer?.getNextSummonIndex(!this.fieldIndex ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER); // TODO: what would be the default trainer-slot fallback?
       }
       if (this.slotIndex > -1) {
         this.showEnemyTrainer(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
-        gScene.pbTrayEnemy.showPbTray(gScene.getEnemyParty());
+        globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
       }
     }
 
-    if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? gScene.getParty() : gScene.getEnemyParty())[this.slotIndex])) {
+    if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? globalScene.getParty() : globalScene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
         return this.switchAndSummon();
       } else {
-        gScene.time.delayedCall(750, () => this.switchAndSummon());
+        globalScene.time.delayedCall(750, () => this.switchAndSummon());
         return;
       }
     }
 
     const pokemon = this.getPokemon();
-    (this.player ? gScene.getEnemyField() : gScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+    (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
     if (this.switchType === SwitchType.SWITCH || this.switchType === SwitchType.INITIAL_SWITCH) {
       const substitute = pokemon.getTag(SubstituteTag);
       if (substitute) {
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: substitute.sprite,
           duration: 250,
           scale: substitute.sprite.scale * 0.5,
@@ -78,40 +78,40 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
-    gScene.ui.showText(this.player ?
+    globalScene.ui.showText(this.player ?
       i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }) :
       i18next.t("battle:trainerComeBack", {
-        trainerName: gScene.currentBattle.trainer?.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
+        trainerName: globalScene.currentBattle.trainer?.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
         pokemonName: pokemon.getNameToRender()
       })
     );
-    gScene.playSound("se/pb_rel");
+    globalScene.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: pokemon,
       duration: 250,
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
         pokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
-        gScene.time.delayedCall(750, () => this.switchAndSummon());
+        globalScene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
   }
 
   switchAndSummon() {
-    const party = this.player ? this.getParty() : gScene.getEnemyParty();
+    const party = this.player ? this.getParty() : globalScene.getEnemyParty();
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
-      (this.player ? gScene.getEnemyField() : gScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
-      if (!gScene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
-        const batonPassModifier = gScene.findModifier(m => m instanceof SwitchEffectTransferModifier
+      (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
+      if (!globalScene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
+        const batonPassModifier = globalScene.findModifier(m => m instanceof SwitchEffectTransferModifier
             && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
-        if (batonPassModifier && !gScene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
-          gScene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false);
+        if (batonPassModifier && !globalScene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
+          globalScene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false);
         }
       }
     }
@@ -119,10 +119,10 @@ export class SwitchSummonPhase extends SummonPhase {
       party[this.slotIndex] = this.lastPokemon;
       party[this.fieldIndex] = switchedInPokemon;
       const showTextAndSummon = () => {
-        gScene.ui.showText(this.player ?
+        globalScene.ui.showText(this.player ?
           i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(switchedInPokemon) }) :
           i18next.t("battle:trainerGo", {
-            trainerName: gScene.currentBattle.trainer?.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
+            trainerName: globalScene.currentBattle.trainer?.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER),
             pokemonName: this.getPokemon().getNameToRender()
           })
         );
@@ -146,9 +146,9 @@ export class SwitchSummonPhase extends SummonPhase {
       if (this.player) {
         showTextAndSummon();
       } else {
-        gScene.time.delayedCall(1500, () => {
+        globalScene.time.delayedCall(1500, () => {
           this.hideEnemyTrainer();
-          gScene.pbTrayEnemy.hide();
+          globalScene.pbTrayEnemy.hide();
           showTextAndSummon();
         });
       }
@@ -162,10 +162,10 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
 
-    const moveId = gScene.currentBattle.lastMove;
+    const moveId = globalScene.currentBattle.lastMove;
     const lastUsedMove = moveId ? allMoves[moveId] : undefined;
 
-    const currentCommand = gScene.currentBattle.turnCommands[this.fieldIndex]?.command;
+    const currentCommand = globalScene.currentBattle.turnCommands[this.fieldIndex]?.command;
     const lastPokemonIsForceSwitchedAndNotFainted = lastUsedMove?.hasAttr(ForceSwitchOutAttr) && !this.lastPokemon.isFainted();
 
     // Compensate for turn spent summoning
@@ -191,12 +191,12 @@ export class SwitchSummonPhase extends SummonPhase {
 
     this.lastPokemon?.resetSummonData();
 
-    gScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
-    gScene.arena.triggerWeatherBasedFormChanges();
+    globalScene.arena.triggerWeatherBasedFormChanges();
   }
 
   queuePostSummon(): void {
-    gScene.unshiftPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    globalScene.unshiftPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
   }
 }

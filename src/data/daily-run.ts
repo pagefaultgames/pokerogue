@@ -1,6 +1,6 @@
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { Starter } from "#app/ui/starter-select-ui-handler";
 import * as Utils from "#app/utils";
@@ -28,8 +28,8 @@ export function fetchDailyRunSeed(): Promise<string | null> {
 export function getDailyRunStarters(seed: string): Starter[] {
   const starters: Starter[] = [];
 
-  gScene.executeWithSeedOffset(() => {
-    const startingLevel = gScene.gameMode.getStartingLevel();
+  globalScene.executeWithSeedOffset(() => {
+    const startingLevel = globalScene.gameMode.getStartingLevel();
 
     if (/\d{18}$/.test(seed)) {
       for (let s = 0; s < 3; s++) {

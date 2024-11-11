@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { PokeballType } from "../data/pokeball";
 import * as Utils from "../utils";
 
@@ -23,9 +23,9 @@ export function addPokeballOpenParticles(x: number, y: number, pokeballType: Pok
 }
 
 function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
-  const pbOpenParticlesFrameNames = gScene.anims.generateFrameNames("pb_particles", { start: 0, end: 3, suffix: ".png" });
-  if (!(gScene.anims.exists("pb_open_particle"))) {
-    gScene.anims.create({
+  const pbOpenParticlesFrameNames = globalScene.anims.generateFrameNames("pb_particles", { start: 0, end: 3, suffix: ".png" });
+  if (!(globalScene.anims.exists("pb_open_particle"))) {
+    globalScene.anims.create({
       key: "pb_open_particle",
       frames: pbOpenParticlesFrameNames,
       frameRate: 16,
@@ -34,11 +34,11 @@ function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
   }
 
   const addParticle = (index: integer) => {
-    const particle = gScene.add.sprite(x, y, "pb_open_particle");
-    gScene.field.add(particle);
+    const particle = globalScene.add.sprite(x, y, "pb_open_particle");
+    globalScene.field.add(particle);
     const angle = index * 45;
     const [ xCoord, yCoord ] = [ radius * Math.cos(angle * Math.PI / 180), radius * Math.sin(angle * Math.PI / 180) ];
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: particle,
       x: x + xCoord,
       y: y + yCoord,
@@ -47,9 +47,9 @@ function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
     particle.play({
       key: "pb_open_particle",
       startFrame: (index + 3) % 4,
-      frameRate: Math.floor(16 * gScene.gameSpeed)
+      frameRate: Math.floor(16 * globalScene.gameSpeed)
     });
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: particle,
       delay: 500,
       duration: 75,
@@ -60,7 +60,7 @@ function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
   };
 
   let particleCount = 0;
-  gScene.time.addEvent({
+  globalScene.time.addEvent({
     delay: 20,
     repeat: 16,
     callback: () => addParticle(++particleCount)
@@ -73,7 +73,7 @@ function doUbOpenParticles(x: number, y: number, frameIndex: integer) {
     particles.push(doFanOutParticle(i * 25, x, y, 1, 1, 5, frameIndex));
   }
 
-  gScene.tweens.add({
+  globalScene.tweens.add({
     targets: particles,
     delay: 750,
     duration: 250,
@@ -94,7 +94,7 @@ function doMbOpenParticles(x: number, y: number) {
       particles.push(doFanOutParticle(i * 32, x, y, j ? 1 : 2, j ? 2 : 1, 8, 4));
     }
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: particles,
       delay: 750,
       duration: 250,
@@ -112,8 +112,8 @@ function doMbOpenParticles(x: number, y: number) {
 function doFanOutParticle(trigIndex: integer, x: integer, y: integer, xSpeed: integer, ySpeed: integer, angle: integer, frameIndex: integer): Phaser.GameObjects.Image {
   let f = 0;
 
-  const particle = gScene.add.image(x, y, "pb_particles", `${frameIndex}.png`);
-  gScene.field.add(particle);
+  const particle = globalScene.add.image(x, y, "pb_particles", `${frameIndex}.png`);
+  globalScene.field.add(particle);
 
   const updateParticle = () => {
     if (!particle.scene) {
@@ -125,7 +125,7 @@ function doFanOutParticle(trigIndex: integer, x: integer, y: integer, xSpeed: in
     f++;
   };
 
-  const particleTimer = gScene.tweens.addCounter({
+  const particleTimer = globalScene.tweens.addCounter({
     repeat: -1,
     duration: Utils.getFrameMs(1),
     onRepeat: () => {
@@ -138,18 +138,18 @@ function doFanOutParticle(trigIndex: integer, x: integer, y: integer, xSpeed: in
 
 export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): void {
   const addParticle = () => {
-    const particle = gScene.add.sprite(pokeball.x, pokeball.y, "pb_particles", "4.png");
+    const particle = globalScene.add.sprite(pokeball.x, pokeball.y, "pb_particles", "4.png");
     particle.setOrigin(pokeball.originX, pokeball.originY);
     particle.setAlpha(0.5);
-    gScene.field.add(particle);
+    globalScene.field.add(particle);
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: particle,
       y: pokeball.y - 10,
       ease: "Sine.easeOut",
       duration: 250,
       onComplete: () => {
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: particle,
           y: pokeball.y,
           alpha: 0,
@@ -160,13 +160,13 @@ export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): vo
     });
 
     const dist = Utils.randGauss(25);
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: particle,
       x: pokeball.x + dist,
       duration: 500
     });
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: particle,
       alpha: 0,
       delay: 425,

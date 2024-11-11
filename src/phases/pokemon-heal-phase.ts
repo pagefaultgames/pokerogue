@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectHealText } from "#app/data/status-effect";
@@ -55,13 +55,13 @@ export class PokemonHealPhase extends CommonAnimPhase {
     let lastStatusEffect = StatusEffect.NONE;
 
     if (healBlock && this.hpHealed > 0) {
-      gScene.queueMessage(healBlock.onActivation(pokemon));
+      globalScene.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       return super.end();
     } else if (healOrDamage) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive) {
-        gScene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
+        globalScene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       }
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
@@ -74,12 +74,12 @@ export class PokemonHealPhase extends CommonAnimPhase {
       }
       healAmount.value = pokemon.heal(healAmount.value);
       if (healAmount.value) {
-        gScene.damageNumberHandler.add(pokemon, healAmount.value, HitResult.HEAL);
+        globalScene.damageNumberHandler.add(pokemon, healAmount.value, HitResult.HEAL);
       }
       if (pokemon.isPlayer()) {
-        gScene.validateAchvs(HealAchv, healAmount);
-        if (healAmount.value > gScene.gameData.gameStats.highestHeal) {
-          gScene.gameData.gameStats.highestHeal = healAmount.value;
+        globalScene.validateAchvs(HealAchv, healAmount);
+        if (healAmount.value > globalScene.gameData.gameStats.highestHeal) {
+          globalScene.gameData.gameStats.highestHeal = healAmount.value;
         }
       }
       if (this.healStatus && !this.revive && pokemon.status) {
@@ -96,11 +96,11 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     if (this.message) {
-      gScene.queueMessage(this.message);
+      globalScene.queueMessage(this.message);
     }
 
     if (this.healStatus && lastStatusEffect && !hasMessage) {
-      gScene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
+      globalScene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
     }
 
     if (!healOrDamage && !lastStatusEffect) {

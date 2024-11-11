@@ -9,7 +9,7 @@ import { TurnHealModifier, EnemyTurnHealModifier, EnemyStatusEffectHealChanceMod
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export class TurnEndPhase extends FieldPhase {
   constructor() {
@@ -19,29 +19,29 @@ export class TurnEndPhase extends FieldPhase {
   start() {
     super.start();
 
-    gScene.currentBattle.incrementTurn();
-    gScene.eventTarget.dispatchEvent(new TurnEndEvent(gScene.currentBattle.turn));
+    globalScene.currentBattle.incrementTurn();
+    globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
 
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
-      gScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
+      globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
-      if (gScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
-        gScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
+      if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
+        globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
           Math.max(pokemon.getMaxHp() >> 4, 1), i18next.t("battle:turnEndHpRestore", { pokemonName: getPokemonNameWithAffix(pokemon) }), true));
       }
 
       if (!pokemon.isPlayer()) {
-        gScene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
-        gScene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
+        globalScene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
+        globalScene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
       }
 
       applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
 
-      gScene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
+      globalScene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
 
-      gScene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
+      globalScene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
       pokemon.battleSummonData.turnCount++;
       pokemon.battleSummonData.waveTurnCount++;
@@ -49,15 +49,15 @@ export class TurnEndPhase extends FieldPhase {
 
     this.executeForAll(handlePokemon);
 
-    gScene.arena.lapseTags();
+    globalScene.arena.lapseTags();
 
-    if (gScene.arena.weather && !gScene.arena.weather.lapse()) {
-      gScene.arena.trySetWeather(WeatherType.NONE, false);
-      gScene.arena.triggerWeatherBasedFormChangesToNormal();
+    if (globalScene.arena.weather && !globalScene.arena.weather.lapse()) {
+      globalScene.arena.trySetWeather(WeatherType.NONE, false);
+      globalScene.arena.triggerWeatherBasedFormChangesToNormal();
     }
 
-    if (gScene.arena.terrain && !gScene.arena.terrain.lapse()) {
-      gScene.arena.trySetTerrain(TerrainType.NONE, false);
+    if (globalScene.arena.terrain && !globalScene.arena.terrain.lapse()) {
+      globalScene.arena.trySetTerrain(TerrainType.NONE, false);
     }
 
     this.end();

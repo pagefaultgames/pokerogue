@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { EncounterPhase } from "./encounter-phase";
 
 export class NextEncounterPhase extends EncounterPhase {
@@ -11,29 +11,29 @@ export class NextEncounterPhase extends EncounterPhase {
   }
 
   doEncounter(): void {
-    gScene.playBgm(undefined, true);
+    globalScene.playBgm(undefined, true);
 
-    for (const pokemon of gScene.getParty()) {
+    for (const pokemon of globalScene.getParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
       }
     }
 
-    gScene.arenaNextEnemy.setBiome(gScene.arena.biomeType);
-    gScene.arenaNextEnemy.setVisible(true);
+    globalScene.arenaNextEnemy.setBiome(globalScene.arena.biomeType);
+    globalScene.arenaNextEnemy.setVisible(true);
 
-    const enemyField = gScene.getEnemyField();
-    const moveTargets: any[] = [ gScene.arenaEnemy, gScene.arenaNextEnemy, gScene.currentBattle.trainer, enemyField, gScene.lastEnemyTrainer ];
-    const lastEncounterVisuals = gScene.lastMysteryEncounter?.introVisuals;
+    const enemyField = globalScene.getEnemyField();
+    const moveTargets: any[] = [ globalScene.arenaEnemy, globalScene.arenaNextEnemy, globalScene.currentBattle.trainer, enemyField, globalScene.lastEnemyTrainer ];
+    const lastEncounterVisuals = globalScene.lastMysteryEncounter?.introVisuals;
     if (lastEncounterVisuals) {
       moveTargets.push(lastEncounterVisuals);
     }
-    const nextEncounterVisuals = gScene.currentBattle.mysteryEncounter?.introVisuals;
+    const nextEncounterVisuals = globalScene.currentBattle.mysteryEncounter?.introVisuals;
     if (nextEncounterVisuals) {
       const enterFromRight = nextEncounterVisuals.enterFromRight;
       if (enterFromRight) {
         nextEncounterVisuals.x += 500;
-        gScene.tweens.add({
+        globalScene.tweens.add({
           targets: nextEncounterVisuals,
           x: "-=200",
           duration: 2000
@@ -43,22 +43,22 @@ export class NextEncounterPhase extends EncounterPhase {
       }
     }
 
-    gScene.tweens.add({
+    globalScene.tweens.add({
       targets: moveTargets.flat(),
       x: "+=300",
       duration: 2000,
       onComplete: () => {
-        gScene.arenaEnemy.setBiome(gScene.arena.biomeType);
-        gScene.arenaEnemy.setX(gScene.arenaNextEnemy.x);
-        gScene.arenaEnemy.setAlpha(1);
-        gScene.arenaNextEnemy.setX(gScene.arenaNextEnemy.x - 300);
-        gScene.arenaNextEnemy.setVisible(false);
-        if (gScene.lastEnemyTrainer) {
-          gScene.lastEnemyTrainer.destroy();
+        globalScene.arenaEnemy.setBiome(globalScene.arena.biomeType);
+        globalScene.arenaEnemy.setX(globalScene.arenaNextEnemy.x);
+        globalScene.arenaEnemy.setAlpha(1);
+        globalScene.arenaNextEnemy.setX(globalScene.arenaNextEnemy.x - 300);
+        globalScene.arenaNextEnemy.setVisible(false);
+        if (globalScene.lastEnemyTrainer) {
+          globalScene.lastEnemyTrainer.destroy();
         }
         if (lastEncounterVisuals) {
-          gScene.field.remove(lastEncounterVisuals, true);
-          gScene.lastMysteryEncounter!.introVisuals = undefined;
+          globalScene.field.remove(lastEncounterVisuals, true);
+          globalScene.lastMysteryEncounter!.introVisuals = undefined;
         }
 
         if (!this.tryOverrideForBattleSpec()) {

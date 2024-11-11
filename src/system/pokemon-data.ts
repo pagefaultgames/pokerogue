@@ -1,5 +1,5 @@
 import { BattleType } from "../battle";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Gender } from "../data/gender";
 import { Nature } from "../data/nature";
 import { PokeballType } from "../data/pokeball";
@@ -166,12 +166,12 @@ export default class PokemonData {
   toPokemon(battleType?: BattleType, partyMemberIndex: integer = 0, double: boolean = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
-      ? gScene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
+      ? globalScene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
         if (this.nickname) {
           playerPokemon.nickname = this.nickname;
         }
       })
-      : gScene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
+      : globalScene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
     if (this.summonData) {
       ret.primeSummonData(this.summonData);
     }

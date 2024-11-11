@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { Mode } from "#app/ui/ui";
 
@@ -10,8 +10,8 @@ export class SelectChallengePhase extends Phase {
   start() {
     super.start();
 
-    gScene.playBgm("menu");
+    globalScene.playBgm("menu");
 
-    gScene.ui.setMode(Mode.CHALLENGE_SELECT);
+    globalScene.ui.setMode(Mode.CHALLENGE_SELECT);
   }
 }

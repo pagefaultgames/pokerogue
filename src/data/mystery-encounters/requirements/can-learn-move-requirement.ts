@@ -2,7 +2,7 @@ import { Moves } from "#app/enums/moves";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
 import { EncounterPokemonRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 /**
  * {@linkcode CanLearnMoveRequirement} options
@@ -39,7 +39,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   }
 
   override meetsRequirement(): boolean {
-    const partyPokemon = gScene.getParty().filter((pkm) => (this.includeFainted ? pkm.isAllowed() : pkm.isAllowedInBattle()));
+    const partyPokemon = globalScene.getParty().filter((pkm) => (this.includeFainted ? pkm.isAllowed() : pkm.isAllowedInBattle()));
 
     if (isNullOrUndefined(partyPokemon) || this.requiredMoves?.length < 0) {
       return false;

@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { ModifierType, ModifierTypeFunc, getModifierType } from "#app/modifier/modifier-type";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
@@ -21,9 +21,9 @@ export class ModifierRewardPhase extends BattlePhase {
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
-      gScene.addModifier(newModifier).then(() => {
-        gScene.playSound("item_fanfare");
-        gScene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }), null, () => resolve(), null, true);
+      globalScene.addModifier(newModifier).then(() => {
+        globalScene.playSound("item_fanfare");
+        globalScene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }), null, () => resolve(), null, true);
       });
     });
   }

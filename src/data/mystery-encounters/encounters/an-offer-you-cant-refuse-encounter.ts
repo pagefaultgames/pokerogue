@@ -2,7 +2,7 @@ import { generateModifierType, leaveEncounterWithoutBattle, setEncounterExp, upd
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { AbilityRequirement, CombinationPokemonRequirement, MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
@@ -70,13 +70,13 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
     .withDescription(`${namespace}:description`)
     .withQuery(`${namespace}:query`)
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       const pokemon = getHighestStatTotalPlayerPokemon(true, true);
 
       const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
       const starterValue: number = speciesStarterCosts[baseSpecies] ?? 1;
       const multiplier = Math.max(MONEY_MAXIMUM_MULTIPLIER / 10 * starterValue, MONEY_MINIMUM_MULTIPLIER);
-      const price = gScene.getWaveMoneyAmount(multiplier);
+      const price = globalScene.getWaveMoneyAmount(multiplier);
 
       encounter.setDialogueToken("strongestPokemon", pokemon.getNameToRender());
       encounter.setDialogueToken("price", price.toString());
@@ -119,15 +119,15 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
           ],
         })
         .withPreOptionPhase(async (): Promise<boolean> => {
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           // Update money and remove pokemon from party
           updatePlayerMoney(encounter.misc.price);
-          gScene.removePokemonFromPlayerParty(encounter.misc.pokemon);
+          globalScene.removePokemonFromPlayerParty(encounter.misc.pokemon);
           return true;
         })
         .withOptionPhase(async () => {
           // Give the player a Shiny Charm
-          gScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.SHINY_CHARM));
+          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.SHINY_CHARM));
           leaveEncounterWithoutBattle(true);
         })
         .build()
@@ -154,7 +154,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Extort the rich kid for money
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           // Update money and remove pokemon from party
           updatePlayerMoney(encounter.misc.price);
 

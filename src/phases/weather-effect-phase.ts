@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { applyPreWeatherEffectAbAttrs, SuppressWeatherEffectAbAttr, PreWeatherDamageAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPostWeatherLapseAbAttrs, PostWeatherLapseAbAttr } from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { Weather, getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
@@ -12,13 +12,13 @@ export class WeatherEffectPhase extends CommonAnimPhase {
   public weather: Weather | null;
 
   constructor() {
-    super(undefined, undefined, CommonAnim.SUNNY + ((gScene?.arena?.weather?.weatherType || WeatherType.NONE) - 1));
-    this.weather = gScene?.arena?.weather;
+    super(undefined, undefined, CommonAnim.SUNNY + ((globalScene?.arena?.weather?.weatherType || WeatherType.NONE) - 1));
+    this.weather = globalScene?.arena?.weather;
   }
 
   start() {
     // Update weather state with any changes that occurred during the turn
-    this.weather = gScene?.arena?.weather;
+    this.weather = globalScene?.arena?.weather;
 
     if (!this.weather) {
       this.end();
@@ -46,7 +46,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 
           const damage = Utils.toDmgValue(pokemon.getMaxHp() / 16);
 
-          gScene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
+          globalScene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
           pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, false, false, true);
         };
 
@@ -59,7 +59,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
       }
     }
 
-    gScene.ui.showText(getWeatherLapseMessage(this.weather.weatherType)!, null, () => { // TODO: is this bang correct?
+    globalScene.ui.showText(getWeatherLapseMessage(this.weather.weatherType)!, null, () => { // TODO: is this bang correct?
       this.executeForAll((pokemon: Pokemon) => applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather));
 
       super.start();

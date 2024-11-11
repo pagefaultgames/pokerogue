@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 
@@ -12,11 +12,11 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(gScene, (gScene.game.canvas.width / 6), -((gScene.game.canvas.height) / 6) + 15);
+    super(globalScene, (globalScene.game.canvas.width / 6), -((globalScene.game.canvas.height) / 6) + 15);
   }
 
   setup(): void {
-    this.bg = gScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
+    this.bg = globalScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
@@ -35,7 +35,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
         return resolve();
       }
 
-      this.pokemonIcon = gScene.addPokemonIcon(pokemon, -8, 15, 0, 0.5);
+      this.pokemonIcon = globalScene.addPokemonIcon(pokemon, -8, 15, 0, 0.5);
       this.pokemonIcon.setScale(0.5);
 
       this.add(this.pokemonIcon);
@@ -54,16 +54,16 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
       this.bg.width = this.expText.displayWidth + 28;
 
-      gScene.fieldUI.bringToTop(this);
+      globalScene.fieldUI.bringToTop(this);
 
       if (this.tween) {
         this.tween.stop();
       }
 
-      this.tween = gScene.tweens.add({
+      this.tween = globalScene.tweens.add({
         targets: this,
-        x: (gScene.game.canvas.width / 6) - (this.bg.width - 5),
-        duration: 500 / Math.pow(2, gScene.expGainsSpeed),
+        x: (globalScene.game.canvas.width / 6) - (this.bg.width - 5),
+        duration: 500 / Math.pow(2, globalScene.expGainsSpeed),
         ease: "Sine.easeOut",
         onComplete: () => {
           this.tween = null;
@@ -86,9 +86,9 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
         this.tween.stop();
       }
 
-      this.tween = gScene.tweens.add({
+      this.tween = globalScene.tweens.add({
         targets: this,
-        x: (gScene.game.canvas.width / 6),
+        x: (globalScene.game.canvas.width / 6),
         duration: 500,
         ease: "Sine.easeIn",
         onComplete: () => {

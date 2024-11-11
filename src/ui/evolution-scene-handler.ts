@@ -2,7 +2,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { Button } from "#enums/buttons";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 export default class EvolutionSceneHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
@@ -21,17 +21,17 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    this.evolutionContainer = gScene.add.container(0, -gScene.game.canvas.height / 6);
+    this.evolutionContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
     ui.add(this.evolutionContainer);
 
-    const messageBg = gScene.add.sprite(0, 0, "bg", gScene.windowType);
+    const messageBg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType);
     messageBg.setOrigin(0, 1);
     messageBg.setVisible(false);
     ui.add(messageBg);
 
     this.messageBg = messageBg;
 
-    this.messageContainer = gScene.add.container(12, -39);
+    this.messageContainer = globalScene.add.container(12, -39);
     this.messageContainer.setVisible(false);
     ui.add(this.messageContainer);
 
@@ -51,9 +51,9 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
   show(_args: any[]): boolean {
     super.show(_args);
 
-    gScene.ui.bringToTop(this.evolutionContainer);
-    gScene.ui.bringToTop(this.messageBg);
-    gScene.ui.bringToTop(this.messageContainer);
+    globalScene.ui.bringToTop(this.evolutionContainer);
+    globalScene.ui.bringToTop(this.messageBg);
+    globalScene.ui.bringToTop(this.messageContainer);
     this.messageBg.setVisible(true);
     this.messageContainer.setVisible(true);
 

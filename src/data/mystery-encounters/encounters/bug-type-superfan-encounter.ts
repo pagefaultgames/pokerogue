@@ -18,7 +18,7 @@ import {
 } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -216,11 +216,11 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       },
     ])
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       // Calculates what trainers are available for battle in the encounter
 
       // Bug type superfan trainer config
-      const config = getTrainerConfigForWave(gScene.currentBattle.waveIndex);
+      const config = getTrainerConfigForWave(globalScene.currentBattle.waveIndex);
       const spriteKey = config.getSpriteKey();
       encounter.enemyPartyConfigs.push({
         trainerConfig: config,
@@ -228,7 +228,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       });
 
       let beedrillKeys: { spriteKey: string, fileRoot: string }, butterfreeKeys: { spriteKey: string, fileRoot: string };
-      if (gScene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
+      if (globalScene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
         beedrillKeys = getSpriteKeysFromSpecies(Species.BEEDRILL, false);
         butterfreeKeys = getSpriteKeysFromSpecies(Species.BUTTERFREE, false);
       } else {
@@ -298,7 +298,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       },
       async () => {
         // Select battle the bug trainer
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
         // Init the moves available for tutor
@@ -329,10 +329,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       })
       .withPreOptionPhase(async () => {
         // Player shows off their bug types
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         // Player gets different rewards depending on the number of bug types they have
-        const numBugTypes = gScene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
+        const numBugTypes = globalScene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
         const numBugTypesText = i18next.t(`${namespace}:numBugTypes`, { count: numBugTypes });
         encounter.setDialogueToken("numBugTypes", numBugTypesText);
 
@@ -366,10 +366,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
           const modifierOptions: ModifierTypeOption[] = [ generateModifierTypeOption(modifierTypes.MASTER_BALL)! ];
           const specialOptions: ModifierTypeOption[] = [];
 
-          if (!gScene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
+          if (!globalScene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
             modifierOptions.push(generateModifierTypeOption(modifierTypes.MEGA_BRACELET)!);
           }
-          if (!gScene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
+          if (!globalScene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
             modifierOptions.push(generateModifierTypeOption(modifierTypes.DYNAMAX_BAND)!);
           }
           const nonRareEvolutionModifier = generateModifierTypeOption(modifierTypes.EVOLUTION_ITEM);
@@ -431,7 +431,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         secondOptionPrompt: `${namespace}:option.3.select_prompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
@@ -476,15 +476,15 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
       })
       .withOptionPhase(async () => {
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         const modifier = encounter.misc.chosenModifier;
 
         // Remove the modifier if its stacks go to 0
         modifier.stackCount -= 1;
         if (modifier.stackCount === 0) {
-          gScene.removeModifier(modifier);
+          globalScene.removeModifier(modifier);
         }
-        gScene.updateModifiers(true, true);
+        globalScene.updateModifiers(true, true);
 
         const bugNet = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
         bugNet.type.tier = ModifierTier.ROGUE;
@@ -648,7 +648,7 @@ function getTrainerConfigForWave(waveIndex: number) {
 
 function doBugTypeMoveTutor(): Promise<void> {
   return new Promise<void>(async resolve => {
-    const moveOptions = gScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
+    const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
     await showEncounterDialogue(`${namespace}:battle_won`, `${namespace}:speaker`);
 
     const overlayScale = 1;
@@ -659,9 +659,9 @@ function doBugTypeMoveTutor(): Promise<void> {
       right: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
-      width: (gScene.game.canvas.width / 6) - 2,
+      width: (globalScene.game.canvas.width / 6) - 2,
     });
-    gScene.ui.add(moveInfoOverlay);
+    globalScene.ui.add(moveInfoOverlay);
 
     const optionSelectItems = moveOptions.map((move: PokemonMove) => {
       const option: OptionSelectItem = {
@@ -695,7 +695,7 @@ function doBugTypeMoveTutor(): Promise<void> {
 
     // Option select complete, handle if they are learning a move
     if (result && result.selectedOptionIndex < moveOptions.length) {
-      gScene.unshiftPhase(new LearnMovePhase(result.selectedPokemonIndex, moveOptions[result.selectedOptionIndex].moveId));
+      globalScene.unshiftPhase(new LearnMovePhase(result.selectedPokemonIndex, moveOptions[result.selectedOptionIndex].moveId));
     }
 
     // Complete battle and go to rewards

@@ -9,7 +9,7 @@ import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import { UiTheme } from "#enums/ui-theme";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 
 interface DisplayStat {
   label_key?: string;
@@ -232,27 +232,27 @@ export default class GameStatsUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.gameStatsContainer = gScene.add.container(1, -(gScene.game.canvas.height / 6) + 1);
+    this.gameStatsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
 
-    this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, gScene.game.canvas.width / 6, gScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+    this.gameStatsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    const headerBg = addWindow(0, 0, (gScene.game.canvas.width / 6) - 2, 24);
+    const headerBg = addWindow(0, 0, (globalScene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
     const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    const statsBgWidth = ((gScene.game.canvas.width / 6) - 2) / 2;
+    const statsBgWidth = ((globalScene.game.canvas.width / 6) - 2) / 2;
     const [ statsBgLeft, statsBgRight ] = new Array(2).fill(null).map((_, i) => {
       const width = statsBgWidth + 2;
-      const height = Math.floor((gScene.game.canvas.height / 6) - headerBg.height - 2);
+      const height = Math.floor((globalScene.game.canvas.height / 6) - headerBg.height - 2);
       const statsBg = addWindow((statsBgWidth - 2) * i, headerBg.height, width, height, false, false, i > 0 ? -3 : 0, 1);
       statsBg.setOrigin(0, 0);
       return statsBg;
     });
 
-    this.statsContainer = gScene.add.container(0, 0);
+    this.statsContainer = globalScene.add.container(0, 0);
 
 
     new Array(18).fill(null).map((_, s) => {
@@ -275,10 +275,10 @@ export default class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.add(this.statsContainer);
 
     // arrows to show that we can scroll through the stats
-    const isLegacyTheme = gScene.uiTheme === UiTheme.LEGACY;
-    this.arrowDown = gScene.add.sprite(statsBgWidth, gScene.game.canvas.height / 6 - (isLegacyTheme ? 9 : 5), "prompt");
+    const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
+    this.arrowDown = globalScene.add.sprite(statsBgWidth, globalScene.game.canvas.height / 6 - (isLegacyTheme ? 9 : 5), "prompt");
     this.gameStatsContainer.add(this.arrowDown);
-    this.arrowUp = gScene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
+    this.arrowUp = globalScene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
     this.arrowUp.flipY = true;
     this.gameStatsContainer.add(this.arrowUp);
 
@@ -298,7 +298,7 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.arrowUp.play("prompt");
     this.arrowDown.play("prompt");
-    if (gScene.uiTheme === UiTheme.LEGACY) {
+    if (globalScene.uiTheme === UiTheme.LEGACY) {
       this.arrowUp.setTint(0x484848);
       this.arrowDown.setTint(0x484848);
     }
@@ -318,7 +318,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + 18);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
-      const value = stat.sourceFunc!(gScene.gameData); // TODO: is this bang correct?
+      const value = stat.sourceFunc!(globalScene.gameData); // TODO: is this bang correct?
       this.statLabels[s].setText(!stat.hidden || isNaN(parseInt(value)) || parseInt(value) ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???");
       this.statValues[s].setText(value);
     });
@@ -348,7 +348,7 @@ export default class GameStatsUiHandler extends UiHandler {
 
     if (button === Button.CANCEL) {
       success = true;
-      gScene.ui.revertMode();
+      globalScene.ui.revertMode();
     } else {
       switch (button) {
         case Button.UP:

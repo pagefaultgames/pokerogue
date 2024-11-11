@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 
 export class MessagePhase extends Phase {
@@ -23,20 +23,20 @@ export class MessagePhase extends Phase {
 
     if (this.text.indexOf("$") > -1) {
       const pageIndex = this.text.indexOf("$");
-      gScene.unshiftPhase(new MessagePhase(this.text.slice(pageIndex + 1), this.callbackDelay, this.prompt, this.promptDelay, this.speaker));
+      globalScene.unshiftPhase(new MessagePhase(this.text.slice(pageIndex + 1), this.callbackDelay, this.prompt, this.promptDelay, this.speaker));
       this.text = this.text.slice(0, pageIndex).trim();
     }
 
     if (this.speaker) {
-      gScene.ui.showDialogue(this.text, this.speaker, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.promptDelay ?? 0);
+      globalScene.ui.showDialogue(this.text, this.speaker, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.promptDelay ?? 0);
     } else {
-      gScene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt, this.promptDelay);
+      globalScene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt, this.promptDelay);
     }
   }
 
   end() {
-    if (gScene.abilityBar.shown) {
-      gScene.abilityBar.hide();
+    if (globalScene.abilityBar.shown) {
+      globalScene.abilityBar.hide();
     }
 
     super.end();

@@ -4,7 +4,7 @@ import { CHARMING_MOVES } from "#app/data/mystery-encounters/requirements/requir
 import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPartyLuckValue } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoveRequirement, PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -46,12 +46,12 @@ export const UncommonBreedEncounter: MysteryEncounter =
       },
     ])
     .withOnInit(() => {
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       // Level equal to 2 below highest party member
       const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-      const species = gScene.arena.randomSpecies(gScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(gScene.getParty()), true);
+      const species = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getParty()), true);
       const pokemon = new EnemyPokemon(species, level, TrainerSlot.NONE, true);
 
       // Pokemon will always have one of its egg moves in its moveset
@@ -73,7 +73,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
       }
 
       // Defense/Spd buffs below wave 50, +1 to all stats otherwise
-      const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = gScene.currentBattle.waveIndex < 50 ?
+      const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = globalScene.currentBattle.waveIndex < 50 ?
         [ Stat.DEF, Stat.SPDEF, Stat.SPD ] :
         [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
 
@@ -86,7 +86,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
           tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.stat_boost`);
-            gScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
+            globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
           }
         }],
       };
@@ -105,15 +105,15 @@ export const UncommonBreedEncounter: MysteryEncounter =
       ];
 
       encounter.setDialogueToken("enemyPokemon", pokemon.getNameToRender());
-      gScene.loadSe("PRSFX- Spotlight2", "battle_anims", "PRSFX- Spotlight2.wav");
+      globalScene.loadSe("PRSFX- Spotlight2", "battle_anims", "PRSFX- Spotlight2.wav");
       return true;
     })
     .withOnVisualsStart(() => {
       // Animate the pokemon
-      const encounter = gScene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       const pokemonSprite = encounter.introVisuals!.getSprites();
 
-      gScene.tweens.add({ // Bounce at the end
+      globalScene.tweens.add({ // Bounce at the end
         targets: pokemonSprite,
         duration: 300,
         ease: "Cubic.easeOut",
@@ -122,7 +122,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
         loop: 1,
       });
 
-      gScene.time.delayedCall(500, () => gScene.playSound("battle_anims/PRSFX- Spotlight2"));
+      globalScene.time.delayedCall(500, () => globalScene.playSound("battle_anims/PRSFX- Spotlight2"));
       return true;
     })
     .setLocalizationKey(`${namespace}`)
@@ -141,7 +141,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
       },
       async () => {
         // Pick battle
-        const encounter = gScene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         const eggMove = encounter.misc.eggMove;
         if (!isNullOrUndefined(eggMove)) {
@@ -182,20 +182,20 @@ export const UncommonBreedEncounter: MysteryEncounter =
 
           // Remove 4 random berries from player's party
           // Get all player berry items, remove from party, and store reference
-          const berryItems: BerryModifier[] = gScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+          const berryItems: BerryModifier[] = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
           for (let i = 0; i < 4; i++) {
             const index = randSeedInt(berryItems.length);
             const randBerry = berryItems[index];
             randBerry.stackCount--;
             if (randBerry.stackCount === 0) {
-              gScene.removeModifier(randBerry);
+              globalScene.removeModifier(randBerry);
               berryItems.splice(index, 1);
             }
           }
-          await gScene.updateModifiers(true, true);
+          await globalScene.updateModifiers(true, true);
 
           // Pokemon joins the team, with 2 egg moves
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const pokemon = encounter.misc.pokemon;
 
           // Give 1 additional egg move
@@ -224,7 +224,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
         .withOptionPhase(async () => {
           // Attract the pokemon with a move
           // Pokemon joins the team, with 2 egg moves and IVs rolled an additional time
-          const encounter = gScene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const pokemon = encounter.misc.pokemon;
 
           // Give 1 additional egg move

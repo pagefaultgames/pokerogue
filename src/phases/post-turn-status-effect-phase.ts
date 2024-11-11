@@ -1,4 +1,4 @@
-import { gScene } from "#app/battle-scene";
+import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, BlockNonDirectDamageAbAttr, BlockStatusDamageAbAttr, ReduceBurnDamageAbAttr } from "#app/data/ability";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
@@ -23,7 +23,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       applyAbAttrs(BlockStatusDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        gScene.queueMessage(getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+        globalScene.queueMessage(getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
         const damage = new Utils.NumberHolder(0);
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
@@ -39,7 +39,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         }
         if (damage.value) {
           // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
-          gScene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
+          globalScene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
           pokemon.updateInfo();
         }
         new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(false, () => this.end());
@@ -52,8 +52,8 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
   }
 
   override end() {
-    if (gScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      gScene.initFinalBossPhaseTwo(this.getPokemon());
+    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      globalScene.initFinalBossPhaseTwo(this.getPokemon());
     } else {
       super.end();
     }
