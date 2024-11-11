@@ -6675,6 +6675,19 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
       return true;
     };
   }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    // TODO: Make the AI acutally use instruct
+    /* Ideally, the AI would score instruct based on the scorings of the on-field pokemons'
+    * last used moves at the time of using Instruct (by the time the instructor gets to act)
+    * with respect to the user's side.
+    * It would then take the greatest of said scores and use it as the score for instruct
+    * (since that'd be the mon it would be most utile to use Instruct on).
+    * In 99.9% of cases, this would be the pokemon's ally (unless the target had last
+    * used a move like decorate on the user or its ally)
+    */
+    return 2;
+  }
 }
 
 /**
