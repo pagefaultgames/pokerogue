@@ -442,7 +442,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             };
             if (this.shiny) {
               const populateVariantColors = (isBackSprite: boolean = false): Promise<void> => {
-                return new Promise(resolve => {
+                return new Promise(async resolve => {
                   const battleSpritePath = this.getBattleSpriteAtlasPath(isBackSprite, ignoreOverride).replace("variant/", "").replace(/_[1-3]$/, "");
                   let config = variantData;
                   const useExpSprite = this.scene.experimentalSprites && this.scene.hasExpSprite(this.getBattleSpriteKey(isBackSprite, ignoreOverride));
@@ -451,7 +451,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                   if (variantSet && variantSet[this.variant] === 1) {
                     const cacheKey = this.getBattleSpriteKey(isBackSprite);
                     if (!variantColorCache.hasOwnProperty(cacheKey)) {
-                      this.populateVariantColorCache(cacheKey, useExpSprite, battleSpritePath);
+                      await this.populateVariantColorCache(cacheKey, useExpSprite, battleSpritePath);
                     }
                   }
                   resolve();
@@ -483,10 +483,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param battleSpritePath the filename of the sprite
    * @param optionalParams any additional params to log
    */
-  fallbackVariantColor(cacheKey: string, attemptedSpritePath: string, useExpSprite: boolean, battleSpritePath: string, ...optionalParams: any[]) {
+  async fallbackVariantColor(cacheKey: string, attemptedSpritePath: string, useExpSprite: boolean, battleSpritePath: string, ...optionalParams: any[]) {
     console.warn(`Could not load ${attemptedSpritePath}!`, ...optionalParams);
     if (useExpSprite) {
-      this.populateVariantColorCache(cacheKey, false, battleSpritePath);
+      await this.populateVariantColorCache(cacheKey, false, battleSpritePath);
     }
   }
 
@@ -497,18 +497,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param useExpSprite should the experimental sprite be used
    * @param battleSpritePath the filename of the sprite
    */
-  populateVariantColorCache(cacheKey: string, useExpSprite: boolean, battleSpritePath: string) {
+  async populateVariantColorCache(cacheKey: string, useExpSprite: boolean, battleSpritePath: string) {
     const spritePath = `./images/pokemon/variant/${useExpSprite ? "exp/" : ""}${battleSpritePath}.json`;
-    this.scene.cachedFetch(spritePath).then(res => {
+    return this.scene.cachedFetch(spritePath).then(res => {
       // Prevent the JSON from processing if it failed to load
       if (!res.ok) {
         return this.fallbackVariantColor(cacheKey, res.url, useExpSprite, battleSpritePath, res.status, res.statusText);
       }
       return res.json();
     }).catch(error => {
-      this.fallbackVariantColor(cacheKey, spritePath, useExpSprite, battleSpritePath, error);
+      return this.fallbackVariantColor(cacheKey, spritePath, useExpSprite, battleSpritePath, error);
     }).then(c => {
-      variantColorCache[cacheKey] = c;
+      if (!isNullOrUndefined(c)) {
+        variantColorCache[cacheKey] = c;
+      }
     });
   }
 
