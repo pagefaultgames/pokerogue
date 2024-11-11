@@ -8480,7 +8480,8 @@ export function initMoves() {
     new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .ignoresSubstitute()
-      .target(MoveTarget.NEAR_ALLY),
+      .target(MoveTarget.NEAR_ALLY)
+      .condition(failIfSingleBattle),
     new StatusMove(Moves.TRICK, Type.PSYCHIC, 100, 10, -1, 0, 3)
       .unimplemented(),
     new StatusMove(Moves.ROLE_PLAY, Type.PSYCHIC, -1, 10, -1, 0, 3)
@@ -9172,6 +9173,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(RemoveHeldItemAttr, true),
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
+      .condition(failIfSingleBattle)
       .unimplemented(),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferable).reduce((v, m) => v + m.stackCount, 0))),
@@ -9459,6 +9461,7 @@ export function initMoves() {
     new StatusMove(Moves.AROMATIC_MIST, Type.FAIRY, -1, 20, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], 1)
       .ignoresSubstitute()
+      .condition(failIfSingleBattle)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.EERIE_IMPULSE, Type.ELECTRIC, 100, 15, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -2),
@@ -9687,7 +9690,8 @@ export function initMoves() {
     new AttackMove(Moves.LEAFAGE, Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 7)
       .makesContact(false),
     new StatusMove(Moves.SPOTLIGHT, Type.NORMAL, -1, 15, -1, 3, 7)
-      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, false),
+      .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, false)
+      .condition(failIfSingleBattle),
     new StatusMove(Moves.TOXIC_THREAD, Type.POISON, 100, 20, -1, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1),
@@ -10144,7 +10148,8 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(Moves.COACHING, Type.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], 1)
-      .target(MoveTarget.NEAR_ALLY),
+      .target(MoveTarget.NEAR_ALLY)
+      .condition(failIfSingleBattle),
     new AttackMove(Moves.FLIP_TURN, Type.WATER, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 8)
       .attr(ForceSwitchOutAttr, true),
     new AttackMove(Moves.TRIPLE_AXEL, Type.ICE, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 8)
