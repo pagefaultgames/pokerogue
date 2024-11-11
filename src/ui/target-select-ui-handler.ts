@@ -13,9 +13,11 @@ import { SubstituteTag } from "#app/data/battler-tags";
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
 export default class TargetSelectUiHandler extends UiHandler {
-  private fieldIndex: integer;
+  private fieldIndex: number;
   private move: Moves;
   private targetSelectCallback: TargetSelectCallback;
+  private cursor1: number;
+  private cursor2: number;
 
   private isMultipleTargets: boolean = false;
   private targets: BattlerIndex[];
@@ -42,8 +44,9 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.fieldIndex = args[0] as integer;
     this.move = args[1] as Moves;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
+    const user = this.scene.getPlayerField()[this.fieldIndex];
 
-    const moveTargets = getMoveTargets(this.scene.getPlayerField()[this.fieldIndex], this.move);
+    const moveTargets = getMoveTargets(user, this.move);
     this.targets = moveTargets.targets;
     this.isMultipleTargets = moveTargets.multiple ?? false;
 
@@ -53,9 +56,23 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     this.enemyModifiers = this.scene.getModifierBar(true);
 
-    this.setCursor(this.targets.includes(this.cursor) ? this.cursor : this.targets[0]);
-
+    if (this.fieldIndex === BattlerIndex.PLAYER) {
+      this.resetCursor(this.cursor1, user);
+    } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
+      this.resetCursor(this.cursor2, user);
+    }
     return true;
+  }
+
+  resetCursor(cursorN: number, user: Pokemon): void {
+    if (!Utils.isNullOrUndefined(cursorN)) {
+      if ([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ].includes(cursorN) || user.battleSummonData.waveTurnCount === 1) {
+        this.cursor = cursorN = -1;
+      } else if (user.battleSummonData.waveTurnCount > 1) {
+        this.cursor = cursorN;
+      }
+    }
+    this.setCursor(this.targets.includes(cursorN) ? cursorN : this.targets[0]);
   }
 
   processInput(button: Button): boolean {
@@ -67,6 +84,15 @@ export default class TargetSelectUiHandler extends UiHandler {
       const targetIndexes: BattlerIndex[] = this.isMultipleTargets ? this.targets : [ this.cursor ];
       this.targetSelectCallback(button === Button.ACTION ? targetIndexes : []);
       success = true;
+      if (this.fieldIndex === BattlerIndex.PLAYER) {
+        if (Utils.isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor) {
+          this.cursor1 = this.cursor;
+        }
+      } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
+        if (Utils.isNullOrUndefined(this.cursor1) || this.cursor2 !== this.cursor) {
+          this.cursor2 = this.cursor;
+        }
+      }
     } else if (this.isMultipleTargets) {
       success = false;
     } else {
@@ -152,7 +178,6 @@ export default class TargetSelectUiHandler extends UiHandler {
         yoyo: true
       }));
     });
-
     return ret;
   }
 
@@ -184,7 +209,6 @@ export default class TargetSelectUiHandler extends UiHandler {
   }
 
   clear() {
-    this.cursor = -1;
     super.clear();
     this.eraseCursor();
   }
