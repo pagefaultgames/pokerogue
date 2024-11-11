@@ -16,8 +16,8 @@ export default class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: number;
   private move: Moves;
   private targetSelectCallback: TargetSelectCallback;
-  private cursor1: number;
-  private cursor2: number;
+  private cursor0: number; // associated with BattlerIndex.PLAYER
+  private cursor1: number; // associated with BattlerIndex.PLAYER_2
 
   private isMultipleTargets: boolean = false;
   private targets: BattlerIndex[];
@@ -57,13 +57,18 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.enemyModifiers = this.scene.getModifierBar(true);
 
     if (this.fieldIndex === BattlerIndex.PLAYER) {
-      this.resetCursor(this.cursor1, user);
+      this.resetCursor(this.cursor0, user);
     } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
-      this.resetCursor(this.cursor2, user);
+      this.resetCursor(this.cursor1, user);
     }
     return true;
   }
 
+  /**
+   * Determines what value to assign the main cursor on previous history or the user's status
+   * @param cursorN the cursor associated with the user's field index
+   * @param user the Pokemon using the move
+   */
   resetCursor(cursorN: number, user: Pokemon): void {
     if (!Utils.isNullOrUndefined(cursorN)) {
       if ([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ].includes(cursorN) || user.battleSummonData.waveTurnCount === 1) {
@@ -85,12 +90,12 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetSelectCallback(button === Button.ACTION ? targetIndexes : []);
       success = true;
       if (this.fieldIndex === BattlerIndex.PLAYER) {
-        if (Utils.isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor) {
-          this.cursor1 = this.cursor;
+        if (Utils.isNullOrUndefined(this.cursor0) || this.cursor0 !== this.cursor) {
+          this.cursor0 = this.cursor;
         }
       } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
-        if (Utils.isNullOrUndefined(this.cursor1) || this.cursor2 !== this.cursor) {
-          this.cursor2 = this.cursor;
+        if (Utils.isNullOrUndefined(this.cursor0) || this.cursor1 !== this.cursor) {
+          this.cursor1 = this.cursor;
         }
       }
     } else if (this.isMultipleTargets) {
