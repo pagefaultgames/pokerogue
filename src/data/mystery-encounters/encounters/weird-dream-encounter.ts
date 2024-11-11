@@ -1,4 +1,4 @@
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import { globalScene } from "#app/battle-scene";
@@ -176,7 +176,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
 
           for (const transformation of globalScene.currentBattle.mysteryEncounter!.misc.teamTransformations) {
             globalScene.removePokemonFromPlayerParty(transformation.previousPokemon, false);
-            globalScene.getParty().push(transformation.newPokemon);
+            globalScene.getPlayerParty().push(transformation.newPokemon);
           }
         })
         .withOptionPhase(async () => {
@@ -280,7 +280,7 @@ export const WeirdDreamEncounter: MysteryEncounter =
         const onBeforeRewards = () => {
           // Before battle rewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
           // One random pokemon will get its passive unlocked
-          const passiveDisabledPokemon = globalScene.getParty().filter(p => !p.passive);
+          const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
           if (passiveDisabledPokemon?.length > 0) {
             const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
             enablePassiveMon.passive = true;
@@ -306,12 +306,13 @@ export const WeirdDreamEncounter: MysteryEncounter =
       },
       async () => {
         // Leave, reduce party levels by 10%
-        for (const pokemon of globalScene.getParty()) {
+        for (const pokemon of globalScene.getPlayerParty()) {
           pokemon.level = Math.max(Math.ceil((100 - PERCENT_LEVEL_LOSS_ON_REFUSE) / 100 * pokemon.level), 1);
           pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
           pokemon.levelExp = 0;
 
           pokemon.calculateStats();
+          pokemon.getBattleInfo().setLevel(pokemon.level);
           await pokemon.updateInfo();
         }
 
@@ -329,7 +330,7 @@ interface PokemonTransformation {
 }
 
 function getTeamTransformations(): PokemonTransformation[] {
-  const party = globalScene.getParty();
+  const party = globalScene.getPlayerParty();
   // Removes all pokemon from the party
   const alreadyUsedSpecies: PokemonSpecies[] = party.map(p => p.species);
   const pokemonTransformations: PokemonTransformation[] = party.map(p => {
@@ -404,7 +405,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     if (shouldGetOldGateau(newPokemon)) {
       const stats = getOldGateauBoostedStats(newPokemon);
       const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU()
-        .generateType(globalScene.getParty(), [ OLD_GATEAU_STATS_UP, stats ])
+        .generateType(globalScene.getPlayerParty(), [ OLD_GATEAU_STATS_UP, stats ])
         ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
       const modifier = modType?.newModifier(newPokemon);
       if (modifier) {
@@ -417,7 +418,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
   }
 
   // One random pokemon will get its passive unlocked
-  const passiveDisabledPokemon = globalScene.getParty().filter(p => !p.passive);
+  const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
   if (passiveDisabledPokemon?.length > 0) {
     const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
     enablePassiveMon.passive = true;

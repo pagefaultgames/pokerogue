@@ -5,7 +5,7 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } f
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "#app/utils";
 import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
-import { PokeballType } from "#app/data/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "#app/data/battle-anims";
 import { Phase } from "#app/phase";
 import { initGameSpeed } from "#app/system/game-speed";
@@ -13,9 +13,10 @@ import { Arena, ArenaBase } from "#app/field/arena";
 import { GameData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "#app/data/move";
+import { MusicPreference } from "#app/system/settings/settings";
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getModifierType, getPartyLuckValue, ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import AbilityBar from "#app/ui/ability-bar";
-import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr } from "#app/data/ability";
+import { allAbilities, applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, PostBattleInitAbAttr, PostItemLostAbAttr } from "#app/data/ability";
 import Battle, { BattleType, FixedBattleConfig } from "#app/battle";
 import { GameMode, GameModes, getGameMode } from "#app/game-mode";
 import FieldSpritePipeline from "#app/pipelines/field-sprite";
@@ -34,10 +35,11 @@ import { Gender } from "#app/data/gender";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import { addUiThemeOverrides } from "#app/ui/ui-theme";
 import PokemonData from "#app/system/pokemon-data";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChange, SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger } from "#app/data/pokemon-forms";
 import { FormChangePhase } from "#app/phases/form-change-phase";
 import { getTypeRgb } from "#app/data/type";
+import { Type } from "#enums/type";
 import PokemonSpriteSparkleHandler from "#app/field/pokemon-sprite-sparkle-handler";
 import CharSprite from "#app/ui/char-sprite";
 import DamageNumberHandler from "#app/field/damage-number-handler";
@@ -95,7 +97,9 @@ import { ExpPhase } from "#app/phases/exp-phase";
 import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
+import { StatusEffect } from "#enums/status-effect";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -171,7 +175,7 @@ export default class BattleScene extends SceneBase {
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType: integer = 0;
   public experimentalSprites: boolean = false;
-  public musicPreference: integer = 0;
+  public musicPreference: number = MusicPreference.MIXED;
   public moveAnimations: boolean = true;
   public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
   public skipSeenDialogues: boolean = false;
@@ -325,6 +329,7 @@ export default class BattleScene extends SceneBase {
     this.conditionalQueue = [];
     this.phaseQueuePrependSpliceIndex = -1;
     this.nextCommandPhaseQueue = [];
+    this.eventManager = new TimedEventManager();
     this.updateGameInfo();
     globalScene = this;
   }
@@ -380,7 +385,6 @@ export default class BattleScene extends SceneBase {
 
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
     (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
-    this.eventManager = new TimedEventManager();
 
     this.launchBattle();
   }
@@ -766,57 +770,65 @@ export default class BattleScene extends SceneBase {
     return true;
   }
 
-  getParty(): PlayerPokemon[] {
+  public getPlayerParty(): PlayerPokemon[] {
     return this.party;
   }
 
-  getPlayerPokemon(): PlayerPokemon | undefined {
-    return this.getPlayerField().find(p => p.isActive());
-  }
-
   /**
-   * Finds the first {@linkcode Pokemon.isActive() | active PlayerPokemon} that isn't also currently switching out
-   * @returns Either the first {@linkcode PlayerPokemon} satisfying, or undefined if no player pokemon on the field satisfy
+   * @returns An array of {@linkcode PlayerPokemon} filtered from the player's party
+   * that are {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
    */
-  getNonSwitchedPlayerPokemon(): PlayerPokemon | undefined {
-    return this.getPlayerField().find(p => p.isActive() && p.switchOutStatus === false);
+  public getPokemonAllowedInBattle(): PlayerPokemon[] {
+    return this.getPlayerParty().filter(p => p.isAllowedInBattle());
   }
 
   /**
-   * Returns an array of PlayerPokemon of length 1 or 2 depending on if double battles or not
+   * @returns The first {@linkcode PlayerPokemon} that is {@linkcode getPlayerField on the field}
+   * and {@linkcode PlayerPokemon.isActive is active}
+   * (aka {@linkcode PlayerPokemon.isAllowedInBattle is allowed in battle}),
+   * or `undefined` if there are no valid pokemon
+   * @param includeSwitching Whether a pokemon that is currently switching out is valid, default `true`
+   */
+  public getPlayerPokemon(includeSwitching: boolean = true): PlayerPokemon | undefined {
+    return this.getPlayerField().find(p => p.isActive() && (includeSwitching || p.switchOutStatus === false));
+  }
+
+  /**
+   * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
+   * Does not actually check if the pokemon are on the field or not.
    * @returns array of {@linkcode PlayerPokemon}
    */
-  getPlayerField(): PlayerPokemon[] {
-    const party = this.getParty();
+  public getPlayerField(): PlayerPokemon[] {
+    const party = this.getPlayerParty();
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
 
-  getEnemyParty(): EnemyPokemon[] {
+  public getEnemyParty(): EnemyPokemon[] {
     return this.currentBattle?.enemyParty ?? [];
   }
 
-  getEnemyPokemon(): EnemyPokemon | undefined {
-    return this.getEnemyField().find(p => p.isActive());
-  }
-
   /**
-   * Finds the first {@linkcode Pokemon.isActive() | active EnemyPokemon} pokemon from the enemy that isn't also currently switching out
-   * @returns Either the first {@linkcode EnemyPokemon} satisfying, or undefined if no player pokemon on the field satisfy
+   * @returns The first {@linkcode EnemyPokemon} that is {@linkcode getEnemyField on the field}
+   * and {@linkcode EnemyPokemon.isActive is active}
+   * (aka {@linkcode EnemyPokemon.isAllowedInBattle is allowed in battle}),
+   * or `undefined` if there are no valid pokemon
+   * @param includeSwitching Whether a pokemon that is currently switching out is valid, default `true`
    */
-  getNonSwitchedEnemyPokemon(): EnemyPokemon | undefined {
-    return this.getEnemyField().find(p => p.isActive() && p.switchOutStatus === false);
+  public getEnemyPokemon(includeSwitching: boolean = true): EnemyPokemon | undefined {
+    return this.getEnemyField().find(p => p.isActive() && (includeSwitching || p.switchOutStatus === false));
   }
 
   /**
-   * Returns an array of EnemyPokemon of length 1 or 2 depending on if double battles or not
+   * Returns an array of EnemyPokemon of length 1 or 2 depending on if in a double battle or not.
+   * Does not actually check if the pokemon are on the field or not.
    * @returns array of {@linkcode EnemyPokemon}
    */
-  getEnemyField(): EnemyPokemon[] {
+  public getEnemyField(): EnemyPokemon[] {
     const party = this.getEnemyParty();
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
 
-  getField(activeOnly: boolean = false): Pokemon[] {
+  public getField(activeOnly: boolean = false): Pokemon[] {
     const ret = new Array(4).fill(null);
     const playerField = this.getPlayerField();
     const enemyField = this.getEnemyField();
@@ -869,7 +881,7 @@ export default class BattleScene extends SceneBase {
 
   getPokemonById(pokemonId: integer): Pokemon | null {
     const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return (findInParty(this.getParty()) || findInParty(this.getEnemyParty())) ?? null;
+    return (findInParty(this.getPlayerParty()) || findInParty(this.getEnemyParty())) ?? null;
   }
 
   addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
@@ -1064,7 +1076,7 @@ export default class BattleScene extends SceneBase {
     this.modifierBar.removeAll(true);
     this.enemyModifierBar.removeAll(true);
 
-    for (const p of this.getParty()) {
+    for (const p of this.getPlayerParty()) {
       p.destroy();
     }
     this.party = [];
@@ -1233,14 +1245,20 @@ export default class BattleScene extends SceneBase {
 
     const lastBattle = this.currentBattle;
 
-    if (lastBattle?.double && !newDouble) {
-      this.tryRemovePhase(p => p instanceof SwitchPhase);
-    }
-
     const maxExpLevel = this.getMaxExpLevel();
 
     this.lastEnemyTrainer = lastBattle?.trainer ?? null;
     this.lastMysteryEncounter = lastBattle?.mysteryEncounter;
+
+    if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+      // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
+      newDouble = false;
+    }
+
+    if (lastBattle?.double && !newDouble) {
+      this.tryRemovePhase(p => p instanceof SwitchPhase);
+      this.getPlayerField().forEach(p => p.lapseTag(BattlerTagType.COMMANDED));
+    }
 
     this.executeWithSeedOffset(() => {
       this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
@@ -1248,8 +1266,6 @@ export default class BattleScene extends SceneBase {
     this.currentBattle.incrementTurn();
 
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
-      // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
-      this.currentBattle.double = false;
       // Will generate the actual Mystery Encounter during NextEncounterPhase, to ensure it uses proper biome
       this.currentBattle.mysteryEncounterType = mysteryEncounterType;
     }
@@ -1271,13 +1287,15 @@ export default class BattleScene extends SceneBase {
       if (resetArenaState) {
         this.arena.resetArenaEffects();
 
+        playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
+
         playerField.forEach((pokemon, p) => {
           if (pokemon.isOnField()) {
             this.pushPhase(new ReturnPhase(p));
           }
         });
 
-        for (const pokemon of this.getParty()) {
+        for (const pokemon of this.getPlayerParty()) {
           pokemon.resetBattleData();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
         }
@@ -1287,7 +1305,7 @@ export default class BattleScene extends SceneBase {
         }
       }
 
-      for (const pokemon of this.getParty()) {
+      for (const pokemon of this.getPlayerParty()) {
         this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
       }
 
@@ -1482,7 +1500,7 @@ export default class BattleScene extends SceneBase {
   }
 
   trySpreadPokerus(): void {
-    const party = this.getParty();
+    const party = this.getPlayerParty();
     const infectedIndexes: integer[] = [];
     const spread = (index: number, spreadTo: number) => {
       const partyMember = party[index + spreadTo];
@@ -1679,7 +1697,7 @@ export default class BattleScene extends SceneBase {
   updateAndShowText(duration: number): void {
     const labels = [ this.luckLabelText, this.luckText ];
     labels.forEach(t => t.setAlpha(0));
-    const luckValue = getPartyLuckValue(this.getParty());
+    const luckValue = getPartyLuckValue(this.getPlayerParty());
     this.luckText.setText(getLuckString(luckValue));
     if (luckValue < 14) {
       this.luckText.setTint(getLuckTextTint(luckValue));
@@ -2556,14 +2574,15 @@ export default class BattleScene extends SceneBase {
    * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
    * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
    * @param itemModifier {@linkcode PokemonHeldItemModifier} item to transfer (represents the whole stack)
-   * @param target {@linkcode Pokemon} pokemon recepient in this transfer
-   * @param playSound {boolean}
-   * @param transferQuantity {@linkcode integer} how many items of the stack to transfer. Optional, defaults to 1
-   * @param instant {boolean}
-   * @param ignoreUpdate {boolean}
-   * @returns true if the transfer was successful
+   * @param target {@linkcode Pokemon} recepient in this transfer
+   * @param playSound `true` to play a sound when transferring the item
+   * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
+   * @param instant ??? (Optional)
+   * @param ignoreUpdate ??? (Optional)
+   * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
+   * @returns `true` if the transfer was successful
    */
-  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean, transferQuantity: integer = 1, instant?: boolean, ignoreUpdate?: boolean): Promise<boolean> {
+  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean, transferQuantity: number = 1, instant?: boolean, ignoreUpdate?: boolean, itemLost: boolean = true): Promise<boolean> {
     return new Promise(resolve => {
       const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
       const cancelled = new Utils.BooleanHolder(false);
@@ -2595,9 +2614,19 @@ export default class BattleScene extends SceneBase {
           const addModifier = () => {
             if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
               if (target.isPlayer()) {
-                this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => resolve(true));
+                this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
+                  if (source && itemLost) {
+                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+                  }
+                  resolve(true);
+                });
               } else {
-                this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => resolve(true));
+                this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
+                  if (source && itemLost) {
+                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+                  }
+                  resolve(true);
+                });
               }
             } else {
               resolve(false);
@@ -2617,7 +2646,7 @@ export default class BattleScene extends SceneBase {
 
   removePartyMemberModifiers(partyMemberIndex: integer): Promise<void> {
     return new Promise(resolve => {
-      const pokemonId = this.getParty()[partyMemberIndex].id;
+      const pokemonId = this.getPlayerParty()[partyMemberIndex].id;
       const modifiersToRemove = this.modifiers.filter(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === pokemonId);
       for (const m of modifiersToRemove) {
         this.modifiers.splice(this.modifiers.indexOf(m), 1);
@@ -2744,7 +2773,7 @@ export default class BattleScene extends SceneBase {
         }
       }
 
-      this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyParty(), instant).then(() => {
+      this.updatePartyForModifiers(player ? this.getPlayerParty() : this.getEnemyParty(), instant).then(() => {
         (player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
         if (!player) {
           this.updateUIPositions();
@@ -2765,7 +2794,15 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  removeModifier(modifier: PersistentModifier, enemy?: boolean): boolean {
+  /**
+   * Removes a currently owned item. If the item is stacked, the entire item stack
+   * gets removed. This function does NOT apply in-battle effects, such as Unburden.
+   * If in-battle effects are needed, use {@linkcode Pokemon.loseHeldItem} instead.
+   * @param modifier The item to be removed.
+   * @param enemy If `true`, remove an item owned by the enemy. If `false`, remove an item owned by the player. Default is `false`.
+   * @returns `true` if the item exists and was successfully removed, `false` otherwise.
+   */
+  removeModifier(modifier: PersistentModifier, enemy: boolean = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
     const modifierIndex = modifiers.indexOf(modifier);
     if (modifierIndex > -1) {
@@ -2962,12 +2999,21 @@ export default class BattleScene extends SceneBase {
 
   updateGameInfo(): void {
     const gameInfo = {
-      playTime: this.sessionPlayTime ? this.sessionPlayTime : 0,
+      playTime: this.sessionPlayTime ?? 0,
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : "",
-      wave: this.currentBattle?.waveIndex || 0,
-      party: this.party ? this.party.map(p => {
-        return { name: p.name, level: p.level };
+      wave: this.currentBattle?.waveIndex ?? 0,
+      party: this.party ? this.party.map((p) => {
+        return {
+          name: p.name,
+          form: p.getFormKey(),
+          types: p.getTypes().map((type) => Type[type]),
+          teraType: p.getTeraType() !== Type.UNKNOWN ? Type[p.getTeraType()] : "",
+          level: p.level,
+          currentHP: p.hp,
+          maxHP: p.getMaxHp(),
+          status: p.status?.effect ? StatusEffect[p.status.effect] : ""
+        };
       }) : [],
       modeChain: this.ui?.getModeChain() ?? [],
     };
@@ -2982,22 +3028,16 @@ export default class BattleScene extends SceneBase {
    */
   getActiveKeys(): string[] {
     const keys: string[] = [];
-    const playerParty = this.getParty();
-    playerParty.forEach(p => {
+    let activePokemon: (PlayerPokemon | EnemyPokemon)[] = this.getPlayerParty();
+    activePokemon = activePokemon.concat(this.getEnemyParty());
+    activePokemon.forEach((p) => {
       keys.push(p.getSpriteKey(true));
-      keys.push(p.getBattleSpriteKey(true, true));
-      keys.push("cry/" + p.species.getCryKey(p.formIndex));
-      if (p.fusionSpecies) {
-        keys.push("cry/" + p.fusionSpecies.getCryKey(p.fusionFormIndex));
+      if (p instanceof PlayerPokemon) {
+        keys.push(p.getBattleSpriteKey(true, true));
       }
-    });
-    // enemyParty has to be operated on separately from playerParty because playerPokemon =/= enemyPokemon
-    const enemyParty = this.getEnemyParty();
-    enemyParty.forEach(p => {
-      keys.push(p.getSpriteKey(true));
-      keys.push("cry/" + p.species.getCryKey(p.formIndex));
+      keys.push(p.species.getCryKey(p.formIndex));
       if (p.fusionSpecies) {
-        keys.push("cry/" + p.fusionSpecies.getCryKey(p.fusionFormIndex));
+        keys.push(p.fusionSpecies.getCryKey(p.fusionFormIndex));
       }
     });
     return keys;
@@ -3018,7 +3058,7 @@ export default class BattleScene extends SceneBase {
         this.setFieldScale(0.75);
         this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
         this.currentBattle.double = true;
-        const availablePartyMembers = this.getParty().filter((p) => p.isAllowedInBattle());
+        const availablePartyMembers = this.getPlayerParty().filter((p) => p.isAllowedInBattle());
         if (availablePartyMembers.length > 1) {
           this.pushPhase(new ToggleDoublePositionPhase(true));
           if (!availablePartyMembers[1].isOnField()) {
@@ -3043,7 +3083,7 @@ export default class BattleScene extends SceneBase {
    */
   applyPartyExp(expValue: number, pokemonDefeated: boolean, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>): void {
     const participantIds = pokemonParticipantIds ?? this.currentBattle.playerParticipantIds;
-    const party = this.getParty();
+    const party = this.getPlayerParty();
     const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const multipleParticipantExpBonusModifier = this.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;

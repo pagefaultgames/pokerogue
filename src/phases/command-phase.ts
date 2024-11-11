@@ -7,7 +7,7 @@ import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
 import { Moves } from "#app/enums/moves";
-import { PokeballType } from "#app/enums/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Command } from "#app/ui/command-ui-handler";
@@ -17,6 +17,8 @@ import { FieldPhase } from "./field-phase";
 import { SelectTargetPhase } from "./select-target-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { isNullOrUndefined } from "#app/utils";
+import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: integer;
@@ -29,6 +31,8 @@ export class CommandPhase extends FieldPhase {
 
   start() {
     super.start();
+
+    globalScene.updateGameInfo();
 
     const commandUiHandler = globalScene.ui.handlers[Mode.COMMAND];
     if (commandUiHandler) {
@@ -50,6 +54,17 @@ export class CommandPhase extends FieldPhase {
           globalScene.currentBattle.turnCommands[this.fieldIndex] = { command: allyCommand?.command, skip: true };
         }
       }
+    }
+
+    // If the Pokemon has applied Commander's effects to its ally, skip this command
+    if (globalScene.currentBattle?.double && this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === this.getPokemon()) {
+      globalScene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.FIGHT, move: { move: Moves.NONE, targets: []}, skip: true };
+    }
+
+    // Checks if the Pokemon is under the effects of Encore. If so, Encore can end early if the encored move has no more PP.
+    const encoreTag = this.getPokemon().getTag(BattlerTagType.ENCORE) as EncoreTag;
+    if (encoreTag) {
+      this.getPokemon().lapseTag(BattlerTagType.ENCORE);
     }
 
     if (globalScene.currentBattle.turnCommands[this.fieldIndex]?.skip) {
@@ -90,7 +105,7 @@ export class CommandPhase extends FieldPhase {
 
   handleCommand(command: Command, cursor: integer, ...args: any[]): boolean {
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
-    let success: boolean;
+    let success: boolean = false;
 
     switch (command) {
       case Command.FIGHT:
@@ -228,42 +243,50 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           } else {
             const trapTag = playerPokemon.getTag(TrappedTag);
+            const fairyLockTag = globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
 
-            // trapTag should be defined at this point, but just in case...
-            if (!trapTag) {
-              currentBattle.turnCommands[this.fieldIndex] = isSwitch
-                ? { command: Command.POKEMON, cursor: cursor, args: args }
-                : { command: Command.RUN };
+            if (!trapTag && !fairyLockTag) {
+              i18next.t(`battle:noEscape${isSwitch ? "Switch" : "Flee"}`);
               break;
             }
-
             if (!isSwitch) {
               globalScene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               globalScene.ui.setMode(Mode.MESSAGE);
             }
-            globalScene.ui.showText(
-              i18next.t("battle:noEscapePokemon", {
-                pokemonName:  trapTag.sourceId && globalScene.getPokemonById(trapTag.sourceId) ? getPokemonNameWithAffix(globalScene.getPokemonById(trapTag.sourceId)!) : "",
-                moveName: trapTag.getMoveName(),
-                escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
-              }),
-              null,
-              () => {
-                globalScene.ui.showText("", 0);
-                if (!isSwitch) {
-                  globalScene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-                }
-              }, null, true);
+            const showNoEscapeText = (tag: any) => {
+              globalScene.ui.showText(
+                i18next.t("battle:noEscapePokemon", {
+                  pokemonName: tag.sourceId && globalScene.getPokemonById(tag.sourceId) ? getPokemonNameWithAffix(globalScene.getPokemonById(tag.sourceId)!) : "",
+                  moveName: tag.getMoveName(),
+                  escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee")
+                }),
+                null,
+                () => {
+                  globalScene.ui.showText("", 0);
+                  if (!isSwitch) {
+                    globalScene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+                  }
+                },
+                null,
+                true
+              );
+            };
+
+            if (trapTag) {
+              showNoEscapeText(trapTag);
+            } else if (fairyLockTag) {
+              showNoEscapeText(fairyLockTag);
+            }
           }
         }
         break;
     }
 
-    if (success!) { // TODO: is the bang correct?
+    if (success) {
       this.end();
     }
 
-    return success!; // TODO: is the bang correct?
+    return success;
   }
 
   cancel() {
@@ -272,26 +295,6 @@ export class CommandPhase extends FieldPhase {
       globalScene.unshiftPhase(new CommandPhase(1));
       this.end();
     }
-  }
-
-  checkFightOverride(): boolean {
-    const pokemon = this.getPokemon();
-
-    const encoreTag = pokemon.getTag(EncoreTag) as EncoreTag;
-
-    if (!encoreTag) {
-      return false;
-    }
-
-    const moveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === encoreTag.moveId);
-
-    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex]!.isUsable(pokemon)) { // TODO: is this bang correct?
-      return false;
-    }
-
-    this.handleCommand(Command.FIGHT, moveIndex, false);
-
-    return true;
   }
 
   getFieldIndex(): integer {

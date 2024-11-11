@@ -7,7 +7,7 @@ import * as Utils from "#app/utils";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "#app/modifier/modifier";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
 import { getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { addWindow } from "#app/ui/ui-theme";
@@ -346,13 +346,13 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.optionsMode) {
       const option = this.options[this.optionsCursor];
       if (button === Button.ACTION) {
-        const pokemon = globalScene.getParty()[this.cursor];
+        const pokemon = globalScene.getPlayerParty()[this.cursor];
         if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode && option !== PartyOption.CANCEL) {
           this.startTransfer();
 
           let ableToTransfer: string;
-          for (let p = 0; p < globalScene.getParty().length; p++) { // this fore look goes through each of the party pokemon
-            const newPokemon = globalScene.getParty()[p];
+          for (let p = 0; p < globalScene.getPlayerParty().length; p++) { // this for look goes through each of the party pokemon
+            const newPokemon = globalScene.getPlayerParty()[p];
             // this next line gets all of the transferable items from pokemon [p]; it does this by getting all the held modifiers that are transferable and checking to see if they belong to pokemon [p]
             const getTransferrableItemsFromPokemon = (newPokemon: PlayerPokemon) =>
               globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).isTransferable && (m as PokemonHeldItemModifier).pokemonId === newPokemon.id) as PokemonHeldItemModifier[];
@@ -409,7 +409,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]!); // TODO: is this bang correct?
             }
           } else {
-            filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, getTransferrableItemsFromPokemon(globalScene.getParty()[this.transferCursor])[this.transferOptionCursor]);
+            filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor])[this.transferOptionCursor]);
           }
           if (filterResult === null) {
             if (this.partyUiMode !== PartyUiMode.SPLICE) {
@@ -419,7 +419,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               if (option === PartyOption.TRANSFER) {
                 if (this.transferCursor !== this.cursor) {
                   if (this.transferAll) {
-                    getTransferrableItemsFromPokemon(globalScene.getParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor));
+                    getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor));
                   } else {
                     (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.transferQuantities[this.transferOptionCursor], this.cursor);
                   }
@@ -580,7 +580,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         // show move description
         if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
           const option = this.options[this.optionsCursor];
-          const pokemon = globalScene.getParty()[this.cursor];
+          const pokemon = globalScene.getPlayerParty()[this.cursor];
           const move = allMoves[pokemon.getLearnableLevelMoves()[option]];
           if (move) {
             this.moveInfoOverlay.show(move);
@@ -596,7 +596,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
             /** Initialize item quantities for the selected Pokemon */
             const itemModifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-              && m.isTransferable && m.pokemonId === globalScene.getParty()[this.cursor].id) as PokemonHeldItemModifier[];
+              && m.isTransferable && m.pokemonId === globalScene.getPlayerParty()[this.cursor].id) as PokemonHeldItemModifier[];
             this.transferQuantities = itemModifiers.map(item => item.getStackCount());
             this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
           }
@@ -664,7 +664,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   populatePartySlots() {
-    const party = globalScene.getParty();
+    const party = globalScene.getPlayerParty();
 
     if (this.cursor < 6 && this.cursor >= party.length) {
       this.cursor = party.length - 1;
@@ -803,7 +803,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   updateOptions(): void {
-    const pokemon = globalScene.getParty()[this.cursor];
+    const pokemon = globalScene.getPlayerParty()[this.cursor];
 
     const learnableLevelMoves = this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER
       ? pokemon.getLearnableLevelMoves()
@@ -1059,13 +1059,13 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   doRelease(slotIndex: integer): void {
-    this.showText(this.getReleaseMessage(getPokemonNameWithAffix(globalScene.getParty()[slotIndex])), null, () => {
+    this.showText(this.getReleaseMessage(getPokemonNameWithAffix(globalScene.getPlayerParty()[slotIndex])), null, () => {
       this.clearPartySlots();
       globalScene.removePartyMemberModifiers(slotIndex);
-      const releasedPokemon = globalScene.getParty().splice(slotIndex, 1)[0];
+      const releasedPokemon = globalScene.getPlayerParty().splice(slotIndex, 1)[0];
       releasedPokemon.destroy();
       this.populatePartySlots();
-      if (this.cursor >= globalScene.getParty().length) {
+      if (this.cursor >= globalScene.getPlayerParty().length) {
         this.setCursor(this.cursor - 1);
       }
       if (this.partyUiMode === PartyUiMode.RELEASE) {

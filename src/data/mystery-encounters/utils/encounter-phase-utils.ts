@@ -18,11 +18,11 @@ import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { Gender } from "#app/data/gender";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import PokemonSpecies from "#app/data/pokemon-species";
 import { Egg, IEggOptions } from "#app/data/egg";
@@ -36,6 +36,7 @@ import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { Variant } from "#app/data/variant";
+import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/battle-scene";
 
 /**
@@ -418,9 +419,9 @@ export function generateModifierType(modifier: () => ModifierType, pregenArgs?: 
   // Populates item id and tier (order matters)
   result = result
     .withIdFromFunc(modifierTypes[modifierId])
-    .withTierFromPool();
+    .withTierFromPool(ModifierPoolType.PLAYER, globalScene.getPlayerParty());
 
-  return result instanceof ModifierTypeGenerator ? result.generateType(globalScene.getParty(), pregenArgs) : result;
+  return result instanceof ModifierTypeGenerator ? result.generateType(globalScene.getPlayerParty(), pregenArgs) : result;
 }
 
 /**
@@ -451,9 +452,9 @@ export function selectPokemonForOption(onPokemonSelected: (pokemon: PlayerPokemo
 
     // Open party screen to choose pokemon
     globalScene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
-      if (slotIndex < globalScene.getParty().length) {
+      if (slotIndex < globalScene.getPlayerParty().length) {
         globalScene.ui.setMode(modeToSetOnExit).then(() => {
-          const pokemon = globalScene.getParty()[slotIndex];
+          const pokemon = globalScene.getPlayerParty()[slotIndex];
           const secondaryOptions = onPokemonSelected(pokemon);
           if (!secondaryOptions) {
             globalScene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -563,7 +564,7 @@ export function selectOptionThenPokemon(options: OptionSelectItem[], optionSelec
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
       // Open party screen to choose a Pokemon
       globalScene.ui.setMode(Mode.PARTY, PartyUiMode.SELECT, -1, (slotIndex: number, option: PartyOption) => {
-        if (slotIndex < globalScene.getParty().length) {
+        if (slotIndex < globalScene.getPlayerParty().length) {
           // Pokemon and option selected
           globalScene.ui.setMode(modeToSetOnExit).then(() => {
             const result: PokemonAndOptionSelected = { selectedPokemonIndex: slotIndex, selectedOptionIndex: selectedOptionIndex };
@@ -713,7 +714,7 @@ export function leaveEncounterWithoutBattle(addHealPhase: boolean = false, encou
  * @param doNotContinue - default `false`. If set to true, will not end the battle and continue to next wave
  */
 export function handleMysteryEncounterVictory(addHealPhase: boolean = false, doNotContinue: boolean = false) {
-  const allowedPkm = globalScene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  const allowedPkm = globalScene.getPlayerParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
     globalScene.clearPhaseQueue();
@@ -750,7 +751,7 @@ export function handleMysteryEncounterVictory(addHealPhase: boolean = false, doN
  * @param addHealPhase
  */
 export function handleMysteryEncounterBattleFailed(addHealPhase: boolean = false, doNotContinue: boolean = false) {
-  const allowedPkm = globalScene.getParty().filter((pkm) => pkm.isAllowedInBattle());
+  const allowedPkm = globalScene.getPlayerParty().filter((pkm) => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
     globalScene.clearPhaseQueue();

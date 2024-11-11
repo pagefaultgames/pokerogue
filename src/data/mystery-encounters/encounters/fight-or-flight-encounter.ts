@@ -57,7 +57,7 @@ export const FightOrFlightEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getParty()), true);
+      const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
       const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
       const config: EnemyPartyConfig = {
@@ -87,11 +87,11 @@ export const FightOrFlightEncounter: MysteryEncounter =
             : globalScene.currentBattle.waveIndex > 40
               ? ModifierTier.ULTRA
               : ModifierTier.GREAT;
-      regenerateModifierPoolThresholds(globalScene.getParty(), ModifierPoolType.PLAYER, 0);
+      regenerateModifierPoolThresholds(globalScene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
       let item: ModifierTypeOption | null = null;
       // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
       while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
-        item = getPlayerModifierTypeOptions(1, globalScene.getParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
+        item = getPlayerModifierTypeOptions(1, globalScene.getPlayerParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
       }
       encounter.setDialogueToken("itemName", item.type.name);
       encounter.misc = item;

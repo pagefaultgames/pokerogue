@@ -39,7 +39,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   }
 
   override meetsRequirement(): boolean {
-    const partyPokemon = globalScene.getParty().filter((pkm) => (this.includeFainted ? pkm.isAllowed() : pkm.isAllowedInBattle()));
+    const partyPokemon = globalScene.getPlayerParty().filter((pkm) => (this.includeFainted ? pkm.isAllowedInChallenge() : pkm.isAllowedInBattle()));
 
     if (isNullOrUndefined(partyPokemon) || this.requiredMoves?.length < 0) {
       return false;

@@ -184,6 +184,7 @@ export default class TargetSelectUiHandler extends UiHandler {
   }
 
   clear() {
+    this.cursor = -1;
     super.clear();
     this.eraseCursor();
   }

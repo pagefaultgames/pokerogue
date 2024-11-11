@@ -1,6 +1,5 @@
 import {
   Status,
-  StatusEffect,
   getStatusEffectActivationText,
   getStatusEffectDescriptor,
   getStatusEffectHealText,
@@ -11,6 +10,7 @@ import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import { mockI18next } from "#test/utils/testUtils";
 import i18next from "i18next";

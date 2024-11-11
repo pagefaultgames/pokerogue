@@ -110,14 +110,14 @@ describe("Weird Dream - Mystery Encounter", () => {
     it("should transform the new party into new species, 2 at +90/+110, the rest at +40/50 BST", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
 
-      const pokemonPrior = scene.getParty().map(pokemon => pokemon);
+      const pokemonPrior = scene.getPlayerParty().map(pokemon => pokemon);
       const bstsPrior = pokemonPrior.map(species => species.getSpeciesForm().getBaseStatTotal());
 
       await runMysteryEncounterToEnd(game, 1);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const pokemonAfter = scene.getParty();
+      const pokemonAfter = scene.getPlayerParty();
       const bstsAfter = pokemonAfter.map(pokemon => pokemon.getSpeciesForm().getBaseStatTotal());
       const bstDiff = bstsAfter.map((bst, index) => bst - bstsPrior[index]);
 
@@ -184,7 +184,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(scene.getEnemyParty().length).toBe(scene.getParty().length);
+      expect(scene.getEnemyParty().length).toBe(scene.getPlayerParty().length);
     });
 
     it("should have 2 Rogue/2 Ultra/2 Great items in rewards", async () => {
@@ -227,14 +227,14 @@ describe("Weird Dream - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
-      const levelsPrior = scene.getParty().map(p => p.level);
+      const levelsPrior = scene.getPlayerParty().map(p => p.level);
       await runMysteryEncounterToEnd(game, 3);
 
-      const levelsAfter = scene.getParty().map(p => p.level);
+      const levelsAfter = scene.getPlayerParty().map(p => p.level);
 
       for (let i = 0; i < levelsPrior.length; i++) {
         expect(Math.max(Math.ceil(0.9 * levelsPrior[i]), 1)).toBe(levelsAfter[i]);
-        expect(scene.getParty()[i].levelExp).toBe(0);
+        expect(scene.getPlayerParty()[i].levelExp).toBe(0);
       }
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

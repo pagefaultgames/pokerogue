@@ -18,7 +18,7 @@ import { randInt } from "#app/utils";
 import { BattlerIndex } from "#app/battle";
 import { applyModifierTypeToPlayerPokemon, catchPokemon, getHighestLevelPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { PokeballType } from "#app/data/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -181,7 +181,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
 
       // Sort berries by party member ID to more easily re-add later if necessary
       const berryItemsMap = new Map<number, BerryModifier[]>();
-      globalScene.getParty().forEach(pokemon => {
+      globalScene.getPlayerParty().forEach(pokemon => {
         const pokemonBerries = berryItems.filter(b => b.pokemonId === pokemon.id);
         if (pokemonBerries?.length > 0) {
           berryItemsMap.set(pokemon.id, pokemonBerries);
@@ -267,7 +267,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const revSeed = generateModifierType(modifierTypes.REVIVER_SEED);
           encounter.setDialogueToken("foodReward", revSeed?.name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"));
           const givePartyPokemonReviverSeeds = () => {
-            const party = globalScene.getParty();
+            const party = globalScene.getPlayerParty();
             party.forEach(p => {
               const heldItems = p.getHeldItems();
               if (revSeed && !heldItems.some(item => item instanceof PokemonInstantReviveModifier)) {
@@ -308,7 +308,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const berryMap = encounter.misc.berryItemsMap;
 
           // Returns 2/5 of the berries stolen to each Pokemon
-          const party = globalScene.getParty();
+          const party = globalScene.getPlayerParty();
           party.forEach(pokemon => {
             const stolenBerries: BerryModifier[] = berryMap.get(pokemon.id);
             const berryTypesAsArray: BerryType[] = [];

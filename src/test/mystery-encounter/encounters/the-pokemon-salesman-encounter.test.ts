@@ -140,14 +140,14 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       scene.money = 20000;
       await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
 
-      const initialPartySize = scene.getParty().length;
+      const initialPartySize = scene.getPlayerParty().length;
       const pokemonName = scene.currentBattle.mysteryEncounter!.misc.pokemon.name;
 
       await runMysteryEncounterToEnd(game, 1);
 
-      expect(scene.getParty().length).toBe(initialPartySize + 1);
+      expect(scene.getPlayerParty().length).toBe(initialPartySize + 1);
 
-      const newlyPurchasedPokemon = scene.getParty()[scene.getParty().length - 1];
+      const newlyPurchasedPokemon = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(newlyPurchasedPokemon.name).toBe(pokemonName);
       expect(newlyPurchasedPokemon!.moveset.length > 0).toBeTruthy();
     });

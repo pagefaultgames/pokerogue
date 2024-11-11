@@ -13,7 +13,7 @@ export class NextEncounterPhase extends EncounterPhase {
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
-    for (const pokemon of globalScene.getParty()) {
+    for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
       }

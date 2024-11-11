@@ -16,9 +16,9 @@ export class ToggleDoublePositionPhase extends BattlePhase {
 
     const playerPokemon = globalScene.getPlayerField().find(p => p.isActive(true));
     if (playerPokemon) {
-      playerPokemon.setFieldPosition(this.double && globalScene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
+      playerPokemon.setFieldPosition(this.double && globalScene.getPokemonAllowedInBattle().length > 1 ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
         if (playerPokemon.getFieldIndex() === 1) {
-          const party = globalScene.getParty();
+          const party = globalScene.getPlayerParty();
           party[1] = party[0];
           party[0] = playerPokemon;
         }

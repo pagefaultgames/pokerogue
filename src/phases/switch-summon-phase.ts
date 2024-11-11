@@ -54,7 +54,7 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
-    if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? globalScene.getParty() : globalScene.getEnemyParty())[this.slotIndex])) {
+    if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
         return this.switchAndSummon();
       } else {
@@ -111,7 +111,7 @@ export class SwitchSummonPhase extends SummonPhase {
         const batonPassModifier = globalScene.findModifier(m => m instanceof SwitchEffectTransferModifier
             && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
         if (batonPassModifier && !globalScene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
-          globalScene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false);
+          globalScene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false, undefined, undefined, undefined, false);
         }
       }
     }
@@ -138,7 +138,6 @@ export class SwitchSummonPhase extends SummonPhase {
             switchedInPokemon.setAlpha(0.5);
           }
         } else {
-          switchedInPokemon.resetBattleData();
           switchedInPokemon.resetSummonData();
         }
         this.summon();

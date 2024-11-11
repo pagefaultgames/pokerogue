@@ -6,6 +6,7 @@ import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/battle-scene";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
@@ -77,12 +78,13 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   }
 
   updateTitleStats(): void {
-    Utils.apiFetch("game/titlestats")
-      .then(request => request.json())
+    pokerogueApi.getGameTitleStats()
       .then(stats => {
-        this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-        if (this.splashMessage === "splashMessages:battlesWon") {
-          this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
+        if (stats) {
+          this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
+          if (this.splashMessage === "splashMessages:battlesWon") {
+            this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
+          }
         }
       })
       .catch(err => {

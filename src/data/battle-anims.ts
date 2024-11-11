@@ -426,7 +426,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setScale(1.25);
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     globalScene.field.add(moveAnim.bgSprite);
-    const fieldPokemon = globalScene.getNonSwitchedEnemyPokemon() || globalScene.getNonSwitchedPlayerPokemon();
+    const fieldPokemon = globalScene.getEnemyPokemon(false) ?? globalScene.getPlayerPokemon(false);
     if (!isNullOrUndefined(priority)) {
       globalScene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
     } else if (fieldPokemon?.isOnField()) {
@@ -997,7 +997,7 @@ export abstract class BattleAnim {
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
                     case 0:
-                      globalScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, globalScene.getNonSwitchedEnemyPokemon() || globalScene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
+                      globalScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, globalScene.getEnemyPokemon(false) ?? globalScene.getPlayerPokemon(false)!); // TODO: is this bang correct?
                       break;
                     case 1:
                       globalScene.field.moveTo(moveSprite, globalScene.field.getAll().length - 1);

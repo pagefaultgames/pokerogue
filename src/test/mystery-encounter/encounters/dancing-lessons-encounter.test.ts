@@ -98,7 +98,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
       // Make party lead's level arbitrarily high to not get KOed by move
-      const partyLead = scene.getParty()[0];
+      const partyLead = scene.getPlayerParty()[0];
       partyLead.level = 1000;
       partyLead.calculateStats();
       await runMysteryEncounterToEnd(game, 1, undefined, true);
@@ -119,7 +119,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     it("should have a Baton in the rewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
       // Make party lead's level arbitrarily high to not get KOed by move
-      const partyLead = scene.getParty()[0];
+      const partyLead = scene.getPlayerParty()[0];
       partyLead.level = 1000;
       partyLead.calculateStats();
       await runMysteryEncounterToEnd(game, 1, undefined, true);
@@ -157,7 +157,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene, "unshiftPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      scene.getParty()[0].moveset = [];
+      scene.getPlayerParty()[0].moveset = [];
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof LearnMovePhase).map(p => p[0]);
@@ -169,7 +169,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      scene.getParty()[0].moveset = [];
+      scene.getPlayerParty()[0].moveset = [];
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
@@ -196,13 +196,13 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
     it("should add Oricorio to the party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      const partyCountBefore = scene.getParty().length;
-      scene.getParty()[0].moveset = [ new PokemonMove(Moves.DRAGON_DANCE) ];
+      const partyCountBefore = scene.getPlayerParty().length;
+      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.DRAGON_DANCE) ];
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
-      const partyCountAfter = scene.getParty().length;
+      const partyCountAfter = scene.getPlayerParty().length;
 
       expect(partyCountBefore + 1).toBe(partyCountAfter);
-      const oricorio = scene.getParty()[scene.getParty().length - 1];
+      const oricorio = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(oricorio.species.speciesId).toBe(Species.ORICORIO);
       const moveset = oricorio.moveset.map(m => m?.moveId);
       expect(moveset?.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
@@ -211,8 +211,8 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
     it("should NOT be selectable if the player doesn't have a Dance type move", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      const partyCountBefore = scene.getParty().length;
-      scene.getParty().forEach(p => p.moveset = []);
+      const partyCountBefore = scene.getPlayerParty().length;
+      scene.getPlayerParty().forEach(p => p.moveset = []);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -223,7 +223,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       vi.spyOn(scene.ui, "playError");
 
       await runSelectMysteryEncounterOption(game, 3);
-      const partyCountAfter = scene.getParty().length;
+      const partyCountAfter = scene.getPlayerParty().length;
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
@@ -236,7 +236,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      scene.getParty()[0].moveset = [ new PokemonMove(Moves.DRAGON_DANCE) ];
+      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.DRAGON_DANCE) ];
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

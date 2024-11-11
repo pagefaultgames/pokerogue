@@ -140,7 +140,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             globalScene.field.add(pokemon);
             if (!this.player) {
               const playerPokemon = globalScene.getPlayerPokemon() as Pokemon;
-              if (playerPokemon?.visible) {
+              if (playerPokemon?.isOnField()) {
                 globalScene.field.moveBelow(pokemon, playerPokemon);
               }
               globalScene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
@@ -193,7 +193,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     globalScene.field.add(pokemon);
     if (!this.player) {
       const playerPokemon = globalScene.getPlayerPokemon() as Pokemon;
-      if (playerPokemon?.visible) {
+      if (playerPokemon?.isOnField()) {
         globalScene.field.moveBelow(pokemon, playerPokemon);
       }
       globalScene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);

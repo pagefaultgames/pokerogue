@@ -3,15 +3,15 @@ import i18next from "i18next";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "#app/data/pokeball";
+import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor } from "#app/data/pokeball";
 import { PlayerGender } from "#enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
-import { getStatusEffectCatchRateMultiplier, StatusEffect } from "#app/data/status-effect";
+import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { achvs } from "#app/system/achv";
 import { Mode } from "#app/ui/ui";
 import { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -23,6 +23,8 @@ import { VictoryPhase } from "#app/phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { Abilities } from "#enums/abilities";
+import type { PokeballType } from "#enums/pokeball";
+import { StatusEffect } from "#enums/status-effect";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -52,23 +54,23 @@ export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string,
 }
 
 /**
- * Will never remove the player's last non-fainted Pokemon (if they only have 1)
+ * Will never remove the player's last non-fainted Pokemon (if they only have 1).
  * Otherwise, picks a Pokemon completely at random and removes from the party
- * @param isAllowed Default false. If true, only picks from legal mons. If no legal mons are found (or there is 1, with `doNotReturnLastAllowedMon = true), will return a mon that is not allowed.
- * @param isFainted Default false. If true, includes fainted mons.
- * @param doNotReturnLastAllowedMon Default false. If true, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
+ * @param isAllowed Default `false`. If `true`, only picks from legal mons. If no legal mons are found (or there is 1, with `doNotReturnLastAllowedMon = true`), will return a mon that is not allowed.
+ * @param isFainted Default `false`. If `true`, includes fainted mons.
+ * @param doNotReturnLastAllowedMon Default `false`. If `true`, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
 export function getRandomPlayerPokemon(isAllowed: boolean = false, isFainted: boolean = false, doNotReturnLastAllowedMon: boolean = false): PlayerPokemon {
-  const party = globalScene.getParty();
+  const party = globalScene.getPlayerParty();
   let chosenIndex: number;
   let chosenPokemon: PlayerPokemon | null = null;
-  const fullyLegalMons = party.filter(p => (!isAllowed || p.isAllowed()) && (isFainted || !p.isFainted()));
-  const allowedOnlyMons = party.filter(p => p.isAllowed());
+  const fullyLegalMons = party.filter(p => (!isAllowed || p.isAllowedInChallenge()) && (isFainted || !p.isFainted()));
+  const allowedOnlyMons = party.filter(p => p.isAllowedInChallenge());
 
   if (doNotReturnLastAllowedMon && fullyLegalMons.length === 1) {
     // If there is only 1 legal/unfainted mon left, select from fainted legal mons
-    const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowed()) && p.isFainted());
+    const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowedInChallenge()) && p.isFainted());
     if (faintedLegalMons.length > 0) {
       chosenIndex = randSeedInt(faintedLegalMons.length);
       chosenPokemon = faintedLegalMons[chosenIndex];
@@ -99,11 +101,11 @@ export function getRandomPlayerPokemon(isAllowed: boolean = false, isFainted: bo
  * @returns
  */
 export function getHighestLevelPlayerPokemon(isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
-  const party = globalScene.getParty();
+  const party = globalScene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (isAllowed && !p.isAllowed()) {
+    if (isAllowed && !p.isAllowedInChallenge()) {
       continue;
     }
     if (!isFainted && p.isFainted()) {
@@ -125,11 +127,11 @@ export function getHighestLevelPlayerPokemon(isAllowed: boolean = false, isFaint
  * @returns
  */
 export function getHighestStatPlayerPokemon(stat: PermanentStat, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
-  const party = globalScene.getParty();
+  const party = globalScene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (isAllowed && !p.isAllowed()) {
+    if (isAllowed && !p.isAllowedInChallenge()) {
       continue;
     }
     if (!isFainted && p.isFainted()) {
@@ -150,11 +152,11 @@ export function getHighestStatPlayerPokemon(stat: PermanentStat, isAllowed: bool
  * @returns
  */
 export function getLowestLevelPlayerPokemon(isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
-  const party = globalScene.getParty();
+  const party = globalScene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (isAllowed && !p.isAllowed()) {
+    if (isAllowed && !p.isAllowedInChallenge()) {
       continue;
     }
     if (!isFainted && p.isFainted()) {
@@ -175,11 +177,11 @@ export function getLowestLevelPlayerPokemon(isAllowed: boolean = false, isFainte
  * @returns
  */
 export function getHighestStatTotalPlayerPokemon(isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
-  const party = globalScene.getParty();
+  const party = globalScene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
   for (const p of party) {
-    if (isAllowed && !p.isAllowed()) {
+    if (isAllowed && !p.isAllowedInChallenge()) {
       continue;
     }
     if (!isFainted && p.isFainted()) {
@@ -313,7 +315,7 @@ export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
  */
 export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
   const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(globalScene.getParty(), [ value ])
+    .generateType(globalScene.getPlayerParty(), [ value ])
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
@@ -589,7 +591,7 @@ export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameO
       const addToParty = (slotIndex?: number) => {
         const newPokemon = pokemon.addToParty(pokeballType, slotIndex);
         const modifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
-        if (globalScene.getParty().filter(p => p.isShiny()).length === 6) {
+        if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === 6) {
           globalScene.validateAchv(achvs.SHINY_PARTY);
         }
         Promise.all(modifiers.map(m => globalScene.addModifier(m, true))).then(() => {
@@ -603,7 +605,7 @@ export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameO
         });
       };
       Promise.all([ pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon) ]).then(() => {
-        if (globalScene.getParty().length === 6) {
+        if (globalScene.getPlayerParty().length === 6) {
           const promptRelease = () => {
             globalScene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
               globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
@@ -824,7 +826,7 @@ export async function addPokemonDataToDexAndValidateAchievements(pokemon: Player
  * @param invalidSelectionKey
  */
 export function isPokemonValidForEncounterOptionSelection(pokemon: Pokemon, invalidSelectionKey: string): string | null {
-  if (!pokemon.isAllowed()) {
+  if (!pokemon.isAllowedInChallenge()) {
     return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
   }
   if (!pokemon.isAllowedInBattle()) {

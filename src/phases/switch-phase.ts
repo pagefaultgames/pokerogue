@@ -1,7 +1,7 @@
 import { globalScene } from "#app/battle-scene"; // todo?
-import { SwitchType } from "#enums/switch-type";
-import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
+import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
+import { SwitchType } from "#enums/switch-type";
 import { BattlePhase } from "./battle-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 
@@ -38,7 +38,7 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (this.isModal && !globalScene.getParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    if (this.isModal && !globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
@@ -49,7 +49,7 @@ export class SwitchPhase extends BattlePhase {
      * if the mon should have already been returned but is still alive and well
      * on the field. see also; battle.test.ts
      */
-    if (this.isModal && !this.doReturn && !globalScene.getParty()[this.fieldIndex].isFainted()) {
+    if (this.isModal && !this.doReturn && !globalScene.getPlayerParty()[this.fieldIndex].isFainted()) {
       return super.end();
     }
 
@@ -59,7 +59,7 @@ export class SwitchPhase extends BattlePhase {
     }
 
     // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
-    const fieldIndex = globalScene.currentBattle.getBattlerCount() === 1 || globalScene.getParty().filter(p => p.isAllowedInBattle()).length > 1 ? this.fieldIndex : 0;
+    const fieldIndex = globalScene.currentBattle.getBattlerCount() === 1 || globalScene.getPokemonAllowedInBattle().length > 1 ? this.fieldIndex : 0;
 
     globalScene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {

@@ -38,7 +38,7 @@ export class SelectModifierPhase extends BattlePhase {
       globalScene.reroll = false;
     }
 
-    const party = globalScene.getParty();
+    const party = globalScene.getPlayerParty();
     if (!this.isCopy) {
       regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
     }
@@ -103,7 +103,7 @@ export class SelectModifierPhase extends BattlePhase {
                   const itemModifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
                       && m.isTransferable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
                   const itemModifier = itemModifiers[itemIndex];
-                  globalScene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
+                  globalScene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity, undefined, undefined, false);
                 } else {
                   globalScene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), this.typeOptions, modifierSelectCallback, this.getRerollCost(globalScene.lockModifierTiers));
                 }
@@ -289,7 +289,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, globalScene.getParty(), globalScene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
+    return getPlayerModifierTypeOptions(modifierCount, globalScene.getPlayerParty(), globalScene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
   }
 
   copy(): SelectModifierPhase {

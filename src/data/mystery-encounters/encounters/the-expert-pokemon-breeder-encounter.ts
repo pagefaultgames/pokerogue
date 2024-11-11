@@ -23,7 +23,7 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { achvs } from "#app/system/achv";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 
@@ -126,7 +126,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       ];
 
       // Determine the 3 pokemon the player can battle with
-      let partyCopy = globalScene.getParty().slice(0);
+      let partyCopy = globalScene.getPlayerParty().slice(0);
       partyCopy = partyCopy
         .filter(p => p.isAllowedInBattle())
         .sort((a, b) => a.friendship - b.friendship);
@@ -506,11 +506,11 @@ function getEggOptions(commonEggs: number, rareEggs: number) {
 }
 
 function removePokemonFromPartyAndStoreHeldItems(encounter: MysteryEncounter, chosenPokemon: PlayerPokemon) {
-  const party = globalScene.getParty();
+  const party = globalScene.getPlayerParty();
   const chosenIndex = party.indexOf(chosenPokemon);
   party[chosenIndex] = party[0];
   party[0] = chosenPokemon;
-  encounter.misc.originalParty = globalScene.getParty().slice(1);
+  encounter.misc.originalParty = globalScene.getPlayerParty().slice(1);
   encounter.misc.originalPartyHeldItems = encounter.misc.originalParty
     .map(p => p.getHeldItems());
   globalScene["party"] = [
@@ -527,7 +527,7 @@ function checkAchievement() {
 function restorePartyAndHeldItems() {
   const encounter = globalScene.currentBattle.mysteryEncounter!;
   // Restore original party
-  globalScene.getParty().push(...encounter.misc.originalParty);
+  globalScene.getPlayerParty().push(...encounter.misc.originalParty);
 
   // Restore held items
   const originalHeldItems = encounter.misc.originalPartyHeldItems;

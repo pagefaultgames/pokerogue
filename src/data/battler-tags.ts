@@ -18,10 +18,9 @@ import Move, {
   StatusCategoryOnAllyAttr
 } from "#app/data/move";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
-import { StatusEffect } from "#app/data/status-effect";
+import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
-import { Type } from "#app/data/type";
-import { WeatherType } from "#app/data/weather";
+import { Type } from "#enums/type";
 import Pokemon, { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
@@ -38,6 +37,8 @@ import { Moves } from "#enums/moves";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { WeatherType } from "#enums/weather-type";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -909,11 +910,15 @@ export class FrenzyTag extends BattlerTag {
   }
 }
 
-export class EncoreTag extends BattlerTag {
+/**
+ * Applies the effects of the move Encore onto the target Pokemon
+ * Encore forces the target Pokemon to use its most-recent move for 3 turns
+ */
+export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
+    super(BattlerTagType.ENCORE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.AFTER_MOVE ], 3, Moves.ENCORE, sourceId);
   }
 
   /**
@@ -967,6 +972,39 @@ export class EncoreTag extends BattlerTag {
           new MovePhase(pokemon, lastMove.targets!, movesetMove)); // TODO: is this bang correct?
       }
     }
+  }
+
+  /**
+   * If the encored move has run out of PP, Encore ends early. Otherwise, Encore lapses based on the AFTER_MOVE battler tag lapse type.
+   * @returns `true` to persist | `false` to end and be removed
+   */
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const encoredMove = pokemon.getMoveset().find(m => m?.moveId === this.moveId);
+      if (encoredMove && encoredMove?.getPpRatio() > 0) {
+        return true;
+      }
+      return false;
+    } else {
+      return super.lapse(pokemon, lapseType);
+    }
+  }
+
+  /**
+   * Checks if the move matches the moveId stored within the tag and returns a boolean value
+   * @param move {@linkcode Moves} the move selected
+   * @param user N/A
+   * @returns `true` if the move does not match with the moveId stored and as a result, restricted
+   */
+  override isMoveRestricted(move: Moves, _user?: Pokemon): boolean {
+    if (move !== this.moveId) {
+      return true;
+    }
+    return false;
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -1571,6 +1609,22 @@ export class AbilityBattlerTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag used by Unburden to double speed
+ * @extends AbilityBattlerTag
+ */
+export class UnburdenTag extends AbilityBattlerTag {
+  constructor() {
+    super(BattlerTagType.UNBURDEN, Abilities.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
+  }
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+  }
+}
+
 export class TruantTag extends AbilityBattlerTag {
   constructor() {
     super(BattlerTagType.TRUANT, Abilities.TRUANT, BattlerTagLapseType.MOVE, 1);
@@ -2074,6 +2128,35 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
 }
 
 /**
+ * Battler tag indicating a Tatsugiri with {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}
+ * has entered the tagged Pokemon's mouth.
+ */
+export class CommandedTag extends BattlerTag {
+  private _tatsugiriFormKey: string;
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.COMMANDED, BattlerTagLapseType.CUSTOM, 0, Moves.NONE, sourceId);
+  }
+
+  public get tatsugiriFormKey(): string {
+    return this._tatsugiriFormKey;
+  }
+
+  /** Caches the Tatsugiri's form key and sharply boosts the tagged Pokemon's stats */
+  override onAdd(pokemon: Pokemon): void {
+    this._tatsugiriFormKey = this.getSourcePokemon()?.getFormKey() ?? "curly";
+    globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2));
+  }
+
+  /** Triggers an {@linkcode PokemonAnimType | animation} of the tagged Pokemon "spitting out" Tatsugiri */
+  override onRemove(pokemon: Pokemon): void {
+    if (this.getSourcePokemon()?.isActive(true)) {
+      globalScene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_REMOVE);
+    }
+  }
+}
+
+/**
  * Battler tag enabling the Stockpile mechanic. This tag handles:
  * - Stack tracking, including max limit enforcement (which is replicated in Stockpile for redundancy).
  *
@@ -2311,7 +2394,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * Uses DisabledTag's selectionDeniedText() message
+   * Uses its own unique selectionDeniedText() message
    */
   override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveDisabledHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name, healBlockName: allMoves[Moves.HEAL_BLOCK].name });
@@ -2478,7 +2561,10 @@ export class SubstituteTag extends BattlerTag {
   onHit(pokemon: Pokemon): void {
     const moveEffectPhase = globalScene.getCurrentPhase();
     if (moveEffectPhase instanceof MoveEffectPhase) {
-      const attacker = moveEffectPhase.getUserPokemon()!;
+      const attacker = moveEffectPhase.getUserPokemon();
+      if (!attacker) {
+        return;
+      }
       const move = moveEffectPhase.move.getMove();
       const firstHit = (attacker.turnData.hitCount === attacker.turnData.hitsLeft);
 
@@ -2776,6 +2862,67 @@ export class PowerTrickTag extends BattlerTag {
 }
 
 /**
+ * Tag associated with the move Grudge.
+ * If this tag is active when the bearer faints from an opponent's move, the tag reduces that move's PP to 0.
+ * Otherwise, it lapses when the bearer makes another move.
+ */
+export class GrudgeTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.GRUDGE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.PRE_MOVE ], 1, Moves.GRUDGE);
+  }
+
+  onAdd(pokemon: Pokemon) {
+    super.onAdd(pokemon);
+    globalScene.queueMessage(i18next.t("battlerTags:grudgeOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * Activates Grudge's special effect on the attacking Pokemon and lapses the tag.
+   * @param pokemon
+   * @param lapseType
+   * @param sourcePokemon {@linkcode Pokemon} the source of the move that fainted the tag's bearer
+   * @returns `false` if Grudge activates its effect or lapses
+   */
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM && sourcePokemon) {
+      if (sourcePokemon.isActive() && pokemon.isOpponent(sourcePokemon)) {
+        const lastMove = pokemon.turnData.attacksReceived[0];
+        const lastMoveData = sourcePokemon.getMoveset().find(m => m?.moveId === lastMove.move);
+        if (lastMoveData && lastMove.move !== Moves.STRUGGLE) {
+          lastMoveData.ppUsed = lastMoveData.getMovePp();
+          globalScene.queueMessage(i18next.t("battlerTags:grudgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: lastMoveData.getName() }));
+        }
+      }
+      return false;
+    } else {
+      return super.lapse(pokemon, lapseType);
+    }
+  }
+}
+
+/**
+ * Tag used to heal the user of Psycho Shift of its status effect if Psycho Shift succeeds in transferring its status effect to the target Pokemon
+ */
+export class PsychoShiftTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.PSYCHO_SHIFT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.PSYCHO_SHIFT);
+  }
+
+  /**
+   * Heals Psycho Shift's user of its status effect after it uses a move
+   * @returns `false` to expire the tag immediately
+   */
+  override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+    if (pokemon.status && pokemon.isActive(true)) {
+      globalScene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+      pokemon.resetStatus();
+      pokemon.updateInfo();
+    }
+    return false;
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
  * @returns The corresponding {@linkcode BattlerTag} object.
@@ -2911,6 +3058,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new IceFaceBlockDamageTag(tagType);
     case BattlerTagType.DISGUISE:
       return new FormBlockDamageTag(tagType);
+    case BattlerTagType.COMMANDED:
+      return new CommandedTag(sourceId);
     case BattlerTagType.STOCKPILING:
       return new StockpilingTag(sourceMove);
     case BattlerTagType.OCTOLOCK:
@@ -2932,6 +3081,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new ThroatChoppedTag();
     case BattlerTagType.GORILLA_TACTICS:
       return new GorillaTacticsTag();
+    case BattlerTagType.UNBURDEN:
+      return new UnburdenTag();
     case BattlerTagType.SUBSTITUTE:
       return new SubstituteTag(sourceMove, sourceId);
     case BattlerTagType.AUTOTOMIZED:
@@ -2952,6 +3103,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new TelekinesisTag(sourceMove);
     case BattlerTagType.POWER_TRICK:
       return new PowerTrickTag(sourceMove, sourceId);
+    case BattlerTagType.GRUDGE:
+      return new GrudgeTag();
+    case BattlerTagType.PSYCHO_SHIFT:
+      return new PsychoShiftTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

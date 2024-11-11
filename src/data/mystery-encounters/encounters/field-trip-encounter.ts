@@ -214,7 +214,7 @@ function pokemonAndMoveChosen(pokemon: PlayerPokemon, move: PokemonMove, correct
         text: `${namespace}:incorrect_exp`,
       },
     ];
-    setEncounterExp(globalScene.getParty().map((p) => p.id), 50);
+    setEncounterExp(globalScene.getPlayerParty().map((p) => p.id), 50);
   } else {
     encounter.selectedOption!.dialogue!.selected = [
       {

@@ -1,10 +1,10 @@
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { StatusEffect } from "#app/data/status-effect";
 import { decrypt, encrypt, GameData, SessionSaveData } from "#app/system/game-data";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

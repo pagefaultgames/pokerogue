@@ -10,7 +10,7 @@ import { Abilities } from "#enums/abilities";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { Nature } from "#enums/nature";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
@@ -23,6 +23,7 @@ import { ReturnPhase } from "#app/phases/return-phase";
 import i18next from "i18next";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theWinstrateChallenge";
@@ -187,9 +188,10 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
     } else {
       globalScene.arena.resetArenaEffects();
       const playerField = globalScene.getPlayerField();
+      playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
       playerField.forEach((_, p) => globalScene.unshiftPhase(new ReturnPhase(p)));
 
-      for (const pokemon of globalScene.getParty()) {
+      for (const pokemon of globalScene.getPlayerParty()) {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {

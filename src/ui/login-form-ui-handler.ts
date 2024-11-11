@@ -6,6 +6,7 @@ import i18next from "i18next";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/battle-scene";
 
 interface BuildInteractableImageOpts {
@@ -135,21 +136,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => {
-            if (!response.ok) {
-              return response.text();
-            }
-            return response.json();
-          })
-          .then(response => {
-            if (response.hasOwnProperty("token")) {
-              Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction && originalLoginAction();
-            } else {
-              onFail(response);
-            }
-          });
+
+        const [ usernameInput, passwordInput ] = this.inputs;
+
+        pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
+          if (!error) {
+            originalLoginAction && originalLoginAction();
+          } else {
+            onFail(error);
+          }
+        });
       };
 
       return true;

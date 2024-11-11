@@ -1,40 +1,40 @@
-import { globalScene } from "#app/battle-scene";
 import { BattlerIndex, BattleType } from "#app/battle";
+import { globalScene } from "#app/battle-scene";
+import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
+import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
+import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { getRandomWeatherType } from "#app/data/weather";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { PlayerGender } from "#app/enums/player-gender";
-import { Species } from "#app/enums/species";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import Pokemon, { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import Overrides from "#app/overrides";
+import { BattlePhase } from "#app/phases/battle-phase";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
+import { GameOverPhase } from "#app/phases/game-over-phase";
+import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { PostSummonPhase } from "#app/phases/post-summon-phase";
+import { ReturnPhase } from "#app/phases/return-phase";
+import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
+import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
+import { SummonPhase } from "#app/phases/summon-phase";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { achvs } from "#app/system/achv";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { Mode } from "#app/ui/ui";
-import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
-import * as Utils from "#app/utils";
-import { randSeedInt } from "#app/utils";
-import { CheckSwitchPhase } from "./check-switch-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { PostSummonPhase } from "./post-summon-phase";
-import { ReturnPhase } from "./return-phase";
-import { ScanIvsPhase } from "./scan-ivs-phase";
-import { ShinySparklePhase } from "./shiny-sparkle-phase";
-import { SummonPhase } from "./summon-phase";
-import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
-import Overrides from "#app/overrides";
-import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { randSeedInt, randSeedItem } from "#app/utils";
+import { BattleSpec } from "#enums/battle-spec";
 import { Biome } from "#enums/biome";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { PlayerGender } from "#enums/player-gender";
+import { Species } from "#enums/species";
+import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 
 export class EncounterPhase extends BattlePhase {
@@ -116,7 +116,7 @@ export class EncounterPhase extends BattlePhase {
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
-          globalScene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
+          globalScene.getPlayerParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
             applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, false, battle.enemyParty[e]);
           });
         }
@@ -156,7 +156,7 @@ export class EncounterPhase extends BattlePhase {
       return true;
     });
 
-    if (globalScene.getParty().filter(p => p.isShiny()).length === 6) {
+    if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === PLAYER_PARTY_MAX_SIZE) {
       globalScene.validateAchv(achvs.SHINY_PARTY);
     }
 
@@ -202,7 +202,7 @@ export class EncounterPhase extends BattlePhase {
             globalScene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = globalScene.getPlayerPokemon();
-            if (playerPokemon?.visible) {
+            if (playerPokemon?.isOnField()) {
               globalScene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
             }
             enemyPokemon.tint(0, 0.5);
@@ -253,7 +253,7 @@ export class EncounterPhase extends BattlePhase {
       globalScene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
     }
 
-    for (const pokemon of globalScene.getParty()) {
+    for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
       }
@@ -332,7 +332,7 @@ export class EncounterPhase extends BattlePhase {
       const doSummon = () => {
         globalScene.currentBattle.started = true;
         globalScene.playBgm(undefined);
-        globalScene.pbTray.showPbTray(globalScene.getParty());
+        globalScene.pbTray.showPbTray(globalScene.getPlayerParty());
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
@@ -356,7 +356,7 @@ export class EncounterPhase extends BattlePhase {
         doSummon();
       } else {
         let message: string;
-        globalScene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), globalScene.currentBattle.waveIndex);
+        globalScene.executeWithSeedOffset(() => message = randSeedItem(encounterMessages), globalScene.currentBattle.waveIndex);
         message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
           globalScene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
@@ -441,13 +441,13 @@ export class EncounterPhase extends BattlePhase {
     if (![ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(globalScene.currentBattle.battleType)) {
       enemyField.map(p => globalScene.pushConditionalPhase(new PostSummonPhase(p.getBattlerIndex()), () => {
         // if there is not a player party, we can't continue
-        if (!globalScene.getParty()?.length) {
+        if (!globalScene.getPlayerParty().length) {
           return false;
         }
         // how many player pokemon are on the field ?
-        const pokemonsOnFieldCount = globalScene.getParty().filter(p => p.isOnField()).length;
+        const pokemonsOnFieldCount = globalScene.getPlayerParty().filter(p => p.isOnField()).length;
         // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-        const requiredPokemonsOnField = Math.min(globalScene.getParty().filter((p) => !p.isFainted()).length, 2);
+        const requiredPokemonsOnField = Math.min(globalScene.getPlayerParty().filter((p) => !p.isFainted()).length, 2);
         // if it's a double, there should be 2, otherwise 1
         if (globalScene.currentBattle.double) {
           return pokemonsOnFieldCount === requiredPokemonsOnField;
@@ -461,7 +461,7 @@ export class EncounterPhase extends BattlePhase {
     }
 
     if (!this.loaded) {
-      const availablePartyMembers = globalScene.getParty().filter(p => p.isAllowedInBattle());
+      const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
 
       if (!availablePartyMembers[0].isOnField()) {
         globalScene.pushPhase(new SummonPhase(0));

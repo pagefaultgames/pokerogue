@@ -6,7 +6,7 @@ import MysteryEncounterOption, { MysteryEncounterOptionBuilder } from "#app/data
 import { TrainerSlot } from "#app/data/trainer-config";
 import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
 import { EnemyPokemon } from "#app/field/pokemon";
-import { PokeballType } from "#app/data/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { PlayerGender } from "#enums/player-gender";
 import { IntegerHolder, randSeedInt } from "#app/utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";

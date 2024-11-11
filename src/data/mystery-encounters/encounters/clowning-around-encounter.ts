@@ -1,7 +1,7 @@
 import { EnemyPartyConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, selectPokemonForOption, setEncounterRewards, transitionMysteryEncounterIntroVisuals } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { ModifierPoolType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/battle-scene";
@@ -12,7 +12,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#enums/abilities";
 import { applyAbilityOverrideToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { randSeedInt, randSeedShuffle } from "#app/utils";
@@ -245,7 +245,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           // So Vitamins, form change items, etc. are not included
           const encounter = globalScene.currentBattle.mysteryEncounter!;
 
-          const party = globalScene.getParty();
+          const party = globalScene.getPlayerParty();
           let mostHeldItemsPokemon = party[0];
           let count = mostHeldItemsPokemon.getHeldItems()
             .filter(m => m.isTransferable && !(m instanceof BerryModifier))
@@ -280,7 +280,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           let numRogue = 0;
           items.filter(m => m.isTransferable && !(m instanceof BerryModifier))
             .forEach(m => {
-              const type = m.type.withTierFromPool();
+              const type = m.type.withTierFromPool(ModifierPoolType.PLAYER, party);
               const tier = type.tier ?? ModifierTier.ULTRA;
               if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
                 numRogue += m.stackCount;
@@ -328,7 +328,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
         .withPreOptionPhase(async () => {
           // Randomize the second type of all player's pokemon
           // If the pokemon does not normally have a second type, it will gain 1
-          for (const pokemon of globalScene.getParty()) {
+          for (const pokemon of globalScene.getPlayerParty()) {
             const originalTypes = pokemon.getTypes(false, false, true);
 
             // If the Pokemon has non-status moves that don't match the Pokemon's type, prioritizes those as the new type

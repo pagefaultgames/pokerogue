@@ -12,7 +12,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Biome } from "#enums/biome";
 import { getBiomeKey } from "#app/field/arena";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -134,7 +134,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
 
         // Init enemy
         const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-        const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getParty()), true);
+        const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
         const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
         encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
         const config: EnemyPartyConfig = {
@@ -170,7 +170,7 @@ async function doBiomeTransitionDialogueAndBattleInit() {
 
   // Init enemy
   const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-  const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getParty()), true);
+  const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
   const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
   encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
 

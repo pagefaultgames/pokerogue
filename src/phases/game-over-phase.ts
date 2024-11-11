@@ -1,8 +1,8 @@
 import { clientSessionId } from "#app/account";
 import { BattleType } from "#app/battle";
 import { globalScene } from "#app/battle-scene";
-import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { trainerConfigs } from "#app/data/trainer-config";
 import Pokemon from "#app/field/pokemon";
@@ -23,15 +23,16 @@ import * as Utils from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export class GameOverPhase extends BattlePhase {
-  private victory: boolean;
+  private isVictory: boolean;
   private firstRibbons: PokemonSpecies[] = [];
 
-  constructor(victory?: boolean) {
+  constructor(isVictory: boolean = false) {
     super();
 
-    this.victory = !!victory;
+    this.isVictory = isVictory;
   }
 
   start() {
@@ -39,22 +40,22 @@ export class GameOverPhase extends BattlePhase {
 
     // Failsafe if players somehow skip floor 200 in classic mode
     if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > 200) {
-      this.victory = true;
+      this.isVictory = true;
     }
 
     // Handle Mystery Encounter special Game Over cases
     // Situations such as when player lost a battle, but it isn't treated as full Game Over
-    if (!this.victory && globalScene.currentBattle.mysteryEncounter?.onGameOver && !globalScene.currentBattle.mysteryEncounter.onGameOver()) {
+    if (!this.isVictory && globalScene.currentBattle.mysteryEncounter?.onGameOver && !globalScene.currentBattle.mysteryEncounter.onGameOver()) {
       // Do not end the game
       return this.end();
     }
     // Otherwise, continue standard Game Over logic
 
-    if (this.victory && globalScene.gameMode.isEndless) {
+    if (this.isVictory && globalScene.gameMode.isEndless) {
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       globalScene.ui.showDialogue(i18next.t("miscDialogue:ending_endless", { context: genderStr }), i18next.t("miscDialogue:ending_name"), 0, () => this.handleGameOver());
-    } else if (this.victory || !globalScene.enableRetries) {
+    } else if (this.isVictory || !globalScene.enableRetries) {
       this.handleGameOver();
     } else {
       globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
@@ -65,7 +66,7 @@ export class GameOverPhase extends BattlePhase {
             globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
               globalScene.pushPhase(new EncounterPhase(true));
 
-              const availablePartyMembers = globalScene.getParty().filter(p => p.isAllowedInBattle()).length;
+              const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
 
               globalScene.pushPhase(new SummonPhase(0));
               if (globalScene.currentBattle.double && availablePartyMembers > 1) {
@@ -92,12 +93,12 @@ export class GameOverPhase extends BattlePhase {
       globalScene.disableMenu = true;
       globalScene.time.delayedCall(1000, () => {
         let firstClear = false;
-        if (this.victory && newClear) {
+        if (this.isVictory && newClear) {
           if (globalScene.gameMode.isClassic) {
             firstClear = globalScene.validateAchv(achvs.CLASSIC_VICTORY);
             globalScene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
             globalScene.gameData.gameStats.sessionsWon++;
-            for (const pokemon of globalScene.getParty()) {
+            for (const pokemon of globalScene.getPlayerParty()) {
               this.awardRibbon(pokemon);
 
               if (pokemon.species.getRootSpeciesId() !== pokemon.species.getRootSpeciesId(true)) {
@@ -108,8 +109,8 @@ export class GameOverPhase extends BattlePhase {
             globalScene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
-        globalScene.gameData.saveRunHistory(globalScene.gameData.getSessionSaveData(), this.victory);
-        const fadeDuration = this.victory ? 10000 : 5000;
+        globalScene.gameData.saveRunHistory(globalScene.gameData.getSessionSaveData(), this.isVictory);
+        const fadeDuration = this.isVictory ? 10000 : 5000;
         globalScene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = globalScene.getField().filter(p => p?.isActive(true));
         activeBattlers.map(p => p.hideInfo());
@@ -119,7 +120,7 @@ export class GameOverPhase extends BattlePhase {
           globalScene.clearPhaseQueue();
           globalScene.ui.clearText();
 
-          if (this.victory && globalScene.gameMode.isChallenge) {
+          if (this.isVictory && globalScene.gameMode.isChallenge) {
             globalScene.gameMode.challenges.forEach(c => globalScene.validateAchvs(ChallengeAchv, c));
           }
 
@@ -127,7 +128,7 @@ export class GameOverPhase extends BattlePhase {
             if (newClear) {
               this.handleUnlocks();
             }
-            if (this.victory && newClear) {
+            if (this.isVictory && newClear) {
               for (const species of this.firstRibbons) {
                 globalScene.unshiftPhase(new RibbonModifierRewardPhase(modifierTypes.VOUCHER_PLUS, species));
               }
@@ -139,7 +140,7 @@ export class GameOverPhase extends BattlePhase {
             this.end();
           };
 
-          if (this.victory && globalScene.gameMode.isClassic) {
+          if (this.isVictory && globalScene.gameMode.isClassic) {
             const dialogueKey = "miscDialogue:ending";
 
             if (!globalScene.ui.shouldSkipDialogue(dialogueKey)) {
@@ -172,36 +173,31 @@ export class GameOverPhase extends BattlePhase {
       });
     };
 
-    /* Added a local check to see if the game is running offline on victory
+    /* Added a local check to see if the game is running offline
       If Online, execute apiFetch as intended
-      If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
-    if (this.victory) {
-      if (!Utils.isLocal) {
-        Utils.apiFetch(`savedata/session/newclear?slot=${globalScene.sessionSlotId}&clientSessionId=${clientSessionId}`, true)
-          .then(response => response.json())
-          .then(newClear => doGameOver(newClear));
-      } else {
-        globalScene.gameData.offlineNewClear().then(result => {
-          doGameOver(result);
-        });
-      }
-    } else {
-      doGameOver(false);
+      If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks */
+    if (!Utils.isLocal || Utils.isLocalServerConnected) {
+      pokerogueApi.savedata.session.newclear({ slot: globalScene.sessionSlotId, isVictory: this.isVictory, clientSessionId: clientSessionId })
+        .then((success) => doGameOver(!!success));
+    } else if (this.isVictory) {
+      globalScene.gameData.offlineNewClear().then(result => {
+        doGameOver(result);
+      });
     }
   }
 
   handleUnlocks(): void {
-    if (this.victory && globalScene.gameMode.isClassic) {
+    if (this.isVictory && globalScene.gameMode.isClassic) {
       if (!globalScene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
         globalScene.unshiftPhase(new UnlockPhase(Unlockables.ENDLESS_MODE));
       }
-      if (globalScene.getParty().filter(p => p.fusionSpecies).length && !globalScene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
+      if (globalScene.getPlayerParty().filter(p => p.fusionSpecies).length && !globalScene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
         globalScene.unshiftPhase(new UnlockPhase(Unlockables.SPLICED_ENDLESS_MODE));
       }
       if (!globalScene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) {
         globalScene.unshiftPhase(new UnlockPhase(Unlockables.MINI_BLACK_HOLE));
       }
-      if (!globalScene.gameData.unlocks[Unlockables.EVIOLITE] && globalScene.getParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)) {
+      if (!globalScene.gameData.unlocks[Unlockables.EVIOLITE] && globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)) {
         globalScene.unshiftPhase(new UnlockPhase(Unlockables.EVIOLITE));
       }
     }

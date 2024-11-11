@@ -176,7 +176,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      scene.getParty().forEach(pkm => {
+      scene.getPlayerParty().forEach(pkm => {
         vi.spyOn(pkm, "getStat").mockReturnValue(1); // for ease return for every stat
       });
 
@@ -200,7 +200,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      scene.getParty().forEach(pkm => {
+      scene.getPlayerParty().forEach(pkm => {
         vi.spyOn(pkm, "getStat").mockReturnValue(1); // for ease return for every stat
       });
 
@@ -225,7 +225,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      scene.getParty().forEach(pkm => {
+      scene.getPlayerParty().forEach(pkm => {
         vi.spyOn(pkm, "getStat").mockReturnValue(9999); // for ease return for every stat
       });
 

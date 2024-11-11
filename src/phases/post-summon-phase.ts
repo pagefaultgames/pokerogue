@@ -1,6 +1,6 @@
 import { globalScene } from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { applyPostSummonAbAttrs, PostSummonAbAttr } from "#app/data/ability";
+import { applyAbAttrs, applyPostSummonAbAttrs, CommanderAbAttr, PostSummonAbAttr } from "#app/data/ability";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { StatusEffect } from "#app/enums/status-effect";
 import { PokemonPhase } from "./pokemon-phase";
@@ -28,5 +28,8 @@ export class PostSummonPhase extends PokemonPhase {
     }
 
     applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
+
+    const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+    field.forEach((p) => applyAbAttrs(CommanderAbAttr, p, null, false));
   }
 }

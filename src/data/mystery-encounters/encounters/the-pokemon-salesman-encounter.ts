@@ -8,7 +8,7 @@ import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon }
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Species } from "#enums/species";
-import { PokeballType } from "#app/data/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";

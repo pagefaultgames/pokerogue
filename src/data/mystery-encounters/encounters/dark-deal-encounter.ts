@@ -1,4 +1,4 @@
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";

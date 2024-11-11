@@ -32,11 +32,8 @@ export class BerryPhase extends FieldPhase {
 
           for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
             if (berryModifier.consumed) {
-              if (!--berryModifier.stackCount) {
-                globalScene.removeModifier(berryModifier);
-              } else {
-                berryModifier.consumed = false;
-              }
+              berryModifier.consumed = false;
+              pokemon.loseHeldItem(berryModifier);
             }
             globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier)); // Announce a berry was used
           }

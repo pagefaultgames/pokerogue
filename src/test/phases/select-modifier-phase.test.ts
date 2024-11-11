@@ -151,10 +151,10 @@ describe.skip("SelectModifierPhase", () => {
     const pokemon = new PlayerPokemon(getPokemonSpecies(Species.BULBASAUR), 10, undefined, 0, undefined, true, 2);
 
     // Fill party with max shinies
-    while (scene.getParty().length > 0) {
-      scene.getParty().pop();
+    while (scene.getPlayerParty().length > 0) {
+      scene.getPlayerParty().pop();
     }
-    scene.getParty().push(pokemon, pokemon, pokemon, pokemon, pokemon, pokemon);
+    scene.getPlayerParty().push(pokemon, pokemon, pokemon, pokemon, pokemon, pokemon);
 
     const selectModifierPhase = new SelectModifierPhase(0, undefined, customModifiers);
     scene.pushPhase(selectModifierPhase);

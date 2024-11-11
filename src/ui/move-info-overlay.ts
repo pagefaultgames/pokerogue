@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import Move, { MoveCategory } from "../data/move";
-import { Type } from "../data/type";
+import { Type } from "#enums/type";
 import i18next from "i18next";
 
 export interface MoveInfoOverlaySettings {

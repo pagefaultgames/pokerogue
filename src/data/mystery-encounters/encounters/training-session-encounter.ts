@@ -1,6 +1,6 @@
 import { Ability, allAbilities } from "#app/data/ability";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getNatureName, Nature } from "#app/data/nature";
+import { getNatureName } from "#app/data/nature";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -21,6 +21,7 @@ import i18next from "i18next";
 import { getStatKey } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import type { Nature } from "#enums/nature";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounters/trainingSession";
@@ -152,7 +153,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             }
 
             // Add pokemon and mods back
-            globalScene.getParty().push(playerPokemon);
+            globalScene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               globalScene.addModifier(mod, true, false, false, true);
@@ -229,7 +230,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             globalScene.gameData.setPokemonCaught(playerPokemon, false);
 
             // Add pokemon and modifiers back
-            globalScene.getParty().push(playerPokemon);
+            globalScene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               globalScene.addModifier(mod, true, false, false, true);
@@ -342,7 +343,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             globalScene.gameData.setPokemonCaught(playerPokemon, false);
 
             // Add pokemon and mods back
-            globalScene.getParty().push(playerPokemon);
+            globalScene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               globalScene.addModifier(mod, true, false, false, true);

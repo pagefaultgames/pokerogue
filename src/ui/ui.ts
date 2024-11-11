@@ -391,6 +391,7 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipContent.y = title ? 16 : 4;
     this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 838);
     this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
+    this.tooltipTitle.x = this.tooltipBg.width / 2;
   }
 
   hideTooltip(): void {
@@ -400,12 +401,34 @@ export default class UI extends Phaser.GameObjects.Container {
 
   update(): void {
     if (this.tooltipContainer.visible) {
-      const xReverse = globalScene.game.input.mousePointer && globalScene.game.input.mousePointer.x >= globalScene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-      const yReverse = globalScene.game.input.mousePointer && globalScene.game.input.mousePointer.y >= globalScene.game.canvas.height - this.tooltipBg.height * 6 - 12;
-      this.tooltipContainer.setPosition(
-        !xReverse ? globalScene.game.input.mousePointer!.x / 6 + 2 : globalScene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2,
-        !yReverse ? globalScene.game.input.mousePointer!.y / 6 + 2 : globalScene.game.input.mousePointer!.y / 6 - this.tooltipBg.height - 2,
-      );
+      const isTouch = globalScene.inputMethod === "touch";
+      const pointerX = globalScene.game.input.activePointer.x;
+      const pointerY = globalScene.game.input.activePointer.y;
+      const tooltipWidth = this.tooltipBg.width;
+      const tooltipHeight = this.tooltipBg.height;
+      const padding = 2;
+
+      // Default placement is top left corner of the screen on mobile. Otherwise below the cursor, to the right
+      let x = isTouch ? padding : pointerX / 6 + padding;
+      let y = isTouch ? padding : pointerY / 6 + padding;
+
+      if (isTouch) {
+        // If we are in the top left quadrant on mobile, move the tooltip to the top right corner
+        if (pointerX <= globalScene.game.canvas.width / 2 && pointerY <= globalScene.game.canvas.height / 2) {
+          x = globalScene.game.canvas.width / 6 - tooltipWidth - padding;
+        }
+      } else {
+        // If the tooltip would go offscreen on the right, or is close to it, move to the left of the cursor
+        if (x + tooltipWidth + padding > globalScene.game.canvas.width / 6) {
+          x = Math.max(padding, pointerX / 6 - tooltipWidth - padding);
+        }
+        // If the tooltip would go offscreen at the bottom, or is close to it, move above the cursor
+        if (y + tooltipHeight + padding > globalScene.game.canvas.height / 6) {
+          y = Math.max(padding, pointerY / 6 - tooltipHeight - padding);
+        }
+      }
+
+      this.tooltipContainer.setPosition(x, y);
     }
   }
 

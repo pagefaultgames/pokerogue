@@ -41,7 +41,7 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    for (const pokemon of globalScene.getParty().filter(p => p.isAllowedInBattle())) {
+    for (const pokemon of globalScene.getPokemonAllowedInBattle()) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
     }
 

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/battle-scene";
-import { PokeballType } from "../data/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import * as Utils from "../utils";
 
 export function addPokeballOpenParticles(x: number, y: number, pokeballType: PokeballType): void {

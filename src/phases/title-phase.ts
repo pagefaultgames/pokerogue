@@ -1,20 +1,20 @@
 import { loggedInUser } from "#app/account";
 import { BattleType } from "#app/battle";
-import { getDailyRunStarters, fetchDailyRunSeed } from "#app/data/daily-run";
+import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
-import { GameModes, GameMode, getGameMode } from "#app/game-mode";
-import { regenerateModifierPoolThresholds, ModifierPoolType, modifierTypes, getDailyRunStarterModifiers } from "#app/modifier/modifier-type";
+import { GameMode, GameModes, getGameMode } from "#app/game-mode";
+import { Modifier } from "#app/modifier/modifier";
+import { getDailyRunStarterModifiers, ModifierPoolType, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { Phase } from "#app/phase";
 import { SessionSaveData } from "#app/system/game-data";
 import { Unlockables } from "#app/system/unlockables";
 import { vouchers } from "#app/system/voucher";
-import { OptionSelectItem, OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
+import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
-import i18next from "i18next";
 import * as Utils from "#app/utils";
-import { Modifier } from "#app/modifier/modifier";
+import i18next from "i18next";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { EncounterPhase } from "./encounter-phase";
 import { SelectChallengePhase } from "./select-challenge-phase";
@@ -203,7 +203,7 @@ export class TitlePhase extends Phase {
         const starters = getDailyRunStarters(seed);
         const startingLevel = globalScene.gameMode.getStartingLevel();
 
-        const party = globalScene.getParty();
+        const party = globalScene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
           const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
@@ -243,7 +243,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!Utils.isLocal) {
+      if (!Utils.isLocal || Utils.isLocalServerConnected) {
         fetchDailyRunSeed().then(seed => {
           if (seed) {
             generateDaily(seed);
@@ -276,7 +276,7 @@ export class TitlePhase extends Phase {
     globalScene.pushPhase(new EncounterPhase(this.loaded));
 
     if (this.loaded) {
-      const availablePartyMembers = globalScene.getParty().filter(p => p.isAllowedInBattle()).length;
+      const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
 
       globalScene.pushPhase(new SummonPhase(0, true, true));
       if (globalScene.currentBattle.double && availablePartyMembers > 1) {

@@ -19,7 +19,7 @@ export class PartyHealPhase extends BattlePhase {
       globalScene.fadeOutBgm(1000, false);
     }
     globalScene.ui.fadeOut(1000).then(() => {
-      for (const pokemon of globalScene.getParty()) {
+      for (const pokemon of globalScene.getPlayerParty()) {
         pokemon.hp = pokemon.getMaxHp();
         pokemon.resetStatus();
         for (const move of pokemon.moveset) {
