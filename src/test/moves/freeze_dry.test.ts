@@ -2,6 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
+import { Challenges } from "#enums/challenges";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -97,7 +98,7 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
-  it("should deal 2x damage to water types under Normalize", async () => {
+  it("should deal 2x damage to water type under Normalize", async () => {
     game.override.ability(Abilities.NORMALIZE);
     await game.classicMode.startBattle();
 
@@ -111,7 +112,7 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
   });
 
-  it("should deal 0.25x damage to rock AND steel type Pkm under Normalize", async () => {
+  it("should deal 0.25x damage to rock/steel type under Normalize", async () => {
     game.override
       .ability(Abilities.NORMALIZE)
       .enemySpecies(Species.SHIELDON);
@@ -127,7 +128,7 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0.25);
   });
 
-  it("should deal 2x damage to water types under Electrify", async () => {
+  it("should deal 2x damage to water type under Electrify", async () => {
     game.override.enemyMoveset([ Moves.ELECTRIFY ]);
     await game.classicMode.startBattle();
 
@@ -141,7 +142,7 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
   });
 
-  it("should deal 4x damage to water/flying types under Electrify", async () => {
+  it("should deal 4x damage to water/flying type under Electrify", async () => {
     game.override
       .enemyMoveset([ Moves.ELECTRIFY ])
       .enemySpecies(Species.GYARADOS);
@@ -157,7 +158,7 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
   });
 
-  it("should deal 0.25x damage to Grass/Dragon types under Electrify", async () => {
+  it("should deal 0.25x damage to Grass/Dragon type under Electrify", async () => {
     game.override
       .enemyMoveset([ Moves.ELECTRIFY ])
       .enemySpecies(Species.FLAPPLE);
@@ -171,5 +172,24 @@ describe("Moves - Freeze-Dry", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0.25);
+  });
+
+  it("should deal 2x damage to Water type during inverse battle", async () => {
+    game.override
+      .moveset([ Moves.FREEZE_DRY ])
+      .enemySpecies(Species.MAGIKARP);
+    game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
+
+
+    await game.challengeMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
   });
 });
