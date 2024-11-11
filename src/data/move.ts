@@ -4938,7 +4938,7 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
   }
 }
 
-export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+export class FreezeDryAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
     if (target.isOfType(Type.WATER)) {
@@ -4950,7 +4950,7 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
          *
          * For more information about special interactions visit [Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Freeze-Dry_(move))
          */
-        if (user.getAbility().id === Abilities.NORMALIZE) {
+        if (user.hasAbility(Abilities.NORMALIZE)) {
           multiplier.value *= 2;
           return true;
         }
@@ -9402,7 +9402,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FREEZE_DRY, Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, 10, 0, 6)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
-      .attr(WaterSuperEffectTypeMultiplierAttr)
+      .attr(FreezeDryAttr)
       .edgeCase(), // This currently just multiplies the move's power instead of changing its effectiveness. It also doesn't account for abilities that modify type effectiveness such as tera shell.
     new AttackMove(Moves.DISARMING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, -1, 0, 6)
       .soundBased()
