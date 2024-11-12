@@ -818,8 +818,6 @@ export default class Move implements Localizable {
 
     applyMoveAttrs(VariablePowerAttr, source, target, this, power);
 
-    source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, this.id, null, power);
-
     if (!this.hasAttr(TypelessAttr)) {
       source.scene.arena.applyTags(WeakenMoveTypeTag, simulated, this.type, power);
       source.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
@@ -846,8 +844,11 @@ export default class Move implements Localizable {
    * by enhancing effects.
    * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
    * and {@linkcode PokemonMultiHitModifier | Multi-Lens}.
+   * @param user The {@linkcode Pokemon} using the move
+   * @param restrictSpread `true` if the enhancing effect
+   * should not affect multi-target moves (default `false`)
    */
-  canBeMultiStrikeEnhanced(user: Pokemon): boolean {
+  canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false): boolean {
     // Multi-strike enhancers...
 
     // ...cannot enhance moves that hit multiple targets
@@ -870,7 +871,7 @@ export default class Move implements Localizable {
       Moves.ENDEAVOR
     ];
 
-    return !isMultiTarget
+    return (!restrictSpread || !isMultiTarget)
       && !this.isChargingMove()
       && !exceptAttrs.some(attr => this.hasAttr(attr))
       && !exceptMoves.some(id => this.id === id)
