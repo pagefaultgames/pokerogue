@@ -125,10 +125,9 @@ export class GameOverPhase extends BattlePhase {
           }
 
           const clear = (endCardPhase?: EndCardPhase) => {
-            if (newClear) {
-              this.handleUnlocks();
-            }
             if (this.isVictory && newClear) {
+              this.handleUnlocks();
+
               for (const species of this.firstRibbons) {
                 this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
               }
@@ -183,6 +182,8 @@ export class GameOverPhase extends BattlePhase {
       this.scene.gameData.offlineNewClear(this.scene).then(result => {
         doGameOver(result);
       });
+    } else {
+      doGameOver(false);
     }
   }
 

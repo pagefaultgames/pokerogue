@@ -7,7 +7,7 @@ import { Weather } from "#app/data/weather";
 import { BattlerTag, BattlerTagLapseType, GroundedTag } from "./battler-tags";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
@@ -1352,64 +1352,29 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   }
 
   /**
-   * Determines whether this attribute can apply to a given move.
-   * @param {Move} move the move to which this attribute may apply
-   * @param numTargets the number of {@linkcode Pokemon} targeted by this move
-   * @returns true if the attribute can apply to the move, false otherwise
-   */
-  canApplyPreAttack(move: Move, numTargets: integer): boolean {
-    /**
-     * Parental Bond cannot apply to multi-hit moves, charging moves, or
-     * moves that cause the user to faint.
-     */
-    const exceptAttrs: Constructor<MoveAttr>[] = [
-      MultiHitAttr,
-      SacrificialAttr,
-      SacrificialAttrOnHit
-    ];
-
-    /** Parental Bond cannot apply to these specific moves */
-    const exceptMoves: Moves[] = [
-      Moves.FLING,
-      Moves.UPROAR,
-      Moves.ROLLOUT,
-      Moves.ICE_BALL,
-      Moves.ENDEAVOR
-    ];
-
-    /** Also check if this move is an Attack move and if it's only targeting one Pokemon */
-    return numTargets === 1
-      && !move.isChargingMove()
-      && !exceptAttrs.some(attr => move.hasAttr(attr))
-      && !exceptMoves.some(id => move.id === id)
-      && move.category !== MoveCategory.STATUS;
-  }
-
-  /**
    * If conditions are met, this doubles the move's hit count (via args[1])
    * or multiplies the damage of secondary strikes (via args[2])
-   * @param {Pokemon} pokemon the Pokemon using the move
+   * @param pokemon the {@linkcode Pokemon} using the move
    * @param passive n/a
    * @param defender n/a
-   * @param {Move} move the move used by the ability source
-   * @param args\[0\] the number of Pokemon this move is targeting
-   * @param {Utils.IntegerHolder} args\[1\] the number of strikes with this move
-   * @param {Utils.NumberHolder} args\[2\] the damage multiplier for the current strike
+   * @param move the {@linkcode Move} used by the ability source
+   * @param args Additional arguments:
+   * - `[0]` the number of strikes this move currently has ({@linkcode Utils.NumberHolder})
+   * - `[1]` the damage multiplier for the current strike ({@linkcode Utils.NumberHolder})
    * @returns
    */
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    const numTargets = args[0] as integer;
-    const hitCount = args[1] as Utils.IntegerHolder;
-    const multiplier = args[2] as Utils.NumberHolder;
+    const hitCount = args[0] as Utils.NumberHolder;
+    const multiplier = args[1] as Utils.NumberHolder;
 
-    if (this.canApplyPreAttack(move, numTargets)) {
+    if (move.canBeMultiStrikeEnhanced(pokemon, true)) {
       this.showAbility = !!hitCount?.value;
-      if (!!hitCount?.value) {
-        hitCount.value *= 2;
+      if (hitCount?.value) {
+        hitCount.value += 1;
       }
 
-      if (!!multiplier?.value && pokemon.turnData.hitsLeft % 2 === 1 && pokemon.turnData.hitsLeft !== pokemon.turnData.hitCount) {
-        multiplier.value *= this.damageMultiplier;
+      if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
+        multiplier.value = this.damageMultiplier;
       }
       return true;
     }
