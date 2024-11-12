@@ -121,12 +121,11 @@ export class MovePhase extends BattlePhase {
 
     // Check if move is unusable (e.g. because it's out of PP due to a mid-turn Spite).
     if (!this.canMove(true)) {
-      if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) {
+      if (this.pokemon.isActive(true)) {
         this.fail();
         this.showMoveText();
         this.showFailedText();
       }
-
       return this.end();
     }
 
@@ -378,15 +377,11 @@ export class MovePhase extends BattlePhase {
     } else {
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
-      let failedText: string | undefined;
       const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
-
       if (failureMessage) {
-        failedText = failureMessage;
+        this.showMoveText();
+        this.showFailedText(failureMessage);
       }
-
-      this.showMoveText();
-      this.showFailedText(failedText);
 
       // Remove the user from its semi-invulnerable state (if applicable)
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
