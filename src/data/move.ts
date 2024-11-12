@@ -6597,7 +6597,7 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
       userPokemonName: getPokemonNameWithAffix(user),
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
-    target.getMoveQueue().push({ move: lastMove?.move!, targets: moveTargets!, ignorePP: false });
+    target.getMoveQueue().unshift({ move: lastMove?.move!, targets: moveTargets!, ignorePP: false });
     target.scene.unshiftPhase(new MovePhase(target.scene, target, moveTargets!, movesetMove!, false, false));
 
     return true;
