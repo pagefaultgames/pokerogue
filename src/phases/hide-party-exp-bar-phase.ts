@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattlePhase } from "./battle-phase";
 
 export class HidePartyExpBarPhase extends BattlePhase {

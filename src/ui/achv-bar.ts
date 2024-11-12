@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Achv, getAchievementDescription } from "../system/achv";
 import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";

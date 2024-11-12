@@ -13,7 +13,7 @@ import i18next from "i18next";
 import { WeatherType } from "#enums/weather-type";
 import { Challenges } from "#app/enums/challenges";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export enum FormChangeItem {
   NONE,

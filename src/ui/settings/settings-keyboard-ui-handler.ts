@@ -15,7 +15,7 @@ import { deleteBind } from "#app/configs/inputs/configHandler";
 import { Device } from "#enums/devices";
 import { NavigationManager } from "#app/ui/settings/navigationMenu";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 /**
  * Class representing the settings UI handler for keyboards.

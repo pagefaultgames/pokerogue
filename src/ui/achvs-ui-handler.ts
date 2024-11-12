@@ -8,7 +8,7 @@ import { Mode } from "#app/ui/ui";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { PlayerGender } from "#enums/player-gender";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 enum Page {
   ACHIEVEMENTS,

@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattleStyle } from "#app/enums/battle-style";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";

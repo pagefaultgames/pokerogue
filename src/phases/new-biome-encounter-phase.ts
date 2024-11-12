@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/ability";
 import { getRandomWeatherType } from "#app/data/weather";
 import { NextEncounterPhase } from "./next-encounter-phase";

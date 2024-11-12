@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";

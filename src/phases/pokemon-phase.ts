@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import Pokemon from "#app/field/pokemon";
 import { FieldPhase } from "./field-phase";

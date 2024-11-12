@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
 import { Biome } from "#app/enums/biome";
 import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";

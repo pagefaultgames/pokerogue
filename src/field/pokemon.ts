@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import BattleScene, { AnySound, globalScene } from "#app/battle-scene";
+import BattleScene, { AnySound } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";

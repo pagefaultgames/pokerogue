@@ -12,7 +12,7 @@ import Overrides from "#app/overrides";
 import { GachaType } from "#app/enums/gacha-types";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;

@@ -3,7 +3,7 @@ import { Mode } from "../ui";
 import { getKeyWithKeycode } from "#app/configs/inputs/configHandler";
 import { Device } from "#enums/devices";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {

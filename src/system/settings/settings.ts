@@ -1,29 +1,21 @@
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import { hasTouchscreen } from "../../touch-controls";
-import { updateWindowType } from "../../ui/ui-theme";
-import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
+import { globalScene } from "#app/global-scene";
+import { hasTouchscreen } from "#app/touch-controls";
+import { updateWindowType } from "#app/ui/ui-theme";
+import { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
-import { getIsInitialized, initI18n } from "#app/plugins/i18n";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { globalScene } from "#app/battle-scene";
-
-function getTranslation(key: string): string {
-  if (!getIsInitialized()) {
-    initI18n();
-  }
-  return i18next.t(key);
-}
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
   label: (i * 10).toString(),
 } : {
   value: "Mute",
-  label: getTranslation("settings:mute")
+  label: i18next.t("settings:mute")
 });
 
 const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {

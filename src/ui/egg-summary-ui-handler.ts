@@ -9,7 +9,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
 import ScrollableGridUiHandler from "./scrollable-grid-handler";
 import { HatchedPokemonContainer } from "./hatched-pokemon-container";
 import { ScrollBar } from "#app/ui/scroll-bar";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 const iconContainerX = 112;
 const iconContainerY = 9;

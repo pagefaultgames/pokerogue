@@ -1,5 +1,6 @@
 import i18next from "i18next";
-import BattleScene, { globalScene } from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { GameMode } from "../game-mode";
 import * as Modifier from "../modifier/modifier";

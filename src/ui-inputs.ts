@@ -8,7 +8,7 @@ import SettingsUiHandler from "./ui/settings/settings-ui-handler";
 import { Button } from "#enums/buttons";
 import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
-import { globalScene } from "./battle-scene";
+import { globalScene } from "#app/global-scene";
 import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
 import RunInfoUiHandler from "./ui/run-info-ui-handler";

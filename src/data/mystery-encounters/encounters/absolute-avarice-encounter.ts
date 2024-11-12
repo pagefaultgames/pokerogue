@@ -3,7 +3,7 @@ import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { BerryModifierType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";

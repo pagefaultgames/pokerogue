@@ -17,7 +17,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { SwitchType } from "#enums/switch-type";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import { OptionSelectSettings, transitionMysteryEncounterIntroVisuals } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { TrainerSlot } from "../data/trainer-config";

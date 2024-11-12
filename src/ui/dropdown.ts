@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";

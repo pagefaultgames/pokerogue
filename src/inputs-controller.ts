@@ -15,7 +15,7 @@ import {
   getButtonWithKeycode,
   getIconForLatestInput, swap,
 } from "#app/configs/inputs/configHandler";
-import { globalScene } from "./battle-scene";
+import { globalScene } from "#app/global-scene";
 import { SettingGamepad } from "#app/system/settings/settings-gamepad";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import TouchControl from "#app/touch-controls";

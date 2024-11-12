@@ -6,7 +6,7 @@ import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export enum Command {
   FIGHT = 0,

@@ -1,5 +1,5 @@
 import { BattlerIndex, BattleType } from "#app/battle";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";

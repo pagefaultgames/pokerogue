@@ -100,10 +100,9 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 import { StatusEffect } from "#enums/status-effect";
+import { globalScene, initGlobalScene } from "#app/global-scene";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
-
-export let globalScene: BattleScene;
 
 const DEBUG_RNG = false;
 
@@ -331,7 +330,7 @@ export default class BattleScene extends SceneBase {
     this.nextCommandPhaseQueue = [];
     this.eventManager = new TimedEventManager();
     this.updateGameInfo();
-    globalScene = this;
+    initGlobalScene(this);
   }
 
   loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {

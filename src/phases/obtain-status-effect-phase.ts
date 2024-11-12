@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";

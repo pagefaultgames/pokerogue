@@ -1,4 +1,5 @@
-import { AnySound, globalScene } from "#app/battle-scene";
+import { AnySound } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Egg } from "#app/data/egg";
 import { EggCountChangedEvent } from "#app/events/egg";
 import { PlayerPokemon } from "#app/field/pokemon";

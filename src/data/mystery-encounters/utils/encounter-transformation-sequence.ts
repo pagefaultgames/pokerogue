@@ -2,7 +2,7 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import { getFrameMs } from "#app/utils";
 import { cos, sin } from "#app/field/anims";
 import { getTypeRgb } from "#app/data/type";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export enum TransformationScreenPosition {
   CENTER,

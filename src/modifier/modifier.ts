@@ -31,7 +31,7 @@ import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierT
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 import { applyAbAttrs, CommanderAbAttr } from "#app/data/ability";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 

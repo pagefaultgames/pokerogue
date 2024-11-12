@@ -2,7 +2,7 @@ import { Moves } from "#app/enums/moves";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
 import { EncounterPokemonRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 /**
  * {@linkcode CanLearnMoveRequirement} options

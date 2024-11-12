@@ -3,7 +3,7 @@ import { StarterContainer } from "./starter-container";
 import { addTextObject, getTextColor, TextStyle } from "./text";
 import { UiTheme } from "#enums/ui-theme";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export enum DropDownColumn {
   GEN,

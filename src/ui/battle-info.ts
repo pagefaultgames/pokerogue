@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import { addTextObject, TextStyle } from "./text";
 import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
 import { StatusEffect } from "#enums/status-effect";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { getTypeRgb } from "#app/data/type";
 import { Type } from "#enums/type";
 import { getVariantTint } from "#app/data/variant";

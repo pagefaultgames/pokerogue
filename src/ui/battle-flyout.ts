@@ -1,7 +1,7 @@
 import { default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from "../utils";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import Move from "#app/data/move";
 import { BattleSceneEventType, BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
 import { BerryType } from "#enums/berry-type";

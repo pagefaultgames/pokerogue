@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 

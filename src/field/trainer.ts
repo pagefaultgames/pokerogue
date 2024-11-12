@@ -1,4 +1,5 @@
-import BattleScene, { globalScene } from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import {

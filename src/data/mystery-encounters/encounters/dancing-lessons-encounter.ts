@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";

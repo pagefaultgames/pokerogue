@@ -5,7 +5,7 @@ import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import * as Utils from "../utils";
 import { Button } from "#enums/buttons";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;

@@ -2,7 +2,7 @@ import { Type } from "#enums/type";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";

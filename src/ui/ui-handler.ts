@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TextStyle, getTextColor } from "./text";
 import { Mode } from "./ui";
 import { Button } from "#enums/buttons";

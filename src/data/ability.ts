@@ -28,7 +28,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { SwitchType } from "#app/enums/switch-type";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";

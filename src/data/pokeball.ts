@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { CriticalCatchChanceBoosterModifier } from "#app/modifier/modifier";
 import { NumberHolder } from "#app/utils";
 import { PokeballType } from "#enums/pokeball";

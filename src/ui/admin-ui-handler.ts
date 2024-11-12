@@ -5,7 +5,7 @@ import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import { TextStyle } from "./text";
 import { Mode } from "./ui";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 type AdminUiHandlerService = "discord" | "google";
 type AdminUiHandlerServiceMode = "Link" | "Unlink";

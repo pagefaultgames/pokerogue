@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { addWindow } from "./ui-theme";
 import { addTextObject, TextStyle } from "./text";
 import { EggCountChangedEvent, EggEventType } from "#app/events/egg";

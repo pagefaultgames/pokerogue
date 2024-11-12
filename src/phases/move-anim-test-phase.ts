@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { initMoveAnim, loadMoveAnimAssets, MoveAnim } from "#app/data/battle-anims";
 import { allMoves, SelfStatusMove } from "#app/data/move";
 import { Moves } from "#app/enums/moves";

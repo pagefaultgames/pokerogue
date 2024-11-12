@@ -11,7 +11,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 /**
  * Handles all the UI for choosing optional challenges.

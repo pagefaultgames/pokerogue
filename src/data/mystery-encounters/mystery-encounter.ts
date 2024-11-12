@@ -15,7 +15,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { GameModes } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;

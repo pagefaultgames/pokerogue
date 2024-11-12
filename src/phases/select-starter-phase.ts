@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Gender } from "#app/data/gender";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";

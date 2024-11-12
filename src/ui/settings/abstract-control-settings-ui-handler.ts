@@ -9,7 +9,7 @@ import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMe
 import { Device } from "#enums/devices";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export interface InputsIcons {
     [key: string]: Phaser.GameObjects.Sprite;

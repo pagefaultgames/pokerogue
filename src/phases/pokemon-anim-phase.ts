@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { SubstituteTag } from "#app/data/battler-tags";
 import Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";

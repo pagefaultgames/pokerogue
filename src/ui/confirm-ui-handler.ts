@@ -2,7 +2,7 @@ import AbstractOptionSelectUiHandler, { OptionSelectConfig } from "./abstact-opt
 import { Mode } from "./ui";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 
 export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {

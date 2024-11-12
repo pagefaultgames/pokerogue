@@ -16,7 +16,7 @@ import { Mode } from "#app/ui/ui";
 import { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;

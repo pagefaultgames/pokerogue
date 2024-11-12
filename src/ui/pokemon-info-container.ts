@@ -1,6 +1,7 @@
 import { getVariantTint } from "#app/data/variant";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import BattleScene, { globalScene } from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { getNatureName } from "../data/nature";
 import { Type } from "#enums/type";

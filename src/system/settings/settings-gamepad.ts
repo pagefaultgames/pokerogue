@@ -3,7 +3,7 @@ import { Mode } from "../../ui/ui";
 import { truncateString } from "../../utils";
 import { Button } from "#enums/buttons";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export enum SettingGamepad {
     Controller = "CONTROLLER",

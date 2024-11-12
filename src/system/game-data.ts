@@ -1,5 +1,6 @@
 import i18next from "i18next";
-import { bypassLogin, globalScene, PokeballCounts } from "#app/battle-scene";
+import { bypassLogin, PokeballCounts } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys } from "#app/data/pokemon-species";

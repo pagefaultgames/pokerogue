@@ -1,5 +1,5 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";

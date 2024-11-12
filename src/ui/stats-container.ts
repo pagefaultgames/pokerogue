@@ -2,7 +2,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 
 const ivChartSize = 24;

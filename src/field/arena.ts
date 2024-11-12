@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "#app/data/balance/biomes";
 import { Constructor } from "#app/utils";
 import * as Utils from "#app/utils";

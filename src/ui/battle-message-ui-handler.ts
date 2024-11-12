@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
 import { Mode } from "./ui";
 import MessageUiHandler from "./message-ui-handler";

@@ -2,7 +2,7 @@ import { TextStyle, addTextObject } from "../ui/text";
 import Pokemon, { DamageResult, HitResult } from "./pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 type TextAndShadowArr = [ string | null, string | null ];
 

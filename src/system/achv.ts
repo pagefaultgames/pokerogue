@@ -8,7 +8,7 @@ import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeCh
 import { ConditionFn } from "#app/@types/common";
 import { Stat, getShortenedStatKey } from "#app/enums/stat";
 import { Challenges } from "#app/enums/challenges";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export enum AchvTier {
   COMMON,

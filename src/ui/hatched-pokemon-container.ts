@@ -2,7 +2,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
 import { Gender } from "#app/data/gender";
 import { getVariantTint } from "#app/data/variant";
 import { DexAttr } from "#app/system/game-data";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import PokemonSpecies from "#app/data/pokemon-species";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 

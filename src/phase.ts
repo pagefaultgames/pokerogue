@@ -1,4 +1,4 @@
-import { globalScene } from "./battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class Phase {
   start() {

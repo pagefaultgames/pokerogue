@@ -1,4 +1,5 @@
-import BattleScene, { globalScene } from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { VariantTier } from "#enums/variant-tier";

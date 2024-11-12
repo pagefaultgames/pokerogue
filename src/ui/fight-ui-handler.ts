@@ -1,4 +1,5 @@
-import { globalScene, InfoToggle } from "#app/battle-scene";
+import { InfoToggle } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "./text";
 import { getTypeDamageMultiplierColor } from "#app/data/type";
 import { Type } from "#enums/type";

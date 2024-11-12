@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { EndCardPhase } from "./end-card-phase";
 import { TitlePhase } from "./title-phase";

@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 
 interface LanguageSetting {

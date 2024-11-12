@@ -1,6 +1,6 @@
 import { clientSessionId } from "#app/account";
 import { BattleType } from "#app/battle";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";

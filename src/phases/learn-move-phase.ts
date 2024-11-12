@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import Move, { allMoves } from "#app/data/move";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";

@@ -3,7 +3,7 @@ import { Mode } from "../ui";
 import { Device } from "#enums/devices";
 import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/configHandler";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {

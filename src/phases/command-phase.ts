@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TurnCommand, BattleType } from "#app/battle";
 import { TrappedTag, EncoreTag } from "#app/data/battler-tags";
 import { MoveTargetSet, getMoveTargets } from "#app/data/move";

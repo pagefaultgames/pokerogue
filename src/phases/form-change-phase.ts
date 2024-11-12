@@ -1,4 +1,4 @@
-import { globalScene } from "../battle-scene";
+import { globalScene } from "#app/global-scene";
 import * as Utils from "../utils";
 import { achvs } from "../system/achv";
 import { SpeciesFormChange, getSpeciesFormChangeMessage } from "../data/pokemon-forms";

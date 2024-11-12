@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { PersistentModifier } from "#app/modifier/modifier";
 import { GeneratedPersistentModifierType, ModifierType, ModifierTypeGenerator, getModifierTypeFuncById } from "#app/modifier/modifier-type";
 

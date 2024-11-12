@@ -8,7 +8,7 @@ import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export enum GameModes {
   CLASSIC,

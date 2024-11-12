@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { DamageResult, HitResult } from "#app/field/pokemon";

@@ -1,4 +1,5 @@
-import { globalScene, starterColors } from "#app/battle-scene";
+import { starterColors } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "./text";
 import { argbFromRgba } from "@material/material-color-utilities";
 import * as Utils from "../utils";

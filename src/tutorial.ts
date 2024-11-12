@@ -1,4 +1,4 @@
-import { globalScene } from "./battle-scene";
+import { globalScene } from "#app/global-scene";
 import AwaitableUiHandler from "./ui/awaitable-ui-handler";
 import UiHandler from "./ui/ui-handler";
 import { Mode } from "./ui/ui";

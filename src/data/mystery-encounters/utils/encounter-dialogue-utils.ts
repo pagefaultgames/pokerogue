@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { getTextWithColors, TextStyle } from "#app/ui/text";
 import { UiTheme } from "#enums/ui-theme";
 import { isNullOrUndefined } from "#app/utils";

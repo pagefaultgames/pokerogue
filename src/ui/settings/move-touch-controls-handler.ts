@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import TouchControl from "#app/touch-controls";
 import UI from "#app/ui/ui";
 import { Scene } from "phaser";

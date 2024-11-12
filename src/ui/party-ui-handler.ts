@@ -23,7 +23,7 @@ import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 

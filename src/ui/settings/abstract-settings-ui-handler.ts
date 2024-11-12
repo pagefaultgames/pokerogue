@@ -9,7 +9,7 @@ import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handl
 import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
 import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 
 /**

@@ -3,7 +3,7 @@ import { UiTheme } from "#enums/ui-theme";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
 import i18next from "#app/plugins/i18n";
 

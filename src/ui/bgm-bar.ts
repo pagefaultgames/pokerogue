@@ -1,7 +1,7 @@
 import { addTextObject, TextStyle } from "./text";
 import i18next from "i18next";
 import * as Utils from "#app/utils";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 const hiddenX = -150;
 const shownX = 0;

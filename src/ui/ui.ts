@@ -1,4 +1,5 @@
-import { default as BattleScene, globalScene } from "#app/battle-scene";
+import { default as BattleScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import UiHandler from "./ui-handler";
 import BattleMessageUiHandler from "./battle-message-ui-handler";
 import CommandUiHandler from "./command-ui-handler";

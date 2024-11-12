@@ -7,7 +7,7 @@ import * as Utils from "#app/utils";
 import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class AttemptRunPhase extends PokemonPhase {
 

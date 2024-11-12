@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { SwitchType } from "#enums/switch-type";
 import { SwitchSummonPhase } from "./switch-summon-phase";

@@ -12,7 +12,7 @@ import { PostSummonPhase } from "./post-summon-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
   private loaded: boolean;

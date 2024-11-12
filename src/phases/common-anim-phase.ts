@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import { PokemonPhase } from "./pokemon-phase";
 

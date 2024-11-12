@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Gender } from "#app/data/gender";
 import { PokeballType } from "#enums/pokeball";
 import Pokemon from "#app/field/pokemon";

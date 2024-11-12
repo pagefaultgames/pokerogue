@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
 import { SpeciesFormChange, getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
 import { getTypeRgb } from "#app/data/type";

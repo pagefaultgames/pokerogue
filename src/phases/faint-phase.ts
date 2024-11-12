@@ -1,5 +1,5 @@
 import { BattlerIndex, BattleType } from "#app/battle";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostVictoryAbAttrs, PostFaintAbAttr, PostKnockOutAbAttr, PostVictoryAbAttr } from "#app/data/ability";
 import { BattlerTagLapseType, DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";

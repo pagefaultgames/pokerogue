@@ -1,4 +1,5 @@
-import { globalScene, InfoToggle } from "#app/battle-scene";
+import { InfoToggle } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";

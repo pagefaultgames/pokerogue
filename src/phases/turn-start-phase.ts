@@ -19,7 +19,7 @@ import { CheckStatusEffectPhase } from "#app/phases/check-status-effect-phase";
 import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class TurnStartPhase extends FieldPhase {
   constructor() {

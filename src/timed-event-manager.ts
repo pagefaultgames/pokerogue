@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { nil } from "#app/utils";
 import i18next from "i18next";

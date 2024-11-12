@@ -7,7 +7,7 @@ import i18next from "i18next";
 import * as Utils from "#app/utils";
 import { FieldPhase } from "./field-phase";
 import { CommonAnimPhase } from "./common-anim-phase";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 /** The phase after attacks where the pokemon eat berries */
 export class BerryPhase extends FieldPhase {

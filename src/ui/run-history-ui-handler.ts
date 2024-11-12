@@ -1,4 +1,5 @@
-import BattleScene, { globalScene } from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { GameModes } from "../game-mode";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";

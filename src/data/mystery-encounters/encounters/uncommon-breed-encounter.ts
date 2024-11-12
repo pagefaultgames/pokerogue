@@ -4,7 +4,7 @@ import { CHARMING_MOVES } from "#app/data/mystery-encounters/requirements/requir
 import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPartyLuckValue } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoveRequirement, PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";

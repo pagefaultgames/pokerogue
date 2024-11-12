@@ -37,7 +37,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { Variant } from "#app/data/variant";
 import { StatusEffect } from "#enums/status-effect";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter

@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "./encounter-phase";
 
 export class NextEncounterPhase extends EncounterPhase {

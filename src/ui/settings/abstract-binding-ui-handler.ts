@@ -5,7 +5,7 @@ import { addTextObject, TextStyle } from "../text";
 import { Button } from "#enums/buttons";
 import { NavigationManager } from "#app/ui/settings/navigationMenu";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 type CancelFn = (succes?: boolean) => boolean;
 

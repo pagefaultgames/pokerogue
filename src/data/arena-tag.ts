@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Arena } from "#app/field/arena";
 import { Type } from "#enums/type";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";

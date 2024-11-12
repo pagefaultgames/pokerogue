@@ -20,7 +20,7 @@ import { EncounterPhase } from "./encounter-phase";
 import { SelectChallengePhase } from "./select-challenge-phase";
 import { SelectStarterPhase } from "./select-starter-phase";
 import { SummonPhase } from "./summon-phase";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 
 export class TitlePhase extends Phase {

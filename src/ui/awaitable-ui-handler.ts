@@ -1,7 +1,7 @@
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export default abstract class AwaitableUiHandler extends UiHandler {
   protected awaitingActionInput: boolean;

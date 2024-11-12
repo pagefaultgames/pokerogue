@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";

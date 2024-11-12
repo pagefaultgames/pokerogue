@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { PlayerGender } from "#app/enums/player-gender";
 import { BattlePhase } from "./battle-phase";
 

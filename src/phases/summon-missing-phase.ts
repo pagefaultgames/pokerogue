@@ -1,7 +1,7 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { SummonPhase } from "./summon-phase";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class SummonMissingPhase extends SummonPhase {
   constructor(fieldIndex: integer) {

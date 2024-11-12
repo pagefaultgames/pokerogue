@@ -1,5 +1,6 @@
 import { updateUserInfo } from "#app/account";
-import { bypassLogin, globalScene } from "#app/battle-scene";
+import { bypassLogin } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { Mode } from "#app/ui/ui";

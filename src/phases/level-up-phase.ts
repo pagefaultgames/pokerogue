@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { ExpNotification } from "#app/enums/exp-notification";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { PlayerPokemon } from "#app/field/pokemon";

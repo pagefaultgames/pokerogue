@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";

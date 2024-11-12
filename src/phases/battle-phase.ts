@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { Phase } from "#app/phase";
 

@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import { updateUserInfo } from "#app/account";
 import * as Utils from "#app/utils";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export default class UnavailableModalUiHandler extends ModalUiHandler {
   private reconnectTimer: NodeJS.Timeout | null;

@@ -1,6 +1,6 @@
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { Starter } from "#app/ui/starter-select-ui-handler";
 import * as Utils from "#app/utils";

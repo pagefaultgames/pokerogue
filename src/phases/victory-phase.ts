@@ -10,7 +10,7 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { SelectModifierPhase } from "./select-modifier-phase";
 import { TrainerVictoryPhase } from "./trainer-victory-phase";
 import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class VictoryPhase extends PokemonPhase {
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */

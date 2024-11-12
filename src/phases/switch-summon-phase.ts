@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene"; // todo?
+import { globalScene } from "#app/global-scene";
 import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
 import { getPokeballTintColor } from "#app/data/pokeball";

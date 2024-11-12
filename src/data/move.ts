@@ -40,7 +40,7 @@ import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
 import { SwitchType } from "#enums/switch-type";
 import { StatusEffect } from "enums/status-effect";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export enum MoveCategory {
   PHYSICAL,

@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TerrainType, getTerrainColor } from "../data/terrain";
 import * as Utils from "../utils";
 

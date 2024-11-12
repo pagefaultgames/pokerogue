@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import PokemonSpecies from "#app/data/pokemon-species";
 import { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import { Mode } from "#app/ui/ui";

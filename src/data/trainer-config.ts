@@ -1,4 +1,5 @@
-import { globalScene, startingWave } from "#app/battle-scene";
+import { startingWave } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { ModifierTypeFunc, modifierTypes } from "#app/modifier/modifier-type";
 import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import * as Utils from "#app/utils";

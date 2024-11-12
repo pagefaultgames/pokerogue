@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import PokemonSpecies from "../data/pokemon-species";
 import { addTextObject, TextStyle } from "./text";
 

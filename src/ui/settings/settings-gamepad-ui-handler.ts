@@ -15,7 +15,7 @@ import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-
 import { Device } from "#enums/devices";
 import { truncateString } from "#app/utils";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 /**
  * Class representing the settings UI handler for gamepads.

@@ -1,5 +1,5 @@
 import { BattleType } from "../battle";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Gender } from "../data/gender";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";

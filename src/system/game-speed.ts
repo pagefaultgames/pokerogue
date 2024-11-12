@@ -1,7 +1,8 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import FadeIn from "phaser3-rex-plugins/plugins/audio/fade/FadeIn";
 import FadeOut from "phaser3-rex-plugins/plugins/audio/fade/FadeOut";
-import BattleScene, { globalScene } from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import * as Utils from "../utils";
 
 type FadeIn = typeof FadeIn;

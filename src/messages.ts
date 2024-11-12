@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattleSpec } from "#enums/battle-spec";
 import Pokemon from "./field/pokemon";
 import i18next from "i18next";

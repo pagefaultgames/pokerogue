@@ -1,7 +1,7 @@
 import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
 import { Moves } from "#app/enums/moves";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Type } from "#enums/type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";

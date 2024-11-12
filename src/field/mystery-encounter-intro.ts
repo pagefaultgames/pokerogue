@@ -1,5 +1,6 @@
 import { GameObjects } from "phaser";
-import BattleScene, { globalScene } from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
 import { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";

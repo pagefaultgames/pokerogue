@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Egg, EGG_SEED } from "#app/data/egg";
 import { Phase } from "#app/phase";
 import i18next from "i18next";

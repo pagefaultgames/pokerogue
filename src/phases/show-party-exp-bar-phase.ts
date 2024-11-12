@@ -1,4 +1,4 @@
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { ExpNotification } from "#app/enums/exp-notification";
 import { ExpBoosterModifier } from "#app/modifier/modifier";

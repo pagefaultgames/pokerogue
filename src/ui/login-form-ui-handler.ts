@@ -7,7 +7,7 @@ import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 interface BuildInteractableImageOpts {
   scale?: number;

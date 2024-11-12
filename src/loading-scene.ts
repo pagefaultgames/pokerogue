@@ -20,7 +20,7 @@ import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initVouchers } from "#app/system/voucher";
 import { Biome } from "#enums/biome";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";

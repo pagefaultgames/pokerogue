@@ -8,7 +8,7 @@ import * as Utils from "../utils";
 import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
-import { globalScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class Weather {
   public weatherType: WeatherType;
