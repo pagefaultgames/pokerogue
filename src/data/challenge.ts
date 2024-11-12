@@ -4,8 +4,7 @@ import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
-import { BattleType, FixedBattleConfig } from "#app/battle";
-import Trainer, { TrainerVariant } from "#app/field/trainer";
+import { ClassicFixedBossWaves, BattleType, FixedBattleConfig, getRandomTrainerFunc } from "#app/battle";
 import { GameMode } from "#app/game-mode";
 import { Type } from "#enums/type";
 import { Challenges } from "#enums/challenges";
@@ -16,6 +15,7 @@ import { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -445,30 +445,77 @@ export class SingleGenerationChallenge extends Challenge {
     return false;
   }
 
-  applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
-    let trainerTypes: TrainerType[] = [];
+  applyFixedBattle(waveIndex: number, battleConfig: FixedBattleConfig): boolean {
+    let trainerTypes: (TrainerType | TrainerType[])[] = [];
+    const evilTeamWaves: number[] = [ ClassicFixedBossWaves.EVIL_GRUNT_1, ClassicFixedBossWaves.EVIL_GRUNT_2, ClassicFixedBossWaves.EVIL_GRUNT_3, ClassicFixedBossWaves.EVIL_ADMIN_1, ClassicFixedBossWaves.EVIL_GRUNT_4, ClassicFixedBossWaves.EVIL_ADMIN_2, ClassicFixedBossWaves.EVIL_BOSS_1, ClassicFixedBossWaves.EVIL_BOSS_2 ];
+    const evilTeamGrunts = [[ TrainerType.ROCKET_GRUNT ], [ TrainerType.ROCKET_GRUNT ], [ TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT ], [ TrainerType.GALACTIC_GRUNT ], [ TrainerType.PLASMA_GRUNT ], [ TrainerType.FLARE_GRUNT ], [ TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT ], [ TrainerType.MACRO_GRUNT ], [ TrainerType.STAR_GRUNT ]];
+    const evilTeamAdmins = [[ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [[ TrainerType.TABITHA, TrainerType.COURTNEY ], [ TrainerType.MATT, TrainerType.SHELLY ]], [ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ], [ TrainerType.ZINZOLIN, TrainerType.ROOD ], [ TrainerType.XEROSIC, TrainerType.BRYONY ], [ TrainerType.FABA, TrainerType.PLUMERIA ], [ TrainerType.OLEANA ], [ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]];
+    const evilTeamBosses = [[ TrainerType.ROCKET_BOSS_GIOVANNI_1 ], [ TrainerType.ROCKET_BOSS_GIOVANNI_1 ], [ TrainerType.MAXIE, TrainerType.ARCHIE ], [ TrainerType.CYRUS ], [ TrainerType.GHETSIS ], [ TrainerType.LYSANDRE ], [ TrainerType.LUSAMINE, TrainerType.GUZMA ], [ TrainerType.ROSE ], [ TrainerType.PENNY ]];
+    const evilTeamBossRematches = [[ TrainerType.ROCKET_BOSS_GIOVANNI_2 ], [ TrainerType.ROCKET_BOSS_GIOVANNI_2 ], [ TrainerType.MAXIE_2, TrainerType.ARCHIE_2 ], [ TrainerType.CYRUS_2 ], [ TrainerType.GHETSIS_2 ], [ TrainerType.LYSANDRE_2 ], [ TrainerType.LUSAMINE_2, TrainerType.GUZMA_2 ], [ TrainerType.ROSE_2 ], [ TrainerType.PENNY_2 ]];
     switch (waveIndex) {
-      case 182:
-        trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]), TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
+      case ClassicFixedBossWaves.EVIL_GRUNT_1:
+        trainerTypes = evilTeamGrunts[this.value - 1];
+        battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true));
+        return true;
         break;
-      case 184:
-        trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY ];
+      case ClassicFixedBossWaves.EVIL_GRUNT_2:
+      case ClassicFixedBossWaves.EVIL_GRUNT_3:
+      case ClassicFixedBossWaves.EVIL_GRUNT_4:
+        trainerTypes = evilTeamGrunts[this.value - 1];
         break;
-      case 186:
-        trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, Utils.randSeedItem([ TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE ]), TrainerType.LARRY_ELITE ];
+      case ClassicFixedBossWaves.EVIL_ADMIN_1:
+      case ClassicFixedBossWaves.EVIL_ADMIN_2:
+        trainerTypes = evilTeamAdmins[this.value - 1];
         break;
-      case 188:
-        trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
+      case ClassicFixedBossWaves.EVIL_BOSS_1:
+        trainerTypes = evilTeamBosses[this.value - 1];
+        battleConfig.setBattleType(BattleType.TRAINER).setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1).setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
+          .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
+        return true;
         break;
-      case 190:
-        trainerTypes = [ TrainerType.BLUE, Utils.randSeedItem([ TrainerType.RED, TrainerType.LANCE_CHAMPION ]), Utils.randSeedItem([ TrainerType.STEVEN, TrainerType.WALLACE ]), TrainerType.CYNTHIA, Utils.randSeedItem([ TrainerType.ALDER, TrainerType.IRIS ]), TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, Utils.randSeedItem([ TrainerType.GEETA, TrainerType.NEMONA ]) ];
+      case ClassicFixedBossWaves.EVIL_BOSS_2:
+        trainerTypes = evilTeamBossRematches[this.value - 1];
+        battleConfig.setBattleType(BattleType.TRAINER).setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1).setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
+          .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
+        return true;
+        break;
+      case ClassicFixedBossWaves.ELITE_FOUR_1:
+        trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, [ TrainerType.HALA, TrainerType.MOLAYNE ], TrainerType.MARNIE_ELITE, [ TrainerType.RIKA, TrainerType.CRISPIN ]];
+        battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(getRandomTrainerFunc([ trainerTypes[this.value - 1] ]));
+        return true;
+        break;
+      case ClassicFixedBossWaves.ELITE_FOUR_2:
+        trainerTypes = [ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, [ TrainerType.POPPY, TrainerType.AMARYS ]];
+        break;
+      case ClassicFixedBossWaves.ELITE_FOUR_3:
+        trainerTypes = [ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, [ TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE ], [ TrainerType.LARRY_ELITE, TrainerType.LACEY ]];
+        break;
+      case ClassicFixedBossWaves.ELITE_FOUR_4:
+        trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, [ TrainerType.HASSEL, TrainerType.DRAYTON ]];
+        break;
+      case ClassicFixedBossWaves.CHAMPION:
+        trainerTypes = [ TrainerType.BLUE, [ TrainerType.RED, TrainerType.LANCE_CHAMPION ], [ TrainerType.STEVEN, TrainerType.WALLACE ], TrainerType.CYNTHIA, [ TrainerType.ALDER, TrainerType.IRIS ], TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, [ TrainerType.GEETA, TrainerType.NEMONA ], TrainerType.KIERAN ];
+        if (this.value < 9) {
+          battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(getRandomTrainerFunc([ trainerTypes[this.value - 1] ]));
+        } else {
+          battleConfig.setBattleType(BattleType.TRAINER).setSeedOffsetWave(ClassicFixedBossWaves.ELITE_FOUR_1).setGetTrainerFunc(getRandomTrainerFunc([[ TrainerType.GEETA, TrainerType.NEMONA ], TrainerType.KIERAN ]));
+        }
+        return true;
         break;
     }
     if (trainerTypes.length === 0) {
       return false;
-    } else {
-      battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(scene => new Trainer(scene, trainerTypes[this.value - 1], TrainerVariant.DEFAULT));
+    } else if (evilTeamWaves.includes(waveIndex)) {
+      battleConfig.setBattleType(BattleType.TRAINER).setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1).setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true));
       return true;
+    } else if (waveIndex === ClassicFixedBossWaves.ELITE_FOUR_1 || waveIndex > ClassicFixedBossWaves.ELITE_FOUR_1 && waveIndex < ClassicFixedBossWaves.CHAMPION && this.value < 9) {
+      battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(getRandomTrainerFunc([ trainerTypes[this.value - 1] ]));
+      return true;
+    } else if (waveIndex > ClassicFixedBossWaves.ELITE_FOUR_1 && waveIndex < ClassicFixedBossWaves.CHAMPION && this.value === 9) { // Use the offset from 182 to determine which Gen 9 league to use
+      battleConfig.setBattleType(BattleType.TRAINER).setSeedOffsetWave(ClassicFixedBossWaves.ELITE_FOUR_1).setGetTrainerFunc(getRandomTrainerFunc([ trainerTypes[this.value - 1] ]));
+      return true;
+    } else {
+      return false;
     }
   }
 
