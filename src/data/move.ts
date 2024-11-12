@@ -4936,12 +4936,13 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
 
 /**
  * This class forces Freeze-Dry to be super effective against Water Type.
- * It considers if target is Mono or Dual Type and calculates the new Multiplier accordingly
+ * It considers if target is Mono or Dual Type and calculates the new Multiplier accordingly.
+ * @see {@linkcode apply}
  */
 export class FreezeDryAttr extends VariableMoveTypeMultiplierAttr {
   /**
    * If the target is Mono Type (Water only) then a 2x Multiplier is always forced.
-   * If target is Dual Type (containing Water) then only a 2x Multiplier is forced for the Water Type
+   * If target is Dual Type (containing Water) then only a 2x Multiplier is forced for the Water Type.
    *
    * Additionally Freeze-Dry's effectiveness against water is always forced during {@linkcode InverseBattleChallenge}.
    * The multiplier is recalculated for the non-Water Type in case of Dual Type targets containing Water Type.
