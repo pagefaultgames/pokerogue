@@ -163,7 +163,7 @@ describe("Moves - Instruct", () => {
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
-  it("should try to repeat enemy's disabled move, but fail", async () => {
+  it("should attempt to call enemy's disabled move, but move use itself should fail", async () => {
     game.override.enemyMoveset([ Moves.SONIC_BOOM, Moves.PROTECT, Moves.SUBSTITUTE, Moves.HYPER_BEAM ]);
     game.override.moveset([ Moves.INSTRUCT, Moves.SONIC_BOOM, Moves.DISABLE, Moves.SPLASH ]);
     await game.classicMode.startBattle([ Species.AMOONGUSS, Species.DROWZEE ]);
