@@ -128,6 +128,22 @@ describe("Moves - Freeze-Dry", () => {
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0.25);
   });
 
+  it("should deal 0x damage to water/ghost type under Normalize", async () => {
+    game.override
+      .ability(Abilities.NORMALIZE)
+      .enemySpecies(Species.JELLICENT);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0);
+  });
+
   it("should deal 2x damage to water type under Electrify", async () => {
     game.override.enemyMoveset([ Moves.ELECTRIFY ]);
     await game.classicMode.startBattle();
@@ -156,6 +172,22 @@ describe("Moves - Freeze-Dry", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(4);
+  });
+
+  it("should deal 0x damage to water/ground type under Electrify", async () => {
+    game.override
+      .enemyMoveset([ Moves.ELECTRIFY ])
+      .enemySpecies(Species.BARBOACH);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0);
   });
 
   it("should deal 0.25x damage to Grass/Dragon type under Electrify", async () => {
