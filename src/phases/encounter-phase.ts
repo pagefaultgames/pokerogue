@@ -141,10 +141,6 @@ export class EncounterPhase extends BattlePhase {
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
           enemyPokemon.updateScale();
-          const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
-          this.scene.removeModifier(bossMBH!);
-          bossMBH?.setTransferrableFalse();
-          this.scene.addEnemyModifier(bossMBH!);
         }
       }
 
@@ -220,6 +216,18 @@ export class EncounterPhase extends BattlePhase {
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         regenerateModifierPoolThresholds(this.scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
         this.scene.generateEnemyModifiers();
+        // This checks if the current battle is an Endless E-Max battle/Classic final boss and sets the MBH held by the boss to untransferrable
+        if (this.scene.currentBattle.waveIndex % 1000 || battle.battleSpec === BattleSpec.FINAL_BOSS) {
+          const enemyPokemon = this.scene.getEnemyPokemon();
+          if (enemyPokemon) {
+            const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
+            if (bossMBH) {
+              this.scene.removeModifier(bossMBH!);
+              bossMBH?.setTransferrableFalse();
+              this.scene.addEnemyModifier(bossMBH!);
+            }
+          }
+        }
       }
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
