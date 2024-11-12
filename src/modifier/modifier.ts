@@ -2715,7 +2715,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
     if (!isNullOrUndefined(count)) {
       return this.applyHitCountBoost(count);
     } else if (!isNullOrUndefined(damageMultiplier)) {
-      return this.applyPowerModifier(pokemon, damageMultiplier);
+      return this.applyDamageModifier(pokemon, damageMultiplier);
     }
 
     return false;
@@ -2732,7 +2732,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
    * equal to (1 - the number of stacked Multi-Lenses).
    * Additional strikes beyond that are given a 0.25x damage multiplier
    */
-  private applyPowerModifier(pokemon: Pokemon, damageMultiplier: NumberHolder): boolean {
+  private applyDamageModifier(pokemon: Pokemon, damageMultiplier: NumberHolder): boolean {
     damageMultiplier.value = (pokemon.turnData.hitsLeft === pokemon.turnData.hitCount)
       ? (1 - (0.25 * this.getStackCount()))
       : 0.25;

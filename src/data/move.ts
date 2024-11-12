@@ -818,8 +818,6 @@ export default class Move implements Localizable {
 
     applyMoveAttrs(VariablePowerAttr, source, target, this, power);
 
-    source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, this.id, null, power);
-
     if (!this.hasAttr(TypelessAttr)) {
       source.scene.arena.applyTags(WeakenMoveTypeTag, simulated, this.type, power);
       source.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
