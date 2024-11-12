@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Species } from "#app/enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";

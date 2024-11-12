@@ -12,7 +12,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Biome } from "#enums/biome";
 import { getBiomeKey } from "#app/field/arena";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { BattlerTagType } from "#enums/battler-tag-type";

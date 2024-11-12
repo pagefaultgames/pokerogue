@@ -1,11 +1,11 @@
 import { BattlerIndex } from "#app/battle";
-import { StatusEffect } from "#app/data/status-effect";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Species } from "#app/enums/species";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

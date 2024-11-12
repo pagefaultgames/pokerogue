@@ -27,7 +27,7 @@ import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";

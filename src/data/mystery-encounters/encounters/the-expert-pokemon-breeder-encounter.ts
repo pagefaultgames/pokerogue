@@ -23,7 +23,7 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { achvs } from "#app/system/achv";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 

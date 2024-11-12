@@ -55,21 +55,21 @@ export class FaintPhase extends PokemonPhase {
   start() {
     super.start();
 
+    const faintPokemon = this.getPokemon();
+
     if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
       this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
     }
 
     if (!isNullOrUndefined(this.grudgeTag) && !isNullOrUndefined(this.source)) {
-      this.grudgeTag.lapse(this.getPokemon(), BattlerTagLapseType.CUSTOM, this.source);
+      this.grudgeTag.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
     if (!this.preventEndure) {
-      const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
+      const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, faintPokemon) as PokemonInstantReviveModifier;
 
       if (instantReviveModifier) {
-        if (!--instantReviveModifier.stackCount) {
-          this.scene.removeModifier(instantReviveModifier);
-        }
+        faintPokemon.loseHeldItem(instantReviveModifier);
         this.scene.updateModifiers(this.player);
         return this.end();
       }
