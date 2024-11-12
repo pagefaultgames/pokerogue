@@ -378,10 +378,8 @@ export class MovePhase extends BattlePhase {
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
       const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
-      if (failureMessage) {
-        this.showMoveText();
-        this.showFailedText(failureMessage);
-      }
+      this.showMoveText();
+      this.showFailedText(failureMessage ?? undefined);
 
       // Remove the user from its semi-invulnerable state (if applicable)
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
