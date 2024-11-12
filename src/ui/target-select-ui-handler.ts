@@ -94,7 +94,7 @@ export default class TargetSelectUiHandler extends UiHandler {
           this.cursor0 = this.cursor;
         }
       } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
-        if (Utils.isNullOrUndefined(this.cursor0) || this.cursor1 !== this.cursor) {
+        if (Utils.isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor) {
           this.cursor1 = this.cursor;
         }
       }
