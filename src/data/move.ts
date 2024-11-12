@@ -4992,15 +4992,15 @@ export class FreezeDryAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
     if (target.isOfType(Type.WATER) && multiplier.value !== 0) {
-      const multipleTypes = new Utils.BooleanHolder(target.getTypes().length > 1);
+      const multipleTypes = (target.getTypes().length > 1);
 
       if (multipleTypes) {
-        const effectivenessAgainstTarget = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, target.getTypes().filter(types => types !== Type.WATER)[0]));
+        const nonWaterType = target.getTypes().filter(type => type !== Type.WATER)[0];
+        const effectivenessAgainstTarget = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, nonWaterType));
 
         applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstTarget);
 
-        multiplier.value = effectivenessAgainstTarget.value;
-        multiplier.value *= 2;
+        multiplier.value = effectivenessAgainstTarget.value * 2;
         return true;
       }
 
