@@ -1367,7 +1367,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
     const hitCount = args[0] as Utils.NumberHolder;
     const multiplier = args[1] as Utils.NumberHolder;
 
-    if (move.canBeMultiStrikeEnhanced(pokemon)) {
+    if (move.canBeMultiStrikeEnhanced(pokemon, true)) {
       this.showAbility = !!hitCount?.value;
       if (hitCount?.value) {
         hitCount.value += 1;

@@ -95,4 +95,23 @@ describe("Items - Multi Lens", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(playerPokemon.turnData.hitCount).toBe(2);
   });
+
+  it("should enhance multi-target moves", async () => {
+    game.override
+      .battleType("double")
+      .moveset([ Moves.SWIFT, Moves.SPLASH ]);
+
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+
+    const [ magikarp, ] = game.scene.getPlayerField();
+
+    game.move.select(Moves.SWIFT, 0);
+    game.move.select(Moves.SPLASH, 1);
+
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    expect(magikarp.turnData.hitCount).toBe(2);
+  });
 });
