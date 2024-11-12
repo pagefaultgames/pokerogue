@@ -6624,9 +6624,9 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 }
 
 /**
- * Attribute used for moves that causes the target to repeat their last used move.4
+ * Attribute used for moves that causes the target to repeat their last used move.
  *
- * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/After_You_(move)).
+ * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)).
 */
 export class RepeatMoveAttr extends OverrideMoveEffectAttr {
   /**
