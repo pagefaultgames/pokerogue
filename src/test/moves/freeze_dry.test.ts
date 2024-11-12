@@ -192,4 +192,61 @@ describe("Moves - Freeze-Dry", () => {
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
   });
+
+  it("should deal 2x damage to Water type during inverse battle under Normalize", async () => {
+    game.override
+      .moveset([ Moves.FREEZE_DRY ])
+      .ability(Abilities.NORMALIZE)
+      .enemySpecies(Species.MAGIKARP);
+    game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
+
+    await game.challengeMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
+  });
+
+  it("should deal 2x damage to Water type during inverse battle under Electrify", async () => {
+    game.override
+      .moveset([ Moves.FREEZE_DRY ])
+      .enemySpecies(Species.MAGIKARP)
+      .enemyMoveset([ Moves.ELECTRIFY ]);
+    game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
+
+    await game.challengeMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
+  });
+
+  it("should deal 1x damage to water/flying type during inverse battle under Electrify", async () => {
+    game.override
+      .enemyMoveset([ Moves.ELECTRIFY ])
+      .enemySpecies(Species.GYARADOS);
+
+    game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
+
+    await game.challengeMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(1);
+  });
 });

@@ -4934,31 +4934,41 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
   }
 }
 
+/**
+ * This class forces Freeze-Dry to be super effective against Water Type.
+ * It considers if target is Mono or Dual Type and calculates the new Multiplier accordingly
+ */
 export class FreezeDryAttr extends VariableMoveTypeMultiplierAttr {
+  /**
+   * If the target is Mono Type (Water only) then a 2x Multiplier is always forced.
+   * If target is Dual Type (containing Water) then only a 2x Multiplier is forced for the Water Type
+   *
+   * Additionally Freeze-Dry's effectiveness against water is always forced during {@linkcode InverseBattleChallenge}.
+   * The multiplier is recalculated for the non-Water Type in case of Dual Type targets containing Water Type.
+   *
+   * @param user The {@linkcode Pokemon} applying the move
+   * @param target The {@linkcode Pokemon} targeted by the move
+   * @param move The move used by the user
+   * @param args `[0]` a {@linkcode Utils.NumberHolder | NumberHolder} containing a type effectiveness multiplier
+   * @returns `true` if super effectiveness on water type is forced; `false` otherwise
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
-    if (target.isOfType(Type.WATER)) {
-      const effectivenessAgainstWater = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, Type.WATER));
-      applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstWater);
-      if (effectivenessAgainstWater.value !== 0) {
-        /**
-         * During Normalize the given multiplier value against water Pkm is 1x but should be 2x.
-         *
-         * For more information about special interactions visit [Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Freeze-Dry_(move))
-         */
-        if (user.hasAbility(Abilities.NORMALIZE)) {
-          multiplier.value *= 2;
-          return true;
-        }
+    if (target.isOfType(Type.WATER) && multiplier.value !== 0) {
+      const multipleTypes = new Utils.BooleanHolder(target.getTypes().length > 1);
 
-        /**
-         * If move is of type electric it already has super effectiveness against water types and multiplier does not need to recalculate its value.
-         */
-        if (user.getMoveType(move) !== Type.ELECTRIC) {
-          multiplier.value *= 2 / effectivenessAgainstWater.value;
-        }
+      if (multipleTypes) {
+        const effectivenessAgainstTarget = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, target.getTypes().filter(types => types !== Type.WATER)[0]));
+
+        applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstTarget);
+
+        multiplier.value = effectivenessAgainstTarget.value;
+        multiplier.value *= 2;
         return true;
       }
+
+      multiplier.value = 2;
+      return true;
     }
 
     return false;
