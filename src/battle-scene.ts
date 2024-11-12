@@ -10,7 +10,7 @@ import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets
 import { Phase } from "#app/phase";
 import { initGameSpeed } from "#app/system/game-speed";
 import { Arena, ArenaBase } from "#app/field/arena";
-import { GameData } from "#app/system/game-data";
+import { GameData, BiomeSessionData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "#app/data/move";
 import { MusicPreference } from "#app/system/settings/settings";
@@ -259,6 +259,7 @@ export default class BattleScene extends SceneBase {
   public pokeballCounts: PokeballCounts;
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
+  public biomeTracker: BiomeSessionData;
   private party: PlayerPokemon[];
   /** Session save data that pertains to Mystery Encounters */
   public mysteryEncounterSaveData: MysteryEncounterSaveData = new MysteryEncounterSaveData();
@@ -1324,6 +1325,22 @@ export default class BattleScene extends SceneBase {
   }
 
   newArena(biome: Biome): Arena {
+    const biomeTrackerLimit = 22;
+    if (Utils.isNullOrUndefined(this.biomeTracker)) {
+      this.biomeTracker = {};
+    }
+    if (this.currentBattle) {
+      this.biomeTracker[this.currentBattle.waveIndex] = biome;
+    } else {
+      this.biomeTracker[1] = biome;
+    }
+    const biomeTrackerKeys = Object.keys(this.biomeTracker).map(Number);
+    console.log(this.biomeTracker);
+    // Arbitrary limit of 22 entries per session --> Can increase or decrease
+    while (biomeTrackerKeys.length >= biomeTrackerLimit ) {
+      const smallestWave = Math.min.apply(Math, biomeTrackerKeys);
+      delete this.biomeTracker[smallestWave];
+    }
     this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
