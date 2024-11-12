@@ -223,7 +223,7 @@ export class EncounterPhase extends BattlePhase {
             const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
             if (bossMBH) {
               this.scene.removeModifier(bossMBH);
-              bossMBH?.setTransferrableFalse();
+              bossMBH.setTransferrableFalse();
               this.scene.addEnemyModifier(bossMBH);
             }
           }
