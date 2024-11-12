@@ -1108,7 +1108,7 @@ export default class BattleScene extends SceneBase {
 
     [ this.luckLabelText, this.luckText ].map(t => t.setVisible(false));
 
-    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
+    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN, false);
 
     this.field.setVisible(true);
 
@@ -1274,7 +1274,7 @@ export default class BattleScene extends SceneBase {
     if (!waveIndex && lastBattle) {
       const isWaveIndexMultipleOfTen = !(lastBattle.waveIndex % 10);
       const isEndlessOrDaily = this.gameMode.hasShortBiomes || this.gameMode.isDaily;
-      const isEndlessFifthWave = this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 5) === 0;
+      const isEndlessFifthWave = this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 2) === 0;
       const isWaveIndexMultipleOfFiftyMinusOne = (lastBattle.waveIndex % 50) === 49;
       const isNewBiome = isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
       const resetArenaState = isNewBiome || [ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.currentBattle.battleType) || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
@@ -1324,18 +1324,17 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: Biome): Arena {
+  newArena(biome: Biome, isReset: boolean = true): Arena {
     const biomeTrackerLimit = 22;
     if (Utils.isNullOrUndefined(this.biomeTracker)) {
       this.biomeTracker = {};
     }
-    if (this.currentBattle) {
-      this.biomeTracker[this.currentBattle.waveIndex] = biome;
-    } else {
-      this.biomeTracker[1] = biome;
+    if (isReset) {
+      if (this.currentBattle) {
+        this.biomeTracker[this.currentBattle.waveIndex] = biome;
+      }
     }
     const biomeTrackerKeys = Object.keys(this.biomeTracker).map(Number);
-    console.log(this.biomeTracker);
     // Arbitrary limit of 22 entries per session --> Can increase or decrease
     while (biomeTrackerKeys.length >= biomeTrackerLimit ) {
       const smallestWave = Math.min.apply(Math, biomeTrackerKeys);
