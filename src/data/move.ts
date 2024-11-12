@@ -4997,7 +4997,7 @@ export class FreezeDryAttr extends VariableMoveTypeMultiplierAttr {
 
       if (multipleTypes) {
         const nonWaterType = target.getTypes().filter(type => type !== Type.WATER)[0];
-        const effectivenessAgainstTarget = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, nonWaterType));
+        const effectivenessAgainstTarget = new Utils.NumberHolder(getTypeDamageMultiplier(user.getMoveType(move), nonWaterType));
 
         applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstTarget);
 
