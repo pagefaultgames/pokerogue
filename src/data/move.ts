@@ -4971,16 +4971,42 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
   }
 }
 
-export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+/**
+ * This class forces Freeze-Dry to be super effective against Water Type.
+ * It considers if target is Mono or Dual Type and calculates the new Multiplier accordingly.
+ * @see {@linkcode apply}
+ */
+export class FreezeDryAttr extends VariableMoveTypeMultiplierAttr {
+  /**
+   * If the target is Mono Type (Water only) then a 2x Multiplier is always forced.
+   * If target is Dual Type (containing Water) then only a 2x Multiplier is forced for the Water Type.
+   *
+   * Additionally Freeze-Dry's effectiveness against water is always forced during {@linkcode InverseBattleChallenge}.
+   * The multiplier is recalculated for the non-Water Type in case of Dual Type targets containing Water Type.
+   *
+   * @param user The {@linkcode Pokemon} applying the move
+   * @param target The {@linkcode Pokemon} targeted by the move
+   * @param move The move used by the user
+   * @param args `[0]` a {@linkcode Utils.NumberHolder | NumberHolder} containing a type effectiveness multiplier
+   * @returns `true` if super effectiveness on water type is forced; `false` otherwise
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
-    if (target.isOfType(Type.WATER)) {
-      const effectivenessAgainstWater = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, Type.WATER));
-      applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstWater);
-      if (effectivenessAgainstWater.value !== 0) {
-        multiplier.value *= 2 / effectivenessAgainstWater.value;
+    if (target.isOfType(Type.WATER) && multiplier.value !== 0) {
+      const multipleTypes = (target.getTypes().length > 1);
+
+      if (multipleTypes) {
+        const nonWaterType = target.getTypes().filter(type => type !== Type.WATER)[0];
+        const effectivenessAgainstTarget = new Utils.NumberHolder(getTypeDamageMultiplier(user.getMoveType(move), nonWaterType));
+
+        applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstTarget);
+
+        multiplier.value = effectivenessAgainstTarget.value * 2;
         return true;
       }
+
+      multiplier.value = 2;
+      return true;
     }
 
     return false;
@@ -9422,7 +9448,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FREEZE_DRY, Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, 10, 0, 6)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
-      .attr(WaterSuperEffectTypeMultiplierAttr)
+      .attr(FreezeDryAttr)
       .edgeCase(), // This currently just multiplies the move's power instead of changing its effectiveness. It also doesn't account for abilities that modify type effectiveness such as tera shell.
     new AttackMove(Moves.DISARMING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, -1, 0, 6)
       .soundBased()
