@@ -12,7 +12,7 @@ import { getRandomWeatherType } from "#app/data/weather";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import Pokemon, { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import { BoostBugSpawnModifier, IvScannerModifier } from "#app/modifier/modifier";
 import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
@@ -216,18 +216,6 @@ export class EncounterPhase extends BattlePhase {
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         regenerateModifierPoolThresholds(this.scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
         this.scene.generateEnemyModifiers();
-        // This checks if the current battle is an Endless E-Max battle/Classic final boss and sets the MBH held by the boss to untransferrable
-        if (this.scene.gameMode.isEndlessMajorBoss(this.scene.currentBattle.waveIndex) || this.scene.gameMode.isBattleClassicFinalBoss(this.scene.currentBattle.waveIndex)) {
-          const enemyPokemon = this.scene.getEnemyPokemon();
-          if (enemyPokemon) {
-            const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
-            if (bossMBH) {
-              this.scene.removeModifier(bossMBH);
-              bossMBH.setTransferrableFalse();
-              this.scene.addEnemyModifier(bossMBH);
-            }
-          }
-        }
       }
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {

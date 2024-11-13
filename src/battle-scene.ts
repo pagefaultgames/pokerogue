@@ -2585,6 +2585,8 @@ export default class BattleScene extends SceneBase {
       const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
       const cancelled = new Utils.BooleanHolder(false);
       Utils.executeIf(!!source && source.isPlayer() !== target.isPlayer(), () => applyAbAttrs(BlockItemTheftAbAttr, source! /* checked in condition*/, cancelled)).then(() => {
+        // Prevents transfer of Mini Black Hole from opponent to player / player to opponent
+        cancelled.value = itemModifier instanceof TurnHeldItemTransferModifier ? true : false;
         if (cancelled.value) {
           return resolve(false);
         }
