@@ -6634,22 +6634,23 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
    *
    * @param user {@linkcode Pokemon} that used the attack
    * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move {@linkcode Move} being used
+   * @param move N/A
    * @param args N/A
-   * @returns {boolean} true if the move succeeds
+   * @returns `true` if the move succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // get the last move used (excluding status based failures) as well as the corresponding moveset slot
-    const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE);
-    const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
-    const moveTargets = lastMove?.targets;
+    const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE)!;
+    const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove.move)!;
+    const moveTargets = lastMove.targets ?? [];
 
     user.scene.queueMessage(i18next.t("moveTriggers:instructingMove", {
       userPokemonName: getPokemonNameWithAffix(user),
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
-    target.getMoveQueue().unshift({ move: lastMove?.move!, targets: moveTargets!, ignorePP: false });
-    target.scene.unshiftPhase(new MovePhase(target.scene, target, moveTargets!, movesetMove!, false, false));
+    target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
+    target.turnData.extraTurns++;
+    target.scene.appendToPhase(new MovePhase(target.scene, target, moveTargets, movesetMove), MoveEndPhase);
 
     return true;
   }
@@ -6659,7 +6660,7 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
       // TODO: Confirm behavior of instructing move known by target but called by another move
       const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE);
       const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
-      const moveTargets = lastMove?.targets!;
+      const moveTargets = lastMove?.targets ?? [];
       // TODO: Add a way of adding moves to list procedurally rather than a pre-defined blacklist
       const unrepeatablemoves = [
         // Locking/Continually Executed moves
@@ -6716,11 +6717,11 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
         // TODO: Add Z-move & Max Move blockage if/when they are implemented
       ];
 
-      if (!movesetMove || // called move not in target's moveset (dancer, forgetting the move, etc.)
-        movesetMove.ppUsed === movesetMove.getMovePp() || // move out of pp
-        allMoves[lastMove!.move].isChargingMove() || // called move is a charging/recharging move
-        !moveTargets.length || // called move has no targets
-        unrepeatablemoves.includes(lastMove?.move!)) { // called move is explicitly in the banlist
+      if (!movesetMove // called move not in target's moveset (dancer, forgetting the move, etc.)
+        || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
+        || allMoves[lastMove?.move ?? Moves.NONE].isChargingMove() // called move is a charging/recharging move
+        || !moveTargets.length // called move has no targets
+        || unrepeatablemoves.includes(lastMove?.move ?? Moves.NONE)) { // called move is explicitly in the banlist
         return false;
       }
       return true;

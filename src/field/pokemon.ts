@@ -5237,6 +5237,7 @@ export class PokemonBattleSummonData {
 export class PokemonTurnData {
   public flinched: boolean = false;
   public acted: boolean = false;
+  /** How many times the move should hit the target(s) */
   public hitCount: number = 0;
   /**
    * - `-1` = Calculate how many hits are left
@@ -5255,6 +5256,11 @@ export class PokemonTurnData {
   public switchedInThisTurn: boolean = false;
   public failedRunAway: boolean = false;
   public joinedRound: boolean = false;
+  /**
+   * Used to make sure multi-hits occur properly when the user is
+   * forced to act again in the same turn
+   */
+  public extraTurns: number = 0;
 }
 
 export enum AiType {
