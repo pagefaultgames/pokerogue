@@ -26,6 +26,7 @@ import {
   applyMoveAttrs,
   AttackMove,
   DelayedAttackAttr,
+  FlinchAttr,
   HitsTagAttr,
   MissEffectAttr,
   MoveAttr,
@@ -502,6 +503,10 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   protected applyHeldItemFlinchCheck(user: Pokemon, target: Pokemon, dealsDamage: boolean) : () => void {
     return () => {
+      if (this.move.getMove().hasAttr(FlinchAttr)) {
+        return;
+      }
+
       if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !this.move.getMove().hitsSubstitute(user, target)) {
         const flinched = new BooleanHolder(false);
         user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
