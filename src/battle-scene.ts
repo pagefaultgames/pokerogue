@@ -105,7 +105,7 @@ export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
-const OPP_IVS_OVERRIDE_VALIDATED : integer[] = (
+const OPP_IVS_OVERRIDE_VALIDATED: integer[] = (
   Array.isArray(Overrides.OPP_IVS_OVERRIDE) ?
     Overrides.OPP_IVS_OVERRIDE :
     new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
@@ -117,18 +117,18 @@ const expSpriteKeys: string[] = [];
 
 export let starterColors: StarterColors;
 interface StarterColors {
-    [key: string]: [string, string]
+  [key: string]: [string, string]
 }
 
 export interface PokeballCounts {
-    [pb: string]: integer;
+  [pb: string]: integer;
 }
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
 export interface InfoToggle {
-    toggleInfo(force?: boolean): void;
-    isActive(): boolean;
+  toggleInfo(force?: boolean): void;
+  isActive(): boolean;
 }
 
 export default class BattleScene extends SceneBase {
@@ -342,7 +342,7 @@ export default class BattleScene extends SceneBase {
     if (variant) {
       atlasPath = atlasPath.replace("variant/", "");
     }
-    this.load.atlas(key, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,  `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`);
+    this.load.atlas(key, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`);
   }
 
   async preload() {
@@ -1420,7 +1420,7 @@ export default class BattleScene extends SceneBase {
         }
         return 0;
       case Species.GIMMIGHOUL:
-      // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
+        // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
         if (this.gameMode.hasMysteryEncounters) {
           return 1; // Wandering form
         } else {
@@ -1649,7 +1649,7 @@ export default class BattleScene extends SceneBase {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
     this.fieldUI.moveAbove(this.biomeWaveText, this.luckText);
-    this.biomeWaveText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
+    this.biomeWaveText.setText(biomeString + " - " + this.currentBattle.waveIndex.toString());
     this.biomeWaveText.setColor(!isBoss ? "#ffffff" : "#f89890");
     this.biomeWaveText.setShadowColor(!isBoss ? "#636363" : "#984038");
     this.biomeWaveText.setVisible(true);
@@ -1955,8 +1955,8 @@ export default class BattleScene extends SceneBase {
         case "heal":
         case "evolution":
         case "evolution_fanfare":
-        // These sounds are loaded in as BGM, but played as sound effects
-        // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
+          // These sounds are loaded in as BGM, but played as sound effects
+          // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
           config["volume"] *= (this.masterVolume * this.bgmVolume);
           break;
         case "battle_anims":
@@ -1968,7 +1968,7 @@ export default class BattleScene extends SceneBase {
           }
           break;
         case "ui":
-        //As of, right now this applies to the "select", "menu_open", "error" sound effects
+          //As of, right now this applies to the "select", "menu_open", "error" sound effects
           config["volume"] *= (this.masterVolume * this.uiVolume);
           break;
         case "se":
@@ -2584,63 +2584,68 @@ export default class BattleScene extends SceneBase {
     return new Promise(resolve => {
       const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
       const cancelled = new Utils.BooleanHolder(false);
-      Utils.executeIf(!!source && source.isPlayer() !== target.isPlayer(), () => applyAbAttrs(BlockItemTheftAbAttr, source! /* checked in condition*/, cancelled)).then(() => {
-        // Prevents transfer of Mini Black Hole from opponent to player / player to opponent
-        cancelled.value = itemModifier instanceof TurnHeldItemTransferModifier ? true : false;
-        if (cancelled.value) {
-          return resolve(false);
-        }
-        const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
-        newItemModifier.pokemonId = target.id;
-        const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
-                    && (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
-        let removeOld = true;
-        if (matchingModifier) {
-          const maxStackCount = matchingModifier.getMaxStackCount(target.scene);
-          if (matchingModifier.stackCount >= maxStackCount) {
+      if (source && source.isPlayer() !== target.isPlayer()) {
+        //Check for abilities like Sticky Hold that prevent item transfer between player and opponent
+        applyAbAttrs(BlockItemTheftAbAttr, source, cancelled).then(() => {
+          // Check to prevent player-to-opponent/opponent-to-player MBH transfer
+          if (!cancelled.value) {
+            cancelled.value = itemModifier instanceof TurnHeldItemTransferModifier;
+          }
+          if (cancelled.value) {
             return resolve(false);
           }
-          const countTaken = Math.min(transferQuantity, itemModifier.stackCount, maxStackCount - matchingModifier.stackCount);
-          itemModifier.stackCount -= countTaken;
-          newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
-          removeOld = !itemModifier.stackCount;
-        } else {
-          const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
-          itemModifier.stackCount -= countTaken;
-          newItemModifier.stackCount = countTaken;
+        });
+      }
+      const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+      newItemModifier.pokemonId = target.id;
+      const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
+        && (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
+      let removeOld = true;
+      if (matchingModifier) {
+        const maxStackCount = matchingModifier.getMaxStackCount(target.scene);
+        if (matchingModifier.stackCount >= maxStackCount) {
+          return resolve(false);
         }
+        const countTaken = Math.min(transferQuantity, itemModifier.stackCount, maxStackCount - matchingModifier.stackCount);
+        itemModifier.stackCount -= countTaken;
+        newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
         removeOld = !itemModifier.stackCount;
-        if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
-          const addModifier = () => {
-            if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
-              if (target.isPlayer()) {
-                this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
-                  if (source && itemLost) {
-                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-                  }
-                  resolve(true);
-                });
-              } else {
-                this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
-                  if (source && itemLost) {
-                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-                  }
-                  resolve(true);
-                });
-              }
+      } else {
+        const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
+        itemModifier.stackCount -= countTaken;
+        newItemModifier.stackCount = countTaken;
+      }
+      removeOld = !itemModifier.stackCount;
+      if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
+        const addModifier = () => {
+          if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
+            if (target.isPlayer()) {
+              this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
+                if (source && itemLost) {
+                  applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+                }
+                resolve(true);
+              });
             } else {
-              resolve(false);
+              this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
+                if (source && itemLost) {
+                  applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+                }
+                resolve(true);
+              });
             }
-          };
-          if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-            this.updateModifiers(source.isPlayer(), instant).then(() => addModifier());
           } else {
-            addModifier();
+            resolve(false);
           }
-          return;
+        };
+        if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
+          this.updateModifiers(source.isPlayer(), instant).then(() => addModifier());
+        } else {
+          addModifier();
         }
-        resolve(false);
-      });
+        return;
+      }
+      resolve(false);
     });
   }
 
