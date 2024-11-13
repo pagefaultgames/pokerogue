@@ -2,7 +2,7 @@ import BattleScene from "./battle-scene";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
-import { GameMode } from "./game-mode";
+import { GameMode, GameModes } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
@@ -26,6 +26,13 @@ export enum ClassicFixedBossWaves {
   // TODO: other fixed wave battles should be added here
   EVIL_BOSS_1 = 115,
   EVIL_BOSS_2 = 165,
+}
+
+export enum EndlessBossType {
+  STANDARD = 50,
+  ETERNATUS = 250,
+  ETERNAMAX = 1000,
+  NONE
 }
 
 export enum BattleType {
@@ -438,6 +445,32 @@ export default class Battle {
   isBattleMysteryEncounter(): boolean {
     return this.battleType === BattleType.MYSTERY_ENCOUNTER;
   }
+
+  /**
+   * @returns `true` if the current battle is against classic mode's final boss
+   */
+  isBattleClassicFinalBoss(): boolean {
+    return (this.gameMode.modeId === GameModes.CLASSIC || this.gameMode.modeId === GameModes.CHALLENGE) && this.waveIndex === 200;
+  }
+
+  /**
+   * Uses modulos to determine what type of boss is faced by the player in Endless mode.
+   * @returns the type of Endless boss faced by the player {@linkcode EndlessBossType}
+   */
+  getEndlessBossType(): EndlessBossType {
+    if (this.gameMode.modeId !== GameModes.ENDLESS && this.gameMode.modeId !== GameModes.SPLICED_ENDLESS) {
+      return EndlessBossType.NONE;
+    } else {
+      if (!(this.waveIndex % EndlessBossType.ETERNAMAX)) {
+        return EndlessBossType.ETERNAMAX;
+      } else if (!(this.waveIndex % EndlessBossType.ETERNATUS)) {
+        return EndlessBossType.ETERNATUS;
+      } else if (!(this.waveIndex % EndlessBossType.STANDARD)) {
+        return EndlessBossType.STANDARD;
+      }
+      return EndlessBossType.NONE;
+    }
+  }
 }
 
 export class FixedBattle extends Battle {
@@ -499,7 +532,7 @@ export class FixedBattleConfig {
  * @param seedOffset the seed offset to use for the random generation of the trainer
  * @returns the generated trainer
  */
-function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], randomGender: boolean = false, seedOffset: number  = 0): GetTrainerFunc {
+function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], randomGender: boolean = false, seedOffset: number = 0): GetTrainerFunc {
   return (scene: BattleScene) => {
     const rand = Utils.randSeedInt(trainerPool.length);
     const trainerTypes: TrainerType[] = [];
@@ -531,7 +564,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
 }
 
 export interface FixedBattleConfigs {
-    [key: number]: FixedBattleConfig
+  [key: number]: FixedBattleConfig
 }
 /**
  * Youngster/Lass on 5
