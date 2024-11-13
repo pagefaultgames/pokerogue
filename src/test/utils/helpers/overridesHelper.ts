@@ -243,9 +243,9 @@ export class OverridesHelper extends GameManagerHelper {
    * @param battleType battle type to set
    * @returns `this`
    */
-  public battleType(battleType: BattleStyle): this {
+  public battleType(battleType: BattleStyle | null): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
-    this.log(`Battle type set to ${battleType} only!`);
+    this.log(battleType === null ? "Battle type override disabled!" : `Battle type set to ${battleType}!`);
     return this;
   }
 
