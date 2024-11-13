@@ -1,4 +1,4 @@
-import { BattlerIndex, BattleType, EndlessBossType } from "#app/battle";
+import { BattlerIndex, BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
@@ -217,7 +217,7 @@ export class EncounterPhase extends BattlePhase {
         regenerateModifierPoolThresholds(this.scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
         this.scene.generateEnemyModifiers();
         // This checks if the current battle is an Endless E-Max battle/Classic final boss and sets the MBH held by the boss to untransferrable
-        if (this.scene.currentBattle.getEndlessBossType() === EndlessBossType.ETERNAMAX || battle.isBattleClassicFinalBoss()) {
+        if (this.scene.gameMode.isEndlessMajorBoss(this.scene.currentBattle.waveIndex) || this.scene.gameMode.isBattleClassicFinalBoss(this.scene.currentBattle.waveIndex)) {
           const enemyPokemon = this.scene.getEnemyPokemon();
           if (enemyPokemon) {
             const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;

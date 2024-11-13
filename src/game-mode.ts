@@ -231,6 +231,13 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * @returns `true` if the current battle is against classic mode's final boss
+   */
+  isBattleClassicFinalBoss(waveIndex: number): boolean {
+    return (this.modeId === GameModes.CLASSIC || this.modeId === GameModes.CHALLENGE) && this.isWaveFinal(waveIndex);
+  }
+
+  /**
      * Every 50 waves of an Endless mode is a boss
      * At this time it is paradox pokemon
      * @returns true if waveIndex is a multiple of 50 in Endless
