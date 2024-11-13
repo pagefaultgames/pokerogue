@@ -1274,7 +1274,7 @@ export default class BattleScene extends SceneBase {
     if (!waveIndex && lastBattle) {
       const isWaveIndexMultipleOfTen = !(lastBattle.waveIndex % 10);
       const isEndlessOrDaily = this.gameMode.hasShortBiomes || this.gameMode.isDaily;
-      const isEndlessFifthWave = this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 2) === 0;
+      const isEndlessFifthWave = this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 5) === 0;
       const isWaveIndexMultipleOfFiftyMinusOne = (lastBattle.waveIndex % 50) === 49;
       const isNewBiome = isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
       const resetArenaState = isNewBiome || [ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.currentBattle.battleType) || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
