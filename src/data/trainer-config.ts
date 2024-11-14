@@ -1177,12 +1177,24 @@ export function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: Tr
   };
 }
 
-function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilter, trainerSlot: TrainerSlot = TrainerSlot.TRAINER, allowLegendaries?: boolean, postProcess?: (EnemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
-  const originalSpeciesFilter = speciesFilter;
-  speciesFilter = (species: PokemonSpecies) => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
-  return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
-    const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength, scene.currentBattle.waveIndex)), level, trainerSlot, undefined, false, undefined, postProcess);
-    return ret;
+function getSpeciesFilterRandomPartyMemberFunc(
+  originalSpeciesFilter: PokemonSpeciesFilter,
+  trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
+  allowLegendaries?: boolean,
+  postProcess?: (EnemyPokemon: EnemyPokemon) => void
+): PartyMemberFunc {
+
+  const speciesFilter = (species: PokemonSpecies): boolean => {
+    const notLegendary = !species.legendary && !species.subLegendary && !species.mythical;
+    return (allowLegendaries || notLegendary) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
+  };
+
+  return (scene: BattleScene, level: number, strength: PartyMemberStrength) => {
+    const waveIndex = scene.currentBattle.waveIndex;
+    const species = getPokemonSpecies(scene.randomSpecies(waveIndex, level, false, speciesFilter)
+      .getTrainerSpeciesForLevel(level, true, strength, waveIndex));
+
+    return scene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
   };
 }
 
