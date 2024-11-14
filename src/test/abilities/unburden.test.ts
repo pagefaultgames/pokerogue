@@ -62,7 +62,7 @@ describe("Abilities - Unburden", () => {
         { name: "BERRY", type: BerryType.LUM, count: 1 },
       ]);
     // For the various tests that use Thief, give it a 100% steal rate
-    vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([ new StealHeldItemChanceAttr(1.0) ]);
+    vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([ new StealHeldItemChanceAttr(100) ]);
   });
 
   it("should activate when a berry is eaten", async () => {
