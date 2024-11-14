@@ -3538,7 +3538,11 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
     return 10;
   }
 }
-
+/**
+ * Modifer Class for Burn, Poison, and Paralysis Tokens
+ * Burn/Poison Tokens -> 2.5% chance of status on hit
+ * Paralysis Token -> 5% chance of status on hit
+ */
 export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifier {
   public effect: StatusEffect;
   public chance: number;
@@ -3548,7 +3552,11 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
     this.effect = effect;
     //Hardcode temporarily
-    this.chance = .025 * ((this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON) ? 2 : 1);
+    if (this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON) {
+      this.chance = 2.5;
+    } else {
+      this.chance = 5;
+    }
   }
 
   match(modifier: Modifier): boolean {
@@ -3556,11 +3564,11 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
   }
 
   clone(): EnemyAttackStatusEffectChanceModifier {
-    return new EnemyAttackStatusEffectChanceModifier(this.type, this.effect, this.chance * 100, this.stackCount);
+    return new EnemyAttackStatusEffectChanceModifier(this.type, this.effect, this.chance, this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.effect, this.chance * 100 ];
+    return [ this.effect, this.chance ];
   }
 
   /**
@@ -3569,7 +3577,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
    * @returns `true` if the {@linkcode Pokemon} was affected
    */
   override apply(enemyPokemon: Pokemon): boolean {
-    if (Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
+    if (enemyPokemon.randSeedInt(100) < (this.chance * this.getStackCount())) {
       return enemyPokemon.trySetStatus(this.effect, true);
     }
 
@@ -3581,6 +3589,9 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
   }
 }
 
+/**
+ * Modifier Class for Full Heal Token
+ */
 export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier {
   public chance: number;
 
@@ -3588,7 +3599,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
     super(type, stackCount);
 
     //Hardcode temporarily
-    this.chance = .025;
+    this.chance = 2.5;
   }
 
   match(modifier: Modifier): boolean {
@@ -3596,11 +3607,11 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   }
 
   clone(): EnemyStatusEffectHealChanceModifier {
-    return new EnemyStatusEffectHealChanceModifier(this.type, this.chance * 100, this.stackCount);
+    return new EnemyStatusEffectHealChanceModifier(this.type, this.chance, this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.chance * 100 ];
+    return [ this.chance ];
   }
 
   /**
@@ -3609,7 +3620,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(enemyPokemon: Pokemon): boolean {
-    if (enemyPokemon.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
+    if (enemyPokemon.status && enemyPokemon.randSeedInt(100) < (this.chance * this.getStackCount())) {
       enemyPokemon.scene.queueMessage(getStatusEffectHealText(enemyPokemon.status.effect, getPokemonNameWithAffix(enemyPokemon)));
       enemyPokemon.resetStatus();
       enemyPokemon.updateInfo();
