@@ -120,17 +120,17 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       });
     });
 
-    it.skip("Should update the player's money properly", async () => {
+    it("Should update the player's money properly", async () => {
       const initialMoney = 20000;
       scene.money = initialMoney;
       const updateMoneySpy = vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
 
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
-      await runMysteryEncounterToEnd(game, 1); // TODO: why does it break here when reaching `MysteryEncounterRewardsPhase`?
+      await runMysteryEncounterToEnd(game, 1);
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, price);
+      expect(updateMoneySpy).toHaveBeenCalledWith(price);
       expect(scene.money).toBe(initialMoney + price);
     });
 
@@ -210,17 +210,17 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       expect(abra.exp).toBe(expBefore + Math.floor(getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave / 5 + 1));
     });
 
-    it.skip("Should update the player's money properly", async () => {
+    it("Should update the player's money properly", async () => {
       const initialMoney = 20000;
       scene.money = initialMoney;
       const updateMoneySpy = vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
 
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
-      await runMysteryEncounterToEnd(game, 2); // TODO: why does it break here when reaching `MysteryEncounterRewardsPhase`?
+      await runMysteryEncounterToEnd(game, 2);
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, price);
+      expect(updateMoneySpy).toHaveBeenCalledWith(price);
       expect(scene.money).toBe(initialMoney + price);
     });
 

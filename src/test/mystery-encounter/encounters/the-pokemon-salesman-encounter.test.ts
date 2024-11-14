@@ -122,17 +122,17 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       });
     });
 
-    it.skip("Should update the player's money properly", async () => {
+    it("Should update the player's money properly", async () => {
       const initialMoney = 20000;
       scene.money = initialMoney;
       const updateMoneySpy = vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
 
       await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
-      await runMysteryEncounterToEnd(game, 1); // TODO: why does it break here when reaching `MysteryEncounterRewardsPhase`?
+      await runMysteryEncounterToEnd(game, 1);
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, -price, true, false);
+      expect(updateMoneySpy).toHaveBeenCalledWith(-price, true, false);
       expect(scene.money).toBe(initialMoney - price);
     });
 

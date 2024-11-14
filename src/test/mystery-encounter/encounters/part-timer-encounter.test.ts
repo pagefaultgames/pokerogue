@@ -96,7 +96,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       });
     });
 
-    it.skip("should give the player 1x money multiplier money with max slowest Pokemon", async () => {
+    it("should give the player 1x money multiplier money with max slowest Pokemon", async () => {
       vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
@@ -105,9 +105,9 @@ describe("Part-Timer - Mystery Encounter", () => {
         p.level = 50;
         p.calculateStats();
       });
-      await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }); // TODO: why does it break here when reaching `MysteryEncounterRewardsPhase`?
+      await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 });
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(1), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(1), true, false);
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getPlayerParty()[0].moveset;
       for (const move of moves) {
@@ -115,7 +115,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       }
     });
 
-    it.skip("should give the player 4x money multiplier money with max fastest Pokemon", async () => {
+    it("should give the player 4x money multiplier money with max fastest Pokemon", async () => {
       vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
@@ -125,9 +125,9 @@ describe("Part-Timer - Mystery Encounter", () => {
         p.ivs = [ 20, 20, 20, 20, 20, 20 ];
         p.calculateStats();
       });
-      await runMysteryEncounterToEnd(game, 1, { pokemonNo: 2 }); // TODO: why does it break here when reaching `MysteryEncounterRewardsPhase`?
+      await runMysteryEncounterToEnd(game, 1, { pokemonNo: 2 });
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(4), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(4), true, false);
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getPlayerParty()[1].moveset;
       for (const move of moves) {
@@ -161,7 +161,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       });
     });
 
-    it.skip("should give the player 1x money multiplier money with least bulky Pokemon", async () => {
+    it("should give the player 1x money multiplier money with least bulky Pokemon", async () => {
       vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
@@ -170,9 +170,9 @@ describe("Part-Timer - Mystery Encounter", () => {
         p.level = 50;
         p.calculateStats();
       });
-      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 3 }); // TODO: why does it break here when reaching `MysteryEncounterRewardsPhase`?
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 3 });
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(1), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(1), true, false);
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getPlayerParty()[2].moveset;
       for (const move of moves) {
@@ -180,7 +180,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       }
     });
 
-    it.skip("should give the player 4x money multiplier money with bulkiest Pokemon", async () => {
+    it("should give the player 4x money multiplier money with bulkiest Pokemon", async () => {
       vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
@@ -190,9 +190,9 @@ describe("Part-Timer - Mystery Encounter", () => {
         p.ivs = [ 20, 20, 20, 20, 20, 20 ];
         p.calculateStats();
       });
-      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 4 }); // TODO: why does it break here when reaching `MysteryEncounterRewardsPhase`?
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 4 });
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(4), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(4), true, false);
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getPlayerParty()[3].moveset;
       for (const move of moves) {
@@ -251,15 +251,15 @@ describe("Part-Timer - Mystery Encounter", () => {
       expect(EncounterPhaseUtils.updatePlayerMoney).not.toHaveBeenCalled();
     });
 
-    it.skip("should be selectable and give the player 2.5x money multiplier money with requirements met", async () => {
+    it("should be selectable and give the player 2.5x money multiplier money with requirements met", async () => {
       vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Mock moveset
       scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.ATTRACT) ];
-      await runMysteryEncounterToEnd(game, 3); // TODO: why does it break here when reaching `MysteryEncounterRewardsPhase`?
+      await runMysteryEncounterToEnd(game, 3);
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(2.5), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(2.5), true, false);
       // Expect PP of mon's moves to have been reduced to 2
       const moves = scene.getPlayerParty()[0].moveset;
       for (const move of moves) {
