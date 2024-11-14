@@ -1809,8 +1809,8 @@ export class TypeImmuneTag extends BattlerTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
  */
 export class FloatingTag extends TypeImmuneTag {
-  constructor(tagType: BattlerTagType, sourceMove: Moves) {
-    super(tagType, sourceMove, Type.GROUND, 5);
+  constructor(tagType: BattlerTagType, sourceMove: Moves, turnCount: number) {
+    super(tagType, sourceMove, Type.GROUND, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -3053,7 +3053,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.FLOATING:
-      return new FloatingTag(tagType, sourceMove);
+      return new FloatingTag(tagType, sourceMove, turnCount);
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
     case BattlerTagType.DESTINY_BOND:
