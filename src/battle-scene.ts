@@ -1398,7 +1398,7 @@ export default class BattleScene extends SceneBase {
         return Utils.randSeedInt(species.forms.length);
       case Species.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
-          return 0;
+          return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
         }
         return Utils.randSeedInt(8);
       case Species.EEVEE:
