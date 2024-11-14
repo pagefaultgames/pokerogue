@@ -1397,10 +1397,19 @@ export default class BattleScene extends SceneBase {
       case Species.PALDEA_TAUROS:
         return Utils.randSeedInt(species.forms.length);
       case Species.PIKACHU:
+        if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.waveIndex < 30) {
+          return 0;
+        }
         return Utils.randSeedInt(8);
       case Species.EEVEE:
+        if (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.waveIndex < 30) {
+          return 0; // No Partner Eevee for Wave 12 Preschoolers
+        }
         return Utils.randSeedInt(2);
       case Species.GRENINJA:
+        if (this.currentBattle.battleType === BattleType.TRAINER) {
+          return 0; // Don't give trainers Battle Bond Greninja
+        }
         return Utils.randSeedInt(2);
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
