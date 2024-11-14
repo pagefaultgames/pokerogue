@@ -46,12 +46,14 @@ export const systemMigrators = [
    * @param data {@linkcode SystemSaveData}
    */
   function fixStarterData(data: SystemSaveData) {
-    for (const starterId of defaultStarterSpecies) {
-      if (data.starterData[starterId]?.abilityAttr) {
-        data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
-      }
-      if (data.dexData[starterId]?.caughtAttr) {
-        data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
+    if (data.starterData !== null) {
+      for (const starterId of defaultStarterSpecies) {
+        if (data.starterData[starterId]?.abilityAttr) {
+          data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+        }
+        if (data.dexData[starterId]?.caughtAttr) {
+          data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
+        }
       }
     }
   }
