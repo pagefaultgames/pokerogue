@@ -676,7 +676,7 @@ export class GameData {
         return ret;
       }
 
-      return k.endsWith("Attr") && ![ "natureAttr", "abilityAttr", "passiveAttr" ].includes(k) ? BigInt(v) : v;
+      return k.endsWith("Attr") && ![ "natureAttr", "abilityAttr", "passiveAttr" ].includes(k) ? BigInt(v ?? 0) : v;
     }) as SystemSaveData;
   }
 
@@ -1530,7 +1530,7 @@ export class GameData {
       entry.caughtAttr = defaultStarterAttr;
       entry.natureAttr = 1 << (defaultStarterNatures[ds] + 1);
       for (const i in entry.ivs) {
-        entry.ivs[i] = 10;
+        entry.ivs[i] = 15;
       }
     }
 

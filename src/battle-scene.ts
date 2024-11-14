@@ -1234,12 +1234,34 @@ export default class BattleScene extends SceneBase {
       newDouble = !!double;
     }
 
-    if (Overrides.BATTLE_TYPE_OVERRIDE === "double") {
-      newDouble = true;
-    }
-    /* Override battles into single only if not fighting with trainers */
-    if (newBattleType !== BattleType.TRAINER && Overrides.BATTLE_TYPE_OVERRIDE === "single") {
-      newDouble = false;
+    if (!isNullOrUndefined(Overrides.BATTLE_TYPE_OVERRIDE)) {
+      let doubleOverrideForWave: "single" | "double" | null = null;
+
+      switch (Overrides.BATTLE_TYPE_OVERRIDE) {
+        case "double":
+          doubleOverrideForWave = "double";
+          break;
+        case "single":
+          doubleOverrideForWave = "single";
+          break;
+        case "even-doubles":
+          doubleOverrideForWave = (newWaveIndex % 2) ? "single" : "double";
+          break;
+        case "odd-doubles":
+          doubleOverrideForWave = (newWaveIndex % 2) ? "double" : "single";
+          break;
+      }
+
+      if (doubleOverrideForWave === "double") {
+        newDouble = true;
+      }
+      /**
+       * Override battles into single only if not fighting with trainers.
+       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 | GitHub Issue #1948}
+       */
+      if (newBattleType !== BattleType.TRAINER && doubleOverrideForWave === "single") {
+        newDouble = false;
+      }
     }
 
     const lastBattle = this.currentBattle;

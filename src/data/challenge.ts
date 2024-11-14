@@ -653,7 +653,7 @@ export class FreshStartChallenge extends Challenge {
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
     pokemon.formIndex = 0; // Froakie should be base form
-    pokemon.ivs = [ 10, 10, 10, 10, 10, 10 ]; // Default IVs of 10 for all stats
+    pokemon.ivs = [ 15, 15, 15, 15, 15, 15 ]; // Default IVs of 15 for all stats (Updated to 15 from 10 in 1.2.0)
     return true;
   }
 
