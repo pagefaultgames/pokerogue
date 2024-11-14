@@ -2409,6 +2409,24 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Tries to add the input phase to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
+   * @param phase {@linkcode Phase} the phase to be added
+   * @param targetPhase {@linkcode Phase} the type of phase to search for in {@linkcode phaseQueue}
+   * @returns `true` if a `targetPhase` was found to append to
+   */
+  appendToPhase(phase: Phase, targetPhase: Constructor<Phase>): boolean {
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+
+    if (targetIndex !== -1 && this.phaseQueue.length > targetIndex) {
+      this.phaseQueue.splice(targetIndex + 1, 0, phase);
+      return true;
+    } else {
+      this.unshiftPhase(phase);
+      return false;
+    }
+  }
+
+  /**
    * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
    * @param message string for MessagePhase
    * @param callbackDelay optional param for MessagePhase constructor
