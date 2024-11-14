@@ -247,8 +247,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       });
     });
 
-    // this is the test that's broken due to the event
-    it.skip("should randomize held items of the Pokemon with the most items, and not the held items of other pokemon", async () => {
+    it("should randomize held items of the Pokemon with the most items, and not the held items of other pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Set some moves on party for attack type booster generation

@@ -171,8 +171,8 @@ describe("BattlerTag - SubstituteTag", () => {
       }
     );
 
-    /** TODO: Figure out how to mock a MoveEffectPhase correctly for this test */
-    it.skip(
+    // TODO: Figure out how to mock a MoveEffectPhase correctly for this test
+    it.todo(
       "HIT lapse triggers on-hit message",
       async () => {
         const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
