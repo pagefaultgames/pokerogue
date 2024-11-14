@@ -26,13 +26,13 @@ import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export class GameOverPhase extends BattlePhase {
-  private victory: boolean;
+  private isVictory: boolean;
   private firstRibbons: PokemonSpecies[] = [];
 
-  constructor(scene: BattleScene, victory?: boolean) {
+  constructor(scene: BattleScene, isVictory: boolean = false) {
     super(scene);
 
-    this.victory = !!victory;
+    this.isVictory = isVictory;
   }
 
   start() {
@@ -40,22 +40,22 @@ export class GameOverPhase extends BattlePhase {
 
     // Failsafe if players somehow skip floor 200 in classic mode
     if (this.scene.gameMode.isClassic && this.scene.currentBattle.waveIndex > 200) {
-      this.victory = true;
+      this.isVictory = true;
     }
 
     // Handle Mystery Encounter special Game Over cases
     // Situations such as when player lost a battle, but it isn't treated as full Game Over
-    if (!this.victory && this.scene.currentBattle.mysteryEncounter?.onGameOver && !this.scene.currentBattle.mysteryEncounter.onGameOver(this.scene)) {
+    if (!this.isVictory && this.scene.currentBattle.mysteryEncounter?.onGameOver && !this.scene.currentBattle.mysteryEncounter.onGameOver(this.scene)) {
       // Do not end the game
       return this.end();
     }
     // Otherwise, continue standard Game Over logic
 
-    if (this.victory && this.scene.gameMode.isEndless) {
+    if (this.isVictory && this.scene.gameMode.isEndless) {
       const genderIndex = this.scene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       this.scene.ui.showDialogue(i18next.t("miscDialogue:ending_endless", { context: genderStr }), i18next.t("miscDialogue:ending_name"), 0, () => this.handleGameOver());
-    } else if (this.victory || !this.scene.enableRetries) {
+    } else if (this.isVictory || !this.scene.enableRetries) {
       this.handleGameOver();
     } else {
       this.scene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
@@ -93,7 +93,7 @@ export class GameOverPhase extends BattlePhase {
       this.scene.disableMenu = true;
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
-        if (this.victory && newClear) {
+        if (this.isVictory && newClear) {
           if (this.scene.gameMode.isClassic) {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
@@ -109,8 +109,8 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
-        this.scene.gameData.saveRunHistory(this.scene, this.scene.gameData.getSessionSaveData(this.scene), this.victory);
-        const fadeDuration = this.victory ? 10000 : 5000;
+        this.scene.gameData.saveRunHistory(this.scene, this.scene.gameData.getSessionSaveData(this.scene), this.isVictory);
+        const fadeDuration = this.isVictory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
         activeBattlers.map(p => p.hideInfo());
@@ -120,15 +120,14 @@ export class GameOverPhase extends BattlePhase {
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
 
-          if (this.victory && this.scene.gameMode.isChallenge) {
+          if (this.isVictory && this.scene.gameMode.isChallenge) {
             this.scene.gameMode.challenges.forEach(c => this.scene.validateAchvs(ChallengeAchv, c));
           }
 
           const clear = (endCardPhase?: EndCardPhase) => {
-            if (newClear) {
+            if (this.isVictory && newClear) {
               this.handleUnlocks();
-            }
-            if (this.victory && newClear) {
+
               for (const species of this.firstRibbons) {
                 this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
               }
@@ -140,7 +139,7 @@ export class GameOverPhase extends BattlePhase {
             this.end();
           };
 
-          if (this.victory && this.scene.gameMode.isClassic) {
+          if (this.isVictory && this.scene.gameMode.isClassic) {
             const dialogueKey = "miscDialogue:ending";
 
             if (!this.scene.ui.shouldSkipDialogue(dialogueKey)) {
@@ -173,25 +172,23 @@ export class GameOverPhase extends BattlePhase {
       });
     };
 
-    /* Added a local check to see if the game is running offline on victory
+    /* Added a local check to see if the game is running offline
       If Online, execute apiFetch as intended
-      If Offline, execute offlineNewClear(), a localStorage implementation of newClear daily run checks */
-    if (this.victory) {
-      if (!Utils.isLocal || Utils.isLocalServerConnected) {
-        pokerogueApi.savedata.session.newclear({ slot: this.scene.sessionSlotId, clientSessionId })
-          .then((success) => doGameOver(!!success));
-      } else {
-        this.scene.gameData.offlineNewClear(this.scene).then(result => {
-          doGameOver(result);
-        });
-      }
+      If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks */
+    if (!Utils.isLocal || Utils.isLocalServerConnected) {
+      pokerogueApi.savedata.session.newclear({ slot: this.scene.sessionSlotId, isVictory: this.isVictory, clientSessionId: clientSessionId })
+        .then((success) => doGameOver(!!success));
+    } else if (this.isVictory) {
+      this.scene.gameData.offlineNewClear(this.scene).then(result => {
+        doGameOver(result);
+      });
     } else {
       doGameOver(false);
     }
   }
 
   handleUnlocks(): void {
-    if (this.victory && this.scene.gameMode.isClassic) {
+    if (this.isVictory && this.scene.gameMode.isClassic) {
       if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
       }

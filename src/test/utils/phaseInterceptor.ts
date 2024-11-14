@@ -55,6 +55,11 @@ import {
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { ExpPhase } from "#app/phases/exp-phase";
+import { GameOverPhase } from "#app/phases/game-over-phase";
+import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
+import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
+import { UnlockPhase } from "#app/phases/unlock-phase";
+import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -113,10 +118,15 @@ type PhaseClass =
   | typeof MysteryEncounterBattlePhase
   | typeof MysteryEncounterRewardsPhase
   | typeof PostMysteryEncounterPhase
+  | typeof RibbonModifierRewardPhase
+  | typeof GameOverModifierRewardPhase
   | typeof ModifierRewardPhase
   | typeof PartyExpPhase
   | typeof ExpPhase
-  | typeof EncounterPhase;
+  | typeof EncounterPhase
+  | typeof GameOverPhase
+  | typeof UnlockPhase
+  | typeof PostGameOverPhase;
 
 type PhaseString =
   | "LoginPhase"
@@ -167,10 +177,15 @@ type PhaseString =
   | "MysteryEncounterBattlePhase"
   | "MysteryEncounterRewardsPhase"
   | "PostMysteryEncounterPhase"
+  | "RibbonModifierRewardPhase"
+  | "GameOverModifierRewardPhase"
   | "ModifierRewardPhase"
   | "PartyExpPhase"
   | "ExpPhase"
-  | "EncounterPhase";
+  | "EncounterPhase"
+  | "GameOverPhase"
+  | "UnlockPhase"
+  | "PostGameOverPhase";
 
 type PhaseInterceptorPhase = PhaseClass | PhaseString;
 
@@ -245,10 +260,15 @@ export default class PhaseInterceptor {
     [ MysteryEncounterBattlePhase, this.startPhase ],
     [ MysteryEncounterRewardsPhase, this.startPhase ],
     [ PostMysteryEncounterPhase, this.startPhase ],
+    [ RibbonModifierRewardPhase, this.startPhase ],
+    [ GameOverModifierRewardPhase, this.startPhase ],
     [ ModifierRewardPhase, this.startPhase ],
     [ PartyExpPhase, this.startPhase ],
     [ ExpPhase, this.startPhase ],
     [ EncounterPhase, this.startPhase ],
+    [ GameOverPhase, this.startPhase ],
+    [ UnlockPhase, this.startPhase ],
+    [ PostGameOverPhase, this.startPhase ],
   ];
 
   private endBySetMode = [

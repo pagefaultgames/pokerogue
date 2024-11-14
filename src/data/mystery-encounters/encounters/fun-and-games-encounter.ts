@@ -305,7 +305,7 @@ async function showWobbuffetHealthBar(scene: BattleScene) {
   scene.field.add(wobbuffet);
 
   const playerPokemon = scene.getPlayerPokemon() as Pokemon;
-  if (playerPokemon?.visible) {
+  if (playerPokemon?.isOnField()) {
     scene.field.moveBelow(wobbuffet, playerPokemon);
   }
   // Show health bar and trigger cry
