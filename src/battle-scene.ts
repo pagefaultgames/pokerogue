@@ -1049,6 +1049,23 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle?.randSeedInt(this, range, min);
   }
 
+  /**
+   * Shuffles an array based on the current battle's seed.
+   * @param {array} items a list of items
+   * @returns a new randomly shuffled array
+   */
+  randBattleSeedShuffle(items: any[]): any[] {
+    if (items.length <= 1) {
+      return items;
+    }
+    const newArray = items.slice(0);
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = this.currentBattle?.randSeedInt(this, i);
+      [ newArray[i], newArray[j] ] = [ newArray[j], newArray[i] ];
+    }
+    return newArray;
+  }
+
   reset(clearScene: boolean = false, clearData: boolean = false, reloadI18n: boolean = false): void {
     if (clearData) {
       this.gameData = new GameData(this);

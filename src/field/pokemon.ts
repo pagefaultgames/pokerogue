@@ -4045,6 +4045,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Shuffles an array using the current battle's seed, or the global seed if `this.scene.currentBattle` is falsy.
+   * @param {array} items an array of items
+   * @returns {array} a new shuffled array of items
+   */
+  randSeedShuffle(items: any[]): any[] {
+    return this.scene.currentBattle ? this.scene.randBattleSeedShuffle(items) : Utils.randSeedShuffle(items);
+  }
+
+  /**
    * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
    * @param clearEffects Indicates if effects should be cleared (true) or passed
    * to the next pokemon, such as during a baton pass (false)

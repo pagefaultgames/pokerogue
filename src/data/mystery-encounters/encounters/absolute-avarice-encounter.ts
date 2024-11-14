@@ -318,7 +318,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             if (returnedBerryCount > 0) {
               for (let i = 0; i < returnedBerryCount; i++) {
                 // Shuffle remaining berry types and pop
-                Phaser.Math.RND.shuffle(berryTypesAsArray);
+                pokemon.randSeedShuffle(berryTypesAsArray);
                 const randBerryType = berryTypesAsArray.pop();
 
                 const berryModType = generateModifierType(scene, modifierTypes.BERRY, [ randBerryType ]) as BerryModifierType;

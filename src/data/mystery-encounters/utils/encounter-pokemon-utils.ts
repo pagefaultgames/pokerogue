@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import i18next from "i18next";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor } from "#app/data/pokeball";
@@ -241,7 +241,7 @@ export function getRandomSpeciesByStarterTier(starterTiers: number | [number, nu
 
   if (tryFilterStarterTiers.length > 0) {
     const index = randSeedInt(tryFilterStarterTiers.length);
-    return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index][0].speciesId;
+    return randSeedShuffle(tryFilterStarterTiers)[index][0].speciesId;
   }
 
   return Species.BULBASAUR;
