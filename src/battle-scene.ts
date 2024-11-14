@@ -1233,16 +1233,16 @@ export default class BattleScene extends SceneBase {
       newDouble = !!double;
     }
 
+    // Disable double battles on Endless/Endless Spliced Wave 50x boss battles (Introduced 1.2.0)
+    if (this.gameMode.isEndlessBoss(newWaveIndex)) {
+      newDouble = false;
+    }
+
     if (Overrides.BATTLE_TYPE_OVERRIDE === "double") {
       newDouble = true;
     }
     /* Override battles into single only if not fighting with trainers */
     if (newBattleType !== BattleType.TRAINER && Overrides.BATTLE_TYPE_OVERRIDE === "single") {
-      newDouble = false;
-    }
-
-    // Disable double battles on Endless/Endless Spliced Wave 50x boss battles (Introduced 1.2.0)
-    if (this.gameMode.isEndlessBoss(newWaveIndex)) {
       newDouble = false;
     }
 
