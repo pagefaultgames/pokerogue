@@ -65,16 +65,15 @@ export default class TargetSelectUiHandler extends UiHandler {
   }
 
   /**
-   * Determines what value to assign the main cursor on previous history or the user's status
+   * Determines what value to assign the main cursor based on the previous turn's target or the user's status
    * @param cursorN the cursor associated with the user's field index
    * @param user the Pokemon using the move
    */
   resetCursor(cursorN: number, user: Pokemon): void {
     if (!Utils.isNullOrUndefined(cursorN)) {
       if ([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ].includes(cursorN) || user.battleSummonData.waveTurnCount === 1) {
-        this.cursor = cursorN = -1;
-      } else if (user.battleSummonData.waveTurnCount > 1) {
-        this.cursor = cursorN;
+        // Reset cursor on the first turn of a fight or if an ally was targeted last turn
+        cursorN = -1;
       }
     }
     this.setCursor(this.targets.includes(cursorN) ? cursorN : this.targets[0]);
