@@ -730,15 +730,16 @@ export class GameData {
    * Saves a setting to localStorage
    * @param setting string ideally of SettingKeys
    * @param valueIndex index of the setting's option
+   * @param fromSettings whether the function was called from the settings menu
    * @returns true
    */
-  public saveSetting(setting: string, valueIndex: integer): boolean {
+  public saveSetting(setting: string, valueIndex: integer, fromSettings?: boolean): boolean {
     let settings: object = {};
     if (localStorage.hasOwnProperty("settings")) {
       settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
     }
 
-    setSetting(this.scene, setting, valueIndex);
+    setSetting(this.scene, setting, valueIndex, fromSettings);
 
     settings[setting] = valueIndex;
     settings["gameVersion"] = this.scene.game.config.gameVersion;

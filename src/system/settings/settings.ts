@@ -10,6 +10,7 @@ import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 
 function getTranslation(key: string): string {
   if (!getIsInitialized()) {
@@ -345,18 +346,33 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL
   },
   {
-    key: SettingKeys.Touch_Controls,
-    label: i18next.t("settings:touchControls"),
-    options: AUTO_DISABLED,
-    default: 0,
-    type: SettingType.GENERAL
-  },
-  {
     key: SettingKeys.Vibration,
     label: i18next.t("settings:vibrations"),
     options: AUTO_DISABLED,
     default: 0,
     type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Touch_Controls,
+    label: i18next.t("settings:touchControls"),
+    options: AUTO_DISABLED,
+    default: 0,
+    type: SettingType.GENERAL,
+    isHidden: () => !hasTouchscreen()
+  },
+  {
+    key: SettingKeys.Move_Touch_Controls,
+    label: i18next.t("settings:moveTouchControls"),
+    options: [
+      {
+        value: "Configure",
+        label: i18next.t("settings:change")
+      }
+    ],
+    default: 0,
+    type: SettingType.GENERAL,
+    activatable: true,
+    isHidden: () => !hasTouchscreen()
   },
   {
     key: SettingKeys.Language,
@@ -644,20 +660,6 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
-    key: SettingKeys.Move_Touch_Controls,
-    label: i18next.t("settings:moveTouchControls"),
-    options: [
-      {
-        value: "Configure",
-        label: i18next.t("settings:change")
-      }
-    ],
-    default: 0,
-    type: SettingType.GENERAL,
-    activatable: true,
-    isHidden: () => !hasTouchscreen()
-  },
-  {
     key: SettingKeys.Shop_Cursor_Target,
     label: i18next.t("settings:shopCursorTarget"),
     options: SHOP_CURSOR_TARGET_OPTIONS,
@@ -696,9 +698,11 @@ export function resetSettings(scene: BattleScene) {
  * @param scene current BattleScene
  * @param setting string ideally from SettingKeys
  * @param value value to update setting with
+ * @param fromSettings whether the function was called from the settings menu, meaning it is possible
+ *   to access the handler and add extra interactions for the player
  * @returns true if successful, false if not
  */
-export function setSetting(scene: BattleScene, setting: string, value: integer): boolean {
+export function setSetting(scene: BattleScene, setting: string, value: integer, fromSettings?: boolean): boolean {
   const index: number = settingIndex(setting);
   if (index === -1) {
     return false;
@@ -832,10 +836,43 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
       }
       break;
     case SettingKeys.Touch_Controls:
-      scene.enableTouchControls = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
-      const touchControls = document.getElementById("touchControls");
-      if (touchControls) {
-        touchControls.classList.toggle("visible", scene.enableTouchControls);
+      const setTouchControlsVisibility = (scene: BattleScene) => {
+        const touchControls = document.getElementById("touchControls");
+        if (touchControls) {
+          touchControls.classList.toggle("visible", scene.enableTouchControls);
+        }
+      };
+
+      if (fromSettings && Setting[index].options[value].value === "Disabled") {
+        const optionsConfig: OptionSelectConfig = {
+          yOffset: 24,
+          delay: 1000,
+          options: [
+            {
+              label: i18next.t("settings:disableTouchControls"),
+              handler: () => {
+                scene.ui.revertMode();
+                scene.enableTouchControls = false;
+                setTouchControlsVisibility(scene);
+                return true;
+              }
+            },
+            {
+              label: i18next.t("settings:cancel"),
+              handler: () => {
+                scene.ui.revertMode();
+                // Put the option cursor back to "Auto" and save that
+                (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(-1, 0, true);
+                return true;
+              }
+            }
+          ]
+        };
+        // Player moved to the "Disabled" option, show a confirmation window, with a 1s delay before being able to confirm
+        scene.ui.setOverlayMode(Mode.OPTION_SELECT, optionsConfig);
+      } else {
+        scene.enableTouchControls = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
+        setTouchControlsVisibility(scene);
       }
       break;
     case SettingKeys.Vibration:
@@ -846,10 +883,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
       break;
     case SettingKeys.Language:
       if (value) {
-        if (scene.ui) {
+        if (fromSettings) {
           const cancelHandler = () => {
             scene.ui.revertMode();
-            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
+            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(-1, 0, true);
           };
           const changeLocaleHandler = (locale: string): boolean => {
             try {

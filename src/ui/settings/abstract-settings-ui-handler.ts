@@ -1,5 +1,4 @@
 import BattleScene from "#app/battle-scene";
-import { hasTouchscreen, isMobile } from "#app/touch-controls";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import UiHandler from "#app/ui/ui-handler";
@@ -326,18 +325,17 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   /**
    * Set the option cursor to the specified position.
    *
-   * @param settingIndex - The index of the setting.
+   * @param settingIndex - The index of the setting or -1 to change the current setting
    * @param cursor - The cursor position to set.
    * @param save - Whether to save the setting to local storage.
    * @returns `true` if the option cursor was set successfully.
    */
   setOptionCursor(settingIndex: number, cursor: number, save?: boolean): boolean {
-    const setting = this.settings[settingIndex];
-
-    if (setting.key === SettingKeys.Touch_Controls && cursor && hasTouchscreen() && isMobile()) {
-      this.getUi().playError();
-      return false;
+    if (settingIndex === -1) {
+      settingIndex = this.cursor + this.scrollCursor;
     }
+
+    const setting = this.settings[settingIndex];
 
     const lastCursor = this.optionCursors[settingIndex];
 
@@ -352,7 +350,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
-      this.scene.gameData.saveSetting(setting.key, cursor);
+      this.scene.gameData.saveSetting(setting.key, cursor, true);
       if (this.reloadSettings.includes(setting)) {
         this.reloadRequired = true;
       }
