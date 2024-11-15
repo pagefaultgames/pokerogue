@@ -115,12 +115,8 @@ export class GameOverPhase extends BattlePhase {
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
           }
         }
-        
-        this.getRunHistoryEntry().then(runHistoryEntry => {
-          this.scene.gameData.saveRunHistory(this.scene, runHistoryEntry, this.victory);
-        });
-        const fadeDuration = this.victory ? 10000 : 5000;
-        this.scene.gameData.saveRunHistory(this.scene, this.scene.gameData.getSessionSaveData(this.scene), this.isVictory);
+
+
         const fadeDuration = this.isVictory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
@@ -146,8 +142,11 @@ export class GameOverPhase extends BattlePhase {
                 this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
               }
             }
-            this.scene.pushPhase(new PostGameOverPhase(this.scene, endCardPhase));
-            this.end();
+            this.getRunHistoryEntry().then(runHistoryEntry => {
+              this.scene.gameData.saveRunHistory(this.scene, runHistoryEntry, this.isVictory);
+              this.scene.pushPhase(new PostGameOverPhase(this.scene, endCardPhase));
+              this.end();
+            });
           };
 
           if (this.isVictory && this.scene.gameMode.isClassic) {
