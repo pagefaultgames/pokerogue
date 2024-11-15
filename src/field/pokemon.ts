@@ -3603,7 +3603,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.status = null;
     if (lastStatus === StatusEffect.SLEEP) {
-      this.setFrameRate(12);
+      this.setFrameRate(10);
       if (this.getTag(BattlerTagType.NIGHTMARE)) {
         this.lapseTag(BattlerTagType.NIGHTMARE);
       }
