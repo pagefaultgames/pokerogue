@@ -1502,6 +1502,11 @@ export class ContactBurnProtectedTag extends DamageProtectedTag {
   }
 }
 
+/**
+ * `BattlerTag` class for effects that cause the affected Pokemon to survive lethal attacks at 1 HP.
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Endure_(move) | Endure} and
+ * Endure Tokens.
+ */
 export class EnduringTag extends BattlerTag {
   constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
     super(tagType, lapseType, 0, sourceMove);
