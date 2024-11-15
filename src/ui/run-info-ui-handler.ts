@@ -118,6 +118,7 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runResultContainer = this.scene.add.container(0, 24);
     const runResultWindow = addWindow(this.scene, 0, 0, this.statsBgWidth - 11, 65);
     runResultWindow.setOrigin(0, 0);
+    runResultWindow.setName("Run_Result_Window");
     this.runResultContainer.add(runResultWindow);
     if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
       this.parseRunResult();
@@ -254,7 +255,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Mystery Encounters contain sprites associated with MEs + the title of the specific ME.
    */
   private parseRunStatus() {
-    const runStatusText = addTextObject(this.scene, 6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, TextStyle.WINDOW, { fontSize : "65px", lineSpacing: 0.1 });
+    const runStatusText = addTextObject(this.scene, -0.5, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, TextStyle.WINDOW, { fontSize : "60px", lineSpacing: 0.1 });
 
     const enemyContainer = this.scene.add.container(0, 0);
     this.runResultContainer.add(enemyContainer);
@@ -271,7 +272,7 @@ export default class RunInfoUiHandler extends UiHandler {
         const pokeball = this.scene.add.sprite(0, 0, "pb");
         pokeball.setFrame(getPokeballAtlasKey(p.pokeball));
         pokeball.setScale(0.5);
-        pokeball.setPosition(52 + ((i % row_limit) * 8), (i <= 2) ? 18 : 25);
+        pokeball.setPosition(58 + ((i % row_limit) * 8), (i <= 2) ? 18 : 25);
         enemyContainer.add(pokeball);
       });
       const trainerObj = this.runInfo.trainer.toTrainer(this.scene);
@@ -286,7 +287,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const descContainer = this.scene.add.container(0, 0);
       const textBox = addTextObject(this.scene, 0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: { width: 200 }});
       descContainer.add(textBox);
-      descContainer.setPosition(52, 29);
+      descContainer.setPosition(55, 32);
       this.runResultContainer.add(descContainer);
     } else if (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER) {
       const encounterExclaim = this.scene.add.sprite(0, 0, "encounter_exclaim");
@@ -302,10 +303,13 @@ export default class RunInfoUiHandler extends UiHandler {
       descContainer.setPosition(47, 37);
       this.runResultContainer.add([ encounterExclaim, subSprite, descContainer ]);
     }
-    const currentBiomeText = addTextObject(this.scene, 6, 0, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "65px" });
-    currentBiomeText.setPosition(6, this.runResultContainer.getBounds().height - 15);
-    this.runResultContainer.add(runStatusText);
-    this.runResultContainer.add(currentBiomeText);
+    const currentBiomeText = addTextObject(this.scene, -0.5, 0, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "60px" });
+    const runResultWindow = this.runResultContainer.getByName("Run_Result_Window") as Phaser.GameObjects.Image;
+    const windowCenterX = (runResultWindow.getTopRight().x - runResultWindow.x) / 2;
+    currentBiomeText.setPosition(windowCenterX - currentBiomeText.displayWidth / 2, runResultWindow.getBottomCenter().y - 15);
+    runStatusText.setX(windowCenterX - 5 - currentBiomeText.displayWidth / 2);
+    this.runResultContainer.add([ runStatusText, currentBiomeText ]);
+    console.log(windowCenterX);
     this.runContainer.add(this.runResultContainer);
   }
 
@@ -393,8 +397,8 @@ export default class RunInfoUiHandler extends UiHandler {
         }
         enemyContainer.add(doubleContainer);
       } else {
-        const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.65;
-        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [ 12, 28 ] : [ 32, 24 ];
+        const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.55;
+        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [ 12, 28 ] : [ 30, 32 ];
         tObjSprite.setScale(scale, scale);
         tObjSprite.setPosition(position[0], position[1]);
         enemyContainer.add(tObjSprite);
