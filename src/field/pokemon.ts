@@ -2651,7 +2651,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new Utils.IntegerHolder(1);
-    if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
+    if (this.getTag(BattlerTagType.GLAIVE_RUSH)) {
       glaiveRushMultiplier.value = 2;
     }
 

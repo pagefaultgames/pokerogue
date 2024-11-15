@@ -5213,8 +5213,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 
     this.tagType = tagType;
     this.turnCountMin = turnCountMin;
-    this.turnCountMax = turnCountMax !== undefined ? turnCountMax : turnCountMin;
-    this.failOnOverlap = !!failOnOverlap;
+    this.turnCountMax = turnCountMax ?? turnCountMin;
+    this.failOnOverlap = failOnOverlap;
     this.cancelOnFail = cancelOnFail;
   }
 
@@ -5257,7 +5257,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.DROWSY:
       case BattlerTagType.DISABLED:
       case BattlerTagType.HEAL_BLOCK:
-      case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
+      case BattlerTagType.GLAIVE_RUSH:
         return -5;
       case BattlerTagType.SEEDED:
       case BattlerTagType.SALT_CURED:
@@ -5278,7 +5278,6 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.ENCORE:
         return -2;
       case BattlerTagType.MINIMIZED:
-      case BattlerTagType.ALWAYS_GET_HIT:
         return 0;
       case BattlerTagType.INGRAIN:
       case BattlerTagType.IGNORE_ACCURACY:
@@ -10475,11 +10474,7 @@ export function initMoves() {
     new AttackMove(Moves.ICE_SPINNER, Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
-      .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_GET_HIT, true, false, 0, 0, true)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECEIVE_DOUBLE_DAMAGE, true, false, 0, 0, true)
-      .condition((user, target, move) => {
-        return !(target.getTag(BattlerTagType.PROTECTED)?.tagType === "PROTECTED" || target.scene.arena.getTag(ArenaTagType.MAT_BLOCK)?.tagType === "MAT_BLOCK");
-      }),
+      .attr(AddBattlerTagAttr, BattlerTagType.GLAIVE_RUSH, true, false, 0, 0, true, true),
     new StatusMove(Moves.REVIVAL_BLESSING, Type.NORMAL, -1, 1, -1, 0, 9)
       .triageMove()
       .attr(RevivalBlessingAttr)

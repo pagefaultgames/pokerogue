@@ -552,7 +552,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    if (target.getTag(BattlerTagType.ALWAYS_GET_HIT)) {
+    if (target.getTag(BattlerTagType.GLAIVE_RUSH)) {
       return true;
     }
 

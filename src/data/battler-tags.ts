@@ -2489,6 +2489,12 @@ export class AutotomizedTag extends BattlerTag {
   }
 }
 
+export class GlaiveRushTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.GLAIVE_RUSH, BattlerTagLapseType.PRE_MOVE, 1, Moves.GLAIVE_RUSH);
+  }
+}
+
 /**
  * Tag implementing the {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll)#Effect | Substitute Doll} effect,
  * for use with the moves Substitute and Shed Tail. Pokemon with this tag deflect most forms of received attack damage
@@ -3033,9 +3039,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.ALWAYS_CRIT:
     case BattlerTagType.IGNORE_ACCURACY:
       return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
-    case BattlerTagType.ALWAYS_GET_HIT:
-    case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
-      return new BattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+    case BattlerTagType.GLAIVE_RUSH:
+      return new GlaiveRushTag();
     case BattlerTagType.BYPASS_SLEEP:
       return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
