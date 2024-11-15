@@ -96,7 +96,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
-  public moveset: (PokemonMove | null)[];
+  public moveset: (PokemonMove)[];
   public status: Status | null;
   public friendship: integer;
   public metLevel: integer;
@@ -138,7 +138,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
+  constructor(
+    scene: BattleScene,
+    x: number,
+    y: number,
+    species: PokemonSpecies,
+    level: integer,
+    abilityIndex?: integer,
+    formIndex?: integer,
+    gender?: Gender,
+    shiny?: boolean,
+    variant?: Variant,
+    ivs?: integer[],
+    nature?: Nature,
+    dataSource?: Pokemon | PokemonData
+  ) {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
@@ -1152,7 +1166,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract isBoss(): boolean;
 
-  getMoveset(ignoreOverride?: boolean): (PokemonMove | null)[] {
+  getMoveset(ignoreOverride?: boolean): (PokemonMove)[] {
     const ret = !ignoreOverride && this.summonData?.moveset
       ? this.summonData.moveset
       : this.moveset;
@@ -1905,7 +1919,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   setMove(moveIndex: integer, moveId: Moves): void {
-    const move = moveId ? new PokemonMove(moveId) : null;
+    if (moveId === Moves.NONE) {
+      return;
+    }
+    const move = new PokemonMove(moveId);
     this.moveset[moveIndex] = move;
     if (this.summonData?.moveset) {
       this.summonData.moveset[moveIndex] = move;
@@ -5211,7 +5228,7 @@ export class PokemonSummonData {
   public gender: Gender;
   public fusionGender: Gender;
   public stats: number[] = [ 0, 0, 0, 0, 0, 0 ];
-  public moveset: (PokemonMove | null)[];
+  public moveset: (PokemonMove)[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = [];
   public addedType: Type | null = null;
