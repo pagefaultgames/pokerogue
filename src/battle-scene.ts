@@ -1233,6 +1233,11 @@ export default class BattleScene extends SceneBase {
       newDouble = !!double;
     }
 
+    // Disable double battles on Endless/Endless Spliced Wave 50x boss battles (Introduced 1.2.0)
+    if (this.gameMode.isEndlessBoss(newWaveIndex)) {
+      newDouble = false;
+    }
+
     if (!isNullOrUndefined(Overrides.BATTLE_TYPE_OVERRIDE)) {
       let doubleOverrideForWave: "single" | "double" | null = null;
 
