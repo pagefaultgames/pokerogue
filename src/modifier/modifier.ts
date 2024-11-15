@@ -2818,7 +2818,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     battleScene.getPlayerParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
-        p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
+        p.evoCounter ? p.evoCounter += Math.min(Math.floor(this.moneyMultiplier), 3) : p.evoCounter = Math.min(Math.floor(this.moneyMultiplier), 3);
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p) as EvoTrackerModifier;
         battleScene.addModifier(modifier);
       }
