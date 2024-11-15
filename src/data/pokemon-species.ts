@@ -2784,23 +2784,3 @@ export function initSpecies() {
     new PokemonSpecies(Species.BLOODMOON_URSALUNA, 9, true, false, false, "Peat Pokémon", Type.GROUND, Type.NORMAL, 2.7, 333, Abilities.MINDS_EYE, Abilities.NONE, Abilities.NONE, 555, 113, 70, 120, 135, 65, 52, 75, 50, 275, GrowthRate.MEDIUM_FAST, 50, false), //Marked as Sub-Legend, for casing purposes
   );
 }
-
-// TODO: Remove
-{
-  //setTimeout(() => {
-  /*for (let tc of Object.keys(trainerConfigs)) {
-      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(trainerConfigs[tc].speciesFilter).map(s => {
-        while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
-				  s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
-        return s;
-      }))].map(s => s.name));
-    }
-
-    const speciesFilter = (species: PokemonSpecies) => !species.legendary && !species.pseudoLegendary && !species.mythical && species.baseTotal >= 540;
-    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(speciesFilter).map(s => {
-      while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
-        s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
-      return s;
-    }))].map(s => s.name));*/
-  //}, 1000);
-}

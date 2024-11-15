@@ -257,7 +257,7 @@ export default class GameManager {
   selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
+      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
       if (!move.isMultiTarget()) {
         handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
       }
