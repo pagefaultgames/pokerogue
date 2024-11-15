@@ -89,7 +89,7 @@ describe("Items - Leek", () => {
       Species.PIKACHU,
     ]);
 
-    const [ partyMember, ally ] = game.scene.getParty();
+    const [ partyMember, ally ] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -120,7 +120,7 @@ describe("Items - Leek", () => {
       species[Utils.randInt(species.length)]
     ]);
 
-    const [ partyMember, ally ] = game.scene.getParty();
+    const [ partyMember, ally ] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;

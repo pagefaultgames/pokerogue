@@ -43,7 +43,7 @@ describe("Moves - Fissure", () => {
 
     await game.startBattle();
 
-    partyPokemon = game.scene.getParty()[0];
+    partyPokemon = game.scene.getPlayerParty()[0];
     enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // remove berries

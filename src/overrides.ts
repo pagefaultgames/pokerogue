@@ -1,20 +1,20 @@
+import { type PokeballCounts } from "#app/battle-scene";
+import { Gender } from "#app/data/gender";
+import { Variant } from "#app/data/variant";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
 import { Moves } from "#enums/moves";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { type PokeballCounts } from "./battle-scene";
-import { Gender } from "./data/gender";
-import { Variant } from "./data/variant";
-import { type ModifierOverride } from "./modifier/modifier-type";
-import { Unlockables } from "./system/unlockables";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Overrides that are using when testing different in game situations
@@ -47,7 +47,18 @@ class DefaultOverrides {
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
-  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
+  /**
+   * If `null`, ignore this override.
+   *
+   * If `"single"`, set every non-trainer battle to be a single battle.
+   *
+   * If `"double"`, set every battle (including trainer battles) to be a double battle.
+   *
+   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers, and follow the `"single"` rule on odd wave numbers.
+   *
+   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
+   */
+  readonly BATTLE_TYPE_OVERRIDE: BattleStyle | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
@@ -230,3 +241,5 @@ export default {
   ...defaultOverrides,
   ...overrides
 } satisfies InstanceType<typeof DefaultOverrides>;
+
+export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";

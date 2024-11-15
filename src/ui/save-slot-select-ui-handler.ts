@@ -132,7 +132,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
                   }, () => {
                     ui.revertMode();
                     ui.showText("", 0);
-                  }, false, 0, 19, 2000);
+                  }, false, 0, 19, import.meta.env.DEV ? 300 : 2000);
                 });
               } else if (this.sessionSlots[cursor].hasData === false) {
                 saveAndCallback();

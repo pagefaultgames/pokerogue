@@ -1,7 +1,7 @@
 import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import BattleScene from "#app/battle-scene";
 import { Gender } from "#app/data/gender";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import * as Utils from "#app/utils";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
