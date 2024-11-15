@@ -2158,6 +2158,11 @@ export class CommandedTag extends BattlerTag {
       pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_REMOVE);
     }
   }
+
+  override loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this._tatsugiriFormKey = source._tatsugiriFormKey;
+  }
 }
 
 /**
