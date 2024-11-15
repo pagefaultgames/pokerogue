@@ -2589,7 +2589,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 
   /**
    * @param selfTarget - Whether this move targets the user
-   * @param ...effects - List of status effects to cure
+   * @param effects - status effect or list of status effects to cure
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
