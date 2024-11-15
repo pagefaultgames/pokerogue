@@ -439,7 +439,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }
       /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
-      if (enemyPokemon.species.speciesId === Species.ETERNATUS && this.scene.gameMode.isEndlessMajorBoss(this.scene.currentBattle.waveIndex)) {
+      if (enemyPokemon.species.speciesId === Species.ETERNATUS && (this.scene.gameMode.isBattleClassicFinalBoss(this.scene.currentBattle.waveIndex) || this.scene.gameMode.isEndlessMajorBoss(this.scene.currentBattle.waveIndex))) {
         const enemyMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier, false) as TurnHeldItemTransferModifier;
         if (enemyMBH) {
           this.scene.removeModifier(enemyMBH, true);
