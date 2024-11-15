@@ -3647,8 +3647,8 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   }
 
   /**
-   * Applies {@linkcode EnemyEndureChanceModifier}
-   * @param target {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
+   * Applies a chance of enduring a lethal hit of an attack
+   * @param target the {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
    * @returns `true` if {@linkcode Pokemon} endured
    */
   override apply(target: Pokemon): boolean {
@@ -3656,7 +3656,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
       return false;
     }
 
-    target.addTag(BattlerTagType.ENDURING, 1);
+    target.addTag(BattlerTagType.ENDURE_TOKEN, 1);
 
     target.battleData.endured = true;
 
