@@ -505,11 +505,11 @@ export abstract class PokemonSpeciesForm {
           scene.anims.create({
             key: this.getSpriteKey(female, formIndex, shiny, variant),
             frames: frameNames,
-            frameRate: 12,
+            frameRate: 10,
             repeat: -1
           });
         } else {
-          scene.anims.get(spriteKey).frameRate = 12;
+          scene.anims.get(spriteKey).frameRate = 10;
         }
         let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
         const useExpSprite = scene.experimentalSprites && scene.hasExpSprite(spriteKey);
