@@ -897,7 +897,7 @@ export class AttackMove extends Move {
 
     let attackScore = 0;
 
-    const effectiveness = target.getAttackTypeEffectiveness(this.type, user);
+    const effectiveness = target.getAttackTypeEffectiveness(this.type, user, undefined, undefined, this);
     attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
     if (attackScore) {
       if (this.category === MoveCategory.PHYSICAL) {
@@ -4971,48 +4971,6 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
   }
 }
 
-/**
- * This class forces Freeze-Dry to be super effective against Water Type.
- * It considers if target is Mono or Dual Type and calculates the new Multiplier accordingly.
- * @see {@linkcode apply}
- */
-export class FreezeDryAttr extends VariableMoveTypeMultiplierAttr {
-  /**
-   * If the target is Mono Type (Water only) then a 2x Multiplier is always forced.
-   * If target is Dual Type (containing Water) then only a 2x Multiplier is forced for the Water Type.
-   *
-   * Additionally Freeze-Dry's effectiveness against water is always forced during {@linkcode InverseBattleChallenge}.
-   * The multiplier is recalculated for the non-Water Type in case of Dual Type targets containing Water Type.
-   *
-   * @param user The {@linkcode Pokemon} applying the move
-   * @param target The {@linkcode Pokemon} targeted by the move
-   * @param move The move used by the user
-   * @param args `[0]` a {@linkcode Utils.NumberHolder | NumberHolder} containing a type effectiveness multiplier
-   * @returns `true` if super effectiveness on water type is forced; `false` otherwise
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const multiplier = args[0] as Utils.NumberHolder;
-    if (target.isOfType(Type.WATER) && multiplier.value !== 0) {
-      const multipleTypes = (target.getTypes().length > 1);
-
-      if (multipleTypes) {
-        const nonWaterType = target.getTypes().filter(type => type !== Type.WATER)[0];
-        const effectivenessAgainstTarget = new Utils.NumberHolder(getTypeDamageMultiplier(user.getMoveType(move), nonWaterType));
-
-        applyChallenges(user.scene.gameMode, ChallengeType.TYPE_EFFECTIVENESS, effectivenessAgainstTarget);
-
-        multiplier.value = effectivenessAgainstTarget.value * 2;
-        return true;
-      }
-
-      multiplier.value = 2;
-      return true;
-    }
-
-    return false;
-  }
-}
-
 export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
   /**
    * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
@@ -5037,6 +4995,41 @@ export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
     const multiplier = args[0] as Utils.NumberHolder;
     multiplier.value *= target.getAttackTypeEffectiveness(Type.FLYING, user);
     return true;
+  }
+}
+
+/**
+ * Attribute for moves which have a custom type chart interaction.
+ */
+export class VariableMoveTypeChartAttr extends MoveAttr {
+  /**
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   * @param args [0] {@linkcode NumberHolder} holding the type effectiveness
+   * @param args [1] A single defensive type of the target
+   *
+   * @returns true if application of the attribute succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+/**
+ * This class forces Freeze-Dry to be super effective against Water Type.
+ */
+export class FreezeDryAttr extends VariableMoveTypeChartAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as Utils.NumberHolder;
+    const defType = args[1] as Type;
+
+    if (defType === Type.WATER) {
+      multiplier.value = 2;
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
@@ -9448,8 +9441,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FREEZE_DRY, Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, 10, 0, 6)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
-      .attr(FreezeDryAttr)
-      .edgeCase(), // This currently just multiplies the move's power instead of changing its effectiveness. It also doesn't account for abilities that modify type effectiveness such as tera shell.
+      .attr(FreezeDryAttr),
     new AttackMove(Moves.DISARMING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, -1, 0, 6)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
