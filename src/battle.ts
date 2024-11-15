@@ -3,7 +3,7 @@ import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import { GameMode } from "./game-mode";
-import { MoneyMultiplierModifier, PokemonHeldItemModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -169,7 +169,7 @@ export default class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable && !(m instanceof TurnHeldItemTransferModifier), false).map(i => {
+    this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable, false).map(i => {
       const ret = i as PokemonHeldItemModifier;
       //@ts-ignore - this is awful to fix/change
       ret.pokemonId = null;
@@ -499,7 +499,7 @@ export class FixedBattleConfig {
  * @param seedOffset the seed offset to use for the random generation of the trainer
  * @returns the generated trainer
  */
-function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], randomGender: boolean = false, seedOffset: number = 0): GetTrainerFunc {
+function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], randomGender: boolean = false, seedOffset: number  = 0): GetTrainerFunc {
   return (scene: BattleScene) => {
     const rand = Utils.randSeedInt(trainerPool.length);
     const trainerTypes: TrainerType[] = [];
@@ -531,7 +531,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], rand
 }
 
 export interface FixedBattleConfigs {
-  [key: number]: FixedBattleConfig
+    [key: number]: FixedBattleConfig
 }
 /**
  * Youngster/Lass on 5
