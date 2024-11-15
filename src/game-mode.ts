@@ -243,7 +243,7 @@ export class GameMode implements GameModeConfig {
      * @returns true if waveIndex is a multiple of 50 in Endless
      */
   isEndlessBoss(waveIndex: integer): boolean {
-    return !!(waveIndex % 50) &&
+    return waveIndex % 50 === 0 &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
