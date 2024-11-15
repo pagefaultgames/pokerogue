@@ -103,7 +103,7 @@ export class SelectModifierPhase extends BattlePhase {
                   const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
                       && m.isTransferable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
                   const itemModifier = itemModifiers[itemIndex];
-                  this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
+                  this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity, undefined, undefined, false);
                 } else {
                   this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), this.typeOptions, modifierSelectCallback, this.getRerollCost(this.scene.lockModifierTiers));
                 }
