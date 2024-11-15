@@ -1069,7 +1069,7 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     if (this.moveCursor < 4 && this.pokemon && this.moveCursor < this.pokemon.moveset.length) {
-      return this.pokemon.moveset[this.moveCursor]!.getMove(); // TODO: is this bang correct?
+      return this.pokemon.moveset[this.moveCursor].getMove();
     } else if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.moveCursor === 4) {
       return this.newMove;
     }

@@ -108,7 +108,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.ORICORIO);
       expect(enemyField[0].summonData.statStages).toEqual([ 1, 1, 1, 1, 0, 0, 0 ]);
-      const moveset = enemyField[0].moveset.map(m => m?.moveId);
+      const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
@@ -204,7 +204,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const oricorio = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(oricorio.species.speciesId).toBe(Species.ORICORIO);
-      const moveset = oricorio.moveset.map(m => m?.moveId);
+      const moveset = oricorio.moveset.map(m => m.moveId);
       expect(moveset?.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
       expect(moveset?.some(m => m === Moves.DRAGON_DANCE)).toBeTruthy();
     });
