@@ -9931,7 +9931,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
       .ignoresSubstitute()
-      .attr(RepeatMoveAttr),
+      .attr(RepeatMoveAttr)
+      .edgeCase(), // incorrect interactions with Gigaton Hammer, Blood Moon, Torment, and the Pledges
     new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()
