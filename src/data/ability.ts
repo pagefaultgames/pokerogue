@@ -516,7 +516,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const modifierValue = args.length > 0
       ? (args[0] as Utils.NumberHolder).value
-      : pokemon.getAttackTypeEffectiveness(attacker.getMoveType(move), attacker);
+      : pokemon.getAttackTypeEffectiveness(attacker.getMoveType(move), attacker, undefined, undefined, move);
 
     if (move instanceof AttackMove && modifierValue < 2) {
       cancelled.value = true; // Suppresses "No Effect" message
@@ -3180,7 +3180,7 @@ function getAnticipationCondition(): AbAttrCondition {
           continue;
         }
         // the move's base type (not accounting for variable type changes) is super effective
-        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true) >= 2) {
+        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true, undefined, move.getMove()) >= 2) {
           return true;
         }
         // move is a OHKO

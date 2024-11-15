@@ -3631,7 +3631,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
     super(type, stackCount || 10);
 
     //Hardcode temporarily
-    this.chance = .02;
+    this.chance = 2;
   }
 
   match(modifier: Modifier) {
@@ -3639,11 +3639,11 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   }
 
   clone() {
-    return new EnemyEndureChanceModifier(this.type, this.chance * 100, this.stackCount);
+    return new EnemyEndureChanceModifier(this.type, this.chance, this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.chance * 100 ];
+    return [ this.chance ];
   }
 
   /**
@@ -3652,7 +3652,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
    * @returns `true` if {@linkcode Pokemon} endured
    */
   override apply(target: Pokemon): boolean {
-    if (target.battleData.endured || Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount())) {
+    if (target.battleData.endured || target.randSeedInt(100) >= (this.chance * this.getStackCount())) {
       return false;
     }
 
