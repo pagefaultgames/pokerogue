@@ -105,7 +105,7 @@ export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
-const OPP_IVS_OVERRIDE_VALIDATED: integer[] = (
+const OPP_IVS_OVERRIDE_VALIDATED : integer[] = (
   Array.isArray(Overrides.OPP_IVS_OVERRIDE) ?
     Overrides.OPP_IVS_OVERRIDE :
     new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
@@ -117,18 +117,18 @@ const expSpriteKeys: string[] = [];
 
 export let starterColors: StarterColors;
 interface StarterColors {
-  [key: string]: [string, string]
+    [key: string]: [string, string]
 }
 
 export interface PokeballCounts {
-  [pb: string]: integer;
+    [pb: string]: integer;
 }
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
 export interface InfoToggle {
-  toggleInfo(force?: boolean): void;
-  isActive(): boolean;
+    toggleInfo(force?: boolean): void;
+    isActive(): boolean;
 }
 
 export default class BattleScene extends SceneBase {
@@ -342,7 +342,7 @@ export default class BattleScene extends SceneBase {
     if (variant) {
       atlasPath = atlasPath.replace("variant/", "");
     }
-    this.load.atlas(key, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`);
+    this.load.atlas(key, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,  `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`);
   }
 
   async preload() {
@@ -1233,12 +1233,39 @@ export default class BattleScene extends SceneBase {
       newDouble = !!double;
     }
 
-    if (Overrides.BATTLE_TYPE_OVERRIDE === "double") {
-      newDouble = true;
-    }
-    /* Override battles into single only if not fighting with trainers */
-    if (newBattleType !== BattleType.TRAINER && Overrides.BATTLE_TYPE_OVERRIDE === "single") {
+    // Disable double battles on Endless/Endless Spliced Wave 50x boss battles (Introduced 1.2.0)
+    if (this.gameMode.isEndlessBoss(newWaveIndex)) {
       newDouble = false;
+    }
+
+    if (!isNullOrUndefined(Overrides.BATTLE_TYPE_OVERRIDE)) {
+      let doubleOverrideForWave: "single" | "double" | null = null;
+
+      switch (Overrides.BATTLE_TYPE_OVERRIDE) {
+        case "double":
+          doubleOverrideForWave = "double";
+          break;
+        case "single":
+          doubleOverrideForWave = "single";
+          break;
+        case "even-doubles":
+          doubleOverrideForWave = (newWaveIndex % 2) ? "single" : "double";
+          break;
+        case "odd-doubles":
+          doubleOverrideForWave = (newWaveIndex % 2) ? "double" : "single";
+          break;
+      }
+
+      if (doubleOverrideForWave === "double") {
+        newDouble = true;
+      }
+      /**
+       * Override battles into single only if not fighting with trainers.
+       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 | GitHub Issue #1948}
+       */
+      if (newBattleType !== BattleType.TRAINER && doubleOverrideForWave === "single") {
+        newDouble = false;
+      }
     }
 
     const lastBattle = this.currentBattle;
@@ -1397,10 +1424,19 @@ export default class BattleScene extends SceneBase {
       case Species.PALDEA_TAUROS:
         return Utils.randSeedInt(species.forms.length);
       case Species.PIKACHU:
+        if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
+          return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
+        }
         return Utils.randSeedInt(8);
       case Species.EEVEE:
+        if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
+          return 0; // No Partner Eevee for Wave 12 Preschoolers
+        }
         return Utils.randSeedInt(2);
       case Species.GRENINJA:
+        if (this.currentBattle?.battleType === BattleType.TRAINER) {
+          return 0; // Don't give trainers Battle Bond Greninja
+        }
         return Utils.randSeedInt(2);
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
@@ -1420,7 +1456,7 @@ export default class BattleScene extends SceneBase {
         }
         return 0;
       case Species.GIMMIGHOUL:
-        // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
+      // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
         if (this.gameMode.hasMysteryEncounters) {
           return 1; // Wandering form
         } else {
@@ -1649,7 +1685,7 @@ export default class BattleScene extends SceneBase {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
     this.fieldUI.moveAbove(this.biomeWaveText, this.luckText);
-    this.biomeWaveText.setText(biomeString + " - " + this.currentBattle.waveIndex.toString());
+    this.biomeWaveText.setText( biomeString + " - " + this.currentBattle.waveIndex.toString());
     this.biomeWaveText.setColor(!isBoss ? "#ffffff" : "#f89890");
     this.biomeWaveText.setShadowColor(!isBoss ? "#636363" : "#984038");
     this.biomeWaveText.setVisible(true);
@@ -1955,8 +1991,8 @@ export default class BattleScene extends SceneBase {
         case "heal":
         case "evolution":
         case "evolution_fanfare":
-          // These sounds are loaded in as BGM, but played as sound effects
-          // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
+        // These sounds are loaded in as BGM, but played as sound effects
+        // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
           config["volume"] *= (this.masterVolume * this.bgmVolume);
           break;
         case "battle_anims":
@@ -1968,7 +2004,7 @@ export default class BattleScene extends SceneBase {
           }
           break;
         case "ui":
-          //As of, right now this applies to the "select", "menu_open", "error" sound effects
+        //As of, right now this applies to the "select", "menu_open", "error" sound effects
           config["volume"] *= (this.masterVolume * this.uiVolume);
           break;
         case "se":
@@ -2584,68 +2620,61 @@ export default class BattleScene extends SceneBase {
     return new Promise(resolve => {
       const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
       const cancelled = new Utils.BooleanHolder(false);
-      if (source && source.isPlayer() !== target.isPlayer()) {
-        //Check for abilities like Sticky Hold that prevent item transfer between player and opponent
-        applyAbAttrs(BlockItemTheftAbAttr, source, cancelled).then(() => {
-          // Check to prevent player-to-opponent/opponent-to-player MBH transfer
-          if (!cancelled.value) {
-            cancelled.value = itemModifier instanceof TurnHeldItemTransferModifier;
-          }
-          if (cancelled.value) {
-            return resolve(false);
-          }
-        });
-      }
-      const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
-      newItemModifier.pokemonId = target.id;
-      const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
-      let removeOld = true;
-      if (matchingModifier) {
-        const maxStackCount = matchingModifier.getMaxStackCount(target.scene);
-        if (matchingModifier.stackCount >= maxStackCount) {
+      Utils.executeIf(!!source && source.isPlayer() !== target.isPlayer(), () => applyAbAttrs(BlockItemTheftAbAttr, source! /* checked in condition*/, cancelled)).then(() => {
+        if (cancelled.value) {
           return resolve(false);
         }
-        const countTaken = Math.min(transferQuantity, itemModifier.stackCount, maxStackCount - matchingModifier.stackCount);
-        itemModifier.stackCount -= countTaken;
-        newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
-        removeOld = !itemModifier.stackCount;
-      } else {
-        const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
-        itemModifier.stackCount -= countTaken;
-        newItemModifier.stackCount = countTaken;
-      }
-      removeOld = !itemModifier.stackCount;
-      if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
-        const addModifier = () => {
-          if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
-            if (target.isPlayer()) {
-              this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
-                if (source && itemLost) {
-                  applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-                }
-                resolve(true);
-              });
-            } else {
-              this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
-                if (source && itemLost) {
-                  applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-                }
-                resolve(true);
-              });
-            }
-          } else {
-            resolve(false);
+        const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+        newItemModifier.pokemonId = target.id;
+        const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
+                    && (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
+        let removeOld = true;
+        if (matchingModifier) {
+          const maxStackCount = matchingModifier.getMaxStackCount(target.scene);
+          if (matchingModifier.stackCount >= maxStackCount) {
+            return resolve(false);
           }
-        };
-        if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-          this.updateModifiers(source.isPlayer(), instant).then(() => addModifier());
+          const countTaken = Math.min(transferQuantity, itemModifier.stackCount, maxStackCount - matchingModifier.stackCount);
+          itemModifier.stackCount -= countTaken;
+          newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
+          removeOld = !itemModifier.stackCount;
         } else {
-          addModifier();
+          const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
+          itemModifier.stackCount -= countTaken;
+          newItemModifier.stackCount = countTaken;
         }
-        return;
-      }
-      resolve(false);
+        removeOld = !itemModifier.stackCount;
+        if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
+          const addModifier = () => {
+            if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
+              if (target.isPlayer()) {
+                this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
+                  if (source && itemLost) {
+                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+                  }
+                  resolve(true);
+                });
+              } else {
+                this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
+                  if (source && itemLost) {
+                    applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+                  }
+                  resolve(true);
+                });
+              }
+            } else {
+              resolve(false);
+            }
+          };
+          if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
+            this.updateModifiers(source.isPlayer(), instant).then(() => addModifier());
+          } else {
+            addModifier();
+          }
+          return;
+        }
+        resolve(false);
+      });
     });
   }
 

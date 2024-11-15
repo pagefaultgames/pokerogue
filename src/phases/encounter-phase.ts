@@ -12,7 +12,7 @@ import { getRandomWeatherType } from "#app/data/weather";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import Pokemon, { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BoostBugSpawnModifier, IvScannerModifier } from "#app/modifier/modifier";
+import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
@@ -437,6 +437,14 @@ export class EncounterPhase extends BattlePhase {
     enemyField.forEach((enemyPokemon, e) => {
       if (enemyPokemon.isShiny()) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
+      }
+      if (enemyPokemon.species.speciesId === Species.ETERNATUS && this.scene.gameMode.isEndlessMajorBoss(this.scene.currentBattle.waveIndex)) {
+        const enemyMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier, false) as TurnHeldItemTransferModifier;
+        if (enemyMBH) {
+          this.scene.removeModifier(enemyMBH, true);
+          enemyMBH.setTransferrableFalse();
+          this.scene.addEnemyModifier(enemyMBH);
+        }
       }
     });
 
