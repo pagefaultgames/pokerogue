@@ -116,7 +116,6 @@ export class GameOverPhase extends BattlePhase {
           }
         }
 
-
         const fadeDuration = this.isVictory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         const activeBattlers = this.scene.getField().filter(p => p?.isActive(true));
