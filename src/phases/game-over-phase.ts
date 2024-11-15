@@ -233,7 +233,7 @@ export class GameOverPhase extends BattlePhase {
       seed: this.scene.seed,
       playTime: this.scene.sessionPlayTime,
       gameMode: this.scene.gameMode.modeId,
-      party: this.scene.getParty().map(p => new PokemonData(p)),
+      party: this.scene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: this.scene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: preWaveSessionData ? preWaveSessionData.modifiers : this.scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
       enemyModifiers: preWaveSessionData ? preWaveSessionData.enemyModifiers : this.scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
