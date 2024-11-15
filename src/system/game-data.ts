@@ -1792,18 +1792,15 @@ export class GameData {
   }
 
   /**
-   * @param {PokemonSpecies} species
-   * @returns {boolean} whether root species has been unlocked for given {@linkcode PokemonSpecies}
+   * Checks whether the root species of a given {@PokemonSpecies} has been unlocked in the dex
    */
   isRootSpeciesUnlocked(species: PokemonSpecies): boolean {
     return !!this.dexData[species.getRootSpeciesId()]?.caughtAttr;
   }
 
   /**
-   * Unlocks nature for a given {@linkcode PokemonSpecies} and its prevolutions.
+   * Unlocks the given {@linkcode Nature} for a {@linkcode PokemonSpecies} and its prevolutions.
    * Will fail silently if root species has not been unlocked
-   * @param {PokemonSpecies} species
-   * @param {Nature} nature
    */
   unlockSpeciesNature(species: PokemonSpecies, nature: Nature): void {
     if (!this.isRootSpeciesUnlocked(species)) {
