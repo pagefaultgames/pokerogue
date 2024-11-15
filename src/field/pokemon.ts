@@ -2955,6 +2955,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURING);
       } else if (this.hp > 1 && this.getTag(BattlerTagType.STURDY)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.STURDY);
+      } else if (this.hp >= 1 && this.getTag(BattlerTagType.ENDURE_TOKEN)) {
+        surviveDamage.value = this.lapseTag(BattlerTagType.ENDURE_TOKEN);
       }
       if (!surviveDamage.value) {
         this.scene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);

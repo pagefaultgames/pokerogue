@@ -3656,7 +3656,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
       return false;
     }
 
-    target.addTag(BattlerTagType.ENDURING, 1);
+    target.addTag(BattlerTagType.ENDURE_TOKEN, 1);
 
     target.battleData.endured = true;
 
