@@ -51,7 +51,7 @@ export const speciesEggMoves = {
   [Species.LICKITUNG]: [ Moves.CRUSH_GRIP, Moves.FIRE_LASH, Moves.SLACK_OFF, Moves.MAGICAL_TORQUE ],
   [Species.KOFFING]: [ Moves.SCALD, Moves.RECOVER, Moves.BODY_PRESS, Moves.MALIGNANT_CHAIN ],
   [Species.RHYHORN]: [ Moves.SHORE_UP, Moves.ICE_HAMMER, Moves.ACCELEROCK, Moves.HEAD_SMASH ],
-  [Species.TANGELA]: [ Moves.NATURE'S_MADNESS, Moves.SNAP_TRAP, Moves.PARTING_SHOT, Moves.SAPPY_SEED ],
+  [Species.TANGELA]: [ Moves.NATURES_MADNESS, Moves.SNAP_TRAP, Moves.PARTING_SHOT, Moves.SAPPY_SEED ],
   [Species.KANGASKHAN]: [ Moves.POWER_UP_PUNCH, Moves.TRAILBLAZE, Moves.FACADE, Moves.SEISMIC_TOSS ],
   [Species.HORSEA]: [ Moves.SNIPE_SHOT, Moves.FROST_BREATH, Moves.HURRICANE, Moves.SPACIAL_REND ],
   [Species.GOLDEEN]: [ Moves.GLACIAL_LANCE, Moves.SUPERCELL_SLAM, Moves.DRAGON_DANCE, Moves.FISHIOUS_REND ],
