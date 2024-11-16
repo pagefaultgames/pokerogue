@@ -5979,7 +5979,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return false;
       }
 
-      if (switchOutTarget.hp > 0) {
+      if (switchOutTarget.hp && SwitchType.FORCE_SWITCH) {
+        switchOutTarget.leaveField(this.switchType === SwitchType.FORCE_SWITCH);
+        const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getPlayerParty().length);
+        user.scene.unshiftPhase(
+          new SwitchSummonPhase(
+            user.scene,
+            this.switchType,
+            switchOutTarget.getFieldIndex(),
+            slotIndex,
+            false,
+            true
+          )
+        );
+      }
+      if (switchOutTarget.hp > 0 && !SwitchType.FORCE_SWITCH) {
         switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         user.scene.prependToPhase(new SwitchPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
         return true;
@@ -5990,8 +6004,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
-
-      if (switchOutTarget.hp > 0) {
+      if (switchOutTarget.hp && SwitchType.FORCE_SWITCH) {
+        switchOutTarget.leaveField(this.switchType === SwitchType.FORCE_SWITCH);
+        const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getEnemyParty().length);
+        user.scene.unshiftPhase(
+          new SwitchSummonPhase(
+            user.scene,
+            this.switchType,
+            switchOutTarget.getFieldIndex(),
+            slotIndex,
+            false,
+            false
+          )
+        );
+      }
+      if (switchOutTarget.hp > 0 && !SwitchType.FORCE_SWITCH) {
         // for opponent switching out
         switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         user.scene.prependToPhase(new SwitchSummonPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(),
@@ -7777,11 +7804,10 @@ export function initMoves() {
       .windMove(),
     new AttackMove(Moves.WING_ATTACK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, -1, 0, 1),
     new StatusMove(Moves.WHIRLWIND, Type.NORMAL, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr)
+      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
       .ignoresSubstitute()
       .hidesTarget()
-      .windMove()
-      .partial(), // Should force random switches
+      .windMove(),
     new ChargingAttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:flewUpHigh", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
@@ -7857,10 +7883,9 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.ROAR, Type.NORMAL, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr)
+      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
       .soundBased()
-      .hidesTarget()
-      .partial(), // Should force random switching
+      .hidesTarget(),
     new StatusMove(Moves.SING, Type.NORMAL, 55, 15, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased(),
@@ -9222,8 +9247,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 2, true),
     new AttackMove(Moves.CIRCLE_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr)
-      .partial(), // Should force random switches
+      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
+      .hidesTarget(),
     new AttackMove(Moves.INCINERATE, Type.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(RemoveHeldItemAttr, true),
@@ -9291,9 +9316,8 @@ export function initMoves() {
     new AttackMove(Moves.FROST_BREATH, Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, 100, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.DRAGON_TAIL, Type.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr)
-      .hidesTarget()
-      .partial(), // Should force random switches
+      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
+      .hidesTarget(),
     new SelfStatusMove(Moves.WORK_UP, Type.NORMAL, -1, 30, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, true),
     new AttackMove(Moves.ELECTROWEB, Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 5)
