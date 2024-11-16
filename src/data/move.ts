@@ -4315,7 +4315,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
 /**
  * Attribute that changes stat stages before the damage is calculated
  */
-export class StatChangesBeforeDmgCalcAttr extends MoveAttr {
+export class StatChangeBeforeDmgCalcAttr extends MoveAttr {
   /**
    * Applies Stat Changes before damage is calculated
    *
@@ -4336,7 +4336,7 @@ export class StatChangesBeforeDmgCalcAttr extends MoveAttr {
  * apply to damage calculation (e.g. {@linkcode Moves.SPECTRAL_THIEF})
  * {@link https://bulbapedia.bulbagarden.net/wiki/Spectral_Thief_(move) | Spectral Thief}
  */
-export class SpectralThiefAttr extends StatChangesBeforeDmgCalcAttr {
+export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
   /**
    * steals max amount of positive stats of the target while not exceeding the limit of max 6 stat stages
    *
@@ -4364,7 +4364,8 @@ export class SpectralThiefAttr extends StatChangesBeforeDmgCalcAttr {
 
     target.updateInfo();
     user.updateInfo();
-    target.scene.queueMessage(i18next.t("moveTriggers:stolePositiveStatChanges", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+    //TODO remove line comment if "stolePositiveStatChanges" text is implemented
+    //target.scene.queueMessage(i18next.t("moveTriggers:stolePositiveStatChanges", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
