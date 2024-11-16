@@ -1072,6 +1072,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.calculateStats();
   }
 
+  setCustomNature(nature: Nature): void {
+    this.customPokemonData.nature = nature;
+    this.calculateStats();
+  }
+
   generateNature(naturePool?: Nature[]): void {
     if (naturePool === undefined) {
       naturePool = Utils.getEnumValues(Nature);
