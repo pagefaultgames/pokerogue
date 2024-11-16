@@ -2837,7 +2837,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       /**
-       * Steals positive stat stages from {@linkcode this} and gives it to {@linkcode source}
+       * Applies stat changes from {@linkcode move} and gives it to {@linkcode source}
        * before damage calculation
        */
       applyMoveAttrs(StatChangeBeforeDmgCalcAttr, source, this, move);
