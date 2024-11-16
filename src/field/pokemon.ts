@@ -3092,10 +3092,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   lapseTag(tagType: BattlerTagType): boolean {
-    const tags = this.summonData?.tags;
-    if (isNullOrUndefined(tags)) {
+    if (!this.summonData) {
       return false;
     }
+    const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (tag && !(tag.lapse(this, BattlerTagLapseType.CUSTOM))) {
       tag.onRemove(this);
@@ -3105,6 +3105,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   lapseTags(lapseType: BattlerTagLapseType): void {
+    if (!this.summonData) {
+      return;
+    }
     const tags = this.summonData.tags;
     tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseTypes.some(lType => lType === lapseType)) && !(t.lapse(this, lapseType)))).forEach(t => {
       t.onRemove(this);
@@ -3113,6 +3116,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   removeTag(tagType: BattlerTagType): boolean {
+    if (!this.summonData) {
+      return false;
+    }
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (tag) {
