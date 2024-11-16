@@ -51,7 +51,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.move.select(Moves.TACKLE);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
       const firstStrikeDamage = enemyStartingHp - enemyPokemon.hp;
       enemyStartingHp = enemyPokemon.hp;
 
@@ -129,7 +129,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.move.select(Moves.SELF_DESTRUCT);
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      await game.phaseInterceptor.to("DamageAnimPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(1);
     }
@@ -147,7 +147,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.ROLLOUT);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      await game.phaseInterceptor.to("DamageAnimPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(1);
     }
@@ -181,7 +181,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.COUNTER);
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       const playerDamage = leadPokemon.getMaxHp() - leadPokemon.hp;
 
@@ -221,7 +221,7 @@ describe("Abilities - Parental Bond", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.move.select(Moves.EARTHQUAKE);
-      await game.phaseInterceptor.to("DamagePhase", false);
+      await game.phaseInterceptor.to("DamageAnimPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
     }
@@ -238,7 +238,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.move.select(Moves.MIND_BLOWN);
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      await game.phaseInterceptor.to("DamageAnimPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
@@ -285,7 +285,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.move.select(Moves.TACKLE);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(3);
     }
@@ -307,7 +307,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.SEISMIC_TOSS);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(3);
 
@@ -329,7 +329,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.HYPER_BEAM);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
@@ -353,7 +353,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.ANCHOR_SHOT);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
@@ -380,7 +380,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.SMACK_DOWN);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
@@ -424,7 +424,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.WAKE_UP_SLAP);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
