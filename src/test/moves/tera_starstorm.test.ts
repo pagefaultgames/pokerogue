@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -70,8 +70,8 @@ describe("Moves - Tera Starstorm", () => {
   it("applies the effects when Terapagos in Stellar Form is fused with another Pokemon", async () => {
     await game.classicMode.startBattle([ Species.TERAPAGOS, Species.CHARMANDER, Species.MAGIKARP ]);
 
-    const fusionedMon = game.scene.getParty()[0];
-    const magikarp = game.scene.getParty()[2];
+    const fusionedMon = game.scene.getPlayerParty()[0];
+    const magikarp = game.scene.getPlayerParty()[2];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     fusionedMon.fusionSpecies = magikarp.species;

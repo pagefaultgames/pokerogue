@@ -1,9 +1,10 @@
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -41,8 +42,8 @@ describe("Abilities - ZERO TO HERO", () => {
 
     await game.startBattle([ Species.FEEBAS, Species.PALAFIN, Species.PALAFIN ]);
 
-    const palafin1 = game.scene.getParty()[1];
-    const palafin2 = game.scene.getParty()[2];
+    const palafin1 = game.scene.getPlayerParty()[1];
+    const palafin2 = game.scene.getPlayerParty()[2];
     expect(palafin1.formIndex).toBe(heroForm);
     expect(palafin2.formIndex).toBe(heroForm);
     palafin2.hp = 0;

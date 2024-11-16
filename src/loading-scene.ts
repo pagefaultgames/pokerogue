@@ -232,7 +232,7 @@ export class LoadingScene extends SceneBase {
     // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
-      if (Utils.verifyLang(lang)) {
+      if (Utils.hasAllLocalizedSprites(lang)) {
         this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {
@@ -244,7 +244,7 @@ export class LoadingScene extends SceneBase {
       this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
-    const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ];
+    const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
       this.loadImage("halloween2024-event-" + lang, "events");
     } else {

@@ -1,11 +1,11 @@
-import { Stat } from "#enums/stat";
-import { StatusEffect } from "#app/data/status-effect";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -274,7 +274,7 @@ describe("Abilities - Parental Bond", () => {
   );
 
   it(
-    "Moves boosted by this ability and Multi-Lens should strike 4 times",
+    "Moves boosted by this ability and Multi-Lens should strike 3 times",
     async () => {
       game.override.moveset([ Moves.TACKLE ]);
       game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
@@ -287,36 +287,12 @@ describe("Abilities - Parental Bond", () => {
 
       await game.phaseInterceptor.to("DamagePhase");
 
-      expect(leadPokemon.turnData.hitCount).toBe(4);
+      expect(leadPokemon.turnData.hitCount).toBe(3);
     }
   );
 
   it(
-    "Super Fang boosted by this ability and Multi-Lens should strike twice",
-    async () => {
-      game.override.moveset([ Moves.SUPER_FANG ]);
-      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
-
-      await game.classicMode.startBattle([ Species.MAGIKARP ]);
-
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
-
-      game.move.select(Moves.SUPER_FANG);
-      await game.move.forceHit();
-
-      await game.phaseInterceptor.to("DamagePhase");
-
-      expect(leadPokemon.turnData.hitCount).toBe(2);
-
-      await game.phaseInterceptor.to("MoveEndPhase", false);
-
-      expect(enemyPokemon.hp).toBe(Math.ceil(enemyPokemon.getMaxHp() * 0.25));
-    }
-  );
-
-  it(
-    "Seismic Toss boosted by this ability and Multi-Lens should strike twice",
+    "Seismic Toss boosted by this ability and Multi-Lens should strike 3 times",
     async () => {
       game.override.moveset([ Moves.SEISMIC_TOSS ]);
       game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
@@ -333,11 +309,11 @@ describe("Abilities - Parental Bond", () => {
 
       await game.phaseInterceptor.to("DamagePhase");
 
-      expect(leadPokemon.turnData.hitCount).toBe(2);
+      expect(leadPokemon.turnData.hitCount).toBe(3);
 
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
-      expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
+      expect(enemyPokemon.hp).toBe(enemyStartingHp - 300);
     }
   );
 
@@ -492,32 +468,6 @@ describe("Abilities - Parental Bond", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
-    }
-  );
-
-  it(
-    "should not apply to multi-target moves with Multi-Lens",
-    async () => {
-      game.override.battleType("double");
-      game.override.moveset([ Moves.EARTHQUAKE, Moves.SPLASH ]);
-      game.override.passiveAbility(Abilities.LEVITATE);
-      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
-
-      await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
-
-      const enemyPokemon = game.scene.getEnemyField();
-
-      const enemyStartingHp = enemyPokemon.map(p => p.hp);
-
-      game.move.select(Moves.EARTHQUAKE);
-      game.move.select(Moves.SPLASH, 1);
-
-      await game.phaseInterceptor.to("DamagePhase");
-      const enemyFirstHitDamage = enemyStartingHp.map((hp, i) => hp - enemyPokemon[i].hp);
-
-      await game.phaseInterceptor.to("BerryPhase", false);
-
-      enemyPokemon.forEach((p, i) => expect(enemyStartingHp[i] - p.hp).toBe(2 * enemyFirstHitDamage[i]));
     }
   );
 });
