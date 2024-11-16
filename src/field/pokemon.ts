@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "#app/battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, VariableMoveTypeChartAttr, SpectralThiefAttr } from "#app/data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, VariableMoveTypeChartAttr, StatChangesBeforeDmgCalcAttr } from "#app/data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
@@ -2835,7 +2835,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
        * Steals positive stat stages from {@linkcode this} and gives it to {@linkcode source}
        * before damage calculation
        */
-      applyMoveAttrs(SpectralThiefAttr, source, this, move);
+      applyMoveAttrs(StatChangesBeforeDmgCalcAttr, source, this, move);
 
       const { cancelled, result, damage: dmg } = this.getAttackDamage(source, move, false, false, isCritical, false);
 

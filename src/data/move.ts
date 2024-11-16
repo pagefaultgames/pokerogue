@@ -4313,15 +4313,30 @@ export class CueNextRoundAttr extends MoveEffectAttr {
 }
 
 /**
+ * Attribute that changes stat stages before the damage is calculated
+ */
+export class StatChangesBeforeDmgCalcAttr extends MoveAttr {
+  /**
+   * Applies Stat Changes before damage is calculated
+   *
+   * @param user {@linkcode Pokemon} that called {@linkcode move}
+   * @param target {@linkcode Pokemon} that is the target of {@linkcode move}
+   * @param move {@linkcode Move} called by {@linkcode user}
+   * @param args N/A
+   *
+   * @returns true if stat stages where correctly applied
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+/**
  * Steals the postitive Stat stages of the target before damage calculation so stat changes
  * apply to damage calculation (e.g. {@linkcode Moves.SPECTRAL_THIEF})
  * {@link https://bulbapedia.bulbagarden.net/wiki/Spectral_Thief_(move) | Spectral Thief}
  */
-export class SpectralThiefAttr extends MoveAttr {
-  constructor() {
-    super();
-  }
-
+export class SpectralThiefAttr extends StatChangesBeforeDmgCalcAttr {
   /**
    * steals max amount of positive stats of the target while not exceeding the limit of max 6 stat stages
    *
@@ -4329,13 +4344,10 @@ export class SpectralThiefAttr extends MoveAttr {
    * @param target {@linkcode Pokemon} that is the target of {@linkcode move}
    * @param move {@linkcode Move} called by {@linkcode user}
    * @param args N/A
+   *
    * @returns true if stat stages where correctly stolen
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
     // Copy all positive stat stages to user and reduce copied stat stages on target
     for (const s of BATTLE_STATS) {
       const statStageValueTarget = target.getStatStage(s);
@@ -5058,6 +5070,7 @@ export class VariableMoveTypeChartAttr extends MoveAttr {
    * @returns true if application of the attribute succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log("Did not call SpectralThiefAttr correctly");
     return false;
   }
 }
@@ -5067,6 +5080,7 @@ export class VariableMoveTypeChartAttr extends MoveAttr {
  */
 export class FreezeDryAttr extends VariableMoveTypeChartAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log("Did call SpectralThiefAttr correctly");
     const multiplier = args[0] as Utils.NumberHolder;
     const defType = args[1] as Type;
 
