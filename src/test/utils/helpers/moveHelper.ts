@@ -20,7 +20,8 @@ export class MoveHelper extends GameManagerHelper {
    */
   public async forceHit(): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
-    vi.spyOn(this.game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+    const moveEffectPhase = this.game.scene.getCurrentPhase() as MoveEffectPhase;
+    vi.spyOn(moveEffectPhase.move.getMove(), "accuracy", "get").mockReturnValue(-1);
   }
 
   /**
@@ -31,12 +32,13 @@ export class MoveHelper extends GameManagerHelper {
    */
   public async forceMiss(firstTargetOnly: boolean = false): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
-    const hitCheck = vi.spyOn(this.game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck");
+    const moveEffectPhase = this.game.scene.getCurrentPhase() as MoveEffectPhase;
+    const accuracy = vi.spyOn(moveEffectPhase.move.getMove(), "accuracy", "get");
 
     if (firstTargetOnly) {
-      hitCheck.mockReturnValueOnce(false);
+      accuracy.mockReturnValueOnce(0);
     } else {
-      hitCheck.mockReturnValue(false);
+      accuracy.mockReturnValue(0);
     }
   }
 

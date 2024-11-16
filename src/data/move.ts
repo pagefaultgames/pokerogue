@@ -307,6 +307,16 @@ export default class Move implements Localizable {
     return false;
   }
 
+  isFieldTarget(): boolean {
+    switch (this.moveTarget) {
+      case MoveTarget.BOTH_SIDES:
+      case MoveTarget.USER_SIDE:
+      case MoveTarget.ENEMY_SIDE:
+        return true;
+    }
+    return false;
+  }
+
   isChargingMove(): this is ChargingMove {
     return false;
   }
@@ -4037,8 +4047,8 @@ export class PresentPowerAttr extends VariablePowerAttr {
     } else if (70 < powerSeed && powerSeed <= 80) {
       (args[0] as Utils.NumberHolder).value = 120;
     } else if (80 < powerSeed && powerSeed <= 100) {
-      // If this move is multi-hit, disable all other hits
-      user.stopMultiHit();
+      user.turnData.hitCount -= user.turnData.hitsLeft - 1;
+      user.turnData.hitsLeft = 1;
       target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
         Utils.toDmgValue(target.getMaxHp() / 4), i18next.t("moveTriggers:regainedHealth", { pokemonName: getPokemonNameWithAffix(target) }), true));
     }

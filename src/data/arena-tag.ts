@@ -294,8 +294,6 @@ export class ConditionalProtectTag extends ArenaTag {
       if (!isProtected.value) {
         isProtected.value = true;
         if (!simulated) {
-          attacker.stopMultiHit(defender);
-
           new CommonBattleAnim(CommonAnim.PROTECT, defender).play(arena.scene);
           arena.scene.queueMessage(i18next.t("arenaTag:conditionalProtectApply", { moveName: super.getMoveName(), pokemonNameWithAffix: getPokemonNameWithAffix(defender) }));
         }

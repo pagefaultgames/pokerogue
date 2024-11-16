@@ -10,6 +10,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { allMoves } from "#app/data/move";
+import { HitResult } from "#app/field/pokemon";
 
 describe("Abilities - Sheer Force", () => {
   let phaserGame: Phaser.Game;
@@ -156,7 +157,7 @@ describe("Abilities - Sheer Force", () => {
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, chance, move, target, false);
     applyPreAttackAbAttrs(MovePowerBoostAbAttr, user, target, move, false, power);
-    applyPostDefendAbAttrs(PostDefendTypeChangeAbAttr, target, user, move, target.apply(user, move));
+    applyPostDefendAbAttrs(PostDefendTypeChangeAbAttr, target, user, move, HitResult.EFFECTIVE);
 
     expect(chance.value).toBe(0);
     expect(power.value).toBe(move.power * 5461 / 4096);

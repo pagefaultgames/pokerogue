@@ -13,24 +13,24 @@ import { TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from "#app/
 import { Type } from "#enums/type";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
+import { EnemyDamageBoosterModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier, PokemonMultiHitModifier, EnemyDamageReducerModifier } from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { Status, getRandomStatus } from "#app/data/status-effect";
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/tms";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, PostDamageForceSwitchAbAttr, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/ability";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { LevelMoves } from "#app/data/balance/pokemon-level-moves";
-import { DamageAchv, achvs } from "#app/system/achv";
+import { achvs } from "#app/system/achv";
 import { DexAttr, StarterDataEntry, StarterMoveset } from "#app/system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { getNatureStatMultiplier } from "#app/data/nature";
@@ -50,7 +50,6 @@ import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { DamagePhase } from "#app/phases/damage-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
@@ -896,19 +895,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * who used it.
    * @param source the {@linkcode Pokemon} who using the move
    * @param move the {@linkcode Move} being used
+   * @param simulated if `true`, obtains the critical-hit stage quietly
    * @returns the final critical-hit stage value
    */
-  getCritStage(source: Pokemon, move: Move): number {
-    const critStage = new Utils.IntegerHolder(0);
+  getCritStage(source: Pokemon, move: Move, simulated: boolean = true): number {
+    const critStage = new Utils.NumberHolder(0);
     applyMoveAttrs(HighCritAttr, source, this, move, critStage);
     this.scene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critStage);
     this.scene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
     const bonusCrit = new Utils.BooleanHolder(false);
-    //@ts-ignore
-    if (applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)) { // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
-      if (bonusCrit.value) {
-        critStage.value += 1;
-      }
+    applyAbAttrs(BonusCritAbAttr, source, null, simulated, bonusCrit);
+    if (bonusCrit.value) {
+      critStage.value += 1;
     }
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
@@ -1591,8 +1589,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the type of a move when used by this Pokemon after
    * type-changing move and ability attributes have applied.
-   * @param move - {@linkcode Move} The move being used.
-   * @param simulated - If `true`, prevents showing abilities applied in this calculation.
+   * @param move The {@linkcode Move} being used.
+   * @param simulated If `true`, prevents showing abilities applied in this calculation.
    * @returns The {@linkcode Type} of the move after attributes are applied
    */
   public getMoveType(move: Move, simulated: boolean = true): Type {
@@ -1607,6 +1605,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     return moveTypeHolder.value as Type;
+  }
+
+  /**
+   * Calculates the category of a move when used by this Pokemon after
+   * category-changing move effects are applied.
+   * @param target The {@linkcode Pokemon} targeted by the move
+   * @param move The {@linkcode Move} being used
+   * @returns The given move's final category when used against the target
+   */
+  public getMoveCategory(target: Pokemon, move: Move): MoveCategory {
+    const moveCategory = new Utils.NumberHolder(move.category);
+    applyMoveAttrs(VariableMoveCategoryAttr, this, target, move, moveCategory);
+    return moveCategory.value;
   }
 
 
@@ -2569,12 +2580,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreSourceAbility If `true`, ignores the attacking Pokemon's ability effects
    * @param isCritical If `true`, calculates damage for a critical hit.
    * @param simulated If `true`, suppresses changes to game state during the calculation.
+   * @param effectiveness If defined, this is used in place of calculated effectiveness values.
    * @returns a {@linkcode DamageCalculationResult} object with three fields:
    * - `cancelled`: `true` if the move was cancelled by another effect.
    * - `result`: {@linkcode HitResult} indicates the attack's type effectiveness.
    * - `damage`: `number` the attack's final damage output.
    */
-  getAttackDamage(source: Pokemon, move: Move, ignoreAbility: boolean = false, ignoreSourceAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): DamageCalculationResult {
+  getAttackDamage(source: Pokemon, move: Move, ignoreAbility: boolean = false, ignoreSourceAbility: boolean = false,
+    isCritical: boolean = false, simulated: boolean = true, effectiveness?: TypeDamageMultiplier): DamageCalculationResult {
     const damage = new Utils.NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
@@ -2595,7 +2608,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      *
      * Note that the source's abilities are not ignored here
      */
-    const typeMultiplier = this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
+    const typeMultiplier = effectiveness ?? this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
 
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
@@ -2793,147 +2806,32 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Applies the results of a move to this pokemon
-   * @param source The {@linkcode Pokemon} using the move
-   * @param move The {@linkcode Move} being used
-   * @returns The {@linkcode HitResult} of the attack
+   * Calculates whether the given move critically hits against this Pokemon
+   * @param source the {@linkcode Pokemon} using the move
+   * @param move the {@linkcode Move} being used
+   * @param simulated if `true`, the calculation is resolved quietly (e.g. without Ability pop-ups)
+   * @returns `true` if the move critically hits; `false` otherwise
    */
-  apply(source: Pokemon, move: Move): HitResult {
+  getCriticalHitResult(source: Pokemon, move: Move, simulated: boolean = true): boolean {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    const moveCategory = new Utils.NumberHolder(move.category);
-    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, moveCategory);
-    if (moveCategory.value === MoveCategory.STATUS) {
-      const cancelled = new Utils.BooleanHolder(false);
-      const typeMultiplier = this.getMoveEffectiveness(source, move, false, false, cancelled);
-
-      if (!cancelled.value && typeMultiplier === 0) {
-        this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
-      }
-      return (typeMultiplier === 0) ? HitResult.NO_EFFECT : HitResult.STATUS;
-    } else {
-      /** Determines whether the attack critically hits */
-      let isCritical: boolean;
-      const critOnly = new Utils.BooleanHolder(false);
-      const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
-      applyMoveAttrs(CritOnlyAttr, source, this, move, critOnly);
-      applyAbAttrs(ConditionalCritAbAttr, source, null, false, critOnly, this, move);
-      if (critOnly.value || critAlways) {
-        isCritical = true;
-      } else {
-        const critChance = [ 24, 8, 2, 1 ][Math.max(0, Math.min(this.getCritStage(source, move), 3))];
-        isCritical = critChance === 1 || !this.scene.randBattleSeedInt(critChance);
-      }
-
-      const noCritTag = this.scene.arena.getTagOnSide(NoCritTag, defendingSide);
-      const blockCrit = new Utils.BooleanHolder(false);
-      applyAbAttrs(BlockCritAbAttr, this, null, false, blockCrit);
-      if (noCritTag || blockCrit.value || Overrides.NEVER_CRIT_OVERRIDE) {
-        isCritical = false;
-      }
-
-      const { cancelled, result, damage: dmg } = this.getAttackDamage(source, move, false, false, isCritical, false);
-
-      const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === source.getMoveType(move)) as TypeBoostTag;
-      if (typeBoost?.oneUse) {
-        source.removeTag(typeBoost.tagType);
-      }
-
-      if (cancelled || result === HitResult.IMMUNE || result === HitResult.NO_EFFECT) {
-        source.stopMultiHit(this);
-
-        if (!cancelled) {
-          if (result === HitResult.IMMUNE) {
-            this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: getPokemonNameWithAffix(this) }));
-          } else {
-            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(this) }));
-          }
-        }
-        return result;
-      }
-
-      // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
-      const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
-      const grudgeTag = this.getTag(BattlerTagType.GRUDGE);
-
-      const isOneHitKo = result === HitResult.ONE_HIT_KO;
-
-      if (dmg) {
-        this.lapseTags(BattlerTagLapseType.HIT);
-
-        const substitute = this.getTag(SubstituteTag);
-        const isBlockedBySubstitute = !!substitute && move.hitsSubstitute(source, this);
-        if (isBlockedBySubstitute) {
-          substitute.hp -= dmg;
-        }
-        if (!this.isPlayer() && dmg >= this.hp) {
-          this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);
-        }
-
-        /**
-         * We explicitly require to ignore the faint phase here, as we want to show the messages
-         * about the critical hit and the super effective/not very effective messages before the faint phase.
-         */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true, source);
-
-        if (damage > 0) {
-          if (source.isPlayer()) {
-            this.scene.validateAchvs(DamageAchv, new Utils.NumberHolder(damage));
-            if (damage > this.scene.gameData.gameStats.highestDamage) {
-              this.scene.gameData.gameStats.highestDamage = damage;
-            }
-          }
-          source.turnData.totalDamageDealt += damage;
-          source.turnData.singleHitDamageDealt = damage;
-          this.turnData.damageTaken += damage;
-          this.battleData.hitCount++;
-
-          // Multi-Lens and Parental Bond check for Wimp Out/Emergency Exit
-          if (this.hasAbilityWithAttr(PostDamageForceSwitchAbAttr)) {
-            const multiHitModifier = source.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
-            if (multiHitModifier || source.hasAbilityWithAttr(AddSecondStrikeAbAttr)) {
-              applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
-            }
-          }
-
-          const attackResult = { move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
-          this.turnData.attacksReceived.unshift(attackResult);
-          if (source.isPlayer() && !this.isPlayer()) {
-            this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, new Utils.NumberHolder(damage));
-          }
-        }
-      }
-
-      if (isCritical) {
-        this.scene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
-      }
-
-      // want to include is.Fainted() in case multi hit move ends early, still want to render message
-      if (source.turnData.hitsLeft === 1 || this.isFainted()) {
-        switch (result) {
-          case HitResult.SUPER_EFFECTIVE:
-            this.scene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
-            break;
-          case HitResult.NOT_VERY_EFFECTIVE:
-            this.scene.queueMessage(i18next.t("battle:hitResultNotVeryEffective"));
-            break;
-          case HitResult.ONE_HIT_KO:
-            this.scene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
-            break;
-        }
-      }
-
-      if (this.isFainted()) {
-        // set splice index here, so future scene queues happen before FaintedPhase
-        this.scene.setPhaseQueueSplice();
-        this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), isOneHitKo, destinyTag, grudgeTag, source));
-
-        this.destroySubstitute();
-        this.lapseTag(BattlerTagType.COMMANDED);
-        this.resetSummonData();
-      }
-
-      return result;
+    const noCritTag = this.scene.arena.getTagOnSide(NoCritTag, defendingSide);
+    if (noCritTag || Overrides.NEVER_CRIT_OVERRIDE || move.hasAttr(FixedDamageAttr)) {
+      return false;
     }
+
+    const isCritical = new Utils.BooleanHolder(false);
+    if (source.getTag(BattlerTagType.ALWAYS_CRIT)) {
+      isCritical.value = true;
+    }
+    applyMoveAttrs(CritOnlyAttr, source, this, move, isCritical);
+    applyAbAttrs(ConditionalCritAbAttr, source, null, simulated, isCritical, this, move);
+    if (!isCritical.value) {
+      const critChance = [ 24, 8, 2, 1 ][Math.max(0, Math.min(this.getCritStage(source, move, false), 3))];
+      isCritical.value = critChance === 1 || !this.scene.randBattleSeedInt(critChance);
+    }
+    applyAbAttrs(BlockCritAbAttr, this, null, simulated, isCritical);
+
+    return isCritical.value;
   }
 
   /**
@@ -3258,17 +3156,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.summonData.moveQueue;
   }
 
-  /**
-   * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-   * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
-   */
-  stopMultiHit(target?: Pokemon): void {
-    const effectPhase = this.scene.getCurrentPhase();
-    if (effectPhase instanceof MoveEffectPhase && effectPhase.getUserPokemon() === this) {
-      effectPhase.stopMultiHit(target);
-    }
-  }
-
   changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
       this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
@@ -3558,7 +3445,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * cancel the attack's subsequent hits.
      */
     if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
-      this.stopMultiHit();
+      const currentPhase = this.scene.getCurrentPhase();
+      if (currentPhase instanceof MoveEffectPhase && currentPhase.getUserPokemon() === this) {
+        this.turnData.hitCount -= this.turnData.hitsLeft - 1;
+        this.turnData.hitsLeft = 1;
+      }
     }
 
     if (asPhase) {

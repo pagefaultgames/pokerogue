@@ -2943,8 +2943,13 @@ export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunit
 
 export class BlockCritAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    (args[0] as Utils.BooleanHolder).value = true;
-    return true;
+    const isCritical = args[0] as Utils.BooleanHolder;
+
+    if (isCritical.value) {
+      isCritical.value = false;
+      return true;
+    }
+    return false;
   }
 }
 
