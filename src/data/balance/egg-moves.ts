@@ -73,6 +73,7 @@ export const speciesEggMoves = {
   [Species.DRATINI]: [ Moves.DRAGON_HAMMER, Moves.CRUSH_GRIP, Moves.FIRE_LASH, Moves.GIGATON_HAMMER ],
   [Species.MEWTWO]: [ Moves.METEOR_MASH, Moves.MOONBLAST, Moves.THUNDEROUS_KICK, Moves.PHOTON_GEYSER ],
   [Species.MEW]: [ Moves.PHOTON_GEYSER, Moves.MOONBLAST, Moves.ASTRAL_BARRAGE, Moves.SHELL_SMASH ],
+
   [Species.CHIKORITA]: [ Moves.SAPPY_SEED, Moves.STONE_AXE, Moves.DRAGON_DANCE, Moves.SPORE ],
   [Species.CYNDAQUIL]: [ Moves.NASTY_PLOT, Moves.EARTH_POWER, Moves.FIERY_DANCE, Moves.ELECTRO_DRIFT ],
   [Species.TOTODILE]: [ Moves.THUNDER_PUNCH, Moves.DRAGON_DANCE, Moves.TRIPLE_AXEL, Moves.SURGING_STRIKES ],
@@ -127,6 +128,7 @@ export const speciesEggMoves = {
   [Species.LUGIA]: [ Moves.NASTY_PLOT, Moves.LUMINA_CRASH, Moves.AURA_SPHERE, Moves.OBLIVION_WING ],
   [Species.HO_OH]: [ Moves.BRAVE_BIRD, Moves.DRAGON_DANCE, Moves.REVIVAL_BLESSING, Moves.BOLT_BEAK ],
   [Species.CELEBI]: [ Moves.PHOTON_GEYSER, Moves.MATCHA_GOTCHA, Moves.REVIVAL_BLESSING, Moves.QUIVER_DANCE ],
+
   [Species.TREECKO]: [ Moves.NASTY_PLOT, Moves.CORE_ENFORCER, Moves.FLAMETHROWER, Moves.SEED_FLARE ],
   [Species.TORCHIC]: [ Moves.THUNDEROUS_KICK, Moves.ZING_ZAP, Moves.BURNING_BULWARK, Moves.PYRO_BALL ],
   [Species.MUDKIP]: [ Moves.SHORE_UP, Moves.MOUNTAIN_GALE, Moves.AQUA_STEP, Moves.PRECIPICE_BLADES ],
@@ -200,6 +202,7 @@ export const speciesEggMoves = {
   [Species.RAYQUAZA]: [ Moves.V_CREATE, Moves.DRAGON_DARTS, Moves.CORE_ENFORCER, Moves.OBLIVION_WING ],
   [Species.JIRACHI]: [ Moves.TACHYON_CUTTER, Moves.TRIPLE_ARROWS, Moves.ROCK_SLIDE, Moves.SHELL_SMASH ],
   [Species.DEOXYS]: [ Moves.COLLISION_COURSE, Moves.FUSION_FLARE, Moves.PARTING_SHOT, Moves.LUMINA_CRASH ],
+
   [Species.TURTWIG]: [ Moves.SHELL_SMASH, Moves.MIGHTY_CLEAVE, Moves.ICE_SPINNER, Moves.SAPPY_SEED ],
   [Species.CHIMCHAR]: [ Moves.FIERY_DANCE, Moves.SECRET_SWORD, Moves.TRIPLE_AXEL, Moves.SACRED_FIRE ],
   [Species.PIPLUP]: [ Moves.KINGS_SHIELD, Moves.TACHYON_CUTTER, Moves.FREEZE_DRY, Moves.STEAM_ERUPTION ],
@@ -252,6 +255,7 @@ export const speciesEggMoves = {
   [Species.DARKRAI]: [ Moves.FIERY_WRATH, Moves.MOONBLAST, Moves.FIERY_DANCE, Moves.MAKE_IT_RAIN ],
   [Species.SHAYMIN]: [ Moves.MATCHA_GOTCHA, Moves.FIERY_DANCE, Moves.AEROBLAST, Moves.QUIVER_DANCE ],
   [Species.ARCEUS]: [ Moves.NO_RETREAT, Moves.COLLISION_COURSE, Moves.ASTRAL_BARRAGE, Moves.MULTI_ATTACK ],
+
   [Species.VICTINI]: [ Moves.BLUE_FLARE, Moves.BOLT_STRIKE, Moves.LUSTER_PURGE, Moves.VICTORY_DANCE ],
   [Species.SNIVY]: [ Moves.FLAMETHROWER, Moves.CLANGING_SCALES, Moves.MAKE_IT_RAIN, Moves.FLEUR_CANNON ],
   [Species.TEPIG]: [ Moves.WAVE_CRASH, Moves.VOLT_TACKLE, Moves.AXE_KICK, Moves.VICTORY_DANCE ],
@@ -301,7 +305,7 @@ export const speciesEggMoves = {
   [Species.FRILLISH]: [ Moves.CALM_MIND, Moves.BUZZY_BUZZ, Moves.FREEZE_DRY, Moves.STEAM_ERUPTION ],
   [Species.ALOMOMOLA]: [ Moves.FLIP_TURN, Moves.HEART_SWAP, Moves.GLITZY_GLOW, Moves.REVIVAL_BLESSING ],
   [Species.JOLTIK]: [ Moves.WILDBOLT_STORM, Moves.PARABOLIC_CHARGE, Moves.EARTH_POWER, Moves.QUIVER_DANCE ],
-  [Species.FERROSEED]: [ Moves.SYNTHESIS, Moves.BODY_PRESS, Moves.SPIKY_SHIELD, Moves.SAPPY_SEED ],
+  [Species.FERROSEED]: [ Moves.SYNTHESIS, Moves.COMBAT_TORQUE, Moves.SPIKY_SHIELD, Moves.SAPPY_SEED ],
   [Species.KLINK]: [ Moves.TRIPLE_AXEL, Moves.HIGH_HORSEPOWER, Moves.RECOVER, Moves.AURA_WHEEL ],
   [Species.TYNAMO]: [ Moves.SCALD, Moves.STRENGTH_SAP, Moves.FIRE_LASH, Moves.AURA_WHEEL ],
   [Species.ELGYEM]: [ Moves.THUNDERCLAP, Moves.BADDY_BAD, Moves.AURA_SPHERE, Moves.PHOTON_GEYSER ],
@@ -334,6 +338,7 @@ export const speciesEggMoves = {
   [Species.KELDEO]: [ Moves.BOUNCY_BUBBLE, Moves.THUNDERBOLT, Moves.FREEZE_DRY, Moves.STEAM_ERUPTION ],
   [Species.MELOETTA]: [ Moves.BODY_SLAM, Moves.TORCH_SONG, Moves.TRIPLE_ARROWS, Moves.BOOMBURST ],
   [Species.GENESECT]: [ Moves.EXTREME_SPEED, Moves.SHIFT_GEAR, Moves.TACHYON_CUTTER, Moves.TAIL_GLOW ],
+
   [Species.CHESPIN]: [ Moves.COMBAT_TORQUE, Moves.SYNTHESIS, Moves.CEASELESS_EDGE, Moves.SAPPY_SEED ],
   [Species.FENNEKIN]: [ Moves.TWIN_BEAM, Moves.FIERY_DANCE, Moves.THUNDERBOLT, Moves.SPARKLY_SWIRL ],
   [Species.FROAKIE]: [ Moves.MOONBLAST, Moves.SHELL_SIDE_ARM, Moves.FIERY_WRATH, Moves.STEAM_ERUPTION ],
@@ -371,6 +376,7 @@ export const speciesEggMoves = {
   [Species.DIANCIE]: [ Moves.MAGICAL_TORQUE, Moves.FIERY_DANCE, Moves.SHORE_UP, Moves.GEOMANCY ],
   [Species.HOOPA]: [ Moves.PHOTON_GEYSER, Moves.SECRET_SWORD, Moves.FIERY_WRATH, Moves.SHELL_SMASH ],
   [Species.VOLCANION]: [ Moves.HYDRO_STEAM, Moves.CALM_MIND, Moves.ENERGY_BALL, Moves.MAGMA_STORM ],
+
   [Species.ROWLET]: [ Moves.THOUSAND_ARROWS, Moves.SHADOW_BONE, Moves.FIRST_IMPRESSION, Moves.VICTORY_DANCE ],
   [Species.LITTEN]: [ Moves.SUCKER_PUNCH, Moves.PARTING_SHOT, Moves.SLACK_OFF, Moves.SACRED_FIRE ],
   [Species.POPPLIO]: [ Moves.PSYCHIC_NOISE, Moves.BOUNCY_BUBBLE, Moves.OVERDRIVE, Moves.TORCH_SONG ],
@@ -426,6 +432,7 @@ export const speciesEggMoves = {
   [Species.BLACEPHALON]: [ Moves.STEEL_BEAM, Moves.MOONBLAST, Moves.CHLOROBLAST, Moves.MOONGEIST_BEAM ],
   [Species.ZERAORA]: [ Moves.SWORDS_DANCE, Moves.TRIPLE_AXEL, Moves.BOLT_STRIKE, Moves.PYRO_BALL ],
   [Species.MELTAN]: [ Moves.BULLET_PUNCH, Moves.DRAIN_PUNCH, Moves.BULK_UP, Moves.PLASMA_FISTS ],
+
   [Species.GROOKEY]: [ Moves.HIGH_HORSEPOWER, Moves.CLANGOROUS_SOUL, Moves.GRASSY_GLIDE, Moves.SAPPY_SEED ],
   [Species.SCORBUNNY]: [ Moves.EXTREME_SPEED, Moves.HIGH_JUMP_KICK, Moves.TRIPLE_AXEL, Moves.BOLT_STRIKE ],
   [Species.SOBBLE]: [ Moves.AEROBLAST, Moves.FROST_BREATH, Moves.ENERGY_BALL, Moves.NASTY_PLOT ],
@@ -474,6 +481,7 @@ export const speciesEggMoves = {
   [Species.SPECTRIER]: [ Moves.EARTH_POWER, Moves.PARTING_SHOT, Moves.AURA_SPHERE, Moves.ASTRAL_BARRAGE ],
   [Species.CALYREX]: [ Moves.SAPPY_SEED, Moves.RECOVER, Moves.SECRET_SWORD, Moves.PHOTON_GEYSER ],
   [Species.ENAMORUS]: [ Moves.AEROBLAST, Moves.THOUSAND_ARROWS, Moves.STORED_POWER, Moves.FLEUR_CANNON ],
+
   [Species.SPRIGATITO]: [ Moves.FIRE_LASH, Moves.TRIPLE_AXEL, Moves.SUCKER_PUNCH, Moves.WICKED_BLOW ],
   [Species.FUECOCO]: [ Moves.ALLURING_VOICE, Moves.SLACK_OFF, Moves.OVERDRIVE, Moves.MOONGEIST_BEAM ],
   [Species.QUAXLY]: [ Moves.DRAGON_DANCE, Moves.TRIPLE_AXEL, Moves.POWER_TRIP, Moves.THUNDEROUS_KICK ],
