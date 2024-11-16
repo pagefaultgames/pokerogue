@@ -38,7 +38,7 @@ vi.mock("i18next", async (importOriginal) => {
   const { setupServer } = await import("msw/node");
   const { http, HttpResponse } = await import("msw");
 
-  global.i18nServer = setupServer(
+  global.server = setupServer(
     http.get("/locales/en/*", async (req) => {
       const filename = req.params[0];
 
@@ -50,9 +50,12 @@ vi.mock("i18next", async (importOriginal) => {
         console.log(`Failed to load locale ${filename}!`, err);
         return HttpResponse.json({});
       }
-    })
+    }),
+    http.get("https://fonts.googleapis.com/*", () => {
+      return HttpResponse.text("");
+    }),
   );
-  global.i18nServer.listen({ onUnhandledRequest: "error" });
+  global.server.listen({ onUnhandledRequest: "error" });
   console.log("i18n MSW server listening!");
 
   return await importOriginal();
@@ -83,6 +86,6 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  global.i18nServer.close();
+  global.server.close();
   console.log("Closing i18n MSW server!");
 });

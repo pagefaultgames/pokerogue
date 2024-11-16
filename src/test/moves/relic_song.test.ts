@@ -1,4 +1,4 @@
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Challenges } from "#app/enums/challenges";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";

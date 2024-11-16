@@ -81,7 +81,7 @@ describe("Abilities - Forecast", () => {
       });
     await game.startBattle([ Species.CASTFORM, Species.FEEBAS, Species.KYOGRE, Species.GROUDON, Species.RAYQUAZA, Species.ALTARIA ]);
 
-    vi.spyOn(game.scene.getParty()[5], "getAbility").mockReturnValue(allAbilities[Abilities.CLOUD_NINE]);
+    vi.spyOn(game.scene.getPlayerParty()[5], "getAbility").mockReturnValue(allAbilities[Abilities.CLOUD_NINE]);
 
     const castform = game.scene.getPlayerField()[0];
     expect(castform.formIndex).toBe(NORMAL_FORM);

@@ -1,6 +1,7 @@
 import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export type nil = null | undefined;
 
@@ -119,18 +120,6 @@ export function randSeedWeightedItem<T>(items: T[]): T {
   return items.length === 1
     ? items[0]
     : Phaser.Math.RND.weightedPick(items);
-}
-
-export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = "Sine.easeIn"): T | null {
-  if (!items.length) {
-    return null;
-  }
-  if (items.length === 1) {
-    return items[0];
-  }
-  const value = Phaser.Math.RND.realInRange(0, 1);
-  const easedValue = Phaser.Tweens.Builders.GetEaseFunction(easingFunction)(value);
-  return items[Math.floor(easedValue * items.length)];
 }
 
 /**
@@ -270,9 +259,16 @@ export const isLocal = (
    /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
   window.location.port !== "") || window.location.hostname === "";
 
+/**
+ * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
+ */
 export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
 
-// Set the server URL based on whether it's local or not
+/**
+ * Set the server URL based on whether it's local or not
+ *
+ * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
+ */
 export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
 // used to disable api calls when isLocal is true and a server is not found
 export let isLocalServerConnected = true;
@@ -319,46 +315,12 @@ export function getCookie(cName: string): string {
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export function localPing() {
+export async function localPing() {
   if (isLocal) {
-    apiFetch("game/titlestats")
-      .then(resolved => isLocalServerConnected = true,
-        rejected => isLocalServerConnected = false
-      );
+    const titleStats = await pokerogueApi.getGameTitleStats();
+    isLocalServerConnected = !!titleStats;
+    console.log("isLocalServerConnected:", isLocalServerConnected);
   }
-}
-
-export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
-    const request = {};
-    if (authed) {
-      const sId = getCookie(sessionIdKey);
-      if (sId) {
-        request["headers"] = { "Authorization": sId };
-      }
-    }
-    fetch(`${apiUrl}/${path}`, request)
-      .then(response => resolve(response))
-      .catch(err => reject(err));
-  }) : new Promise(() => {});
-}
-
-export function apiPost(path: string, data?: any, contentType: string = "application/json", authed: boolean = false): Promise<Response> {
-  return (isLocal && isLocalServerConnected) || !isLocal ? new Promise((resolve, reject) => {
-    const headers = {
-      "Accept": contentType,
-      "Content-Type": contentType,
-    };
-    if (authed) {
-      const sId = getCookie(sessionIdKey);
-      if (sId) {
-        headers["Authorization"] = sId;
-      }
-    }
-    fetch(`${apiUrl}/${path}`, { method: "POST", headers: headers, body: data })
-      .then(response => resolve(response))
-      .catch(err => reject(err));
-  }) : new Promise(() => {});
 }
 
 /** Alias for the constructor of a class */
@@ -380,18 +342,21 @@ export class NumberHolder {
   }
 }
 
+/** @deprecated Use {@linkcode NumberHolder} */
 export class IntegerHolder extends NumberHolder {
   constructor(value: integer) {
     super(value);
   }
 }
 
+/** @deprecated Use {@linkcode NumberHolder}*/
 export class FixedInt extends IntegerHolder {
   constructor(value: integer) {
     super(value);
   }
 }
 
+/** @deprecated */
 export function fixedInt(value: integer): integer {
   return new FixedInt(value) as unknown as integer;
 }
@@ -474,14 +439,15 @@ export function hslToHex(h: number, s: number, l: number): string {
   return `#${f(0)}${f(8)}${f(4)}`;
 }
 
-/*This function returns true if the current lang is available for some functions
-If the lang is not in the function, it usually means that lang is going to use the default english version
-This function is used in:
-- summary-ui-handler.ts: If the lang is not available, it'll use types.json (english)
-English itself counts as not available
+/**
+ * This function returns `true` if all localized images used by the game have been added for the given language.
+ *
+ * If the lang is not in the function, it usually means that lang is going to use the default english version
+ *
+ * English itself counts as not available
 */
-export function verifyLang(lang?: string): boolean {
-  //IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
+export function hasAllLocalizedSprites(lang?: string): boolean {
+  // IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
   if (!lang) {
     lang = i18next.resolvedLanguage;
   }
@@ -503,7 +469,7 @@ export function verifyLang(lang?: string): boolean {
 }
 
 /**
- * Prints the type and name of all game objects in a container for debuggin purposes
+ * Prints the type and name of all game objects in a container for debugging purposes
  * @param container container with game objects inside it
  */
 export function printContainerList(container: Phaser.GameObjects.Container): void {
@@ -578,17 +544,12 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar: boole
   return null;
 }
 
-/**
- * Returns if an object is null or undefined
- * @param object
- */
 export function isNullOrUndefined(object: any): object is undefined | null {
   return null === object || undefined === object;
 }
 
 /**
  * Capitalizes the first letter of a string
- * @param str
  */
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -614,7 +575,7 @@ export function toDmgValue(value: number, minValue: number = 1) {
  * @returns the localized sprite key
  */
 export function getLocalizedSpriteKey(baseKey: string) {
-  return `${baseKey}${verifyLang(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+  return `${baseKey}${hasAllLocalizedSprites(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
 }
 
 /**
@@ -622,7 +583,7 @@ export function getLocalizedSpriteKey(baseKey: string) {
  * @param num the number to check
  * @param min the minimum value (included)
  * @param max the maximum value (included)
- * @returns true if number is **inclusive** between min and max
+ * @returns `true` if number is **inclusive** between min and max
  */
 export function isBetween(num: number, min: number, max: number): boolean {
   return num >= min && num <= max;
