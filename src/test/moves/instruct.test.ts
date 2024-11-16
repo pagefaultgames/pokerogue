@@ -195,17 +195,16 @@ describe("Moves - Instruct", () => {
   });
 
   it("should not repeat enemy's move through protect", async () => {
-    game.override.enemyMoveset([ Moves.SONIC_BOOM, Moves.PROTECT ]);
     await game.classicMode.startBattle([ Species.AMOONGUSS ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    enemyPokemon.battleSummonData.moveHistory = [{ move: Moves.SONIC_BOOM, targets: [ BattlerIndex.PLAYER ], result: MoveResult.SUCCESS, virtual: false }];
-
+    game.move.changeMoveset(enemyPokemon, Moves.PROTECT);
     game.move.select(Moves.INSTRUCT);
     await game.forceEnemyMove(Moves.PROTECT);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     expect(enemyPokemon.getLastXMoves()[0].move).toBe(Moves.PROTECT);
+    expect(enemyPokemon.getMoveset().find(m => m?.moveId === Moves.PROTECT)?.ppUsed).toBe(1);
   });
 
   it("should not repeat enemy's charging move", async () => {
