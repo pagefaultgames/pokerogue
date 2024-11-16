@@ -12,6 +12,5 @@ export enum SwitchType {
   /** Transfers the returning Pokemon's Substitute to the switched in Pokemon */
   SHED_TAIL,
   /** Force switchout to a random party member */
-  FORCE_SWITCH
-
+  FORCE_SWITCH,
 }
