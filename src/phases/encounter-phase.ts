@@ -226,7 +226,8 @@ export class EncounterPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
           this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
-          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 5 === 1 || (this.scene.lastSavePlayTime ?? 0) >= 300).then(success => {
+          // Game syncs to server on waves 1, X6, and X11 (As of 1.2.0)
+          this.scene.gameData.saveAll(this.scene, true, (battle.waveIndex % 5 === 1 || battle.waveIndex === 1) || (this.scene.lastSavePlayTime ?? 0) >= 300).then(success => {
             this.scene.disableMenu = false;
             if (!success) {
               return this.scene.reset(true);
