@@ -191,5 +191,20 @@ describe("Abilities - Sheer Force", () => {
     expect(onix.getTypes()).toStrictEqual(expectedTypes);
   });
 
+  it("Sheer Force should disable Meloetta's transformation from Relic Song", async () => {
+    game.override
+      .ability(Abilities.SHEER_FORCE)
+      .moveset([ Moves.RELIC_SONG ])
+      .enemyMoveset([ Moves.SPLASH ]);
+    await game.classicMode.startBattle([ Species.MELOETTA ]);
+
+    const playerPokemon = game.scene.getPlayerPokemon();
+    const formKeyStart = playerPokemon?.getFormKey();
+
+    game.move.select(Moves.RELIC_SONG);
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(formKeyStart).toBe(playerPokemon?.getFormKey());
+  });
+
   //TODO King's Rock Interaction Unit Test
 });
