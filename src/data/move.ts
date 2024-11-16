@@ -5979,24 +5979,35 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return false;
       }
 
-      if (switchOutTarget.hp && SwitchType.FORCE_SWITCH) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.FORCE_SWITCH);
-        const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getPlayerParty().length);
-        user.scene.unshiftPhase(
-          new SwitchSummonPhase(
-            user.scene,
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            true
-          )
-        );
-      }
-      if (switchOutTarget.hp > 0 && !SwitchType.FORCE_SWITCH) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        user.scene.prependToPhase(new SwitchPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
-        return true;
+      if (switchOutTarget.hp > 0) {
+        if (this.switchType === SwitchType.FORCE_SWITCH) {
+          switchOutTarget.leaveField(true);
+          const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getPlayerParty().length);
+          user.scene.prependToPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              this.switchType,
+              switchOutTarget.getFieldIndex(),
+              slotIndex,
+              false,
+              true
+            ),
+            MoveEndPhase
+          );
+        } else {
+          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
+          user.scene.prependToPhase(
+            new SwitchPhase(
+              user.scene,
+              this.switchType,
+              switchOutTarget.getFieldIndex(),
+              true,
+              true
+            ),
+            MoveEndPhase
+          );
+          return true;
+        }
       }
       return false;
     } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
@@ -6004,26 +6015,36 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
-      if (switchOutTarget.hp && SwitchType.FORCE_SWITCH) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.FORCE_SWITCH);
-        const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getEnemyParty().length);
-        user.scene.unshiftPhase(
-          new SwitchSummonPhase(
-            user.scene,
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            false
-          )
-        );
-      }
-      if (switchOutTarget.hp > 0 && !SwitchType.FORCE_SWITCH) {
+      if (switchOutTarget.hp > 0) {
+        if (this.switchType === SwitchType.FORCE_SWITCH) {
+          switchOutTarget.leaveField(true);
+          const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getEnemyParty().length);
+          user.scene.prependToPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              this.switchType,
+              switchOutTarget.getFieldIndex(),
+              slotIndex,
+              false,
+              false
+            ),
+            MoveEndPhase
+          );
+        } else {
         // for opponent switching out
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        user.scene.prependToPhase(new SwitchSummonPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(),
-          (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
-          false, false), MoveEndPhase);
+          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
+          user.scene.prependToPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              this.switchType,
+              switchOutTarget.getFieldIndex(),
+              (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
+              false,
+              false
+            ),
+            MoveEndPhase
+          );
+        }
       }
     } else {
       /**
