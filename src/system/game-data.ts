@@ -510,7 +510,7 @@ export class GameData {
           for (const s of starterIds) {
             this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
             this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
-            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
+            if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
               this.starterData[s].candyCount += 4;
             }
           }
