@@ -573,7 +573,7 @@ export const speciesEggMoves = {
   [Species.HISUI_ZORUA]: [ Moves.MOONBLAST, Moves.HYPER_VOICE, Moves.PARTING_SHOT, Moves.BLOOD_MOON ],
   [Species.PALDEA_TAUROS]: [ Moves.NO_RETREAT, Moves.BLAZING_TORQUE, Moves.AQUA_STEP, Moves.THUNDEROUS_KICK ],
   [Species.PALDEA_WOOPER]: [ Moves.STONE_AXE, Moves.RECOVER, Moves.BANEFUL_BUNKER, Moves.BARB_BARRAGE ],
-  [Species.BLOODMOON_URSALUNA]: [ Moves.NASTY_PLOT, Moves.ROCK_POLISH, Moves.SANDSEAR_STORM, Moves.BOOMBURST ]
+  [Species.BLOODMOON_URSALUNA]: [ Moves.NASTY_PLOT, Moves.ROCK_POLISH, Moves.SANDSEAR_STORM, Moves.BOOMBURST ],
 };
 
 function parseEggMoves(content: string): void {
