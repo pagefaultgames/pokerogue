@@ -112,7 +112,7 @@ export class SwitchSummonPhase extends SummonPhase {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
             && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
         if (batonPassModifier && !this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
-          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false);
+          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false, undefined, undefined, undefined, false);
         }
       }
     }

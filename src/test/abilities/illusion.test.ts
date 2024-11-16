@@ -88,8 +88,8 @@ describe("Abilities - Illusion", () => {
 
     const flameThrower = enemy.getMoveset()[0]!.getMove();
     const psychic = enemy.getMoveset()[1]!.getMove();
-    const flameThrowerEffectiveness = zoroark.getAttackTypeEffectiveness(flameThrower.type, enemy, undefined, undefined, true);
-    const psychicEffectiveness = zoroark.getAttackTypeEffectiveness(psychic.type, enemy, undefined, undefined, true);
+    const flameThrowerEffectiveness = zoroark.getAttackTypeEffectiveness(flameThrower.type, enemy, undefined, undefined, flameThrower, true);
+    const psychicEffectiveness = zoroark.getAttackTypeEffectiveness(psychic.type, enemy, undefined, undefined, psychic, true);
     expect(psychicEffectiveness).above(flameThrowerEffectiveness);
   });
 
