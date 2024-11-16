@@ -141,10 +141,6 @@ export class EncounterPhase extends BattlePhase {
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
           enemyPokemon.updateScale();
-          const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
-          this.scene.removeModifier(bossMBH!);
-          bossMBH?.setTransferrableFalse();
-          this.scene.addEnemyModifier(bossMBH!);
         }
       }
 
@@ -442,6 +438,15 @@ export class EncounterPhase extends BattlePhase {
     enemyField.forEach((enemyPokemon, e) => {
       if (enemyPokemon.isShiny()) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
+      }
+      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
+      if (enemyPokemon.species.speciesId === Species.ETERNATUS && (this.scene.gameMode.isBattleClassicFinalBoss(this.scene.currentBattle.waveIndex) || this.scene.gameMode.isEndlessMajorBoss(this.scene.currentBattle.waveIndex))) {
+        const enemyMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier, false) as TurnHeldItemTransferModifier;
+        if (enemyMBH) {
+          this.scene.removeModifier(enemyMBH, true);
+          enemyMBH.setTransferrableFalse();
+          this.scene.addEnemyModifier(enemyMBH);
+        }
       }
     });
 
