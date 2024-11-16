@@ -36,8 +36,7 @@ describe("Items - Dire Hit", () => {
       .enemyMoveset(Moves.SPLASH)
       .moveset([ Moves.POUND ])
       .startingHeldItems([{ name: "DIRE_HIT" }])
-      .battleType("single")
-      .disableCrits();
+      .battleType("single");
 
   }, 20000);
 

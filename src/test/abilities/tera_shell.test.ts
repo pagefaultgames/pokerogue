@@ -2,7 +2,6 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { HitResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -98,12 +97,12 @@ describe("Abilities - Tera Shell", () => {
       await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
-      vi.spyOn(playerPokemon, "apply");
+      vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
       game.move.select(Moves.SPLASH);
 
       await game.phaseInterceptor.to("BerryPhase", false);
-      expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.EFFECTIVE);
+      expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(1);
       expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
     }
   );
@@ -116,7 +115,9 @@ describe("Abilities - Tera Shell", () => {
       await game.classicMode.startBattle([ Species.SNORLAX ]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
-      vi.spyOn(playerPokemon, "apply");
+      vi.spyOn(playerPokemon, "getMoveEffectiveness");
+
+      const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.SPLASH);
 
@@ -124,9 +125,9 @@ describe("Abilities - Tera Shell", () => {
       await game.move.forceHit();
       for (let i = 0; i < 2; i++) {
         await game.phaseInterceptor.to("MoveEffectPhase");
-        expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.NOT_VERY_EFFECTIVE);
+        expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0.5);
       }
-      expect(playerPokemon.apply).toHaveReturnedTimes(2);
+      expect(enemyPokemon.turnData.hitCount).toBe(2);
     }
   );
 });

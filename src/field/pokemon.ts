@@ -3447,7 +3447,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
       const currentPhase = this.scene.getCurrentPhase();
       if (currentPhase instanceof MoveEffectPhase && currentPhase.getUserPokemon() === this) {
-        this.turnData.hitCount -= this.turnData.hitsLeft - 1;
+        this.turnData.hitCount = 1;
         this.turnData.hitsLeft = 1;
       }
     }

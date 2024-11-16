@@ -14,26 +14,24 @@ import { vi } from "vitest";
  */
 export class MoveHelper extends GameManagerHelper {
   /**
-   * Intercepts {@linkcode MoveEffectPhase} and mocks the
-   * {@linkcode MoveEffectPhase.hitCheck | hitCheck}'s return value to `true`.
-   * Used to force a move to hit.
+   * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's
+   * accuracy to -1, guaranteeing a hit.
    */
   public async forceHit(): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
     const moveEffectPhase = this.game.scene.getCurrentPhase() as MoveEffectPhase;
-    vi.spyOn(moveEffectPhase.move.getMove(), "accuracy", "get").mockReturnValue(-1);
+    vi.spyOn(moveEffectPhase.move.getMove(), "calculateBattleAccuracy").mockReturnValue(-1);
   }
 
   /**
-   * Intercepts {@linkcode MoveEffectPhase} and mocks the
-   * {@linkcode MoveEffectPhase.hitCheck | hitCheck}'s return value to `false`.
-   * Used to force a move to miss.
+   * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's accuracy
+   * to 0, guaranteeing a miss.
    * @param firstTargetOnly - Whether the move should force miss on the first target only, in the case of multi-target moves.
    */
   public async forceMiss(firstTargetOnly: boolean = false): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
     const moveEffectPhase = this.game.scene.getCurrentPhase() as MoveEffectPhase;
-    const accuracy = vi.spyOn(moveEffectPhase.move.getMove(), "accuracy", "get");
+    const accuracy = vi.spyOn(moveEffectPhase.move.getMove(), "calculateBattleAccuracy");
 
     if (firstTargetOnly) {
       accuracy.mockReturnValueOnce(0);

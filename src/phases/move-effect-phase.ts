@@ -81,8 +81,6 @@ export class MoveEffectPhase extends PokemonPhase {
   private firstHit: boolean;
   /** Is this the last strike of a move? */
   private lastHit: boolean;
-  /** Is this the first target to be hit by this strike? */
-  private firstTarget: boolean = true;
 
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
     super(scene, battlerIndex);
@@ -136,90 +134,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
     user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
-    this.moveHistoryEntry = { move: move.id, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
-
-    targets.forEach((t, i) => this.hitChecks[i] = this.hitCheck(t));
-
-    if (!targets.some(t => t.isActive(true))) {
-      this.scene.queueMessage(i18next.t("battle:attackFailed"));
-      this.moveHistoryEntry.result = MoveResult.FAIL;
-    }
-
-    if (this.hitChecks.some(hc => hc[0] === HitCheckResult.HIT)) {
-      this.moveHistoryEntry.result = MoveResult.SUCCESS;
-    } else if (this.hitChecks.every(hc => hc[0] === HitCheckResult.MISS)) {
-      this.moveHistoryEntry.result = MoveResult.MISS;
-    } else {
-      this.moveHistoryEntry.result = MoveResult.FAIL;
-    }
-
-    // If the move has a post-target effect (e.g. Explosion), but doesn't
-    // successfully hit a target, play the move's animation and return
-    if (move.getAttrs(MoveEffectAttr).some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET)
-        && this.hitChecks.every(hc => hc[1] === 0, this)) {
-      const playOnEmptyField = this.scene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false;
-      return new MoveAnim(move.id, user, this.getFirstTarget()!.getBattlerIndex(), playOnEmptyField).play(this.scene, false, () =>
-        this.triggerMoveEffects(MoveEffectTrigger.POST_TARGET, user, null).then(() => this.end())
-      );
-    }
-
-    // If this phase represents the first strike of the given move,
-    // log the move in the user's move history.
-    if (user.turnData.hitsLeft === -1) {
-      user.pushMoveHistory(this.moveHistoryEntry);
-    }
-
-    console.log(this.hitChecks);
-
-    targets.forEach((target, i) => {
-      const [ hitCheckResult, effectiveness ] = this.hitChecks[i];
-
-      switch (hitCheckResult) {
-        case HitCheckResult.HIT:
-          this.applyMoveEffects(target, effectiveness);
-          this.firstTarget = false;
-          break;
-        case HitCheckResult.NO_EFFECT:
-          if (move.id === Moves.SHEER_COLD) {
-            this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: getPokemonNameWithAffix(target) }));
-          } else {
-            this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(target) }));
-          }
-        case HitCheckResult.PROTECTED:
-        case HitCheckResult.NO_EFFECT_NO_MESSAGE:
-          applyMoveAttrs(NoEffectAttr, user, target, move);
-          break;
-        case HitCheckResult.MISS:
-          this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getFirstTarget() ? getPokemonNameWithAffix(this.getFirstTarget()!) : "" }));
-          applyMoveAttrs(MissEffectAttr, user, target, move);
-          break;
-        case HitCheckResult.PENDING:
-        case HitCheckResult.ERROR:
-          console.log(`Unexpected hit check result ${HitCheckResult[hitCheckResult]}. Aborting phase.`);
-          return this.end();
-      }
-    });
-
-    const doPostTarget = this.lastHit ? this.triggerMoveEffects(MoveEffectTrigger.POST_TARGET, user, null) : Promise.resolve();
-    doPostTarget.then(() => {
-      this.updateSubstitutes();
-      this.end();
-    });
-  }
-
-  protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier): void {
-    const user = this.getUserPokemon();
-    const move = this.move.getMove();
-
-    if (isNullOrUndefined(user)) {
-      return;
-    }
-
-    // prevent field-targeted moves from activating multiple times
-    if (move.isFieldTarget() && target !== this.getTargets()[this.targets.length - 1]) {
-      return;
-    }
-
     /**
      * If this phase is for the first hit of the invoked move,
      * resolve the move's total hit count. This block combines the
@@ -238,13 +152,109 @@ export class MoveEffectPhase extends PokemonPhase {
       user.turnData.hitsLeft = hitCount.value;
     }
 
-    this.firstHit = user.turnData.hitsLeft === user.turnData.hitCount;
-    this.lastHit = user.turnData.hitsLeft === 1 || !this.getTargets().some(t => t.isActive(true));
+    this.moveHistoryEntry = { move: move.id, targets: this.targets, result: MoveResult.PENDING, virtual: this.move.virtual };
 
-    const playOnEmptyField = this.scene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false;
-    return new MoveAnim(move.id as Moves, user, this.getFirstTarget()!.getBattlerIndex()!, playOnEmptyField).play(this.scene, move.hitsSubstitute(user, this.getFirstTarget()!), async () => {
-      await this.triggerMoveEffects(MoveEffectTrigger.PRE_APPLY, user, target);
+    targets.forEach((t, i) => this.hitChecks[i] = this.hitCheck(t));
 
+    if (!targets.some(t => t.isActive(true))) {
+      this.scene.queueMessage(i18next.t("battle:attackFailed"));
+      this.moveHistoryEntry.result = MoveResult.FAIL;
+    }
+
+    if (this.hitChecks.some(hc => hc[0] === HitCheckResult.HIT)) {
+      this.moveHistoryEntry.result = MoveResult.SUCCESS;
+    } else {
+      user.turnData.hitCount = 1;
+      user.turnData.hitsLeft = 1;
+
+      if (this.hitChecks.every(hc => hc[0] === HitCheckResult.MISS)) {
+        this.moveHistoryEntry.result = MoveResult.MISS;
+      } else {
+        this.moveHistoryEntry.result = MoveResult.FAIL;
+      }
+    }
+
+    this.firstHit = user.turnData.hitCount === user.turnData.hitsLeft;
+    this.lastHit = user.turnData.hitsLeft === 1 || !targets.some(t => t.isActive(true));
+
+    // If the move successfully hit at least 1 target, or the move has a
+    // post-target effect, play the move's animation
+    const tryPlayAnim = (this.moveHistoryEntry.result === MoveResult.SUCCESS || move.getAttrs(MoveEffectAttr).some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET))
+      ? this.playMoveAnim(user)
+      : Promise.resolve();
+
+    tryPlayAnim.then(() => {
+      // If this phase represents the first strike of the given move,
+      // log the move in the user's move history.
+      if (this.firstHit) {
+        user.pushMoveHistory(this.moveHistoryEntry);
+      }
+
+      const applyPromises: Promise<void>[] = [];
+
+      for (const target of targets) {
+        const [ hitCheckResult, effectiveness ] = this.hitChecks[targets.indexOf(target)];
+
+        switch (hitCheckResult) {
+          case HitCheckResult.HIT:
+            applyPromises.push(this.applyMoveEffects(target, effectiveness));
+            break;
+          case HitCheckResult.NO_EFFECT:
+            if (move.id === Moves.SHEER_COLD) {
+              this.scene.queueMessage(i18next.t("battle:hitResultImmune", { pokemonName: getPokemonNameWithAffix(target) }));
+            } else {
+              this.scene.queueMessage(i18next.t("battle:hitResultNoEffect", { pokemonName: getPokemonNameWithAffix(target) }));
+            }
+          case HitCheckResult.PROTECTED:
+          case HitCheckResult.NO_EFFECT_NO_MESSAGE:
+            applyMoveAttrs(NoEffectAttr, user, target, move);
+            break;
+          case HitCheckResult.MISS:
+            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getFirstTarget() ? getPokemonNameWithAffix(this.getFirstTarget()!) : "" }));
+            applyMoveAttrs(MissEffectAttr, user, target, move);
+            break;
+          case HitCheckResult.PENDING:
+          case HitCheckResult.ERROR:
+            console.log(`Unexpected hit check result ${HitCheckResult[hitCheckResult]}. Aborting phase.`);
+            return this.end();
+        }
+      }
+
+      Promise.allSettled(applyPromises)
+        .then(() => executeIf(this.lastHit, () => this.triggerMoveEffects(MoveEffectTrigger.POST_TARGET, user, null)))
+        .then(() => {
+          this.updateSubstitutes();
+          this.end();
+        });
+    });
+  }
+
+  protected playMoveAnim(user: Pokemon): Promise<void> {
+    return new Promise((resolve) => {
+      const move = this.move.getMove();
+      const firstTargetPokemon = this.getFirstTarget() ?? null;
+      const playOnEmptyField = this.scene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false;
+      new MoveAnim(move.id, user, firstTargetPokemon!.getBattlerIndex(), playOnEmptyField)
+        .play(this.scene, move.hitsSubstitute(user, firstTargetPokemon), () => resolve());
+    });
+  }
+
+  protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier): Promise<void> {
+    const user = this.getUserPokemon();
+    const move = this.move.getMove();
+
+    const firstTarget = target === this.getTargets().find((_, i) => this.hitChecks[i][1] > 0);
+
+    if (isNullOrUndefined(user)) {
+      return Promise.resolve();
+    }
+
+    // prevent field-targeted moves from activating multiple times
+    if (move.isFieldTarget() && target !== this.getTargets()[this.targets.length - 1]) {
+      return Promise.resolve();
+    }
+
+    return this.triggerMoveEffects(MoveEffectTrigger.PRE_APPLY, user, target).then(() => {
       const hitResult = this.applyMove(target, effectiveness);
 
       /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
@@ -255,19 +265,20 @@ export class MoveEffectPhase extends PokemonPhase {
         HitResult.ONE_HIT_KO
       ].includes(hitResult);
 
-      await this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target);
-      this.applyHeldItemFlinchCheck(user, target, dealsDamage);
-      await this.triggerMoveEffects(MoveEffectTrigger.HIT, user, target);
-      await this.applyOnGetHitAbEffects(user, target, hitResult);
-      await applyPostAttackAbAttrs(PostAttackAbAttr, user, target, move, hitResult);
+      return this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget)
+        .then(() => this.applyHeldItemFlinchCheck(user, target, dealsDamage))
+        .then(() => this.triggerMoveEffects(MoveEffectTrigger.HIT, user, target, firstTarget))
+        .then(() => this.applyOnGetHitAbEffects(user, target, hitResult))
+        .then(() => applyPostAttackAbAttrs(PostAttackAbAttr, user, target, move, hitResult))
+        .then(() => {
+          if (move instanceof AttackMove) {
+            this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
+          }
 
-      if (move instanceof AttackMove) {
-        this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
-      }
-
-      if (this.lastHit) {
-        this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
-      }
+          if (this.lastHit) {
+            this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+          }
+        });
     });
   }
 
@@ -307,18 +318,19 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param triggerType The {@linkcode MoveEffectTrigger} being applied
    * @param user The {@linkcode Pokemon} using the move
    * @param target The {@linkcode Pokemon} targeted by the move
+   * @param firstTarget Whether the target is the first to be hit by the current strike
    * @param selfTarget If defined, limits the effects triggered to either self-targeted
    * effects (if set to `true`) or targeted effects (if set to `false`).
    * @returns a `Promise` applying the relevant move effects.
    */
-  protected triggerMoveEffects(triggerType: MoveEffectTrigger, user: Pokemon, target: Pokemon | null, selfTarget?: boolean): Promise<void> {
+  protected triggerMoveEffects(triggerType: MoveEffectTrigger, user: Pokemon, target: Pokemon | null, firstTarget?: boolean | null, selfTarget?: boolean): Promise<void> {
     return applyFilteredMoveAttrs((attr: MoveAttr) =>
       attr instanceof MoveEffectAttr
       && attr.trigger === triggerType
       && (isNullOrUndefined(selfTarget) || (attr.selfTarget === selfTarget))
       && (!attr.firstHitOnly || this.firstHit)
       && (!attr.lastHitOnly || this.lastHit)
-      && (!attr.firstTargetOnly || this.firstTarget),
+      && (!attr.firstTargetOnly || (firstTarget ?? true)),
     user, target, this.move.getMove());
   }
 
@@ -565,7 +577,7 @@ export class MoveEffectPhase extends PokemonPhase {
       }
     }
 
-    if (alwaysHit || target.getTag(BattlerTagType.TELEKINESIS) && !move.hasAttr(OneHitKOAttr)) {
+    if (alwaysHit || (target.getTag(BattlerTagType.TELEKINESIS) && !move.hasAttr(OneHitKOAttr))) {
       return [ HitCheckResult.HIT, effectiveness ];
     }
 

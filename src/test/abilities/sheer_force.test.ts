@@ -1,16 +1,17 @@
 import { BattlerIndex } from "#app/battle";
-import { applyAbAttrs, applyPostDefendAbAttrs, applyPreAttackAbAttrs, MoveEffectChanceMultiplierAbAttr, MovePowerBoostAbAttr, PostDefendTypeChangeAbAttr } from "#app/data/ability";
+import { applyAbAttrs, applyPreAttackAbAttrs, MoveEffectChanceMultiplierAbAttr, MovePowerBoostAbAttr } from "#app/data/ability";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
+import { Type } from "#enums/type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { allMoves } from "#app/data/move";
-import { HitResult } from "#app/field/pokemon";
+
 
 describe("Abilities - Sheer Force", () => {
   let phaserGame: Phaser.Game;
@@ -130,40 +131,25 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force Disabling Specific Abilities", async () => {
     const moveToUse = Moves.CRUSH_CLAW;
-    game.override.enemyAbility(Abilities.COLOR_CHANGE);
-    game.override.startingHeldItems([{ name: "KINGS_ROCK", count: 1 }]);
-    game.override.ability(Abilities.SHEER_FORCE);
-    await game.startBattle([ Species.PIDGEOT ]);
+    game.override
+      .startingLevel(100)
+      .enemyLevel(100)
+      .enemySpecies(Species.SHUCKLE)
+      .enemyAbility(Abilities.COLOR_CHANGE)
+      .ability(Abilities.SHEER_FORCE);
 
+    await game.classicMode.startBattle([ Species.PIDGEOT ]);
 
-    game.scene.getEnemyPokemon()!.stats[Stat.DEF] = 10000;
-    expect(game.scene.getPlayerPokemon()!.formIndex).toBe(0);
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(moveToUse);
-
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.move.forceHit();
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
-    const move = phase.move.getMove();
-    expect(move.id).toBe(Moves.CRUSH_CLAW);
-
-    //Disable color change due to being hit by Sheer Force
-    const power = new NumberHolder(move.power);
-    const chance = new NumberHolder(move.chance);
-    const user = phase.getUserPokemon()!;
-    const target = phase.getFirstTarget()!;
-    const opponentType = target.getTypes()[0];
-
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, chance, move, target, false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, user, target, move, false, power);
-    applyPostDefendAbAttrs(PostDefendTypeChangeAbAttr, target, user, move, HitResult.EFFECTIVE);
-
-    expect(chance.value).toBe(0);
-    expect(power.value).toBe(move.power * 5461 / 4096);
-    expect(target.getTypes().length).toBe(2);
-    expect(target.getTypes()[0]).toBe(opponentType);
-
+    expect(player.battleData.abilitiesApplied.includes(Abilities.SHEER_FORCE)).toBeTruthy();
+    expect(enemy.getTypes()).toEqual([ Type.BUG, Type.ROCK ]);
   }, 20000);
 
   it("Two Pokemon with abilities disabled by Sheer Force hitting each other should not cause a crash", async () => {
