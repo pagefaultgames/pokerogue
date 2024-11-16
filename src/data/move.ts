@@ -4312,6 +4312,53 @@ export class CueNextRoundAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Steals the postitive Stat stages of the target before damage calculation so stat changes
+ * apply to damage calculation (e.g. {@linkcode Moves.SPECTRAL_THIEF})
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Spectral_Thief_(move) | Spectral Thief}
+ */
+export class SpectralThiefAttr extends MoveAttr {
+  constructor() {
+    super();
+  }
+
+  /**
+   * steals max amount of positive stats of the target while not exceeding the limit of max 6 stat stages
+   *
+   * @param user {@linkcode Pokemon} that called {@linkcode move}
+   * @param target {@linkcode Pokemon} that is the target of {@linkcode move}
+   * @param move {@linkcode Move} called by {@linkcode user}
+   * @param args N/A
+   * @returns true if stat stages where correctly stolen
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    // Copy all positive stat stages to user and reduce copied stat stages on target
+    for (const s of BATTLE_STATS) {
+      const statStageValueTarget = target.getStatStage(s);
+      const statStageValueUser = user.getStatStage(s);
+
+      if (statStageValueTarget > 0) {
+        // Only value of up to 6 can be stolen (stat stages don't exceed 6)
+        const availableToSteal = Math.min(statStageValueTarget, 6 - statStageValueUser);
+
+        user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [ s ], availableToSteal));
+        target.setStatStage(s, statStageValueTarget - availableToSteal);
+      }
+    }
+
+    target.updateInfo();
+    user.updateInfo();
+    target.scene.queueMessage(i18next.t("moveTriggers:stolePositiveStatChanges", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+
+    return true;
+  }
+
+}
+
 export class VariableAtkAttr extends MoveAttr {
   constructor() {
     super();
@@ -9872,6 +9919,7 @@ export function initMoves() {
     new AttackMove(Moves.PRISMATIC_LASER, Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, 0, 7)
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
+      .attr(SpectralThiefAttr)
       .ignoresSubstitute()
       .partial(), // Does not steal stats
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
