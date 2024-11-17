@@ -2622,6 +2622,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const fixedDamage = new Utils.IntegerHolder(0);
     applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
     if (fixedDamage.value) {
+      const multiLensMultiplier = new Utils.NumberHolder(1);
+      source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, move.id, null, multiLensMultiplier);
+      fixedDamage.value = Utils.toDmgValue(fixedDamage.value * multiLensMultiplier.value);
+
       return {
         cancelled: false,
         result: HitResult.EFFECTIVE,
