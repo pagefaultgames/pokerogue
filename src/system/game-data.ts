@@ -506,9 +506,9 @@ export class GameData {
 
           const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
           for (const s of starterIds) {
-            this.starterData[s].candyCount += this.dexData[s].caughtCount;
-            this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
-            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
+            this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
+            this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
+            if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
               this.starterData[s].candyCount += 4;
             }
           }
@@ -1789,6 +1789,32 @@ export class GameData {
 
       this.scene.ui.showText(message, null, () => resolve(true), null, true);
     });
+  }
+
+  /**
+   * Checks whether the root species of a given {@PokemonSpecies} has been unlocked in the dex
+   */
+  isRootSpeciesUnlocked(species: PokemonSpecies): boolean {
+    return !!this.dexData[species.getRootSpeciesId()]?.caughtAttr;
+  }
+
+  /**
+   * Unlocks the given {@linkcode Nature} for a {@linkcode PokemonSpecies} and its prevolutions.
+   * Will fail silently if root species has not been unlocked
+   */
+  unlockSpeciesNature(species: PokemonSpecies, nature: Nature): void {
+    if (!this.isRootSpeciesUnlocked(species)) {
+      return;
+    }
+
+    //recursively unlock nature for species and prevolutions
+    const _unlockSpeciesNature = (speciesId: Species) => {
+      this.dexData[speciesId].natureAttr |= 1 << (nature + 1);
+      if (pokemonPrevolutions.hasOwnProperty(speciesId)) {
+        _unlockSpeciesNature(pokemonPrevolutions[speciesId]);
+      }
+    };
+    _unlockSpeciesNature(species.speciesId);
   }
 
   updateSpeciesDexIvs(speciesId: Species, ivs: integer[]): void {
