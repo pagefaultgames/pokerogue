@@ -766,11 +766,11 @@ export class MoveEffectModifier extends PokemonHeldItemModifier {
   }
 
   shouldApply(pokemon?: Pokemon, ..._args: unknown[]): boolean {
-    return pokemon?.hasAbility(Abilities.SHEER_FORCE, true) ?? false;
+    return !pokemon?.hasAbility(Abilities.SHEER_FORCE, true);
   }
 
-  apply(pokemon: Pokemon): boolean {
-    return this.apply(pokemon);
+  apply(pokemon: Pokemon, ...args: unknown[]): boolean {
+    return this.apply(pokemon, args);
   }
 
   getMaxHeldItemCount(pokemon?: Pokemon): number {
@@ -1787,6 +1787,10 @@ export class HitHealModifier extends MoveEffectModifier {
 
   clone() {
     return new HitHealModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  override shouldApply(pokemon?: Pokemon, ...args: unknown[]): boolean {
+    return super.shouldApply(pokemon, ...args);
   }
 
   /**
@@ -2877,7 +2881,10 @@ export class MoneyMultiplierModifier extends PersistentModifier {
   }
 }
 
-export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
+/**
+ * Modifier class for items like Golden Punch
+ */
+export class DamageMoneyRewardModifier extends MoveEffectModifier {
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
@@ -3311,6 +3318,10 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
 
   getArgs(): any[] {
     return super.getArgs().concat(this.chance * 100);
+  }
+
+  shouldApply(pokemon?: Pokemon, ..._args: unknown[]): boolean {
+    return !pokemon?.hasAbility(Abilities.SHEER_FORCE, true);
   }
 
   getTransferredItemCount(): number {
