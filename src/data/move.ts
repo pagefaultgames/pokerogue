@@ -4364,8 +4364,7 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
 
     target.updateInfo();
     user.updateInfo();
-    //TODO remove line comment if "stolePositiveStatChanges" text is implemented
-    //target.scene.queueMessage(i18next.t("moveTriggers:stolePositiveStatChanges", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+    target.scene.queueMessage(i18next.t("moveTriggers:stolePositiveStatChanges", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
