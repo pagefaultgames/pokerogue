@@ -77,6 +77,7 @@ describe("Moves - Spectral Thief", () => {
     const dmgBefore = enemy.getAttackDamage(player, moveToCheck, false, false, false, false).damage;
 
     enemy.setStatStage(Stat.ATK, 6);
+
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -94,6 +95,7 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 6);
+
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -112,6 +114,7 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 3);
+
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -130,6 +133,7 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 3);
+
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -148,6 +152,7 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 3);
+
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -166,6 +171,7 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 3);
+
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -184,6 +190,7 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 3);
+
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -192,7 +199,6 @@ describe("Moves - Spectral Thief", () => {
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
-    //-1 Damage since Subsitute damages enemy for 1
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp() - 1);
   });
 
@@ -205,6 +211,7 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 3);
+
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
