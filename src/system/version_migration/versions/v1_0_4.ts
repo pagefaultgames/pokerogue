@@ -1,7 +1,8 @@
-import { SettingKeys } from "../../settings/settings";
+import { SettingKeys } from "#app/system/settings/settings";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SystemSaveData, SessionSaveData  } from "../../game-data";
-import { allSpecies } from "../../../data/pokemon-species";
+import { allSpecies } from "#app/data/pokemon-species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { isNullOrUndefined } from "#app/utils";
 
 export const systemMigrators = [
   /**
@@ -150,7 +151,7 @@ export const sessionMigrators = [
         pokemon["fusionMysteryEncounterPokemonData"] = null;
       }
       pokemon.customPokemonData = pokemon.customPokemonData ?? new CustomPokemonData();
-      if (pokemon["natureOverride"] && pokemon["natureOverride"] >= 0) {
+      if (!isNullOrUndefined(pokemon["natureOverride"]) && pokemon["natureOverride"] >= 0) {
         pokemon.customPokemonData.nature = pokemon["natureOverride"];
         pokemon["natureOverride"] = -1;
       }
