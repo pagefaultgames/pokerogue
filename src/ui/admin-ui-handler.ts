@@ -1,10 +1,14 @@
 import BattleScene from "#app/battle-scene";
-import { ModalConfig } from "./modal-ui-handler";
-import { Mode } from "./ui";
-import * as Utils from "../utils";
-import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { Button } from "#app/enums/buttons";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { formatText } from "#app/utils";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
+import { ModalConfig } from "./modal-ui-handler";
 import { TextStyle } from "./text";
+import { Mode } from "./ui";
+
+type AdminUiHandlerService = "discord" | "google";
+type AdminUiHandlerServiceMode = "Link" | "Unlink";
 
 export default class AdminUiHandler extends FormModalUiHandler {
 
@@ -17,17 +21,15 @@ export default class AdminUiHandler extends FormModalUiHandler {
   private readonly httpUserNotFoundErrorCode: number = 404;
   private readonly ERR_REQUIRED_FIELD = (field: string) => {
     if (field === "username") {
-      return `${Utils.formatText(field)} is required`;
+      return `${formatText(field)} is required`;
     } else {
-      return `${Utils.formatText(field)} Id is required`;
+      return `${formatText(field)} Id is required`;
     }
   };
   // returns a string saying whether a username has been successfully linked/unlinked to discord/google
   private readonly SUCCESS_SERVICE_MODE = (service: string, mode: string) => {
     return `Username and ${service} successfully ${mode.toLowerCase()}ed`;
   };
-  private readonly ERR_USERNAME_NOT_FOUND: string = "Username not found!";
-  private readonly ERR_GENERIC_ERROR: string = "There was an error";
 
   constructor(scene: BattleScene, mode: Mode | null = null) {
     super(scene, mode);
@@ -148,7 +150,6 @@ export default class AdminUiHandler extends FormModalUiHandler {
         } else if (this.adminMode === AdminMode.ADMIN) {
           this.updateAdminPanelInfo(adminSearchResult, AdminMode.SEARCH);
         }
-        return false;
       };
       return true;
     }
@@ -196,7 +197,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
                 this.scene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
                 return this.showMessage(validFields.errorMessage ?? "", adminResult, true);
               }
-              this.adminLinkUnlink(this.convertInputsToAdmin(), service, mode).then(response => { // attempts to link/unlink depending on the service
+              this.adminLinkUnlink(this.convertInputsToAdmin(), service as AdminUiHandlerService, mode).then(response => { // attempts to link/unlink depending on the service
                 if (response.error) {
                   this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
                   return this.showMessage(response.errorType, adminResult, true); // fail
@@ -276,12 +277,11 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   private async adminSearch(adminSearchResult: AdminSearchInfo) {
     try {
-      const adminInfo = await Utils.apiFetch(`admin/account/adminSearch?username=${encodeURIComponent(adminSearchResult.username)}`, true);
-      if (!adminInfo.ok) { // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
-        return { adminSearchResult: adminSearchResult, error: true, errorType: adminInfo.status === this.httpUserNotFoundErrorCode ? this.ERR_USERNAME_NOT_FOUND : this.ERR_GENERIC_ERROR };
+      const [ adminInfo, errorType ] = await pokerogueApi.admin.searchAccount({ username: adminSearchResult.username });
+      if (errorType || !adminInfo) { // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
+        return { adminSearchResult: adminSearchResult, error: true, errorType };
       } else { // success
-        const adminInfoJson: AdminSearchInfo = await adminInfo.json();
-        return { adminSearchResult: adminInfoJson, error: false };
+        return { adminSearchResult: adminInfo, error: false };
       }
     } catch (err) {
       console.error(err);
@@ -289,12 +289,47 @@ export default class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
-  private async adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: string, mode: string) {
+  private async adminLinkUnlink(adminSearchResult: AdminSearchInfo, service: AdminUiHandlerService, mode: AdminUiHandlerServiceMode) {
     try {
-      const response = await Utils.apiPost(`admin/account/${service}${mode}`, `username=${encodeURIComponent(adminSearchResult.username)}&${service}Id=${encodeURIComponent(service === "discord" ? adminSearchResult.discordId : adminSearchResult.googleId)}`, "application/x-www-form-urlencoded", true);
-      if (!response.ok) { // error - if response.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
-        return { adminSearchResult: adminSearchResult, error: true, errorType: response.status === this.httpUserNotFoundErrorCode ? this.ERR_USERNAME_NOT_FOUND : this.ERR_GENERIC_ERROR };
-      } else { // success!
+      let errorType: string | null = null;
+
+      if (service === "discord") {
+        if (mode === "Link") {
+          errorType = await pokerogueApi.admin.linkAccountToDiscord({
+            discordId: adminSearchResult.discordId,
+            username: adminSearchResult.username,
+          });
+        } else if (mode === "Unlink") {
+          errorType = await pokerogueApi.admin.unlinkAccountFromDiscord({
+            discordId: adminSearchResult.discordId,
+            username: adminSearchResult.username,
+          });
+        } else {
+          console.warn("Unknown mode", mode, "for service", service);
+        }
+      } else if (service === "google") {
+        if (mode === "Link") {
+          errorType = await pokerogueApi.admin.linkAccountToGoogleId({
+            googleId: adminSearchResult.googleId,
+            username: adminSearchResult.username,
+          });
+        } else if (mode === "Unlink") {
+          errorType = await pokerogueApi.admin.unlinkAccountFromGoogleId({
+            googleId: adminSearchResult.googleId,
+            username: adminSearchResult.username,
+          });
+        } else {
+          console.warn("Unknown mode", mode, "for service", service);
+        }
+      } else {
+        console.warn("Unknown service", service);
+      }
+
+      if (errorType) {
+        // error - if response.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
+        return { adminSearchResult: adminSearchResult, error: true, errorType };
+      } else {
+        // success!
         return { adminSearchResult: adminSearchResult, error: false };
       }
     } catch (err) {
