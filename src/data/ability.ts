@@ -4953,7 +4953,7 @@ class ForceSwitchOutHelper {
      * For wild Pokémon battles, the Pokémon will flee if the conditions are met (waveIndex and double battles).
      */
     } else {
-      if (!pokemon.scene.currentBattle.waveIndex && pokemon.scene.currentBattle.waveIndex % 10 === 0) {
+      if (!pokemon.scene.currentBattle.waveIndex || pokemon.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
 
