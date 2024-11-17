@@ -267,7 +267,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
       return this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget)
         .then(() => this.applyHeldItemFlinchCheck(user, target, dealsDamage))
-        .then(() => this.triggerMoveEffects(MoveEffectTrigger.HIT, user, target, firstTarget))
         .then(() => this.applyOnGetHitAbEffects(user, target, hitResult))
         .then(() => applyPostAttackAbAttrs(PostAttackAbAttr, user, target, move, hitResult))
         .then(() => {

@@ -1106,7 +1106,6 @@ export abstract class MoveAttr {
 export enum MoveEffectTrigger {
   PRE_APPLY,
   POST_APPLY,
-  HIT,
   /** Triggers one time after all target effects have applied */
   POST_TARGET,
 }
@@ -1600,7 +1599,7 @@ export class SacrificialAttr extends MoveEffectAttr {
  **/
 export class SacrificialAttrOnHit extends MoveEffectAttr {
   constructor() {
-    super(true, { trigger: MoveEffectTrigger.HIT });
+    super(true);
   }
 
   /**
@@ -2043,7 +2042,7 @@ export class HitHealAttr extends MoveEffectAttr {
   private healStat: EffectiveStat | null;
 
   constructor(healRatio?: number | null, healStat?: EffectiveStat) {
-    super(true, { trigger: MoveEffectTrigger.HIT });
+    super(true);
 
     this.healRatio = healRatio ?? 0.5;
     this.healStat = healStat ?? null;
@@ -2252,7 +2251,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   public overrideStatus: boolean = false;
 
   constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
-    super(selfTarget, { trigger: MoveEffectTrigger.HIT });
+    super(selfTarget);
 
     this.effect = effect;
     this.turnsRemaining = turnsRemaining;
@@ -2325,7 +2324,7 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
 
 export class PsychoShiftEffectAttr extends MoveEffectAttr {
   constructor() {
-    super(false, { trigger: MoveEffectTrigger.HIT });
+    super(false);
   }
 
   /**
@@ -2364,7 +2363,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   private chance: number;
 
   constructor(chance: number) {
-    super(false, { trigger: MoveEffectTrigger.HIT });
+    super(false);
     this.chance = chance;
   }
 
@@ -2425,7 +2424,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   private berriesOnly: boolean;
 
   constructor(berriesOnly: boolean) {
-    super(false, { trigger: MoveEffectTrigger.HIT });
+    super(false);
     this.berriesOnly = berriesOnly;
   }
 
@@ -2499,8 +2498,8 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier | undefined;
-  constructor() {
-    super(true, { trigger: MoveEffectTrigger.HIT });
+  constructor(selfTarget: boolean) {
+    super(selfTarget);
   }
   /**
    * Causes the target to eat a berry.
@@ -2515,17 +2514,19 @@ export class EatBerryAttr extends MoveEffectAttr {
       return false;
     }
 
-    const heldBerries = this.getTargetHeldBerries(target);
+    const pokemon = this.selfTarget ? user : target;
+
+    const heldBerries = this.getTargetHeldBerries(pokemon);
     if (heldBerries.length <= 0) {
       return false;
     }
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     const preserve = new Utils.BooleanHolder(false);
-    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
+    target.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve); // check for berry pouch preservation
     if (!preserve.value) {
-      this.reduceBerryModifier(target);
+      this.reduceBerryModifier(pokemon);
     }
-    this.eatBerry(target);
+    this.eatBerry(pokemon);
     return true;
   }
 
@@ -2553,7 +2554,7 @@ export class EatBerryAttr extends MoveEffectAttr {
  */
 export class StealEatBerryAttr extends EatBerryAttr {
   constructor() {
-    super();
+    super(false);
   }
   /**
    * User steals a random berry from the target and then eats it.
@@ -3000,14 +3001,6 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   }
 
   /**
-   * Indicates when the stat change should trigger
-   * @default MoveEffectTrigger.HIT
-   */
-  public override get trigger () {
-    return this.options?.trigger ?? MoveEffectTrigger.HIT;
-  }
-
-  /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
    * @param user {@linkcode Pokemon} the user of the move
    * @param target {@linkcode Pokemon} the target of the move
@@ -3312,7 +3305,7 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
  */
 export class OrderUpStatBoostAttr extends MoveEffectAttr {
   constructor() {
-    super(true, { trigger: MoveEffectTrigger.HIT });
+    super(true);
   }
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
@@ -5138,7 +5131,7 @@ export class BypassRedirectAttr extends MoveAttr {
 
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
-    super(true, { trigger: MoveEffectTrigger.HIT, lastHitOnly: true });
+    super(true, { lastHitOnly: true });
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
@@ -6328,7 +6321,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
   private type: Type;
 
   constructor(type: Type) {
-    super(false, { trigger: MoveEffectTrigger.HIT });
+    super(false);
 
     this.type = type;
   }
@@ -6351,7 +6344,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   private type: Type;
 
   constructor(type: Type) {
-    super(false, { trigger: MoveEffectTrigger.HIT });
+    super(false);
 
     this.type = type;
   }
@@ -6886,7 +6879,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
   public ability: Abilities;
 
   constructor(ability: Abilities, selfTarget?: boolean) {
-    super(selfTarget, { trigger: MoveEffectTrigger.HIT });
+    super(selfTarget);
 
     this.ability = ability;
   }
@@ -6915,7 +6908,7 @@ export class AbilityCopyAttr extends MoveEffectAttr {
   public copyToPartner: boolean;
 
   constructor(copyToPartner: boolean = false) {
-    super(false, { trigger: MoveEffectTrigger.HIT });
+    super(false);
 
     this.copyToPartner = copyToPartner;
   }
@@ -6954,7 +6947,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
   public copyToPartner: boolean;
 
   constructor() {
-    super(false, { trigger: MoveEffectTrigger.HIT });
+    super(false);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7267,7 +7260,7 @@ export class DiscourageFrequentUseAttr extends MoveAttr {
 
 export class MoneyAttr extends MoveEffectAttr {
   constructor() {
-    super(true, { trigger: MoveEffectTrigger.HIT, firstHitOnly: true });
+    super(true, { firstHitOnly: true });
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
@@ -7334,7 +7327,7 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
   public effect: StatusEffect;
 
   constructor(effect: StatusEffect) {
-    super(true, { trigger: MoveEffectTrigger.HIT });
+    super(true);
     this.effect = effect;
   }
 
@@ -9997,7 +9990,7 @@ export function initMoves() {
       .attr(JawLockAttr)
       .bitingMove(),
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, -1, 0, 8)
-      .attr(EatBerryAttr)
+      .attr(EatBerryAttr, true)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
       .condition((user) => {
         const userBerries = user.scene.findModifiers(m => m instanceof BerryModifier, user.isPlayer());
@@ -10019,7 +10012,7 @@ export function initMoves() {
       .makesContact(false)
       .partial(), // smart targetting is unimplemented
     new StatusMove(Moves.TEATIME, Type.NORMAL, -1, 10, -1, 0, 8)
-      .attr(EatBerryAttr)
+      .attr(EatBerryAttr, false)
       .target(MoveTarget.ALL),
     new StatusMove(Moves.OCTOLOCK, Type.FIGHTING, 100, 15, -1, 0, 8)
       .attr(AddBattlerTagAttr, BattlerTagType.OCTOLOCK, false, true, 1),
