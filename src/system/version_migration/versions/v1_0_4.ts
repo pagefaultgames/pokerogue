@@ -1,6 +1,7 @@
-import { SettingKeys } from "../../settings/settings";
-import { AbilityAttr, defaultStarterSpecies, DexAttr, SystemSaveData, SessionSaveData  } from "../../game-data";
-import { allSpecies } from "../../../data/pokemon-species";
+import { SettingKeys } from "#app/system/settings/settings";
+import { AbilityAttr, defaultStarterSpecies, DexAttr, SystemSaveData, SessionSaveData  } from "#app/system/game-data";
+import { allSpecies } from "#app/data/pokemon-species";
+import { isNullOrUndefined } from "#app/utils";
 
 export const systemMigrators = [
   /**
@@ -46,12 +47,14 @@ export const systemMigrators = [
    * @param data {@linkcode SystemSaveData}
    */
   function fixStarterData(data: SystemSaveData) {
-    for (const starterId of defaultStarterSpecies) {
-      if (data.starterData[starterId]?.abilityAttr) {
-        data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
-      }
-      if (data.dexData[starterId]?.caughtAttr) {
-        data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
+    if (!isNullOrUndefined(data.starterData)) {
+      for (const starterId of defaultStarterSpecies) {
+        if (data.starterData[starterId]?.abilityAttr) {
+          data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+        }
+        if (data.dexData[starterId]?.caughtAttr) {
+          data.dexData[starterId].caughtAttr |= DexAttr.FEMALE;
+        }
       }
     }
   }
