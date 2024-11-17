@@ -4954,7 +4954,7 @@ class ForceSwitchOutHelper {
      * It will not flee if it is a wave 10x boss battle or a battle in a Mystery Encounter
      */
     } else {
-      if (!pokemon.scene.currentBattle.waveIndex || pokemon.scene.currentBattle.waveIndex % 10 === 0 || pokemon.scene.currentBattle.isBattleMysteryEncounter()) {
+      if (!pokemon.scene.currentBattle.waveIndex || pokemon.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
 
