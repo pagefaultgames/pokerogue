@@ -5070,7 +5070,6 @@ export class VariableMoveTypeChartAttr extends MoveAttr {
    * @returns true if application of the attribute succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log("Did not call SpectralThiefAttr correctly");
     return false;
   }
 }
@@ -5080,7 +5079,6 @@ export class VariableMoveTypeChartAttr extends MoveAttr {
  */
 export class FreezeDryAttr extends VariableMoveTypeChartAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log("Did call SpectralThiefAttr correctly");
     const multiplier = args[0] as Utils.NumberHolder;
     const defType = args[1] as Type;
 
