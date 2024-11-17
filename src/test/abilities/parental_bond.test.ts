@@ -313,7 +313,7 @@ describe("Abilities - Parental Bond", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
-      expect(enemyPokemon.hp).toBe(enemyStartingHp - 300);
+      expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
     }
   );
 
