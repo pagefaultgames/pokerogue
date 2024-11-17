@@ -8,7 +8,7 @@ export class BattleEndPhase extends BattlePhase {
   /** If true, will increment battles won */
   isVictory: boolean;
 
-  constructor(scene: BattleScene, isVictory: boolean = true) {
+  constructor(scene: BattleScene, isVictory: boolean) {
     super(scene);
 
     this.isVictory = isVictory;
@@ -42,7 +42,7 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of this.scene.getPokemonAllowedInBattle()) {
-      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon, false, this.isVictory);
     }
 
     if (this.scene.currentBattle.moneyScattered) {

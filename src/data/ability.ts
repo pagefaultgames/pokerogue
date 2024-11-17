@@ -4112,9 +4112,13 @@ export class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
+  /**
+   * @param args - `[0]`: boolean for if the battle ended in a victory
+   * @returns `true` if successful
+   */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const postBattleLoot = pokemon.scene.currentBattle.postBattleLoot;
-    if (!simulated && postBattleLoot.length) {
+    if (!simulated && postBattleLoot.length && args[0]) {
       const randItem = Utils.randSeedItem(postBattleLoot);
       //@ts-ignore - TODO see below
       if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) { // TODO: fix. This is a promise!?
@@ -4575,14 +4579,15 @@ export class MoneyAbAttr extends PostBattleAbAttr {
   /**
    * @param pokemon {@linkcode Pokemon} that is the user of this ability.
    * @param passive N/A
-   * @param args N/A
-   * @returns true
+   * @param args - `[0]`: boolean for if the battle ended in a victory
+   * @returns `true` if successful
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!simulated) {
+    if (!simulated && args[0]) {
       pokemon.scene.currentBattle.moneyScattered += pokemon.scene.getWaveMoneyAmount(0.2);
+      return true;
     }
-    return true;
+    return false;
   }
 }
 
@@ -4590,13 +4595,12 @@ export class MoneyAbAttr extends PostBattleAbAttr {
  * Applies a stat change after a Pokémon is summoned,
  * conditioned on the presence of a specific arena tag.
  *
- * @extends {PostSummonStatStageChangeAbAttr}
+ * @extends PostSummonStatStageChangeAbAttr
  */
 export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageChangeAbAttr {
   /**
    * The type of arena tag that conditions the stat change.
    * @private
-   * @type {ArenaTagType}
    */
   private tagType: ArenaTagType;
 
@@ -4972,7 +4976,7 @@ class ForceSwitchOutHelper {
         pokemon.scene.clearEnemyHeldItemModifiers();
 
         if (switchOutTarget.hp) {
-          pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
+          pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene, false));
           pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
         }
       }
