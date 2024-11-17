@@ -1,16 +1,15 @@
 import { BattlerIndex } from "#app/battle";
 import { applyAbAttrs, applyPostDefendAbAttrs, applyPreAttackAbAttrs, MoveEffectChanceMultiplierAbAttr, MovePowerBoostAbAttr, PostDefendTypeChangeAbAttr } from "#app/data/ability";
-import { Stat } from "#enums/stat";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { allMoves } from "#app/data/move";
-
 
 describe("Abilities - Sheer Force", () => {
   let phaserGame: Phaser.Game;
@@ -39,13 +38,10 @@ describe("Abilities - Sheer Force", () => {
   it("Sheer Force", async () => {
     const moveToUse = Moves.AIR_SLASH;
     game.override.ability(Abilities.SHEER_FORCE);
-    await game.startBattle([
-      Species.PIDGEOT
-    ]);
+    await game.classicMode.startBattle([ Species.PIDGEOT ]);
 
-
-    game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    expect(game.scene.getParty()[0].formIndex).toBe(0);
+    game.scene.getEnemyPokemon()!.stats[Stat.SPDEF] = 10000;
+    expect(game.scene.getPlayerPokemon()!.formIndex).toBe(0);
 
     game.move.select(moveToUse);
 
@@ -57,11 +53,11 @@ describe("Abilities - Sheer Force", () => {
     expect(move.id).toBe(Moves.AIR_SLASH);
 
     //Verify the move is boosted and has no chance of secondary effects
-    const power = new Utils.IntegerHolder(move.power);
-    const chance = new Utils.IntegerHolder(move.chance);
+    const power = new NumberHolder(move.power);
+    const chance = new NumberHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getFirstTarget()!, move, false, power);
 
     expect(chance.value).toBe(0);
     expect(power.value).toBe(move.power * 5461 / 4096);
@@ -72,13 +68,11 @@ describe("Abilities - Sheer Force", () => {
   it("Sheer Force with exceptions including binding moves", async () => {
     const moveToUse = Moves.BIND;
     game.override.ability(Abilities.SHEER_FORCE);
-    await game.startBattle([
-      Species.PIDGEOT
-    ]);
+    await game.classicMode.startBattle([ Species.PIDGEOT ]);
 
 
-    game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    expect(game.scene.getParty()[0].formIndex).toBe(0);
+    game.scene.getEnemyPokemon()!.stats[Stat.DEF] = 10000;
+    expect(game.scene.getPlayerPokemon()!.formIndex).toBe(0);
 
     game.move.select(moveToUse);
 
@@ -90,11 +84,11 @@ describe("Abilities - Sheer Force", () => {
     expect(move.id).toBe(Moves.BIND);
 
     //Binding moves and other exceptions are not affected by Sheer Force and have a chance.value of -1
-    const power = new Utils.IntegerHolder(move.power);
-    const chance = new Utils.IntegerHolder(move.chance);
+    const power = new NumberHolder(move.power);
+    const chance = new NumberHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getFirstTarget()!, move, false, power);
 
     expect(chance.value).toBe(-1);
     expect(power.value).toBe(move.power);
@@ -105,13 +99,11 @@ describe("Abilities - Sheer Force", () => {
   it("Sheer Force with moves with no secondary effect", async () => {
     const moveToUse = Moves.TACKLE;
     game.override.ability(Abilities.SHEER_FORCE);
-    await game.startBattle([
-      Species.PIDGEOT
-    ]);
+    await game.classicMode.startBattle([ Species.PIDGEOT ]);
 
 
-    game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    expect(game.scene.getParty()[0].formIndex).toBe(0);
+    game.scene.getEnemyPokemon()!.stats[Stat.DEF] = 10000;
+    expect(game.scene.getPlayerPokemon()!.formIndex).toBe(0);
 
     game.move.select(moveToUse);
 
@@ -123,11 +115,11 @@ describe("Abilities - Sheer Force", () => {
     expect(move.id).toBe(Moves.TACKLE);
 
     //Binding moves and other exceptions are not affected by Sheer Force and have a chance.value of -1
-    const power = new Utils.IntegerHolder(move.power);
-    const chance = new Utils.IntegerHolder(move.chance);
+    const power = new NumberHolder(move.power);
+    const chance = new NumberHolder(move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
-    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getTarget()!, move, false, power);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
+    applyPreAttackAbAttrs(MovePowerBoostAbAttr, phase.getUserPokemon()!, phase.getFirstTarget()!, move, false, power);
 
     expect(chance.value).toBe(-1);
     expect(power.value).toBe(move.power);
@@ -140,13 +132,11 @@ describe("Abilities - Sheer Force", () => {
     game.override.enemyAbility(Abilities.COLOR_CHANGE);
     game.override.startingHeldItems([{ name: "KINGS_ROCK", count: 1 }]);
     game.override.ability(Abilities.SHEER_FORCE);
-    await game.startBattle([
-      Species.PIDGEOT
-    ]);
+    await game.startBattle([ Species.PIDGEOT ]);
 
 
-    game.scene.getEnemyParty()[0].stats[Stat.DEF] = 10000;
-    expect(game.scene.getParty()[0].formIndex).toBe(0);
+    game.scene.getEnemyPokemon()!.stats[Stat.DEF] = 10000;
+    expect(game.scene.getPlayerPokemon()!.formIndex).toBe(0);
 
     game.move.select(moveToUse);
 
@@ -158,10 +148,10 @@ describe("Abilities - Sheer Force", () => {
     expect(move.id).toBe(Moves.CRUSH_CLAW);
 
     //Disable color change due to being hit by Sheer Force
-    const power = new Utils.IntegerHolder(move.power);
-    const chance = new Utils.IntegerHolder(move.chance);
+    const power = new NumberHolder(move.power);
+    const chance = new NumberHolder(move.chance);
     const user = phase.getUserPokemon()!;
-    const target = phase.getTarget()!;
+    const target = phase.getFirstTarget()!;
     const opponentType = target.getTypes()[0];
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, false, chance, move, target, false);
@@ -186,7 +176,7 @@ describe("Abilities - Sheer Force", () => {
       Species.PIDGEOT
     ]);
 
-    const pidgeot = game.scene.getParty()[0];
+    const pidgeot = game.scene.getPlayerParty()[0];
     const onix = game.scene.getEnemyParty()[0];
 
     pidgeot.stats[Stat.DEF] = 10000;

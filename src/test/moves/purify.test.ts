@@ -1,9 +1,10 @@
 import { BattlerIndex } from "#app/battle";
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";

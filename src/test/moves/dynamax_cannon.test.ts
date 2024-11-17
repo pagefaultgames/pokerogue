@@ -81,7 +81,7 @@ describe("Moves - Dynamax Cannon", () => {
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
     expect(phase.move.moveId).toBe(dynamaxCannon.id);
     // Force level cap to be 100
-    vi.spyOn(phase.getTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
+    vi.spyOn(phase.getFirstTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamagePhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(120);
   }, 20000);
@@ -98,7 +98,7 @@ describe("Moves - Dynamax Cannon", () => {
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
     expect(phase.move.moveId).toBe(dynamaxCannon.id);
     // Force level cap to be 100
-    vi.spyOn(phase.getTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
+    vi.spyOn(phase.getFirstTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamagePhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(140);
   }, 20000);
@@ -115,7 +115,7 @@ describe("Moves - Dynamax Cannon", () => {
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
     expect(phase.move.moveId).toBe(dynamaxCannon.id);
     // Force level cap to be 100
-    vi.spyOn(phase.getTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
+    vi.spyOn(phase.getFirstTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamagePhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(160);
   }, 20000);
@@ -132,7 +132,7 @@ describe("Moves - Dynamax Cannon", () => {
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
     expect(phase.move.moveId).toBe(dynamaxCannon.id);
     // Force level cap to be 100
-    vi.spyOn(phase.getTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
+    vi.spyOn(phase.getFirstTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamagePhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(180);
   }, 20000);
@@ -149,7 +149,7 @@ describe("Moves - Dynamax Cannon", () => {
     const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
     expect(phase.move.moveId).toBe(dynamaxCannon.id);
     // Force level cap to be 100
-    vi.spyOn(phase.getTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
+    vi.spyOn(phase.getFirstTarget()!.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamagePhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
