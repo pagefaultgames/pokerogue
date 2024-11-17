@@ -1837,6 +1837,15 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
  * @extends MoveEffectAttr
  */
 export class FlameBurstAttr extends MoveEffectAttr {
+  constructor() {
+    /**
+     * This is self-targeted to bypass immunity to target-facing secondary
+     * effects when the target has an active Substitute doll.
+     * TODO: Find a more intuitive way to implement Substitute bypassing.
+     */
+    super(true);
+  }
+
   /**
    * @param user - n/a
    * @param target - The target Pokémon.
@@ -5176,21 +5185,19 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   public tagType: BattlerTagType;
   public turnCountMin: integer;
   public turnCountMax: integer;
-  protected cancelOnFail: boolean;
   private failOnOverlap: boolean;
 
-  constructor(tagType: BattlerTagType, selfTarget: boolean = false, failOnOverlap: boolean = false, turnCountMin: integer = 0, turnCountMax?: integer, lastHitOnly: boolean = false, cancelOnFail: boolean = false) {
+  constructor(tagType: BattlerTagType, selfTarget: boolean = false, failOnOverlap: boolean = false, turnCountMin: integer = 0, turnCountMax?: integer, lastHitOnly: boolean = false) {
     super(selfTarget, { lastHitOnly: lastHitOnly });
 
     this.tagType = tagType;
     this.turnCountMin = turnCountMin;
     this.turnCountMax = turnCountMax !== undefined ? turnCountMax : turnCountMin;
     this.failOnOverlap = !!failOnOverlap;
-    this.cancelOnFail = cancelOnFail;
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.canApply(user, target, move, args) || (this.cancelOnFail === true && user.getLastXMoves(1)[0]?.result === MoveResult.FAIL)) {
+    if (!super.canApply(user, target, move, args)) {
       return false;
     } else {
       return true;
@@ -5452,7 +5459,7 @@ export class ConfuseAttr extends AddBattlerTagAttr {
 
 export class RechargeAttr extends AddBattlerTagAttr {
   constructor() {
-    super(BattlerTagType.RECHARGING, true, false, 1, 1, true, true);
+    super(BattlerTagType.RECHARGING, true, false, 1, 1, true);
   }
 }
 
