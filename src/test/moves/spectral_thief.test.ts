@@ -1,4 +1,5 @@
 import { Abilities } from "#enums/abilities";
+import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/move";
 import { Moves } from "#enums/moves";
@@ -76,7 +77,6 @@ describe("Moves - Spectral Thief", () => {
     const dmgBefore = enemy.getAttackDamage(player, moveToCheck, false, false, false, false).damage;
 
     enemy.setStatStage(Stat.ATK, 6);
-
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -94,7 +94,6 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 6);
-
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -113,7 +112,6 @@ describe("Moves - Spectral Thief", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.setStatStage(Stat.ATK, 3);
-
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
@@ -121,5 +119,99 @@ describe("Moves - Spectral Thief", () => {
 
     expect(player.getStatStage(Stat.ATK)).toEqual(6);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+  });
+
+  it("should steal the stat stages through Clear Body.", async () => {
+    game.override
+      .enemyAbility(Abilities.CLEAR_BODY);
+    await game.classicMode.startBattle();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    enemy.setStatStage(Stat.ATK, 3);
+    player.setStatStage(Stat.ATK, 0);
+
+    game.move.select(Moves.SPECTRAL_THIEF);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(player.getStatStage(Stat.ATK)).toEqual(3);
+    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+  });
+
+  it("should steal the stat stages through White Smoke.", async () => {
+    game.override
+      .enemyAbility(Abilities.WHITE_SMOKE);
+    await game.classicMode.startBattle();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    enemy.setStatStage(Stat.ATK, 3);
+    player.setStatStage(Stat.ATK, 0);
+
+    game.move.select(Moves.SPECTRAL_THIEF);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(player.getStatStage(Stat.ATK)).toEqual(3);
+    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+  });
+
+  it("should steal the stat stages through Hyper Cutter.", async () => {
+    game.override
+      .enemyAbility(Abilities.HYPER_CUTTER);
+    await game.classicMode.startBattle();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    enemy.setStatStage(Stat.ATK, 3);
+    player.setStatStage(Stat.ATK, 0);
+
+    game.move.select(Moves.SPECTRAL_THIEF);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(player.getStatStage(Stat.ATK)).toEqual(3);
+    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+  });
+
+  it("should bypass Substitute.", async () => {
+    game.override
+      .enemyMoveset(Moves.SUBSTITUTE);
+    await game.classicMode.startBattle();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    enemy.setStatStage(Stat.ATK, 3);
+    player.setStatStage(Stat.ATK, 0);
+
+    game.move.select(Moves.SPECTRAL_THIEF);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(player.getStatStage(Stat.ATK)).toEqual(3);
+    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    //-1 Damage since Subsitute damages enemy for 1
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp() - 1);
+  });
+
+  it("should get blocked by protect.", async () => {
+    game.override
+      .enemyMoveset(Moves.PROTECT);
+    await game.classicMode.startBattle();
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    enemy.setStatStage(Stat.ATK, 3);
+    player.setStatStage(Stat.ATK, 0);
+
+    game.move.select(Moves.SPECTRAL_THIEF);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    expect(player.getStatStage(Stat.ATK)).toEqual(0);
+    expect(enemy.getStatStage(Stat.ATK)).toEqual(3);
+    expect(enemy.hp).toBe(enemy.getMaxHp());
   });
 });
