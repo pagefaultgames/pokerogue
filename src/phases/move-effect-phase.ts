@@ -257,23 +257,10 @@ export class MoveEffectPhase extends PokemonPhase {
     return this.triggerMoveEffects(MoveEffectTrigger.PRE_APPLY, user, target).then(() => {
       const hitResult = this.applyMove(target, effectiveness);
 
-      /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
-      const dealsDamage = [
-        HitResult.EFFECTIVE,
-        HitResult.SUPER_EFFECTIVE,
-        HitResult.NOT_VERY_EFFECTIVE,
-        HitResult.ONE_HIT_KO
-      ].includes(hitResult);
-
-      return this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget)
-        .then(() => this.applyHeldItemFlinchCheck(user, target, dealsDamage))
-        .then(() => this.applyOnGetHitAbEffects(user, target, hitResult))
-        .then(() => applyPostAttackAbAttrs(PostAttackAbAttr, user, target, move, hitResult))
+      return this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, true)
+        .then(() => executeIf(!move.hitsSubstitute(user, target),
+          () => this.applyOnTargetEffects(user, target, hitResult, firstTarget)))
         .then(() => {
-          if (move instanceof AttackMove) {
-            this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
-          }
-
           if (this.lastHit) {
             this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
           }
@@ -442,6 +429,28 @@ export class MoveEffectPhase extends PokemonPhase {
     return result;
   }
 
+  protected applyOnTargetEffects(user: Pokemon, target: Pokemon, hitResult: HitResult, firstTarget: boolean): Promise<void | null> {
+    const move = this.move.getMove();
+
+    /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
+    const dealsDamage = [
+      HitResult.EFFECTIVE,
+      HitResult.SUPER_EFFECTIVE,
+      HitResult.NOT_VERY_EFFECTIVE,
+      HitResult.ONE_HIT_KO
+    ].includes(hitResult);
+
+    return this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, false)
+      .then(() => this.applyHeldItemFlinchCheck(user, target, dealsDamage))
+      .then(() => this.applyOnGetHitAbEffects(user, target, hitResult))
+      .then(() => applyPostAttackAbAttrs(PostAttackAbAttr, user, target, move, hitResult))
+      .then(() => {
+        if (move instanceof AttackMove) {
+          this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
+        }
+      });
+  }
+
 
   /**
    * Applies reactive effects that occur when a Pokémon is hit.
@@ -455,15 +464,11 @@ export class MoveEffectPhase extends PokemonPhase {
     return executeIf(!target.isFainted() || target.canApplyAbility(), () =>
       applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult)
         .then(() => {
-
-          if (!this.move.getMove().hitsSubstitute(user, target)) {
-            if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
-              user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
-            }
-
-            target.lapseTags(BattlerTagLapseType.AFTER_HIT);
+          if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
+            user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
           }
 
+          target.lapseTags(BattlerTagLapseType.AFTER_HIT);
         })
     );
   }
