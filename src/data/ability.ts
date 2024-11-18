@@ -6122,8 +6122,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .bypassFaint()
-      .edgeCase(), // Soft-locks the game if a form-changed Cramorant and its attacker both faint at the same time (ex. using Self-Destruct)
+      .bypassFaint(),
     new Ability(Abilities.STALWART, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.STEAM_ENGINE, 8)
