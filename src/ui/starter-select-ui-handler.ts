@@ -1283,9 +1283,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (this.tryStart(true)) {
         success = true;
       } else {
-        // pressing enter with an empty party -> display message with the controls
-        this.tutorialActive = true;
-        this.showText(i18next.t("starterSelectUiHandler:emptyParty"), undefined, () => this.showText("", 0, () => this.tutorialActive = false), undefined, true);
         error = true;
       }
     } else if (button === Button.CANCEL) {
