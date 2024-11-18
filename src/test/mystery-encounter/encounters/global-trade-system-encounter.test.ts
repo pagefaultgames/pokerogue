@@ -19,8 +19,8 @@ import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 
-const namespace = "mysteryEncounter:globalTradeSystem";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const namespace = "mysteryEncounters/globalTradeSystem";
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -42,10 +42,10 @@ describe("Global Trade System - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
     ]);
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [MysteryEncounterType.GLOBAL_TRADE_SYSTEM]);
+      biomeMap.set(biome, [ MysteryEncounterType.GLOBAL_TRADE_SYSTEM ]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -62,27 +62,25 @@ describe("Global Trade System - Mystery Encounter", () => {
     expect(GlobalTradeSystemEncounter.encounterType).toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);
     expect(GlobalTradeSystemEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(GlobalTradeSystemEncounter.dialogue).toBeDefined();
-    expect(GlobalTradeSystemEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(GlobalTradeSystemEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(GlobalTradeSystemEncounter.options.length).toBe(4);
   });
 
-  it("should not run below wave 10", async () => {
-    game.override.startingWave(9);
+  it("should not loop infinitely when generating trade options for extreme BST non-legendaries", async () => {
+    const extremeBstTeam = [ Species.SLAKING, Species.WISHIWASHI, Species.SUNKERN ];
+    await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, extremeBstTeam);
 
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);
-  });
-
-  it("should not run above wave 179", async () => {
-    game.override.startingWave(181);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
+    expect(GlobalTradeSystemEncounter.encounterType).toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);
+    expect(GlobalTradeSystemEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
+    expect(GlobalTradeSystemEncounter.dialogue).toBeDefined();
+    expect(GlobalTradeSystemEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
+    expect(GlobalTradeSystemEncounter.options.length).toBe(4);
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {
@@ -99,19 +97,19 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
-        secondOptionPrompt: `${namespace}.option.1.trade_options_prompt`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
+        secondOptionPrompt: `${namespace}:option.1.trade_options_prompt`,
       });
     });
 
     it("Should trade a Pokemon from the player's party for the first of 3 Pokemon options", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
-      const speciesBefore = scene.getParty()[0].species.speciesId;
+      const speciesBefore = scene.getPlayerParty()[0].species.speciesId;
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 1 });
 
-      const speciesAfter = scene.getParty().at(-1)?.species.speciesId;
+      const speciesAfter = scene.getPlayerParty().at(-1)?.species.speciesId;
 
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
@@ -121,10 +119,10 @@ describe("Global Trade System - Mystery Encounter", () => {
     it("Should trade a Pokemon from the player's party for the second of 3 Pokemon options", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
-      const speciesBefore = scene.getParty()[1].species.speciesId;
+      const speciesBefore = scene.getPlayerParty()[1].species.speciesId;
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 2, optionNo: 2 });
 
-      const speciesAfter = scene.getParty().at(-1)?.species.speciesId;
+      const speciesAfter = scene.getPlayerParty().at(-1)?.species.speciesId;
 
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
@@ -134,10 +132,10 @@ describe("Global Trade System - Mystery Encounter", () => {
     it("Should trade a Pokemon from the player's party for the third of 3 Pokemon options", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
-      const speciesBefore = scene.getParty()[2].species.speciesId;
+      const speciesBefore = scene.getPlayerParty()[2].species.speciesId;
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 3, optionNo: 3 });
 
-      const speciesAfter = scene.getParty().at(-1)?.species.speciesId;
+      const speciesAfter = scene.getPlayerParty().at(-1)?.species.speciesId;
 
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
@@ -160,18 +158,18 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`
       });
     });
 
     it("Should trade a Pokemon from the player's party for a random wonder trade Pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
-      const speciesBefore = scene.getParty()[2].species.speciesId;
+      const speciesBefore = scene.getPlayerParty()[2].species.speciesId;
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
-      const speciesAfter = scene.getParty().at(-1)?.species.speciesId;
+      const speciesAfter = scene.getPlayerParty().at(-1)?.species.speciesId;
 
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
@@ -194,9 +192,9 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        secondOptionPrompt: `${namespace}.option.3.trade_options_prompt`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        secondOptionPrompt: `${namespace}:option.3.trade_options_prompt`,
       });
     });
 
@@ -206,12 +204,12 @@ describe("Global Trade System - Mystery Encounter", () => {
       // Set 2 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 2;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
@@ -231,12 +229,12 @@ describe("Global Trade System - Mystery Encounter", () => {
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       await scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1});
+      await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
@@ -248,11 +246,11 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.4.label`,
-        buttonTooltip: `${namespace}.option.4.tooltip`,
+        buttonLabel: `${namespace}:option.4.label`,
+        buttonTooltip: `${namespace}:option.4.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.4.selected`,
+            text: `${namespace}:option.4.selected`,
           },
         ],
       });

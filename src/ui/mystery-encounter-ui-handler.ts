@@ -6,7 +6,7 @@ import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
 import { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
-import MysteryEncounterOption from "../data/mystery-encounters/mystery-encounter-option";
+import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
@@ -42,7 +42,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private encounterOptions: MysteryEncounterOption[] = [];
   private optionsMeetsReqs: boolean[];
 
-  protected viewPartyIndex: integer = 0;
+  protected viewPartyIndex: number = 0;
+  protected viewPartyXPosition: number = 0;
 
   protected blockInput: boolean = true;
 
@@ -94,8 +95,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     super.show(args);
 
     this.overrideSettings = args[0] as OptionSelectSettings ?? {};
-    const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription) ? true : !this.overrideSettings?.hideDescription;
-    const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription) ? true : this.overrideSettings?.slideInDescription;
+    const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription) ? true : !this.overrideSettings.hideDescription;
+    const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription) ? true : this.overrideSettings.slideInDescription;
     const startingCursorIndex = this.overrideSettings?.startingCursorIndex ?? 0;
 
     this.cursorContainer.setVisible(true);
@@ -158,16 +159,16 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       }
     } else {
       switch (this.optionsContainer.getAll()?.length) {
-      default:
-      case 3:
-        success = this.handleTwoOptionMoveInput(button);
-        break;
-      case 4:
-        success = this.handleThreeOptionMoveInput(button);
-        break;
-      case 5:
-        success = this.handleFourOptionMoveInput(button);
-        break;
+        default:
+        case 3:
+          success = this.handleTwoOptionMoveInput(button);
+          break;
+        case 4:
+          success = this.handleThreeOptionMoveInput(button);
+          break;
+        case 5:
+          success = this.handleFourOptionMoveInput(button);
+          break;
       }
 
       this.displayOptionTooltip();
@@ -184,26 +185,26 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
-    case Button.UP:
-      if (cursor < this.viewPartyIndex) {
-        success = this.setCursor(this.viewPartyIndex);
-      }
-      break;
-    case Button.DOWN:
-      if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      }
-      break;
-    case Button.LEFT:
-      if (cursor > 0) {
-        success = this.setCursor(cursor - 1);
-      }
-      break;
-    case Button.RIGHT:
-      if (cursor < this.viewPartyIndex) {
-        success = this.setCursor(cursor + 1);
-      }
-      break;
+      case Button.UP:
+        if (cursor < this.viewPartyIndex) {
+          success = this.setCursor(this.viewPartyIndex);
+        }
+        break;
+      case Button.DOWN:
+        if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor > 0) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor < this.viewPartyIndex) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
     }
 
     return success;
@@ -213,34 +214,34 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
-    case Button.UP:
-      if (cursor === 2) {
-        success = this.setCursor(cursor - 2);
-      } else {
-        success = this.setCursor(this.viewPartyIndex);
-      }
-      break;
-    case Button.DOWN:
-      if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      } else {
-        success = this.setCursor(2);
-      }
-      break;
-    case Button.LEFT:
-      if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      } else if (cursor === 1) {
-        success = this.setCursor(cursor - 1);
-      }
-      break;
-    case Button.RIGHT:
-      if (cursor === 1) {
-        success = this.setCursor(this.viewPartyIndex);
-      } else if (cursor < 1) {
-        success = this.setCursor(cursor + 1);
-      }
-      break;
+      case Button.UP:
+        if (cursor === 2) {
+          success = this.setCursor(cursor - 2);
+        } else {
+          success = this.setCursor(this.viewPartyIndex);
+        }
+        break;
+      case Button.DOWN:
+        if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        } else {
+          success = this.setCursor(2);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        } else if (cursor === 1) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor === 1) {
+          success = this.setCursor(this.viewPartyIndex);
+        } else if (cursor < 1) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
     }
 
     return success;
@@ -250,34 +251,34 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let success = false;
     const cursor = this.getCursor();
     switch (button) {
-    case Button.UP:
-      if (cursor >= 2 && cursor !== this.viewPartyIndex) {
-        success = this.setCursor(cursor - 2);
-      } else {
-        success = this.setCursor(this.viewPartyIndex);
-      }
-      break;
-    case Button.DOWN:
-      if (cursor <= 1) {
-        success = this.setCursor(cursor + 2);
-      } else if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      }
-      break;
-    case Button.LEFT:
-      if (cursor === this.viewPartyIndex) {
-        success = this.setCursor(1);
-      } else if (cursor % 2 === 1) {
-        success = this.setCursor(cursor - 1);
-      }
-      break;
-    case Button.RIGHT:
-      if (cursor === 1) {
-        success = this.setCursor(this.viewPartyIndex);
-      } else if (cursor % 2 === 0 && cursor !== this.viewPartyIndex) {
-        success = this.setCursor(cursor + 1);
-      }
-      break;
+      case Button.UP:
+        if (cursor >= 2 && cursor !== this.viewPartyIndex) {
+          success = this.setCursor(cursor - 2);
+        } else {
+          success = this.setCursor(this.viewPartyIndex);
+        }
+        break;
+      case Button.DOWN:
+        if (cursor <= 1) {
+          success = this.setCursor(cursor + 2);
+        } else if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor === this.viewPartyIndex) {
+          success = this.setCursor(1);
+        } else if (cursor % 2 === 1) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor === 1) {
+          success = this.setCursor(this.viewPartyIndex);
+        } else if (cursor % 2 === 0 && cursor !== this.viewPartyIndex) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
     }
 
     return success;
@@ -300,11 +301,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
   }
 
-  override getCursor(): integer {
+  override getCursor(): number {
     return this.cursor ? this.cursor : 0;
   }
 
-  override setCursor(cursor: integer): boolean {
+  override setCursor(cursor: number): boolean {
     const prevCursor = this.getCursor();
     const changed = prevCursor !== cursor;
     if (changed) {
@@ -319,7 +320,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     if (cursor === this.viewPartyIndex) {
-      this.cursorObj.setPosition(246, -17);
+      this.cursorObj.setPosition(this.viewPartyXPosition, -17);
     } else if (this.optionsContainer.getAll()?.length === 3) { // 2 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 15);
     } else if (this.optionsContainer.getAll()?.length === 4) { // 3 Options
@@ -350,16 +351,16 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       let optionText: BBCodeText;
       switch (this.encounterOptions.length) {
-      default:
-      case 2:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
-        break;
-      case 3:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
-        break;
-      case 4:
-        optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
-        break;
+        default:
+        case 2:
+          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          break;
+        case 3:
+          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          break;
+        case 4:
+          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          break;
       }
 
       this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));
@@ -368,9 +369,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       let text: string | null;
       if (option.hasRequirements() && this.optionsMeetsReqs[i] && (option.optionMode === MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
         // Options with special requirements that are met are automatically colored green
-        text = getEncounterText(this.scene, label, TextStyle.SUMMARY_GREEN);
+        text = getEncounterText(this.scene, label, TextStyle.ME_OPTION_SPECIAL);
       } else {
-        text = getEncounterText(this.scene, label, optionDialogue.style ? optionDialogue.style : TextStyle.WINDOW);
+        text = getEncounterText(this.scene, label, optionDialogue.style ? optionDialogue.style : TextStyle.ME_OPTION_DEFAULT);
       }
 
       if (text) {
@@ -419,8 +420,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // View Party Button
-    const viewPartyText = addBBCodeTextObject(this.scene, 256, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
+    const viewPartyText = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width) / 6, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
     this.optionsContainer.add(viewPartyText);
+    viewPartyText.x -= (viewPartyText.displayWidth + 16);
+    this.viewPartyXPosition = viewPartyText.x - 10;
 
     // Description Window
     const titleTextObject = addBBCodeTextObject(this.scene, 0, 0, titleText ?? "", TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 750 }, align: "center", lineSpacing: -8 });
@@ -435,7 +438,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const ballType = getPokeballAtlasKey(index);
     this.rarityBall.setTexture("pb", ballType);
 
-    const descriptionTextObject = addBBCodeTextObject(this.scene, 6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    const descriptionTextObject = addBBCodeTextObject(this.scene, 6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
     const descriptionTextMaskRect = this.scene.make.graphics({});
@@ -469,7 +472,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     this.descriptionContainer.add(descriptionTextObject);
 
-    const queryTextObject = addBBCodeTextObject(this.scene, 0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 } });
+    const queryTextObject = addBBCodeTextObject(this.scene, 0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
     this.descriptionContainer.add(queryTextObject);
     queryTextObject.setPosition(75 - queryTextObject.displayWidth / 2, 90);
 
@@ -515,7 +518,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)
     if (text) {
-      const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+      const primaryStyleString = [ ...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))! ][0];
       text = text.replace(/(\(\+\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) + "[/color][/shadow]" + primaryStyleString);
       text = text.replace(/(\(\-\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) + "[/color][/shadow]" + primaryStyleString);
     }

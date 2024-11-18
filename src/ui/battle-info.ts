@@ -3,9 +3,10 @@ import { getLevelTotalExp, getLevelRelExp } from "../data/exp";
 import * as Utils from "../utils";
 import { addTextObject, TextStyle } from "./text";
 import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
-import { StatusEffect } from "../data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import BattleScene from "../battle-scene";
-import { Type, getTypeRgb } from "../data/type";
+import { getTypeRgb } from "#app/data/type";
+import { Type } from "#enums/type";
 import { getVariantTint } from "#app/data/variant";
 import { Stat } from "#enums/stat";
 import BattleFlyout from "./battle-flyout";
@@ -326,7 +327,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teraIcon.setVisible(this.lastTeraType !== Type.UNKNOWN);
     this.teraIcon.on("pointerover", () => {
       if (this.lastTeraType !== Type.UNKNOWN) {
-        (this.scene as BattleScene).ui.showTooltip("", i18next.t("fightUiHandler:teraHover", {type: i18next.t(`pokemonInfo:Type.${Type[this.lastTeraType]}`) }));
+        (this.scene as BattleScene).ui.showTooltip("", i18next.t("fightUiHandler:teraHover", { type: i18next.t(`pokemonInfo:Type.${Type[this.lastTeraType]}`) }));
       }
     });
     this.teraIcon.on("pointerout", () => (this.scene as BattleScene).ui.hideTooltip());
@@ -381,17 +382,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       const ownedAbilityAttrs = pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
 
-      let playerOwnsThisAbility = false;
       // Check if the player owns ability for the root form
-      if ((ownedAbilityAttrs & 1) > 0 && pokemon.hasSameAbilityInRootForm(0)) {
-        playerOwnsThisAbility = true;
-      }
-      if ((ownedAbilityAttrs & 2) > 0 && pokemon.hasSameAbilityInRootForm(1)) {
-        playerOwnsThisAbility = true;
-      }
-      if ((ownedAbilityAttrs & 4) > 0 && pokemon.hasSameAbilityInRootForm(2)) {
-        playerOwnsThisAbility = true;
-      }
+      const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs);
 
       if (missingDexAttrs || !playerOwnsThisAbility) {
         this.ownedIcon.setTint(0x808080);
@@ -602,7 +594,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       };
 
       const updatePokemonHp = () => {
-        let duration = !instant ? Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
+        let duration = !instant ? Phaser.Math.Clamp(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
         const speed = (this.scene as BattleScene).hpBarSpeed;
         if (speed) {
           duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);

@@ -1,18 +1,19 @@
-import { Button } from "#app/enums/buttons";
-import { MysteryEncounterBattlePhase, MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
-import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
-import { Mode } from "#app/ui/ui";
-import GameManager from "../utils/gameManager";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { Status, StatusEffect } from "#app/data/status-effect";
-import { expect, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { Status } from "#app/data/status-effect";
+import { CommandPhase } from "#app/phases/command-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { MysteryEncounterBattlePhase, MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
+import { VictoryPhase } from "#app/phases/victory-phase";
+import MessageUiHandler from "#app/ui/message-ui-handler";
+import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import { Mode } from "#app/ui/ui";
 import { isNullOrUndefined } from "#app/utils";
-import { CommandPhase } from "#app/phases/command-phase";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import { MessagePhase } from "#app/phases/message-phase";
+import { Button } from "#enums/buttons";
+import { StatusEffect } from "#enums/status-effect";
+import GameManager from "#test/utils/gameManager";
+import { expect, vi } from "vitest";
 
 /**
  * Runs a {@linkcode MysteryEncounter} to either the start of a battle, or to the {@linkcode MysteryEncounterRewardsPhase}, depending on the option selected
@@ -97,24 +98,24 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
   uiHandler.unblockInput(); // input are blocked by 1s to prevent accidental input. Tests need to handle that
 
   switch (optionNo) {
-  default:
-  case 1:
+    default:
+    case 1:
     // no movement needed. Default cursor position
-    break;
-  case 2:
-    uiHandler.processInput(Button.RIGHT);
-    break;
-  case 3:
-    uiHandler.processInput(Button.DOWN);
-    break;
-  case 4:
-    uiHandler.processInput(Button.RIGHT);
-    uiHandler.processInput(Button.DOWN);
-    break;
+      break;
+    case 2:
+      uiHandler.processInput(Button.RIGHT);
+      break;
+    case 3:
+      uiHandler.processInput(Button.DOWN);
+      break;
+    case 4:
+      uiHandler.processInput(Button.RIGHT);
+      uiHandler.processInput(Button.DOWN);
+      break;
   }
 
   if (!isNullOrUndefined(secondaryOptionSelect?.pokemonNo)) {
-    await handleSecondaryOptionSelect(game, secondaryOptionSelect!.pokemonNo, secondaryOptionSelect!.optionNo);
+    await handleSecondaryOptionSelect(game, secondaryOptionSelect.pokemonNo, secondaryOptionSelect.optionNo);
   } else {
     uiHandler.processInput(Button.ACTION);
   }

@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
@@ -7,6 +7,7 @@ import BattleScene from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 interface BuildInteractableImageOpts {
   scale?: number;
@@ -17,9 +18,9 @@ interface BuildInteractableImageOpts {
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   private readonly ERR_USERNAME: string = "invalid username";
-  private readonly ERR_PASSWORD: string =  "invalid password";
-  private readonly ERR_ACCOUNT_EXIST: string =  "account doesn't exist";
-  private readonly ERR_PASSWORD_MATCH: string =  "password doesn't match";
+  private readonly ERR_PASSWORD: string = "invalid password";
+  private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
+  private readonly ERR_PASSWORD_MATCH: string = "password doesn't match";
   private readonly ERR_NO_SAVES: string = "No save files found";
   private readonly ERR_TOO_MANY_SAVES: string = "Too many save files found";
 
@@ -75,10 +76,6 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     return i18next.t("menu:login");
   }
 
-  override getFields(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
-  }
-
   override getWidth(_config?: ModalConfig): number {
     return 160;
   }
@@ -88,7 +85,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getButtonLabels(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:login"), i18next.t("menu:register")];
+    return [ i18next.t("menu:login"), i18next.t("menu:register") ];
   }
 
   override getReadableErrorMessage(error: string): string {
@@ -97,21 +94,28 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-    case this.ERR_USERNAME:
-      return i18next.t("menu:invalidLoginUsername");
-    case this.ERR_PASSWORD:
-      return i18next.t("menu:invalidLoginPassword");
-    case this.ERR_ACCOUNT_EXIST:
-      return i18next.t("menu:accountNonExistent");
-    case this.ERR_PASSWORD_MATCH:
-      return i18next.t("menu:unmatchingPassword");
-    case this.ERR_NO_SAVES:
-      return i18next.t("menu:noSaves");
-    case this.ERR_TOO_MANY_SAVES:
-      return i18next.t("menu:tooManySaves");
+      case this.ERR_USERNAME:
+        return i18next.t("menu:invalidLoginUsername");
+      case this.ERR_PASSWORD:
+        return i18next.t("menu:invalidLoginPassword");
+      case this.ERR_ACCOUNT_EXIST:
+        return i18next.t("menu:accountNonExistent");
+      case this.ERR_PASSWORD_MATCH:
+        return i18next.t("menu:unmatchingPassword");
+      case this.ERR_NO_SAVES:
+        return "P01: " + i18next.t("menu:noSaves");
+      case this.ERR_TOO_MANY_SAVES:
+        return "P02: " + i18next.t("menu:tooManySaves");
     }
 
     return super.getReadableErrorMessage(error);
+  }
+
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    const inputFieldConfigs: InputFieldConfig[] = [];
+    inputFieldConfigs.push({ label: i18next.t("menu:username") });
+    inputFieldConfigs.push({ label: i18next.t("menu:password"), isPassword: true });
+    return inputFieldConfigs;
   }
 
   override show(args: any[]): boolean {
@@ -124,7 +128,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
         const onFail = error => {
           this.scene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           this.scene.ui.playError();
@@ -132,21 +136,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => {
-            if (!response.ok) {
-              return response.text();
-            }
-            return response.json();
-          })
-          .then(response => {
-            if (response.hasOwnProperty("token")) {
-              Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction && originalLoginAction();
-            } else {
-              onFail(response);
-            }
-          });
+
+        const [ usernameInput, passwordInput ] = this.inputs;
+
+        pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
+          if (!error) {
+            originalLoginAction && originalLoginAction();
+          } else {
+            onFail(error);
+          }
+        });
       };
 
       return true;
@@ -161,19 +160,19 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [this.discordImage, this.googleImage, this.usernameInfoImage].forEach((img) => img.off("pointerdown"));
+    [ this.discordImage, this.googleImage, this.usernameInfoImage ].forEach((img) => img.off("pointerdown"));
   }
 
-  private processExternalProvider(config: ModalConfig) : void {
+  private processExternalProvider(config: ModalConfig): void {
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
-    this.externalPartyTitle.setX(20+this.externalPartyTitle.text.length);
+    this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
     this.externalPartyContainer.setPositionRelative(this.modalContainer, 175, 0);
     this.externalPartyContainer.setVisible(true);
     this.externalPartyBg.setSize(this.externalPartyTitle.text.length + 50, this.modalBg.height);
     this.getUi().moveTo(this.externalPartyContainer, this.getUi().length - 1);
-    this.googleImage.setPosition(this.externalPartyBg.width/3.1, this.externalPartyBg.height-60);
-    this.discordImage.setPosition(this.externalPartyBg.width/3.1, this.externalPartyBg.height-40);
+    this.googleImage.setPosition(this.externalPartyBg.width / 3.1, this.externalPartyBg.height - 60);
+    this.discordImage.setPosition(this.externalPartyBg.width / 3.1, this.externalPartyBg.height - 40);
 
     this.infoContainer.setPosition(5, -76);
     this.infoContainer.setVisible(true);
@@ -195,7 +194,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     });
 
     const onFail = error => {
-      this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+      this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
       this.scene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
       this.scene.ui.playError();
     };

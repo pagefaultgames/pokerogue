@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import Pokemon from "#app/field/pokemon";
 import { ModifierBar } from "#app/modifier/modifier";
@@ -13,9 +13,11 @@ import { SubstituteTag } from "#app/data/battler-tags";
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
 export default class TargetSelectUiHandler extends UiHandler {
-  private fieldIndex: integer;
+  private fieldIndex: number;
   private move: Moves;
   private targetSelectCallback: TargetSelectCallback;
+  private cursor0: number; // associated with BattlerIndex.PLAYER
+  private cursor1: number; // associated with BattlerIndex.PLAYER_2
 
   private isMultipleTargets: boolean = false;
   private targets: BattlerIndex[];
@@ -42,8 +44,9 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.fieldIndex = args[0] as integer;
     this.move = args[1] as Moves;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
+    const user = this.scene.getPlayerField()[this.fieldIndex];
 
-    const moveTargets = getMoveTargets(this.scene.getPlayerField()[this.fieldIndex], this.move);
+    const moveTargets = getMoveTargets(user, this.move);
     this.targets = moveTargets.targets;
     this.isMultipleTargets = moveTargets.multiple ?? false;
 
@@ -53,9 +56,27 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     this.enemyModifiers = this.scene.getModifierBar(true);
 
-    this.setCursor(this.targets.includes(this.cursor) ? this.cursor : this.targets[0]);
-
+    if (this.fieldIndex === BattlerIndex.PLAYER) {
+      this.resetCursor(this.cursor0, user);
+    } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
+      this.resetCursor(this.cursor1, user);
+    }
     return true;
+  }
+
+  /**
+   * Determines what value to assign the main cursor based on the previous turn's target or the user's status
+   * @param cursorN the cursor associated with the user's field index
+   * @param user the Pokemon using the move
+   */
+  resetCursor(cursorN: number, user: Pokemon): void {
+    if (!Utils.isNullOrUndefined(cursorN)) {
+      if ([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ].includes(cursorN) || user.battleSummonData.waveTurnCount === 1) {
+        // Reset cursor on the first turn of a fight or if an ally was targeted last turn
+        cursorN = -1;
+      }
+    }
+    this.setCursor(this.targets.includes(cursorN) ? cursorN : this.targets[0]);
   }
 
   processInput(button: Button): boolean {
@@ -64,33 +85,42 @@ export default class TargetSelectUiHandler extends UiHandler {
     let success = false;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const targetIndexes: BattlerIndex[] = this.isMultipleTargets ? this.targets : [this.cursor];
+      const targetIndexes: BattlerIndex[] = this.isMultipleTargets ? this.targets : [ this.cursor ];
       this.targetSelectCallback(button === Button.ACTION ? targetIndexes : []);
       success = true;
+      if (this.fieldIndex === BattlerIndex.PLAYER) {
+        if (Utils.isNullOrUndefined(this.cursor0) || this.cursor0 !== this.cursor) {
+          this.cursor0 = this.cursor;
+        }
+      } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
+        if (Utils.isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor) {
+          this.cursor1 = this.cursor;
+        }
+      }
     } else if (this.isMultipleTargets) {
       success = false;
     } else {
       switch (button) {
-      case Button.UP:
-        if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1) {
-          success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
-        }
-        break;
-      case Button.DOWN:
-        if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1) {
-          success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
-        }
-        break;
-      case Button.LEFT:
-        if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
+        case Button.UP:
+          if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1) {
+            success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1) {
+            success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY)!); // TODO: is the bang correct here?
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1) {
+            success = this.setCursor(this.cursor + 1);
+          }
+          break;
       }
     }
 
@@ -152,7 +182,6 @@ export default class TargetSelectUiHandler extends UiHandler {
         yoyo: true
       }));
     });
-
     return ret;
   }
 

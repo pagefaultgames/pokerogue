@@ -27,12 +27,12 @@ describe("Abilities - Serene Grace", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const movesToUse = [Moves.AIR_SLASH, Moves.TACKLE];
+    const movesToUse = [ Moves.AIR_SLASH, Moves.TACKLE ];
     game.override.battleType("single");
     game.override.enemySpecies(Species.ONIX);
     game.override.startingLevel(100);
     game.override.moveset(movesToUse);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   it("Move chance without Serene Grace", async () => {
@@ -43,11 +43,11 @@ describe("Abilities - Serene Grace", () => {
 
 
     game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    expect(game.scene.getParty()[0].formIndex).toBe(0);
+    expect(game.scene.getPlayerParty()[0].formIndex).toBe(0);
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Check chance of Air Slash without Serene Grace
@@ -57,7 +57,7 @@ describe("Abilities - Serene Grace", () => {
 
     const chance = new Utils.IntegerHolder(move.chance);
     console.log(move.chance + " Their ability is " + phase.getUserPokemon()!.getAbility().name);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
     expect(chance.value).toBe(30);
 
   }, 20000);
@@ -70,11 +70,11 @@ describe("Abilities - Serene Grace", () => {
     ]);
 
     game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    expect(game.scene.getParty()[0].formIndex).toBe(0);
+    expect(game.scene.getPlayerParty()[0].formIndex).toBe(0);
 
     game.move.select(moveToUse);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 
     // Check chance of Air Slash with Serene Grace
@@ -83,7 +83,7 @@ describe("Abilities - Serene Grace", () => {
     expect(move.id).toBe(Moves.AIR_SLASH);
 
     const chance = new Utils.IntegerHolder(move.chance);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getTarget(), false);
+    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
     expect(chance.value).toBe(60);
 
   }, 20000);

@@ -1,19 +1,20 @@
+import { type PokeballCounts } from "#app/battle-scene";
+import { Gender } from "#app/data/gender";
+import { Variant } from "#app/data/variant";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
 import { Moves } from "#enums/moves";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
-import { VariantTier } from "#enums/variant-tiers";
+import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { type PokeballCounts } from "./battle-scene";
-import { Gender } from "./data/gender";
-import { Variant } from "./data/variant";
-import { type ModifierOverride } from "./modifier/modifier-type";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Overrides that are using when testing different in game situations
@@ -46,7 +47,18 @@ class DefaultOverrides {
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
-  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
+  /**
+   * If `null`, ignore this override.
+   *
+   * If `"single"`, set every non-trainer battle to be a single battle.
+   *
+   * If `"double"`, set every battle (including trainer battles) to be a double battle.
+   *
+   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers, and follow the `"single"` rule on odd wave numbers.
+   *
+   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
+   */
+  readonly BATTLE_TYPE_OVERRIDE: BattleStyle | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
@@ -70,8 +82,12 @@ class DefaultOverrides {
       [PokeballType.MASTER_BALL]: 0,
     },
   };
+  /** Forces an item to be UNLOCKED */
+  readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
   /** Set to `true` to show all tutorials */
-  readonly BYPASS_TUTORIAL_SKIP: boolean = false;
+  readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
+  /** Set to `true` to force Paralysis and Freeze to always activate, or `false` to force them to not activate */
+  readonly STATUS_ACTIVATION_OVERRIDE: boolean | null = null;
 
   // ----------------
   // PLAYER OVERRIDES
@@ -97,26 +113,42 @@ class DefaultOverrides {
    * @example SPECIES_OVERRIDE = Species.Bulbasaur;
    */
   readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
+  /**
+   * This will force your starter to be a random fusion
+   */
+  readonly STARTER_FUSION_OVERRIDE: boolean = false;
+  /**
+   * This will override the species of the fusion
+   */
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly SHINY_OVERRIDE: boolean = false;
-  readonly VARIANT_OVERRIDE: Variant = 0;
+  readonly SHINY_OVERRIDE: boolean | null = null;
+  readonly VARIANT_OVERRIDE: Variant | null = null;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
   readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
+  /**
+   * This will make all opponents fused Pokemon
+   */
+  readonly OPP_FUSION_OVERRIDE: boolean = false;
+  /**
+   * This will override the species of the fusion only when the opponent is already a fusion
+   */
+  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
   readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly OPP_SHINY_OVERRIDE: boolean = false;
-  readonly OPP_VARIANT_OVERRIDE: Variant = 0;
+  readonly OPP_SHINY_OVERRIDE: boolean | null = null;
+  readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
   /**
@@ -137,6 +169,7 @@ class DefaultOverrides {
   readonly EGG_VARIANT_OVERRIDE: VariantTier | null = null;
   readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean = false;
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
+  readonly UNLIMITED_EGG_COUNT_OVERRIDE: boolean = false;
 
   // -------------------------
   // MYSTERY ENCOUNTER OVERRIDES
@@ -207,3 +240,5 @@ export default {
   ...defaultOverrides,
   ...overrides
 } satisfies InstanceType<typeof DefaultOverrides>;
+
+export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";

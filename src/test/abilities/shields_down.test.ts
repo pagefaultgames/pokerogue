@@ -1,13 +1,13 @@
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Abilities - SHIELDS DOWN", () => {
   let phaserGame: Phaser.Game;
@@ -28,8 +28,8 @@ describe("Abilities - SHIELDS DOWN", () => {
     const moveToUse = Moves.SPLASH;
     game.override.battleType("single");
     game.override.ability(Abilities.SHIELDS_DOWN);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
   });
 
   test(
@@ -42,9 +42,9 @@ describe("Abilities - SHIELDS DOWN", () => {
         [Species.MINIOR]: coreForm,
       });
 
-      await game.startBattle([Species.MAGIKARP, Species.MINIOR]);
+      await game.startBattle([ Species.MAGIKARP, Species.MINIOR ]);
 
-      const minior = game.scene.getParty().find((p) => p.species.speciesId === Species.MINIOR)!;
+      const minior = game.scene.getPlayerParty().find((p) => p.species.speciesId === Species.MINIOR)!;
       expect(minior).not.toBe(undefined);
       expect(minior.formIndex).toBe(coreForm);
 
@@ -60,6 +60,5 @@ describe("Abilities - SHIELDS DOWN", () => {
 
       expect(minior.formIndex).toBe(meteorForm);
     },
-    TIMEOUT
   );
 });

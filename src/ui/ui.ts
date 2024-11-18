@@ -34,7 +34,6 @@ import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
 import TitleUiHandler from "./title-ui-handler";
 import SavingIconHandler from "./saving-icon-handler";
 import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
-import OutdatedModalUiHandler from "./outdated-modal-ui-handler";
 import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
@@ -90,7 +89,6 @@ export enum Mode {
   LOADING,
   SESSION_RELOAD,
   UNAVAILABLE,
-  OUTDATED,
   CHALLENGE_SELECT,
   RENAME_POKEMON,
   RUN_HISTORY,
@@ -134,12 +132,12 @@ const noTransitionModes = [
   Mode.LOADING,
   Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
-  Mode.OUTDATED,
   Mode.RENAME_POKEMON,
   Mode.TEST_DIALOGUE,
   Mode.AUTO_COMPLETE,
   Mode.ADMIN,
-  Mode.MYSTERY_ENCOUNTER
+  Mode.MYSTERY_ENCOUNTER,
+  Mode.RUN_INFO
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -199,7 +197,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new LoadingModalUiHandler(scene),
       new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
-      new OutdatedModalUiHandler(scene),
       new GameChallengesUiHandler(scene),
       new RenameFormUiHandler(scene),
       new RunHistoryUiHandler(scene),
@@ -272,7 +269,7 @@ export default class UI extends Phaser.GameObjects.Container {
     }
 
     const battleScene = this.scene as BattleScene;
-    if ([Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE].includes(this.mode)) {
+    if ([ Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE ].includes(this.mode)) {
       battleScene?.processInfoButton(pressed);
       return true;
     }
@@ -394,6 +391,7 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipContent.y = title ? 16 : 4;
     this.tooltipBg.width = Math.min(Math.max(this.tooltipTitle.displayWidth, this.tooltipContent.displayWidth) + 12, 838);
     this.tooltipBg.height = (title ? 31 : 19) + 10.5 * (wrappedContent.split("\n").length - 1);
+    this.tooltipTitle.x = this.tooltipBg.width / 2;
   }
 
   hideTooltip(): void {
@@ -403,12 +401,34 @@ export default class UI extends Phaser.GameObjects.Container {
 
   update(): void {
     if (this.tooltipContainer.visible) {
-      const xReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
-      const yReverse = this.scene.game.input.mousePointer && this.scene.game.input.mousePointer.y >= this.scene.game.canvas.height - this.tooltipBg.height * 6 - 12;
-      this.tooltipContainer.setPosition(
-        !xReverse ? this.scene.game.input.mousePointer!.x / 6 + 2 : this.scene.game.input.mousePointer!.x / 6 - this.tooltipBg.width - 2,
-        !yReverse ? this.scene.game.input.mousePointer!.y / 6 + 2 : this.scene.game.input.mousePointer!.y / 6 - this.tooltipBg.height - 2,
-      );
+      const isTouch = (this.scene as BattleScene).inputMethod === "touch";
+      const pointerX = this.scene.game.input.activePointer.x;
+      const pointerY = this.scene.game.input.activePointer.y;
+      const tooltipWidth = this.tooltipBg.width;
+      const tooltipHeight = this.tooltipBg.height;
+      const padding = 2;
+
+      // Default placement is top left corner of the screen on mobile. Otherwise below the cursor, to the right
+      let x = isTouch ? padding : pointerX / 6 + padding;
+      let y = isTouch ? padding : pointerY / 6 + padding;
+
+      if (isTouch) {
+        // If we are in the top left quadrant on mobile, move the tooltip to the top right corner
+        if (pointerX <= this.scene.game.canvas.width / 2 && pointerY <= this.scene.game.canvas.height / 2) {
+          x = this.scene.game.canvas.width / 6 - tooltipWidth - padding;
+        }
+      } else {
+        // If the tooltip would go offscreen on the right, or is close to it, move to the left of the cursor
+        if (x + tooltipWidth + padding > this.scene.game.canvas.width / 6) {
+          x = Math.max(padding, pointerX / 6 - tooltipWidth - padding);
+        }
+        // If the tooltip would go offscreen at the bottom, or is close to it, move above the cursor
+        if (y + tooltipHeight + padding > this.scene.game.canvas.height / 6) {
+          y = Math.max(padding, pointerY / 6 - tooltipHeight - padding);
+        }
+      }
+
+      this.tooltipContainer.setPosition(x, y);
     }
   }
 

@@ -36,6 +36,16 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   start() {
+
+    // Check if multiple stats are being changed at the same time, then run SSCPhase for each of them
+    if (this.stats.length > 1) {
+      for (let i = 0; i < this.stats.length; i++) {
+        const stat = [ this.stats[i] ];
+        this.scene.unshiftPhase(new StatStageChangePhase(this.scene, this.battlerIndex, this.selfTarget, stat, this.stages, this.showMessage, this.ignoreAbilities, this.canBeCopied, this.onChange));
+      }
+      return this.end();
+    }
+
     const pokemon = this.getPokemon();
 
     if (!pokemon.isActive(true)) {
@@ -54,8 +64,8 @@ export class StatStageChangePhase extends PokemonPhase {
       const cancelled = new BooleanHolder(false);
 
       if (!this.selfTarget && stages.value < 0) {
-        // TODO: Include simulate boolean when tag applications can be simulated
-        this.scene.arena.applyTagsForSide(MistTag, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, cancelled);
+        // TODO: add a reference to the source of the stat change to fix Infiltrator interaction
+        this.scene.arena.applyTagsForSide(MistTag, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, false, null, cancelled);
       }
 
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {
@@ -115,10 +125,7 @@ export class StatStageChangePhase extends PokemonPhase {
         const whiteHerb = this.scene.applyModifier(ResetNegativeStatStageModifier, this.player, pokemon) as ResetNegativeStatStageModifier;
         // If the White Herb was applied, consume it
         if (whiteHerb) {
-          whiteHerb.stackCount--;
-          if (whiteHerb.stackCount <= 0) {
-            this.scene.removeModifier(whiteHerb);
-          }
+          pokemon.loseHeldItem(whiteHerb);
           this.scene.updateModifiers(this.player);
         }
       }

@@ -28,9 +28,9 @@ describe("Abilities - Mycelium Might", () => {
     game.override.disableCrits();
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.CLEAR_BODY);
-    game.override.enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);
+    game.override.enemyMoveset([ Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK ]);
     game.override.ability(Abilities.MYCELIUM_MIGHT);
-    game.override.moveset([Moves.QUICK_ATTACK, Moves.BABY_DOLL_EYES]);
+    game.override.moveset([ Moves.QUICK_ATTACK, Moves.BABY_DOLL_EYES ]);
   });
 
   /**
@@ -41,7 +41,7 @@ describe("Abilities - Mycelium Might", () => {
    **/
 
   it("will move last in its priority bracket and ignore protective abilities", async () => {
-    await game.startBattle([Species.REGIELEKI]);
+    await game.startBattle([ Species.REGIELEKI ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
@@ -55,8 +55,8 @@ describe("Abilities - Mycelium Might", () => {
     const commandOrder = phase.getCommandOrder();
     // The opponent Pokemon (without Mycelium Might) goes first despite having lower speed than the player Pokemon.
     // The player Pokemon (with Mycelium Might) goes last despite having higher speed than the opponent.
-    expect(speedOrder).toEqual([playerIndex, enemyIndex]);
-    expect(commandOrder).toEqual([enemyIndex, playerIndex]);
+    expect(speedOrder).toEqual([ playerIndex, enemyIndex ]);
+    expect(commandOrder).toEqual([ enemyIndex, playerIndex ]);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
@@ -64,8 +64,8 @@ describe("Abilities - Mycelium Might", () => {
   }, 20000);
 
   it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle([Species.REGIELEKI]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
+    await game.startBattle([ Species.REGIELEKI ]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
@@ -79,15 +79,15 @@ describe("Abilities - Mycelium Might", () => {
     const commandOrder = phase.getCommandOrder();
     // The player Pokemon (with M.M.) goes first because its move is still within a higher priority bracket than its opponent.
     // The enemy Pokemon goes second because its move is in a lower priority bracket.
-    expect(speedOrder).toEqual([playerIndex, enemyIndex]);
-    expect(commandOrder).toEqual([playerIndex, enemyIndex]);
+    expect(speedOrder).toEqual([ playerIndex, enemyIndex ]);
+    expect(commandOrder).toEqual([ playerIndex, enemyIndex ]);
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
   }, 20000);
 
   it("will not affect non-status moves", async () => {
-    await game.startBattle([Species.REGIELEKI]);
+    await game.startBattle([ Species.REGIELEKI ]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
@@ -101,7 +101,7 @@ describe("Abilities - Mycelium Might", () => {
     // The player Pokemon (with M.M.) goes first because it has a higher speed and did not use a status move.
     // The enemy Pokemon (without M.M.) goes second because its speed is lower.
     // This means that the commandOrder should be identical to the speedOrder
-    expect(speedOrder).toEqual([playerIndex, enemyIndex]);
-    expect(commandOrder).toEqual([playerIndex, enemyIndex]);
+    expect(speedOrder).toEqual([ playerIndex, enemyIndex ]);
+    expect(commandOrder).toEqual([ playerIndex, enemyIndex ]);
   }, 20000);
 });

@@ -70,7 +70,7 @@ describe("check if every variant's sprite are correctly set", () => {
                 errors.push(`[${id}] missing key ${id} in masterlist for ${trimmedFilePath}`);
               }
               if (mlist[id][index] === 1 && jsonFileExists) {
-                const raw = fs.readFileSync(urlJsonFile, {encoding: "utf8", flag: "r"});
+                const raw = fs.readFileSync(urlJsonFile, { encoding: "utf8", flag: "r" });
                 const data = JSON.parse(raw);
                 const keys = Object.keys(data);
                 if (!keys.includes(`${index}`)) {
@@ -87,7 +87,7 @@ describe("check if every variant's sprite are correctly set", () => {
         } else if (!mlist.hasOwnProperty(name)) {
           errors.push(`[${name}] - missing key ${name} in masterlist for ${trimmedFilePath}`);
         } else {
-          const raw = fs.readFileSync(filePath, {encoding: "utf8", flag: "r"});
+          const raw = fs.readFileSync(filePath, { encoding: "utf8", flag: "r" });
           const data = JSON.parse(raw);
           for (const key of Object.keys(data)) {
             if (mlist[name][key] !== 1) {
@@ -109,14 +109,14 @@ describe("check if every variant's sprite are correctly set", () => {
     const errors: string[] = [];
     for (const key of Object.keys(keys)) {
       const row = keys[key];
-      for (const [index, elm] of row.entries()) {
+      for (const [ index, elm ] of row.entries()) {
         let url: string;
         if (elm === 0) {
           continue;
         } else if (elm === 1) {
           url = `${key}.json`;
           const filePath = `${dirPath}${url}`;
-          const raw = fs.readFileSync(filePath, {encoding: "utf8", flag: "r"});
+          const raw = fs.readFileSync(filePath, { encoding: "utf8", flag: "r" });
           const data = JSON.parse(raw);
           if (!data.hasOwnProperty(index)) {
             errors.push(`index: ${index} - ${filePath}`);
@@ -232,7 +232,7 @@ describe("check if every variant's sprite are correctly set", () => {
   it("look over every file in variant back male and check if present in masterlist", () => {
     const dirPath = `${rootDir}back${path.sep}`;
     const backMaleVariant = deepCopy(backVariant);
-    const errors = getMissingMasterlist(backMaleVariant, dirPath, ["female"]);
+    const errors = getMissingMasterlist(backMaleVariant, dirPath, [ "female" ]);
     if (errors.length) {
       console.log("errors for ", dirPath, errors);
     }
@@ -259,7 +259,7 @@ describe("check if every variant's sprite are correctly set", () => {
 
   it("look over every file in variant exp male and check if present in masterlist", () => {
     const dirPath = `${rootDir}exp${path.sep}`;
-    const errors = getMissingMasterlist(expVariant, dirPath, ["back", "female"]);
+    const errors = getMissingMasterlist(expVariant, dirPath, [ "back", "female" ]);
     if (errors.length) {
       console.log("errors for ", dirPath, errors);
     }
@@ -268,7 +268,7 @@ describe("check if every variant's sprite are correctly set", () => {
 
   it("look over every file in variant root and check if present in masterlist", () => {
     const dirPath = `${rootDir}`;
-    const errors = getMissingMasterlist(masterlist, dirPath, ["back", "female", "exp", "icons"]);
+    const errors = getMissingMasterlist(masterlist, dirPath, [ "back", "female", "exp", "icons" ]);
     if (errors.length) {
       console.log("errors for ", dirPath, errors);
     }

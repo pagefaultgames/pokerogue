@@ -1,35 +1,36 @@
-import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
-import { TrainerSlot } from "#app/data/trainer-config";
-import PokemonData from "#app/system/pokemon-data";
-import { Biome } from "#enums/biome";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { DANCING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { BattlerIndex } from "#app/battle";
-import { catchPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { PokeballType } from "#enums/pokeball";
+import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { catchPokemon, getEncounterPokemonLevelForWave, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { TrainerSlot } from "#app/data/trainer-config";
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { Stat } from "#enums/stat";
+import PokemonData from "#app/system/pokemon-data";
+import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Biome } from "#enums/biome";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokeballType } from "#enums/pokeball";
+import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
-const namespace = "mysteryEncounter:dancingLessons";
+const namespace = "mysteryEncounters/dancingLessons";
 
 // Fire form
 const BAILE_STYLE_BIOMES = [
@@ -89,25 +90,27 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withHideWildIntroMessage(true)
     .withAutoHideIntroVisuals(false)
     .withCatchAllowed(true)
+    .withFleeAllowed(false)
     .withOnVisualsStart((scene: BattleScene) => {
-      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getParty()[0]);
+      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getPlayerPokemon()!);
       danceAnim.play(scene);
 
       return true;
     })
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .setLocalizationKey(`${namespace}`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
       const species = getPokemonSpecies(Species.ORICORIO);
-      const level = (scene.currentBattle.enemyLevels?.[0] ?? scene.currentBattle.waveIndex) + Math.max(Math.round((scene.currentBattle.waveIndex / 10)), 0);
+      const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
       const enemyPokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, false);
       if (!enemyPokemon.moveset.some(m => m && m.getMove().id === Moves.REVELATION_DANCE)) {
         if (enemyPokemon.moveset.length < 4) {
@@ -133,33 +136,32 @@ export const DancingLessonsEncounter: MysteryEncounter =
       }
 
       const oricorioData = new PokemonData(enemyPokemon);
-      const oricorio = scene.addEnemyPokemon(species, scene.currentBattle.enemyLevels![0], TrainerSlot.NONE, false, oricorioData);
+      const oricorio = scene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, oricorioData);
 
       // Adds a real Pokemon sprite to the field (required for the animation)
       scene.getEnemyParty().forEach(enemyPokemon => {
         scene.field.remove(enemyPokemon, true);
       });
-      scene.currentBattle.enemyParty = [oricorio];
+      scene.currentBattle.enemyParty = [ oricorio ];
       scene.field.add(oricorio);
       // Spawns on offscreen field
       oricorio.x -= 300;
       encounter.loadAssets.push(oricorio.loadAssets());
 
       const config: EnemyPartyConfig = {
-        levelAdditiveMultiplier: 1,
         pokemonConfigs: [{
           species: species,
           dataSource: oricorioData,
           isBoss: true,
           // Gets +1 to all stats except SPD on battle start
-          tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
+          tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(pokemon.scene, `${namespace}.option.1.boss_enraged`);
-            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF], 1));
+            queueEncounterMessage(pokemon.scene, `${namespace}:option.1.boss_enraged`);
+            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF ], 1));
           }
         }],
       };
-      encounter.enemyPartyConfigs = [config];
+      encounter.enemyPartyConfigs = [ config ];
       encounter.misc = {
         oricorioData
       };
@@ -172,11 +174,11 @@ export const DancingLessonsEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.1.selected`,
+              text: `${namespace}:option.1.selected`,
             },
           ],
         })
@@ -186,13 +188,13 @@ export const DancingLessonsEncounter: MysteryEncounter =
 
           encounter.startOfBattleEffects.push({
             sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
+            targets: [ BattlerIndex.PLAYER ],
             move: new PokemonMove(Moves.REVELATION_DANCE),
             ignorePp: true
           });
 
           await hideOricorioPokemon(scene);
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.BATON], fillRemaining: true });
+          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.BATON ], fillRemaining: true });
           await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
         })
         .build()
@@ -201,11 +203,11 @@ export const DancingLessonsEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
           selected: [
             {
-              text: `${namespace}.option.2.selected`,
+              text: `${namespace}:option.2.selected`,
             },
           ],
         })
@@ -215,7 +217,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
 
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
-            scene.unshiftPhase(new LearnMovePhase(scene, scene.getParty().indexOf(pokemon), Moves.REVELATION_DANCE));
+            scene.unshiftPhase(new LearnMovePhase(scene, scene.getPlayerParty().indexOf(pokemon), Moves.REVELATION_DANCE));
 
             // Play animation again to "learn" the dance
             const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, scene.getEnemyPokemon()!, scene.getPlayerPokemon());
@@ -226,7 +228,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Learn its Dance
-          hideOricorioPokemon(scene);
+          await hideOricorioPokemon(scene);
           leaveEncounterWithoutBattle(scene, true);
         })
         .build()
@@ -234,15 +236,15 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(DANCING_MOVES)) // Will set option3PrimaryName and option3PrimaryMove dialogue tokens automatically
+        .withPrimaryPokemonRequirement(new MoveRequirement(DANCING_MOVES, true)) // Will set option3PrimaryName and option3PrimaryMove dialogue tokens automatically
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
-          secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+          secondOptionPrompt: `${namespace}:option.3.select_prompt`,
           selected: [
             {
-              text: `${namespace}.option.3.selected`,
+              text: `${namespace}:option.3.selected`,
             },
           ],
         })
@@ -269,12 +271,15 @@ export const DancingLessonsEncounter: MysteryEncounter =
               });
           };
 
-          // Only Pokemon that have a Dancing move can be selected
+          // Only challenge legal/unfainted Pokemon that have a Dancing move can be selected
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon meets primary pokemon reqs, it can be selected
+            if (!pokemon.isAllowedInBattle()) {
+              return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
+            }
             const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(scene, pokemon);
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.invalid_selection`) ?? null;
+              return getEncounterText(scene, `${namespace}:invalid_selection`) ?? null;
             }
 
             return null;
@@ -298,7 +303,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
             }
           }
 
-          hideOricorioPokemon(scene);
+          await hideOricorioPokemon(scene);
           await catchPokemon(scene, oricorio, null, PokeballType.POKEBALL, false);
           leaveEncounterWithoutBattle(scene, true);
         })

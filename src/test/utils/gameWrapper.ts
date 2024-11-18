@@ -23,6 +23,8 @@ import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
+import { version } from "../../../package.json";
+import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
 
 Object.defineProperty(window, "localStorage", {
   value: mockLocalStorage(),
@@ -77,7 +79,7 @@ export default class GameWrapper {
 
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean) {
     Phaser.Math.RND.sow([ 'test' ]);
-    vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
+    // vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {
       vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
     }
@@ -101,6 +103,7 @@ export default class GameWrapper {
   injectMandatory() {
     this.game.config = {
       seed: ["test"],
+      gameVersion: version
     };
     this.scene.game = this.game;
     this.game.renderer = {
@@ -230,6 +233,7 @@ export default class GameWrapper {
     this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
     this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
+    this.scene.eventManager = new MockTimedEventManager(); // Disable Timed Events
   }
 }
 

@@ -28,20 +28,21 @@ export class EggLapsePhase extends Phase {
       return Overrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
     const eggsToHatchCount: number = eggsToHatch.length;
-    this.eggHatchData= [];
+    this.eggHatchData = [];
 
     if (eggsToHatchCount > 0) {
       if (eggsToHatchCount >= this.minEggsToSkip && this.scene.eggSkipPreference === 1) {
         this.scene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
-          // show prompt for skip
+          // show prompt for skip, blocking inputs for 1 second
           this.scene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
           this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
             this.hatchEggsSkipped(eggsToHatch);
             this.showSummary();
           }, () => {
             this.hatchEggsRegular(eggsToHatch);
-            this.showSummary();
-          }
+            this.end();
+          },
+          null, null, null, 1000, true
           );
         }, 100, true);
       } else if (eggsToHatchCount >= this.minEggsToSkip && this.scene.eggSkipPreference === 2) {

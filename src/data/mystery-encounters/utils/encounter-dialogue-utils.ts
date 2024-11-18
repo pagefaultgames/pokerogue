@@ -7,22 +7,22 @@ import i18next from "i18next";
 /**
  * Will inject all relevant dialogue tokens that exist in the {@linkcode BattleScene.currentBattle.mysteryEncounter.dialogueTokens}, into i18n text.
  * Also adds BBCodeText fragments for colored text, if applicable
- * @param scene
  * @param keyOrString
  * @param primaryStyle Can define a text style to be applied to the entire string. Must be defined for BBCodeText styles to be applied correctly
- * @param uiTheme
  */
-export function getEncounterText(scene: BattleScene, keyOrString?: string, primaryStyle?: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string | null {
+export function getEncounterText(scene: BattleScene, keyOrString?: string, primaryStyle?: TextStyle): string | null {
   if (isNullOrUndefined(keyOrString)) {
     return null;
   }
 
-  let textString: string | null = getTextWithDialogueTokens(scene, keyOrString!);
+  const uiTheme = scene.uiTheme ?? UiTheme.DEFAULT;
+
+  let textString: string | null = getTextWithDialogueTokens(scene, keyOrString);
 
   // Can only color the text if a Primary Style is defined
   // primaryStyle is applied to all text that does not have its own specified style
   if (primaryStyle && textString) {
-    textString = getTextWithColors(textString, primaryStyle, uiTheme);
+    textString = getTextWithColors(textString, primaryStyle, uiTheme, true);
   }
 
   return textString;

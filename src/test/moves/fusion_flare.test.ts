@@ -1,7 +1,7 @@
-import { StatusEffect } from "#app/data/status-effect";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,11 +24,11 @@ describe("Moves - Fusion Flare", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([fusionFlare]);
+    game.override.moveset([ fusionFlare ]);
     game.override.startingLevel(1);
 
     game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
+    game.override.enemyMoveset([ Moves.REST, Moves.REST, Moves.REST, Moves.REST ]);
 
     game.override.battleType("single");
     game.override.startingWave(97);

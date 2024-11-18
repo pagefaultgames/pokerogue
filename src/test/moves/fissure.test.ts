@@ -32,7 +32,7 @@ describe("Moves - Fissure", () => {
     game.override.disableCrits();
 
     game.override.starterSpecies(Species.SNORLAX);
-    game.override.moveset([Moves.FISSURE]);
+    game.override.moveset([ Moves.FISSURE ]);
     game.override.passiveAbility(Abilities.BALL_FETCH);
     game.override.startingLevel(100);
 
@@ -43,7 +43,7 @@ describe("Moves - Fissure", () => {
 
     await game.startBattle();
 
-    partyPokemon = game.scene.getParty()[0];
+    partyPokemon = game.scene.getPlayerParty()[0];
     enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // remove berries

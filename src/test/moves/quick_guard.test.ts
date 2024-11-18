@@ -8,7 +8,6 @@ import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Moves - Quick Guard", () => {
   let phaserGame: Phaser.Game;
@@ -29,10 +28,10 @@ describe("Moves - Quick Guard", () => {
 
     game.override.battleType("double");
 
-    game.override.moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME]);
+    game.override.moveset([ Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME ]);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.QUICK_ATTACK]);
+    game.override.enemyMoveset([ Moves.QUICK_ATTACK ]);
     game.override.enemyAbility(Abilities.INSOMNIA);
 
     game.override.startingLevel(100);
@@ -42,7 +41,7 @@ describe("Moves - Quick Guard", () => {
   test(
     "should protect the user and allies from priority moves",
     async () => {
-      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const playerPokemon = game.scene.getPlayerField();
 
@@ -52,16 +51,16 @@ describe("Moves - Quick Guard", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       playerPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
-    }, TIMEOUT
+    }
   );
 
   test(
     "should protect the user and allies from Prankster-boosted moves",
     async () => {
       game.override.enemyAbility(Abilities.PRANKSTER);
-      game.override.enemyMoveset([Moves.GROWL]);
+      game.override.enemyMoveset([ Moves.GROWL ]);
 
-      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const playerPokemon = game.scene.getPlayerField();
 
@@ -71,15 +70,15 @@ describe("Moves - Quick Guard", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       playerPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
-    }, TIMEOUT
+    }
   );
 
   test(
     "should stop subsequent hits of a multi-hit priority move",
     async () => {
-      game.override.enemyMoveset([Moves.WATER_SHURIKEN]);
+      game.override.enemyMoveset([ Moves.WATER_SHURIKEN ]);
 
-      await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+      await game.classicMode.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
       const playerPokemon = game.scene.getPlayerField();
       const enemyPokemon = game.scene.getEnemyField();
@@ -98,21 +97,21 @@ describe("Moves - Quick Guard", () => {
     "should fail if the user is the last to move in the turn",
     async () => {
       game.override.battleType("single");
-      game.override.enemyMoveset([Moves.QUICK_GUARD]);
+      game.override.enemyMoveset([ Moves.QUICK_GUARD ]);
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.QUICK_GUARD);
 
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    }, TIMEOUT
+    }
   );
 });

@@ -1,6 +1,6 @@
 import { EggTier } from "#enums/egg-type";
 import { Species } from "#enums/species";
-import { VariantTier } from "#enums/variant-tiers";
+import { VariantTier } from "#enums/variant-tier";
 import { EGG_SEED, Egg } from "../data/egg";
 import { EggSourceType } from "#app/enums/egg-source-types";
 
@@ -41,7 +41,7 @@ export default class EggData {
     if (!this.species) {
       return new Egg({ id: this.id, hatchWaves: this.hatchWaves, sourceType: this.sourceType, timestamp: this.timestamp, tier: Math.floor(this.id / EGG_SEED) });
     } else {
-      return new Egg({id: this.id, tier: this.tier, sourceType: this.sourceType, hatchWaves: this.hatchWaves,
+      return new Egg({ id: this.id, tier: this.tier, sourceType: this.sourceType, hatchWaves: this.hatchWaves,
         timestamp: this.timestamp, variantTier: this.variantTier, isShiny: this.isShiny, species: this.species,
         eggMoveIndex: this.eggMoveIndex, overrideHiddenAbility: this.overrideHiddenAbility });
     }
