@@ -1405,7 +1405,7 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, critStage: NumberHolder): boolean {
-    if (this.getSecondaryChanceMultiplier(pokemon) === 0) {
+    if (super.getSecondaryChanceMultiplier(pokemon) === 0) {
       return false;
     }
     critStage.value += this.stageIncrement;
@@ -1454,7 +1454,7 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
    * @returns `true` if the critical-hit level can be incremented, false otherwise
    */
   override shouldApply(pokemon: Pokemon, critStage: NumberHolder): boolean {
-    return super.shouldApply(pokemon, critStage) && this.getSecondaryChanceMultiplier(pokemon) !== 0 && (this.species.includes(pokemon.getSpeciesForm(true).speciesId) || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)));
+    return super.shouldApply(pokemon, critStage) && super.getSecondaryChanceMultiplier(pokemon) !== 0 && (this.species.includes(pokemon.getSpeciesForm(true).speciesId) || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)));
   }
 }
 
@@ -2671,7 +2671,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
-    if (this.getSecondaryChanceMultiplier(pokemon)) {
+    if (super.getSecondaryChanceMultiplier(pokemon)) {
       return false;
     }
     moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
@@ -2711,7 +2711,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, moveId: Moves, count: NumberHolder | null = null, damageMultiplier: NumberHolder | null = null): boolean {
-    if (this.getSecondaryChanceMultiplier(pokemon) === 0) {
+    if (super.getSecondaryChanceMultiplier(pokemon) === 0) {
       return false;
     }
     const move = allMoves[moveId];
@@ -2904,7 +2904,7 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, multiplier: NumberHolder): boolean {
-    if (this.getSecondaryChanceMultiplier(pokemon) === 0) {
+    if (super.getSecondaryChanceMultiplier(pokemon) === 0) {
       return false;
     }
     const battleScene = pokemon.scene;
