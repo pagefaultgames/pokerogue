@@ -4951,9 +4951,10 @@ class ForceSwitchOutHelper {
       }
     /**
      * For wild Pokémon battles, the Pokémon will flee if the conditions are met (waveIndex and double battles).
+     * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
      */
     } else {
-      if (!pokemon.scene.currentBattle.waveIndex && pokemon.scene.currentBattle.waveIndex % 10 === 0) {
+      if (!pokemon.scene.currentBattle.waveIndex || pokemon.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
 
