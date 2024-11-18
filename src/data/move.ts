@@ -6646,7 +6646,11 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
  *
  * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)).
 */
-export class RepeatMoveAttr extends OverrideMoveEffectAttr {
+export class RepeatMoveAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, { trigger: MoveEffectTrigger.POST_APPLY }); // needed to ensure correct protect interaction
+  }
+
   /**
    * Forces the target to re-use their last used move again
    *
@@ -6669,7 +6673,6 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
     target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
     target.turnData.extraTurns++;
     target.scene.appendToPhase(new MovePhase(target.scene, target, moveTargets, movesetMove), MoveEndPhase);
-
     return true;
   }
 
@@ -6732,7 +6735,7 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
         Moves.TRANSFORM,
         Moves.MIMIC,
         Moves.STRUGGLE,
-        // TODO: Add Z-move & Max Move blockage if/when they are implemented
+        // TODO: Add Max/G-Move blockage if or when they are implemented
       ];
 
       if (!movesetMove // called move not in target's moveset (dancer, forgetting the move, etc.)
@@ -6751,10 +6754,8 @@ export class RepeatMoveAttr extends OverrideMoveEffectAttr {
     /* Ideally, the AI would score instruct based on the scorings of the on-field pokemons'
     * last used moves at the time of using Instruct (by the time the instructor gets to act)
     * with respect to the user's side.
-    * It would then take the greatest of said scores and use it as the score for instruct
-    * (since that'd be the mon it would be most utile to use Instruct on).
     * In 99.9% of cases, this would be the pokemon's ally (unless the target had last
-    * used a move like decorate on the user or its ally)
+    * used a move like Decorate on the user or its ally)
     */
     return 2;
   }

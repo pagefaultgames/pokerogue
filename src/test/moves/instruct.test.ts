@@ -197,13 +197,16 @@ describe("Moves - Instruct", () => {
   it("should not repeat enemy's move through protect", async () => {
     await game.classicMode.startBattle([ Species.AMOONGUSS ]);
 
+    const MoveToUse = Moves.PROTECT;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    game.move.changeMoveset(enemyPokemon, Moves.PROTECT);
+    game.move.changeMoveset(enemyPokemon, MoveToUse);
     game.move.select(Moves.INSTRUCT);
     await game.forceEnemyMove(Moves.PROTECT);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(enemyPokemon.getLastXMoves()[0].move).toBe(Moves.PROTECT);
+    expect(enemyPokemon.getLastXMoves(-1)[0].move).toBe(Moves.PROTECT);
+    expect(enemyPokemon.getLastXMoves(-1)[1]).toBeUndefined(); // undefined because protect failed
     expect(enemyPokemon.getMoveset().find(m => m?.moveId === Moves.PROTECT)?.ppUsed).toBe(1);
   });
 
