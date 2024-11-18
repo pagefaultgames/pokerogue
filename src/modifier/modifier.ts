@@ -756,32 +756,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
 }
 
-export class MoveEffectModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
-    super(type, pokemonId, stackCount);
-  }
-
-  matchType(modifier: Modifier): boolean {
-    return this.matchType(modifier);
-  }
-
-  shouldApply(pokemon?: Pokemon, ..._args: unknown[]): boolean {
-    return pokemon?.hasAbility(Abilities.SHEER_FORCE, true) ?? false;
-  }
-
-  apply(pokemon: Pokemon): boolean {
-    return this.apply(pokemon);
-  }
-
-  getMaxHeldItemCount(pokemon?: Pokemon): number {
-    return this.getMaxHeldItemCount(pokemon);
-  }
-
-  clone() {
-    return this.clone();
-  }
-}
-
 export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModifier {
   protected battlesLeft: number;
   public isTransferable: boolean = false;
@@ -1776,7 +1750,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   }
 }
 
-export class HitHealModifier extends MoveEffectModifier {
+export class HitHealModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
   }
@@ -1795,7 +1769,7 @@ export class HitHealModifier extends MoveEffectModifier {
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(pokemon: Pokemon): boolean {
-    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
+    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp() && !pokemon.hasAbility(Abilities.SHEER_FORCE, true)) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         toDmgValue(pokemon.turnData.totalDamageDealt / 8) * this.stackCount, i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
