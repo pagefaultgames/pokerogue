@@ -732,11 +732,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     if (!pokemon.getLastXMoves()[0]) {
       return 1;
     }
-    const sheerForceAffected = allMoves[pokemon.getLastXMoves()[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
-
+    const sheerForceAffected = pokemon.hasAbility(Abilities.SHEER_FORCE, true);
     if (sheerForceAffected) {
       return 0;
-    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
+    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE, true)) {
       return 2;
     }
     return 1;
