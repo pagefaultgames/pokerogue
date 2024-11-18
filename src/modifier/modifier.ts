@@ -1368,6 +1368,7 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
 
 /**
  * Modifier used for held items that apply critical-hit stage boost(s).
+ * Example: Scope Lens
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
@@ -1403,7 +1404,10 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
    * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, critStage: NumberHolder): boolean {
+  override apply(pokemon: Pokemon, critStage: NumberHolder): boolean {
+    if (this.getSecondaryChanceMultiplier(pokemon) === 0) {
+      return false;
+    }
     critStage.value += this.stageIncrement;
     return true;
   }
@@ -1416,6 +1420,7 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items that apply critical-hit stage boost(s)
  * if the holder is of a specific {@linkcode Species}.
+ * Example: Leek-FarFetch'd line
  * @extends CritBoosterModifier
  * @see {@linkcode shouldApply}
  */
@@ -1449,7 +1454,7 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
    * @returns `true` if the critical-hit level can be incremented, false otherwise
    */
   override shouldApply(pokemon: Pokemon, critStage: NumberHolder): boolean {
-    return super.shouldApply(pokemon, critStage) && (this.species.includes(pokemon.getSpeciesForm(true).speciesId) || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)));
+    return super.shouldApply(pokemon, critStage) && this.getSecondaryChanceMultiplier(pokemon) !== 0 && (this.species.includes(pokemon.getSpeciesForm(true).speciesId) || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)));
   }
 }
 
@@ -1750,6 +1755,9 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Modifier class associated with items like Shell Bell
+ */
 export class HitHealModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
@@ -1769,12 +1777,14 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(pokemon: Pokemon): boolean {
-    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp() && !pokemon.hasAbility(Abilities.SHEER_FORCE, true)) {
+    if (this.getSecondaryChanceMultiplier(pokemon) === 0) {
+      return false;
+    }
+    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         toDmgValue(pokemon.turnData.totalDamageDealt / 8) * this.stackCount, i18next.t("modifier:hitHealApply", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), typeName: this.type.name }), true));
     }
-
     return true;
   }
 
@@ -2616,6 +2626,9 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * This class is associated with accuracy-boosting held items such as Wide Lens.
+ */
 export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier {
   public override type: PokemonMoveAccuracyBoosterModifierType;
   private accuracyAmount: number;
@@ -2657,7 +2670,10 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
    * @param moveAccuracy {@linkcode NumberHolder} holding the move accuracy boost
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
+  override apply(pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
+    if (this.getSecondaryChanceMultiplier(pokemon)) {
+      return false;
+    }
     moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
 
     return true;
@@ -2668,6 +2684,9 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
   }
 }
 
+/**
+ * This class is associated with items like Multi-Lens
+ */
 export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   public override type: PokemonMultiHitModifierType;
 
@@ -2692,6 +2711,9 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, moveId: Moves, count: NumberHolder | null = null, damageMultiplier: NumberHolder | null = null): boolean {
+    if (this.getSecondaryChanceMultiplier(pokemon) === 0) {
+      return false;
+    }
     const move = allMoves[moveId];
     /**
      * The move must meet Parental Bond's restrictions for this item
@@ -2859,6 +2881,9 @@ export class MoneyMultiplierModifier extends PersistentModifier {
   }
 }
 
+/**
+ * Class associated with items like Golden Punch
+ */
 export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
@@ -2879,6 +2904,9 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, multiplier: NumberHolder): boolean {
+    if (this.getSecondaryChanceMultiplier(pokemon) === 0) {
+      return false;
+    }
     const battleScene = pokemon.scene;
     const moneyAmount = new NumberHolder(Math.floor(multiplier.value * (0.5 * this.getStackCount())));
     battleScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
