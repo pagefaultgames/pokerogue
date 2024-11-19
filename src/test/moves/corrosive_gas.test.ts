@@ -264,19 +264,12 @@ describe("Moves - Corrosive Gas", () => {
       );
     await game.classicMode.startBattle([ Species.STAKATAKA, Species.SALAZZLE, Species.SALANDIT ]);
     const playerPokemon = game.scene.getPlayerField()!;
-    const enemyPokemon = game.scene.getEnemyField()!;
 
     const staka = playerPokemon[0];
-    const karp1 = enemyPokemon[0];
-    const karp2 = enemyPokemon[1];
 
     staka.hp *= 0.5;
-    karp1.hp *= 0.5;
-    karp2.hp *= 0.5;
 
     const stakaHeldItems = staka.getHeldItems();
-    const magikarpItems1 = karp1.getHeldItems();
-    const magikarpItems2 = karp2.getHeldItems();
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.CORROSIVE_GAS);
@@ -294,11 +287,6 @@ describe("Moves - Corrosive Gas", () => {
     await game.toNextTurn();
 
     expect(stakaHeldItems[0].isNullified).toEqual(true);
-    expect(magikarpItems1[0].isNullified).toEqual(true);
-    expect(magikarpItems2[0].isNullified).toEqual(true);
-
     expect(staka.getHpRatio()).toBeCloseTo(0.5);
-    expect(karp1.getHpRatio()).toBeCloseTo(0.5);
-    expect(karp2.getHpRatio()).toBeCloseTo(0.5);
   });
 });

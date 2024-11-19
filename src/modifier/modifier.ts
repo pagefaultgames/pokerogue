@@ -648,11 +648,17 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: number;
   public isTransferable: boolean = true;
   public isNullified: boolean = false;
+  /** The maximum amount of battles the modifier will exist for */
+  private maxBattles: number | undefined;
+  /** The current amount of battles the modifier will exist for */
+  private battleCount: number | undefined;
 
-  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
+  constructor(type: ModifierType, pokemonId: number, stackCount?: number, maxBattles?: number, battleCount?: number) {
     super(type, stackCount);
 
     this.pokemonId = pokemonId;
+    this.maxBattles = maxBattles;
+    this.battleCount = battleCount ?? this.maxBattles;
   }
 
   abstract matchType(_modifier: Modifier): boolean;
@@ -665,7 +671,8 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return [ this.pokemonId ];
   }
 
-  nullify() {
+  nullify(count: number) {
+    this.setNewBattleCount(count);
     this.isNullified = true;
   }
 
@@ -709,6 +716,11 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       item.setScale(0.5);
       item.setOrigin(0, 0.5);
       item.setTexture("items", this.type.iconImage);
+      if (this.isNullified) {
+        item.setTint(0x838383);
+      } else {
+        item.clearTint();
+      }
       container.add(item);
 
       const stackText = this.getIconStackText(scene);
@@ -722,6 +734,28 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       }
     } else {
       container.setScale(0.5);
+    }
+
+    if (this.battleCount && this.maxBattles && this.getPokemon(scene)?.isPlayer()) {
+      let hue;
+      if (this.isNullified) {
+        hue = 0;
+      } else {
+        hue = Math.floor(120 * (this.battleCount / this.maxBattles) + 5);
+      }
+
+      // Generates the color hex code with a constant saturation and lightness but varying hue
+      const typeHex = hslToHex(hue, 0.5, 0.9);
+      const strokeHex = hslToHex(hue, 0.7, 0.3);
+
+      const battleCountText = addTextObject(scene, 27, 0, this.battleCount.toString(), TextStyle.PARTY, {
+        fontSize: "66px",
+        color: typeHex,
+      });
+      battleCountText.setShadow(0, 0);
+      battleCountText.setStroke(strokeHex, 16);
+      battleCountText.setOrigin(1, 0);
+      container.add(battleCountText);
     }
 
     return container;
@@ -763,6 +797,57 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
+
+  /**
+   * Lapses the {@linkcode battleCount} by 1.
+   * @param _args passed arguments (not in use here)
+   * @returns `true` if the {@linkcode battleCount} is greater than 0
+   */
+  public lapse(..._args: unknown[]): void {
+    if (this.battleCount) {
+      this.battleCount--;
+      if (this.battleCount === 0 && this.isNullified) {
+        this.removeNullification();
+      }
+    }
+  }
+
+  getIconStackText(_scene: BattleScene, _virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    return null;
+  }
+
+  getBattleCount(): number {
+    if (this.battleCount) {
+      return this.battleCount;
+    } else {
+      return -1;
+    }
+  }
+
+  resetBattleCount(): void {
+    this.battleCount = this.maxBattles;
+  }
+
+  /**
+   * Updates an existing modifier with a new `maxBattles` and `battleCount`.
+   */
+  setNewBattleCount(count: number): void {
+    this.maxBattles = count;
+    this.battleCount = count;
+  }
+
+  getMaxBattles(): number {
+    if (this.maxBattles) {
+      return this.maxBattles;
+    } else {
+      return -1;
+    }
+  }
+
+  getBattleCountArgs(): any[] {
+    return [ this.maxBattles, this.battleCount ];
+  }
+
 }
 
 export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModifier {

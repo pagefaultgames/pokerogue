@@ -43,15 +43,6 @@ export class BattleEndPhase extends BattlePhase {
 
     for (const pokemon of this.scene.getPokemonAllowedInBattle()) {
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
-      const heldItems =  pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier) as PokemonHeldItemModifier[];
-      for (const item of heldItems) {
-        if (item.isNullified) {
-          item.removeNullification();
-          if (item.isTransferable === false) {
-            item.isTransferable = true;
-          }
-        }
-      }
     }
 
     if (this.scene.currentBattle.moneyScattered) {
@@ -60,14 +51,16 @@ export class BattleEndPhase extends BattlePhase {
 
     this.scene.clearEnemyHeldItemModifiers();
 
-    const lapsingModifiers = this.scene.findModifiers(m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
+    const lapsingModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isNullified || m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (PokemonHeldItemModifier | LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
     for (const m of lapsingModifiers) {
       const args: any[] = [];
       if (m instanceof LapsingPokemonHeldItemModifier) {
         args.push(this.scene.getPokemonById(m.pokemonId));
       }
       if (!m.lapse(...args)) {
-        this.scene.removeModifier(m);
+        if (!(m instanceof PokemonHeldItemModifier)) {
+          this.scene.removeModifier(m);
+        }
       }
     }
 

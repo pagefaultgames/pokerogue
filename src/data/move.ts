@@ -7660,7 +7660,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
     return true;
   }
 }
-
 /**
  * Nullifies a Pokemon's held item until the battle ends.
  * Simulates the item being removed, but it just neutralizes it until the next battle
@@ -7670,8 +7669,10 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
  * @see {@linkcode apply}
  */
 export class NullifyHeldItemAttr extends MoveEffectAttr {
-  constructor() {
+  public turnCount: integer;
+  constructor(turnCount: integer) {
     super(false, { trigger: MoveEffectTrigger.HIT });
+    this.turnCount = turnCount;
   }
 
   /**
@@ -7692,19 +7693,20 @@ export class NullifyHeldItemAttr extends MoveEffectAttr {
       return false;
     }
 
-    const heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable);
+    const heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable && !i.isNullified);
 
     if (heldItems.length) {
       const nullifiedItem = heldItems[user.randSeedInt(heldItems.length)];
 
-      nullifiedItem.nullify();
-      nullifiedItem.isTransferable = false;
+      nullifiedItem.nullify(this.turnCount);
       target.scene.updateModifiers(target.isPlayer());
 
       user.scene.queueMessage(i18next.t("moveTriggers:corrosiveGasItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: nullifiedItem.type.name }));
 
     }
-    applyPostItemLostAbAttrs(PostItemLostAbAttr, target, false);
+    if (move.id === Moves.CORROSIVE_GAS) {
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, target, false);
+    }
     return true;
   }
 
@@ -10249,7 +10251,7 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.CORROSIVE_GAS, Type.POISON, 100, 40, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .attr(NullifyHeldItemAttr),
+      .attr(NullifyHeldItemAttr, 1),
     new StatusMove(Moves.COACHING, Type.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], 1)
       .target(MoveTarget.NEAR_ALLY)
