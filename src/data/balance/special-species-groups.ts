@@ -1,9 +1,9 @@
 import { Species } from "#enums/species";
 
 /**
- * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Paradox_Pok%C3%A9mon | Paradox Pokemon}, including the legendaries Miraidon and Koraidon.
+ * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Paradox_Pok%C3%A9mon | Paradox Pokemon}, NOT including the legendaries Miraidon and Koraidon.
  */
-export const PARADOX_POKEMON = [
+export const NON_LEGEND_PARADOX_POKEMON = [
   Species.GREAT_TUSK,
   Species.SCREAM_TAIL,
   Species.BRUTE_BONNET,
@@ -24,14 +24,14 @@ export const PARADOX_POKEMON = [
   Species.IRON_LEAVES,
   Species.IRON_BOULDER,
   Species.IRON_CROWN,
-  Species.KORAIDON,
-  Species.MIRAIDON,
 ];
 
 /**
- * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Ultra_Beast | Ultra Beasts}, NOT including legendaries such as Necrozma.
+ * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Ultra_Beast | Ultra Beasts}, NOT including legendaries such as Necrozma or the Cosmog line.
+ *
+ * Note that all of these Ultra Beasts are still considered Sub-Legendary.
  */
-export const ULTRA_BEASTS = [
+export const NON_LEGEND_ULTRA_BEASTS = [
   Species.NIHILEGO,
   Species.BUZZWOLE,
   Species.PHEROMOSA,

@@ -14,7 +14,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
+import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 const namespace = "mysteryEncounters/thePokemonSalesman";
 const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
@@ -173,7 +173,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
     });
 
-    it("should not spawn any Paradox Pokemon", async () => {
+    it("should not offer any Paradox Pokemon", async () => {
       const NUM_ROLLS = 2000; // As long as this is greater than total number of species, this should cover all possible RNG rolls
       let rngSweepProgress = 0; // Will simulate full range of RNG rolls by steadily increasing from 0 to 1
 
@@ -185,7 +185,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       for (let i = 0; i < NUM_ROLLS; i++) {
         rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);
         const simSpecies = getSalesmanSpeciesOffer().speciesId;
-        expect(PARADOX_POKEMON).not.toContain(simSpecies);
+        expect(NON_LEGEND_PARADOX_POKEMON).not.toContain(simSpecies);
       }
     });
 

@@ -13,7 +13,7 @@ import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { getSafariSpeciesSpawn, SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
+import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 const namespace = "mysteryEncounters/safariZone";
 const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
@@ -138,7 +138,7 @@ describe("Safari Zone - Mystery Encounter", () => {
       for (let i = 0; i < NUM_ROLLS; i++) {
         rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);
         const simSpecies = getSafariSpeciesSpawn().speciesId;
-        expect(PARADOX_POKEMON).not.toContain(simSpecies);
+        expect(NON_LEGEND_PARADOX_POKEMON).not.toContain(simSpecies);
       }
     });
 

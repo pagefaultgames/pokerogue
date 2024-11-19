@@ -4,7 +4,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { catchPokemon, getRandomSpeciesByStarterCost, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Species } from "#enums/species";
@@ -17,7 +17,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
-import { PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
+import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/thePokemonSalesman";
@@ -170,5 +170,5 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
  * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSalesmanSpeciesOffer(): PokemonSpecies {
-  return getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], PARADOX_POKEMON, undefined, false, false, false));
+  return getPokemonSpecies(getRandomSpeciesByStarterCost([ 0, 5 ], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false));
 }

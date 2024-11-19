@@ -11,7 +11,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { IntegerHolder, randSeedInt } from "#app/utils";
 import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { doPlayerFlee, doPokemonFlee, getRandomSpeciesByStarterTier, trainerThrowPokeball } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { doPlayerFlee, doPokemonFlee, getRandomSpeciesByStarterCost, trainerThrowPokeball } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -19,7 +19,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import { PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
+import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/safariZone";
@@ -532,5 +532,5 @@ async function doEndTurn(scene: BattleScene, cursorIndex: number) {
  * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSafariSpeciesSpawn(): PokemonSpecies {
-  return getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], PARADOX_POKEMON, undefined, false, false, false));
+  return getPokemonSpecies(getRandomSpeciesByStarterCost([ 0, 5 ], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false));
 }
