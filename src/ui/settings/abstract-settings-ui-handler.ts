@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
-import UiHandler from "#app/ui/ui-handler";
+import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { Button } from "#enums/buttons";
@@ -14,9 +14,10 @@ import i18next from "i18next";
 /**
  * Abstract class for handling UI elements related to settings.
  */
-export default class AbstractSettingsUiHandler extends UiHandler {
+export default class AbstractSettingsUiHandler extends MessageUiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
+  private messageBoxContainer: Phaser.GameObjects.Container;
   private navigationContainer: NavigationMenu;
 
   private scrollCursor: number;
@@ -134,6 +135,22 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.scrollBar = new ScrollBar(this.scene, this.optionsBg.width - 9, this.optionsBg.y + 5, 4, this.optionsBg.height - 11, this.rowsToDisplay);
     this.scrollBar.setTotalRows(this.settings.length);
 
+    // Single-line message box
+    this.messageBoxContainer = this.scene.add.container(0, this.scene.scaledCanvas.height);
+    this.messageBoxContainer.setName("settings-message-box");
+    this.messageBoxContainer.setVisible(false);
+
+    const settingsMessageBox = addWindow(this.scene, 0, -1, this.scene.scaledCanvas.width - 2, 28);
+    settingsMessageBox.setOrigin(0, 1);
+    this.messageBoxContainer.add(settingsMessageBox);
+
+    const messageText = addTextObject(this.scene, 8, -8, "", TextStyle.WINDOW);
+    messageText.setOrigin(0, 1);
+    messageText.setName("settings-message");
+
+    this.messageBoxContainer.add(messageText);
+    this.message = messageText;
+
     this.settingsContainer.add(this.optionsBg);
     this.settingsContainer.add(this.scrollBar);
     this.settingsContainer.add(this.navigationContainer);
@@ -143,6 +160,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.settingsContainer.add(iconCancel);
     this.settingsContainer.add(actionText);
     this.settingsContainer.add(cancelText);
+    this.settingsContainer.add(this.messageBoxContainer);
 
     ui.add(this.settingsContainer);
 
@@ -350,9 +368,34 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
-      this.scene.gameData.saveSetting(setting.key, cursor, true);
-      if (this.reloadSettings.includes(setting)) {
-        this.reloadRequired = true;
+      const saveSetting = () => {
+        this.scene.gameData.saveSetting(setting.key, cursor);
+        if (setting.requireReload) {
+          this.reloadRequired = true;
+        }
+      };
+
+      // For settings that ask for confirmation
+      if (setting.options[cursor].needConfirmation) {
+        const confirmUpdateSetting = () => {
+          this.scene.ui.revertMode();
+          this.showText("");
+          saveSetting();
+        };
+        const cancelUpdateSetting = () => {
+          this.scene.ui.revertMode();
+          this.showText("");
+          // Put the cursor back to its previous position without saving or asking for confirmation again
+          this.setOptionCursor(settingIndex, lastCursor, false);
+        };
+
+        const confirmationMessage = setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
+        this.scene.ui.showText(confirmationMessage, null, () => {
+          const yOffset = 48 - this.messageBoxContainer.getAt(0).height;
+          this.scene.ui.setOverlayMode(Mode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, yOffset, 1000);
+        });
+      } else {
+        saveSetting();
       }
     }
 
@@ -418,5 +461,11 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    console.log("HELLO");
+    this.messageBoxContainer.setVisible(!!text?.length);
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 }
