@@ -26,25 +26,29 @@ export class CheckSwitchPhase extends BattlePhase {
 
     const pokemon = this.scene.getPlayerField()[this.fieldIndex];
 
+    // End this phase early...
+
+    // ...if the user is playing in Set Mode
     if (this.scene.battleStyle === BattleStyle.SET) {
-      super.end();
-      return;
+      return super.end();
     }
 
+    // ...if the checked Pokemon is somehow not on the field
     if (this.scene.field.getAll().indexOf(pokemon) === -1) {
       this.scene.unshiftPhase(new SummonMissingPhase(this.scene, this.fieldIndex));
-      super.end();
-      return;
+      return super.end();
     }
 
+    // ...if there are no other allowed Pokemon in the player's party to switch with
     if (!this.scene.getPlayerParty().slice(1).filter(p => p.isActive()).length) {
-      super.end();
-      return;
+      return super.end();
     }
 
-    if (pokemon.getTag(BattlerTagType.FRENZY)) {
-      super.end();
-      return;
+    // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
+    if (pokemon.getTag(BattlerTagType.FRENZY)
+        || pokemon.isTrapped()
+        || this.scene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))) {
+      return super.end();
     }
 
     this.scene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {

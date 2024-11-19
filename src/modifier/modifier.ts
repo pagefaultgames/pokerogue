@@ -1,12 +1,11 @@
 import type BattleScene from "#app/battle-scene";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
 import { allMoves } from "#app/data/move";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { type FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
-import { Type } from "#enums/type";
 import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -22,11 +21,13 @@ import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } 
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { Moves } from "#enums/moves";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { Type } from "#enums/type";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
@@ -728,10 +729,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   //Applies to items with chance of activating secondary effects ie Kings Rock
   getSecondaryChanceMultiplier(pokemon: Pokemon): number {
     // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
-    if (!pokemon.getLastXMoves(0)[0]) {
+    if (!pokemon.getLastXMoves()[0]) {
       return 1;
     }
-    const sheerForceAffected = allMoves[pokemon.getLastXMoves(0)[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
+    const sheerForceAffected = allMoves[pokemon.getLastXMoves()[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
 
     if (sheerForceAffected) {
       return 0;
@@ -2196,14 +2197,8 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.customPokemonData.nature = this.nature;
-    let speciesId = playerPokemon.species.speciesId;
-    playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
-
-    while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
-      speciesId = pokemonPrevolutions[speciesId];
-      playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
-    }
+    playerPokemon.setCustomNature(this.nature);
+    playerPokemon.scene.gameData.unlockSpeciesNature(playerPokemon.species, this.nature);
 
     return true;
   }
@@ -2689,32 +2684,65 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Applies {@linkcode PokemonMultiHitModifier}
-   * @param _pokemon The {@linkcode Pokemon} using the move
-   * @param count {@linkcode NumberHolder} holding the number of items
-   * @param power {@linkcode NumberHolder} holding the power of the move
+   * For each stack, converts 25 percent of attack damage into an additional strike.
+   * @param pokemon The {@linkcode Pokemon} using the move
+   * @param moveId The {@linkcode Moves | identifier} for the move being used
+   * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
+   * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, count: NumberHolder, power: NumberHolder): boolean {
-    count.value *= (this.getStackCount() + 1);
-
-    switch (this.getStackCount()) {
-      case 1:
-        power.value *= 0.4;
-        break;
-      case 2:
-        power.value *= 0.25;
-        break;
-      case 3:
-        power.value *= 0.175;
-        break;
+  override apply(pokemon: Pokemon, moveId: Moves, count: NumberHolder | null = null, damageMultiplier: NumberHolder | null = null): boolean {
+    const move = allMoves[moveId];
+    /**
+     * The move must meet Parental Bond's restrictions for this item
+     * to apply. This means
+     * - Only attacks are boosted
+     * - Multi-strike moves, charge moves, and self-sacrificial moves are not boosted
+     *   (though Multi-Lens can still affect moves boosted by Parental Bond)
+     * - Multi-target moves are not boosted *unless* they can only hit a single Pokemon
+     * - Fling, Uproar, Rollout, Ice Ball, and Endeavor are not boosted
+     */
+    if (!move.canBeMultiStrikeEnhanced(pokemon)) {
+      return false;
     }
 
+    if (!isNullOrUndefined(count)) {
+      return this.applyHitCountBoost(count);
+    } else if (!isNullOrUndefined(damageMultiplier)) {
+      return this.applyDamageModifier(pokemon, damageMultiplier);
+    }
+
+    return false;
+  }
+
+  /** Adds strikes to a move equal to the number of stacked Multi-Lenses */
+  private applyHitCountBoost(count: NumberHolder): boolean {
+    count.value += this.getStackCount();
     return true;
   }
 
+  /**
+   * If applied to the first hit of a move, sets the damage multiplier
+   * equal to (1 - the number of stacked Multi-Lenses).
+   * Additional strikes beyond that are given a 0.25x damage multiplier
+   */
+  private applyDamageModifier(pokemon: Pokemon, damageMultiplier: NumberHolder): boolean {
+    if (pokemon.turnData.hitsLeft === pokemon.turnData.hitCount) {
+      // Reduce first hit by 25% for each stack count
+      damageMultiplier.value *= 1 - 0.25 * this.getStackCount();
+      return true;
+    } else if (pokemon.turnData.hitCount - pokemon.turnData.hitsLeft !== this.getStackCount() + 1) {
+      // Deal 25% damage for each remaining Multi Lens hit
+      damageMultiplier.value *= 0.25;
+      return true;
+    } else {
+      // An extra hit not caused by Multi Lens -- assume it is Parental Bond
+      return false;
+    }
+  }
+
   getMaxHeldItemCount(pokemon: Pokemon): number {
-    return 3;
+    return 2;
   }
 }
 
@@ -2792,7 +2820,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     battleScene.getPlayerParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
-        p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
+        p.evoCounter ? p.evoCounter += Math.min(Math.floor(this.moneyMultiplier), 3) : p.evoCounter = Math.min(Math.floor(this.moneyMultiplier), 3);
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p) as EvoTrackerModifier;
         battleScene.addModifier(modifier);
       }
@@ -2954,6 +2982,38 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
 
   getMaxStackCount(scene: BattleScene): number {
     return 4;
+  }
+}
+
+export class CriticalCatchChanceBoosterModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: number) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof CriticalCatchChanceBoosterModifier;
+  }
+
+  clone(): CriticalCatchChanceBoosterModifier {
+    return new CriticalCatchChanceBoosterModifier(this.type, this.stackCount);
+  }
+
+  /**
+   * Applies {@linkcode CriticalCatchChanceBoosterModifier}
+   * @param boost {@linkcode NumberHolder} holding the boost value
+   * @returns always `true`
+   */
+  override apply(boost: NumberHolder): boolean {
+    // 1 stack: 2x
+    // 2 stack: 2.5x
+    // 3 stack: 3x
+    boost.value *= 1.5 + this.getStackCount() / 2;
+
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): number {
+    return 3;
   }
 }
 
@@ -3573,7 +3633,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
     super(type, stackCount || 10);
 
     //Hardcode temporarily
-    this.chance = .02;
+    this.chance = 2;
   }
 
   match(modifier: Modifier) {
@@ -3581,24 +3641,24 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   }
 
   clone() {
-    return new EnemyEndureChanceModifier(this.type, this.chance * 100, this.stackCount);
+    return new EnemyEndureChanceModifier(this.type, this.chance, this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.chance * 100 ];
+    return [ this.chance ];
   }
 
   /**
-   * Applies {@linkcode EnemyEndureChanceModifier}
-   * @param target {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
+   * Applies a chance of enduring a lethal hit of an attack
+   * @param target the {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
    * @returns `true` if {@linkcode Pokemon} endured
    */
   override apply(target: Pokemon): boolean {
-    if (target.battleData.endured || Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount())) {
+    if (target.battleData.endured || target.randSeedInt(100) >= (this.chance * this.getStackCount())) {
       return false;
     }
 
-    target.addTag(BattlerTagType.ENDURING, 1);
+    target.addTag(BattlerTagType.ENDURE_TOKEN, 1);
 
     target.battleData.endured = true;
 

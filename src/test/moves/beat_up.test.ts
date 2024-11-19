@@ -74,29 +74,4 @@ describe("Moves - Beat Up", () => {
       expect(playerPokemon.turnData.hitCount).toBe(5);
     }
   );
-
-  it(
-    "should hit twice for each player Pokemon if the user has Multi-Lens",
-    async () => {
-      game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
-      await game.startBattle([ Species.MAGIKARP, Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.PIKACHU, Species.EEVEE ]);
-
-      const playerPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
-      let enemyStartingHp = enemyPokemon.hp;
-
-      game.move.select(Moves.BEAT_UP);
-
-      await game.phaseInterceptor.to(MoveEffectPhase);
-
-      expect(playerPokemon.turnData.hitCount).toBe(12);
-      expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-
-      while (playerPokemon.turnData.hitsLeft > 0) {
-        enemyStartingHp = enemyPokemon.hp;
-        await game.phaseInterceptor.to(MoveEffectPhase);
-        expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-      }
-    }
-  );
 });

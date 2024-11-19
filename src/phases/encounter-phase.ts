@@ -36,7 +36,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -142,10 +141,6 @@ export class EncounterPhase extends BattlePhase {
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
           enemyPokemon.updateScale();
-          const bossMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier && m.pokemonId === enemyPokemon.id, false) as TurnHeldItemTransferModifier;
-          this.scene.removeModifier(bossMBH!);
-          bossMBH?.setTransferrableFalse();
-          this.scene.addEnemyModifier(bossMBH!);
         }
       }
 
@@ -203,7 +198,7 @@ export class EncounterPhase extends BattlePhase {
             this.scene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = this.scene.getPlayerPokemon();
-            if (playerPokemon?.visible) {
+            if (playerPokemon?.isOnField()) {
               this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
             }
             enemyPokemon.tint(0, 0.5);
@@ -226,7 +221,8 @@ export class EncounterPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
           this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
-          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 10 === 1 || (this.scene.lastSavePlayTime ?? 0) >= 300).then(success => {
+          // Game syncs to server on waves X1 and X6 (As of 1.2.0)
+          this.scene.gameData.saveAll(this.scene, true, battle.waveIndex % 5 === 1 || (this.scene.lastSavePlayTime ?? 0) >= 300).then(success => {
             this.scene.disableMenu = false;
             if (!success) {
               return this.scene.reset(true);
@@ -443,6 +439,15 @@ export class EncounterPhase extends BattlePhase {
       if (enemyPokemon.isShiny()) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }
+      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
+      if (enemyPokemon.species.speciesId === Species.ETERNATUS && (this.scene.gameMode.isBattleClassicFinalBoss(this.scene.currentBattle.waveIndex) || this.scene.gameMode.isEndlessMajorBoss(this.scene.currentBattle.waveIndex))) {
+        const enemyMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier, false) as TurnHeldItemTransferModifier;
+        if (enemyMBH) {
+          this.scene.removeModifier(enemyMBH, true);
+          enemyMBH.setTransferrableFalse();
+          this.scene.addEnemyModifier(enemyMBH);
+        }
+      }
     });
 
     if (![ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(this.scene.currentBattle.battleType)) {
@@ -483,7 +488,6 @@ export class EncounterPhase extends BattlePhase {
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          this.scene.getPlayerField().forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
           this.scene.pushPhase(new ReturnPhase(this.scene, 1));
         }
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
