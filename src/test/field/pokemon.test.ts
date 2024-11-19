@@ -1,7 +1,7 @@
 import { Species } from "#app/enums/species";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
-import { PokeballType } from "#app/enums/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import BattleScene from "#app/battle-scene";
 import { Moves } from "#app/enums/moves";
 
@@ -45,7 +45,7 @@ describe("Spec - Pokemon", () => {
       const zubat = scene.getEnemyPokemon()!;
       zubat.addToParty(PokeballType.LUXURY_BALL);
 
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       expect(party).toHaveLength(6);
       party.forEach((pkm, index) =>{
         expect(pkm.species.speciesId).toBe(index === 5 ? Species.ZUBAT : Species.ABRA);
@@ -57,7 +57,7 @@ describe("Spec - Pokemon", () => {
       const zubat = scene.getEnemyPokemon()!;
       zubat.addToParty(PokeballType.LUXURY_BALL, slotIndex);
 
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       expect(party).toHaveLength(6);
       party.forEach((pkm, index) =>{
         expect(pkm.species.speciesId).toBe(index === slotIndex ? Species.ZUBAT : Species.ABRA);

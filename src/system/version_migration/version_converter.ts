@@ -129,7 +129,7 @@ class SessionVersionConverter extends VersionConverter {
 
     if (curMajor === 1) {
       if (curMinor === 0) {
-        if (curPatch <= 4) {
+        if (curPatch <= 5) {
           console.log("Applying v1.0.4 session data migration!");
           this.callMigrators(data, v1_0_4.sessionMigrators);
         }
