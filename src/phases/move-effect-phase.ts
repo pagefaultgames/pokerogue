@@ -58,7 +58,7 @@ import { BooleanHolder, executeIf, NumberHolder } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
-import { ArenaTagType } from "#app/enums/arena-tag-type.js";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
@@ -101,7 +101,7 @@ export class MoveEffectPhase extends PokemonPhase {
       }
       this.scene.currentBattle.lastPlayerInvolved = this.fieldIndex;
     }
-    
+
     if (!user) {
       return super.end();
     }
