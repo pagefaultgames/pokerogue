@@ -9,11 +9,12 @@ import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test
 import BattleScene from "#app/battle-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
-import { ThePokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/the-pokemon-salesman-encounter";
+import { getSalesmanSpeciesOffer, ThePokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/the-pokemon-salesman-encounter";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 const namespace = "mysteryEncounters/thePokemonSalesman";
 const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
@@ -170,6 +171,22 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
+    });
+
+    it("should not spawn any Paradox Pokemon", async () => {
+      const NUM_ROLLS = 2000; // As long as this is greater than total number of species, this should cover all possible RNG rolls
+      let rngSweepProgress = 0; // Will simulate full range of RNG rolls by steadily increasing from 0 to 1
+
+      vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
+        return rngSweepProgress * (max - min) + min;
+      });
+      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation((arr: any[]) => arr);
+
+      for (let i = 0; i < NUM_ROLLS; i++) {
+        rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);
+        const simSpecies = getSalesmanSpeciesOffer().speciesId;
+        expect(PARADOX_POKEMON).not.toContain(simSpecies);
+      }
     });
 
     it("should leave encounter without battle", async () => {

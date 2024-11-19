@@ -5,7 +5,7 @@ import BattleScene from "#app/battle-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Species } from "#enums/species";
 import { PokeballType } from "#enums/pokeball";
@@ -17,6 +17,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
+import { PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/thePokemonSalesman";
@@ -60,12 +61,12 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
-      let species = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
+      let species = getSalesmanSpeciesOffer();
       let tries = 0;
 
       // Reroll any species that don't have HAs
       while ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) && tries < 5) {
-        species = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
+        species = getSalesmanSpeciesOffer();
         tries++;
       }
 
@@ -164,3 +165,10 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       }
     )
     .build();
+
+/**
+ * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
+ */
+export function getSalesmanSpeciesOffer(): PokemonSpecies {
+  return getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], PARADOX_POKEMON, undefined, false, false, false));
+}
