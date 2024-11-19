@@ -5781,11 +5781,7 @@ export function initAbilities() {
     new Ability(Abilities.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const movePhase = user?.scene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user.id);
-        if (movePhase) {
-          return false;
-        } else {
-          return true;
-        }
+        return Utils.isNullOrUndefined(movePhase);
       }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
