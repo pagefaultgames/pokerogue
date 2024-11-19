@@ -17,39 +17,44 @@ export const EGG_SEED = 1073741824;
 
 /** Egg options to override egg properties */
 export interface IEggOptions {
-  /** Id. Used to check if egg type will be manaphy (id % 204 === 0) */
+  /** ID. Used to check if egg type will be manaphy (`id % 204 === 0`) */
   id?: number;
   /** Timestamp when this egg got created */
   timestamp?: number;
-  /** Defines if the egg got pulled from a gacha or not. If true, egg pity and pull statistics will be applyed.
+  /**
+   * Defines if the egg got pulled from a gacha or not. If true, egg pity and pull statistics will be applyed.
    * Egg will be automaticly added to the game data.
-   * NEEDS scene eggOption to work.
+   * NEEDS `scene` `eggOption` to work.
    */
   pulled?: boolean;
-  /** Defines where the egg comes from. Applies specific modifiers.
+  /**
+   * Defines where the egg comes from. Applies specific modifiers.
    * Will also define the text displayed in the egg list.
    */
   sourceType?: EggSourceType;
-  /** Needs to be defined if eggOption pulled is defined or if no species or isShiny is degined since this will be needed to generate them. */
+  /** Needs to be defined if `eggOption` pulled is defined or if no species or `isShiny` is defined since this will be needed to generate them. */
   scene?: BattleScene;
-  /** Sets the tier of the egg. Only species of this tier can be hatched from this egg.
-   * Tier will be overriden if species eggOption is set.
+  /**
+   * Sets the tier of the egg. Only species of this tier can be hatched from this egg.
+   * Tier will be overriden if species `eggOption` is set.
    */
   tier?: EggTier;
   /** Sets how many waves it will take till this egg hatches. */
   hatchWaves?: number;
-  /** Sets the exact species that will hatch from this egg.
-   * Needs scene eggOption if not provided.
+  /**
+   * Sets the exact species that will hatch from this egg.
+   * Needs `scene` `eggOption` if not provided.
    */
   species?: Species;
   /** Defines if the hatched pokemon will be a shiny. */
   isShiny?: boolean;
-  /** Defines the variant of the pokemon that will hatch from this egg. If no variantTier is given the normal variant rates will apply. */
+  /** Defines the variant of the pokemon that will hatch from this egg. If no `variantTier` is given the normal variant rates will apply. */
   variantTier?: VariantTier;
-  /** Defines which egg move will be unlocked. 3 = rare egg move. */
+  /** Defines which egg move will be unlocked. `3` = rare egg move. */
   eggMoveIndex?: number;
-  /** Defines if the egg will hatch with the hidden ability of this species.
-   *  If no hidden ability exist, a random one will get choosen.
+  /**
+   * Defines if the egg will hatch with the hidden ability of this species.
+   * If no hidden ability exist, a random one will get choosen.
    */
   overrideHiddenAbility?: boolean,
 
@@ -418,7 +423,7 @@ export class Egg {
     }
 
     /**
-     * Pokemon that are cheaper in their tier get a weight boost. Regionals get a weight penalty
+     * Pokemon that are cheaper in their tier get a weight boost.
      * 1 cost mons get 2x
      * 2 cost mons get 1.5x
      * 4, 6, 8 cost mons get 1.75x
@@ -433,11 +438,7 @@ export class Egg {
     for (const speciesId of speciesPool) {
       // Accounts for species that have starter costs outside of the normal range for their EggTier
       const speciesCostClamped = Phaser.Math.Clamp(speciesStarterCosts[speciesId], minStarterValue, maxStarterValue);
-      let weight = Math.floor((((maxStarterValue - speciesCostClamped) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
-      const species = getPokemonSpecies(speciesId);
-      if (species.isRegional()) {
-        weight = Math.floor(weight / 2);
-      }
+      const weight = Math.floor((((maxStarterValue - speciesCostClamped) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
       speciesWeights.push(totalWeight + weight);
       totalWeight += weight;
     }
