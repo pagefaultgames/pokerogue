@@ -2624,13 +2624,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (fixedDamage.value) {
       const lensCount = source.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
       // Apply damage fixing for hp cutting moves on multi lens hits (NOT PARENTAL BOND)
-      if (move.hasAttr(TargetHalfHpDamageAttr)
+      if (lensCount > 0
+        && move.hasAttr(TargetHalfHpDamageAttr)
         && (source.turnData.hitCount === source.turnData.hitsLeft
         || source.turnData.hitCount - source.turnData.hitsLeft !== lensCount + 1)) {
         // Do some unholy math to make the moves' damage values add up to 50%
         // Values obtained courtesy of WolframAlpha and Desmos Graphing Calculator
         // (https://www.desmos.com/calculator/wdngrksdfz)
-        let damageMulti = 0;
+        let damageMulti = 1;
         // NOTE: If multi lens ever gets updated (again) this switch case will NEED to be updated alongside it!
         switch (lensCount) {
           case 1:
@@ -2639,8 +2640,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           case 2:
             damageMulti = 0.60875846088;
             break;
-          case 3:
-            damageMulti = 0.636414338985;
+          default:
+            damageMulti = 0.5;
             break;
         }
 
