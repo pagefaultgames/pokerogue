@@ -28,7 +28,6 @@ describe("Items - Leek", () => {
       .enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ])
       .startingHeldItems([{ name: "LEEK" }])
       .moveset([ Moves.TACKLE ])
-      .disableCrits()
       .battleType("single");
   });
 
