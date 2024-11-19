@@ -90,7 +90,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     /** If an enemy used this move, set this as last enemy that used move or ability */
     if (!user?.isPlayer()) {
-      /** If the move used was sticky web AND it was successful, save the id of pokemon that used it */
+      /** If the move used was sticky web AND sticky web not already active, save the id of pokemon that used it */
       if (this.move.moveId === 564 && user !== null && !this.scene.arena.hasTag(ArenaTagType.STICKY_WEB)) {
         this.scene.currentBattle.lastEnemyIDUsingStickyWeb = user.id;
       }

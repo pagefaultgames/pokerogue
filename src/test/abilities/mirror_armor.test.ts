@@ -1,5 +1,3 @@
-//test memnto as well and double battles and multiple stats and octolock
-// test mirror armor infinite loop as well
 import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -8,6 +6,8 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerIndex } from "#app/battle";
+
+// TODO: When Magic Bounce is implemented, make a test for its interaction with mirror guard, use screech
 
 describe("Ability - Mirror Armor", () => {
   let phaserGame: Phaser.Game;
@@ -28,10 +28,10 @@ describe("Ability - Mirror Armor", () => {
 
     game.override.battleType("single")
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset([ Moves.SPLASH, Moves.MEMENTO, Moves.TICKLE, Moves.OCTOLOCK ])
+      .enemyMoveset([ Moves.SPLASH, Moves.STICKY_WEB, Moves.TICKLE, Moves.OCTOLOCK ])
       .enemyAbility(Abilities.BALL_FETCH)
       .startingLevel(2000)
-      .moveset([ Moves.SPLASH, Moves.MEMENTO, Moves.TICKLE, Moves.OCTOLOCK ])
+      .moveset([ Moves.SPLASH, Moves.STICKY_WEB, Moves.TICKLE, Moves.OCTOLOCK ])
       .ability(Abilities.BALL_FETCH);
   });
 
@@ -251,22 +251,65 @@ describe("Ability - Mirror Armor", () => {
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
   }, 20000);
 
-  //   it("traps the target pokemon", async () => {
-  //     await game.classicMode.startBattle([ Species.GRAPPLOCT ]);
+  it("Both sides have mirror armor - does not loop, player loses attack", async () => {
+    game.override.enemyAbility(Abilities.MIRROR_ARMOR);
+    game.override.ability(Abilities.MIRROR_ARMOR);
+    game.override.ability(Abilities.INTIMIDATE);
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
-  //     const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const userPokemon = game.scene.getPlayerPokemon()!;
 
-  //     // before Octolock - enemy should not be trapped
-  //     expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.toNextTurn();
 
-  //     game.move.select(Moves.OCTOLOCK);
+    expect(userPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
+  }, 20000);
 
-  //     // after Octolock - enemy should be trapped
-  //     await game.phaseInterceptor.to(MoveEndPhase);
-  //     expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeDefined();
-  //   });
+  it("Single battle + sticky web applied player side - player switches out and enemy should lose -1 speed", async () => {
+    game.override.ability(Abilities.MIRROR_ARMOR);
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
-// TODO: Implement test for sticky web
-// TODO: IMPLEMENT TEST FOR LOOPING MIRROR ARMORS BETWEEN OPPONENT AND PLAYER
-// TODO: IMPLEMENT MAGIC GUARD INTERACITON TEST
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const userPokemon = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.STICKY_WEB, BattlerIndex.PLAYER);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.toNextTurn();
+
+    expect(userPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(enemyPokemon.getStatStage(Stat.SPD)).toBe(-1);
+  }, 20000);
+
+  it("Double battle + sticky web applied player side - player switches out and enemy 1 should lose -1 speed", async () => {
+    game.override.battleType("double");
+    game.override.ability(Abilities.MIRROR_ARMOR);
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    const [ enemy1, enemy2 ] = game.scene.getEnemyField();
+    const [ player1, player2 ] = game.scene.getPlayerField();
+
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
+    await game.forceEnemyMove(Moves.STICKY_WEB, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(2);
+    game.move.select(Moves.SPLASH, 1);
+    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
+
+    expect(enemy1.getStatStage(Stat.SPD)).toBe(-1);
+    expect(enemy2.getStatStage(Stat.SPD)).toBe(0);
+    expect(player1.getStatStage(Stat.SPD)).toBe(0);
+    expect(player2.getStatStage(Stat.SPD)).toBe(0);
+  }, 20000);
 });

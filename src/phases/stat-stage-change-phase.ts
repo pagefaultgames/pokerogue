@@ -102,7 +102,6 @@ export class StatStageChangePhase extends PokemonPhase {
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {
         applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled, simulate);
 
-        // TODO: CODE INTERACTION WITH MAGIC BOUNCE AS WELL
         /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
         if (opponentPokemon !== undefined && !pokemon.findTag(t => t instanceof OctolockTag) && !this.comingFromMirrorArmorUser) {
           applyPreStatStageChangeAbAttrs(ReflectStatStageChangeAbAttr, pokemon, stat, cancelled, simulate, opponentPokemon, this.stages);

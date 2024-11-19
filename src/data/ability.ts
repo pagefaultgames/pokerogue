@@ -2748,8 +2748,6 @@ export class PreStatStageChangeAbAttr extends AbAttr {
  * Reflect all {@linkcode BattleStat} reductions caused by other Pokémon's moves and Abilities.
  * Currently only applies to Mirror Armor.
  */
-// TODO: CODE INTERACTION WITH MAGIC BOUNCE AS WELL
-// TODO: CODE INTERACTION WITH STICKY WEB
 export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to reflect */
   private reflectedStat? : BattleStat;
