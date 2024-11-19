@@ -135,4 +135,78 @@ describe("Items - Multi Lens", () => {
     expect(damageResults[0]).toBe(Math.floor(playerPokemon.level * 0.75));
     expect(damageResults[1]).toBe(Math.floor(playerPokemon.level * 0.25));
   });
+
+  it("should result in correct damage for hp% attacks with 1 lens", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.COMPOUND_EYES)
+      .enemyLevel(100000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase", true);
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 10); // unrealistically high level of precision
+  });
+
+  it("should result in correct damage for hp% attacks with 2 lenses", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.COMPOUND_EYES)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyLevel(100000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase", true);
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 8); // unrealistically high level of precision
+  });
+
+  it("should result in correct damage for hp% attacks with 3 lenses", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 3 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.COMPOUND_EYES)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyLevel(100000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase", true);
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 8);
+  });
+  it("should result in correct damage for hp% attacks with 3 lenses + Parental Bond", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 3 },
+      { name: "WIDE_LENS", count: 2 }]) // ensures move always hits
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.PARENTAL_BOND)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyLevel(100000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase", true);
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.25, 8);
+  });
 });
