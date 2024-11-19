@@ -113,8 +113,20 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
     /** If the user was somehow removed from the field and it's not a delayed attack, end this phase */
-    if (!user.isOnField() && !isDelayedAttack) {
-      return super.end();
+    if (!user.isOnField()) {
+      if (!isDelayedAttack) {
+        return super.end();
+      } else {
+        if (!user.scene) {
+          /**
+           * This happens if the Pokemon that used the delayed attack gets caught and released
+           * on the turn the attack would have triggered. Having access to the global scene
+           * in the future may solve this entirely, so for now we just cancel the hit
+           */
+          return super.end();
+        }
+        user.resetTurnData();
+      }
     }
 
     /**
