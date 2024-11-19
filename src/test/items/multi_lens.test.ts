@@ -149,7 +149,7 @@ describe("Items - Multi Lens", () => {
 
     game.move.select(Moves.SUPER_FANG);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 10); // unrealistically high level of precision
   });
 
@@ -166,9 +166,8 @@ describe("Items - Multi Lens", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SUPER_FANG);
-    await game.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 8); // unrealistically high level of precision
   });
 
@@ -185,9 +184,8 @@ describe("Items - Multi Lens", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SUPER_FANG);
-    await game.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 8);
   });
   it("should result in correct damage for hp% attacks with 3 lenses + Parental Bond", async () => {
@@ -204,9 +202,8 @@ describe("Items - Multi Lens", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SUPER_FANG);
-    await game.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.25, 8);
   });
 });
