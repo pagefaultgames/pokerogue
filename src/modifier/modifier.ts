@@ -18,7 +18,6 @@ import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils";
-import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
@@ -1625,18 +1624,6 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Checks for any chance modifying abilities
-   * @param pokemon
-   * @returns `2` if the pokemon involved has a Serene Grace-like ability | `1` if it does not
-   */
-  getSecondaryChanceMultiplier(pokemon: Pokemon): number {
-    if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
-      return 2;
-    }
-    return 1;
-  }
-
-  /**
    * Applies {@linkcode FlinchChanceModifier}
    * @param pokemon the {@linkcode Pokemon} that holds the item
    * @param flinched {@linkcode BooleanHolder} that is `true` if the pokemon flinched
@@ -1644,8 +1631,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
     // The check for pokemon.battleSummonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
-    const secondaryChanceMultiplier = pokemon.battleSummonData ? this.getSecondaryChanceMultiplier(pokemon) : 1;
-    if (!flinched.value && pokemon.randSeedInt(100) < (this.getStackCount() * secondaryChanceMultiplier * this.chance)) {
+    if (!flinched.value && pokemon.randSeedInt(100) < (this.getStackCount() * this.chance)) {
       flinched.value = true;
       return true;
     }

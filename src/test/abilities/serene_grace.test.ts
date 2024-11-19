@@ -7,8 +7,6 @@ import Phaser from "phaser";
 import { allMoves } from "#app/data/move";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { FlinchAttr } from "#app/data/move";
-import { FlinchChanceModifier } from "#app/modifier/modifier";
-
 
 describe("Abilities - Serene Grace", () => {
   let phaserGame: Phaser.Game;
@@ -47,22 +45,5 @@ describe("Abilities - Serene Grace", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(airSlashFlinchAttr.getMoveChance).toHaveLastReturnedWith(60);
-  });
-
-  it("Serene Grace should double the chance of King Rock's activating", async () => {
-    game.override
-      .startingHeldItems([{ name: "KINGS_ROCK", count: 1 }]);
-
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
-
-    const kingsRockInstance = game.scene.findModifier(m => m instanceof FlinchChanceModifier) as FlinchChanceModifier;
-    vi.spyOn(kingsRockInstance, "getSecondaryChanceMultiplier");
-
-    game.move.select(Moves.TACKLE);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.move.forceHit();
-    await game.phaseInterceptor.to("BerryPhase");
-
-    expect(kingsRockInstance.getSecondaryChanceMultiplier).toHaveLastReturnedWith(2);
   });
 });
