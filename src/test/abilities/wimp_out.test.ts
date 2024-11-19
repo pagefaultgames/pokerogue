@@ -296,7 +296,9 @@ describe("Abilities - Wimp Out", () => {
       Species.TYRUNT
     ]);
 
-    game.move.select(Moves.SPLASH);
+    game.scene.getPlayerPokemon()!.hp *= 0.51;
+
+    game.move.select(Moves.ENDURE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     confirmNoSwitch();
@@ -610,5 +612,24 @@ describe("Abilities - Wimp Out", () => {
     }
 
     confirmNoSwitch();
+  });
+
+  it("should not activate on wave X0 bosses", async () => {
+    game.override.enemyAbility(Abilities.WIMP_OUT)
+      .startingLevel(5850)
+      .startingWave(10);
+    await game.classicMode.startBattle([ Species.GOLISOPOD ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    // Use 2 turns of False Swipe due to opponent's health bar shield
+    game.move.select(Moves.FALSE_SWIPE);
+    await game.toNextTurn();
+    game.move.select(Moves.FALSE_SWIPE);
+    await game.toNextTurn();
+
+    const isVisible = enemyPokemon.visible;
+    const hasFled = enemyPokemon.switchOutStatus;
+    expect(isVisible && !hasFled).toBe(true);
   });
 });

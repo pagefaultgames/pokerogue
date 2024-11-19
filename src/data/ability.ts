@@ -1,13 +1,13 @@
 import Pokemon, { EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { Type } from "./type";
+import { Type } from "#enums/type";
 import { Constructor } from "#app/utils";
 import * as Utils from "../utils";
 import { getPokemonNameWithAffix } from "../messages";
-import { Weather, WeatherType } from "./weather";
-import { BattlerTag, GroundedTag } from "./battler-tags";
-import { StatusEffect, getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
+import { Weather } from "#app/data/weather";
+import { BattlerTag, BattlerTagLapseType, GroundedTag } from "./battler-tags";
+import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, IncrementMovePriorityAttr, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, MoveAttr, MultiHitAttr, SacrificialAttr, SacrificialAttrOnHit, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
@@ -35,6 +35,9 @@ import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
+import { StatusEffect } from "#enums/status-effect";
+import { WeatherType } from "#enums/weather-type";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -511,7 +514,11 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move instanceof AttackMove && pokemon.getAttackTypeEffectiveness(attacker.getMoveType(move), attacker) < 2) {
+    const modifierValue = args.length > 0
+      ? (args[0] as Utils.NumberHolder).value
+      : pokemon.getAttackTypeEffectiveness(attacker.getMoveType(move), attacker, undefined, undefined, move);
+
+    if (move instanceof AttackMove && modifierValue < 2) {
       cancelled.value = true; // Suppresses "No Effect" message
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
@@ -578,15 +585,11 @@ export class PostDefendAbAttr extends AbAttr {
 
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const attackPriority = new Utils.IntegerHolder(move.priority);
-    applyMoveAttrs(IncrementMovePriorityAttr, attacker, null, move, attackPriority);
-    applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, simulated, move, attackPriority);
-
     if (move.moveTarget === MoveTarget.USER || move.moveTarget === MoveTarget.NEAR_ALLY) {
       return false;
     }
 
-    if (attackPriority.value > 0 && !move.isMultiTarget()) {
+    if (move.getPriority(attacker) > 0 && !move.isMultiTarget()) {
       cancelled.value = true;
       return true;
     }
@@ -1349,64 +1352,29 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   }
 
   /**
-   * Determines whether this attribute can apply to a given move.
-   * @param {Move} move the move to which this attribute may apply
-   * @param numTargets the number of {@linkcode Pokemon} targeted by this move
-   * @returns true if the attribute can apply to the move, false otherwise
-   */
-  canApplyPreAttack(move: Move, numTargets: integer): boolean {
-    /**
-     * Parental Bond cannot apply to multi-hit moves, charging moves, or
-     * moves that cause the user to faint.
-     */
-    const exceptAttrs: Constructor<MoveAttr>[] = [
-      MultiHitAttr,
-      SacrificialAttr,
-      SacrificialAttrOnHit
-    ];
-
-    /** Parental Bond cannot apply to these specific moves */
-    const exceptMoves: Moves[] = [
-      Moves.FLING,
-      Moves.UPROAR,
-      Moves.ROLLOUT,
-      Moves.ICE_BALL,
-      Moves.ENDEAVOR
-    ];
-
-    /** Also check if this move is an Attack move and if it's only targeting one Pokemon */
-    return numTargets === 1
-      && !move.isChargingMove()
-      && !exceptAttrs.some(attr => move.hasAttr(attr))
-      && !exceptMoves.some(id => move.id === id)
-      && move.category !== MoveCategory.STATUS;
-  }
-
-  /**
    * If conditions are met, this doubles the move's hit count (via args[1])
    * or multiplies the damage of secondary strikes (via args[2])
-   * @param {Pokemon} pokemon the Pokemon using the move
+   * @param pokemon the {@linkcode Pokemon} using the move
    * @param passive n/a
    * @param defender n/a
-   * @param {Move} move the move used by the ability source
-   * @param args\[0\] the number of Pokemon this move is targeting
-   * @param {Utils.IntegerHolder} args\[1\] the number of strikes with this move
-   * @param {Utils.NumberHolder} args\[2\] the damage multiplier for the current strike
+   * @param move the {@linkcode Move} used by the ability source
+   * @param args Additional arguments:
+   * - `[0]` the number of strikes this move currently has ({@linkcode Utils.NumberHolder})
+   * - `[1]` the damage multiplier for the current strike ({@linkcode Utils.NumberHolder})
    * @returns
    */
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    const numTargets = args[0] as integer;
-    const hitCount = args[1] as Utils.IntegerHolder;
-    const multiplier = args[2] as Utils.NumberHolder;
+    const hitCount = args[0] as Utils.NumberHolder;
+    const multiplier = args[1] as Utils.NumberHolder;
 
-    if (this.canApplyPreAttack(move, numTargets)) {
+    if (move.canBeMultiStrikeEnhanced(pokemon, true)) {
       this.showAbility = !!hitCount?.value;
-      if (!!hitCount?.value) {
-        hitCount.value *= 2;
+      if (hitCount?.value) {
+        hitCount.value += 1;
       }
 
-      if (!!multiplier?.value && pokemon.turnData.hitsLeft % 2 === 1 && pokemon.turnData.hitsLeft !== pokemon.turnData.hitCount) {
-        multiplier.value *= this.damageMultiplier;
+      if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
+        multiplier.value = this.damageMultiplier;
       }
       return true;
     }
@@ -2460,12 +2428,15 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Used by Imposter
+ */
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   constructor() {
     super(true);
   }
 
-  async applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): Promise<boolean> {
+  async applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): Promise<boolean> {
     const targets = pokemon.getOpponents();
     if (simulated || !targets.length) {
       return simulated;
@@ -2474,17 +2445,31 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 
     let target: Pokemon;
     if (targets.length > 1) {
-      pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
+      pokemon.scene.executeWithSeedOffset(() => {
+        // in a double battle, if one of the opposing pokemon is fused the other one will be chosen
+        // if both are fused, then Imposter will fail below
+        if (targets[0].fusionSpecies) {
+          target = targets[1];
+          return;
+        } else if (targets[1].fusionSpecies) {
+          target = targets[0];
+          return;
+        }
+        target = Utils.randSeedItem(targets);
+      }, pokemon.scene.currentBattle.waveIndex);
     } else {
       target = targets[0];
     }
-
     target = target!;
+
+    // transforming from or into fusion pokemon causes various problems (including crashes and save corruption)
+    if (target.fusionSpecies || pokemon.fusionSpecies) {
+      return false;
+    }
+
     pokemon.summonData.speciesForm = target.getSpeciesForm();
-    pokemon.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
     pokemon.summonData.ability = target.getAbility().id;
     pokemon.summonData.gender = target.getGender();
-    pokemon.summonData.fusionGender = target.getFusionGender();
 
     // Copy all stats (except HP)
     for (const s of EFFECTIVE_STATS) {
@@ -2585,6 +2570,42 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
       queueShowAbility(pokemon, passive);
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}.
+ * When the source of an ability with this attribute detects a Dondozo as their active ally, the source "jumps
+ * into the Dondozo's mouth," sharply boosting the Dondozo's stats, cancelling the source's moves, and
+ * causing attacks that target the source to always miss.
+ */
+export class CommanderAbAttr extends AbAttr {
+  constructor() {
+    super(true);
+  }
+
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): boolean {
+    // TODO: Should this work with X + Dondozo fusions?
+    if (pokemon.scene.currentBattle?.double && pokemon.getAlly()?.species.speciesId === Species.DONDOZO) {
+      // If the ally Dondozo is fainted or was previously "commanded" by
+      // another Pokemon, this effect cannot apply.
+      if (pokemon.getAlly().isFainted() || pokemon.getAlly().getTag(BattlerTagType.COMMANDED)) {
+        return false;
+      }
+
+      if (!simulated) {
+        // Lapse the source's semi-invulnerable tags (to avoid visual inconsistencies)
+        pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+        // Play an animation of the source jumping into the ally Dondozo's mouth
+        pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_APPLY);
+        // Apply boosts from this effect to the ally Dondozo
+        pokemon.getAlly().addTag(BattlerTagType.COMMANDED, 0, Moves.NONE, pokemon.id);
+        // Cancel the source Pokemon's next move (if a move is queued)
+        pokemon.scene.tryRemovePhase((phase) => phase instanceof MovePhase && phase.pokemon === pokemon);
+      }
       return true;
     }
     return false;
@@ -3159,7 +3180,7 @@ function getAnticipationCondition(): AbAttrCondition {
           continue;
         }
         // the move's base type (not accounting for variable type changes) is super effective
-        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true) >= 2) {
+        if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true, undefined, move.getMove()) >= 2) {
           return true;
         }
         // move is a OHKO
@@ -4096,7 +4117,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
     if (!simulated && postBattleLoot.length) {
       const randItem = Utils.randSeedItem(postBattleLoot);
       //@ts-ignore - TODO see below
-      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true)) { // TODO: fix. This is a promise!?
+      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) { // TODO: fix. This is a promise!?
         postBattleLoot.splice(postBattleLoot.indexOf(randItem), 1);
         pokemon.scene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: randItem.type.name }));
         return true;
@@ -4930,9 +4951,10 @@ class ForceSwitchOutHelper {
       }
     /**
      * For wild Pokémon battles, the Pokémon will flee if the conditions are met (waveIndex and double battles).
+     * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
      */
     } else {
-      if (!pokemon.scene.currentBattle.waveIndex && pokemon.scene.currentBattle.waveIndex % 10 === 0) {
+      if (!pokemon.scene.currentBattle.waveIndex || pokemon.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
 
@@ -5392,8 +5414,7 @@ export function initAbilities() {
       .attr(EffectSporeAbAttr),
     new Ability(Abilities.SYNCHRONIZE, 3)
       .attr(SyncEncounterNatureAbAttr)
-      .attr(SynchronizeStatusAbAttr)
-      .partial(), // interaction with psycho shift needs work, keeping to old Gen interaction for now
+      .attr(SynchronizeStatusAbAttr),
     new Ability(Abilities.CLEAR_BODY, 3)
       .attr(ProtectStatAbAttr)
       .ignorable(),
@@ -5561,7 +5582,9 @@ export function initAbilities() {
     new Ability(Abilities.ANGER_POINT, 4)
       .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
     new Ability(Abilities.UNBURDEN, 4)
-      .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN),
+      .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN)
+      .bypassFaint() // Allows reviver seed to activate Unburden
+      .edgeCase(), // Should not restore Unburden boost if Pokemon loses then regains Unburden ability
     new Ability(Abilities.HEATPROOF, 4)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReduceBurnDamageAbAttr, 0.5)
@@ -5995,7 +6018,7 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(Abilities.CORROSION, 7)
       .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ Type.STEEL, Type.POISON ])
-      .edgeCase(), // Should interact correctly with magic coat/bounce (not yet implemented), fling with toxic orb (not implemented yet), and synchronize (not fully implemented yet)
+      .edgeCase(), // Should interact correctly with magic coat/bounce (not yet implemented) + fling with toxic orb (not implemented yet)
     new Ability(Abilities.COMATOSE, 7)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -6099,7 +6122,8 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .bypassFaint(),
+      .bypassFaint()
+      .edgeCase(), // Soft-locks the game if a form-changed Cramorant and its attacker both faint at the same time (ex. using Self-Destruct)
     new Ability(Abilities.STALWART, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.STEAM_ENGINE, 8)
@@ -6242,9 +6266,11 @@ export function initAbilities() {
       .attr(PreSwitchOutFormChangeAbAttr, (pokemon) => !pokemon.isFainted() ? 1 : pokemon.formIndex)
       .bypassFaint(),
     new Ability(Abilities.COMMANDER, 9)
+      .attr(CommanderAbAttr)
+      .attr(DoubleBattleChanceAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .unimplemented(),
+      .edgeCase(), // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
     new Ability(Abilities.ELECTROMORPHOSIS, 9)
       .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattlerTagType.CHARGED),
     new Ability(Abilities.PROTOSYNTHESIS, 9)

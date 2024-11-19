@@ -4,7 +4,7 @@ import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
-import { PokeballType } from "./data/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import Pokemon, { EnemyPokemon, PlayerPokemon, QueuedMove } from "#app/field/pokemon";

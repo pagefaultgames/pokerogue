@@ -3,7 +3,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import BattleScene from "../battle-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { getNatureName } from "../data/nature";
-import { Type } from "../data/type";
+import { Type } from "#enums/type";
 import Pokemon from "../field/pokemon";
 import i18next from "i18next";
 import { DexAttr, DexEntry, StarterDataEntry } from "../system/game-data";
