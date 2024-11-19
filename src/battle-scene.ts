@@ -4,7 +4,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "#app/utils";
-import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "#app/data/battle-anims";
 import { Phase } from "#app/phase";
@@ -906,8 +906,6 @@ export default class BattleScene extends SceneBase {
       pokemon.generateFusionSpecies();
     }
 
-    overrideModifiers(this, false);
-    overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
       const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967296));
 
