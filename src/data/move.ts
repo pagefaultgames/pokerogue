@@ -5453,7 +5453,7 @@ export class ConfuseAttr extends AddBattlerTagAttr {
       return false;
     }
 
-    return false;
+    return super.apply(user, target, move, args);
   }
 }
 
