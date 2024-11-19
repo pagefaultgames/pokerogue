@@ -23,9 +23,10 @@ export class StatStageChangePhase extends PokemonPhase {
   private canBeCopied: boolean;
   private onChange: StatStageChangeCallback | null;
   private comingFromMirrorArmorUser: boolean;
+  private comingFromStickyWeb: boolean;
 
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], stages: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatStageChangeCallback | null = null, comingFromMirrorArmorUser: boolean = false) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], stages: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatStageChangeCallback | null = null, comingFromMirrorArmorUser: boolean = false, comingFromStickyWeb: boolean = false) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
@@ -36,6 +37,7 @@ export class StatStageChangePhase extends PokemonPhase {
     this.canBeCopied = canBeCopied;
     this.onChange = onChange;
     this.comingFromMirrorArmorUser = comingFromMirrorArmorUser;
+    this.comingFromStickyWeb = comingFromStickyWeb;
   }
 
   start() {
@@ -52,18 +54,29 @@ export class StatStageChangePhase extends PokemonPhase {
     const pokemon = this.getPokemon();
     let opponentPokemon: Pokemon | undefined;
 
-    /** StickY web should be like
-     * if (stat loss due to switching in on sticky web)
-     *    if (have mirror armor)
-     *      if (enemy that used sticky web is in)
-     *        apply -1 spd to that enemy
-     */
-
-    // Gets the position of last enemy or player pokemon that used ability or move, primarily for double battles involving Mirror Armor
+    /** Gets the position of last enemy or player pokemon that used ability or move, primarily for double battles involving Mirror Armor */
     if (pokemon.isPlayer()) {
-      opponentPokemon = this.scene.getEnemyField()[this.scene.currentBattle.lastEnemyInvolved];
+      /** If this SSCP is not from sticky web, then we find the opponent pokemon that last did something */
+      if (!this.comingFromStickyWeb) {
+        opponentPokemon = this.scene.getEnemyField()[this.scene.currentBattle.lastEnemyInvolved];
+      } else {
+        /** If this SSCP is from sticky web, then check if pokemon that last sucessfully used sticky web is on field */
+        this.scene.getEnemyField().forEach((e) => {
+          if (e.id === this.scene.currentBattle.lastEnemyIDUsingStickyWeb) {
+            opponentPokemon = e;
+          }
+        });
+      }
     } else {
-      opponentPokemon = this.scene.getPlayerField()[this.scene.currentBattle.lastPlayerInvolved];
+      if (!this.comingFromStickyWeb) {
+        opponentPokemon = this.scene.getPlayerField()[this.scene.currentBattle.lastPlayerInvolved];
+      } else {
+        this.scene.getPlayerField().forEach((p) => {
+          if (p.id === this.scene.currentBattle.lastPlayerIDUsingStickyWeb) {
+            opponentPokemon = p;
+          }
+        });
+      }
     }
 
     if (!pokemon.isActive(true)) {
@@ -90,7 +103,6 @@ export class StatStageChangePhase extends PokemonPhase {
         applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled, simulate);
 
         // TODO: CODE INTERACTION WITH MAGIC BOUNCE AS WELL
-        // TODO: CODE INTERACTION WITH STICKY WEB
         /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
         if (opponentPokemon !== undefined && !pokemon.findTag(t => t instanceof OctolockTag) && !this.comingFromMirrorArmorUser) {
           applyPreStatStageChangeAbAttrs(ReflectStatStageChangeAbAttr, pokemon, stat, cancelled, simulate, opponentPokemon, this.stages);

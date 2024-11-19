@@ -266,8 +266,7 @@ describe("Ability - Mirror Armor", () => {
   //     expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeDefined();
   //   });
 
-//TODO: Implement test for sticky web
-// TODO: IMPLEMENT TEST FOR MEMENTO
+// TODO: Implement test for sticky web
 // TODO: IMPLEMENT TEST FOR LOOPING MIRROR ARMORS BETWEEN OPPONENT AND PLAYER
 // TODO: IMPLEMENT MAGIC GUARD INTERACITON TEST
 });

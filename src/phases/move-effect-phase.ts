@@ -15,6 +15,7 @@ import i18next from "i18next";
 import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 import { Type } from "#app/data/type";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
@@ -45,8 +46,15 @@ export class MoveEffectPhase extends PokemonPhase {
 
     /** If an enemy used this move, set this as last enemy that used move or ability */
     if (!user?.isPlayer()) {
+      /** If the move used was sticky web AND it was successful, save the id of pokemon that used it */
+      if (this.move.moveId === 564 && user !== undefined && !this.scene.arena.hasTag(ArenaTagType.STICKY_WEB)) {
+        this.scene.currentBattle.lastEnemyIDUsingStickyWeb = user.id;
+      }
       this.scene.currentBattle.lastEnemyInvolved = this.fieldIndex;
     } else {
+      if (this.move.moveId === 564 && user !== undefined && !this.scene.arena.hasTag(ArenaTagType.STICKY_WEB)) {
+        this.scene.currentBattle.lastPlayerIDUsingStickyWeb = user.id;
+      }
       this.scene.currentBattle.lastPlayerInvolved = this.fieldIndex;
     }
 
