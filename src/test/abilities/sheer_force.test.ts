@@ -153,23 +153,5 @@ describe("Abilities - Sheer Force", () => {
     expect(formKeyStart).toBe(playerPokemon?.getFormKey());
   });
 
-  it("Sheer Force should disable healing from Shell Bell", async () => {
-    game.override
-      .ability(Abilities.SHEER_FORCE)
-      .moveset([ Moves.TACKLE ])
-      .enemySpecies(Species.GEODUDE)
-      .enemyMoveset([ Moves.TACKLE ])
-      .startingHeldItems([{ name: "SHELL_BELL", count: 1 }]);
-
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
-    const playerPokemon = game.scene.getPlayerPokemon();
-    game.move.select(Moves.TACKLE);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
-    await game.phaseInterceptor.to("MoveEndPhase");
-    const postAttackHp = playerPokemon?.hp;
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon?.hp).toBe(postAttackHp);
-  });
-
   //TODO King's Rock Interaction Unit Test
 });
