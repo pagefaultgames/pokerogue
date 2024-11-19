@@ -1,14 +1,13 @@
 import { BattlerIndex } from "#app/battle";
-import { applyAbAttrs, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
-import { Stat } from "#enums/stat";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import * as Utils from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { allMoves } from "#app/data/move";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { FlinchAttr } from "#app/data/move";
+import { FlinchChanceModifier } from "#app/modifier/modifier";
 
 
 describe("Abilities - Serene Grace", () => {
@@ -27,66 +26,42 @@ describe("Abilities - Serene Grace", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const movesToUse = [ Moves.AIR_SLASH, Moves.TACKLE ];
-    game.override.battleType("single");
-    game.override.enemySpecies(Species.ONIX);
-    game.override.startingLevel(100);
-    game.override.moveset(movesToUse);
-    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
+    game.override
+      .ability(Abilities.SERENE_GRACE)
+      .moveset([ Moves.AIR_SLASH, Moves.TACKLE ])
+      .enemyLevel(10)
+      .enemyMoveset([ Moves.SPLASH ]);
   });
 
-  it("Move chance without Serene Grace", async () => {
-    const moveToUse = Moves.AIR_SLASH;
-    await game.startBattle([
-      Species.PIDGEOT
-    ]);
+  it("Serene Grace should double the secondary effect chance of a move", async () => {
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
 
+    const airSlashMove = allMoves[Moves.AIR_SLASH];
+    const airSlashFlinchAttr = airSlashMove.getAttrs(FlinchAttr)[0];
+    vi.spyOn(airSlashFlinchAttr, "getMoveChance");
 
-    game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    expect(game.scene.getPlayerParty()[0].formIndex).toBe(0);
-
-    game.move.select(moveToUse);
-
+    game.move.select(Moves.AIR_SLASH);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.move.forceHit();
+    await game.phaseInterceptor.to("BerryPhase");
 
-    // Check chance of Air Slash without Serene Grace
-    const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
-    const move = phase.move.getMove();
-    expect(move.id).toBe(Moves.AIR_SLASH);
+    expect(airSlashFlinchAttr.getMoveChance).toHaveLastReturnedWith(60);
+  });
 
-    const chance = new Utils.IntegerHolder(move.chance);
-    console.log(move.chance + " Their ability is " + phase.getUserPokemon()!.getAbility().name);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
-    expect(chance.value).toBe(30);
+  it("Serene Grace should double the chance of King Rock's activating", async () => {
+    game.override
+      .startingHeldItems([{ name: "KINGS_ROCK", count: 1 }]);
 
-  }, 20000);
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
 
-  it("Move chance with Serene Grace", async () => {
-    const moveToUse = Moves.AIR_SLASH;
-    game.override.ability(Abilities.SERENE_GRACE);
-    await game.startBattle([
-      Species.TOGEKISS
-    ]);
+    const kingsRockInstance = game.scene.findModifier(m => m instanceof FlinchChanceModifier) as FlinchChanceModifier;
+    vi.spyOn(kingsRockInstance, "getSecondaryChanceMultiplier");
 
-    game.scene.getEnemyParty()[0].stats[Stat.SPDEF] = 10000;
-    expect(game.scene.getPlayerParty()[0].formIndex).toBe(0);
-
-    game.move.select(moveToUse);
-
+    game.move.select(Moves.TACKLE);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.move.forceHit();
+    await game.phaseInterceptor.to("BerryPhase");
 
-    // Check chance of Air Slash with Serene Grace
-    const phase = game.scene.getCurrentPhase() as MoveEffectPhase;
-    const move = phase.move.getMove();
-    expect(move.id).toBe(Moves.AIR_SLASH);
-
-    const chance = new Utils.IntegerHolder(move.chance);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
-    expect(chance.value).toBe(60);
-
-  }, 20000);
-
-  //TODO King's Rock Interaction Unit Test
+    expect(kingsRockInstance.getSecondaryChanceMultiplier).toHaveLastReturnedWith(2);
+  });
 });

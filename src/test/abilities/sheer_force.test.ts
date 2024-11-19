@@ -152,6 +152,4 @@ describe("Abilities - Sheer Force", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(formKeyStart).toBe(playerPokemon?.getFormKey());
   });
-
-  //TODO King's Rock Interaction Unit Test
 });

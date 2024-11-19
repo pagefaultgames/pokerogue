@@ -726,22 +726,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return 1;
   }
 
-  //Applies to items with chance of activating secondary effects ie Kings Rock
-  getSecondaryChanceMultiplier(pokemon: Pokemon): number {
-    // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
-    if (!pokemon.getLastXMoves()[0]) {
-      return 1;
-    }
-    const sheerForceAffected = allMoves[pokemon.getLastXMoves()[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
-
-    if (sheerForceAffected) {
-      return 0;
-    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
-      return 2;
-    }
-    return 1;
-  }
-
   getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
     const pokemon = this.getPokemon(scene);
     if (!pokemon) {
@@ -1615,8 +1599,11 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
 }
 
 export class FlinchChanceModifier extends PokemonHeldItemModifier {
+  private chance: number;
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
+
+    this.chance = 10;
   }
 
   matchType(modifier: Modifier) {
@@ -1638,13 +1625,27 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
   }
 
   /**
+   * Checks for any chance modifying abilities
+   * @param pokemon
+   * @returns `2` if the pokemon involved has a Serene Grace-like ability | `1` if it does not
+   */
+  getSecondaryChanceMultiplier(pokemon: Pokemon): number {
+    if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
+      return 2;
+    }
+    return 1;
+  }
+
+  /**
    * Applies {@linkcode FlinchChanceModifier}
    * @param pokemon the {@linkcode Pokemon} that holds the item
    * @param flinched {@linkcode BooleanHolder} that is `true` if the pokemon flinched
    * @returns `true` if {@linkcode FlinchChanceModifier} has been applied
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
-    if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
+    // The check for pokemon.battleSummonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
+    const secondaryChanceMultiplier = pokemon.battleSummonData ? this.getSecondaryChanceMultiplier(pokemon) : 1;
+    if (!flinched.value && pokemon.randSeedInt(100) < (this.getStackCount() * secondaryChanceMultiplier * this.chance)) {
       flinched.value = true;
       return true;
     }
