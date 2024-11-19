@@ -3267,11 +3267,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
-  getMoveHistory(): TurnMove[] {
+  public getMoveHistory(): TurnMove[] {
     return this.battleSummonData.moveHistory;
   }
 
-  pushMoveHistory(turnMove: TurnMove) {
+  public pushMoveHistory(turnMove: TurnMove): void {
+    if (!this.isOnField()) {
+      return;
+    }
     turnMove.turn = this.scene.currentBattle?.turn;
     this.getMoveHistory().push(turnMove);
   }
