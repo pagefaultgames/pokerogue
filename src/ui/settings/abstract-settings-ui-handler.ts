@@ -352,7 +352,6 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     if (settingIndex === -1) {
       settingIndex = this.cursor + this.scrollCursor;
     }
-
     const setting = this.settings[settingIndex];
 
     const lastCursor = this.optionCursors[settingIndex];
@@ -463,8 +462,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.cursorObj = null;
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
-    console.log("HELLO");
+  override showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
     this.messageBoxContainer.setVisible(!!text?.length);
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
