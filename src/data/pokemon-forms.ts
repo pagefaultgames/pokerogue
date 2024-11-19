@@ -1,8 +1,8 @@
 import { PokemonFormChangeItemModifier, TerastallizeModifier } from "../modifier/modifier";
 import Pokemon from "../field/pokemon";
-import { StatusEffect } from "./status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import { MoveCategory, allMoves } from "./move";
-import { Type } from "./type";
+import { Type } from "#enums/type";
 import { Constructor, nil } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -10,7 +10,7 @@ import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
-import { WeatherType } from "./weather";
+import { WeatherType } from "#enums/weather-type";
 import { Challenges } from "#app/enums/challenges";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
