@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from "#app/battle-scene";
 import { Variant, VariantSet, variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, VariableMoveTypeChartAttr, TargetHalfHpDamageAttr } from "#app/data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, VariableMoveTypeChartAttr } from "#app/data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
@@ -2622,14 +2622,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const fixedDamage = new Utils.NumberHolder(0);
     applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
     if (fixedDamage.value) {
-      // Don't apply the multi lens damage penalty for subsequent hits of a hp cutting move
-      // those get handled separately in move.ts
-      if (!(move.hasAttr(TargetHalfHpDamageAttr)
-        && source.turnData.hitCount !== source.turnData.hitsLeft)) {
-        const multiLensMultiplier = new Utils.NumberHolder(1);
-        source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, move.id, null, multiLensMultiplier);
-        fixedDamage.value = Utils.toDmgValue(fixedDamage.value * multiLensMultiplier.value);
-      }
+      const multiLensMultiplier = new Utils.NumberHolder(1);
+      source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, move.id, null, multiLensMultiplier);
+      fixedDamage.value = Utils.toDmgValue(fixedDamage.value * multiLensMultiplier.value);
 
       return {
         cancelled: false,
