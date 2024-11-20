@@ -707,7 +707,7 @@ export class Arena {
       case Biome.METROPOLIS:
         return 141.470;
       case Biome.FOREST:
-        return 4.294;
+        return 2.590;
       case Biome.SEA:
         return 0.024;
       case Biome.SWAMP:
