@@ -100,7 +100,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
           // Only Pokemon that can gain benefits are above half HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon meets primary pokemon reqs, it can be selected
-            if (!pokemon.isAllowed()) {
+            if (!pokemon.isAllowedInChallenge()) {
               return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
             }
             if (!encounter.pokemonMeetsPrimaryRequirements(scene, pokemon)) {
@@ -138,7 +138,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             newNature = randSeedInt(25) as Nature;
           }
 
-          chosenPokemon.customPokemonData.nature = newNature;
+          chosenPokemon.setCustomNature(newNature);
           encounter.setDialogueToken("newNature", getNatureName(newNature));
           queueEncounterMessage(scene, `${namespace}:cheap_side_effects`);
           setEncounterExp(scene, [ chosenPokemon.id ], 100);

@@ -1,6 +1,7 @@
 import BattleScene, { InfoToggle } from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
-import { getTypeDamageMultiplierColor, Type } from "../data/type";
+import { getTypeDamageMultiplierColor } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";

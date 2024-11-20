@@ -35,10 +35,10 @@ describe("Moves - Magnet Rise", () => {
   it("MAGNET RISE", async () => {
     await game.startBattle();
 
-    const startingHp = game.scene.getParty()[0].hp;
+    const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
-    const finalHp = game.scene.getParty()[0].hp;
+    const finalHp = game.scene.getPlayerParty()[0].hp;
     const hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
   }, 20000);
@@ -46,15 +46,15 @@ describe("Moves - Magnet Rise", () => {
   it("MAGNET RISE - Gravity", async () => {
     await game.startBattle();
 
-    const startingHp = game.scene.getParty()[0].hp;
+    const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(CommandPhase);
-    let finalHp = game.scene.getParty()[0].hp;
+    let finalHp = game.scene.getPlayerParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
     game.move.select(Moves.GRAVITY);
     await game.phaseInterceptor.to(TurnEndPhase);
-    finalHp = game.scene.getParty()[0].hp;
+    finalHp = game.scene.getPlayerParty()[0].hp;
     hpLost = finalHp - startingHp;
     expect(hpLost).not.toBe(0);
   }, 20000);
