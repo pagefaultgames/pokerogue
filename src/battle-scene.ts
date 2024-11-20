@@ -949,7 +949,7 @@ export default class BattleScene extends SceneBase {
     this.updateModifiers(true);
   }
 
-  addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
+  addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false, tint?: boolean): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
     container.setName(`${pokemon.name}-icon`);
 
@@ -966,6 +966,11 @@ export default class BattleScene extends SceneBase {
       pokemon.shiny = temp;
     }
     icon.setOrigin(0.5, 0);
+    if (tint) {
+      icon.setTint(0x838383);
+    } else {
+      icon.clearTint();
+    }
 
     container.add(icon);
 
