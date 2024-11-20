@@ -2622,34 +2622,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const fixedDamage = new Utils.NumberHolder(0);
     applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
     if (fixedDamage.value) {
-      const lensCount = source.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
-      // Apply damage fixing for hp cutting moves on multi lens hits (NOT PARENTAL BOND)
-      if (lensCount > 0
-        && move.hasAttr(TargetHalfHpDamageAttr)
-        && (source.turnData.hitCount === source.turnData.hitsLeft
-        || source.turnData.hitCount - source.turnData.hitsLeft !== lensCount + 1)) {
-        // Do some unholy math to make the moves' damage values add up to 50%
-        // Values obtained courtesy of WolframAlpha and Desmos Graphing Calculator
-        // (https://www.desmos.com/calculator/wdngrksdfz)
-        let damageMulti = 1;
-        // NOTE: If multi lens ever gets updated (again) this switch case will NEED to be updated alongside it!
-        switch (lensCount) {
-          case 1:
-            damageMulti = 0.558481559888;
-            break;
-          case 2:
-            damageMulti = 0.60875846088;
-            break;
-          default:
-            damageMulti = 0.5;
-            break;
-        }
-
-        fixedDamage.value = this.hp * damageMulti;
+      // Don't apply the multi lens damage penalty for subsequent hits of a hp cutting move
+      // those get handled separately in move.ts
+      if (!(move.hasAttr(TargetHalfHpDamageAttr)
+        && source.turnData.hitCount !== source.turnData.hitsLeft)) {
+        const multiLensMultiplier = new Utils.NumberHolder(1);
+        source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, move.id, null, multiLensMultiplier);
+        fixedDamage.value = Utils.toDmgValue(fixedDamage.value * multiLensMultiplier.value);
       }
-      const multiLensMultiplier = new Utils.NumberHolder(1);
-      source.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, move.id, null, multiLensMultiplier);
-      fixedDamage.value = Utils.toDmgValue(fixedDamage.value * multiLensMultiplier.value);
 
       return {
         cancelled: false,

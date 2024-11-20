@@ -9,7 +9,7 @@ import { Constructor, NumberHolder } from "#app/utils";
 import * as Utils from "../utils";
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, ArenaTrapTag, WeakenMoveTypeTag } from "./arena-tag";
-import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPostItemLostAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ChangeMovePriorityAbAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, InfiltratorAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, PostDamageForceSwitchAbAttr, PostItemLostAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
+import { AddSecondStrikeAbAttr, allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPostItemLostAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ChangeMovePriorityAbAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, InfiltratorAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, PostDamageForceSwitchAbAttr, PostItemLostAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
 import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex, BattleType } from "../battle";
 import { TerrainType } from "./terrain";
@@ -1385,12 +1385,33 @@ export class UserHpDamageAttr extends FixedDamageAttr {
 }
 
 export class TargetHalfHpDamageAttr extends FixedDamageAttr {
+  private targetHp: number; // the final amount of hp we want the target to have
+  private hpAfterFirstAttack: number | null;
   constructor() {
     super(0);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Utils.toDmgValue(target.hp / 2);
+    // first, determine if the hit is coming from multi lens or not
+    const lensCount = user.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
+    if (lensCount <= 0) {
+      // no multi lenses; we can just halve the target's hp and call it a day
+      (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(target.hp / 2);
+      return true;
+    }
+
+    // Figure out what hit # we're on
+    if (user.turnData.hitCount === user.turnData.hitsLeft) {
+      // first hit of move; apply damage as normal and update targetHp accordingly
+      this.targetHp = target.hp * (0.5 ** (user.hasAbilityWithAttr(AddSecondStrikeAbAttr) ? 2 : 1));
+      this.hpAfterFirstAttack = null;
+      (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(target.hp / 2);
+    } else {
+      // all subsequent hits split the damage evenly among themselves
+      this.hpAfterFirstAttack ??= Utils.toDmgValue(target.hp); // nullish coalescing assignment go brrr
+      const totalHits = user.turnData.hitCount - 1;
+      (args[0] as Utils.NumberHolder).value = Utils.toDmgValue((this.hpAfterFirstAttack - this.targetHp) / totalHits);
+    }
 
     return true;
   }
