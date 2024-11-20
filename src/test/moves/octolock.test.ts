@@ -9,6 +9,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { BattlerIndex } from "#app/battle";
 
 describe("Moves - Octolock", () => {
   let phaserGame: Phaser.Game;
@@ -112,5 +113,26 @@ describe("Moves - Octolock", () => {
     // after Octolock - enemy should be trapped
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeDefined();
+  });
+
+  it("does not work on ghost type pokemon", async () => {
+    game.override.enemySpecies(Species.GRAPPLOCT);
+    game.override.enemyMoveset(Moves.OCTOLOCK);
+    game.override.moveset(Moves.SPLASH);
+    await game.classicMode.startBattle([ Species.GASTLY ]);
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+
+    // before Octolock - player should not be trapped
+    expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
+
+    game.forceEnemyMove(Moves.OCTOLOCK, BattlerIndex.PLAYER);
+    game.move.select(Moves.OCTOLOCK);
+    game.toNextTurn();
+
+    // after Octolock - player should still not be trapped, and no stat loss
+    expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
+    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
+    expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(0);
   });
 });
