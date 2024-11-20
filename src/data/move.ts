@@ -1898,7 +1898,7 @@ export class SacrificialFullRestoreAndPPRestoreAttr extends SacrificialAttr {
     const maxPartyMemberHp = user.scene.getPlayerParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
 
     user.scene.pushPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
-      maxPartyMemberHp, i18next.t("moveTriggers:sacrificialFullRestore", { pokemonName: getPokemonNameWithAffix(user) }), true, false, false, true, false, true), true);
+      maxPartyMemberHp, i18next.t("moveTriggers:lunarDanceRestore", { pokemonName: getPokemonNameWithAffix(user) }), false, false, false, true, false, true), true);
 
     return true;
   }
