@@ -4087,7 +4087,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (flee) {
       this.turnData.flee = true;
-      console.log("FLEE SET TO", this.turnData.flee);
     }
     this.scene.field.remove(this);
     this.setSwitchOutStatus(true);
