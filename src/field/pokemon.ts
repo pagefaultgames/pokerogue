@@ -2954,7 +2954,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns integer representing damage
    */
   damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false): integer {
-    if (this.isFainted()) {
+    if (this.isFainted() || this.turnData?.flee) {
       return 0;
     }
     const surviveDamage = new Utils.BooleanHolder(false);
@@ -4075,7 +4075,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param hideInfo Indicates if this should also play the animation to hide the Pokemon's
    * info container.
    */
-  leaveField(clearEffects: boolean = true, hideInfo: boolean = true) {
+  leaveField(clearEffects: boolean = true, hideInfo: boolean = true, flee?: boolean) {
     this.resetSprite();
     this.resetTurnData();
     if (clearEffects) {
@@ -4084,6 +4084,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (hideInfo) {
       this.hideInfo();
+    }
+    if (flee) {
+      this.turnData.flee = true;
+      console.log("FLEE SET TO", this.turnData.flee);
     }
     this.scene.field.remove(this);
     this.setSwitchOutStatus(true);
@@ -5279,6 +5283,7 @@ export class PokemonTurnData {
   public switchedInThisTurn: boolean = false;
   public failedRunAway: boolean = false;
   public joinedRound: boolean = false;
+  public flee: boolean = false;
 }
 
 export enum AiType {

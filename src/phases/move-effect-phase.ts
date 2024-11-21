@@ -228,9 +228,11 @@ export class MoveEffectPhase extends PokemonPhase {
            * If the move missed a target, stop all future hits against that target
            * and move on to the next target (if there is one).
            */
-          if (isCommanding || (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()])) {
+          if (target.turnData.flee || isCommanding || (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()])) {
             this.stopMultiHit(target);
-            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            if (!target.turnData.flee) {
+              this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            }
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
             }
