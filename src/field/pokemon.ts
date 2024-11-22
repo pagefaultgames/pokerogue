@@ -5282,7 +5282,6 @@ export class PokemonTurnData {
   public switchedInThisTurn: boolean = false;
   public failedRunAway: boolean = false;
   public joinedRound: boolean = false;
-  public flee: boolean = false;
 }
 
 export enum AiType {
