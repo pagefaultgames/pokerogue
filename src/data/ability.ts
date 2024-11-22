@@ -4959,7 +4959,7 @@ class ForceSwitchOutHelper {
       }
 
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(false, true, true);
+        switchOutTarget.leaveField(false);
         pokemon.scene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
 
         if (switchOutTarget.scene.currentBattle.double) {

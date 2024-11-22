@@ -16,7 +16,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
 
   start() {
     const pokemon = this.getPokemon();
-    if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn() && !pokemon.turnData.flee) {
+    if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn() && !pokemon.switchOutStatus) {
       pokemon.status.incrementTurn();
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
