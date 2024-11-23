@@ -646,9 +646,7 @@ describe("Abilities - Wimp Out", () => {
       Species.RAICHU,
       Species.PIKACHU
     ]);
-    const enemyPokemon = game.scene.getEnemyField();
-    const wimpod0 = enemyPokemon[0];
-    const wimpod1 = enemyPokemon[1];
+    const [ wimpod0, wimpod1 ] = game.scene.getEnemyField();
 
     game.move.select(Moves.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.MATCHA_GOTCHA, 1);
