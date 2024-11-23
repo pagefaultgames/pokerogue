@@ -650,8 +650,8 @@ describe("Abilities - Wimp Out", () => {
     const wimpod0 = enemyPokemon[0];
     const wimpod1 = enemyPokemon[1];
 
-    game.move.select(Moves.FALSE_SWIPE, 1);
-    game.move.select(Moves.MATCHA_GOTCHA);
+    game.move.select(Moves.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.MATCHA_GOTCHA, 1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(wimpod0.hp).toBeGreaterThan(0);
