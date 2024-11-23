@@ -4,11 +4,14 @@ import {
   AddSecondStrikeAbAttr,
   AlwaysHitAbAttr,
   applyPostAttackAbAttrs,
+  applyPostDamageAbAttrs,
   applyPostDefendAbAttrs,
   applyPreAttackAbAttrs,
   IgnoreMoveEffectsAbAttr,
   MaxMultiHitAbAttr,
   PostAttackAbAttr,
+  PostDamageAbAttr,
+  PostDamageForceSwitchAbAttr,
   PostDefendAbAttr,
   TypeImmunityAbAttr,
 } from "#app/data/ability";
@@ -299,6 +302,16 @@ export class MoveEffectPhase extends PokemonPhase {
            */
           if (lastHit) {
             this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+            /**
+             * Multi-Lens, Multi Hit move and Parental Bond check for PostDamageAbAttr
+             * other damage source are calculated in damageAndUpdate in pokemon.ts
+             */
+            if (target.hasAbilityWithAttr(PostDamageForceSwitchAbAttr)) {
+              const multiHitModifier = user.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
+              if (multiHitModifier || user.hasAbilityWithAttr(AddSecondStrikeAbAttr) || move.hasAttr(MultiHitAttr)) {
+                applyPostDamageAbAttrs(PostDamageAbAttr, target, 0, target.hasPassive(), false, [], user);
+              }
+            }
           }
 
           /**
