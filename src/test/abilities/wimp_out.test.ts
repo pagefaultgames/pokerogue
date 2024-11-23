@@ -657,8 +657,7 @@ describe("Abilities - Wimp Out", () => {
     expect(wimpod0.isFainted()).toBe(false);
     expect(wimpod1.isFainted()).toBe(true);
 
-    game.doSelectModifier();
-    await game.phaseInterceptor.to("TurnInitPhase");
+    await game.toNextWave();
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
   });
 });
