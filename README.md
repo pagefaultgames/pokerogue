@@ -123,6 +123,7 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
   - Involuntary-Twitch
   - selstar
   - koda_want_to_sleep
+  - thedreadedden
 
 ### 🎨 Move Animations
   - Pokémon Reborn
