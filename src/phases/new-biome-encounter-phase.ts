@@ -11,13 +11,13 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   doEncounter(): void {
     this.scene.playBgm(undefined, true);
 
-    for (const pokemon of this.scene.getParty()) {
+    for (const pokemon of this.scene.getPlayerParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
       }
     }
 
-    for (const pokemon of this.scene.getParty().filter(p => p.isOnField())) {
+    for (const pokemon of this.scene.getPlayerParty().filter(p => p.isOnField())) {
       applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
     }
 

@@ -165,7 +165,7 @@ async function summonPlayerPokemon(scene: BattleScene) {
 
     const playerPokemon = encounter.misc.playerPokemon;
     // Swaps the chosen Pokemon and the first player's lead Pokemon in the party
-    const party = scene.getParty();
+    const party = scene.getPlayerParty();
     const chosenIndex = party.indexOf(playerPokemon);
     if (chosenIndex !== 0) {
       const leadPokemon = party[0];
@@ -305,7 +305,7 @@ async function showWobbuffetHealthBar(scene: BattleScene) {
   scene.field.add(wobbuffet);
 
   const playerPokemon = scene.getPlayerPokemon() as Pokemon;
-  if (playerPokemon?.visible) {
+  if (playerPokemon?.isOnField()) {
     scene.field.moveBelow(wobbuffet, playerPokemon);
   }
   // Show health bar and trigger cry

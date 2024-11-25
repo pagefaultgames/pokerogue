@@ -98,7 +98,7 @@ describe("Moves - Electro Shot", () => {
     game.move.select(Moves.ELECTRO_SHOT);
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(playerPokemon.turnData.hitCount).toBe(2);
+    expect(playerPokemon.turnData.hitCount).toBe(1);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
   });
 });
