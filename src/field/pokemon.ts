@@ -5355,11 +5355,29 @@ export class PokemonMove {
       return false;
     }
 
+    if (!this.isSelectable(pokemon)) {
+      return false;
+    }
+
     if (this.getMove().name.endsWith(" (N)")) {
       return false;
     }
 
     return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1);
+  }
+
+  /**
+   * This function checks if the current move can be selected or not
+   *
+   * @param pokemon {@linkcode Pokemon} that selected this {@linkcode PokemonMove}
+   * @returns true if move can be selected, otherwise false
+   */
+  isSelectable(pokemon: Pokemon): boolean {
+    const move = this.getMove();
+    if (!move.applySelectableConditions(pokemon)) {
+      return false;
+    }
+    return true;
   }
 
   getMove(): Move {
