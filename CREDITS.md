@@ -1,3 +1,5 @@
+# 🎵 Music
+
 ## 🎵 BGM
   - Pokémon Mystery Dungeon: Explorers of Sky
     - Arata Iiyoshi
@@ -25,10 +27,14 @@
   - Firel (Custom Ice Cave, Laboratory, Metropolis, Plains, Power Plant, Seabed, Space, and Volcano biome music)
   - Lmz (Custom Ancient Ruins, Jungle, and Lake biome music)
   - Andr06 (Custom Slum and Sea biome music)
+  - _tresnoir
+  - unveiler
 
 ## 🎵 Sound Effects
   - Pokémon Emerald
   - Pokémon Black/White
+
+# 🎨 Art
 
 ## 🎨 Backgrounds
   - Squip (Paid Commissions)
@@ -86,3 +92,11 @@
 
 ## 🎨 Move Animations
   - Pokémon Reborn
+
+# ⚖️ Balance
+
+# 💻 Development
+
+# 🌎 Translation
+
+# 📰 Wiki
