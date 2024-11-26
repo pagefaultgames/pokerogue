@@ -1,6 +1,7 @@
 import { SettingKeys } from "#app/system/settings/settings";
 import { AbilityAttr, defaultStarterSpecies, DexAttr, SystemSaveData, SessionSaveData  } from "#app/system/game-data";
 import { allSpecies } from "#app/data/pokemon-species";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { isNullOrUndefined } from "#app/utils";
 
 export const systemMigrators = [
@@ -132,6 +133,29 @@ export const sessionMigrators = [
         m.className = "BaseStatModifier";
       } else if (m.className === "PokemonResetNegativeStatStageModifier") {
         m.className = "ResetNegativeStatStageModifier";
+      }
+    });
+  },
+  /**
+   *  Converts old Pokemon natureOverride and mysteryEncounterData
+   *  to use the new conjoined {@linkcode Pokemon.customPokemonData} structure instead.
+   *  @param data {@linkcode SessionSaveData}
+   */
+  function migrateCustomPokemonDataAndNatureOverrides(data: SessionSaveData) {
+    // Fix Pokemon nature overrides and custom data migration
+    data.party.forEach(pokemon => {
+      if (pokemon["mysteryEncounterPokemonData"]) {
+        pokemon.customPokemonData = new CustomPokemonData(pokemon["mysteryEncounterPokemonData"]);
+        pokemon["mysteryEncounterPokemonData"] = null;
+      }
+      if (pokemon["fusionMysteryEncounterPokemonData"]) {
+        pokemon.fusionCustomPokemonData = new CustomPokemonData(pokemon["fusionMysteryEncounterPokemonData"]);
+        pokemon["fusionMysteryEncounterPokemonData"] = null;
+      }
+      pokemon.customPokemonData = pokemon.customPokemonData ?? new CustomPokemonData();
+      if (!isNullOrUndefined(pokemon["natureOverride"]) && pokemon["natureOverride"] >= 0) {
+        pokemon.customPokemonData.nature = pokemon["natureOverride"];
+        pokemon["natureOverride"] = -1;
       }
     });
   }
