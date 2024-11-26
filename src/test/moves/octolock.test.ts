@@ -1,15 +1,11 @@
-import { Stat } from "#enums/stat";
 import { TrappedTag } from "#app/data/battler-tags";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#app/battle";
 
 describe("Moves - Octolock", () => {
   let phaserGame: Phaser.Game;
@@ -28,7 +24,8 @@ describe("Moves - Octolock", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single")
+    game.override
+      .battleType("single")
       .enemySpecies(Species.RATTATA)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -44,16 +41,15 @@ describe("Moves - Octolock", () => {
 
     // use Octolock and advance to init phase of next turn to check for stat changes
     game.move.select(Moves.OCTOLOCK);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
 
     // take a second turn to make sure stat changes occur again
-    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
 
-    await game.phaseInterceptor.to(TurnInitPhase);
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-2);
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-2);
   });
@@ -66,7 +62,7 @@ describe("Moves - Octolock", () => {
 
     // use Octolock and advance to init phase of next turn to check for stat changes
     game.move.select(Moves.OCTOLOCK);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
@@ -80,7 +76,7 @@ describe("Moves - Octolock", () => {
 
     // use Octolock and advance to init phase of next turn to check for stat changes
     game.move.select(Moves.OCTOLOCK);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(0);
@@ -94,7 +90,7 @@ describe("Moves - Octolock", () => {
 
     // use Octolock and advance to init phase of next turn to check for stat changes
     game.move.select(Moves.OCTOLOCK);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(0);
@@ -111,14 +107,12 @@ describe("Moves - Octolock", () => {
     game.move.select(Moves.OCTOLOCK);
 
     // after Octolock - enemy should be trapped
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeDefined();
   });
 
   it("does not work on ghost type pokemon", async () => {
-    game.override.enemySpecies(Species.GRAPPLOCT);
     game.override.enemyMoveset(Moves.OCTOLOCK);
-    game.override.moveset(Moves.SPLASH);
     await game.classicMode.startBattle([ Species.GASTLY ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -126,8 +120,7 @@ describe("Moves - Octolock", () => {
     // before Octolock - player should not be trapped
     expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
-    game.forceEnemyMove(Moves.OCTOLOCK, BattlerIndex.PLAYER);
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(Moves.SPLASH);
     game.toNextTurn();
 
     // after Octolock - player should still not be trapped, and no stat loss
