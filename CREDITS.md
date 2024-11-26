@@ -55,7 +55,8 @@
   - kyledove
   - Brumirage
   - pkmn_realidea (Paid Commissions)
-  - IceJkai 
+  - IceJkai
+  - Leparagon
 
 ## 🎨 Trainer Portraits
   - pkmn_realidea (Paid Commissions)
