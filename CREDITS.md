@@ -24,7 +24,7 @@
   - Pokémon Sword/Shield
   - Pokémon Legends: Arceus
   - Pokémon Scarlet/Violet
-  - Firel (Custom Ice Cave, Laboratory, Metropolis, Plains, Power Plant, Seabed, Space, and Volcano biome music)
+  - Firel (Custom Graveyard, Ice Cave, Laboratory, Metropolis, Plains, Power Plant, Seabed, Space, and Volcano biome music)
   - Lmz (Custom Ancient Ruins, Jungle, and Lake biome music)
   - Andr06 (Custom Slum and Sea biome music)
   - _tresnoir
