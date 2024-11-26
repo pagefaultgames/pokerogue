@@ -1,4 +1,4 @@
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -48,7 +48,7 @@ describe("Items - Leftovers", () => {
     game.move.select(Moves.SPLASH);
 
     // We should have less hp after the attack
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
     const leadHpAfterDamage = leadPokemon.hp;
