@@ -382,7 +382,6 @@ export default class Move implements Localizable {
    * @returns the called object {@linkcode Move}
    */
   selectableCondition(condition: MoveSelectCondition): this {
-    console.log(`GHnote condition: ${typeof condition}`);
     if (condition) {
       this.selectableConditions.push(condition);
     }
