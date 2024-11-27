@@ -1,4 +1,12 @@
 { "frames": [
+  {
+    "filename": "0055.png",
+    "frame": { "x": 0, "y": 0, "w": 68, "h": 40 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 3, "y": 6, "w": 68, "h": 40 },
+    "sourceSize": { "w": 71, "h": 46 }
+   },
    {
     "filename": "0001.png",
     "frame": { "x": 287, "y": 86, "w": 52, "h": 46 },
@@ -429,14 +437,6 @@
     "rotated": false,
     "trimmed": true,
     "spriteSourceSize": { "x": 4, "y": 4, "w": 63, "h": 42 },
-    "sourceSize": { "w": 71, "h": 46 }
-   },
-   {
-    "filename": "0055.png",
-    "frame": { "x": 0, "y": 0, "w": 68, "h": 40 },
-    "rotated": false,
-    "trimmed": true,
-    "spriteSourceSize": { "x": 3, "y": 6, "w": 68, "h": 40 },
     "sourceSize": { "w": 71, "h": 46 }
    },
    {

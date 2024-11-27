@@ -1,13 +1,5 @@
 { "frames": [
   {
-    "filename": "0032.png",
-    "frame": { "x": 0, "y": 0, "w": 59, "h": 58 },
-    "rotated": false,
-    "trimmed": true,
-    "spriteSourceSize": { "x": 3, "y": 6, "w": 59, "h": 58 },
-    "sourceSize": { "w": 65, "h": 65 }
-   },
-   {
     "filename": "0001.png",
     "frame": { "x": 0, "y": 58, "w": 55, "h": 57 },
     "rotated": false,
@@ -249,6 +241,14 @@
    },
    {
     "filename": "0031.png",
+    "frame": { "x": 0, "y": 0, "w": 59, "h": 58 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 3, "y": 6, "w": 59, "h": 58 },
+    "sourceSize": { "w": 65, "h": 65 }
+   },
+   {
+    "filename": "0032.png",
     "frame": { "x": 0, "y": 0, "w": 59, "h": 58 },
     "rotated": false,
     "trimmed": true,
