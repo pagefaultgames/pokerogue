@@ -248,10 +248,10 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       if (dataKeys.length > 0 || sessionKeys.length > 0) {
         const zip = new JSZip();
         for (let i = 0; i < dataKeys.length; i++) {
-          zip.file(dataKeys[i], localStorage.getItem(dataKeys[i])!);
+          zip.file(dataKeys[i] + ".prsv", localStorage.getItem(dataKeys[i])!);
         }
         for (let i = 0; i < sessionKeys.length; i++) {
-          zip.file(sessionKeys[i], localStorage.getItem(sessionKeys[i])!);
+          zip.file(sessionKeys[i] + ".prsv", localStorage.getItem(sessionKeys[i])!);
         }
         zip.generateAsync({ type: "blob" }).then(content => {
           const url = URL.createObjectURL(content);
