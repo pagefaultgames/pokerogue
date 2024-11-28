@@ -4,9 +4,9 @@ export const POKERUS_STARTER_COUNT = 5;
 
 // #region Friendship constants
 export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 2;
-export const FRIENDSHIP_GAIN_FROM_BATTLE = 2;
+export const FRIENDSHIP_GAIN_FROM_BATTLE = 4;
 export const FRIENDSHIP_GAIN_FROM_RARE_CANDY = 5;
-export const FRIENDSHIP_LOSS_FROM_FAINT = 10;
+export const FRIENDSHIP_LOSS_FROM_FAINT = 5;
 
 /**
  * Function to get the cumulative friendship threshold at which a candy is earned
@@ -16,19 +16,19 @@ export const FRIENDSHIP_LOSS_FROM_FAINT = 10;
 export function getStarterValueFriendshipCap(starterCost: number): number {
   switch (starterCost) {
     case 1:
-      return 20;
+      return 25;
     case 2:
-      return 40;
+      return 50;
     case 3:
-      return 60;
+      return 75;
     case 4:
       return 100;
     case 5:
-      return 140;
+      return 150;
     case 6:
       return 200;
     case 7:
-      return 280;
+      return 300;
     case 8:
     case 9:
       return 450;
