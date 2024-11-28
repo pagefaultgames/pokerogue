@@ -96,8 +96,34 @@
 
 # ⚖️ Balance
 
+## Balance Team
+- damocleas
+- Blitzy (Kazapple)
+- Cynthia_calliope
+- Esca
+- Fontbane
+- Plasto
+- Sethcurry
+- Starkrieg
+
+## Past Members
+- Swizzo
+- Zaccie
+
 # 💻 Development
 
+## Senior Developers
+
+## Developers
+- CodeTappert
+
+## Junior Developers
+
+## Past Contributors
+
 # 🌎 Translation
+
+## 🇩🇪 German
+- CodeTappert
 
 # 📰 Wiki
