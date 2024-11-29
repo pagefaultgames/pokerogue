@@ -2882,7 +2882,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true, source, move);
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true, source);
 
         if (damage > 0) {
           if (source.isPlayer()) {
@@ -3006,7 +3006,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * Run PostDamageAbAttr from any source of damage that is not from a multi-hit
      * Multi-hits are handled in move-effect-phase.ts for PostDamageAbAttr
      */
-    if (source.turnData.hitCount <= 1) {
+    if (source && source.turnData.hitCount <= 1) {
       applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
     }
     return damage;
