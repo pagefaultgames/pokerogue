@@ -5779,9 +5779,10 @@ export function initAbilities() {
       .attr(WonderSkinAbAttr)
       .ignorable(),
     new Ability(Abilities.ANALYTIC, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) =>
-        !!target?.getLastXMoves(1).find(m => m.turn === target?.scene.currentBattle.turn)
-        || user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command !== Command.FIGHT, 1.3),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => {
+        const movePhase = user?.scene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user.id);
+        return Utils.isNullOrUndefined(movePhase);
+      }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
