@@ -306,11 +306,8 @@ export class MoveEffectPhase extends PokemonPhase {
              * Multi-Lens, Multi Hit move and Parental Bond check for PostDamageAbAttr
              * other damage source are calculated in damageAndUpdate in pokemon.ts
              */
-            if (target.hasAbilityWithAttr(PostDamageForceSwitchAbAttr)) {
-              const multiHitModifier = user.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
-              if (multiHitModifier || user.hasAbilityWithAttr(AddSecondStrikeAbAttr) || move.hasAttr(MultiHitAttr)) {
-                applyPostDamageAbAttrs(PostDamageAbAttr, target, 0, target.hasPassive(), false, [], user);
-              }
+            if (user.turnData.hitCount > 1) {
+              applyPostDamageAbAttrs(PostDamageAbAttr, target, 0, target.hasPassive(), false, [], user);
             }
           }
 

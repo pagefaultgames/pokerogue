@@ -2996,7 +2996,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
    * @returns integer of damage done
    */
-  damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon, move?: Move): number {
+  damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
     const damagePhase = new DamageAnimPhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
     damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
@@ -3006,8 +3006,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * Run PostDamageAbAttr from any source of damage that is not from a multi-hit
      * Multi-hits are handled in move-effect-phase.ts for PostDamageAbAttr
      */
-    const multiHitModifier = source?.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
-    if (!multiHitModifier && !source?.hasAbilityWithAttr(AddSecondStrikeAbAttr) && !move?.hasAttr(MultiHitAttr)) {
+    if (source.turnData.hitCount <= 1) {
       applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
     }
     return damage;
