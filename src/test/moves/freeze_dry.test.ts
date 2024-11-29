@@ -2,6 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
+import { Type } from "#enums/type";
 import { Challenges } from "#enums/challenges";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
@@ -29,7 +30,7 @@ describe("Moves - Freeze-Dry", () => {
       .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
-      .moveset([ Moves.FREEZE_DRY ]);
+      .moveset([ Moves.FREEZE_DRY, Moves.FORESTS_CURSE, Moves.SOAK ]);
   });
 
   it("should deal 2x damage to pure water types", async () => {
@@ -96,6 +97,71 @@ describe("Moves - Freeze-Dry", () => {
 
     expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+  });
+
+  it("should deal 8x damage to water/ground/grass type under Forest's Curse", async () => {
+    game.override.enemySpecies(Species.QUAGSIRE);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FORESTS_CURSE);
+    await game.toNextTurn();
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(8);
+  });
+
+  it("should deal 2x damage to steel type terastallized into water", async () => {
+    game.override.enemySpecies(Species.SKARMORY)
+      .enemyHeldItems([{ name: "TERA_SHARD", type: Type.WATER }]);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
+  });
+
+  it("should deal 0.5x damage to water type terastallized into fire", async () => {
+    game.override.enemySpecies(Species.PELIPPER)
+      .enemyHeldItems([{ name: "TERA_SHARD", type: Type.FIRE }]);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0.5);
+  });
+
+  it("should deal 0.5x damage to water type Terapagos with Tera Shell", async () => {
+    game.override.enemySpecies(Species.TERAPAGOS)
+      .enemyAbility(Abilities.TERA_SHELL);
+    await game.classicMode.startBattle();
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemy, "getMoveEffectiveness");
+
+    game.move.select(Moves.SOAK);
+    await game.toNextTurn();
+
+    game.move.select(Moves.FREEZE_DRY);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(0.5);
   });
 
   it("should deal 2x damage to water type under Normalize", async () => {

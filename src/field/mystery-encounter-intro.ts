@@ -246,7 +246,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
             this.scene.anims.create({
               key: config.spriteKey,
               frames: frameNames,
-              frameRate: 12,
+              frameRate: 10,
               repeat: -1
             });
           }

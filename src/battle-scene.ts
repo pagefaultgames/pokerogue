@@ -1260,12 +1260,39 @@ export default class BattleScene extends SceneBase {
       newDouble = !!double;
     }
 
-    if (Overrides.BATTLE_TYPE_OVERRIDE === "double") {
-      newDouble = true;
-    }
-    /* Override battles into single only if not fighting with trainers */
-    if (newBattleType !== BattleType.TRAINER && Overrides.BATTLE_TYPE_OVERRIDE === "single") {
+    // Disable double battles on Endless/Endless Spliced Wave 50x boss battles (Introduced 1.2.0)
+    if (this.gameMode.isEndlessBoss(newWaveIndex)) {
       newDouble = false;
+    }
+
+    if (!isNullOrUndefined(Overrides.BATTLE_TYPE_OVERRIDE)) {
+      let doubleOverrideForWave: "single" | "double" | null = null;
+
+      switch (Overrides.BATTLE_TYPE_OVERRIDE) {
+        case "double":
+          doubleOverrideForWave = "double";
+          break;
+        case "single":
+          doubleOverrideForWave = "single";
+          break;
+        case "even-doubles":
+          doubleOverrideForWave = (newWaveIndex % 2) ? "single" : "double";
+          break;
+        case "odd-doubles":
+          doubleOverrideForWave = (newWaveIndex % 2) ? "double" : "single";
+          break;
+      }
+
+      if (doubleOverrideForWave === "double") {
+        newDouble = true;
+      }
+      /**
+       * Override battles into single only if not fighting with trainers.
+       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 | GitHub Issue #1948}
+       */
+      if (newBattleType !== BattleType.TRAINER && doubleOverrideForWave === "single") {
+        newDouble = false;
+      }
     }
 
     const lastBattle = this.currentBattle;
@@ -1424,10 +1451,19 @@ export default class BattleScene extends SceneBase {
       case Species.PALDEA_TAUROS:
         return Utils.randSeedInt(species.forms.length);
       case Species.PIKACHU:
+        if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
+          return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
+        }
         return Utils.randSeedInt(8);
       case Species.EEVEE:
+        if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
+          return 0; // No Partner Eevee for Wave 12 Preschoolers
+        }
         return Utils.randSeedInt(2);
       case Species.GRENINJA:
+        if (this.currentBattle?.battleType === BattleType.TRAINER) {
+          return 0; // Don't give trainers Battle Bond Greninja
+        }
         return Utils.randSeedInt(2);
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
@@ -2999,7 +3035,8 @@ export default class BattleScene extends SceneBase {
   }
 
   validateAchv(achv: Achv, args?: unknown[]): boolean {
-    if (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) && achv.validate(this, args)) {
+    if ((!this.gameData.achvUnlocks.hasOwnProperty(achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
+      && achv.validate(this, args)) {
       this.gameData.achvUnlocks[achv.id] = new Date().getTime();
       this.ui.achvBar.showAchv(achv);
       if (vouchers.hasOwnProperty(achv.id)) {
