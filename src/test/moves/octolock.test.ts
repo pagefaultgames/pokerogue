@@ -26,11 +26,11 @@ describe("Moves - Octolock", () => {
 
     game.override
       .battleType("single")
-      .enemySpecies(Species.RATTATA)
+      .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .startingLevel(2000)
-      .moveset([ Moves.OCTOLOCK, Moves.SPLASH ])
+      .moveset([ Moves.OCTOLOCK, Moves.SPLASH, Moves.TRICK_OR_TREAT ])
       .ability(Abilities.BALL_FETCH);
   });
 
@@ -121,11 +121,30 @@ describe("Moves - Octolock", () => {
     expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
     game.move.select(Moves.SPLASH);
-    game.toNextTurn();
+    await game.toNextTurn();
 
     // after Octolock - player should still not be trapped, and no stat loss
     expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(0);
+  });
+
+  it("does not work on pokemon with added ghost type via Trick-or-Treat", async () => {
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    // before Octolock - pokemon should not be trapped
+    expect(enemy.findTag(t => t instanceof TrappedTag)).toBeUndefined();
+
+    game.move.select(Moves.TRICK_OR_TREAT);
+    await game.toNextTurn();
+    game.move.select(Moves.OCTOLOCK);
+    await game.toNextTurn();
+
+    // after Octolock - pokemon should still not be trapped, and no stat loss
+    expect(enemy.findTag(t => t instanceof TrappedTag)).toBeUndefined();
+    expect(enemy.getStatStage(Stat.DEF)).toBe(0);
+    expect(enemy.getStatStage(Stat.SPDEF)).toBe(0);
   });
 });
