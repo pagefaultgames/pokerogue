@@ -3006,7 +3006,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * Run PostDamageAbAttr from any source of damage that is not from a multi-hit
      * Multi-hits are handled in move-effect-phase.ts for PostDamageAbAttr
      */
-    if (source && source.turnData.hitCount <= 1) {
+    if (!source || source.turnData.hitCount <= 1) {
       applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
     }
     return damage;
