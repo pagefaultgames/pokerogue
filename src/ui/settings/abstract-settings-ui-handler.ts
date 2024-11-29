@@ -135,18 +135,19 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.scrollBar = new ScrollBar(this.scene, this.optionsBg.width - 9, this.optionsBg.y + 5, 4, this.optionsBg.height - 11, this.rowsToDisplay);
     this.scrollBar.setTotalRows(this.settings.length);
 
-    // Single-line message box
+    // Two-lines message box
     this.messageBoxContainer = this.scene.add.container(0, this.scene.scaledCanvas.height);
     this.messageBoxContainer.setName("settings-message-box");
     this.messageBoxContainer.setVisible(false);
 
-    const settingsMessageBox = addWindow(this.scene, 0, -1, this.scene.scaledCanvas.width - 2, 28);
+    const settingsMessageBox = addWindow(this.scene, 0, -1, this.scene.scaledCanvas.width - 2, 48);
     settingsMessageBox.setOrigin(0, 1);
     this.messageBoxContainer.add(settingsMessageBox);
 
-    const messageText = addTextObject(this.scene, 8, -8, "", TextStyle.WINDOW);
-    messageText.setOrigin(0, 1);
+    const messageText = addTextObject(this.scene, 8, -40, "", TextStyle.WINDOW, { maxLines: 2 });
+    messageText.setWordWrapWidth(this.scene.game.canvas.width - 60);
     messageText.setName("settings-message");
+    messageText.setOrigin(0, 0);
 
     this.messageBoxContainer.add(messageText);
     this.message = messageText;
@@ -374,7 +375,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
         }
       };
 
-      // For settings that ask for confirmation
+      // For settings that ask for confirmation, display confirmation message and a Yes/No prompt before saving the setting
       if (setting.options[cursor].needConfirmation) {
         const confirmUpdateSetting = () => {
           this.scene.ui.revertMode();
@@ -390,8 +391,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
         const confirmationMessage = setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
         this.scene.ui.showText(confirmationMessage, null, () => {
-          const yOffset = 48 - this.messageBoxContainer.getAt(0).height;
-          this.scene.ui.setOverlayMode(Mode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, yOffset, 1000);
+          this.scene.ui.setOverlayMode(Mode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
         });
       } else {
         saveSetting();
