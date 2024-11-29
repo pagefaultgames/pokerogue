@@ -32,8 +32,8 @@ describe("Items - Multi Lens", () => {
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
-      .startingLevel(100)
-      .enemyLevel(100);
+      .startingLevel(99) // Check for proper rounding on Seismic Toss damage reduction
+      .enemyLevel(99);
   });
 
   it.each([
@@ -113,5 +113,26 @@ describe("Items - Multi Lens", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(magikarp.turnData.hitCount).toBe(2);
+  });
+
+  it("should enhance fixed-damage moves while also applying damage reduction", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }])
+      .moveset(Moves.SEISMIC_TOSS);
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
+
+    game.move.select(Moves.SEISMIC_TOSS);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+    const damageResults = spy.mock.results.map(result => result.value?.damage);
+
+    expect(damageResults).toHaveLength(2);
+    expect(damageResults[0]).toBe(Math.floor(playerPokemon.level * 0.75));
+    expect(damageResults[1]).toBe(Math.floor(playerPokemon.level * 0.25));
   });
 });
