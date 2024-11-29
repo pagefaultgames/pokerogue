@@ -1,4 +1,4 @@
-import { FormModalUiHandler } from "./form-modal-ui-handler";
+import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
@@ -7,6 +7,8 @@ import BattleScene from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import JSZip from "jszip";
 
 interface BuildInteractableImageOpts {
   scale?: number;
@@ -17,15 +19,16 @@ interface BuildInteractableImageOpts {
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   private readonly ERR_USERNAME: string = "invalid username";
-  private readonly ERR_PASSWORD: string =  "invalid password";
-  private readonly ERR_ACCOUNT_EXIST: string =  "account doesn't exist";
-  private readonly ERR_PASSWORD_MATCH: string =  "password doesn't match";
+  private readonly ERR_PASSWORD: string = "invalid password";
+  private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
+  private readonly ERR_PASSWORD_MATCH: string = "password doesn't match";
   private readonly ERR_NO_SAVES: string = "No save files found";
   private readonly ERR_TOO_MANY_SAVES: string = "Too many save files found";
 
   private googleImage: Phaser.GameObjects.Image;
   private discordImage: Phaser.GameObjects.Image;
   private usernameInfoImage: Phaser.GameObjects.Image;
+  private saveDownloadImage: Phaser.GameObjects.Image;
   private externalPartyContainer: Phaser.GameObjects.Container;
   private infoContainer: Phaser.GameObjects.Container;
   private externalPartyBg: Phaser.GameObjects.NineSlice;
@@ -45,7 +48,13 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       scale: 0.5
     });
 
+    this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", {
+      x: 0,
+      scale: 0.75
+    });
+
     this.infoContainer.add(this.usernameInfoImage);
+    this.infoContainer.add(this.saveDownloadImage);
     this.getUi().add(this.infoContainer);
     this.infoContainer.setVisible(false);
     this.infoContainer.disableInteractive();
@@ -75,10 +84,6 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     return i18next.t("menu:login");
   }
 
-  override getFields(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:username"), i18next.t("menu:password") ];
-  }
-
   override getWidth(_config?: ModalConfig): number {
     return 160;
   }
@@ -106,12 +111,19 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       case this.ERR_PASSWORD_MATCH:
         return i18next.t("menu:unmatchingPassword");
       case this.ERR_NO_SAVES:
-        return i18next.t("menu:noSaves");
+        return "P01: " + i18next.t("menu:noSaves");
       case this.ERR_TOO_MANY_SAVES:
-        return i18next.t("menu:tooManySaves");
+        return "P02: " + i18next.t("menu:tooManySaves");
     }
 
     return super.getReadableErrorMessage(error);
+  }
+
+  override getInputFieldConfigs(): InputFieldConfig[] {
+    const inputFieldConfigs: InputFieldConfig[] = [];
+    inputFieldConfigs.push({ label: i18next.t("menu:username") });
+    inputFieldConfigs.push({ label: i18next.t("menu:password"), isPassword: true });
+    return inputFieldConfigs;
   }
 
   override show(args: any[]): boolean {
@@ -132,21 +144,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => {
-            if (!response.ok) {
-              return response.text();
-            }
-            return response.json();
-          })
-          .then(response => {
-            if (response.hasOwnProperty("token")) {
-              Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction && originalLoginAction();
-            } else {
-              onFail(response);
-            }
-          });
+
+        const [ usernameInput, passwordInput ] = this.inputs;
+
+        pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
+          if (!error) {
+            originalLoginAction && originalLoginAction();
+          } else {
+            onFail(error);
+          }
+        });
       };
 
       return true;
@@ -161,10 +168,10 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [ this.discordImage, this.googleImage, this.usernameInfoImage ].forEach((img) => img.off("pointerdown"));
+    [ this.discordImage, this.googleImage, this.usernameInfoImage, this.saveDownloadImage ].forEach((img) => img.off("pointerdown"));
   }
 
-  private processExternalProvider(config: ModalConfig) : void {
+  private processExternalProvider(config: ModalConfig): void {
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
     this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
@@ -179,6 +186,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(true);
     this.getUi().moveTo(this.infoContainer, this.getUi().length - 1);
     this.usernameInfoImage.setPositionRelative(this.infoContainer, 0, 0);
+    this.saveDownloadImage.setPositionRelative(this.infoContainer, 20, 0);
 
     this.discordImage.on("pointerdown", () => {
       const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
@@ -227,6 +235,34 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         } else {
           return onFail(this.ERR_NO_SAVES);
         }
+      }
+    });
+
+    this.saveDownloadImage.on("pointerdown", () => {
+      // find all data_ and sessionData keys, put them in a .txt file and download everything in a single zip
+      const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
+      const keyToFind = "data_";
+      const sessionKeyToFind = "sessionData";
+      const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
+      const sessionKeys = localStorageKeys.filter(ls => ls.indexOf(sessionKeyToFind) >= 0);
+      if (dataKeys.length > 0 || sessionKeys.length > 0) {
+        const zip = new JSZip();
+        for (let i = 0; i < dataKeys.length; i++) {
+          zip.file(dataKeys[i] + ".prsv", localStorage.getItem(dataKeys[i])!);
+        }
+        for (let i = 0; i < sessionKeys.length; i++) {
+          zip.file(sessionKeys[i] + ".prsv", localStorage.getItem(sessionKeys[i])!);
+        }
+        zip.generateAsync({ type: "blob" }).then(content => {
+          const url = URL.createObjectURL(content);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "pokerogue_saves.zip";
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      } else {
+        return onFail(this.ERR_NO_SAVES);
       }
     });
 

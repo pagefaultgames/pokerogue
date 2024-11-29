@@ -3,9 +3,7 @@ import { TextStyle, getBBCodeFrag } from "../ui/text";
 import { Nature } from "#enums/nature";
 import { UiTheme } from "#enums/ui-theme";
 import i18next from "i18next";
-import { Stat, EFFECTIVE_STATS, getShortenedStatKey } from "#app/enums/stat";
-
-export { Nature };
+import { Stat, EFFECTIVE_STATS, getShortenedStatKey } from "#enums/stat";
 
 export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false, uiTheme: UiTheme = UiTheme.DEFAULT): string {
   let ret = Utils.toReadableString(Nature[nature]);

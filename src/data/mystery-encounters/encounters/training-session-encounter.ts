@@ -1,6 +1,6 @@
 import { Ability, allAbilities } from "#app/data/ability";
 import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getNatureName, Nature } from "#app/data/nature";
+import { getNatureName } from "#app/data/nature";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -21,6 +21,7 @@ import i18next from "i18next";
 import { getStatKey } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import type { Nature } from "#enums/nature";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounters/trainingSession";
@@ -37,6 +38,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
     .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 unfainted pokemon in party
     .withFleeAllowed(false)
     .withHideWildIntroMessage(true)
+    .withPreventGameStatsUpdates(true) // Do not count the Pokemon as seen or defeated since it is ours
     .withIntroSpriteConfigs([
       {
         spriteKey: "training_session_gear",
@@ -151,7 +153,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             }
 
             // Add pokemon and mods back
-            scene.getParty().push(playerPokemon);
+            scene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               scene.addModifier(mod, true, false, false, true);
@@ -224,11 +226,11 @@ export const TrainingSessionEncounter: MysteryEncounter =
           const onBeforeRewardsPhase = () => {
             queueEncounterMessage(scene, `${namespace}:option.2.finished`);
             // Add the pokemon back to party with Nature change
-            playerPokemon.setNature(encounter.misc.chosenNature);
-            scene.gameData.setPokemonCaught(playerPokemon, false);
+            playerPokemon.setCustomNature(encounter.misc.chosenNature);
+            scene.gameData.unlockSpeciesNature(playerPokemon.species, encounter.misc.chosenNature);
 
             // Add pokemon and modifiers back
-            scene.getParty().push(playerPokemon);
+            scene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               scene.addModifier(mod, true, false, false, true);
@@ -341,7 +343,7 @@ export const TrainingSessionEncounter: MysteryEncounter =
             scene.gameData.setPokemonCaught(playerPokemon, false);
 
             // Add pokemon and mods back
-            scene.getParty().push(playerPokemon);
+            scene.getPlayerParty().push(playerPokemon);
             for (const mod of modifiers.value) {
               mod.pokemonId = playerPokemon.id;
               scene.addModifier(mod, true, false, false, true);

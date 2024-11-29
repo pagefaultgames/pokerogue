@@ -36,7 +36,7 @@ import {
   HeldItemRequirement,
   TypeRequirement
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { AttackTypeBoosterModifierType, ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import {
   AttackTypeBoosterModifier,
@@ -193,12 +193,14 @@ const WAVE_LEVEL_BREAKPOINTS = [ 30, 50, 70, 100, 120, 140, 160 ];
 export const BugTypeSuperfanEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.BUG_TYPE_SUPERFAN)
     .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-      // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
-      new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
-      new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
-      new TypeRequirement(Type.BUG, false, 1)
-    ))
+    .withPrimaryPokemonRequirement(
+      CombinationPokemonRequirement.Some(
+        // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
+        new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
+        new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1),
+        new TypeRequirement(Type.BUG, false, 1)
+      )
+    )
     .withMaxAllowedEncounters(1)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withIntroSpriteConfigs([]) // These are set in onInit()
@@ -329,7 +331,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
 
         // Player gets different rewards depending on the number of bug types they have
-        const numBugTypes = scene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
+        const numBugTypes = scene.getPlayerParty().filter(p => p.isOfType(Type.BUG, true)).length;
         const numBugTypesText = i18next.t(`${namespace}:numBugTypes`, { count: numBugTypes });
         encounter.setDialogueToken("numBugTypes", numBugTypesText);
 
@@ -405,11 +407,13 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       .build())
     .withOption(MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withPrimaryPokemonRequirement(new CombinationPokemonRequirement(
-        // Meets one or both of the below reqs
-        new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
-        new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1)
-      ))
+      .withPrimaryPokemonRequirement(
+        CombinationPokemonRequirement.Some(
+          // Meets one or both of the below reqs
+          new HeldItemRequirement([ "BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier" ], 1),
+          new AttackTypeBoosterHeldItemTypeRequirement(Type.BUG, 1)
+        )
+      )
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
@@ -473,12 +477,9 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       .withOptionPhase(async (scene: BattleScene) => {
         const encounter = scene.currentBattle.mysteryEncounter!;
         const modifier = encounter.misc.chosenModifier;
+        const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
-        // Remove the modifier if its stacks go to 0
-        modifier.stackCount -= 1;
-        if (modifier.stackCount === 0) {
-          scene.removeModifier(modifier);
-        }
+        chosenPokemon.loseHeldItem(modifier, false);
         scene.updateModifiers(true, true);
 
         const bugNet = generateModifierTypeOption(scene, modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;

@@ -1,13 +1,13 @@
 import { Arena } from "#app/field/arena";
 import BattleScene from "#app/battle-scene";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
-import { MoveCategory, allMoves, MoveTarget, IncrementMovePriorityAttr, applyMoveAttrs } from "#app/data/move";
+import { MoveCategory, allMoves, MoveTarget } from "#app/data/move";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Pokemon, { HitResult, PokemonMove } from "#app/field/pokemon";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
-import { BlockNonDirectDamageAbAttr, ChangeMovePriorityAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
+import { BlockNonDirectDamageAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -126,6 +126,7 @@ export class MistTag extends ArenaTag {
    * Cancels the lowering of stats
    * @param arena the {@linkcode Arena} containing this effect
    * @param simulated `true` if the effect should be applied quietly
+   * @param attacker the {@linkcode Pokemon} using a move into this effect.
    * @param cancelled a {@linkcode BooleanHolder} whose value is set to `true`
    * to flag the stat reduction as cancelled
    * @returns `true` if a stat reduction was cancelled; `false` otherwise
@@ -312,20 +313,20 @@ export class ConditionalProtectTag extends ArenaTag {
  * protection effect.
  * @param arena {@linkcode Arena} The arena containing the protection effect
  * @param moveId {@linkcode Moves} The move to check against this condition
- * @returns `true` if the incoming move's priority is greater than 0. This includes
- * moves with modified priorities from abilities (e.g. Prankster)
+ * @returns `true` if the incoming move's priority is greater than 0.
+ *   This includes moves with modified priorities from abilities (e.g. Prankster)
  */
 const QuickGuardConditionFunc: ProtectConditionFunc = (arena, moveId) => {
   const move = allMoves[moveId];
-  const priority = new NumberHolder(move.priority);
   const effectPhase = arena.scene.getCurrentPhase();
 
   if (effectPhase instanceof MoveEffectPhase) {
-    const attacker = effectPhase.getUserPokemon()!;
-    applyMoveAttrs(IncrementMovePriorityAttr, attacker, null, move, priority);
-    applyAbAttrs(ChangeMovePriorityAbAttr, attacker, null, false, move, priority);
+    const attacker = effectPhase.getUserPokemon();
+    if (attacker) {
+      return move.getPriority(attacker) > 0;
+    }
   }
-  return priority.value > 0;
+  return move.priority > 0;
 };
 
 /**
@@ -777,13 +778,14 @@ class ToxicSpikesTag extends ArenaTrapTag {
  * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
  * and deals damage after the turn count is reached.
  */
-class DelayedAttackTag extends ArenaTag {
+export class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;
 
-  constructor(tagType: ArenaTagType, sourceMove: Moves | undefined, sourceId: number, targetIndex: BattlerIndex) {
-    super(tagType, 3, sourceMove, sourceId);
+  constructor(tagType: ArenaTagType, sourceMove: Moves | undefined, sourceId: number, targetIndex: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH) {
+    super(tagType, 3, sourceMove, sourceId, side);
 
     this.targetIndex = targetIndex;
+    this.side = side;
   }
 
   lapse(arena: Arena): boolean {
@@ -970,6 +972,9 @@ export class GravityTag extends ArenaTag {
       if (pokemon !== null) {
         pokemon.removeTag(BattlerTagType.FLOATING);
         pokemon.removeTag(BattlerTagType.TELEKINESIS);
+        if (pokemon.getTag(BattlerTagType.FLYING)) {
+          pokemon.addTag(BattlerTagType.INTERRUPTED);
+        }
       }
     });
   }
@@ -1199,6 +1204,24 @@ class GrassWaterPledgeTag extends ArenaTag {
   }
 }
 
+/**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Fairy_Lock_(move) Fairy Lock}.
+ * Fairy Lock prevents all Pokémon (except Ghost types) on the field from switching out or
+ * fleeing during their next turn.
+ * If a Pokémon that's on the field when Fairy Lock is used goes on to faint later in the same turn,
+ * the Pokémon that replaces it will still be unable to switch out in the following turn.
+ */
+export class FairyLockTag extends ArenaTag {
+  constructor(turnCount: number, sourceId: number) {
+    super(ArenaTagType.FAIRY_LOCK, turnCount, Moves.FAIRY_LOCK, sourceId);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(i18next.t("arenaTag:fairyLockOnAdd"));
+  }
+
+}
+
 // TODO: swap `sourceMove` and `sourceId` and make `sourceMove` an optional parameter
 export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove: Moves | undefined, sourceId: number, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
@@ -1226,7 +1249,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove
       return new ToxicSpikesTag(sourceId, side);
     case ArenaTagType.FUTURE_SIGHT:
     case ArenaTagType.DOOM_DESIRE:
-      return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex!); // TODO:questionable bang
+      return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex!, side); // TODO:questionable bang
     case ArenaTagType.WISH:
       return new WishTag(turnCount, sourceId, side);
     case ArenaTagType.STEALTH_ROCK:
@@ -1257,6 +1280,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove
       return new WaterFirePledgeTag(sourceId, side);
     case ArenaTagType.GRASS_WATER_PLEDGE:
       return new GrassWaterPledgeTag(sourceId, side);
+    case ArenaTagType.FAIRY_LOCK:
+      return new FairyLockTag(turnCount, sourceId);
     default:
       return null;
   }

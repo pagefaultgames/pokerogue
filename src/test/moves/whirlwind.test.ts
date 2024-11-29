@@ -41,7 +41,8 @@ describe("Moves - Whirlwind", () => {
     const staraptor = game.scene.getPlayerPokemon()!;
 
     game.move.select(move);
-    await game.toNextTurn();
+
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(staraptor.findTag((t) => t.tagType === BattlerTagType.FLYING)).toBeDefined();
     expect(game.scene.getEnemyPokemon()!.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);

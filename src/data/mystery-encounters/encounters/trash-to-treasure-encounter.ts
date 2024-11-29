@@ -71,7 +71,7 @@ export const TrashToTreasureEncounter: MysteryEncounter =
         moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ]
       };
       const config: EnemyPartyConfig = {
-        levelAdditiveModifier: 1,
+        levelAdditiveModifier: 0.5,
         pokemonConfigs: [ pokemonConfig ],
         disableSwitch: true
       };
@@ -164,7 +164,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
   const leftovers = generateModifierType(scene, modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType;
 
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
 
   // Iterate over the party until an item was successfully given
   // First leftovers

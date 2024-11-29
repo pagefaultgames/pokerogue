@@ -1,8 +1,9 @@
 import { allMoves, MultiHitAttr, MultiHitType } from "#app/data/move";
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -40,7 +41,7 @@ describe("Abilities - BATTLE BOND", () => {
   it("check if fainted pokemon switches to base form on arena reset", async () => {
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.GRENINJA ]);
 
-    const greninja = game.scene.getParty()[1];
+    const greninja = game.scene.getPlayerParty()[1];
     expect(greninja.formIndex).toBe(ashForm);
 
     greninja.hp = 0;

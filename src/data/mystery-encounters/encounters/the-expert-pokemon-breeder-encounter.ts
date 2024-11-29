@@ -21,9 +21,8 @@ import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { achvs } from "#app/system/achv";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 
@@ -126,7 +125,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       ];
 
       // Determine the 3 pokemon the player can battle with
-      let partyCopy = scene.getParty().slice(0);
+      let partyCopy = scene.getPlayerParty().slice(0);
       partyCopy = partyCopy
         .filter(p => p.isAllowedInBattle())
         .sort((a, b) => a.friendship - b.friendship);
@@ -222,7 +221,10 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.misc.chosenPokemon = pokemon1;
           encounter.setDialogueToken("chosenPokemon", pokemon1.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon1CommonEggs, pokemon1RareEggs);
-          setEncounterRewards(scene, { fillRemaining: true }, eggOptions, () => doPostEncounterCleanup(scene));
+          setEncounterRewards(scene,
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
+            eggOptions,
+            () => doPostEncounterCleanup(scene));
 
           // Remove all Pokemon from the party except the chosen Pokemon
           removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon1);
@@ -271,7 +273,10 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.misc.chosenPokemon = pokemon2;
           encounter.setDialogueToken("chosenPokemon", pokemon2.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon2CommonEggs, pokemon2RareEggs);
-          setEncounterRewards(scene, { fillRemaining: true }, eggOptions, () => doPostEncounterCleanup(scene));
+          setEncounterRewards(scene,
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
+            eggOptions,
+            () => doPostEncounterCleanup(scene));
 
           // Remove all Pokemon from the party except the chosen Pokemon
           removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon2);
@@ -320,7 +325,10 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
           encounter.misc.chosenPokemon = pokemon3;
           encounter.setDialogueToken("chosenPokemon", pokemon3.getNameToRender());
           const eggOptions = getEggOptions(scene, pokemon3CommonEggs, pokemon3RareEggs);
-          setEncounterRewards(scene, { fillRemaining: true }, eggOptions, () => doPostEncounterCleanup(scene));
+          setEncounterRewards(scene,
+            { guaranteedModifierTypeFuncs: [ modifierTypes.SOOTHE_BELL ], fillRemaining: true },
+            eggOptions,
+            () => doPostEncounterCleanup(scene));
 
           // Remove all Pokemon from the party except the chosen Pokemon
           removePokemonFromPartyAndStoreHeldItems(scene, encounter, pokemon3);
@@ -454,12 +462,16 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   }
 
   // Maximum of 30 points
-  const totalPoints = Math.min(pointsFromStarterTier + pointsFromBst, 30);
+  let totalPoints = Math.min(pointsFromStarterTier + pointsFromBst, 30);
 
-  // 1 Rare egg for every 6 points
-  const numRares = Math.floor(totalPoints / 6);
+  // First 5 points go to Common eggs
+  let numCommons = Math.min(totalPoints, 5);
+  totalPoints -= numCommons;
+
+  // Then, 1 Rare egg for every 4 points
+  const numRares = Math.floor(totalPoints / 4);
   // 1 Common egg for every point leftover
-  const numCommons = totalPoints % 6;
+  numCommons += totalPoints % 4;
 
   return [ numCommons, numRares ];
 }
@@ -495,11 +507,11 @@ function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number)
 }
 
 function removePokemonFromPartyAndStoreHeldItems(scene: BattleScene, encounter: MysteryEncounter, chosenPokemon: PlayerPokemon) {
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
   const chosenIndex = party.indexOf(chosenPokemon);
   party[chosenIndex] = party[0];
   party[0] = chosenPokemon;
-  encounter.misc.originalParty = scene.getParty().slice(1);
+  encounter.misc.originalParty = scene.getPlayerParty().slice(1);
   encounter.misc.originalPartyHeldItems = encounter.misc.originalParty
     .map(p => p.getHeldItems());
   scene["party"] = [
@@ -507,16 +519,10 @@ function removePokemonFromPartyAndStoreHeldItems(scene: BattleScene, encounter: 
   ];
 }
 
-function checkAchievement(scene: BattleScene) {
-  if (scene.arena.biomeType === Biome.SPACE) {
-    scene.validateAchv(achvs.BREEDERS_IN_SPACE);
-  }
-}
-
 function restorePartyAndHeldItems(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter!;
   // Restore original party
-  scene.getParty().push(...encounter.misc.originalParty);
+  scene.getPlayerParty().push(...encounter.misc.originalParty);
 
   // Restore held items
   const originalHeldItems = encounter.misc.originalPartyHeldItems;
@@ -604,8 +610,6 @@ function onGameOver(scene: BattleScene) {
 function doPostEncounterCleanup(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter!;
   if (!encounter.misc.encounterFailed) {
-    // Give achievement if in Space biome
-    checkAchievement(scene);
     // Give 20 friendship to the chosen pokemon
     encounter.misc.chosenPokemon.addFriendship(FRIENDSHIP_ADDED);
     restorePartyAndHeldItems(scene);

@@ -1,7 +1,7 @@
 import BattleScene from "#app/battle-scene";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { regenerateModifierPoolThresholds, ModifierTypeOption, ModifierType, getPlayerShopModifierTypeOptionsForWave, PokemonModifierType, FusePokemonModifierType, PokemonMoveModifierType, TmModifierType, RememberMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, ModifierPoolType, getPlayerModifierTypeOptions } from "#app/modifier/modifier-type";
-import { ExtraModifierModifier, HealShopCostModifier, Modifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, Modifier, PokemonHeldItemModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
@@ -38,13 +38,14 @@ export class SelectModifierPhase extends BattlePhase {
       this.scene.reroll = false;
     }
 
-    const party = this.scene.getParty();
+    const party = this.scene.getPlayerParty();
     if (!this.isCopy) {
       regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
     }
     const modifierCount = new Utils.IntegerHolder(3);
     if (this.isPlayer()) {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
+      this.scene.applyModifiers(TempExtraModifierModifier, true, modifierCount);
     }
 
     // If custom modifiers are specified, overrides default item count
@@ -102,7 +103,7 @@ export class SelectModifierPhase extends BattlePhase {
                   const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
                       && m.isTransferable && m.pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
                   const itemModifier = itemModifiers[itemIndex];
-                  this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity);
+                  this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, itemQuantity, undefined, undefined, false);
                 } else {
                   this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), this.typeOptions, modifierSelectCallback, this.getRerollCost(this.scene.lockModifierTiers));
                 }
@@ -274,7 +275,13 @@ export class SelectModifierPhase extends BattlePhase {
       // Otherwise, continue with custom multiplier
       multiplier = this.customModifierSettings.rerollMultiplier;
     }
-    return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
+
+    const baseMultiplier = Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * (2 ** this.rerollCount) * multiplier, Number.MAX_SAFE_INTEGER);
+
+    // Apply Black Sludge to reroll cost
+    const modifiedRerollCost = new NumberHolder(baseMultiplier);
+    this.scene.applyModifier(HealShopCostModifier, true, modifiedRerollCost);
+    return modifiedRerollCost.value;
   }
 
   getPoolType(): ModifierPoolType {
@@ -282,7 +289,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getPlayerParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined, this.customModifierSettings);
   }
 
   copy(): SelectModifierPhase {
