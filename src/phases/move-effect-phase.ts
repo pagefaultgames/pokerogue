@@ -11,7 +11,6 @@ import {
   MaxMultiHitAbAttr,
   PostAttackAbAttr,
   PostDamageAbAttr,
-  PostDamageForceSwitchAbAttr,
   PostDefendAbAttr,
   TypeImmunityAbAttr,
 } from "#app/data/ability";
