@@ -651,7 +651,7 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(Moves.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.MATCHA_GOTCHA, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(wimpod0.hp).toBeGreaterThan(0);
