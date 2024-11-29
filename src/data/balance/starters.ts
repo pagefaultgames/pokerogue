@@ -3,9 +3,9 @@ import { Species } from "#enums/species";
 export const POKERUS_STARTER_COUNT = 5;
 
 // #region Friendship constants
-export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 2;
-export const FRIENDSHIP_GAIN_FROM_BATTLE = 4;
-export const FRIENDSHIP_GAIN_FROM_RARE_CANDY = 5;
+export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 3;
+export const FRIENDSHIP_GAIN_FROM_BATTLE = 3;
+export const FRIENDSHIP_GAIN_FROM_RARE_CANDY = 6;
 export const FRIENDSHIP_LOSS_FROM_FAINT = 5;
 
 /**
