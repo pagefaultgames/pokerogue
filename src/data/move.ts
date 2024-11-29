@@ -5967,50 +5967,97 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
       * If it did, the user of U-turn or Volt Switch will not be switched out.
       */
-      if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr) &&
-          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH || move.id === Moves.FLIP_TURN)
+      if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr)
+        && [ Moves.U_TURN, Moves.VOLT_SWITCH, Moves.FLIP_TURN ].includes(move.id)
       ) {
         if (this.hpDroppedBelowHalf(target)) {
           return false;
         }
       }
-      // Switch out logic for the player's Pokemon
+
       if (switchOutTarget.scene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        user.scene.prependToPhase(new SwitchPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
-        return true;
+        if (this.switchType === SwitchType.FORCE_SWITCH) {
+          switchOutTarget.leaveField(true);
+          const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getPlayerParty().length);
+          user.scene.prependToPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              this.switchType,
+              switchOutTarget.getFieldIndex(),
+              slotIndex,
+              false,
+              true
+            ),
+            MoveEndPhase
+          );
+        } else {
+          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
+          user.scene.prependToPhase(
+            new SwitchPhase(
+              user.scene,
+              this.switchType,
+              switchOutTarget.getFieldIndex(),
+              true,
+              true
+            ),
+            MoveEndPhase
+          );
+          return true;
+        }
       }
       return false;
-    } else if (user.scene.currentBattle.battleType !== BattleType.WILD) {
-      // Switch out logic for trainer battles
+    } else if (user.scene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
       if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
-        // for opponent switching out
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        user.scene.prependToPhase(new SwitchSummonPhase(user.scene, this.switchType, switchOutTarget.getFieldIndex(),
-          (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
-          false, false), MoveEndPhase);
+        if (this.switchType === SwitchType.FORCE_SWITCH) {
+          switchOutTarget.leaveField(true);
+          const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getEnemyParty().length);
+          user.scene.prependToPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              this.switchType,
+              switchOutTarget.getFieldIndex(),
+              slotIndex,
+              false,
+              false
+            ),
+            MoveEndPhase
+          );
+        } else {
+          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
+          user.scene.prependToPhase(
+            new SwitchSummonPhase(
+              user.scene,
+              this.switchType,
+              switchOutTarget.getFieldIndex(),
+              (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
+              false,
+              false
+            ),
+            MoveEndPhase
+          );
+        }
       }
-    } else {
+    } else { // Switch out logic for wild pokemon
       /**
       * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
       * If it did, the user of U-turn or Volt Switch will not be switched out.
       */
-      if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr) &&
-          (move.id === Moves.U_TURN || move.id === Moves.VOLT_SWITCH) || move.id === Moves.FLIP_TURN) {
+      if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr)
+        && [ Moves.U_TURN, Moves.VOLT_SWITCH, Moves.FLIP_TURN ].includes(move.id)
+      ) {
         if (this.hpDroppedBelowHalf(target)) {
           return false;
         }
       }
 
-      // Switch out logic for everything else (eg: WILD battles)
       if (user.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
@@ -7777,11 +7824,10 @@ export function initMoves() {
       .windMove(),
     new AttackMove(Moves.WING_ATTACK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, -1, 0, 1),
     new StatusMove(Moves.WHIRLWIND, Type.NORMAL, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr)
+      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
       .ignoresSubstitute()
       .hidesTarget()
-      .windMove()
-      .partial(), // Should force random switches
+      .windMove(),
     new ChargingAttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:flewUpHigh", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
@@ -7857,10 +7903,9 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.ROAR, Type.NORMAL, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr)
+      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
       .soundBased()
-      .hidesTarget()
-      .partial(), // Should force random switching
+      .hidesTarget(),
     new StatusMove(Moves.SING, Type.NORMAL, 55, 15, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased(),
@@ -9222,8 +9267,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 2, true),
     new AttackMove(Moves.CIRCLE_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr)
-      .partial(), // Should force random switches
+      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
+      .hidesTarget(),
     new AttackMove(Moves.INCINERATE, Type.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(RemoveHeldItemAttr, true),
@@ -9291,9 +9336,8 @@ export function initMoves() {
     new AttackMove(Moves.FROST_BREATH, Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, 100, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.DRAGON_TAIL, Type.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr)
-      .hidesTarget()
-      .partial(), // Should force random switches
+      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
+      .hidesTarget(),
     new SelfStatusMove(Moves.WORK_UP, Type.NORMAL, -1, 30, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, true),
     new AttackMove(Moves.ELECTROWEB, Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 5)
