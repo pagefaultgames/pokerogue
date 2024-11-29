@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/ability";
 import { Abilities } from "#app/enums/abilities";
 import { WeatherType } from "#app/enums/weather-type";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
@@ -273,7 +273,7 @@ describe("Abilities - Forecast", () => {
     const castform = game.scene.getPlayerPokemon()!;
 
     // Damage phase should come first
-    await game.phaseInterceptor.to(DamagePhase);
+    await game.phaseInterceptor.to(DamageAnimPhase);
     expect(castform.hp).toBeLessThan(castform.getMaxHp());
 
     // Then change form

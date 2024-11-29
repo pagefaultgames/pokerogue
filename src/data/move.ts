@@ -10598,6 +10598,7 @@ export function initMoves() {
     new AttackMove(Moves.TWIN_BEAM, Type.PSYCHIC, MoveCategory.SPECIAL, 40, 100, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.RAGE_FIST, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
+      .partial() // Counter resets every wave instead of on arena reset
       .attr(HitCountPowerAttr)
       .punchingMove(),
     new AttackMove(Moves.ARMOR_CANNON, Type.FIRE, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
