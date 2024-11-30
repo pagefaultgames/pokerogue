@@ -1,9 +1,9 @@
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
-import BattleScene from "../../battle-scene";
-import { hasTouchscreen } from "../../touch-controls";
-import { updateWindowType } from "../../ui/ui-theme";
-import { CandyUpgradeNotificationChangedEvent } from "../../events/battle-scene";
+import BattleScene from "#app/battle-scene";
+import { hasTouchscreen } from "#app/touch-controls";
+import { updateWindowType } from "#app/ui/ui-theme";
+import { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
 import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
@@ -44,6 +44,7 @@ const OFF_ON: SettingOption[] = [
     label: i18next.t("settings:on")
   }
 ];
+
 const AUTO_DISABLED: SettingOption[] = [
   {
     value: "Auto",
@@ -52,6 +53,19 @@ const AUTO_DISABLED: SettingOption[] = [
   {
     value: "Disabled",
     label: i18next.t("settings:disabled")
+  }
+];
+
+const TOUCH_CONTROLS_OPTIONS: SettingOption[] = [
+  {
+    value: "Auto",
+    label: i18next.t("settings:auto")
+  },
+  {
+    value: "Disabled",
+    label: i18next.t("settings:disabled"),
+    needConfirmation: true,
+    confirmationMessage: i18next.t("settings:confirmDisableTouch")
   }
 ];
 
@@ -100,7 +114,9 @@ export enum SettingType {
 
 type SettingOption = {
   value: string,
-  label: string
+  label: string,
+  needConfirmation?: boolean,
+  confirmationMessage?: string
 };
 
 export interface Setting {
@@ -345,18 +361,33 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL
   },
   {
-    key: SettingKeys.Touch_Controls,
-    label: i18next.t("settings:touchControls"),
-    options: AUTO_DISABLED,
-    default: 0,
-    type: SettingType.GENERAL
-  },
-  {
     key: SettingKeys.Vibration,
     label: i18next.t("settings:vibrations"),
     options: AUTO_DISABLED,
     default: 0,
     type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Touch_Controls,
+    label: i18next.t("settings:touchControls"),
+    options: TOUCH_CONTROLS_OPTIONS,
+    default: 0,
+    type: SettingType.GENERAL,
+    isHidden: () => !hasTouchscreen()
+  },
+  {
+    key: SettingKeys.Move_Touch_Controls,
+    label: i18next.t("settings:moveTouchControls"),
+    options: [
+      {
+        value: "Configure",
+        label: i18next.t("settings:change")
+      }
+    ],
+    default: 0,
+    type: SettingType.GENERAL,
+    activatable: true,
+    isHidden: () => !hasTouchscreen()
   },
   {
     key: SettingKeys.Language,
@@ -644,20 +675,6 @@ export const Setting: Array<Setting> = [
     requireReload: true
   },
   {
-    key: SettingKeys.Move_Touch_Controls,
-    label: i18next.t("settings:moveTouchControls"),
-    options: [
-      {
-        value: "Configure",
-        label: i18next.t("settings:change")
-      }
-    ],
-    default: 0,
-    type: SettingType.GENERAL,
-    activatable: true,
-    isHidden: () => !hasTouchscreen()
-  },
-  {
     key: SettingKeys.Shop_Cursor_Target,
     label: i18next.t("settings:shopCursorTarget"),
     options: SHOP_CURSOR_TARGET_OPTIONS,
@@ -849,7 +866,7 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
         if (scene.ui) {
           const cancelHandler = () => {
             scene.ui.revertMode();
-            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(0, 0, true);
+            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(-1, 0, true);
           };
           const changeLocaleHandler = (locale: string): boolean => {
             try {

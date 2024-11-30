@@ -4112,9 +4112,13 @@ export class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
+  /**
+   * @param args - `[0]`: boolean for if the battle ended in a victory
+   * @returns `true` if successful
+   */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const postBattleLoot = pokemon.scene.currentBattle.postBattleLoot;
-    if (!simulated && postBattleLoot.length) {
+    if (!simulated && postBattleLoot.length && args[0]) {
       const randItem = Utils.randSeedItem(postBattleLoot);
       //@ts-ignore - TODO see below
       if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) { // TODO: fix. This is a promise!?
@@ -4575,14 +4579,15 @@ export class MoneyAbAttr extends PostBattleAbAttr {
   /**
    * @param pokemon {@linkcode Pokemon} that is the user of this ability.
    * @param passive N/A
-   * @param args N/A
-   * @returns true
+   * @param args - `[0]`: boolean for if the battle ended in a victory
+   * @returns `true` if successful
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!simulated) {
+    if (!simulated && args[0]) {
       pokemon.scene.currentBattle.moneyScattered += pokemon.scene.getWaveMoneyAmount(0.2);
+      return true;
     }
-    return true;
+    return false;
   }
 }
 
@@ -4590,13 +4595,12 @@ export class MoneyAbAttr extends PostBattleAbAttr {
  * Applies a stat change after a Pokémon is summoned,
  * conditioned on the presence of a specific arena tag.
  *
- * @extends {PostSummonStatStageChangeAbAttr}
+ * @extends PostSummonStatStageChangeAbAttr
  */
 export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageChangeAbAttr {
   /**
    * The type of arena tag that conditions the stat change.
    * @private
-   * @type {ArenaTagType}
    */
   private tagType: ArenaTagType;
 
@@ -4951,9 +4955,10 @@ class ForceSwitchOutHelper {
       }
     /**
      * For wild Pokémon battles, the Pokémon will flee if the conditions are met (waveIndex and double battles).
+     * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
      */
     } else {
-      if (!pokemon.scene.currentBattle.waveIndex && pokemon.scene.currentBattle.waveIndex % 10 === 0) {
+      if (!pokemon.scene.currentBattle.waveIndex || pokemon.scene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
 
@@ -4971,7 +4976,7 @@ class ForceSwitchOutHelper {
         pokemon.scene.clearEnemyHeldItemModifiers();
 
         if (switchOutTarget.hp) {
-          pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
+          pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene, false));
           pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
         }
       }
@@ -5778,9 +5783,10 @@ export function initAbilities() {
       .attr(WonderSkinAbAttr)
       .ignorable(),
     new Ability(Abilities.ANALYTIC, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) =>
-        !!target?.getLastXMoves(1).find(m => m.turn === target?.scene.currentBattle.turn)
-        || user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command !== Command.FIGHT, 1.3),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => {
+        const movePhase = user?.scene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user.id);
+        return Utils.isNullOrUndefined(movePhase);
+      }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -5928,10 +5934,10 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
       .attr(PostDamageForceSwitchAbAttr)
-      .edgeCase(), // Should not trigger when hurting itself in confusion
+      .edgeCase(), // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .attr(PostDamageForceSwitchAbAttr)
-      .edgeCase(), // Should not trigger when hurting itself in confusion
+      .edgeCase(), // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
@@ -5947,7 +5953,7 @@ export function initAbilities() {
       .bypassFaint()
       .partial(), // Meteor form should protect against status effects and yawn
     new Ability(Abilities.STAKEOUT, 7)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command === Command.POKEMON, 2),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => !!target?.turnData.switchedInThisTurn, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
@@ -6090,11 +6096,9 @@ export function initAbilities() {
     new Ability(Abilities.NEUROFORCE, 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) >= 2, 1.25),
     new Ability(Abilities.INTREPID_SWORD, 8)
-      .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
-      .condition(getOncePerBattleCondition(Abilities.INTREPID_SWORD)),
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true),
     new Ability(Abilities.DAUNTLESS_SHIELD, 8)
-      .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true)
-      .condition(getOncePerBattleCondition(Abilities.DAUNTLESS_SHIELD)),
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(Abilities.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr),
     //.condition((p) => !p.summonData?.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
@@ -6121,8 +6125,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .bypassFaint()
-      .edgeCase(), // Soft-locks the game if a form-changed Cramorant and its attacker both faint at the same time (ex. using Self-Destruct)
+      .bypassFaint(),
     new Ability(Abilities.STALWART, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.STEAM_ENGINE, 8)
@@ -6342,8 +6345,7 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatStagesAbAttr, [ Stat.EVA ])
       .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
-      .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1)
-      .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1),
     new Ability(Abilities.HOSPITALITY, 9)
       .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)

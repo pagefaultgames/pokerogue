@@ -1,5 +1,5 @@
 import { EnemyPokemon } from "#app/field/pokemon";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -55,7 +55,7 @@ describe("Abilities - Sturdy", () => {
       enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
 
       game.move.select(Moves.CLOSE_COMBAT);
-      await game.phaseInterceptor.to(DamagePhase);
+      await game.phaseInterceptor.to(DamageAnimPhase);
 
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
@@ -81,7 +81,7 @@ describe("Abilities - Sturdy", () => {
 
       await game.startBattle();
       game.move.select(Moves.CLOSE_COMBAT);
-      await game.phaseInterceptor.to(DamagePhase);
+      await game.phaseInterceptor.to(DamageAnimPhase);
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       expect(enemyPokemon.hp).toBe(0);
