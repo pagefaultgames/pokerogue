@@ -1385,14 +1385,38 @@ export class UserHpDamageAttr extends FixedDamageAttr {
 }
 
 export class TargetHalfHpDamageAttr extends FixedDamageAttr {
+  // the initial amount of hp the target had before the first hit
+  // used for multi lens
+  private initialHp: number;
   constructor() {
     super(0);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Utils.toDmgValue(target.hp / 2);
+    // first, determine if the hit is coming from multi lens or not
+    const lensCount = user.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
+    if (lensCount <= 0) {
+      // no multi lenses; we can just halve the target's hp and call it a day
+      (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(target.hp / 2);
+      return true;
+    }
 
-    return true;
+    // figure out what hit # we're on
+    switch (user.turnData.hitCount - user.turnData.hitsLeft) {
+      case 0:
+        // first hit of move; update initialHp tracker
+        this.initialHp = target.hp;
+      default:
+        // multi lens added hit; use initialHp tracker to ensure correct damage
+        (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(this.initialHp / 2);
+        return true;
+        break;
+      case lensCount + 1:
+        // parental bond added hit; calc damage as normal
+        (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(target.hp / 2);
+        return true;
+        break;
+    }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -5975,14 +5999,22 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
 
-      if (switchOutTarget.scene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      // Find indices of off-field Pokemon that are eligible to be switched into
+      const eligibleNewIndices: number[] = [];
+      switchOutTarget.scene.getPlayerParty().forEach((pokemon, index) => {
+        if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
+          eligibleNewIndices.push(index);
+        }
+      });
+
+      if (eligibleNewIndices.length < 1) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
           switchOutTarget.leaveField(true);
-          const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getPlayerParty().length);
+          const slotIndex = eligibleNewIndices[user.randSeedInt(eligibleNewIndices.length)];
           user.scene.prependToPhase(
             new SwitchSummonPhase(
               user.scene,
@@ -6011,14 +6043,22 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
       return false;
     } else if (user.scene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
-      if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      // Find indices of off-field Pokemon that are eligible to be switched into
+      const eligibleNewIndices: number[] = [];
+      switchOutTarget.scene.getEnemyParty().forEach((pokemon, index) => {
+        if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
+          eligibleNewIndices.push(index);
+        }
+      });
+
+      if (eligibleNewIndices.length < 1) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
           switchOutTarget.leaveField(true);
-          const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getEnemyParty().length);
+          const slotIndex = eligibleNewIndices[user.randSeedInt(eligibleNewIndices.length)];
           user.scene.prependToPhase(
             new SwitchSummonPhase(
               user.scene,
