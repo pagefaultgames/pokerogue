@@ -35,7 +35,7 @@ export class EvolutionPhase extends Phase {
   protected pokemonEvoSprite: Phaser.GameObjects.Sprite;
   protected pokemonEvoTintSprite: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, pokemon: PlayerPokemon, evolution: SpeciesFormEvolution | FusionSpeciesFormEvolution | null, lastLevel: integer) {
+  constructor(scene: BattleScene, pokemon: PlayerPokemon, evolution: SpeciesFormEvolution | null, lastLevel: integer) {
     super(scene);
 
     this.pokemon = pokemon;

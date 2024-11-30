@@ -1795,7 +1795,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (atkScore + defScore) * hpDiffRatio;
   }
 
-  getEvolution(): SpeciesFormEvolution | FusionSpeciesFormEvolution | null {
+  getEvolution(): SpeciesFormEvolution | null {
     if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
       const evolutions = pokemonEvolutions[this.species.speciesId];
       for (const e of evolutions) {
