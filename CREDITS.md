@@ -114,6 +114,9 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 
 # 💻 Development
 
+## Server Owner/Administrator
+- pancakes aka patapancakes
+
 ## Senior Developers
 - Walker
 - NightKev
