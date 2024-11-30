@@ -4271,7 +4271,7 @@ export class PlayerPokemon extends Pokemon {
     });
   }
 
-  addFriendship(friendship: integer): void {
+  addFriendship(friendship: number): void {
     if (friendship > 0) {
       const starterSpeciesId = this.species.getRootSpeciesId();
       const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
@@ -4279,21 +4279,21 @@ export class PlayerPokemon extends Pokemon {
         this.scene.gameData.starterData[starterSpeciesId],
         fusionStarterSpeciesId ? this.scene.gameData.starterData[fusionStarterSpeciesId] : null
       ].filter(d => !!d);
-      const amount = new Utils.IntegerHolder(friendship);
+      const amount = new Utils.NumberHolder(friendship);
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
       let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
       if (this.scene.eventManager.isEventActive()) {
         candyFriendshipMultiplier *= this.scene.eventManager.getFriendshipMultiplier();
       }
-      const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic && friendship > 0 ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
+      const starterAmount = new Utils.NumberHolder(Math.floor(friendship * (this.scene.gameMode.isClassic ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
 
-      //Add friendship to this PlayerPokemon
+      // Add friendship to this PlayerPokemon
       this.friendship = Math.min(this.friendship + amount.value, 255);
       if (this.friendship === 255) {
         this.scene.validateAchv(achvs.MAX_FRIENDSHIP);
       }
-      //Add to candy progress for this mon's starter species and its fused species (if it has one)
-      starterData.forEach((sd: StarterDataEntry, i: integer) => {
+      // Add to candy progress for this mon's starter species and its fused species (if it has one)
+      starterData.forEach((sd: StarterDataEntry, i: number) => {
         const speciesId = !i ? starterSpeciesId : fusionStarterSpeciesId as Species;
         sd.friendship = (sd.friendship || 0) + starterAmount.value;
         if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[speciesId])) {
@@ -4302,7 +4302,7 @@ export class PlayerPokemon extends Pokemon {
         }
       });
     } else {
-      //Lose friendship upon fainting
+      // Lose friendship upon fainting
       this.friendship = Math.max(this.friendship + friendship, 0);
     }
   }
