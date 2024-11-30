@@ -5976,7 +5976,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       // Find indices of off-field Pokemon that are eligible to be switched into
-      const eligibleNewIndices = [] as number[];
+      const eligibleNewIndices: number[] = [];
       switchOutTarget.scene.getPlayerParty().forEach((pokemon, index) => {
         if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
           eligibleNewIndices.push(index);
@@ -6020,7 +6020,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       return false;
     } else if (user.scene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
       // Find indices of off-field Pokemon that are eligible to be switched into
-      const eligibleNewIndices = [] as number[];
+      const eligibleNewIndices: number[] = [];
       switchOutTarget.scene.getEnemyParty().forEach((pokemon, index) => {
         if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
           eligibleNewIndices.push(index);
