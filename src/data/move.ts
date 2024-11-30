@@ -1385,14 +1385,38 @@ export class UserHpDamageAttr extends FixedDamageAttr {
 }
 
 export class TargetHalfHpDamageAttr extends FixedDamageAttr {
+  // the initial amount of hp the target had before the first hit
+  // used for multi lens
+  private initialHp: number;
   constructor() {
     super(0);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Utils.toDmgValue(target.hp / 2);
+    // first, determine if the hit is coming from multi lens or not
+    const lensCount = user.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
+    if (lensCount <= 0) {
+      // no multi lenses; we can just halve the target's hp and call it a day
+      (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(target.hp / 2);
+      return true;
+    }
 
-    return true;
+    // figure out what hit # we're on
+    switch (user.turnData.hitCount - user.turnData.hitsLeft) {
+      case 0:
+        // first hit of move; update initialHp tracker
+        this.initialHp = target.hp;
+      default:
+        // multi lens added hit; use initialHp tracker to ensure correct damage
+        (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(this.initialHp / 2);
+        return true;
+        break;
+      case lensCount + 1:
+        // parental bond added hit; calc damage as normal
+        (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(target.hp / 2);
+        return true;
+        break;
+    }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
