@@ -10,7 +10,6 @@ import { Type } from "#enums/type";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { StatusEffect } from "#enums/status-effect";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Moves - Powder", () => {
   let phaserGame: Phaser.Game;
