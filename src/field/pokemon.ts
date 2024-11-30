@@ -4272,26 +4272,27 @@ export class PlayerPokemon extends Pokemon {
   }
 
   addFriendship(friendship: integer): void {
-    const starterSpeciesId = this.species.getRootSpeciesId();
-    const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
-    const starterData = [
-      this.scene.gameData.starterData[starterSpeciesId],
-      fusionStarterSpeciesId ? this.scene.gameData.starterData[fusionStarterSpeciesId] : null
-    ].filter(d => !!d);
-    const amount = new Utils.IntegerHolder(friendship);
-    let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
-    if (this.scene.eventManager.isEventActive()) {
-      candyFriendshipMultiplier *= this.scene.eventManager.getFriendshipMultiplier();
-    }
-    const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic && friendship > 0 ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
-    if (amount.value > 0) {
+    if (friendship > 0) {
+      const starterSpeciesId = this.species.getRootSpeciesId();
+      const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
+      const starterData = [
+        this.scene.gameData.starterData[starterSpeciesId],
+        fusionStarterSpeciesId ? this.scene.gameData.starterData[fusionStarterSpeciesId] : null
+      ].filter(d => !!d);
+      const amount = new Utils.IntegerHolder(friendship);
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
-      this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, starterAmount);
+      let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
+      if (this.scene.eventManager.isEventActive()) {
+        candyFriendshipMultiplier *= this.scene.eventManager.getFriendshipMultiplier();
+      }
+      const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic && friendship > 0 ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
 
+      //Add friendship to this PlayerPokemon
       this.friendship = Math.min(this.friendship + amount.value, 255);
       if (this.friendship === 255) {
         this.scene.validateAchv(achvs.MAX_FRIENDSHIP);
       }
+      //Add to candy progress for this mon's starter species and its fused species (if it has one)
       starterData.forEach((sd: StarterDataEntry, i: integer) => {
         const speciesId = !i ? starterSpeciesId : fusionStarterSpeciesId as Species;
         sd.friendship = (sd.friendship || 0) + starterAmount.value;
@@ -4301,10 +4302,8 @@ export class PlayerPokemon extends Pokemon {
         }
       });
     } else {
-      this.friendship = Math.max(this.friendship + amount.value, 0);
-      for (const sd of starterData) {
-        sd.friendship = Math.max((sd.friendship || 0) + starterAmount.value, 0);
-      }
+      //Lose friendship upon fainting
+      this.friendship = Math.max(this.friendship + friendship, 0);
     }
   }
   /**
