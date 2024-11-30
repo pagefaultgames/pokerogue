@@ -12,7 +12,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { SwitchType } from "#enums/switch-type";
 import i18next from "i18next";
-import { DamagePhase } from "./damage-phase";
+import { DamageAnimPhase } from "./damage-anim-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import { SwitchPhase } from "./switch-phase";
@@ -206,7 +206,7 @@ export class FaintPhase extends PokemonPhase {
           } else {
           // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
             enemy.hp++;
-            this.scene.unshiftPhase(new DamagePhase(this.scene, enemy.getBattlerIndex(), 0, HitResult.OTHER));
+            this.scene.unshiftPhase(new DamageAnimPhase(this.scene, enemy.getBattlerIndex(), 0, HitResult.OTHER));
             this.end();
           }
           return true;
