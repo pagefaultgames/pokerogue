@@ -1631,7 +1631,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
     // The check for pokemon.battleSummonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
-    if (!flinched.value && pokemon.randSeedInt(100) < (this.getStackCount() * this.chance)) {
+    if (pokemon.battleSummonData && !flinched.value && pokemon.randSeedInt(100) < (this.getStackCount() * this.chance)) {
       flinched.value = true;
       return true;
     }
@@ -1639,7 +1639,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): number {
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
     return 3;
   }
 }
