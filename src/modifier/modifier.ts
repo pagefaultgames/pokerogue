@@ -1597,6 +1597,10 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Class for Pokemon held items like King's Rock
+ * Because King's Rock can be stacked in PokeRogue, unlike mainline, it does not receive a boost from Abilities.SERENE_GRACE
+ */
 export class FlinchChanceModifier extends PokemonHeldItemModifier {
   private chance: number;
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
