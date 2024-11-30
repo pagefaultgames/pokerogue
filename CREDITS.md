@@ -98,7 +98,7 @@
 
 ## Balance Team
 - damocleas
-- Blitzy (Kazapple)
+- Blitzy aka Kazapple
 - Cynthia_calliope
 - Esca
 - Fontbane
@@ -113,13 +113,87 @@
 # 💻 Development
 
 ## Senior Developers
+- Walker
+- NightKev
+- Moka
+- Temp aka Tempo_anon
 
 ## Developers
 - CodeTappert
+- flx-sta
+- innerthunder
+- frutescens
+- Opaquer
+- SN34KZ
+- Swain aka torranx
 
 ## Junior Developers
+- KimJeongSun
+- ImperialSympathizer
+
+## Bug/Issue Managers
+- Snailman
+- Daleks
+- Lily
+- PigeonBar
 
 ## Past Contributors
+- Fontbane
+- sodaMelon
+- schmidtc1
+- shayebeadling
+- DustinLin
+- lucfd
+- madibye
+- EmberCM
+- Mewtwo2387
+- hayuna
+- sirzento
+- ReneGV
+- mattrossdev
+- zacharied
+- NxKarim
+- td76099
+- Xiaphear
+- j-diefenbach
+- jaimefd
+- EvasiveAce
+- EmoUsedHM01
+- francktrouillez
+- JakubHanko
+- FredeX
+- PigeonBar
+- prime-dialga
+- rnicar245
+- rationality6
+- Neverblade
+- Corrade
+- Admiral-Billy (also created the offline app)
+- okimin
+- Arxalc
+- PrabbyDD
+- JonStudders
+- karl-police
+- prateau
+- meepen
+- arColm
+- allen925
+- InfernoVulpix
+- snoozbuster
+- zaccie
+- happinyz
+- PyGaVS
+- mcmontag
+- ElizaAlex
+- AsdarDevelops
+- Vassiat
+- RedstonewolfX
+- Sam/Flashfyre (initial developer, started PokeRogue)
+- Greenlamp
+- bennybroseph
+- OrangeRed
+- Dakurei
+- Brain Frog
 
 # 🌎 Translation
 
