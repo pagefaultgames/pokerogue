@@ -5999,14 +5999,22 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
 
-      if (switchOutTarget.scene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      // Find indices of off-field Pokemon that are eligible to be switched into
+      const eligibleNewIndices: number[] = [];
+      switchOutTarget.scene.getPlayerParty().forEach((pokemon, index) => {
+        if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
+          eligibleNewIndices.push(index);
+        }
+      });
+
+      if (eligibleNewIndices.length < 1) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
           switchOutTarget.leaveField(true);
-          const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getPlayerParty().length);
+          const slotIndex = eligibleNewIndices[user.randSeedInt(eligibleNewIndices.length)];
           user.scene.prependToPhase(
             new SwitchSummonPhase(
               user.scene,
@@ -6035,14 +6043,22 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
       return false;
     } else if (user.scene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
-      if (switchOutTarget.scene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      // Find indices of off-field Pokemon that are eligible to be switched into
+      const eligibleNewIndices: number[] = [];
+      switchOutTarget.scene.getEnemyParty().forEach((pokemon, index) => {
+        if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
+          eligibleNewIndices.push(index);
+        }
+      });
+
+      if (eligibleNewIndices.length < 1) {
         return false;
       }
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
           switchOutTarget.leaveField(true);
-          const slotIndex = Utils.randIntRange(user.scene.currentBattle.getBattlerCount(), user.scene.getEnemyParty().length);
+          const slotIndex = eligibleNewIndices[user.randSeedInt(eligibleNewIndices.length)];
           user.scene.prependToPhase(
             new SwitchSummonPhase(
               user.scene,
