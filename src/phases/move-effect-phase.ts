@@ -92,8 +92,20 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
     /** If the user was somehow removed from the field and it's not a delayed attack, end this phase */
-    if (!user.isOnField() && !isDelayedAttack) {
-      return super.end();
+    if (!user.isOnField()) {
+      if (!isDelayedAttack) {
+        return super.end();
+      } else {
+        if (!user.scene) {
+          /**
+           * This happens if the Pokemon that used the delayed attack gets caught and released
+           * on the turn the attack would have triggered. Having access to the global scene
+           * in the future may solve this entirely, so for now we just cancel the hit
+           */
+          return super.end();
+        }
+        user.resetTurnData();
+      }
     }
 
     /**
@@ -174,7 +186,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       const playOnEmptyField = this.scene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false;
       // Move animation only needs one target
-      new MoveAnim(move.id as Moves, user, this.getFirstTarget()!.getBattlerIndex()!, playOnEmptyField).play(this.scene, move.hitsSubstitute(user, this.getFirstTarget()!), () => {
+      new MoveAnim(move.id as Moves, user, this.getFirstTarget()!.getBattlerIndex(), playOnEmptyField).play(this.scene, move.hitsSubstitute(user, this.getFirstTarget()!), () => {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
@@ -216,9 +228,11 @@ export class MoveEffectPhase extends PokemonPhase {
            * If the move missed a target, stop all future hits against that target
            * and move on to the next target (if there is one).
            */
-          if (isCommanding || (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()])) {
+          if (target.switchOutStatus || isCommanding || (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()])) {
             this.stopMultiHit(target);
-            this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            if (!target.switchOutStatus) {
+              this.scene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            }
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
             }

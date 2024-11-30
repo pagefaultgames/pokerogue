@@ -613,4 +613,53 @@ describe("Abilities - Wimp Out", () => {
 
     confirmNoSwitch();
   });
+
+  it("should not activate on wave X0 bosses", async () => {
+    game.override.enemyAbility(Abilities.WIMP_OUT)
+      .startingLevel(5850)
+      .startingWave(10);
+    await game.classicMode.startBattle([ Species.GOLISOPOD ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    // Use 2 turns of False Swipe due to opponent's health bar shield
+    game.move.select(Moves.FALSE_SWIPE);
+    await game.toNextTurn();
+    game.move.select(Moves.FALSE_SWIPE);
+    await game.toNextTurn();
+
+    const isVisible = enemyPokemon.visible;
+    const hasFled = enemyPokemon.switchOutStatus;
+    expect(isVisible && !hasFled).toBe(true);
+  });
+  it("wimp out will not skip battles when triggered in a double battle", async () => {
+    const wave = 2;
+    game.override
+      .enemyMoveset(Moves.SPLASH)
+      .enemySpecies(Species.WIMPOD)
+      .enemyAbility(Abilities.WIMP_OUT)
+      .moveset([ Moves.MATCHA_GOTCHA, Moves.FALSE_SWIPE ])
+      .startingLevel(50)
+      .enemyLevel(1)
+      .battleType("double")
+      .startingWave(wave);
+    await game.classicMode.startBattle([
+      Species.RAICHU,
+      Species.PIKACHU
+    ]);
+    const [ wimpod0, wimpod1 ] = game.scene.getEnemyField();
+
+    game.move.select(Moves.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.MATCHA_GOTCHA, 1);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(wimpod0.hp).toBeGreaterThan(0);
+    expect(wimpod0.switchOutStatus).toBe(true);
+    expect(wimpod0.isFainted()).toBe(false);
+    expect(wimpod1.isFainted()).toBe(true);
+
+    await game.toNextWave();
+    expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
+  });
 });

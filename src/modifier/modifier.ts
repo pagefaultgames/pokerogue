@@ -1,5 +1,5 @@
 import type BattleScene from "#app/battle-scene";
-import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
 import { allMoves } from "#app/data/move";
@@ -2197,14 +2197,8 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.customPokemonData.nature = this.nature;
-    let speciesId = playerPokemon.species.speciesId;
-    playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
-
-    while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
-      speciesId = pokemonPrevolutions[speciesId];
-      playerPokemon.scene.gameData.dexData[speciesId].natureAttr |= 1 << (this.nature + 1);
-    }
+    playerPokemon.setCustomNature(this.nature);
+    playerPokemon.scene.gameData.unlockSpeciesNature(playerPokemon.species, this.nature);
 
     return true;
   }
@@ -2733,10 +2727,18 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
    * Additional strikes beyond that are given a 0.25x damage multiplier
    */
   private applyDamageModifier(pokemon: Pokemon, damageMultiplier: NumberHolder): boolean {
-    damageMultiplier.value = (pokemon.turnData.hitsLeft === pokemon.turnData.hitCount)
-      ? (1 - (0.25 * this.getStackCount()))
-      : 0.25;
-    return true;
+    if (pokemon.turnData.hitsLeft === pokemon.turnData.hitCount) {
+      // Reduce first hit by 25% for each stack count
+      damageMultiplier.value *= 1 - 0.25 * this.getStackCount();
+      return true;
+    } else if (pokemon.turnData.hitCount - pokemon.turnData.hitsLeft !== this.getStackCount() + 1) {
+      // Deal 25% damage for each remaining Multi Lens hit
+      damageMultiplier.value *= 0.25;
+      return true;
+    } else {
+      // An extra hit not caused by Multi Lens -- assume it is Parental Bond
+      return false;
+    }
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): number {
@@ -2818,7 +2820,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     battleScene.getPlayerParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
-        p.evoCounter ? p.evoCounter++ : p.evoCounter = 1;
+        p.evoCounter ? p.evoCounter += Math.min(Math.floor(this.moneyMultiplier), 3) : p.evoCounter = Math.min(Math.floor(this.moneyMultiplier), 3);
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p) as EvoTrackerModifier;
         battleScene.addModifier(modifier);
       }
@@ -3647,8 +3649,8 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   }
 
   /**
-   * Applies {@linkcode EnemyEndureChanceModifier}
-   * @param target {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
+   * Applies a chance of enduring a lethal hit of an attack
+   * @param target the {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
    * @returns `true` if {@linkcode Pokemon} endured
    */
   override apply(target: Pokemon): boolean {
@@ -3656,7 +3658,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
       return false;
     }
 
-    target.addTag(BattlerTagType.ENDURING, 1);
+    target.addTag(BattlerTagType.ENDURE_TOKEN, 1);
 
     target.battleData.endured = true;
 
