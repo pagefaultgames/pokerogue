@@ -118,7 +118,8 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - Walker
 - NightKev
 - Moka
-- Temp aka Tempo_anon
+- Temp aka Tempo-anon
+- Madmadness65
 
 ## Developers
 - CodeTappert
