@@ -62,6 +62,7 @@
   - pkmn_realidea (Paid Commissions)
 
 ## 🎨 Pokemon Sprites and Animation
+In addition to the list below, please check [the PokeRogue wiki](https://wiki.pokerogue.net/credits:credits) for a full list of Pokemon Sprite credits.
   - GAMEFREAK (Pokémon Black/White 2)
   - Smogon Sprite Project (Various Artists)
   - Skyflyer
