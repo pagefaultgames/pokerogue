@@ -1843,7 +1843,7 @@ export class FlameBurstAttr extends MoveEffectAttr {
       applyAbAttrs(BlockNonDirectDamageAbAttr, targetAlly, cancelled);
     }
 
-    if (cancelled.value || !targetAlly) {
+    if (cancelled.value || !targetAlly || targetAlly.switchOutStatus) {
       return false;
     }
 

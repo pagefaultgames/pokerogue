@@ -3720,16 +3720,16 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
 
   /**
    * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
-   * @param {Pokemon} pokemon Pokemon that has this ability
-   * @param {boolean} passive N/A
-   * @param {boolean} simulated true if applying in a simulated call.
-   * @param {any[]} args N/A
-   * @returns {boolean} true if any opponents are sleeping
+   * @param pokemon Pokemon that has this ability
+   * @param passive N/A
+   * @param simulated `true` if applying in a simulated call.
+   * @param args N/A
+   * @returns `true` if any opponents are sleeping
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
     for (const opp of pokemon.getOpponents()) {
-      if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+      if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus) {
         if (!simulated) {
           opp.damageAndUpdate(Utils.toDmgValue(opp.getMaxHp() / 8), HitResult.OTHER);
           pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }));

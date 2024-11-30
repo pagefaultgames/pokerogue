@@ -59,8 +59,12 @@ export class WeatherEffectPhase extends CommonAnimPhase {
       }
     }
 
-    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType)!, null, () => { // TODO: is this bang correct?
-      this.executeForAll((pokemon: Pokemon) => applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather));
+    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType) ?? "", null, () => {
+      this.executeForAll((pokemon: Pokemon) => {
+        if (!pokemon.switchOutStatus) {
+          applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather);
+        }
+      });
 
       super.start();
     });
