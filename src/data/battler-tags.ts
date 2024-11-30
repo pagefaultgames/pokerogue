@@ -1085,10 +1085,6 @@ export class OctolockTag extends TrappedTag {
     super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, Moves.OCTOLOCK, sourceId);
   }
 
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.getTag(BattlerTagType.OCTOLOCK);
-  }
-
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
