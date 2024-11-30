@@ -135,4 +135,57 @@ describe("Items - Multi Lens", () => {
     expect(damageResults[0]).toBe(Math.floor(playerPokemon.level * 0.75));
     expect(damageResults[1]).toBe(Math.floor(playerPokemon.level * 0.25));
   });
+
+  it("should result in correct damage for hp% attacks with 1 lens", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.COMPOUND_EYES)
+      .enemyLevel(1000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 5);
+  });
+
+  it("should result in correct damage for hp% attacks with 2 lenses", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.COMPOUND_EYES)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyLevel(1000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 5);
+  });
+  it("should result in correct damage for hp% attacks with 2 lenses + Parental Bond", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.PARENTAL_BOND)
+      .passiveAbility(Abilities.COMPOUND_EYES)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyLevel(1000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.25, 5);
+  });
 });
