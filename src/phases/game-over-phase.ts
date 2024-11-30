@@ -223,8 +223,8 @@ export class GameOverPhase extends BattlePhase {
   }
 
   /**
-   * Retrieves the session's data to log its TBD
-   * @returns
+   * Slightly modified version of {@linkcode GameData.getSessionSaveData}.
+   * @returns A promise containing the {@linkcode SessionSaveData}
    */
   private async getRunHistoryEntry(): Promise<SessionSaveData> {
     const preWaveSessionData = await this.scene.gameData.getSession(this.scene.sessionSlotId);
