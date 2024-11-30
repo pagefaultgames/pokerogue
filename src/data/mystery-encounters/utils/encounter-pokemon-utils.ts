@@ -207,7 +207,7 @@ export function getHighestStatTotalPlayerPokemon(scene: BattleScene, isAllowed: 
  * @param allowMythical
  * @returns
  */
-export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[], allowSubLegendary: boolean = true, allowLegendary: boolean = true, allowMythical: boolean = true): Species {
+export function getRandomSpeciesByStarterCost(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[], allowSubLegendary: boolean = true, allowLegendary: boolean = true, allowMythical: boolean = true): Species {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
