@@ -1,11 +1,11 @@
 import BattleScene from "#app/battle-scene";
 import { allAbilities } from "#app/data/ability";
 import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
-import { StatusEffect } from "#app/data/status-effect";
-import { Type } from "#app/data/type";
-import { WeatherType } from "#app/data/weather";
+import { StatusEffect } from "#enums/status-effect";
+import { Type } from "#enums/type";
+import { WeatherType } from "#enums/weather-type";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";

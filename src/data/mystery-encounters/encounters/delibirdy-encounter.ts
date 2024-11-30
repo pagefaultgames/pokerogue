@@ -8,7 +8,7 @@ import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/u
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import { BerryModifier, HealingBoosterModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier, PokemonHeldItemModifier, PreserveBerryModifier } from "#app/modifier/modifier";
+import { BerryModifier, HealingBoosterModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import i18next from "#app/plugins/i18n";
@@ -197,7 +197,8 @@ export const DelibirdyEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter!;
-          const modifier: BerryModifier | HealingBoosterModifier = encounter.misc.chosenModifier;
+          const modifier: BerryModifier | PokemonInstantReviveModifier = encounter.misc.chosenModifier;
+          const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
           // Give the player a Candy Jar if they gave a Berry, and a Berry Pouch for Reviver Seed
           if (modifier instanceof BerryModifier) {
@@ -228,11 +229,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             }
           }
 
-          // Remove the modifier if its stacks go to 0
-          modifier.stackCount -= 1;
-          if (modifier.stackCount === 0) {
-            scene.removeModifier(modifier);
-          }
+          chosenPokemon.loseHeldItem(modifier, false);
 
           leaveEncounterWithoutBattle(scene, true);
         })
@@ -292,6 +289,7 @@ export const DelibirdyEncounter: MysteryEncounter =
         .withOptionPhase(async (scene: BattleScene) => {
           const encounter = scene.currentBattle.mysteryEncounter!;
           const modifier = encounter.misc.chosenModifier;
+          const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
           // Check if the player has max stacks of Healing Charm already
           const existing = scene.findModifier(m => m instanceof HealingBoosterModifier) as HealingBoosterModifier;
@@ -306,11 +304,7 @@ export const DelibirdyEncounter: MysteryEncounter =
             scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.HEALING_CHARM));
           }
 
-          // Remove the modifier if its stacks go to 0
-          modifier.stackCount -= 1;
-          if (modifier.stackCount === 0) {
-            scene.removeModifier(modifier);
-          }
+          chosenPokemon.loseHeldItem(modifier, false);
 
           leaveEncounterWithoutBattle(scene, true);
         })

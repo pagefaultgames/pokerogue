@@ -12,7 +12,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#enums/abilities";
 import { applyAbilityOverrideToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { randSeedInt, randSeedShuffle } from "#app/utils";
@@ -276,6 +276,8 @@ export const ClowningAroundEncounter: MysteryEncounter =
           generateItemsOfTier(scene, mostHeldItemsPokemon, numBerries, "Berries");
 
           // Shuffle Transferable held items in the same tier (only shuffles Ultra and Rogue atm)
+          // For the purpose of this ME, Soothe Bells and Lucky Eggs are counted as Ultra tier
+          // And Golden Eggs as Rogue tier
           let numUltra = 0;
           let numRogue = 0;
           items.filter(m => m.isTransferable && !(m instanceof BerryModifier))
@@ -285,7 +287,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
               if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
                 numRogue += m.stackCount;
                 scene.removeModifier(m);
-              } else if (type.id === "LUCKY_EGG" || tier === ModifierTier.ULTRA) {
+              } else if (type.id === "LUCKY_EGG" || type.id === "SOOTHE_BELL" || tier === ModifierTier.ULTRA) {
                 numUltra += m.stackCount;
                 scene.removeModifier(m);
               }
@@ -456,7 +458,6 @@ function generateItemsOfTier(scene: BattleScene, pokemon: PlayerPokemon, numItem
     [ modifierTypes.LEFTOVERS, 4 ],
     [ modifierTypes.SHELL_BELL, 4 ],
     [ modifierTypes.SOUL_DEW, 10 ],
-    [ modifierTypes.SOOTHE_BELL, 3 ],
     [ modifierTypes.SCOPE_LENS, 1 ],
     [ modifierTypes.BATON, 1 ],
     [ modifierTypes.FOCUS_BAND, 5 ],

@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Biome } from "#app/enums/biome";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";

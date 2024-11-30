@@ -1,11 +1,11 @@
 import { Arena } from "#app/field/arena";
 import BattleScene from "#app/battle-scene";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
 import { MoveCategory, allMoves, MoveTarget } from "#app/data/move";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Pokemon, { HitResult, PokemonMove } from "#app/field/pokemon";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
 import { BlockNonDirectDamageAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
@@ -1144,7 +1144,7 @@ class FireGrassPledgeTag extends ArenaTag {
       ? arena.scene.getPlayerField()
       : arena.scene.getEnemyField();
 
-    field.filter(pokemon => !pokemon.isOfType(Type.FIRE)).forEach(pokemon => {
+    field.filter(pokemon => !pokemon.isOfType(Type.FIRE) && !pokemon.switchOutStatus).forEach(pokemon => {
       // "{pokemonNameWithAffix} was hurt by the sea of fire!"
       pokemon.scene.queueMessage(i18next.t("arenaTag:fireGrassPledgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       // TODO: Replace this with a proper animation

@@ -27,7 +27,7 @@ import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -266,6 +266,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       // 5 Lucky Egg on lead (ultra)
       itemType = generateModifierType(scene, modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
+      // 3 Soothe Bell on lead (great tier, but counted as ultra by this ME)
+      itemType = generateModifierType(scene, modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType;
+      await addItemToPokemon(scene, scene.getPlayerParty()[0], 3, itemType);
       // 5 Soul Dew on lead (rogue)
       itemType = generateModifierType(scene, modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
@@ -286,7 +289,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       const rogueCountAfter = leadItemsAfter
         .filter(m => m.type.tier === ModifierTier.ROGUE)
         .reduce((a, b) => a + b.stackCount, 0);
-      expect(ultraCountAfter).toBe(10);
+      expect(ultraCountAfter).toBe(13);
       expect(rogueCountAfter).toBe(7);
 
       const secondItemsAfter = scene.getPlayerParty()[1].getHeldItems();

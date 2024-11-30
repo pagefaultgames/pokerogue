@@ -22,7 +22,7 @@ import { vouchers, VoucherType } from "#app/system/voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "#app/ui/ui";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { GameStats } from "#app/system/game-stats";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
@@ -33,7 +33,7 @@ import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/
 import { setSettingKeyboard, SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import * as Modifier from "#app/modifier/modifier";
-import { StatusEffect } from "#app/data/status-effect";
+import { StatusEffect } from "#enums/status-effect";
 import ChallengeData from "#app/system/challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
@@ -506,9 +506,9 @@ export class GameData {
 
           const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
           for (const s of starterIds) {
-            this.starterData[s].candyCount += this.dexData[s].caughtCount;
-            this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
-            if (this.dexData[s].caughtAttr & DexAttr.SHINY) {
+            this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
+            this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
+            if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
               this.starterData[s].candyCount += 4;
             }
           }
@@ -679,7 +679,7 @@ export class GameData {
         return ret;
       }
 
-      return k.endsWith("Attr") && ![ "natureAttr", "abilityAttr", "passiveAttr" ].includes(k) ? BigInt(v) : v;
+      return k.endsWith("Attr") && ![ "natureAttr", "abilityAttr", "passiveAttr" ].includes(k) ? BigInt(v ?? 0) : v;
     }) as SystemSaveData;
   }
 
@@ -1540,7 +1540,7 @@ export class GameData {
       entry.caughtAttr = defaultStarterAttr;
       entry.natureAttr = 1 << (defaultStarterNatures[ds] + 1);
       for (const i in entry.ivs) {
-        entry.ivs[i] = 10;
+        entry.ivs[i] = 15;
       }
     }
 
@@ -1789,6 +1789,32 @@ export class GameData {
 
       this.scene.ui.showText(message, null, () => resolve(true), null, true);
     });
+  }
+
+  /**
+   * Checks whether the root species of a given {@PokemonSpecies} has been unlocked in the dex
+   */
+  isRootSpeciesUnlocked(species: PokemonSpecies): boolean {
+    return !!this.dexData[species.getRootSpeciesId()]?.caughtAttr;
+  }
+
+  /**
+   * Unlocks the given {@linkcode Nature} for a {@linkcode PokemonSpecies} and its prevolutions.
+   * Will fail silently if root species has not been unlocked
+   */
+  unlockSpeciesNature(species: PokemonSpecies, nature: Nature): void {
+    if (!this.isRootSpeciesUnlocked(species)) {
+      return;
+    }
+
+    //recursively unlock nature for species and prevolutions
+    const _unlockSpeciesNature = (speciesId: Species) => {
+      this.dexData[speciesId].natureAttr |= 1 << (nature + 1);
+      if (pokemonPrevolutions.hasOwnProperty(speciesId)) {
+        _unlockSpeciesNature(pokemonPrevolutions[speciesId]);
+      }
+    };
+    _unlockSpeciesNature(species.speciesId);
   }
 
   updateSpeciesDexIvs(speciesId: Species, ivs: integer[]): void {

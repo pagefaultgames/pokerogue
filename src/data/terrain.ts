@@ -1,6 +1,6 @@
 import Pokemon from "../field/pokemon";
 import Move from "./move";
-import { Type } from "./type";
+import { Type } from "#enums/type";
 import { ProtectAttr } from "./move";
 import { BattlerIndex } from "#app/battle";
 import i18next from "i18next";

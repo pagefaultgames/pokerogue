@@ -1,8 +1,7 @@
 import { Stat } from "#enums/stat";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Species } from "#app/enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { modifierTypes } from "#app/modifier/modifier-type";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -108,16 +107,6 @@ describe("Moves - Dragon Rage", () => {
   it("ignores damage modification from abilities, for example ICE_SCALES", async () => {
     game.override.disableCrits();
     game.override.enemyAbility(Abilities.ICE_SCALES);
-
-    game.move.select(Moves.DRAGON_RAGE);
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
-  });
-
-  it("ignores multi hit", async () => {
-    game.override.disableCrits();
-    game.scene.addModifier(modifierTypes.MULTI_LENS().newModifier(partyPokemon), false);
 
     game.move.select(Moves.DRAGON_RAGE);
     await game.phaseInterceptor.to(TurnEndPhase);

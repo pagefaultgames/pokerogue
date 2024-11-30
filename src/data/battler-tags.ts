@@ -18,10 +18,9 @@ import Move, {
   StatusCategoryOnAllyAttr
 } from "#app/data/move";
 import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
-import { getStatusEffectHealText, StatusEffect } from "#app/data/status-effect";
+import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
-import { Type } from "#app/data/type";
-import { WeatherType } from "#app/data/weather";
+import { Type } from "#enums/type";
 import Pokemon, { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
@@ -38,6 +37,8 @@ import { Moves } from "#enums/moves";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { WeatherType } from "#enums/weather-type";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -909,11 +910,15 @@ export class FrenzyTag extends BattlerTag {
   }
 }
 
-export class EncoreTag extends BattlerTag {
+/**
+ * Applies the effects of the move Encore onto the target Pokemon
+ * Encore forces the target Pokemon to use its most-recent move for 3 turns
+ */
+export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
+    super(BattlerTagType.ENCORE, [ BattlerTagLapseType.CUSTOM, BattlerTagLapseType.AFTER_MOVE ], 3, Moves.ENCORE, sourceId);
   }
 
   /**
@@ -967,6 +972,39 @@ export class EncoreTag extends BattlerTag {
           new MovePhase(pokemon.scene, pokemon, lastMove.targets!, movesetMove)); // TODO: is this bang correct?
       }
     }
+  }
+
+  /**
+   * If the encored move has run out of PP, Encore ends early. Otherwise, Encore lapses based on the AFTER_MOVE battler tag lapse type.
+   * @returns `true` to persist | `false` to end and be removed
+   */
+  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const encoredMove = pokemon.getMoveset().find(m => m?.moveId === this.moveId);
+      if (encoredMove && encoredMove?.getPpRatio() > 0) {
+        return true;
+      }
+      return false;
+    } else {
+      return super.lapse(pokemon, lapseType);
+    }
+  }
+
+  /**
+   * Checks if the move matches the moveId stored within the tag and returns a boolean value
+   * @param move {@linkcode Moves} the move selected
+   * @param user N/A
+   * @returns `true` if the move does not match with the moveId stored and as a result, restricted
+   */
+  override isMoveRestricted(move: Moves, _user?: Pokemon): boolean {
+    if (move !== this.moveId) {
+      return true;
+    }
+    return false;
+  }
+
+  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -1045,10 +1083,6 @@ export class IngrainTag extends TrappedTag {
 export class OctolockTag extends TrappedTag {
   constructor(sourceId: number) {
     super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, Moves.OCTOLOCK, sourceId);
-  }
-
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.getTag(BattlerTagType.OCTOLOCK);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1464,9 +1498,14 @@ export class ContactBurnProtectedTag extends DamageProtectedTag {
   }
 }
 
+/**
+ * `BattlerTag` class for effects that cause the affected Pokemon to survive lethal attacks at 1 HP.
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Endure_(move) | Endure} and
+ * Endure Tokens.
+ */
 export class EnduringTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.ENDURING, BattlerTagLapseType.TURN_END, 0, sourceMove);
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+    super(tagType, lapseType, 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1771,8 +1810,8 @@ export class TypeImmuneTag extends BattlerTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
  */
 export class FloatingTag extends TypeImmuneTag {
-  constructor(tagType: BattlerTagType, sourceMove: Moves) {
-    super(tagType, sourceMove, Type.GROUND, 5);
+  constructor(tagType: BattlerTagType, sourceMove: Moves, turnCount: number) {
+    super(tagType, sourceMove, Type.GROUND, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -2120,6 +2159,11 @@ export class CommandedTag extends BattlerTag {
       pokemon.scene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_REMOVE);
     }
   }
+
+  override loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this._tatsugiriFormKey = source._tatsugiriFormKey;
+  }
 }
 
 /**
@@ -2360,7 +2404,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * Uses DisabledTag's selectionDeniedText() message
+   * Uses its own unique selectionDeniedText() message
    */
   override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
     return i18next.t("battle:moveDisabledHealBlock", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: allMoves[move].name, healBlockName: allMoves[Moves.HEAL_BLOCK].name });
@@ -2966,7 +3010,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.BURNING_BULWARK:
       return new ContactBurnProtectedTag(sourceMove);
     case BattlerTagType.ENDURING:
-      return new EnduringTag(sourceMove);
+      return new EnduringTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
+    case BattlerTagType.ENDURE_TOKEN:
+      return new EnduringTag(tagType, BattlerTagLapseType.AFTER_HIT, sourceMove);
     case BattlerTagType.STURDY:
       return new SturdyTag(sourceMove);
     case BattlerTagType.PERISH_SONG:
@@ -3015,7 +3061,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.FLOATING:
-      return new FloatingTag(tagType, sourceMove);
+      return new FloatingTag(tagType, sourceMove, turnCount);
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
     case BattlerTagType.DESTINY_BOND:

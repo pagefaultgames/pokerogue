@@ -15,7 +15,8 @@ import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
-import { Type, getTypeRgb } from "../data/type";
+import { getTypeRgb } from "#app/data/type";
+import { Type } from "#enums/type";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/data/variant";
@@ -517,7 +518,8 @@ export default class RunInfoUiHandler extends UiHandler {
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
     const runMoney = Utils.formatMoney(this.scene.moneyFormat, this.runInfo.money);
-    runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]${i18next.t("battleScene:moneyOwned", { formattedMoney : runMoney })}[/color]`);
+    const moneyTextColor = getTextColor(TextStyle.MONEY_WINDOW, false, this.scene.uiTheme);
+    runInfoText.appendText(`[color=${moneyTextColor}]${i18next.t("battleScene:moneyOwned", { formattedMoney : runMoney })}[/color]`);
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);
     // Luck

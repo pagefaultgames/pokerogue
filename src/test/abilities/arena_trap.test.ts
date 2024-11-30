@@ -1,9 +1,10 @@
+import { allAbilities } from "#app/data/ability";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
 
 describe("Abilities - Arena Trap", () => {
   let phaserGame: Phaser.Game;
@@ -54,5 +55,40 @@ describe("Abilities - Arena Trap", () => {
     await game.classicMode.startBattle();
 
     expect(game.scene.getEnemyField().length).toBe(2);
+  });
+
+  /**
+   * This checks if the Player Pokemon is able to switch out/run away after the Enemy Pokemon with {@linkcode Abilities.ARENA_TRAP}
+   * is forcefully moved out of the field from moves such as Roar {@linkcode Moves.ROAR}
+   *
+   * Note: It should be able to switch out/run away
+   */
+  it("should lift if pokemon with this ability leaves the field", async () => {
+    game.override
+      .battleType("double")
+      .enemyMoveset(Moves.SPLASH)
+      .moveset([ Moves.ROAR, Moves.SPLASH ])
+      .ability(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.SUDOWOODO, Species.LUNATONE ]);
+
+    const [ enemy1, enemy2 ] = game.scene.getEnemyField();
+    const [ player1, player2 ] = game.scene.getPlayerField();
+
+    vi.spyOn(enemy1, "getAbility").mockReturnValue(allAbilities[Abilities.ARENA_TRAP]);
+
+    game.move.select(Moves.ROAR);
+    game.move.select(Moves.SPLASH, 1);
+
+    // This runs the fist command phase where the moves are selected
+    await game.toNextTurn();
+    // During the next command phase the player pokemons should not be trapped anymore
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
+    await game.toNextTurn();
+
+    expect(player1.isTrapped()).toBe(false);
+    expect(player2.isTrapped()).toBe(false);
+    expect(enemy1.isOnField()).toBe(false);
+    expect(enemy2.isOnField()).toBe(true);
   });
 });

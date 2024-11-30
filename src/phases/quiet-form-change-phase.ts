@@ -29,10 +29,14 @@ export class QuietFormChangePhase extends BattlePhase {
 
     const preName = getPokemonNameWithAffix(this.pokemon);
 
-    if (!this.pokemon.isOnField() || this.pokemon.getTag(SemiInvulnerableTag)) {
-      this.pokemon.changeForm(this.formChange).then(() => {
-        this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), 1500);
-      });
+    if (!this.pokemon.isOnField() || this.pokemon.getTag(SemiInvulnerableTag) || this.pokemon.isFainted()) {
+      if (this.pokemon.isPlayer() || this.pokemon.isActive()) {
+        this.pokemon.changeForm(this.formChange).then(() => {
+          this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), 1500);
+        });
+      } else {
+        this.end();
+      }
       return;
     }
 
