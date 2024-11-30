@@ -26,7 +26,7 @@ describe("Moves - Shell Side Arm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SHELL_SIDE_ARM ])
+      .moveset([ Moves.SHELL_SIDE_ARM, Moves.SPLASH ])
       .battleType("single")
       .startingLevel(100)
       .enemyLevel(100)
@@ -68,6 +68,9 @@ describe("Moves - Shell Side Arm", () => {
     await game.classicMode.startBattle([ Species.MANAPHY ]);
 
     vi.spyOn(shellSideArmAttr, "apply");
+
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
 
     game.move.select(Moves.SHELL_SIDE_ARM);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
