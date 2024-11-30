@@ -23,7 +23,6 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export enum ClassicFixedBossWaves {
-  // TODO: other fixed wave battles should be added here
   TOWN_YOUNGSTER = 5,
   RIVAL_1 = 8,
   RIVAL_2 = 25,
