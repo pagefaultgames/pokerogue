@@ -255,8 +255,6 @@ export default class RunInfoUiHandler extends UiHandler {
    * Mystery Encounters contain sprites associated with MEs + the title of the specific ME.
    */
   private parseRunStatus() {
-    const runStatusText = addTextObject(this.scene, -0.5, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, TextStyle.WINDOW, { fontSize : "60px", lineSpacing: 0.1 });
-
     const enemyContainer = this.scene.add.container(0, 0);
     this.runResultContainer.add(enemyContainer);
     if (this.runInfo.battleType === BattleType.WILD) {
@@ -303,13 +301,18 @@ export default class RunInfoUiHandler extends UiHandler {
       descContainer.setPosition(47, 37);
       this.runResultContainer.add([ encounterExclaim, subSprite, descContainer ]);
     }
-    const currentBiomeText = addTextObject(this.scene, -0.5, 0, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "60px" });
+
     const runResultWindow = this.runResultContainer.getByName("Run_Result_Window") as Phaser.GameObjects.Image;
-    const windowCenterX = (runResultWindow.getTopRight().x - runResultWindow.x) / 2;
-    currentBiomeText.setPosition(windowCenterX - currentBiomeText.displayWidth / 2, runResultWindow.getBottomCenter().y - 15);
-    runStatusText.setX(windowCenterX - 5 - currentBiomeText.displayWidth / 2);
+    const windowCenterX = runResultWindow.getTopCenter().x;
+    const windowBottomY = runResultWindow.getBottomCenter().y;
+
+    const runStatusText = addTextObject(this.scene, windowCenterX, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, TextStyle.WINDOW, { fontSize : "60px", lineSpacing: 0.1 });
+    runStatusText.setOrigin(0.5, 0);
+
+    const currentBiomeText = addTextObject(this.scene, windowCenterX, windowBottomY - 5, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "60px" });
+    currentBiomeText.setOrigin(0.5, 1);
+
     this.runResultContainer.add([ runStatusText, currentBiomeText ]);
-    console.log(windowCenterX);
     this.runContainer.add(this.runResultContainer);
   }
 
