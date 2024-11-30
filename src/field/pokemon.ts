@@ -4285,7 +4285,7 @@ export class PlayerPokemon extends Pokemon {
       if (this.scene.eventManager.isEventActive()) {
         candyFriendshipMultiplier *= this.scene.eventManager.getFriendshipMultiplier();
       }
-      const starterAmount = new Utils.NumberHolder(Math.floor(friendship * (this.scene.gameMode.isClassic ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
+      const starterAmount = new Utils.NumberHolder(Math.floor(amount.value * (this.scene.gameMode.isClassic ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
 
       // Add friendship to this PlayerPokemon
       this.friendship = Math.min(this.friendship + amount.value, 255);
