@@ -26,7 +26,7 @@
   - Pokémon Scarlet/Violet
   - Firel (Custom Graveyard, Ice Cave, Laboratory, Metropolis, Plains, Power Plant, Seabed, Space, and Volcano biome music)
   - Lmz (Custom Ancient Ruins, Jungle, and Lake biome music)
-  - Andr06 (Custom Slum and Sea biome music)
+  - Andr06 (Custom Forest, Slum and Sea biome music)
   - _tresnoir
   - unveiler
 
