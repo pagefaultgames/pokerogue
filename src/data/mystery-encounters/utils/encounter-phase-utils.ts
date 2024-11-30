@@ -731,7 +731,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
     scene.pushPhase(new EggLapsePhase(scene));
   } else if (!scene.getEnemyParty().find(p => encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
-    scene.pushPhase(new BattleEndPhase(scene));
+    scene.pushPhase(new BattleEndPhase(scene, true));
     if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       scene.pushPhase(new TrainerVictoryPhase(scene));
     }

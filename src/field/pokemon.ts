@@ -2610,8 +2610,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       };
     }
 
-    // If the attack deals fixed damaged, return a result with that much damage
-    const fixedDamage = new Utils.IntegerHolder(0);
+    // If the attack deals fixed damage, return a result with that much damage
+    const fixedDamage = new Utils.NumberHolder(0);
     applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
     if (fixedDamage.value) {
       const multiLensMultiplier = new Utils.NumberHolder(1);
