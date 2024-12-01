@@ -59,6 +59,11 @@
 - Leparagon
 - wormhood
 
+## Mystery Event Sprites
+- chrysomelinae
+- koda_want_to_sleep
+- thedreadedden
+
 ## 🎨 Trainer Portraits
 - pkmn_realidea (Paid Commissions)
 
@@ -112,6 +117,10 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 ## Past Members
 - Swizzo
 - Zaccie
+
+## Past Contributors
+- chrysomelinae (Mystery Events)
+- AsdarDevelops (Mystery Events)
 
 # 💻 Development
 
