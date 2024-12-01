@@ -79,6 +79,7 @@ export const TheStrongStuffEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
+            shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
             customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
             nature: Nature.BOLD,
             moveSet: [ Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER ],

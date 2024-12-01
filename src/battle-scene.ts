@@ -4,7 +4,7 @@ import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import { Constructor, isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "#app/utils";
-import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, overrideHeldItems, overrideModifiers, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, Modifier, ModifierBar, ModifierPredicate, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "#app/data/battle-anims";
 import { Phase } from "#app/phase";
@@ -47,7 +47,7 @@ import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { biomeDepths, getBiomeName } from "#app/data/balance/biomes";
 import { SceneBase } from "#app/scene-base";
 import CandyBar from "#app/ui/candy-bar";
-import { Variant, variantData } from "#app/data/variant";
+import { Variant, variantColorCache, variantData, VariantSet } from "#app/data/variant";
 import { Localizable } from "#app/interfaces/locales";
 import Overrides from "#app/overrides";
 import { InputsController } from "#app/inputs-controller";
@@ -343,6 +343,33 @@ export default class BattleScene extends SceneBase {
       atlasPath = atlasPath.replace("variant/", "");
     }
     this.load.atlas(key, `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,  `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`);
+  }
+
+  /**
+   * Load the variant assets for the given sprite and stores them in {@linkcode variantColorCache}
+   */
+  loadPokemonVariantAssets(spriteKey: string, fileRoot: string, variant?: Variant) {
+    const useExpSprite = this.experimentalSprites && this.hasExpSprite(spriteKey);
+    if (useExpSprite) {
+      fileRoot = `exp/${fileRoot}`;
+    }
+    let variantConfig = variantData;
+    fileRoot.split("/").map(p => variantConfig ? variantConfig = variantConfig[p] : null);
+    const variantSet = variantConfig as VariantSet;
+    if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
+      const populateVariantColors = (key: string): Promise<void> => {
+        return new Promise(resolve => {
+          if (variantColorCache.hasOwnProperty(key)) {
+            return resolve();
+          }
+          this.cachedFetch(`./images/pokemon/variant/${fileRoot}.json`).then(res => res.json()).then(c => {
+            variantColorCache[key] = c;
+            resolve();
+          });
+        });
+      };
+      populateVariantColors(spriteKey);
+    }
   }
 
   async preload() {
@@ -891,7 +918,7 @@ export default class BattleScene extends SceneBase {
     return pokemon;
   }
 
-  addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+  addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, shinyLock: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
     if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
       level = Overrides.OPP_LEVEL_OVERRIDE;
     }
@@ -901,13 +928,11 @@ export default class BattleScene extends SceneBase {
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
-    const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+    const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, shinyLock, dataSource);
     if (Overrides.OPP_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }
 
-    overrideModifiers(this, false);
-    overrideHeldItems(this, pokemon, false);
     if (boss && !dataSource) {
       const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967296));
 
@@ -3008,7 +3033,8 @@ export default class BattleScene extends SceneBase {
   }
 
   validateAchv(achv: Achv, args?: unknown[]): boolean {
-    if (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) && achv.validate(this, args)) {
+    if ((!this.gameData.achvUnlocks.hasOwnProperty(achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
+      && achv.validate(this, args)) {
       this.gameData.achvUnlocks[achv.id] = new Date().getTime();
       this.ui.achvBar.showAchv(achv);
       if (vouchers.hasOwnProperty(achv.id)) {

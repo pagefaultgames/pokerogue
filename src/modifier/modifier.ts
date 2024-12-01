@@ -18,7 +18,6 @@ import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils";
-import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
@@ -723,22 +722,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getScoreMultiplier(): number {
-    return 1;
-  }
-
-  //Applies to items with chance of activating secondary effects ie Kings Rock
-  getSecondaryChanceMultiplier(pokemon: Pokemon): number {
-    // Temporary quickfix to stop game from freezing when the opponet uses u-turn while holding on to king's rock
-    if (!pokemon.getLastXMoves()[0]) {
-      return 1;
-    }
-    const sheerForceAffected = allMoves[pokemon.getLastXMoves()[0].move].chance >= 0 && pokemon.hasAbility(Abilities.SHEER_FORCE);
-
-    if (sheerForceAffected) {
-      return 0;
-    } else if (pokemon.hasAbility(Abilities.SERENE_GRACE)) {
-      return 2;
-    }
     return 1;
   }
 
@@ -1614,9 +1597,16 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Class for Pokemon held items like King's Rock
+ * Because King's Rock can be stacked in PokeRogue, unlike mainline, it does not receive a boost from Abilities.SERENE_GRACE
+ */
 export class FlinchChanceModifier extends PokemonHeldItemModifier {
+  private chance: number;
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
+
+    this.chance = 10;
   }
 
   matchType(modifier: Modifier) {
@@ -1644,7 +1634,8 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
    * @returns `true` if {@linkcode FlinchChanceModifier} has been applied
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
-    if (!flinched.value && pokemon.randSeedInt(10) < (this.getStackCount() * this.getSecondaryChanceMultiplier(pokemon))) {
+    // The check for pokemon.battleSummonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
+    if (pokemon.battleSummonData && !flinched.value && pokemon.randSeedInt(100) < (this.getStackCount() * this.chance)) {
       flinched.value = true;
       return true;
     }
@@ -1652,7 +1643,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): number {
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
     return 3;
   }
 }
