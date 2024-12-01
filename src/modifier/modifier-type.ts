@@ -1754,31 +1754,49 @@ const modifierPool: ModifierPool = {
       return party.some(p => {
         const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
 
-        const canSetStatus = !p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
+        const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
         const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
 
-        // TODO: Take moves out of comment as they become implemented
-        const hasRelevantMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT, /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */]
+        // Moves that take advantage of obtaining the actual status effect
+        const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
           .some(m => moveset.includes(m));
+        // Moves that take advantage of being able to give the target a status orb
+        // TODO: Take moves from comment they are implemented
+        const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
+          .some(m => moveset.includes(m));
+        // Abilities that take advantage of obtaining the actual status effect
         const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ]
           .some(a => p.hasAbility(a, false, true));
 
-        return !isHoldingOrb && (canSetStatus || hasRelevantMoves || hasRelevantAbilities);
+        if (canSetStatus) {
+          return !isHoldingOrb && (hasRelevantAbilities || hasStatusMoves);
+        } else {
+          return !isHoldingOrb && hasItemMoves;
+        }
       }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
       return party.some(p => {
         const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
-        const canSetStatus = !p.canSetStatus(StatusEffect.BURN, true, true, null, true);
+        const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
         const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
 
-        // TODO: Take moves out of comment as they become implemented
-        const hasRelevantMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT, /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */]
+        // Moves that take advantage of obtaining the actual status effect
+        const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
           .some(m => moveset.includes(m));
+        // Moves that take advantage of being able to give the target a status orb
+        // TODO: Take moves from comment they are implemented
+        const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
+          .some(m => moveset.includes(m));
+        // Abilities that take advantage of obtaining the actual status effect
         const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ]
           .some(a => p.hasAbility(a, false, true));
 
-        return !isHoldingOrb && (canSetStatus || hasRelevantMoves || hasRelevantAbilities);
+        if (canSetStatus) {
+          return !isHoldingOrb && (hasRelevantAbilities || hasStatusMoves);
+        } else {
+          return !isHoldingOrb && hasItemMoves;
+        }
       }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
