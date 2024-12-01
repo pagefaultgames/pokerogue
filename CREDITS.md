@@ -1,6 +1,6 @@
 # 🎵 Music
 
-## 🎵 BGM
+## BGM
 - Pokémon Mystery Dungeon: Explorers of Sky
   - Arata Iiyoshi
   - Hideki Sakamoto
@@ -30,27 +30,27 @@
 - _tresnoir
 - unveiler
 
-## 🎵 Sound Effects
+## Sound Effects
 - Pokémon Emerald
 - Pokémon Black/White
 
 # 🎨 Art
 
-## 🎨 Backgrounds
+## Backgrounds
 - Squip (Paid Commissions)
 - Contributions by Someonealive-QN
 
-## 🎨 UI
+## UI
 - GAMEFREAK
 - LJ Birdman
 
-## 🎨 Pagefault Games Intro
+## Pagefault Games Intro
 - Spectremint
 
-## 🎨 Game Logo
+## Game Logo
 - Gonstar (Paid Commission)
 
-## 🎨 Trainer Sprites
+## Trainer Sprites
 - GAMEFREAK (Pokémon Black/White 2, Pokémon Diamond/Pearl)
 - kyledove
 - Brumirage
@@ -64,10 +64,10 @@
 - koda_want_to_sleep
 - thedreadedden
 
-## 🎨 Trainer Portraits
+## Trainer Portraits
 - pkmn_realidea (Paid Commissions)
 
-## 🎨 Pokemon Sprites and Animation
+## Pokemon Sprites and Animation
 In addition to the list below, please check [the PokeRogue wiki](https://wiki.pokerogue.net/credits:credits) for a full list of Pokemon Sprite credits.
 
 - GAMEFREAK (Pokémon Black/White 2)
@@ -99,7 +99,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - koda_want_to_sleep
 - thedreadedden
 
-## 🎨 Move Animations
+## Move Animations
 - Pokémon Reborn
 
 # ⚖️ Balance
