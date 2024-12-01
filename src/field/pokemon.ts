@@ -3496,6 +3496,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
+  /**
+   * Checks if a status effect can be applied to the Pokemon.
+   *
+   * @param effect The {@linkcode StatusEffect} whose applicability is being checked
+   * @param quiet Whether in-battle messages should trigger or not
+   * @param overrideStatus Whether the Pokemon's current status can be overriden
+   * @param sourcePokemon The Pokemon that is setting the status effect
+   * @param ignoreField Whether any field effects (weather, terrain, etc.) should be considered
+   */
   canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null, ignoreField: boolean = false): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
