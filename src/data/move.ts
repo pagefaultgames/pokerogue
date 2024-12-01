@@ -6491,9 +6491,9 @@ export class RandomMoveAttr extends CallMoveAttr {
   /**
    * This function exists solely to allow tests to override the randomly selected move by mocking this function.
    */
-    public getMoveOverride(): Moves | null {
-      return null;
-    }
+  public getMoveOverride(): Moves | null {
+    return null;
+  }
 
   /**
    * User calls a random moveId
