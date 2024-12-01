@@ -12,8 +12,7 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon
 import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import * as Utils from "#app/utils";
-import { IntegerHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
+import { NumberHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -27,6 +26,7 @@ import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import type { PokeballType } from "#enums/pokeball";
+import { doShinySparkleAnim } from "#app/field/anims";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -230,7 +230,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
-              const shinyThreshold = new Utils.IntegerHolder(WONDER_TRADE_SHINY_CHANCE);
+              const shinyThreshold = new NumberHolder(WONDER_TRADE_SHINY_CHANCE);
               if (scene.eventManager.isEventActive()) {
                 shinyThreshold.value *= scene.eventManager.getShinyMultiplier();
               }
@@ -247,7 +247,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
             if (tradePokemon.species.abilityHidden) {
               if (tradePokemon.abilityIndex < hiddenIndex) {
-                const hiddenAbilityChance = new IntegerHolder(64);
+                const hiddenAbilityChance = new NumberHolder(64);
                 scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
                 const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
@@ -809,6 +809,14 @@ function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPoke
     receivedPokeballSprite.x = tradeBaseBg.displayWidth / 2;
     receivedPokeballSprite.y = tradeBaseBg.displayHeight / 2 - 100;
 
+    // Received pokemon sparkles
+    let pokemonShinySparkle: Phaser.GameObjects.Sprite;
+    if (receivedPokemon.shiny) {
+      pokemonShinySparkle = scene.add.sprite(receivedPokemonSprite.x, receivedPokemonSprite.y, "shiny");
+      pokemonShinySparkle.setVisible(false);
+      tradeContainer.add(pokemonShinySparkle);
+    }
+
     const BASE_ANIM_DURATION = 1000;
 
     // Pokeball falls to the screen
@@ -847,6 +855,11 @@ function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPoke
             scale: 1,
             alpha: 0,
             onComplete: () => {
+              if (receivedPokemon.shiny) {
+                scene.time.delayedCall(500, () => {
+                  doShinySparkleAnim(scene, pokemonShinySparkle, receivedPokemon.variant);
+                });
+              }
               receivedPokeballSprite.destroy();
               scene.time.delayedCall(2000, () => resolve());
             }
