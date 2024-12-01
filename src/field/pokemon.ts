@@ -3741,8 +3741,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   setFrameRate(frameRate: integer) {
     this.scene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
-    this.getSprite().play(this.getBattleSpriteKey());
-    this.getTintSprite()?.play(this.getBattleSpriteKey());
+    try {
+      this.getSprite().play(this.getBattleSpriteKey());
+    } catch (err: unknown) {
+      console.error(`Failed to play animation for ${this.getBattleSpriteKey()}`, err);
+    }
+    try {
+      this.getTintSprite()?.play(this.getBattleSpriteKey());
+    } catch (err: unknown) {
+      console.error(`Failed to play animation for ${this.getBattleSpriteKey()}`, err);
+    }
   }
 
   tint(color: number, alpha?: number, duration?: integer, ease?: string) {
