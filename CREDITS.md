@@ -57,6 +57,7 @@
 - pkmn_realidea (Paid Commissions)
 - IceJkai
 - Leparagon
+- wormhood
 
 ## 🎨 Trainer Portraits
 - pkmn_realidea (Paid Commissions)
