@@ -1754,7 +1754,7 @@ const modifierPool: ModifierPool = {
       return party.some(p => {
         const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
 
-        const isImmune = !p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
+        const canSetStatus = !p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
         const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
 
         // TODO: Take moves out of comment as they become implemented
@@ -1763,13 +1763,13 @@ const modifierPool: ModifierPool = {
         const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ]
           .some(a => p.hasAbility(a, false, true));
 
-        return !isHoldingOrb && (!isImmune || hasRelevantMoves || hasRelevantAbilities);
+        return !isHoldingOrb && (canSetStatus || hasRelevantMoves || hasRelevantAbilities);
       }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
       return party.some(p => {
         const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
-        const isImmune = !p.canSetStatus(StatusEffect.BURN, true, true, null, true);
+        const canSetStatus = !p.canSetStatus(StatusEffect.BURN, true, true, null, true);
         const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
 
         // TODO: Take moves out of comment as they become implemented
@@ -1778,7 +1778,7 @@ const modifierPool: ModifierPool = {
         const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ]
           .some(a => p.hasAbility(a, false, true));
 
-        return !isHoldingOrb && (!isImmune || hasRelevantMoves || hasRelevantAbilities);
+        return !isHoldingOrb && (canSetStatus || hasRelevantMoves || hasRelevantAbilities);
       }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
