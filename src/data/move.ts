@@ -7638,8 +7638,8 @@ export class MoveSelectCondition {
 }
 
 /**
- * extends {@linkcode MoveSelectCondition} and contains the condition for 
- * {@link https://bulbapedia.bulbagarden.net/wiki/Stuff_Cheeks_(move) | Stuff Cheeks}s success
+ * extends {@linkcode MoveSelectCondition} and contains the condition
+ * for {@link https://bulbapedia.bulbagarden.net/wiki/Stuff_Cheeks_(move) | Stuff Cheeks}s success
  */
 export class StuffCheeksCondition extends MoveSelectCondition {
   constructor() {
