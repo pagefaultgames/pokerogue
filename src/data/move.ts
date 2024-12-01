@@ -142,7 +142,7 @@ export default class Move implements Localizable {
   public generation: number;
   public attrs: MoveAttr[] = [];
   private conditions: MoveCondition[] = [];
-  /** contains conditions if move is selectable and should fail or not */
+  /** contains conditions if move is selectable or not */
   private selectableConditions: MoveSelectCondition[] = [];
   /** The move's {@linkcode MoveFlags} */
   private flags: number = 0;
@@ -377,9 +377,9 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Adds a {@linkcode MoveSelectCondition} to the move if it is only selectable/successful under certain conditions
-   * @param condition {@linkcode MoveSelectCondition} appends to conditions array a MoveSelectCondition {@linkcode selectableConditions}
-   * @returns the called object {@linkcode Move}
+   * Adds a {@linkcode MoveSelectCondition} to the move. It contains the condition if the move should be selectable in the move menu or not
+   * @param condition {@linkcode MoveSelectCondition} gets pushed into {@linkcode selectableConditions}
+   * @returns this move {@linkcode Move}
    */
   selectableCondition(condition: MoveSelectCondition): this {
     if (condition) {
@@ -683,7 +683,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Applies each {@linkcode MoveSelectCondition} function of this move to determine if the move can be used selected during {@linkcode CommandPhase}
+   * Applies each {@linkcode MoveSelectCondition} function of this move to determine if the move can be selected during {@linkcode CommandPhase}
    * @param user {@linkcode Pokemon} to apply conditions to
    * @returns boolean: false if any of the apply()'s return false, else true
    */
@@ -7617,8 +7617,7 @@ export function applyMoveChargeAttrs(attrType: Constructor<MoveAttr>, user: Poke
 
 /**
  * Base class defining all {@linkcode selectableConditions}
- * Is used to add {@linkcode UserMoveConditionFunc} in order to check if condition
- * is met and move can be selected/ if move fails
+ * Is used to add {@linkcode UserMoveConditionFunc} in order to check if move can be selected
  */
 export class MoveSelectCondition {
   protected func: UserMoveConditionFunc;
@@ -7639,13 +7638,10 @@ export class MoveSelectCondition {
 }
 
 /**
- * extends {@linkcode MoveSelectCondition} and contains the condition for {@link https://bulbapedia.bulbagarden.net/wiki/Stuff_Cheeks_(move) | Stuff Cheeks}
- * success
+ * extends {@linkcode MoveSelectCondition} and contains the condition for 
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Stuff_Cheeks_(move) | Stuff Cheeks}s success
  */
 export class StuffCheeksCondition extends MoveSelectCondition {
-  /**
-   * contains function that checks if the {@linkcode user} is currently holding a berry or not
-   */
   constructor() {
     super((user, move) => this.selectableCondition(user));
   }
