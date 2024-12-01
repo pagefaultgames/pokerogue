@@ -2790,7 +2790,7 @@ export class StuffCheeksTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * This function always returns true since {@linkcode MoveUnselectableTag} is only added if condition {@linkcode MoveSelectCondition} fails
+   * This function returns true if {@linkcode move} is {@linkcode Moves.STUFF_CHEEKS}
    * @param move {@linkcode Moves} that is selected
    * @returns true if the move matches the ID of Stuff Cheeks
    */
