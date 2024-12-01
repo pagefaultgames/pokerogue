@@ -6729,6 +6729,126 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 }
 
 /**
+ * Attribute used for moves that causes the target to repeat their last used move.
+ *
+ * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)).
+*/
+export class RepeatMoveAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, { trigger: MoveEffectTrigger.POST_APPLY }); // needed to ensure correct protect interaction
+  }
+
+  /**
+   * Forces the target to re-use their last used move again
+   *
+   * @param user {@linkcode Pokemon} that used the attack
+   * @param target {@linkcode Pokemon} targeted by the attack
+   * @param move N/A
+   * @param args N/A
+   * @returns `true` if the move succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    // get the last move used (excluding status based failures) as well as the corresponding moveset slot
+    const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE)!;
+    const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove.move)!;
+    const moveTargets = lastMove.targets ?? [];
+
+    user.scene.queueMessage(i18next.t("moveTriggers:instructingMove", {
+      userPokemonName: getPokemonNameWithAffix(user),
+      targetPokemonName: getPokemonNameWithAffix(target)
+    }));
+    target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
+    target.turnData.extraTurns++;
+    target.scene.appendToPhase(new MovePhase(target.scene, target, moveTargets, movesetMove), MoveEndPhase);
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      // TODO: Confirm behavior of instructing move known by target but called by another move
+      const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE);
+      const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
+      const moveTargets = lastMove?.targets ?? [];
+      // TODO: Add a way of adding moves to list procedurally rather than a pre-defined blacklist
+      const unrepeatablemoves = [
+        // Locking/Continually Executed moves
+        Moves.OUTRAGE,
+        Moves.RAGING_FURY,
+        Moves.ROLLOUT,
+        Moves.PETAL_DANCE,
+        Moves.THRASH,
+        Moves.ICE_BALL,
+        // Multi-turn Moves
+        Moves.BIDE,
+        Moves.SHELL_TRAP,
+        Moves.BEAK_BLAST,
+        Moves.FOCUS_PUNCH,
+        // "First Turn Only" moves
+        Moves.FAKE_OUT,
+        Moves.FIRST_IMPRESSION,
+        Moves.MAT_BLOCK,
+        // Moves with a recharge turn
+        Moves.HYPER_BEAM,
+        Moves.ETERNABEAM,
+        Moves.FRENZY_PLANT,
+        Moves.BLAST_BURN,
+        Moves.HYDRO_CANNON,
+        Moves.GIGA_IMPACT,
+        Moves.PRISMATIC_LASER,
+        Moves.ROAR_OF_TIME,
+        Moves.ROCK_WRECKER,
+        Moves.METEOR_ASSAULT,
+        // Charging & 2-turn moves
+        Moves.DIG,
+        Moves.FLY,
+        Moves.BOUNCE,
+        Moves.SHADOW_FORCE,
+        Moves.PHANTOM_FORCE,
+        Moves.DIVE,
+        Moves.ELECTRO_SHOT,
+        Moves.ICE_BURN,
+        Moves.GEOMANCY,
+        Moves.FREEZE_SHOCK,
+        Moves.SKY_DROP,
+        Moves.SKY_ATTACK,
+        Moves.SKULL_BASH,
+        Moves.SOLAR_BEAM,
+        Moves.SOLAR_BLADE,
+        Moves.METEOR_BEAM,
+        // Other moves
+        Moves.INSTRUCT,
+        Moves.KINGS_SHIELD,
+        Moves.SKETCH,
+        Moves.TRANSFORM,
+        Moves.MIMIC,
+        Moves.STRUGGLE,
+        // TODO: Add Max/G-Move blockage if or when they are implemented
+      ];
+
+      if (!movesetMove // called move not in target's moveset (dancer, forgetting the move, etc.)
+        || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
+        || allMoves[lastMove?.move ?? Moves.NONE].isChargingMove() // called move is a charging/recharging move
+        || !moveTargets.length // called move has no targets
+        || unrepeatablemoves.includes(lastMove?.move ?? Moves.NONE)) { // called move is explicitly in the banlist
+        return false;
+      }
+      return true;
+    };
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    // TODO: Make the AI acutally use instruct
+    /* Ideally, the AI would score instruct based on the scorings of the on-field pokemons'
+    * last used moves at the time of using Instruct (by the time the instructor gets to act)
+    * with respect to the user's side.
+    * In 99.9% of cases, this would be the pokemon's ally (unless the target had last
+    * used a move like Decorate on the user or its ally)
+    */
+    return 2;
+  }
+}
+
+/**
  *  Attribute used for moves that reduce PP of the target's last used move.
  *  Used for Spite.
  */
@@ -9892,7 +10012,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
       .ignoresSubstitute()
-      .unimplemented(),
+      .attr(RepeatMoveAttr)
+      .edgeCase(), // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
     new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()
