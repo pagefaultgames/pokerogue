@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
-import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr, ChangeMovePriorityAbAttr } from "#app/data/ability";
-import { allMoves, applyMoveAttrs, IncrementMovePriorityAttr, MoveHeaderAttr } from "#app/data/move";
+import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/ability";
+import { allMoves, MoveHeaderAttr } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
@@ -98,26 +98,22 @@ export class TurnStartPhase extends FieldPhase {
         const aMove = allMoves[aCommand.move!.move];
         const bMove = allMoves[bCommand!.move!.move];
 
-        // The game now considers priority and applies the relevant move and ability attributes
-        const aPriority = new Utils.IntegerHolder(aMove.priority);
-        const bPriority = new Utils.IntegerHolder(bMove.priority);
+        const aUser = this.scene.getField(true).find(p => p.getBattlerIndex() === a)!;
+        const bUser = this.scene.getField(true).find(p => p.getBattlerIndex() === b)!;
 
-        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, aMove, aPriority);
-        applyMoveAttrs(IncrementMovePriorityAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, bMove, bPriority);
-
-        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a)!, null, false, aMove, aPriority);
-        applyAbAttrs(ChangeMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b)!, null, false, bMove, bPriority);
+        const aPriority = aMove.getPriority(aUser, false);
+        const bPriority = bMove.getPriority(bUser, false);
 
         // The game now checks for differences in priority levels.
         // If the moves share the same original priority bracket, it can check for differences in battlerBypassSpeed and return the result.
         // This conditional is used to ensure that Quick Claw can still activate with abilities like Stall and Mycelium Might (attack moves only)
         // Otherwise, the game returns the user of the move with the highest priority.
-        const isSameBracket = Math.ceil(aPriority.value) - Math.ceil(bPriority.value) === 0;
-        if (aPriority.value !== bPriority.value) {
+        const isSameBracket = Math.ceil(aPriority) - Math.ceil(bPriority) === 0;
+        if (aPriority !== bPriority) {
           if (isSameBracket && battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
             return battlerBypassSpeed[a].value ? -1 : 1;
           }
-          return aPriority.value < bPriority.value ? 1 : -1;
+          return (aPriority < bPriority) ? 1 : -1;
         }
       }
 

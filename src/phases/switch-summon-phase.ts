@@ -1,5 +1,5 @@
 import BattleScene from "#app/battle-scene";
-import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability";
+import { applyPreSwitchOutAbAttrs, PostDamageForceSwitchAbAttr, PreSwitchOutAbAttr } from "#app/data/ability";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
@@ -54,7 +54,7 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
-    if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
+    if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getPlayerParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
         return this.switchAndSummon();
       } else {
@@ -111,7 +111,7 @@ export class SwitchSummonPhase extends SummonPhase {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
             && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
         if (batonPassModifier && !this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
-          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false);
+          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false, undefined, undefined, undefined, false);
         }
       }
     }
@@ -138,7 +138,6 @@ export class SwitchSummonPhase extends SummonPhase {
             switchedInPokemon.setAlpha(0.5);
           }
         } else {
-          switchedInPokemon.resetBattleData();
           switchedInPokemon.resetSummonData();
         }
         this.summon();
@@ -167,10 +166,11 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const currentCommand = pokemon.scene.currentBattle.turnCommands[this.fieldIndex]?.command;
     const lastPokemonIsForceSwitchedAndNotFainted = lastUsedMove?.hasAttr(ForceSwitchOutAttr) && !this.lastPokemon.isFainted();
+    const lastPokemonHasForceSwitchAbAttr = this.lastPokemon.hasAbilityWithAttr(PostDamageForceSwitchAbAttr) && !this.lastPokemon.isFainted();
 
     // Compensate for turn spent summoning
     // Or compensate for force switch move if switched out pokemon is not fainted
-    if (currentCommand === Command.POKEMON || lastPokemonIsForceSwitchedAndNotFainted) {
+    if (currentCommand === Command.POKEMON || lastPokemonIsForceSwitchedAndNotFainted || lastPokemonHasForceSwitchAbAttr) {
       pokemon.battleSummonData.turnCount--;
       pokemon.battleSummonData.waveTurnCount--;
     }

@@ -1,12 +1,12 @@
 import { allMoves } from "#app/data/move";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import * as Messages from "#app/messages";
-import { TerastallizeModifier } from "#app/modifier/modifier";
+import { TerastallizeModifier, overrideHeldItems } from "#app/modifier/modifier";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -15,14 +15,16 @@ function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Sp
   expected: number, targetAbility: Abilities = Abilities.BALL_FETCH, teraType?: Type): void {
   // Suppress getPokemonNameWithAffix because it calls on a null battle spec
   vi.spyOn(Messages, "getPokemonNameWithAffix").mockReturnValue("");
-  game.override.enemyAbility(targetAbility);
-
-  if (teraType !== undefined) {
-    game.override.enemyHeldItems([{ name:"TERA_SHARD", type: teraType }]);
-  }
+  game.override
+    .enemyAbility(targetAbility)
+    .enemyHeldItems([{ name:"TERA_SHARD", type: teraType }]);
 
   const user = game.scene.addPlayerPokemon(getPokemonSpecies(Species.SNORLAX), 5);
   const target = game.scene.addEnemyPokemon(getPokemonSpecies(targetSpecies), 5, TrainerSlot.NONE);
+
+  if (teraType !== undefined) {
+    overrideHeldItems(game.scene, target, false);
+  }
 
   expect(target.getMoveEffectiveness(user, allMoves[move])).toBe(expected);
   user.destroy();

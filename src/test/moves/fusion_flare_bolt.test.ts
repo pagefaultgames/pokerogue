@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -58,12 +58,12 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
@@ -81,12 +81,12 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
@@ -104,7 +104,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEndPhase);
@@ -114,7 +114,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
@@ -133,7 +133,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEndPhase);
@@ -142,7 +142,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
   }, 20000);
 
@@ -160,12 +160,12 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
@@ -176,7 +176,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.ZEKROM
     ]);
 
-    const party = game.scene.getParty();
+    const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
 
     // Get rid of any modifiers that may alter power
@@ -209,22 +209,22 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(200);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
@@ -235,7 +235,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       Species.ZEKROM
     ]);
 
-    const party = game.scene.getParty();
+    const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
 
     // Get rid of any modifiers that may alter power
@@ -268,22 +268,22 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(200);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 });

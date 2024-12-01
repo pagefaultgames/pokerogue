@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { BattlerIndex } from "#app/battle";
-import { applyPostSummonAbAttrs, PostSummonAbAttr } from "#app/data/ability";
+import { applyAbAttrs, applyPostSummonAbAttrs, CommanderAbAttr, PostSummonAbAttr } from "#app/data/ability";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { StatusEffect } from "#app/enums/status-effect";
 import { PokemonPhase } from "./pokemon-phase";
@@ -27,6 +27,12 @@ export class PostSummonPhase extends PokemonPhase {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
 
-    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
+    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon)
+      .then(() => {
+        const field = pokemon.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
+        field.forEach((p) => applyAbAttrs(CommanderAbAttr, p, null, false));
+
+        this.end();
+      });
   }
 }

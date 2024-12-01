@@ -61,11 +61,12 @@ export const TrashToTreasureEncounter: MysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
-      // Calculate boss mon
+      // Calculate boss mon (shiny locked)
       const bossSpecies = getPokemonSpecies(Species.GARBODOR);
       const pokemonConfig: EnemyPokemonConfig = {
         species: bossSpecies,
         isBoss: true,
+        shiny: false, // Shiny lock because of custom intro sprite
         formIndex: 1, // Gmax
         bossSegmentModifier: 1, // +1 Segment from normal
         moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ]
@@ -164,7 +165,7 @@ async function tryApplyDigRewardItems(scene: BattleScene) {
   const shellBell = generateModifierType(scene, modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
   const leftovers = generateModifierType(scene, modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType;
 
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
 
   // Iterate over the party until an item was successfully given
   // First leftovers

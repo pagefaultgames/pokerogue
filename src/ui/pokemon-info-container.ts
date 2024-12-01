@@ -3,7 +3,7 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import BattleScene from "../battle-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { getNatureName } from "../data/nature";
-import { Type } from "../data/type";
+import { Type } from "#enums/type";
 import Pokemon from "../field/pokemon";
 import i18next from "i18next";
 import { DexAttr, DexEntry, StarterDataEntry } from "../system/game-data";
@@ -21,24 +21,6 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
-  "en": {
-    infoContainerTextSize: "64px"
-  },
-  "de": {
-    infoContainerTextSize: "64px",
-  },
-  "es": {
-    infoContainerTextSize: "64px"
-  },
-  "fr": {
-    infoContainerTextSize: "64px"
-  },
-  "it": {
-    infoContainerTextSize: "64px"
-  },
-  "zh": {
-    infoContainerTextSize: "64px"
-  },
   "pt": {
     infoContainerTextSize: "60px",
     infoContainerLabelXPos: -15,
@@ -331,6 +313,11 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonShinyNewIcon.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
         const newShinyOrVariant = ((newShiny & caughtAttr) === BigInt(0)) || ((newVariant & caughtAttr) === BigInt(0));
         this.pokemonShinyNewIcon.setVisible(!!newShinyOrVariant);
+      } else if ((caughtAttr & DexAttr.NON_SHINY) === BigInt(0) && ((caughtAttr & DexAttr.SHINY) === DexAttr.SHINY)) { //If the player has *only* caught any shiny variant of this species, not a non-shiny
+        this.pokemonShinyNewIcon.setVisible(true);
+        this.pokemonShinyNewIcon.setText("(+)");
+        this.pokemonShinyNewIcon.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false, this.scene.uiTheme));
+        this.pokemonShinyNewIcon.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true, this.scene.uiTheme));
       } else {
         this.pokemonShinyNewIcon.setVisible(false);
       }
