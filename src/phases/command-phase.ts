@@ -75,6 +75,19 @@ export class CommandPhase extends FieldPhase {
 
     const moveQueue = playerPokemon.getMoveQueue();
 
+    /**
+     * Checks if the playerPokemon has a move that might be unselectable
+     */
+    const moveset = playerPokemon.getMoveset();
+    const conditionalMove = moveset.find(m => {
+      const move = m?.getMove();
+      return move && move.selectableCondition && move.selectableCondition.length > 0;
+    });
+
+    if (conditionalMove) {
+      conditionalMove.getMove().applySelectableConditions(playerPokemon);
+    }
+
     while (moveQueue.length && moveQueue[0]
         && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
           || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move)]!.isUsable(playerPokemon, moveQueue[0].ignorePP))) { // TODO: is the bang correct?
@@ -140,8 +153,7 @@ export class CommandPhase extends FieldPhase {
           const errorMessage =
           playerPokemon.isMoveRestricted(move.moveId, playerPokemon)
             ? playerPokemon.getRestrictingTag(move.moveId, playerPokemon)!.selectionDeniedText(playerPokemon, move.moveId)
-            : !move.isSelectable(playerPokemon) ? "battle:moveCannotBeSelected"
-              : move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
+            : move.getName().endsWith(" (N)") ? "battle:moveNotImplemented" : "battle:moveNoPP";
           const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
           this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {

@@ -7539,15 +7539,13 @@ export class MoveSelectCondition {
   }
 
   /**
-   * {@linkcode func} is being called in order to check if the {@linkcode user} is able to
-   * select the {@linkcode move} and if the move should fail
-   *
-   * @param user {@linkcode Pokemon} that want to use this {@linkcode move}
-   * @param move {@linkcode Move} being selected
-   * @returns true if the move can be selected/doesn't fail, otherwise false
+   * Checks condition and adds appropriate MoveRestrictionTag accordingly
+   * @param user {@linkcode Pokemon} that uses the move
+   * @param move {@linkcode Move} that is used
+   * @returns true if Tag was added successfully
    */
   apply(user: Pokemon, move: Move): boolean {
-    return this.func(user, move);
+    return true;
   }
 }
 
@@ -7560,9 +7558,35 @@ export class StuffCheeksCondition extends MoveSelectCondition {
    * contains function that checks if the {@linkcode user} is currently holding a berry or not
    */
   constructor() {
-    super((user: Pokemon, move: Move) => user.scene.findModifiers(m => m instanceof BerryModifier, user.isPlayer()).length > 0);
+    super((user, move) => this.selectableCondition(user));
+  }
+
+  /**
+   * Checks if the user is holding a berry
+   * @param user {@linkcode Pokemon} whose berries to check
+   * @returns true if the user is holding a berry, otherwise false
+   */
+  private selectableCondition(user: Pokemon): boolean {
+    return user.scene.findModifiers(m => m instanceof BerryModifier, user.isPlayer()).length > 0;
+  }
+
+  /**
+   * {@linkcode func} is being called in order to check if the {@linkcode user} is able to
+   * select the {@linkcode move} and adds {@linkcode StuffCheeksTag} if condition fails
+   *
+   * @param user {@linkcode Pokemon} that want to use this {@linkcode move}
+   * @param move {@linkcode Move} being selected
+   * @returns true if the move can be selected/doesn't fail, otherwise false
+   */
+  apply(user: Pokemon, move: Move): boolean {
+    if (!this.selectableCondition(user)) {
+      user.addTag(BattlerTagType.STUFF_CHEEKS, 0, move.id);
+    }
+    return this.func(user, move);
   }
 }
+
+const hasBerryCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => user.scene.findModifiers(m => m instanceof BerryModifier, user.isPlayer()).length > 0;
 
 export class MoveCondition {
   protected func: MoveConditionFunc;
@@ -10057,7 +10081,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, -1, 0, 8)
       .attr(EatBerryAttr)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
-      .selectableCondition(new StuffCheeksCondition()),
+      .selectableCondition(new StuffCheeksCondition())
+      .condition(hasBerryCondition),
     new SelfStatusMove(Moves.NO_RETREAT, Type.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, false)

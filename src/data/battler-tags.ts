@@ -2782,6 +2782,32 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   }
 }
 
+export class StuffCheeksTag extends MoveRestrictionBattlerTag {
+  // Stuff Cheeks
+  private moveId: Moves = Moves.STUFF_CHEEKS;
+  /**
+   * This Tag only lasts the turn the {@linkcode MoveUnselectableTag} was added.
+   * @param move {@linkcode Moves} that is selected
+   */
+  constructor(move: Moves) {
+    super(BattlerTagType.STUFF_CHEEKS, BattlerTagLapseType.TURN_END, 0, Moves.STUFF_CHEEKS);
+  }
+
+  /**
+   * This function always returns true since {@linkcode MoveUnselectableTag} is only added if condition {@linkcode MoveSelectCondition} fails
+   * @param move {@linkcode Moves} that is selected
+   * @returns true if the move matches the ID of Stuff Cheeks
+   */
+  override isMoveRestricted(move: Moves): boolean {
+    return move === this.moveId;
+  }
+
+  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+    return i18next.t("battle:moveCannotBeSelected", { moveName: allMoves[move].name });
+  }
+}
+
+
 /**
  * Battler Tag that applies the effects of Syrup Bomb to the target Pokemon.
  * For three turns, starting from the turn of hit, at the end of each turn, the target Pokemon's speed will decrease by 1.
@@ -3123,6 +3149,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new GrudgeTag();
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
+    case BattlerTagType.STUFF_CHEEKS:
+      return new StuffCheeksTag(sourceMove);
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
