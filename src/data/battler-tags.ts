@@ -856,6 +856,57 @@ export class SeedTag extends BattlerTag {
   }
 }
 
+/**
+ * BattlerTag representing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Powder_(move) | Powder}.
+ * When the afflicted Pokemon uses a Fire-type move, the move is cancelled, and the
+ * Pokemon takes damage equal to 1/4 of it's maximum HP (rounded down).
+ */
+export class PowderTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.POWDER, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END ], 1);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    // "{Pokemon} is covered in powder!"
+    pokemon.scene.queueMessage(i18next.t("battlerTags:powderOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
+  /**
+   * Applies Powder's effects before the tag owner uses a Fire-type move.
+   * Also causes the tag to expire at the end of turn.
+   * @param pokemon {@linkcode Pokemon} the owner of this tag
+   * @param lapseType {@linkcode BattlerTagLapseType} the type of lapse functionality to carry out
+   * @returns `true` if the tag should not expire after this lapse; `false` otherwise.
+   */
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      const movePhase = pokemon.scene.getCurrentPhase();
+      if (movePhase instanceof MovePhase) {
+        const move = movePhase.move.getMove();
+        if (pokemon.getMoveType(move) === Type.FIRE) {
+          movePhase.cancel();
+
+          pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.POWDER));
+
+          const cancelDamage = new BooleanHolder(false);
+          applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
+          if (!cancelDamage.value) {
+            pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), HitResult.OTHER);
+          }
+
+          // "When the flame touched the powder\non the Pokémon, it exploded!"
+          pokemon.scene.queueMessage(i18next.t("battlerTags:powderLapse", { moveName: move.name }));
+        }
+      }
+      return true;
+    } else {
+      return super.lapse(pokemon, lapseType);
+    }
+  }
+}
+
 export class NightmareTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.TURN_END, 1, Moves.NIGHTMARE);
@@ -2981,6 +3032,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new InfatuatedTag(sourceMove, sourceId);
     case BattlerTagType.SEEDED:
       return new SeedTag(sourceId);
+    case BattlerTagType.POWDER:
+      return new PowderTag();
     case BattlerTagType.NIGHTMARE:
       return new NightmareTag();
     case BattlerTagType.FRENZY:
