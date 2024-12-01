@@ -184,7 +184,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           dataSource = config.dataSource;
           enemySpecies = config.species;
           isBoss = config.isBoss;
-          battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, dataSource);
+          battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, false, dataSource);
         } else {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         }
@@ -202,7 +202,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           enemySpecies = scene.randomSpecies(battle.waveIndex, level, true);
         }
 
-        battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss, dataSource);
+        battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss, false, dataSource);
       }
     }
 

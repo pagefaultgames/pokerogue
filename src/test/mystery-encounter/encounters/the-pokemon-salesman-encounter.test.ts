@@ -123,7 +123,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       });
     });
 
-    it("Should update the player's money properly", async () => {
+    it("should update the player's money properly", async () => {
       const initialMoney = 20000;
       scene.money = initialMoney;
       const updateMoneySpy = vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
@@ -137,7 +137,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(scene.money).toBe(initialMoney - price);
     });
 
-    it("Should add the Pokemon to the party", async () => {
+    it("should add the Pokemon to the party", async () => {
       scene.money = 20000;
       await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
 
@@ -151,6 +151,18 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       const newlyPurchasedPokemon = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(newlyPurchasedPokemon.name).toBe(pokemonName);
       expect(newlyPurchasedPokemon!.moveset.length > 0).toBeTruthy();
+    });
+
+    it("should give the purchased Pokemon its HA or make it shiny", async () => {
+      scene.money = 20000;
+      await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
+      await runMysteryEncounterToEnd(game, 1);
+
+      const newlyPurchasedPokemon = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
+      const isshiny = newlyPurchasedPokemon.shiny;
+      const hasHA = newlyPurchasedPokemon.abilityIndex === 2;
+      expect(isshiny || hasHA).toBeTruthy();
+      expect(isshiny && hasHA).toBeFalsy();
     });
 
     it("should be disabled if player does not have enough money", async () => {

@@ -69,6 +69,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#app/data/balance/rates";
 import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
+import { doShinySparkleAnim } from "#app/field/anims";
 
 export enum FieldPosition {
   CENTER,
@@ -673,21 +674,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   initShinySparkle(): void {
-    const keySuffix = this.variant ? `_${this.variant + 1}` : "";
-    const key = `shiny${keySuffix}`;
-    const shinySparkle = this.scene.addFieldSprite(0, 0, key);
+    const shinySparkle = this.scene.addFieldSprite(0, 0, "shiny");
     shinySparkle.setVisible(false);
     shinySparkle.setOrigin(0.5, 1);
-    const frameNames = this.scene.anims.generateFrameNames(key, { suffix: ".png", end: 34 });
-    if (!(this.scene.anims.exists(`sparkle${keySuffix}`))) {
-      this.scene.anims.create({
-        key: `sparkle${keySuffix}`,
-        frames: frameNames,
-        frameRate: 32,
-        showOnStart: true,
-        hideOnComplete: true,
-      });
-    }
     this.add(shinySparkle);
 
     this.shinySparkle = shinySparkle;
@@ -1976,6 +1965,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Function that tries to set a Pokemon shiny based on seed.
    * For manual use only, usually to roll a Pokemon's shiny chance a second time.
+   * If it rolls shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
@@ -2001,6 +1991,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.shiny = randSeedInt(65536) < shinyThreshold.value;
 
     if (this.shiny) {
+      this.variant = this.generateShinyVariant();
+      this.luck = this.variant + 1 + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.initShinySparkle();
     }
 
@@ -3802,8 +3794,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   sparkle(): void {
     if (this.shinySparkle) {
-      this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
-      this.scene.playSound("se/sparkle");
+      doShinySparkleAnim(this.scene, this.shinySparkle, this.variant);
     }
   }
 
@@ -4646,12 +4637,13 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
-  /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
+  /** To indicate if the instance was populated with a dataSource -> e.g. loaded & populated from session data */
   public readonly isPopulatedFromDataSource: boolean;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, dataSource?: PokemonData) {
-    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
-      dataSource?.gender, dataSource ? dataSource.shiny : false, dataSource ? dataSource.variant : undefined, undefined, dataSource ? dataSource.nature : undefined, dataSource);
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, shinyLock: boolean = false, dataSource?: PokemonData) {
+    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex, dataSource?.gender,
+      (!shinyLock && dataSource) ? dataSource.shiny : false, (!shinyLock && dataSource) ? dataSource.variant : undefined,
+      undefined, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
     this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
@@ -4680,12 +4672,15 @@ export class EnemyPokemon extends Pokemon {
     if (!dataSource) {
       this.generateAndPopulateMoveset();
 
-      this.trySetShiny();
-      if (Overrides.OPP_SHINY_OVERRIDE) {
+      if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
+        this.shiny = false;
+      } else {
+        this.trySetShiny();
+      }
+
+      if (!this.shiny && Overrides.OPP_SHINY_OVERRIDE) {
         this.shiny = true;
         this.initShinySparkle();
-      } else if (Overrides.OPP_SHINY_OVERRIDE === false) {
-        this.shiny = false;
       }
 
       if (this.shiny) {

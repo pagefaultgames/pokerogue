@@ -379,6 +379,9 @@ export class EncounterPhase extends BattlePhase {
 
       if (encounter.onVisualsStart) {
         encounter.onVisualsStart(this.scene);
+      } else if (encounter.spriteConfigs && introVisuals) {
+        // If the encounter doesn't have any special visual intro, show sparkle for shiny Pokemon
+        introVisuals.playShinySparkles();
       }
 
       const doEncounter = () => {
