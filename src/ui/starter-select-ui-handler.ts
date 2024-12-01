@@ -39,7 +39,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
-import AwaitableUiHandler from "#app/ui/awaitable-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
 import { StarterContainer } from "#app/ui/starter-container";
 import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
@@ -1062,15 +1061,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, moveToTop?: boolean) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
-    if (text?.indexOf("\n") === -1) {
-      this.starterSelectMessageBox.setSize(318, 28);
-      this.message.setY(-22);
+    const singleLine = text?.indexOf("\n") === -1;
+
+    this.starterSelectMessageBox.setSize(318, singleLine ? 28 : 42);
+
+    if (moveToTop) {
+      this.starterSelectMessageBox.setOrigin(0, 0);
+      this.starterSelectMessageBoxContainer.setY(0);
+      this.message.setY(4);
     } else {
-      this.starterSelectMessageBox.setSize(318, 42);
-      this.message.setY(-37);
+      this.starterSelectMessageBoxContainer.setY(this.scene.game.canvas.height / 6);
+      this.starterSelectMessageBox.setOrigin(0, 1);
+      this.message.setY(singleLine ? -22 : -37);
     }
 
     this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
@@ -1804,8 +1809,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
-                if ((this.scene.gameData.eggs.length < 99 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE)
-                  && (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost)) {
+                if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
+                  if (this.scene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                    // Egg list full, show error message at the top of the screen and abort
+                    this.showText(i18next.t("egg:tooManyEggs"), undefined, () => this.showText("", 0, () => this.tutorialActive = false), 2000, false, undefined, true);
+                    return false;
+                  }
                   if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     starterData.candyCount -= sameSpeciesEggCost;
                   }
@@ -3565,9 +3574,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }, cancel, null, null, 19);
       });
     } else {
-      const handler = this.scene.ui.getHandler() as AwaitableUiHandler;
-      handler.tutorialActive = true;
-      this.scene.ui.showText(i18next.t("starterSelectUiHandler:invalidParty"), null, () => this.scene.ui.showText("", 0, () => handler.tutorialActive = false), null, true);
+      this.tutorialActive = true;
+      this.showText(i18next.t("starterSelectUiHandler:invalidParty"), undefined, () => this.showText("", 0, () => this.tutorialActive = false), undefined, true);
     }
     return true;
   }

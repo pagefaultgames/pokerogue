@@ -18,6 +18,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import * as Utils from "#app/utils";
 
 const namespace = "mysteryEncounters/globalTradeSystem";
 const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
@@ -174,6 +175,23 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
       expect(defaultParty.includes(speciesAfter!)).toBeFalsy();
+    });
+
+    it("Should roll for shiny twice, with random variant and associated luck", async () => {
+      // This ensures that the first shiny roll gets ignored, to test the ME rerolling for shiny
+      game.override.enemyShiny(false);
+
+      await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
+
+      vi.spyOn(Utils, "randSeedInt").mockReturnValue(1); // force shiny on reroll
+
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
+
+      const receivedPokemon = scene.getPlayerParty().at(-1)!;
+
+      expect(receivedPokemon.shiny).toBeTruthy();
+      expect(receivedPokemon.variant).toBeDefined();
+      expect(receivedPokemon.luck).toBe(receivedPokemon.variant + 1);
     });
 
     it("should leave encounter without battle", async () => {

@@ -177,7 +177,11 @@ class DefaultOverrides {
   // MYSTERY ENCOUNTER OVERRIDES
   // -------------------------
 
-  /** 1 to 256, set to null to ignore */
+  /**
+   * `1` (almost never) to `256` (always), set to `null` to disable the override
+   *
+   * Note: Make sure `STARTING_WAVE_OVERRIDE > 10`, otherwise MEs won't trigger
+   */
   readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
   readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
