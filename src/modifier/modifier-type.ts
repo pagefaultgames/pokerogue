@@ -1768,11 +1768,14 @@ const modifierPool: ModifierPool = {
         const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ]
           .some(a => p.hasAbility(a, false, true));
 
-        if (canSetStatus) {
-          return !isHoldingOrb && (hasRelevantAbilities || hasStatusMoves);
-        } else {
-          return !isHoldingOrb && hasItemMoves;
+        if (!isHoldingOrb) {
+          if (canSetStatus) {
+            return hasRelevantAbilities || hasStatusMoves;
+          } else {
+            return hasItemMoves;
+          }
         }
+        return false;
       }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
@@ -1792,11 +1795,14 @@ const modifierPool: ModifierPool = {
         const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ]
           .some(a => p.hasAbility(a, false, true));
 
-        if (canSetStatus) {
-          return !isHoldingOrb && (hasRelevantAbilities || hasStatusMoves);
-        } else {
-          return !isHoldingOrb && hasItemMoves;
+        if (!isHoldingOrb) {
+          if (canSetStatus) {
+            return hasRelevantAbilities || hasStatusMoves;
+          } else {
+            return hasItemMoves;
+          }
         }
+        return false;
       }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
