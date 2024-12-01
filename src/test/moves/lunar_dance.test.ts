@@ -24,16 +24,19 @@ describe("Moves - Lunar Dance", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.LUNAR_DANCE, Moves.SPLASH ])
       .statusEffect(StatusEffect.BURN)
       .battleType("double")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should full restore HP, PP and status of switched in pokemon, using lunar dance after should fail because no pokemon in party", async () => {
+  it("should full restore HP, PP and status of switched in pokemon, then fail second use because no remaining backup pokemon in party", async () => {
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.ODDISH, Species.RATTATA ]);
-    let leftPlayer = game.scene.getPlayerParty()[0];
+
+    const [ bulbasaur, oddish, rattata ] = game.scene.getPlayerParty();
+    game.move.changeMoveset(bulbasaur, [ Moves.LUNAR_DANCE, Moves.SPLASH ]);
+    game.move.changeMoveset(oddish, [ Moves.LUNAR_DANCE, Moves.SPLASH ]);
+    game.move.changeMoveset(rattata, [ Moves.LUNAR_DANCE, Moves.SPLASH ]);
 
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.SPLASH, 1);
@@ -41,9 +44,9 @@ describe("Moves - Lunar Dance", () => {
     await game.toNextTurn();
 
     // Bulbasaur should still be burned and have used a PP for splash and not at max hp
-    expect(leftPlayer.status?.effect).toBe(StatusEffect.BURN);
-    expect(leftPlayer.moveset[1]?.ppUsed).toBe(1);
-    expect(leftPlayer.hp).toBeLessThan(leftPlayer.getMaxHp());
+    expect(bulbasaur.status?.effect).toBe(StatusEffect.BURN);
+    expect(bulbasaur.moveset[1]?.ppUsed).toBe(1);
+    expect(bulbasaur.hp).toBeLessThan(bulbasaur.getMaxHp());
 
     // Switch out Bulbasaur for Rattata so we can swtich bulbasaur back in with lunar dance
     game.doSwitchPokemon(2);
@@ -58,19 +61,17 @@ describe("Moves - Lunar Dance", () => {
     await game.toNextTurn();
 
     // Bulbasaur should NOT have any status and have full PP for splash and be at max hp
-    expect(leftPlayer.status?.effect).toBeUndefined();
-    expect(leftPlayer.moveset[1]?.ppUsed).toBe(0);
-    expect(leftPlayer.hp).toBe(leftPlayer.getMaxHp());
+    expect(bulbasaur.status?.effect).toBeUndefined();
+    expect(bulbasaur.moveset[1]?.ppUsed).toBe(0);
+    expect(bulbasaur.isFullHp()).toBe(true);
 
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.LUNAR_DANCE);
     await game.phaseInterceptor.to(CommandPhase);
     await game.toNextTurn();
 
-    leftPlayer = game.scene.getPlayerParty()[0];
-
     // Using Lunar dance again should fail because nothing in party and rattata should be alive
-    expect(leftPlayer.status?.effect).toBe(StatusEffect.BURN);
-    expect(leftPlayer.hp).toBeLessThan(leftPlayer.getMaxHp());
+    expect(rattata.status?.effect).toBe(StatusEffect.BURN);
+    expect(rattata.hp).toBeLessThan(rattata.getMaxHp());
   });
 });
