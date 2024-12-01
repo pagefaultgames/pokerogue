@@ -33,7 +33,7 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
   }, () => game.isCurrentPhase(MysteryEncounterBattlePhase) || game.isCurrentPhase(MysteryEncounterRewardsPhase));
 
   if (isBattle) {
-    game.onNextPrompt("DamagePhase", Mode.MESSAGE, () => {
+    game.onNextPrompt("DamageAnimPhase", Mode.MESSAGE, () => {
       game.setMode(Mode.MESSAGE);
       game.endPhase();
     }, () => game.isCurrentPhase(CommandPhase));

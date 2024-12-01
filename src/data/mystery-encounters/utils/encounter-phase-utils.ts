@@ -184,7 +184,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           dataSource = config.dataSource;
           enemySpecies = config.species;
           isBoss = config.isBoss;
-          battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, dataSource);
+          battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, false, dataSource);
         } else {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         }
@@ -202,7 +202,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           enemySpecies = scene.randomSpecies(battle.waveIndex, level, true);
         }
 
-        battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss, dataSource);
+        battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss, false, dataSource);
       }
     }
 
@@ -731,7 +731,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
     scene.pushPhase(new EggLapsePhase(scene));
   } else if (!scene.getEnemyParty().find(p => encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
-    scene.pushPhase(new BattleEndPhase(scene));
+    scene.pushPhase(new BattleEndPhase(scene, true));
     if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       scene.pushPhase(new TrainerVictoryPhase(scene));
     }

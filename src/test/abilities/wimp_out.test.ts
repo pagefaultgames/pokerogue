@@ -632,4 +632,34 @@ describe("Abilities - Wimp Out", () => {
     const hasFled = enemyPokemon.switchOutStatus;
     expect(isVisible && !hasFled).toBe(true);
   });
+  it("wimp out will not skip battles when triggered in a double battle", async () => {
+    const wave = 2;
+    game.override
+      .enemyMoveset(Moves.SPLASH)
+      .enemySpecies(Species.WIMPOD)
+      .enemyAbility(Abilities.WIMP_OUT)
+      .moveset([ Moves.MATCHA_GOTCHA, Moves.FALSE_SWIPE ])
+      .startingLevel(50)
+      .enemyLevel(1)
+      .battleType("double")
+      .startingWave(wave);
+    await game.classicMode.startBattle([
+      Species.RAICHU,
+      Species.PIKACHU
+    ]);
+    const [ wimpod0, wimpod1 ] = game.scene.getEnemyField();
+
+    game.move.select(Moves.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.MATCHA_GOTCHA, 1);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(wimpod0.hp).toBeGreaterThan(0);
+    expect(wimpod0.switchOutStatus).toBe(true);
+    expect(wimpod0.isFainted()).toBe(false);
+    expect(wimpod1.isFainted()).toBe(true);
+
+    await game.toNextWave();
+    expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
+  });
 });
