@@ -63,7 +63,7 @@
 - chrysomelinae
 - koda_want_to_sleep
 - thedreadedden
-- ImperialSynthesizer
+- ImperialSympathizer
 - wormhood
 - gerolau
 - otterwatch
