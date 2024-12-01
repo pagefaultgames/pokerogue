@@ -63,6 +63,10 @@
 - chrysomelinae
 - koda_want_to_sleep
 - thedreadedden
+- ImperialSynthesizer
+- wormhood
+- gerolau
+- otterwatch
 
 ## Trainer Portraits
 - pkmn_realidea (Paid Commissions)
