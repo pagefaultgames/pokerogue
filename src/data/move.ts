@@ -6549,7 +6549,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
       // includeParty will be true for Assist, false for Sleep Talk
       let allies: Pokemon[];
       if (this.includeParty) {
-        allies = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+        allies = user.isPlayer() ? user.scene.getPlayerParty() : user.scene.getEnemyParty();
       } else {
         allies = [ user ];
       }
