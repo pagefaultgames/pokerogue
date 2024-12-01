@@ -31,7 +31,7 @@ describe("Moves - Powder", () => {
     game.override
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
-      .enemyMoveset(Array(4).fill(Moves.EMBER))
+      .enemyMoveset(Moves.EMBER)
       .enemyAbility(Abilities.INSOMNIA)
       .startingLevel(100)
       .moveset([ Moves.POWDER, Moves.SPLASH, Moves.FIERY_DANCE ]);
