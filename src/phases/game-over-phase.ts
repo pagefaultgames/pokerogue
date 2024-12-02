@@ -222,32 +222,33 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
+  // TODO: Make function use existing getSessionSaveData() function and then modify the values from there.
   /**
    * Slightly modified version of {@linkcode GameData.getSessionSaveData}.
    * @returns A promise containing the {@linkcode SessionSaveData}
    */
   private async getRunHistoryEntry(): Promise<SessionSaveData> {
-    const preWaveSessionData = await this.scene.gameData.getSession(this.scene.sessionSlotId);
+    const preWaveSessionData = await globalScene.gameData.getSession(globalScene.sessionSlotId);
     return {
-      seed: this.scene.seed,
-      playTime: this.scene.sessionPlayTime,
-      gameMode: this.scene.gameMode.modeId,
-      party: this.scene.getPlayerParty().map(p => new PokemonData(p)),
-      enemyParty: this.scene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: preWaveSessionData ? preWaveSessionData.modifiers : this.scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: preWaveSessionData ? preWaveSessionData.enemyModifiers : this.scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
-      arena: new ArenaData(this.scene.arena),
-      pokeballCounts: this.scene.pokeballCounts,
-      money: Math.floor(this.scene.money),
-      score: this.scene.score,
-      waveIndex: this.scene.currentBattle.waveIndex,
-      battleType: this.scene.currentBattle.battleType,
-      trainer: this.scene.currentBattle.trainer ? new TrainerData(this.scene.currentBattle.trainer) : null,
-      gameVersion: this.scene.game.config.gameVersion,
+      seed: globalScene.seed,
+      playTime: globalScene.sessionPlayTime,
+      gameMode: globalScene.gameMode.modeId,
+      party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
+      enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
+      modifiers: preWaveSessionData ? preWaveSessionData.modifiers : globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: preWaveSessionData ? preWaveSessionData.enemyModifiers : globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      arena: new ArenaData(globalScene.arena),
+      pokeballCounts: globalScene.pokeballCounts,
+      money: Math.floor(globalScene.money),
+      score: globalScene.score,
+      waveIndex: globalScene.currentBattle.waveIndex,
+      battleType: globalScene.currentBattle.battleType,
+      trainer: globalScene.currentBattle.trainer ? new TrainerData(globalScene.currentBattle.trainer) : null,
+      gameVersion: globalScene.game.config.gameVersion,
       timestamp: new Date().getTime(),
-      challenges: this.scene.gameMode.challenges.map(c => new ChallengeData(c)),
-      mysteryEncounterType: this.scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
-      mysteryEncounterSaveData: this.scene.mysteryEncounterSaveData
+      challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
+      mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
+      mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 }

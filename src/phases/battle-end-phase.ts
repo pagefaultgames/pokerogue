@@ -17,9 +17,9 @@ export class BattleEndPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.gameData.gameStats.battles++;
-    if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave) {
-      this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
+    globalScene.gameData.gameStats.battles++;
+    if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave) {
+      globalScene.gameData.gameStats.highestEndlessWave = globalScene.currentBattle.waveIndex + 1;
     }
 
     if (this.isVictory) {

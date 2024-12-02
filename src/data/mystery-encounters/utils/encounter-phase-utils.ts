@@ -114,7 +114,6 @@ export interface EnemyPartyConfig {
  * Generates an enemy party for a mystery encounter battle
  * This will override and replace any standard encounter generation logic
  * Useful for tailoring specific battles to mystery encounters
- * @param scene Battle Scene
  * @param partyConfig Can pass various customizable attributes for the enemy party, see EnemyPartyConfig
  */
 export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): Promise<void> {
@@ -370,7 +369,6 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
  * See: [startOfBattleEffects](IMysteryEncounter.startOfBattleEffects) for more details
  *
  * This promise does not need to be awaited on if called in an encounter onInit (will just load lazily)
- * @param scene
  * @param moves
  */
 export function loadCustomMovesForEncounter(moves: Moves | Moves[]) {
@@ -381,7 +379,6 @@ export function loadCustomMovesForEncounter(moves: Moves | Moves[]) {
 
 /**
  * Will update player money, and animate change (sound optional)
- * @param scene
  * @param changeValue
  * @param playSound
  * @param showMessage
@@ -404,7 +401,6 @@ export function updatePlayerMoney(changeValue: number, playSound: boolean = true
 
 /**
  * Converts modifier bullshit to an actual item
- * @param scene Battle Scene
  * @param modifier
  * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
@@ -426,7 +422,6 @@ export function generateModifierType(modifier: () => ModifierType, pregenArgs?: 
 
 /**
  * Converts modifier bullshit to an actual item
- * @param scene - Battle Scene
  * @param modifier
  * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
@@ -440,7 +435,6 @@ export function generateModifierTypeOption(modifier: () => ModifierType, pregenA
 
 /**
  * This function is intended for use inside onPreOptionPhase() of an encounter option
- * @param scene
  * @param onPokemonSelected - Any logic that needs to be performed when Pokemon is chosen
  * If a second option needs to be selected, onPokemonSelected should return a OptionSelectItem[] object
  * @param onPokemonNotSelected - Any logic that needs to be performed if no Pokemon is chosen
@@ -529,9 +523,9 @@ interface PokemonAndOptionSelected {
 }
 
 /**
- * This function is intended for use inside onPreOptionPhase() of an encounter option
- * @param scene
- * If a second option needs to be selected, onPokemonSelected should return a OptionSelectItem[] object
+ * This function is intended for use inside `onPreOptionPhase()` of an encounter option
+ *
+ * If a second option needs to be selected, `onPokemonSelected` should return a {@linkcode OptionSelectItem}`[]` object
  * @param options
  * @param optionSelectPromptKey
  * @param selectablePokemonFilter
@@ -617,7 +611,6 @@ export function selectOptionThenPokemon(options: OptionSelectItem[], optionSelec
 /**
  * Will initialize reward phases to follow the mystery encounter
  * Can have shop displayed or skipped
- * @param scene - Battle Scene
  * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
  * @param eggRewards
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before {@linkcode MysteryEncounterRewardsPhase})
@@ -648,10 +641,11 @@ export function setEncounterRewards(customShopRewards?: CustomModifierSettings, 
 /**
  * Will initialize exp phases into the phase queue (these are in addition to any combat or other exp earned)
  * Exp Share and Exp Balance will still function as normal
- * @param scene - Battle Scene
  * @param participantId - id/s of party pokemon that get full exp value. Other party members will receive Exp Share amounts
  * @param baseExpValue - gives exp equivalent to a pokemon of the wave index's level.
+ *
  * Guidelines:
+ * ```md
  * 36 - Sunkern (lowest in game)
  * 62-64 - regional starter base evos
  * 100 - Scyther
@@ -660,6 +654,7 @@ export function setEncounterRewards(customShopRewards?: CustomModifierSettings, 
  * 290 - trio legendaries
  * 340 - box legendaries
  * 608 - Blissey (highest in game)
+ * ```
  * https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_(Generation_IX)
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
@@ -686,7 +681,6 @@ export class OptionSelectSettings {
 /**
  * Can be used to queue a new series of Options to select for an Encounter
  * MUST be used only in onOptionPhase, will not work in onPreOptionPhase or onPostOptionPhase
- * @param scene
  * @param optionSelectSettings
  */
 export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSettings) {
@@ -696,7 +690,6 @@ export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSet
 /**
  * Can be used to exit an encounter without any battles or followup
  * Will skip any shops and rewards, and queue the next encounter phase as normal
- * @param scene
  * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 rewards but healing items are available
  * @param encounterMode - Can set custom encounter mode if necessary (may be required for forcing Pokemon to return before next phase)
  */
@@ -709,7 +702,6 @@ export function leaveEncounterWithoutBattle(addHealPhase: boolean = false, encou
 
 /**
  *
- * @param scene
  * @param addHealPhase - Adds an empty shop phase to allow player to purchase healing items
  * @param doNotContinue - default `false`. If set to true, will not end the battle and continue to next wave
  */
@@ -747,7 +739,6 @@ export function handleMysteryEncounterVictory(addHealPhase: boolean = false, doN
 
 /**
  * Similar to {@linkcode handleMysteryEncounterVictory}, but for cases where the player lost a battle or failed a challenge
- * @param scene
  * @param addHealPhase
  */
 export function handleMysteryEncounterBattleFailed(addHealPhase: boolean = false, doNotContinue: boolean = false) {
@@ -778,7 +769,6 @@ export function handleMysteryEncounterBattleFailed(addHealPhase: boolean = false
 
 /**
  *
- * @param scene
  * @param hide - If true, performs ease out and hide visuals. If false, eases in visuals. Defaults to true
  * @param destroy - If true, will destroy visuals ONLY ON HIDE TRANSITION. Does nothing on show. Defaults to true
  * @param duration
@@ -829,7 +819,6 @@ export function transitionMysteryEncounterIntroVisuals(hide: boolean = true, des
 /**
  * Will queue moves for any pokemon to use before the first CommandPhase of a battle
  * Mostly useful for allowing {@linkcode MysteryEncounter} enemies to "cheat" and use moves before the first turn
- * @param scene
  */
 export function handleMysteryEncounterBattleStartEffects() {
   const encounter = globalScene.currentBattle.mysteryEncounter;
@@ -867,7 +856,6 @@ export function handleMysteryEncounterBattleStartEffects() {
 /**
  * Can queue extra phases or logic during {@linkcode TurnInitPhase}
  * Should mostly just be used for injecting custom phases into the battle system on turn start
- * @param scene
  * @return boolean - if true, will skip the remainder of the {@linkcode TurnInitPhase}
  */
 export function handleMysteryEncounterTurnStartEffects(): boolean {
@@ -882,7 +870,6 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
 /**
  * TODO: remove once encounter spawn rate is finalized
  * Just a helper function to calculate aggregate stats for MEs in a Classic run
- * @param scene
  * @param baseSpawnWeight
  */
 export function calculateMEAggregateStats(baseSpawnWeight: number) {
@@ -1047,7 +1034,6 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
 /**
  * TODO: remove once encounter spawn rate is finalized
  * Just a helper function to calculate aggregate stats for MEs in a Classic run
- * @param scene
  * @param luckValue - 0 to 14
  */
 export function calculateRareSpawnAggregateStats(luckValue: number) {

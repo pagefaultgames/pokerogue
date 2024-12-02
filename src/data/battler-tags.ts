@@ -870,7 +870,7 @@ export class PowderTag extends BattlerTag {
     super.onAdd(pokemon);
 
     // "{Pokemon} is covered in powder!"
-    pokemon.scene.queueMessage(i18next.t("battlerTags:powderOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    globalScene.queueMessage(i18next.t("battlerTags:powderOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 
   /**
@@ -882,13 +882,13 @@ export class PowderTag extends BattlerTag {
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
-      const movePhase = pokemon.scene.getCurrentPhase();
+      const movePhase = globalScene.getCurrentPhase();
       if (movePhase instanceof MovePhase) {
         const move = movePhase.move.getMove();
         if (pokemon.getMoveType(move) === Type.FIRE) {
           movePhase.cancel();
 
-          pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.POWDER));
+          globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.POWDER));
 
           const cancelDamage = new BooleanHolder(false);
           applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
@@ -897,7 +897,7 @@ export class PowderTag extends BattlerTag {
           }
 
           // "When the flame touched the powder\non the Pokémon, it exploded!"
-          pokemon.scene.queueMessage(i18next.t("battlerTags:powderLapse", { moveName: move.name }));
+          globalScene.queueMessage(i18next.t("battlerTags:powderLapse", { moveName: move.name }));
         }
       }
       return true;

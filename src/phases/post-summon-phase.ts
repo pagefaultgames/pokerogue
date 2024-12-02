@@ -29,7 +29,7 @@ export class PostSummonPhase extends PokemonPhase {
 
     applyPostSummonAbAttrs(PostSummonAbAttr, pokemon)
       .then(() => {
-        const field = pokemon.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
+        const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
         field.forEach((p) => applyAbAttrs(CommanderAbAttr, p, null, false));
 
         this.end();

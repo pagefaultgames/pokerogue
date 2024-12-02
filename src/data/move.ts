@@ -6041,7 +6041,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
       return false;
-    } else if (user.scene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
+    } else if (globalScene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
       // Find indices of off-field Pokemon that are eligible to be switched into
       const eligibleNewIndices: number[] = [];
       globalScene.getEnemyParty().forEach((pokemon, index) => {
@@ -6074,7 +6074,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
             new SwitchSummonPhase(
               this.switchType,
               switchOutTarget.getFieldIndex(),
-              (user.scene.currentBattle.trainer ? user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
+              (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
               false,
               false
             ),
@@ -6750,13 +6750,13 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove.move)!;
     const moveTargets = lastMove.targets ?? [];
 
-    user.scene.queueMessage(i18next.t("moveTriggers:instructingMove", {
+    globalScene.queueMessage(i18next.t("moveTriggers:instructingMove", {
       userPokemonName: getPokemonNameWithAffix(user),
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
     target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
     target.turnData.extraTurns++;
-    target.scene.appendToPhase(new MovePhase(target.scene, target, moveTargets, movesetMove), MoveEndPhase);
+    globalScene.appendToPhase(new MovePhase(target, moveTargets, movesetMove), MoveEndPhase);
     return true;
   }
 

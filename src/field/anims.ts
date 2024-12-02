@@ -193,15 +193,15 @@ export function cos(index: integer, amplitude: integer): number {
  * @param sparkleSprite the Sprite to play the animation on
  * @param variant which shiny {@linkcode variant} to play the animation for
  */
-export function doShinySparkleAnim(scene: BattleScene, sparkleSprite: Phaser.GameObjects.Sprite, variant: Variant) {
+export function doShinySparkleAnim(sparkleSprite: Phaser.GameObjects.Sprite, variant: Variant) {
   const keySuffix = variant ? `_${variant + 1}` : "";
   const spriteKey = `shiny${keySuffix}`;
   const animationKey = `sparkle${keySuffix}`;
 
   // Make sure the animation exists, and create it if not
-  if (!scene.anims.exists(animationKey)) {
-    const frameNames = scene.anims.generateFrameNames(spriteKey, { suffix: ".png", end: 34 });
-    scene.anims.create({
+  if (!globalScene.anims.exists(animationKey)) {
+    const frameNames = globalScene.anims.generateFrameNames(spriteKey, { suffix: ".png", end: 34 });
+    globalScene.anims.create({
       key: `sparkle${keySuffix}`,
       frames: frameNames,
       frameRate: 32,
@@ -212,5 +212,5 @@ export function doShinySparkleAnim(scene: BattleScene, sparkleSprite: Phaser.Gam
 
   // Play the animation
   sparkleSprite.play(animationKey);
-  scene.playSound("se/sparkle");
+  globalScene.playSound("se/sparkle");
 }

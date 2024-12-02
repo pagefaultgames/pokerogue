@@ -306,10 +306,10 @@ export default class RunInfoUiHandler extends UiHandler {
     const windowCenterX = runResultWindow.getTopCenter().x;
     const windowBottomY = runResultWindow.getBottomCenter().y;
 
-    const runStatusText = addTextObject(this.scene, windowCenterX, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, TextStyle.WINDOW, { fontSize : "60px", lineSpacing: 0.1 });
+    const runStatusText = addTextObject(windowCenterX, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, TextStyle.WINDOW, { fontSize : "60px", lineSpacing: 0.1 });
     runStatusText.setOrigin(0.5, 0);
 
-    const currentBiomeText = addTextObject(this.scene, windowCenterX, windowBottomY - 5, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "60px" });
+    const currentBiomeText = addTextObject(windowCenterX, windowBottomY - 5, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "60px" });
     currentBiomeText.setOrigin(0.5, 1);
 
     this.runResultContainer.add([ runStatusText, currentBiomeText ]);
@@ -527,7 +527,7 @@ export default class RunInfoUiHandler extends UiHandler {
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
     const runMoney = Utils.formatMoney(globalScene.moneyFormat, this.runInfo.money);
-    const moneyTextColor = getTextColor(TextStyle.MONEY_WINDOW, false, this.scene.uiTheme);
+    const moneyTextColor = getTextColor(TextStyle.MONEY_WINDOW, false, globalScene.uiTheme);
     runInfoText.appendText(`[color=${moneyTextColor}]${i18next.t("battleScene:moneyOwned", { formattedMoney : runMoney })}[/color]`);
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);

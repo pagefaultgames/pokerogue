@@ -4,9 +4,10 @@ import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 import { Variant } from "#app/data/variant";
 import { doShinySparkleAnim } from "#app/field/anims";
+import type BattleScene from "#app/battle-scene";
+import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 
 type KnownFileRoot =
   | "arenas"
@@ -128,7 +129,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.filter(s => !s.x && !s.y).length, 1));
 
     this.shinySparkleSprites = [];
-    const shinySparkleSprites = scene.add.container(0, 0);
+    const shinySparkleSprites = globalScene.add.container(0, 0);
     this.spriteConfigs?.forEach((config) => {
       const { spriteKey, isItem, hasShadow, scale, x, y, yShadow, alpha, isPokemon, isShiny, variant } = config;
 
@@ -151,7 +152,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           tintSprite.setPipelineData("shiny", true);
           tintSprite.setPipelineData("variant", variant);
           // Create Sprite for shiny Sparkle
-          pokemonShinySparkle = scene.add.sprite(sprite.x, sprite.y, "shiny");
+          pokemonShinySparkle = globalScene.add.sprite(sprite.x, sprite.y, "shiny");
           pokemonShinySparkle.setOrigin(0.5, 1);
           pokemonShinySparkle.setVisible(false);
           this.shinySparkleSprites.push({ sprite: pokemonShinySparkle, variant: variant ?? 0 });
@@ -338,7 +339,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   playShinySparkles() {
     for (const sparkleConfig of this.shinySparkleSprites) {
       this.scene.time.delayedCall(500, () => {
-        doShinySparkleAnim(this.scene, sparkleConfig.sprite, sparkleConfig.variant);
+        doShinySparkleAnim(sparkleConfig.sprite, sparkleConfig.variant);
       });
     }
   }

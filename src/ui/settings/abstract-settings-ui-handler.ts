@@ -136,16 +136,16 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.scrollBar.setTotalRows(this.settings.length);
 
     // Two-lines message box
-    this.messageBoxContainer = this.scene.add.container(0, this.scene.scaledCanvas.height);
+    this.messageBoxContainer = globalScene.add.container(0, globalScene.scaledCanvas.height);
     this.messageBoxContainer.setName("settings-message-box");
     this.messageBoxContainer.setVisible(false);
 
-    const settingsMessageBox = addWindow(this.scene, 0, -1, this.scene.scaledCanvas.width - 2, 48);
+    const settingsMessageBox = addWindow(0, -1, globalScene.scaledCanvas.width - 2, 48);
     settingsMessageBox.setOrigin(0, 1);
     this.messageBoxContainer.add(settingsMessageBox);
 
-    const messageText = addTextObject(this.scene, 8, -40, "", TextStyle.WINDOW, { maxLines: 2 });
-    messageText.setWordWrapWidth(this.scene.game.canvas.width - 60);
+    const messageText = addTextObject(8, -40, "", TextStyle.WINDOW, { maxLines: 2 });
+    messageText.setWordWrapWidth(globalScene.game.canvas.width - 60);
     messageText.setName("settings-message");
     messageText.setOrigin(0, 0);
 

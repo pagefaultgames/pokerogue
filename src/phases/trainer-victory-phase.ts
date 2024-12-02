@@ -43,9 +43,11 @@ export class TrainerVictoryPhase extends BattlePhase {
       }
     }
     // Breeders in Space achievement
-    if (this.scene.arena.biomeType === Biome.SPACE
-      && (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)) {
-      this.scene.validateAchv(achvs.BREEDERS_IN_SPACE);
+    if (
+      globalScene.arena.biomeType === Biome.SPACE
+      && (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
+    ) {
+      globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);
     }
 
     globalScene.ui.showText(i18next.t("battle:trainerDefeated", { trainerName: globalScene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) }), null, () => {

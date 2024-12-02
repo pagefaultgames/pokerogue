@@ -217,9 +217,9 @@ export class EncounterPhase extends BattlePhase {
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         regenerateModifierPoolThresholds(globalScene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
         globalScene.generateEnemyModifiers();
-        overrideModifiers(this.scene, false);
-        this.scene.getEnemyField().forEach(enemy => {
-          overrideHeldItems(this.scene, enemy, false);
+        overrideModifiers(false);
+        globalScene.getEnemyField().forEach(enemy => {
+          overrideHeldItems(enemy, false);
         });
 
       }
@@ -443,12 +443,12 @@ export class EncounterPhase extends BattlePhase {
         globalScene.unshiftPhase(new ShinySparklePhase(BattlerIndex.ENEMY + e));
       }
       /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
-      if (enemyPokemon.species.speciesId === Species.ETERNATUS && (this.scene.gameMode.isBattleClassicFinalBoss(this.scene.currentBattle.waveIndex) || this.scene.gameMode.isEndlessMajorBoss(this.scene.currentBattle.waveIndex))) {
-        const enemyMBH = this.scene.findModifier(m => m instanceof TurnHeldItemTransferModifier, false) as TurnHeldItemTransferModifier;
+      if (enemyPokemon.species.speciesId === Species.ETERNATUS && (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex) || globalScene.gameMode.isEndlessMajorBoss(globalScene.currentBattle.waveIndex))) {
+        const enemyMBH = globalScene.findModifier(m => m instanceof TurnHeldItemTransferModifier, false) as TurnHeldItemTransferModifier;
         if (enemyMBH) {
-          this.scene.removeModifier(enemyMBH, true);
+          globalScene.removeModifier(enemyMBH, true);
           enemyMBH.setTransferrableFalse();
-          this.scene.addEnemyModifier(enemyMBH);
+          globalScene.addEnemyModifier(enemyMBH);
         }
       }
     });

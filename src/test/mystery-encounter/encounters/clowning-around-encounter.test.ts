@@ -267,7 +267,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       itemType = generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
       // 3 Soothe Bell on lead (great tier, but counted as ultra by this ME)
-      itemType = generateModifierType(scene, modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType;
+      itemType = generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 3, itemType);
       // 5 Soul Dew on lead (rogue)
       itemType = generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;

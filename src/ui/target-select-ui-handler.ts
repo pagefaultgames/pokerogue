@@ -44,7 +44,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.fieldIndex = args[0] as integer;
     this.move = args[1] as Moves;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
-    const user = this.scene.getPlayerField()[this.fieldIndex];
+    const user = globalScene.getPlayerField()[this.fieldIndex];
 
     const moveTargets = getMoveTargets(user, this.move);
     this.targets = moveTargets.targets;

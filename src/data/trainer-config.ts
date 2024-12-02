@@ -1191,7 +1191,7 @@ function getSpeciesFilterRandomPartyMemberFunc(
   };
 
   return (level: number, strength: PartyMemberStrength) => {
-    const waveIndex = scene.currentBattle.waveIndex;
+    const waveIndex = globalScene.currentBattle.waveIndex;
     const species = getPokemonSpecies(globalScene.randomSpecies(waveIndex, level, false, speciesFilter)
       .getTrainerSpeciesForLevel(level, true, strength, waveIndex));
 

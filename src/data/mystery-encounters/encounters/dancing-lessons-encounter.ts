@@ -92,7 +92,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withCatchAllowed(true)
     .withFleeAllowed(false)
     .withOnVisualsStart(() => {
-      const oricorio = globalSscene.getEnemyPokemon()!;
+      const oricorio = globalScene.getEnemyPokemon()!;
       const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, oricorio, globalScene.getPlayerPokemon()!);
       danceAnim.play(false, () => {
         if (oricorio.shiny) {

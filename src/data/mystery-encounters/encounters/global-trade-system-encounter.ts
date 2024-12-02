@@ -812,7 +812,7 @@ function doTradeReceivedSequence(receivedPokemon: PlayerPokemon, receivedPokemon
     // Received pokemon sparkles
     let pokemonShinySparkle: Phaser.GameObjects.Sprite;
     if (receivedPokemon.shiny) {
-      pokemonShinySparkle = scene.add.sprite(receivedPokemonSprite.x, receivedPokemonSprite.y, "shiny");
+      pokemonShinySparkle = globalScene.add.sprite(receivedPokemonSprite.x, receivedPokemonSprite.y, "shiny");
       pokemonShinySparkle.setVisible(false);
       tradeContainer.add(pokemonShinySparkle);
     }
@@ -856,8 +856,8 @@ function doTradeReceivedSequence(receivedPokemon: PlayerPokemon, receivedPokemon
             alpha: 0,
             onComplete: () => {
               if (receivedPokemon.shiny) {
-                scene.time.delayedCall(500, () => {
-                  doShinySparkleAnim(scene, pokemonShinySparkle, receivedPokemon.variant);
+                globalScene.time.delayedCall(500, () => {
+                  doShinySparkleAnim(pokemonShinySparkle, receivedPokemon.variant);
                 });
               }
               receivedPokeballSprite.destroy();
