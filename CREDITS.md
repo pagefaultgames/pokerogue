@@ -258,6 +258,28 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - Scoom
 - BlueVaron
 
+# ☎️ Discord
+
+## Head Moderator
+- leah
+
+## Senior Moderators
+- Solanum Tuberosum
+- Madmadness65
+- Necrowmancer
+- lana
+
+## Moderators
+- Sethcurry
+
+## Junior Moderators
+- chacolah
+- ChaosGrimmon
+- Cynthia
+- Kat
+- lyn
+- Pom
+
 # ✨ Special Thanks
 
 ## Reddit Moderators
