@@ -23,13 +23,13 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
-import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, PostDamageForceSwitchAbAttr, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/ability";
+import { Ability, AbAttr, StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/ability";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { LevelMoves } from "#app/data/balance/pokemon-level-moves";
+import { EVOLVE_MOVE, LevelMoves, RELEARN_MOVE } from "#app/data/balance/pokemon-level-moves";
 import { DamageAchv, achvs } from "#app/system/achv";
 import { DexAttr, StarterDataEntry, StarterMoveset } from "#app/system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
@@ -51,7 +51,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -69,6 +69,16 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#app/data/balance/rates";
 import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
+import { doShinySparkleAnim } from "#app/field/anims";
+
+export enum LearnMoveSituation {
+  MISC,
+  LEVEL_UP,
+  RELEARN,
+  EVOLUTION,
+  EVOLUTION_FUSED, // If fusionSpecies has Evolved
+  EVOLUTION_FUSED_BASE // If fusion's base species has Evolved
+}
 
 export enum FieldPosition {
   CENTER,
@@ -337,6 +347,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   isOnField(): boolean {
     if (!this.scene) {
+      return false;
+    }
+    if (this.switchOutStatus) {
       return false;
     }
     return this.scene.field.getIndex(this) > -1;
@@ -684,21 +697,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   initShinySparkle(): void {
-    const keySuffix = this.variant ? `_${this.variant + 1}` : "";
-    const key = `shiny${keySuffix}`;
-    const shinySparkle = this.scene.addFieldSprite(0, 0, key);
+    const shinySparkle = this.scene.addFieldSprite(0, 0, "shiny");
     shinySparkle.setVisible(false);
     shinySparkle.setOrigin(0.5, 1);
-    const frameNames = this.scene.anims.generateFrameNames(key, { suffix: ".png", end: 34 });
-    if (!(this.scene.anims.exists(`sparkle${keySuffix}`))) {
-      this.scene.anims.create({
-        key: `sparkle${keySuffix}`,
-        frames: frameNames,
-        frameRate: 32,
-        showOnStart: true,
-        hideOnComplete: true,
-      });
-    }
     this.add(shinySparkle);
 
     this.shinySparkle = shinySparkle;
@@ -1597,7 +1598,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const trappedByAbility = new Utils.BooleanHolder(false);
-    const opposingField = this.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+    /**
+     * Contains opposing Pokemon (Enemy/Player Pokemon) depending on perspective
+     * Afterwards, it filters out Pokemon that have been switched out of the field so trapped abilities/moves do not trigger
+     */
+    const opposingFieldUnfiltered = this.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+    const opposingField = opposingFieldUnfiltered.filter(enemyPkm => enemyPkm.switchOutStatus === false);
 
     opposingField.forEach((opponent) =>
       applyCheckTrappedAbAttrs(CheckTrappedAbAttr, opponent, trappedByAbility, this, trappedAbMessages, simulated)
@@ -1834,40 +1840,44 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
    * @returns {LevelMoves} A list of moves and the levels they can be learned at
    */
-  getLevelMoves(startingLevel?: integer, includeEvolutionMoves: boolean = false, simulateEvolutionChain: boolean = false, includeRelearnerMoves: boolean = false): LevelMoves {
+  getLevelMoves(startingLevel?: integer, includeEvolutionMoves: boolean = false, simulateEvolutionChain: boolean = false, includeRelearnerMoves: boolean = false, learnSituation: LearnMoveSituation = LearnMoveSituation.MISC): LevelMoves {
     const ret: LevelMoves = [];
     let levelMoves: LevelMoves = [];
     if (!startingLevel) {
       startingLevel = this.level;
     }
-    if (simulateEvolutionChain) {
-      const evolutionChain = this.species.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
-      for (let e = 0; e < evolutionChain.length; e++) {
-        // TODO: Might need to pass specific form index in simulated evolution chain
-        const speciesLevelMoves = getPokemonSpeciesForm(evolutionChain[e][0], this.formIndex).getLevelMoves();
-        if (includeRelearnerMoves) {
-          levelMoves.push(...speciesLevelMoves);
-        } else {
-          levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && lm[0] === 0) || ((!e || lm[0] > 1) && (e === evolutionChain.length - 1 || lm[0] <= evolutionChain[e + 1][1]))));
-        }
-      }
+    if (learnSituation === LearnMoveSituation.EVOLUTION_FUSED && this.fusionSpecies) { // For fusion evolutions, get ONLY the moves of the component mon that evolved
+      levelMoves = this.getFusionSpeciesForm(true).getLevelMoves().filter(lm => (includeEvolutionMoves && lm[0] === EVOLVE_MOVE) || (includeRelearnerMoves && lm[0] === RELEARN_MOVE) || lm[0] > 0);
     } else {
-      levelMoves = this.getSpeciesForm(true).getLevelMoves().filter(lm => (includeEvolutionMoves && lm[0] === 0) || (includeRelearnerMoves && lm[0] === -1) || lm[0] > 0);
-    }
-    if (this.fusionSpecies) {
       if (simulateEvolutionChain) {
-        const fusionEvolutionChain = this.fusionSpecies.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
-        for (let e = 0; e < fusionEvolutionChain.length; e++) {
+        const evolutionChain = this.species.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
+        for (let e = 0; e < evolutionChain.length; e++) {
           // TODO: Might need to pass specific form index in simulated evolution chain
-          const speciesLevelMoves = getPokemonSpeciesForm(fusionEvolutionChain[e][0], this.fusionFormIndex).getLevelMoves();
+          const speciesLevelMoves = getPokemonSpeciesForm(evolutionChain[e][0], this.formIndex).getLevelMoves();
           if (includeRelearnerMoves) {
-            levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && lm[0] === 0) || lm[0] !== 0));
+            levelMoves.push(...speciesLevelMoves);
           } else {
-            levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && lm[0] === 0) || ((!e || lm[0] > 1) && (e === fusionEvolutionChain.length - 1 || lm[0] <= fusionEvolutionChain[e + 1][1]))));
+            levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && lm[0] === EVOLVE_MOVE) || ((!e || lm[0] > 1) && (e === evolutionChain.length - 1 || lm[0] <= evolutionChain[e + 1][1]))));
           }
         }
       } else {
-        levelMoves.push(...this.getFusionSpeciesForm(true).getLevelMoves().filter(lm => (includeEvolutionMoves && lm[0] === 0) || (includeRelearnerMoves && lm[0] === -1) || lm[0] > 0));
+        levelMoves = this.getSpeciesForm(true).getLevelMoves().filter(lm => (includeEvolutionMoves && lm[0] === EVOLVE_MOVE) || (includeRelearnerMoves && lm[0] === RELEARN_MOVE) || lm[0] > 0);
+      }
+      if (this.fusionSpecies && learnSituation !== LearnMoveSituation.EVOLUTION_FUSED_BASE) {  // For fusion evolutions, get ONLY the moves of the component mon that evolved
+        if (simulateEvolutionChain) {
+          const fusionEvolutionChain = this.fusionSpecies.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
+          for (let e = 0; e < fusionEvolutionChain.length; e++) {
+            // TODO: Might need to pass specific form index in simulated evolution chain
+            const speciesLevelMoves = getPokemonSpeciesForm(fusionEvolutionChain[e][0], this.fusionFormIndex).getLevelMoves();
+            if (includeRelearnerMoves) {
+              levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && lm[0] === EVOLVE_MOVE) || lm[0] !== EVOLVE_MOVE));
+            } else {
+              levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && lm[0] === EVOLVE_MOVE) || ((!e || lm[0] > 1) && (e === fusionEvolutionChain.length - 1 || lm[0] <= fusionEvolutionChain[e + 1][1]))));
+            }
+          }
+        } else {
+          levelMoves.push(...this.getFusionSpeciesForm(true).getLevelMoves().filter(lm => (includeEvolutionMoves && lm[0] === EVOLVE_MOVE) || (includeRelearnerMoves && lm[0] === RELEARN_MOVE) || lm[0] > 0));
+        }
       }
     }
     levelMoves.sort((lma: [integer, integer], lmb: [integer, integer]) => lma[0] > lmb[0] ? 1 : lma[0] < lmb[0] ? -1 : 0);
@@ -1985,6 +1995,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Function that tries to set a Pokemon shiny based on seed.
    * For manual use only, usually to roll a Pokemon's shiny chance a second time.
+   * If it rolls shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
@@ -2010,6 +2021,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.shiny = randSeedInt(65536) < shinyThreshold.value;
 
     if (this.shiny) {
+      this.variant = this.generateShinyVariant();
+      this.luck = this.variant + 1 + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.initShinySparkle();
     }
 
@@ -2635,8 +2648,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       };
     }
 
-    // If the attack deals fixed damaged, return a result with that much damage
-    const fixedDamage = new Utils.IntegerHolder(0);
+    // If the attack deals fixed damage, return a result with that much damage
+    const fixedDamage = new Utils.NumberHolder(0);
     applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
     if (fixedDamage.value) {
       const multiLensMultiplier = new Utils.NumberHolder(1);
@@ -2913,14 +2926,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.turnData.damageTaken += damage;
           this.battleData.hitCount++;
 
-          // Multi-Lens and Parental Bond check for Wimp Out/Emergency Exit
-          if (this.hasAbilityWithAttr(PostDamageForceSwitchAbAttr)) {
-            const multiHitModifier = source.getHeldItems().find(m => m instanceof PokemonMultiHitModifier);
-            if (multiHitModifier || source.hasAbilityWithAttr(AddSecondStrikeAbAttr)) {
-              applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
-            }
-          }
-
           const attackResult = { move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id, sourceBattlerIndex: source.getBattlerIndex() };
           this.turnData.attacksReceived.unshift(attackResult);
           if (source.isPlayer() && !this.isPlayer()) {
@@ -3021,13 +3026,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
    * @returns integer of damage done
    */
-  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): integer {
-    const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
+  damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
+    const damagePhase = new DamageAnimPhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
     this.scene.unshiftPhase(damagePhase);
+    if (this.switchOutStatus && source) {
+      damage = 0;
+    }
     damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
-    applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
+    /**
+     * Run PostDamageAbAttr from any source of damage that is not from a multi-hit
+     * Multi-hits are handled in move-effect-phase.ts for PostDamageAbAttr
+     */
+    if (!source || source.turnData.hitCount <= 1) {
+      applyPostDamageAbAttrs(PostDamageAbAttr, this, damage, this.hasPassive(), false, [], source);
+    }
     return damage;
   }
 
@@ -3504,12 +3518,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
+  /**
+   * Checks if a status effect can be applied to the Pokemon.
+   *
+   * @param effect The {@linkcode StatusEffect} whose applicability is being checked
+   * @param quiet Whether in-battle messages should trigger or not
+   * @param overrideStatus Whether the Pokemon's current status can be overriden
+   * @param sourcePokemon The Pokemon that is setting the status effect
+   * @param ignoreField Whether any field effects (weather, terrain, etc.) should be considered
+   */
+  canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null, ignoreField: boolean = false): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
         return false;
       }
-      if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.MISTY) {
+      if (this.isGrounded() && (!ignoreField && this.scene.arena.terrain?.terrainType === TerrainType.MISTY)) {
         return false;
       }
     }
@@ -3559,7 +3582,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         break;
       case StatusEffect.FREEZE:
-        if (this.isOfType(Type.ICE) || (this.scene?.arena?.weather?.weatherType && [ WeatherType.SUNNY, WeatherType.HARSH_SUN ].includes(this.scene.arena.weather.weatherType))) {
+        if (this.isOfType(Type.ICE) || (!ignoreField && (this.scene?.arena?.weather?.weatherType && [ WeatherType.SUNNY, WeatherType.HARSH_SUN ].includes(this.scene.arena.weather.weatherType)))) {
           return false;
         }
         break;
@@ -3744,8 +3767,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   setFrameRate(frameRate: integer) {
     this.scene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
-    this.getSprite().play(this.getBattleSpriteKey());
-    this.getTintSprite()?.play(this.getBattleSpriteKey());
+    try {
+      this.getSprite().play(this.getBattleSpriteKey());
+    } catch (err: unknown) {
+      console.error(`Failed to play animation for ${this.getBattleSpriteKey()}`, err);
+    }
+    try {
+      this.getTintSprite()?.play(this.getBattleSpriteKey());
+    } catch (err: unknown) {
+      console.error(`Failed to play animation for ${this.getBattleSpriteKey()}`, err);
+    }
   }
 
   tint(color: number, alpha?: number, duration?: integer, ease?: string) {
@@ -3810,8 +3841,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   sparkle(): void {
     if (this.shinySparkle) {
-      this.shinySparkle.play(`sparkle${this.variant ? `_${this.variant + 1}` : ""}`);
-      this.scene.playSound("se/sparkle");
+      doShinySparkleAnim(this.scene, this.shinySparkle, this.variant);
     }
   }
 
@@ -4288,28 +4318,29 @@ export class PlayerPokemon extends Pokemon {
     });
   }
 
-  addFriendship(friendship: integer): void {
-    const starterSpeciesId = this.species.getRootSpeciesId();
-    const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
-    const starterData = [
-      this.scene.gameData.starterData[starterSpeciesId],
-      fusionStarterSpeciesId ? this.scene.gameData.starterData[fusionStarterSpeciesId] : null
-    ].filter(d => !!d);
-    const amount = new Utils.IntegerHolder(friendship);
-    let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
-    if (this.scene.eventManager.isEventActive()) {
-      candyFriendshipMultiplier *= this.scene.eventManager.getFriendshipMultiplier();
-    }
-    const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic && friendship > 0 ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
-    if (amount.value > 0) {
+  addFriendship(friendship: number): void {
+    if (friendship > 0) {
+      const starterSpeciesId = this.species.getRootSpeciesId();
+      const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
+      const starterData = [
+        this.scene.gameData.starterData[starterSpeciesId],
+        fusionStarterSpeciesId ? this.scene.gameData.starterData[fusionStarterSpeciesId] : null
+      ].filter(d => !!d);
+      const amount = new Utils.NumberHolder(friendship);
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
-      this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, starterAmount);
+      let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
+      if (this.scene.eventManager.isEventActive()) {
+        candyFriendshipMultiplier *= this.scene.eventManager.getFriendshipMultiplier();
+      }
+      const starterAmount = new Utils.NumberHolder(Math.floor(amount.value * (this.scene.gameMode.isClassic ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
 
+      // Add friendship to this PlayerPokemon
       this.friendship = Math.min(this.friendship + amount.value, 255);
       if (this.friendship === 255) {
         this.scene.validateAchv(achvs.MAX_FRIENDSHIP);
       }
-      starterData.forEach((sd: StarterDataEntry, i: integer) => {
+      // Add to candy progress for this mon's starter species and its fused species (if it has one)
+      starterData.forEach((sd: StarterDataEntry, i: number) => {
         const speciesId = !i ? starterSpeciesId : fusionStarterSpeciesId as Species;
         sd.friendship = (sd.friendship || 0) + starterAmount.value;
         if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[speciesId])) {
@@ -4318,10 +4349,8 @@ export class PlayerPokemon extends Pokemon {
         }
       });
     } else {
-      this.friendship = Math.max(this.friendship + amount.value, 0);
-      for (const sd of starterData) {
-        sd.friendship = Math.max((sd.friendship || 0) + starterAmount.value, 0);
-      }
+      // Lose friendship upon fainting
+      this.friendship = Math.max(this.friendship + friendship, 0);
     }
   }
   /**
@@ -4651,12 +4680,13 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
-  /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
+  /** To indicate if the instance was populated with a dataSource -> e.g. loaded & populated from session data */
   public readonly isPopulatedFromDataSource: boolean;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, dataSource?: PokemonData) {
-    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
-      dataSource?.gender, dataSource ? dataSource.shiny : false, dataSource ? dataSource.variant : undefined, undefined, dataSource ? dataSource.nature : undefined, dataSource);
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, shinyLock: boolean = false, dataSource?: PokemonData) {
+    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex, dataSource?.gender,
+      (!shinyLock && dataSource) ? dataSource.shiny : false, (!shinyLock && dataSource) ? dataSource.variant : undefined,
+      undefined, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
     this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
@@ -4685,12 +4715,15 @@ export class EnemyPokemon extends Pokemon {
     if (!dataSource) {
       this.generateAndPopulateMoveset();
 
-      this.trySetShiny();
-      if (Overrides.OPP_SHINY_OVERRIDE) {
+      if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
+        this.shiny = false;
+      } else {
+        this.trySetShiny();
+      }
+
+      if (!this.shiny && Overrides.OPP_SHINY_OVERRIDE) {
         this.shiny = true;
         this.initShinySparkle();
-      } else if (Overrides.OPP_SHINY_OVERRIDE === false) {
-        this.shiny = false;
       }
 
       if (this.shiny) {
@@ -5275,6 +5308,7 @@ export class PokemonBattleSummonData {
 export class PokemonTurnData {
   public flinched: boolean = false;
   public acted: boolean = false;
+  /** How many times the move should hit the target(s) */
   public hitCount: number = 0;
   /**
    * - `-1` = Calculate how many hits are left
@@ -5293,6 +5327,11 @@ export class PokemonTurnData {
   public switchedInThisTurn: boolean = false;
   public failedRunAway: boolean = false;
   public joinedRound: boolean = false;
+  /**
+   * Used to make sure multi-hits occur properly when the user is
+   * forced to act again in the same turn
+   */
+  public extraTurns: number = 0;
 }
 
 export enum AiType {
