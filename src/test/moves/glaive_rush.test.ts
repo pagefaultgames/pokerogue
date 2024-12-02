@@ -41,11 +41,11 @@ describe("Moves - Glaive Rush", () => {
     enemy.hp = 1000;
 
     game.move.select(Moves.SHADOW_SNEAK);
-    await game.phaseInterceptor.to("DamagePhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
     const damageDealt = 1000 - enemy.hp;
     await game.phaseInterceptor.to("TurnEndPhase");
     game.move.select(Moves.SHADOW_SNEAK);
-    await game.phaseInterceptor.to("DamagePhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
     expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
 
   });

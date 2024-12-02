@@ -1,12 +1,13 @@
 import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";
-import { StatusEffect, getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
-import { WeatherType } from "#app/data/weather";
+import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
+import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

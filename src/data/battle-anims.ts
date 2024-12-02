@@ -90,6 +90,7 @@ export enum CommonAnim {
     RAGING_BULL_FIRE,
     RAGING_BULL_WATER,
     SALT_CURE,
+    POWDER,
     SUNNY = 2100,
     RAIN,
     SANDSTORM,
@@ -428,7 +429,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setScale(1.25);
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     scene.field.add(moveAnim.bgSprite);
-    const fieldPokemon = scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon();
+    const fieldPokemon = scene.getEnemyPokemon(false) ?? scene.getPlayerPokemon(false);
     if (!isNullOrUndefined(priority)) {
       scene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
     } else if (fieldPokemon?.isOnField()) {
@@ -999,7 +1000,7 @@ export abstract class BattleAnim {
                 const setSpritePriority = (priority: integer) => {
                   switch (priority) {
                     case 0:
-                      scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getNonSwitchedEnemyPokemon() || scene.getNonSwitchedPlayerPokemon()!); // This bang assumes that if (the EnemyPokemon is undefined, then the PlayerPokemon function must return an object), correct assumption?
+                      scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemon(false) ?? scene.getPlayerPokemon(false)!); // TODO: is this bang correct?
                       break;
                     case 1:
                       scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);

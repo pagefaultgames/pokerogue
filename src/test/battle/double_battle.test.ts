@@ -1,13 +1,18 @@
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
+import { Abilities } from "#enums/abilities";
+import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Double Battles", () => {
+  const DOUBLE_CHANCE = 8; // Normal chance of double battle is 1/8
+
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -49,10 +54,46 @@ describe("Double Battles", () => {
     await game.phaseInterceptor.to(BattleEndPhase);
     game.doSelectModifier();
 
-    const charizard = game.scene.getParty().findIndex(p => p.species.speciesId === Species.CHARIZARD);
+    const charizard = game.scene.getPlayerParty().findIndex(p => p.species.speciesId === Species.CHARIZARD);
     game.doRevivePokemon(charizard);
 
     await game.phaseInterceptor.to(TurnInitPhase);
     expect(game.scene.getPlayerField().filter(p => !p.isFainted())).toHaveLength(2);
   }, 20000);
+
+  it("randomly chooses between single and double battles if there is no battle type override", async () => {
+    let rngSweepProgress = 0; // Will simulate RNG rolls by slowly increasing from 0 to 1
+    let doubleCount = 0;
+    let singleCount = 0;
+
+    vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
+      return rngSweepProgress * (max - min) + min;
+    });
+
+    game.override.enemyMoveset(Moves.SPLASH)
+      .moveset(Moves.SPLASH)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(Abilities.BALL_FETCH);
+
+    // Play through endless, waves 1 to 9, counting number of double battles from waves 2 to 9
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    game.scene.gameMode = getGameMode(GameModes.ENDLESS);
+
+    for (let i = 0; i < DOUBLE_CHANCE; i++) {
+      rngSweepProgress = (i + 0.5) / DOUBLE_CHANCE;
+
+      game.move.select(Moves.SPLASH);
+      await game.doKillOpponents();
+      await game.toNextWave();
+
+      if (game.scene.getEnemyParty().length === 1) {
+        singleCount++;
+      } else if (game.scene.getEnemyParty().length === 2) {
+        doubleCount++;
+      }
+    }
+
+    expect(doubleCount).toBe(1);
+    expect(singleCount).toBe(DOUBLE_CHANCE - 1);
+  });
 });

@@ -21,9 +21,8 @@ import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { achvs } from "#app/system/achv";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 
@@ -126,7 +125,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter =
       ];
 
       // Determine the 3 pokemon the player can battle with
-      let partyCopy = scene.getParty().slice(0);
+      let partyCopy = scene.getPlayerParty().slice(0);
       partyCopy = partyCopy
         .filter(p => p.isAllowedInBattle())
         .sort((a, b) => a.friendship - b.friendship);
@@ -508,11 +507,11 @@ function getEggOptions(scene: BattleScene, commonEggs: number, rareEggs: number)
 }
 
 function removePokemonFromPartyAndStoreHeldItems(scene: BattleScene, encounter: MysteryEncounter, chosenPokemon: PlayerPokemon) {
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
   const chosenIndex = party.indexOf(chosenPokemon);
   party[chosenIndex] = party[0];
   party[0] = chosenPokemon;
-  encounter.misc.originalParty = scene.getParty().slice(1);
+  encounter.misc.originalParty = scene.getPlayerParty().slice(1);
   encounter.misc.originalPartyHeldItems = encounter.misc.originalParty
     .map(p => p.getHeldItems());
   scene["party"] = [
@@ -520,16 +519,10 @@ function removePokemonFromPartyAndStoreHeldItems(scene: BattleScene, encounter: 
   ];
 }
 
-function checkAchievement(scene: BattleScene) {
-  if (scene.arena.biomeType === Biome.SPACE) {
-    scene.validateAchv(achvs.BREEDERS_IN_SPACE);
-  }
-}
-
 function restorePartyAndHeldItems(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter!;
   // Restore original party
-  scene.getParty().push(...encounter.misc.originalParty);
+  scene.getPlayerParty().push(...encounter.misc.originalParty);
 
   // Restore held items
   const originalHeldItems = encounter.misc.originalPartyHeldItems;
@@ -617,8 +610,6 @@ function onGameOver(scene: BattleScene) {
 function doPostEncounterCleanup(scene: BattleScene) {
   const encounter = scene.currentBattle.mysteryEncounter!;
   if (!encounter.misc.encounterFailed) {
-    // Give achievement if in Space biome
-    checkAchievement(scene);
     // Give 20 friendship to the chosen pokemon
     encounter.misc.chosenPokemon.addFriendship(FRIENDSHIP_ADDED);
     restorePartyAndHeldItems(scene);

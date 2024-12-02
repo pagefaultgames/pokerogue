@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { Species } from "#app/enums/species";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -43,7 +43,7 @@ describe("Moves - Fissure", () => {
 
     await game.startBattle();
 
-    partyPokemon = game.scene.getParty()[0];
+    partyPokemon = game.scene.getPlayerParty()[0];
     enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // remove berries
@@ -56,7 +56,7 @@ describe("Moves - Fissure", () => {
     game.override.enemyAbility(Abilities.FUR_COAT);
 
     game.move.select(Moves.FISSURE);
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(DamageAnimPhase, true);
 
     expect(enemyPokemon.isFainted()).toBe(true);
   });

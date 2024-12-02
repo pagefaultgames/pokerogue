@@ -42,7 +42,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   function confirmSwitch(): void {
-    const [ pokemon1, pokemon2 ] = game.scene.getParty();
+    const [ pokemon1, pokemon2 ] = game.scene.getPlayerParty();
 
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
 
@@ -54,7 +54,7 @@ describe("Abilities - Wimp Out", () => {
   }
 
   function confirmNoSwitch(): void {
-    const [ pokemon1, pokemon2 ] = game.scene.getParty();
+    const [ pokemon1, pokemon2 ] = game.scene.getPlayerParty();
 
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
 
@@ -135,7 +135,7 @@ describe("Abilities - Wimp Out", () => {
 
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(game.scene.getParty()[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(game.scene.getPlayerParty()[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     confirmSwitch();
   });
 
@@ -263,7 +263,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getParty()[1].getHpRatio()).toBeGreaterThan(0.5);
+    expect(game.scene.getPlayerParty()[1].getHpRatio()).toBeGreaterThan(0.5);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.TYRUNT);
   });
@@ -296,7 +296,9 @@ describe("Abilities - Wimp Out", () => {
       Species.TYRUNT
     ]);
 
-    game.move.select(Moves.SPLASH);
+    game.scene.getPlayerPokemon()!.hp *= 0.51;
+
+    game.move.select(Moves.ENDURE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     confirmNoSwitch();
@@ -424,7 +426,7 @@ describe("Abilities - Wimp Out", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getParty()[0].getHpRatio()).toEqual(0.51);
+    expect(game.scene.getPlayerParty()[0].getHpRatio()).toEqual(0.51);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.WIMPOD);
   });
@@ -522,7 +524,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getParty()[1].status?.effect).toEqual(StatusEffect.POISON);
+    expect(game.scene.getPlayerParty()[1].status?.effect).toEqual(StatusEffect.POISON);
     confirmSwitch();
   });
 
@@ -610,5 +612,54 @@ describe("Abilities - Wimp Out", () => {
     }
 
     confirmNoSwitch();
+  });
+
+  it("should not activate on wave X0 bosses", async () => {
+    game.override.enemyAbility(Abilities.WIMP_OUT)
+      .startingLevel(5850)
+      .startingWave(10);
+    await game.classicMode.startBattle([ Species.GOLISOPOD ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    // Use 2 turns of False Swipe due to opponent's health bar shield
+    game.move.select(Moves.FALSE_SWIPE);
+    await game.toNextTurn();
+    game.move.select(Moves.FALSE_SWIPE);
+    await game.toNextTurn();
+
+    const isVisible = enemyPokemon.visible;
+    const hasFled = enemyPokemon.switchOutStatus;
+    expect(isVisible && !hasFled).toBe(true);
+  });
+  it("wimp out will not skip battles when triggered in a double battle", async () => {
+    const wave = 2;
+    game.override
+      .enemyMoveset(Moves.SPLASH)
+      .enemySpecies(Species.WIMPOD)
+      .enemyAbility(Abilities.WIMP_OUT)
+      .moveset([ Moves.MATCHA_GOTCHA, Moves.FALSE_SWIPE ])
+      .startingLevel(50)
+      .enemyLevel(1)
+      .battleType("double")
+      .startingWave(wave);
+    await game.classicMode.startBattle([
+      Species.RAICHU,
+      Species.PIKACHU
+    ]);
+    const [ wimpod0, wimpod1 ] = game.scene.getEnemyField();
+
+    game.move.select(Moves.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.MATCHA_GOTCHA, 1);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(wimpod0.hp).toBeGreaterThan(0);
+    expect(wimpod0.switchOutStatus).toBe(true);
+    expect(wimpod0.isFainted()).toBe(false);
+    expect(wimpod1.isFainted()).toBe(true);
+
+    await game.toNextWave();
+    expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
   });
 });

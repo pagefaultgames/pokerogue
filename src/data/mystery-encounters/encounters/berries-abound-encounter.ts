@@ -58,7 +58,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getParty()), true);
+      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);
       const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
       const config: EnemyPartyConfig = {
@@ -77,7 +77,7 @@ export const BerriesAboundEncounter: MysteryEncounter =
         scene.currentBattle.waveIndex > 160 ? 7
           : scene.currentBattle.waveIndex > 120 ? 5
             : scene.currentBattle.waveIndex > 40 ? 4 : 2;
-      regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
+      regenerateModifierPoolThresholds(scene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
       encounter.misc = { numBerries };
 
       const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
@@ -98,7 +98,9 @@ export const BerriesAboundEncounter: MysteryEncounter =
           tint: 0.25,
           x: -5,
           repeat: true,
-          isPokemon: true
+          isPokemon: true,
+          isShiny: bossPokemon.shiny,
+          variant: bossPokemon.variant
         }
       ];
 
@@ -253,7 +255,7 @@ function tryGiveBerry(scene: BattleScene, prioritizedPokemon?: PlayerPokemon) {
   const berryType = randSeedInt(Object.keys(BerryType).filter(s => !isNaN(Number(s))).length) as BerryType;
   const berry = generateModifierType(scene, modifierTypes.BERRY, [ berryType ]) as BerryModifierType;
 
-  const party = scene.getParty();
+  const party = scene.getPlayerParty();
 
   // Will try to apply to prioritized pokemon first, then do normal application method if it fails
   if (prioritizedPokemon) {
