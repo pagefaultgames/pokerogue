@@ -257,3 +257,12 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - P0kemonY
 - Scoom
 - BlueVaron
+
+# ✨ Special Thanks
+
+## Reddit Moderators
+- TheZigglez
+- Vicksin
+- Sapphire
+- Javi
+- roi
