@@ -376,7 +376,7 @@ export const speciesEggTiers = {
   [Species.DIANCIE]: EggTier.EPIC,
   [Species.HOOPA]: EggTier.EPIC,
   [Species.VOLCANION]: EggTier.EPIC,
-  [Species.ETERNAL_FLOETTE]: EggTier.RARE,
+  [Species.ETERNAL_FLOETTE]: EggTier.EPIC,
 
   [Species.ROWLET]: EggTier.COMMON,
   [Species.LITTEN]: EggTier.COMMON,
@@ -488,6 +488,7 @@ export const speciesEggTiers = {
   [Species.GLASTRIER]: EggTier.EPIC,
   [Species.SPECTRIER]: EggTier.EPIC,
   [Species.CALYREX]: EggTier.LEGENDARY,
+  [Species.ENAMORUS]: EggTier.EPIC,
   [Species.GALAR_MEOWTH]: EggTier.RARE,
   [Species.GALAR_PONYTA]: EggTier.RARE,
   [Species.GALAR_SLOWPOKE]: EggTier.RARE,
@@ -505,7 +506,6 @@ export const speciesEggTiers = {
   [Species.HISUI_QWILFISH]: EggTier.RARE,
   [Species.HISUI_SNEASEL]: EggTier.RARE,
   [Species.HISUI_ZORUA]: EggTier.RARE,
-  [Species.ENAMORUS]: EggTier.EPIC,
 
   [Species.SPRIGATITO]: EggTier.COMMON,
   [Species.FUECOCO]: EggTier.COMMON,
@@ -581,5 +581,5 @@ export const speciesEggTiers = {
   [Species.PECHARUNT]: EggTier.EPIC,
   [Species.PALDEA_TAUROS]: EggTier.RARE,
   [Species.PALDEA_WOOPER]: EggTier.RARE,
-  [Species.BLOODMOON_URSALUNA]: EggTier.EPIC,
+  [Species.BLOODMOON_URSALUNA]: EggTier.EPIC
 };
