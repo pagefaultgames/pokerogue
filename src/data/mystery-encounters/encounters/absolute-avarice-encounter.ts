@@ -18,7 +18,7 @@ import { randInt } from "#app/utils";
 import { BattlerIndex } from "#app/battle";
 import { applyModifierTypeToPlayerPokemon, catchPokemon, getHighestLevelPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { PokeballType } from "#app/data/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -181,7 +181,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
 
       // Sort berries by party member ID to more easily re-add later if necessary
       const berryItemsMap = new Map<number, BerryModifier[]>();
-      scene.getParty().forEach(pokemon => {
+      scene.getPlayerParty().forEach(pokemon => {
         const pokemonBerries = berryItems.filter(b => b.pokemonId === pokemon.id);
         if (pokemonBerries?.length > 0) {
           berryItemsMap.set(pokemon.id, pokemonBerries);
@@ -216,6 +216,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.GREEDENT),
             isBoss: true,
             bossSegments: 3,
+            shiny: false, // Shiny lock because of consistency issues between the different options
             moveSet: [ Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH ],
             modifierConfigs: bossModifierConfigs,
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
@@ -267,7 +268,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const revSeed = generateModifierType(scene, modifierTypes.REVIVER_SEED);
           encounter.setDialogueToken("foodReward", revSeed?.name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"));
           const givePartyPokemonReviverSeeds = () => {
-            const party = scene.getParty();
+            const party = scene.getPlayerParty();
             party.forEach(p => {
               const heldItems = p.getHeldItems();
               if (revSeed && !heldItems.some(item => item instanceof PokemonInstantReviveModifier)) {
@@ -308,7 +309,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
           const berryMap = encounter.misc.berryItemsMap;
 
           // Returns 2/5 of the berries stolen to each Pokemon
-          const party = scene.getParty();
+          const party = scene.getPlayerParty();
           party.forEach(pokemon => {
             const stolenBerries: BerryModifier[] = berryMap.get(pokemon.id);
             const berryTypesAsArray: BerryType[] = [];
@@ -353,9 +354,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
         })
         .withOptionPhase(async (scene: BattleScene) => {
           // Let it have the food
-          // Greedent joins the team, level equal to 2 below highest party member
+          // Greedent joins the team, level equal to 2 below highest party member (shiny locked)
           const level = getHighestLevelPlayerPokemon(scene, false, true).level - 2;
-          const greedent = new EnemyPokemon(scene, getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false);
+          const greedent = new EnemyPokemon(scene, getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false, true);
           greedent.moveset = [ new PokemonMove(Moves.THRASH), new PokemonMove(Moves.BODY_PRESS), new PokemonMove(Moves.STUFF_CHEEKS), new PokemonMove(Moves.SLACK_OFF) ];
           greedent.passive = true;
 

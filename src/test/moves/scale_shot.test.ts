@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -48,7 +48,7 @@ describe("Moves - Scale Shot", () => {
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.phaseInterceptor.to(MoveEffectPhase);
-    await game.phaseInterceptor.to(DamagePhase);
+    await game.phaseInterceptor.to(DamageAnimPhase);
 
     //check that stats haven't changed after one or two hits have occurred
     await game.phaseInterceptor.to(MoveEffectPhase);

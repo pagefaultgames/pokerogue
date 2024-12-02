@@ -1,11 +1,12 @@
-import { MapModifier } from "#app/modifier/modifier";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "./utils/gameManager";
-import { Moves } from "#app/enums/moves";
 import { Biome } from "#app/enums/biome";
-import { Mode } from "#app/ui/ui";
+import { Moves } from "#app/enums/moves";
+import { MapModifier } from "#app/modifier/modifier";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Species } from "#enums/species";
+import { Mode } from "#app/ui/ui";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import GameManager from "#app/test/utils/gameManager";
 
 //const TIMEOUT = 20 * 1000;
 
@@ -21,6 +22,7 @@ describe("Daily Mode", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
   });
 
   afterEach(() => {
@@ -30,9 +32,9 @@ describe("Daily Mode", () => {
   it("should initialize properly", async () => {
     await game.dailyMode.runToSummon();
 
-    const party = game.scene.getParty();
+    const party = game.scene.getPlayerParty();
     expect(party).toHaveLength(3);
-    party.forEach(pkm => {
+    party.forEach((pkm) => {
       expect(pkm.level).toBe(20);
       expect(pkm.moveset.length).toBeGreaterThan(0);
     });
@@ -63,6 +65,7 @@ describe("Shop modifications", async () => {
     game.modifiers
       .addCheck("EVIOLITE")
       .addCheck("MINI_BLACK_HOLE");
+    vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
   });
 
   afterEach(() => {

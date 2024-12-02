@@ -1,8 +1,8 @@
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
 import { Gender } from "../data/gender";
-import { Nature } from "../data/nature";
-import { PokeballType } from "../data/pokeball";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
@@ -171,7 +171,7 @@ export default class PokemonData {
           playerPokemon.nickname = this.nickname;
         }
       })
-      : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
+      : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, false, this);
     if (this.summonData) {
       ret.primeSummonData(this.summonData);
     }

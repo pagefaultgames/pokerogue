@@ -214,11 +214,11 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
       // Berries on party lead
       const sitrus = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ])!;
-      const sitrusMod = sitrus.newModifier(scene.getParty()[0]) as BerryModifier;
+      const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
       sitrusMod.stackCount = 2;
       await scene.addModifier(sitrusMod, true, false, false, true);
       const ganlon = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.GANLON ])!;
-      const ganlonMod = ganlon.newModifier(scene.getParty()[0]) as BerryModifier;
+      const ganlonMod = ganlon.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
       ganlonMod.stackCount = 3;
       await scene.addModifier(ganlonMod, true, false, false, true);
       await scene.updateModifiers(true);
@@ -248,7 +248,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
     it("should NOT be selectable if the player doesn't have an Attracting move", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
-      scene.getParty().forEach(p => p.moveset = []);
+      scene.getPlayerParty().forEach(p => p.moveset = []);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -270,7 +270,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Mock moveset
-      scene.getParty()[0].moveset = [ new PokemonMove(Moves.CHARM) ];
+      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.CHARM) ];
       await runMysteryEncounterToEnd(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

@@ -18,6 +18,7 @@ import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/e
 import { TrainerType } from "#enums/trainer-type";
 import { EggTier } from "#enums/egg-type";
 import { PostMysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";
 const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
@@ -152,7 +153,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getParty().length).toBe(1);
+      expect(scene.getPlayerParty().length).toBe(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
@@ -182,7 +183,10 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
 
       const friendshipAfter = scene.currentBattle.mysteryEncounter!.misc.pokemon1.friendship;
-      expect(friendshipAfter).toBe(friendshipBefore + 20 + 2); // +2 extra for friendship gained from winning battle
+      // 20 from ME + extra from winning battle (that extra is not accurate to what happens in game.
+      // The Pokemon normally gets FRIENDSHIP_GAIN_FROM_BATTLE 3 times, once for each defeated Pokemon
+      // but due to how skipBattleRunMysteryEncounterRewardsPhase is implemented, it only receives it once)
+      expect(friendshipAfter).toBe(friendshipBefore + 20 + FRIENDSHIP_GAIN_FROM_BATTLE);
     });
   });
 
@@ -231,7 +235,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getParty().length).toBe(1);
+      expect(scene.getPlayerParty().length).toBe(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
@@ -261,7 +265,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
 
       const friendshipAfter = scene.currentBattle.mysteryEncounter!.misc.pokemon2.friendship;
-      expect(friendshipAfter).toBe(friendshipBefore + 20 + 2); // +2 extra for friendship gained from winning battle
+      expect(friendshipAfter).toBe(friendshipBefore + 20 + FRIENDSHIP_GAIN_FROM_BATTLE); // 20 from ME + extra for friendship gained from winning battle
     });
   });
 
@@ -310,7 +314,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getParty().length).toBe(1);
+      expect(scene.getPlayerParty().length).toBe(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
@@ -340,7 +344,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
 
       const friendshipAfter = scene.currentBattle.mysteryEncounter!.misc.pokemon3.friendship;
-      expect(friendshipAfter).toBe(friendshipBefore + 20 + 2); // +2 extra for friendship gained from winning battle
+      expect(friendshipAfter).toBe(friendshipBefore + 20 + FRIENDSHIP_GAIN_FROM_BATTLE); // 20 + extra for friendship gained from winning battle
     });
   });
 });

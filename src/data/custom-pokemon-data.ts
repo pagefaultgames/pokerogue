@@ -1,5 +1,5 @@
 import { Abilities } from "#enums/abilities";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { isNullOrUndefined } from "#app/utils";
 import { Nature } from "#enums/nature";
 
