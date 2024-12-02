@@ -1,10 +1,10 @@
 import { BattlerIndex } from "#app/battle";
-import { StatusEffect } from "#app/data/status-effect";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -138,7 +138,7 @@ describe("Abilities - Disguise", () => {
     });
     await game.classicMode.startBattle([ Species.FURRET, Species.MIMIKYU ]);
 
-    const mimikyu = game.scene.getParty()[1]!;
+    const mimikyu = game.scene.getPlayerParty()[1]!;
     expect(mimikyu.formIndex).toBe(bustedForm);
 
     game.move.select(Moves.SPLASH);

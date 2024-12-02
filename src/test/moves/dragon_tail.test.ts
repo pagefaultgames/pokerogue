@@ -1,5 +1,9 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
+import { Status } from "#app/data/status-effect";
+import { Challenges } from "#enums/challenges";
+import { StatusEffect } from "#enums/status-effect";
+import { Type } from "#enums/type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -73,7 +77,7 @@ describe("Moves - Dragon Tail", () => {
       .enemyAbility(Abilities.ROUGH_SKIN);
     await game.classicMode.startBattle([ Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD ]);
 
-    const leadPokemon = game.scene.getParty()[0]!;
+    const leadPokemon = game.scene.getPlayerParty()[0]!;
 
     const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
     const enemySecPokemon = game.scene.getEnemyParty()[1]!;
@@ -105,8 +109,8 @@ describe("Moves - Dragon Tail", () => {
       .enemyAbility(Abilities.ROUGH_SKIN);
     await game.classicMode.startBattle([ Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD ]);
 
-    const leadPokemon = game.scene.getParty()[0]!;
-    const secPokemon = game.scene.getParty()[1]!;
+    const leadPokemon = game.scene.getPlayerParty()[0]!;
+    const secPokemon = game.scene.getPlayerParty()[1]!;
 
     const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
     const enemySecPokemon = game.scene.getEnemyParty()[1]!;
@@ -192,5 +196,123 @@ describe("Moves - Dragon Tail", () => {
     expect(dratini).toBeDefined();
     expect(dratini.hp).toBe(Math.floor(dratini.getMaxHp() / 2));
     expect(game.scene.getPlayerField().length).toBe(1);
+  });
+
+  it("should force switches randomly", async () => {
+    game.override.enemyMoveset(Moves.DRAGON_TAIL)
+      .startingLevel(100)
+      .enemyLevel(1);
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    const [ bulbasaur, charmander, squirtle ] = game.scene.getPlayerParty();
+
+    // Turn 1: Mock an RNG call that calls for switching to 1st backup Pokemon (Charmander)
+    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((range, min: number = 0) => {
+      return min;
+    });
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.DRAGON_TAIL);
+    await game.toNextTurn();
+
+    expect(bulbasaur.isOnField()).toBe(false);
+    expect(charmander.isOnField()).toBe(true);
+    expect(squirtle.isOnField()).toBe(false);
+    expect(bulbasaur.getInverseHp()).toBeGreaterThan(0);
+
+    // Turn 2: Mock an RNG call that calls for switching to 2nd backup Pokemon (Squirtle)
+    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((range, min: number = 0) => {
+      return min + 1;
+    });
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+
+    expect(bulbasaur.isOnField()).toBe(false);
+    expect(charmander.isOnField()).toBe(false);
+    expect(squirtle.isOnField()).toBe(true);
+    expect(charmander.getInverseHp()).toBeGreaterThan(0);
+  });
+
+  it("should not force a switch to a challenge-ineligible Pokemon", async () => {
+    game.override.enemyMoveset(Moves.DRAGON_TAIL)
+      .startingLevel(100)
+      .enemyLevel(1);
+    // Mono-Water challenge, Eevee is ineligible
+    game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, Type.WATER + 1, 0);
+    await game.challengeMode.startBattle([ Species.LAPRAS, Species.EEVEE, Species.TOXAPEX, Species.PRIMARINA ]);
+
+    const [ lapras, eevee, toxapex, primarina ] = game.scene.getPlayerParty();
+
+    // Turn 1: Mock an RNG call that would normally call for switching to Eevee, but it is ineligible
+    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((range, min: number = 0) => {
+      return min;
+    });
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+
+    expect(lapras.isOnField()).toBe(false);
+    expect(eevee.isOnField()).toBe(false);
+    expect(toxapex.isOnField()).toBe(true);
+    expect(primarina.isOnField()).toBe(false);
+    expect(lapras.getInverseHp()).toBeGreaterThan(0);
+  });
+
+  it("should not force a switch to a fainted Pokemon", async () => {
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.DRAGON_TAIL ])
+      .startingLevel(100)
+      .enemyLevel(1);
+    await game.classicMode.startBattle([ Species.LAPRAS, Species.EEVEE, Species.TOXAPEX, Species.PRIMARINA ]);
+
+    const [ lapras, eevee, toxapex, primarina ] = game.scene.getPlayerParty();
+
+    // Turn 1: Eevee faints
+    eevee.hp = 0;
+    eevee.status = new Status(StatusEffect.FAINT);
+    expect(eevee.isFainted()).toBe(true);
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
+    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((range, min: number = 0) => {
+      return min;
+    });
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.DRAGON_TAIL);
+    await game.toNextTurn();
+
+    expect(lapras.isOnField()).toBe(false);
+    expect(eevee.isOnField()).toBe(false);
+    expect(toxapex.isOnField()).toBe(true);
+    expect(primarina.isOnField()).toBe(false);
+    expect(lapras.getInverseHp()).toBeGreaterThan(0);
+  });
+
+  it("should not force a switch if there are no available Pokemon to switch into", async () => {
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.DRAGON_TAIL ])
+      .startingLevel(100)
+      .enemyLevel(1);
+    await game.classicMode.startBattle([ Species.LAPRAS, Species.EEVEE ]);
+
+    const [ lapras, eevee ] = game.scene.getPlayerParty();
+
+    // Turn 1: Eevee faints
+    eevee.hp = 0;
+    eevee.status = new Status(StatusEffect.FAINT);
+    expect(eevee.isFainted()).toBe(true);
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
+    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((range, min: number = 0) => {
+      return min;
+    });
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.DRAGON_TAIL);
+    await game.toNextTurn();
+
+    expect(lapras.isOnField()).toBe(true);
+    expect(eevee.isOnField()).toBe(false);
+    expect(lapras.getInverseHp()).toBeGreaterThan(0);
   });
 });

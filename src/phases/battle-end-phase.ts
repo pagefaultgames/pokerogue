@@ -1,14 +1,14 @@
+import BattleScene from "#app/battle-scene";
 import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
 import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
-import BattleScene from "#app/battle-scene";
 
 export class BattleEndPhase extends BattlePhase {
   /** If true, will increment battles won */
   isVictory: boolean;
 
-  constructor(scene: BattleScene, isVictory: boolean = true) {
+  constructor(scene: BattleScene, isVictory: boolean) {
     super(scene);
 
     this.isVictory = isVictory;
@@ -17,15 +17,16 @@ export class BattleEndPhase extends BattlePhase {
   start() {
     super.start();
 
+    this.scene.gameData.gameStats.battles++;
+    if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave) {
+      this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
+    }
+
     if (this.isVictory) {
       this.scene.currentBattle.addBattleScore(this.scene);
 
-      this.scene.gameData.gameStats.battles++;
       if (this.scene.currentBattle.trainer) {
         this.scene.gameData.gameStats.trainersDefeated++;
-      }
-      if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave) {
-        this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
       }
     }
 
@@ -41,8 +42,8 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    for (const pokemon of this.scene.getParty().filter(p => p.isAllowedInBattle())) {
-      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+    for (const pokemon of this.scene.getPokemonAllowedInBattle()) {
+      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon, false, this.isVictory);
     }
 
     if (this.scene.currentBattle.moneyScattered) {

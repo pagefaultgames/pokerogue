@@ -36,7 +36,7 @@ import {
   HeldItemRequirement,
   TypeRequirement
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { AttackTypeBoosterModifierType, ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import {
   AttackTypeBoosterModifier,
@@ -331,7 +331,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
         const encounter = scene.currentBattle.mysteryEncounter!;
 
         // Player gets different rewards depending on the number of bug types they have
-        const numBugTypes = scene.getParty().filter(p => p.isOfType(Type.BUG, true)).length;
+        const numBugTypes = scene.getPlayerParty().filter(p => p.isOfType(Type.BUG, true)).length;
         const numBugTypesText = i18next.t(`${namespace}:numBugTypes`, { count: numBugTypes });
         encounter.setDialogueToken("numBugTypes", numBugTypesText);
 
@@ -477,12 +477,9 @@ export const BugTypeSuperfanEncounter: MysteryEncounter =
       .withOptionPhase(async (scene: BattleScene) => {
         const encounter = scene.currentBattle.mysteryEncounter!;
         const modifier = encounter.misc.chosenModifier;
+        const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
-        // Remove the modifier if its stacks go to 0
-        modifier.stackCount -= 1;
-        if (modifier.stackCount === 0) {
-          scene.removeModifier(modifier);
-        }
+        chosenPokemon.loseHeldItem(modifier, false);
         scene.updateModifiers(true, true);
 
         const bugNet = generateModifierTypeOption(scene, modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
