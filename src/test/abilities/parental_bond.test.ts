@@ -1,5 +1,5 @@
 import { Type } from "#enums/type";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -8,7 +8,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 
 describe("Abilities - Parental Bond", () => {
@@ -470,4 +470,24 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
     }
   );
+
+  it("should cause Future Sight to hit exactly twice if the user switches out", async () => {
+    game.override.enemyLevel(1000)
+      .moveset(Moves.FUTURE_SIGHT);
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemyPokemon, "damageAndUpdate");
+
+    game.move.select(Moves.FUTURE_SIGHT);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(2);
+    await game.toNextTurn();
+
+    expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
+  });
 });

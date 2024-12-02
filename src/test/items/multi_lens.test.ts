@@ -24,7 +24,7 @@ describe("Items - Multi Lens", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.TACKLE, Moves.TRAILBLAZE, Moves.TACHYON_CUTTER ])
+      .moveset([ Moves.TACKLE, Moves.TRAILBLAZE, Moves.TACHYON_CUTTER, Moves.FUTURE_SIGHT ])
       .ability(Abilities.BALL_FETCH)
       .startingHeldItems([{ name: "MULTI_LENS" }])
       .battleType("single")
@@ -170,6 +170,7 @@ describe("Items - Multi Lens", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 5);
   });
+
   it("should result in correct damage for hp% attacks with 2 lenses + Parental Bond", async () => {
     game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
       .moveset(Moves.SUPER_FANG)
@@ -187,5 +188,24 @@ describe("Items - Multi Lens", () => {
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.25, 5);
+  });
+
+  it("should cause Future Sight to hit exactly twice if the user switches out", async () => {
+    game.override.enemyLevel(1000);
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemyPokemon, "damageAndUpdate");
+
+    game.move.select(Moves.FUTURE_SIGHT);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(2);
+    await game.toNextTurn();
+
+    expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
   });
 });
