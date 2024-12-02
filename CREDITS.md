@@ -221,3 +221,39 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - CodeTappert
 
 # 📰 Wiki
+
+## Wiki Head
+- H.A.R.V.
+
+## Wiki Lead
+- Sangara
+- Zac
+- Smew
+- Brain Frog
+- Hannah
+
+## Editor
+- Prodigy
+- Akuma
+- Dan Gioia
+- Shimizoki
+- Stave
+- NalysArbur
+- Ceimir
+- Solanum Tuberosum
+- Pom
+
+## Artist
+- dub
+- SmashMania
+- Wren
+- Lugiadrien
+
+## Contributor
+- Daleks <3
+- Inferno Vulpix
+- Embri
+- Nekod
+- P0kemonY
+- Scoom
+- BlueVaron
