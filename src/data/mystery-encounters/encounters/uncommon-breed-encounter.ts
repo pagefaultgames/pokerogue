@@ -100,7 +100,9 @@ export const UncommonBreedEncounter: MysteryEncounter =
           hasShadow: true,
           x: -5,
           repeat: true,
-          isPokemon: true
+          isPokemon: true,
+          isShiny: pokemon.shiny,
+          variant: pokemon.variant
         },
       ];
 
@@ -113,13 +115,15 @@ export const UncommonBreedEncounter: MysteryEncounter =
       const encounter = scene.currentBattle.mysteryEncounter!;
       const pokemonSprite = encounter.introVisuals!.getSprites();
 
-      scene.tweens.add({ // Bounce at the end
+      // Bounce at the end, then shiny sparkle if the Pokemon is shiny
+      scene.tweens.add({
         targets: pokemonSprite,
         duration: 300,
         ease: "Cubic.easeOut",
         yoyo: true,
         y: "-=20",
         loop: 1,
+        onComplete: () => encounter.introVisuals?.playShinySparkles()
       });
 
       scene.time.delayedCall(500, () => scene.playSound("battle_anims/PRSFX- Spotlight2"));

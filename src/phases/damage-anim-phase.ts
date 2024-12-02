@@ -1,11 +1,11 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex } from "#app/battle";
+import type BattleScene from "#app/battle-scene";
+import { type BattlerIndex } from "#app/battle";
 import { BattleSpec } from "#enums/battle-spec";
-import { DamageResult, HitResult } from "#app/field/pokemon";
+import { type DamageResult, HitResult } from "#app/field/pokemon";
 import { fixedInt } from "#app/utils";
-import { PokemonPhase } from "./pokemon-phase";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
 
-export class DamagePhase extends PokemonPhase {
+export class DamageAnimPhase extends PokemonPhase {
   private amount: number;
   private damageResult: DamageResult;
   private critical: boolean;

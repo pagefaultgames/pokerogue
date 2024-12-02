@@ -14,6 +14,7 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { fixedInt, getFrameMs, randInt } from "#app/utils";
 import { EggLapsePhase } from "./egg-lapse-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
+import { doShinySparkleAnim } from "#app/field/anims";
 
 
 /**
@@ -329,7 +330,12 @@ export class EggHatchPhase extends Phase {
       this.scene.validateAchv(achvs.HATCH_SHINY);
     }
     this.eggContainer.setVisible(false);
-    this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
+    const spriteKey = this.pokemon.getSpriteKey(true);
+    try {
+      this.pokemonSprite.play(spriteKey);
+    } catch (err: unknown) {
+      console.error(`Failed to play animation for ${spriteKey}`, err);
+    }
     this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
     this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
     this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
@@ -341,8 +347,7 @@ export class EggHatchPhase extends Phase {
       this.pokemon.cry();
       if (isShiny) {
         this.scene.time.delayedCall(fixedInt(500), () => {
-          this.pokemonShinySparkle.play(`sparkle${this.pokemon.variant ? `_${this.pokemon.variant + 1}` : ""}`);
-          this.scene.playSound("se/sparkle");
+          doShinySparkleAnim(this.scene, this.pokemonShinySparkle, this.pokemon.variant);
         });
       }
       this.scene.time.delayedCall(fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {

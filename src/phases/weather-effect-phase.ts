@@ -50,7 +50,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
         };
 
         this.executeForAll((pokemon: Pokemon) => {
-          const immune = !pokemon || !!pokemon.getTypes(true, true).filter(t => this.weather?.isTypeDamageImmune(t)).length;
+          const immune = !pokemon || !!pokemon.getTypes(true, true).filter(t => this.weather?.isTypeDamageImmune(t)).length || pokemon.switchOutStatus;
           if (!immune) {
             inflictDamage(pokemon);
           }
@@ -59,7 +59,11 @@ export class WeatherEffectPhase extends CommonAnimPhase {
     }
 
     this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType) ?? "", null, () => {
-      this.executeForAll((pokemon: Pokemon) => applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather));
+      this.executeForAll((pokemon: Pokemon) => {
+        if (!pokemon.switchOutStatus) {
+          applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather);
+        }
+      });
 
       super.start();
     });

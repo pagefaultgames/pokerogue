@@ -52,7 +52,7 @@ export class AttemptRunPhase extends PokemonPhase {
         enemyPokemon.trySetStatus(StatusEffect.FAINT);
       });
 
-      this.scene.pushPhase(new BattleEndPhase(this.scene));
+      this.scene.pushPhase(new BattleEndPhase(this.scene, false));
       this.scene.pushPhase(new NewBattlePhase(this.scene));
     } else {
       playerPokemon.turnData.failedRunAway = true;
