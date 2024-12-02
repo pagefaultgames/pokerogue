@@ -582,7 +582,13 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
     receivedPokemonTintSprite.setTintFill(getPokeballTintColor(receivedPokemon.pokeball));
 
     [ tradedPokemonSprite, tradedPokemonTintSprite ].map(sprite => {
-      sprite.play(tradedPokemon.getSpriteKey(true));
+      const spriteKey = tradedPokemon.getSpriteKey(true);
+      try {
+        sprite.play(spriteKey);
+      } catch (err: unknown) {
+        console.error(`Failed to play animation for ${spriteKey}`, err);
+      }
+
       sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(tradedPokemon.getTeraType()) });
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", tradedPokemon.getSpriteKey());
@@ -597,7 +603,13 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
     });
 
     [ receivedPokemonSprite, receivedPokemonTintSprite ].map(sprite => {
-      sprite.play(receivedPokemon.getSpriteKey(true));
+      const spriteKey = receivedPokemon.getSpriteKey(true);
+      try {
+        sprite.play(spriteKey);
+      } catch (err: unknown) {
+        console.error(`Failed to play animation for ${spriteKey}`, err);
+      }
+
       sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(tradedPokemon.getTeraType()) });
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", receivedPokemon.getSpriteKey());

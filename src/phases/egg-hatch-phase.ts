@@ -330,7 +330,12 @@ export class EggHatchPhase extends Phase {
       this.scene.validateAchv(achvs.HATCH_SHINY);
     }
     this.eggContainer.setVisible(false);
-    this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
+    const spriteKey = this.pokemon.getSpriteKey(true);
+    try {
+      this.pokemonSprite.play(spriteKey);
+    } catch (err: unknown) {
+      console.error(`Failed to play animation for ${spriteKey}`, err);
+    }
     this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
     this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
     this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);

@@ -105,7 +105,13 @@ export class EvolutionPhase extends Phase {
       this.scene.ui.add(this.evolutionOverlay);
 
       [ this.pokemonSprite, this.pokemonTintSprite, this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
-        sprite.play(this.pokemon.getSpriteKey(true));
+        const spriteKey = this.pokemon.getSpriteKey(true);
+        try {
+          sprite.play(spriteKey);
+        } catch (err: unknown) {
+          console.error(`Failed to play animation for ${spriteKey}`, err);
+        }
+
         sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
         sprite.setPipelineData("ignoreTimeTint", true);
         sprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
@@ -130,7 +136,13 @@ export class EvolutionPhase extends Phase {
       this.pokemon.getPossibleEvolution(this.evolution).then(evolvedPokemon => {
 
         [ this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
-          sprite.play(evolvedPokemon.getSpriteKey(true));
+          const spriteKey = evolvedPokemon.getSpriteKey(true);
+          try {
+            sprite.play(spriteKey);
+          } catch (err: unknown) {
+            console.error(`Failed to play animation for ${spriteKey}`, err);
+          }
+
           sprite.setPipelineData("ignoreTimeTint", true);
           sprite.setPipelineData("spriteKey", evolvedPokemon.getSpriteKey());
           sprite.setPipelineData("shiny", evolvedPokemon.shiny);

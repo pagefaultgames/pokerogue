@@ -56,7 +56,7 @@ import {
   PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { BooleanHolder, executeIf, NumberHolder } from "#app/utils";
+import { BooleanHolder, executeIf, isNullOrUndefined, NumberHolder } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
@@ -106,7 +106,9 @@ export class MoveEffectPhase extends PokemonPhase {
            */
           return super.end();
         }
-        user.resetTurnData();
+        if (isNullOrUndefined(user.turnData)) {
+          user.resetTurnData();
+        }
       }
     }
 
@@ -126,6 +128,14 @@ export class MoveEffectPhase extends PokemonPhase {
       }
 
       user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+
+      // If the user is acting again (such as due to Instruct), reset hitsLeft/hitCount so that
+      // the move executes correctly (ensures all hits of a multi-hit are properly calculated)
+      if (user.turnData.hitsLeft === 0 && user.turnData.hitCount > 0 && user.turnData.extraTurns > 0) {
+        user.turnData.hitsLeft = -1;
+        user.turnData.hitCount = 0;
+        user.turnData.extraTurns--;
+      }
 
       /**
        * If this phase is for the first hit of the invoked move,
@@ -313,7 +323,7 @@ export class MoveEffectPhase extends PokemonPhase {
           }
 
           /**
-           * Create a Promise that applys *all* effects from the invoked move's MoveEffectAttrs.
+           * Create a Promise that applies *all* effects from the invoked move's MoveEffectAttrs.
            * These are ordered by trigger type (see {@linkcode MoveEffectTrigger}), and each trigger
            * type requires different conditions to be met with respect to the move's hit result.
            */
