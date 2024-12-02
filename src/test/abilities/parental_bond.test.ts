@@ -471,7 +471,7 @@ describe("Abilities - Parental Bond", () => {
     }
   );
 
-  it("should cause Future Sight to hit exactly twice if the user switches out", async () => {
+  it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {
     game.override.enemyLevel(1000)
       .moveset(Moves.FUTURE_SIGHT);
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
@@ -488,6 +488,7 @@ describe("Abilities - Parental Bond", () => {
     game.doSwitchPokemon(2);
     await game.toNextTurn();
 
+    // TODO: Update hit count to 1 once Future Sight is fixed to not activate abilities if user is off the field
     expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
   });
 });

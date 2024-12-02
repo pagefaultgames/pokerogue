@@ -190,7 +190,7 @@ describe("Items - Multi Lens", () => {
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.25, 5);
   });
 
-  it("should cause Future Sight to hit exactly twice if the user switches out", async () => {
+  it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {
     game.override.enemyLevel(1000);
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
@@ -206,6 +206,7 @@ describe("Items - Multi Lens", () => {
     game.doSwitchPokemon(2);
     await game.toNextTurn();
 
+    // TODO: Update hit count to 1 once Future Sight is fixed to not activate held items if user is off the field
     expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
   });
 });
