@@ -2,17 +2,18 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { Phase } from "#app/phase";
 import { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
 import * as Utils from "#app/utils";
 import { Mode } from "#app/ui/ui";
 import { cos, sin } from "#app/field/anims";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import Pokemon, { LearnMoveSituation, PlayerPokemon } from "#app/field/pokemon";
 import { getTypeRgb } from "#app/data/type";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
+import { EVOLVE_MOVE } from "#app/data/balance/pokemon-level-moves";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
@@ -21,6 +22,7 @@ export class EvolutionPhase extends Phase {
   private preEvolvedPokemonName: string;
 
   private evolution: SpeciesFormEvolution | null;
+  private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
   private evolutionBgm: AnySound;
   private evolutionHandler: EvolutionSceneHandler;
 
@@ -40,6 +42,7 @@ export class EvolutionPhase extends Phase {
     this.pokemon = pokemon;
     this.evolution = evolution;
     this.lastLevel = lastLevel;
+    this.fusionSpeciesEvolved = evolution instanceof FusionSpeciesFormEvolution;
   }
 
   validate(): boolean {
@@ -103,7 +106,13 @@ export class EvolutionPhase extends Phase {
       globalScene.ui.add(this.evolutionOverlay);
 
       [ this.pokemonSprite, this.pokemonTintSprite, this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
-        sprite.play(this.pokemon.getSpriteKey(true));
+        const spriteKey = this.pokemon.getSpriteKey(true);
+        try {
+          sprite.play(spriteKey);
+        } catch (err: unknown) {
+          console.error(`Failed to play animation for ${spriteKey}`, err);
+        }
+
         sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
         sprite.setPipelineData("ignoreTimeTint", true);
         sprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
@@ -128,7 +137,13 @@ export class EvolutionPhase extends Phase {
       this.pokemon.getPossibleEvolution(this.evolution).then(evolvedPokemon => {
 
         [ this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
-          sprite.play(evolvedPokemon.getSpriteKey(true));
+          const spriteKey = evolvedPokemon.getSpriteKey(true);
+          try {
+            sprite.play(spriteKey);
+          } catch (err: unknown) {
+            console.error(`Failed to play animation for ${spriteKey}`, err);
+          }
+
           sprite.setPipelineData("ignoreTimeTint", true);
           sprite.setPipelineData("spriteKey", evolvedPokemon.getSpriteKey());
           sprite.setPipelineData("shiny", evolvedPokemon.shiny);
@@ -262,7 +277,8 @@ export class EvolutionPhase extends Phase {
       this.evolutionHandler.canCancel = false;
 
       this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => {
-        const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true);
+        const learnSituation: LearnMoveSituation = this.fusionSpeciesEvolved ? LearnMoveSituation.EVOLUTION_FUSED : this.pokemon.fusionSpecies ? LearnMoveSituation.EVOLUTION_FUSED_BASE : LearnMoveSituation.EVOLUTION;
+        const levelMoves = this.pokemon.getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation).filter(lm => lm[0] === EVOLVE_MOVE);
         for (const lm of levelMoves) {
           globalScene.unshiftPhase(new LearnMovePhase(globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]));
         }

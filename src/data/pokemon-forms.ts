@@ -352,6 +352,10 @@ export class MeloettaFormChangePostMoveTrigger extends SpeciesFormChangePostMove
     if (globalScene.gameMode.hasChallenge(Challenges.SINGLE_TYPE)) {
       return false;
     } else {
+      // Meloetta will not transform if it has the ability Sheer Force when using Relic Song
+      if (pokemon.hasAbility(Abilities.SHEER_FORCE)) {
+        return false;
+      }
       return super.canChange(pokemon);
     }
   }

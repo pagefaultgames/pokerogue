@@ -34,7 +34,7 @@ export class EggLapsePhase extends Phase {
       if (eggsToHatchCount >= this.minEggsToSkip && globalScene.eggSkipPreference === 1) {
         globalScene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
           // show prompt for skip, blocking inputs for 1 second
-          globalScene.ui.showText(i18next.t("battle:eggSkipPrompt"), 0);
+          globalScene.ui.showText(i18next.t("battle:eggSkipPrompt", { eggsToHatch: eggsToHatchCount }), 0);
           globalScene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
             this.hatchEggsSkipped(eggsToHatch);
             this.showSummary();

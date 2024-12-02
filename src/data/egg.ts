@@ -18,7 +18,7 @@ export const EGG_SEED = 1073741824;
 
 /** Egg options to override egg properties */
 export interface IEggOptions {
-  /** Id. Used to check if egg type will be manaphy (`id % 204 === 0`) */
+  /** ID. Used to check if egg type will be manaphy (`id % 204 === 0`) */
   id?: number;
   /** Timestamp when this egg got created */
   timestamp?: number;
@@ -36,7 +36,7 @@ export interface IEggOptions {
   scene?: BattleScene;
   /**
    * Sets the tier of the egg. Only species of this tier can be hatched from this egg.
-   * Tier will be overriden if species eggOption is set.
+   * Tier will be overriden if species `eggOption` is set.
    */
   tier?: EggTier;
   /** Sets how many waves it will take till this egg hatches. */
@@ -47,7 +47,7 @@ export interface IEggOptions {
   isShiny?: boolean;
   /** Defines the variant of the pokemon that will hatch from this egg. If no `variantTier` is given the normal variant rates will apply. */
   variantTier?: VariantTier;
-  /** Defines which egg move will be unlocked. 3 = rare egg move. */
+  /** Defines which egg move will be unlocked. `3` = rare egg move. */
   eggMoveIndex?: number;
   /**
    * Defines if the egg will hatch with the hidden ability of this species.
@@ -419,7 +419,7 @@ export class Egg {
     }
 
     /**
-     * Pokemon that are cheaper in their tier get a weight boost. Regionals get a weight penalty
+     * Pokemon that are cheaper in their tier get a weight boost.
      * 1 cost mons get 2x
      * 2 cost mons get 1.5x
      * 4, 6, 8 cost mons get 1.75x
@@ -434,11 +434,7 @@ export class Egg {
     for (const speciesId of speciesPool) {
       // Accounts for species that have starter costs outside of the normal range for their EggTier
       const speciesCostClamped = Phaser.Math.Clamp(speciesStarterCosts[speciesId], minStarterValue, maxStarterValue);
-      let weight = Math.floor((((maxStarterValue - speciesCostClamped) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
-      const species = getPokemonSpecies(speciesId);
-      if (species.isRegional()) {
-        weight = Math.floor(weight / 2);
-      }
+      const weight = Math.floor((((maxStarterValue - speciesCostClamped) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
       speciesWeights.push(totalWeight + weight);
       totalWeight += weight;
     }

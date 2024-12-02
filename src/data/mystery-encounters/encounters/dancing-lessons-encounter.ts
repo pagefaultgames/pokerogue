@@ -92,9 +92,13 @@ export const DancingLessonsEncounter: MysteryEncounter =
     .withCatchAllowed(true)
     .withFleeAllowed(false)
     .withOnVisualsStart(() => {
-      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, globalScene.getEnemyPokemon()!, globalScene.getPlayerPokemon()!);
-      danceAnim.play();
-
+      const oricorio = globalSscene.getEnemyPokemon()!;
+      const danceAnim = new EncounterBattleAnim(EncounterAnim.DANCE, oricorio, globalScene.getPlayerPokemon()!);
+      danceAnim.play(false, () => {
+        if (oricorio.shiny) {
+          oricorio.sparkle();
+        }
+      });
       return true;
     })
     .withIntroDialogue([
@@ -136,7 +140,7 @@ export const DancingLessonsEncounter: MysteryEncounter =
       }
 
       const oricorioData = new PokemonData(enemyPokemon);
-      const oricorio = globalScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, oricorioData);
+      const oricorio = globalScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, false, oricorioData);
 
       // Adds a real Pokemon sprite to the field (required for the animation)
       globalScene.getEnemyParty().forEach(enemyPokemon => {

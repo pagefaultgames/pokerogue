@@ -1,7 +1,6 @@
-import { hasTouchscreen, isMobile } from "#app/touch-controls";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
-import UiHandler from "#app/ui/ui-handler";
+import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { Button } from "#enums/buttons";
@@ -15,9 +14,10 @@ import { globalScene } from "#app/global-scene";
 /**
  * Abstract class for handling UI elements related to settings.
  */
-export default class AbstractSettingsUiHandler extends UiHandler {
+export default class AbstractSettingsUiHandler extends MessageUiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
+  private messageBoxContainer: Phaser.GameObjects.Container;
   private navigationContainer: NavigationMenu;
 
   private scrollCursor: number;
@@ -135,6 +135,23 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.scrollBar = new ScrollBar(this.optionsBg.width - 9, this.optionsBg.y + 5, 4, this.optionsBg.height - 11, this.rowsToDisplay);
     this.scrollBar.setTotalRows(this.settings.length);
 
+    // Two-lines message box
+    this.messageBoxContainer = this.scene.add.container(0, this.scene.scaledCanvas.height);
+    this.messageBoxContainer.setName("settings-message-box");
+    this.messageBoxContainer.setVisible(false);
+
+    const settingsMessageBox = addWindow(this.scene, 0, -1, this.scene.scaledCanvas.width - 2, 48);
+    settingsMessageBox.setOrigin(0, 1);
+    this.messageBoxContainer.add(settingsMessageBox);
+
+    const messageText = addTextObject(this.scene, 8, -40, "", TextStyle.WINDOW, { maxLines: 2 });
+    messageText.setWordWrapWidth(this.scene.game.canvas.width - 60);
+    messageText.setName("settings-message");
+    messageText.setOrigin(0, 0);
+
+    this.messageBoxContainer.add(messageText);
+    this.message = messageText;
+
     this.settingsContainer.add(this.optionsBg);
     this.settingsContainer.add(this.scrollBar);
     this.settingsContainer.add(this.navigationContainer);
@@ -144,6 +161,7 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     this.settingsContainer.add(iconCancel);
     this.settingsContainer.add(actionText);
     this.settingsContainer.add(cancelText);
+    this.settingsContainer.add(this.messageBoxContainer);
 
     ui.add(this.settingsContainer);
 
@@ -326,18 +344,16 @@ export default class AbstractSettingsUiHandler extends UiHandler {
   /**
    * Set the option cursor to the specified position.
    *
-   * @param settingIndex - The index of the setting.
+   * @param settingIndex - The index of the setting or -1 to change the current setting
    * @param cursor - The cursor position to set.
    * @param save - Whether to save the setting to local storage.
    * @returns `true` if the option cursor was set successfully.
    */
   setOptionCursor(settingIndex: number, cursor: number, save?: boolean): boolean {
-    const setting = this.settings[settingIndex];
-
-    if (setting.key === SettingKeys.Touch_Controls && cursor && hasTouchscreen() && isMobile()) {
-      this.getUi().playError();
-      return false;
+    if (settingIndex === -1) {
+      settingIndex = this.cursor + this.scrollCursor;
     }
+    const setting = this.settings[settingIndex];
 
     const lastCursor = this.optionCursors[settingIndex];
 
@@ -352,9 +368,33 @@ export default class AbstractSettingsUiHandler extends UiHandler {
     newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
-      globalScene.gameData.saveSetting(setting.key, cursor);
-      if (this.reloadSettings.includes(setting)) {
-        this.reloadRequired = true;
+      const saveSetting = () => {
+        globalScene.gameData.saveSetting(setting.key, cursor);
+        if (setting.requireReload) {
+          this.reloadRequired = true;
+        }
+      };
+
+      // For settings that ask for confirmation, display confirmation message and a Yes/No prompt before saving the setting
+      if (setting.options[cursor].needConfirmation) {
+        const confirmUpdateSetting = () => {
+          globalScene.ui.revertMode();
+          this.showText("");
+          saveSetting();
+        };
+        const cancelUpdateSetting = () => {
+          globalScene.ui.revertMode();
+          this.showText("");
+          // Put the cursor back to its previous position without saving or asking for confirmation again
+          this.setOptionCursor(settingIndex, lastCursor, false);
+        };
+
+        const confirmationMessage = setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
+        globalScene.ui.showText(confirmationMessage, null, () => {
+          globalScene.ui.setOverlayMode(Mode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
+        });
+      } else {
+        saveSetting();
       }
     }
 
@@ -420,5 +460,10 @@ export default class AbstractSettingsUiHandler extends UiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  override showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    this.messageBoxContainer.setVisible(!!text?.length);
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 }

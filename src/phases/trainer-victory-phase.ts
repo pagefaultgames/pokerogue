@@ -9,6 +9,8 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { globalScene } from "#app/global-scene";
+import { Biome } from "#app/enums/biome";
+import { achvs } from "#app/system/achv";
 
 export class TrainerVictoryPhase extends BattlePhase {
   constructor() {
@@ -34,10 +36,16 @@ export class TrainerVictoryPhase extends BattlePhase {
     }
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
+    // Validate Voucher for boss trainers
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
       if (!globalScene.validateVoucher(vouchers[TrainerType[trainerType]]) && globalScene.currentBattle.trainer?.config.isBoss) {
         globalScene.unshiftPhase(new ModifierRewardPhase([ modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
       }
+    }
+    // Breeders in Space achievement
+    if (this.scene.arena.biomeType === Biome.SPACE
+      && (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)) {
+      this.scene.validateAchv(achvs.BREEDERS_IN_SPACE);
     }
 
     globalScene.ui.showText(i18next.t("battle:trainerDefeated", { trainerName: globalScene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) }), null, () => {

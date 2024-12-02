@@ -4,11 +4,13 @@ import {
   AddSecondStrikeAbAttr,
   AlwaysHitAbAttr,
   applyPostAttackAbAttrs,
+  applyPostDamageAbAttrs,
   applyPostDefendAbAttrs,
   applyPreAttackAbAttrs,
   IgnoreMoveEffectsAbAttr,
   MaxMultiHitAbAttr,
   PostAttackAbAttr,
+  PostDamageAbAttr,
   PostDefendAbAttr,
   TypeImmunityAbAttr,
 } from "#app/data/ability";
@@ -92,8 +94,20 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
     /** If the user was somehow removed from the field and it's not a delayed attack, end this phase */
-    if (!user.isOnField() && !isDelayedAttack) {
-      return super.end();
+    if (!user.isOnField()) {
+      if (!isDelayedAttack) {
+        return super.end();
+      } else {
+        if (!user.scene) {
+          /**
+           * This happens if the Pokemon that used the delayed attack gets caught and released
+           * on the turn the attack would have triggered. Having access to the global scene
+           * in the future may solve this entirely, so for now we just cancel the hit
+           */
+          return super.end();
+        }
+        user.resetTurnData();
+      }
     }
 
     /**
@@ -112,6 +126,14 @@ export class MoveEffectPhase extends PokemonPhase {
       }
 
       user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+
+      // If the user is acting again (such as due to Instruct), reset hitsLeft/hitCount so that
+      // the move executes correctly (ensures all hits of a multi-hit are properly calculated)
+      if (user.turnData.hitsLeft === 0 && user.turnData.hitCount > 0 && user.turnData.extraTurns > 0) {
+        user.turnData.hitsLeft = -1;
+        user.turnData.hitCount = 0;
+        user.turnData.extraTurns--;
+      }
 
       /**
        * If this phase is for the first hit of the invoked move,
@@ -174,7 +196,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       const playOnEmptyField = globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false;
       // Move animation only needs one target
-      new MoveAnim(move.id as Moves, user, this.getFirstTarget()!.getBattlerIndex()!, playOnEmptyField).play(move.hitsSubstitute(user, this.getFirstTarget()!), () => {
+      new MoveAnim(move.id as Moves, user, this.getFirstTarget()!.getBattlerIndex(), playOnEmptyField).play(move.hitsSubstitute(user, this.getFirstTarget()!), () => {
         /** Has the move successfully hit a target (for damage) yet? */
         let hasHit: boolean = false;
         for (const target of targets) {
@@ -216,9 +238,11 @@ export class MoveEffectPhase extends PokemonPhase {
            * If the move missed a target, stop all future hits against that target
            * and move on to the next target (if there is one).
            */
-          if (isCommanding || (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()])) {
+          if (target.switchOutStatus || isCommanding || (!isImmune && !isProtected && !targetHitChecks[target.getBattlerIndex()])) {
             this.stopMultiHit(target);
-            globalScene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            if (!target.switchOutStatus) {
+              globalScene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+            }
             if (moveHistoryEntry.result === MoveResult.PENDING) {
               moveHistoryEntry.result = MoveResult.MISS;
             }
@@ -287,10 +311,17 @@ export class MoveEffectPhase extends PokemonPhase {
            */
           if (lastHit) {
             globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+            /**
+             * Multi-Lens, Multi Hit move and Parental Bond check for PostDamageAbAttr
+             * other damage source are calculated in damageAndUpdate in pokemon.ts
+             */
+            if (user.turnData.hitCount > 1) {
+              applyPostDamageAbAttrs(PostDamageAbAttr, target, 0, target.hasPassive(), false, [], user);
+            }
           }
 
           /**
-           * Create a Promise that applys *all* effects from the invoked move's MoveEffectAttrs.
+           * Create a Promise that applies *all* effects from the invoked move's MoveEffectAttrs.
            * These are ordered by trigger type (see {@linkcode MoveEffectTrigger}), and each trigger
            * type requires different conditions to be met with respect to the move's hit result.
            */

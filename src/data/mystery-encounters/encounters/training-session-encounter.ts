@@ -226,8 +226,8 @@ export const TrainingSessionEncounter: MysteryEncounter =
           const onBeforeRewardsPhase = () => {
             queueEncounterMessage(`${namespace}:option.2.finished`);
             // Add the pokemon back to party with Nature change
-            playerPokemon.setNature(encounter.misc.chosenNature);
-            globalScene.gameData.setPokemonCaught(playerPokemon, false);
+            playerPokemon.setCustomNature(encounter.misc.chosenNature);
+            globalScene.gameData.unlockSpeciesNature(playerPokemon.species, encounter.misc.chosenNature);
 
             // Add pokemon and modifiers back
             globalScene.getPlayerParty().push(playerPokemon);

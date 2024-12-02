@@ -88,6 +88,7 @@ export enum CommonAnim {
     RAGING_BULL_FIRE,
     RAGING_BULL_WATER,
     SALT_CURE,
+    POWDER,
     SUNNY = 2100,
     RAIN,
     SANDSTORM,

@@ -205,7 +205,7 @@ export function getHighestStatTotalPlayerPokemon(isAllowed: boolean = false, isF
  * @param allowMythical
  * @returns
  */
-export function getRandomSpeciesByStarterTier(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[], allowSubLegendary: boolean = true, allowLegendary: boolean = true, allowMythical: boolean = true): Species {
+export function getRandomSpeciesByStarterCost(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[], allowSubLegendary: boolean = true, allowLegendary: boolean = true, allowMythical: boolean = true): Species {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
@@ -288,7 +288,10 @@ export function applyDamageToPokemon(pokemon: PlayerPokemon, damage: number) {
   if (damage <= 0) {
     console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
   }
-
+  // If a Pokemon would faint from the damage applied, its HP is instead set to 1.
+  if (pokemon.isAllowedInBattle() && pokemon.hp - damage <= 0) {
+    damage = pokemon.hp - 1;
+  }
   applyHpChangeToPokemon(pokemon, -damage);
 }
 

@@ -216,6 +216,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
             species: getPokemonSpecies(Species.GREEDENT),
             isBoss: true,
             bossSegments: 3,
+            shiny: false, // Shiny lock because of consistency issues between the different options
             moveSet: [ Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH ],
             modifierConfigs: bossModifierConfigs,
             tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
@@ -353,9 +354,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter =
         })
         .withOptionPhase(async () => {
           // Let it have the food
-          // Greedent joins the team, level equal to 2 below highest party member
+          // Greedent joins the team, level equal to 2 below highest party member (shiny locked)
           const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-          const greedent = new EnemyPokemon(getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false);
+          const greedent = new EnemyPokemon(getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false, true);
           greedent.moveset = [ new PokemonMove(Moves.THRASH), new PokemonMove(Moves.BODY_PRESS), new PokemonMove(Moves.STUFF_CHEEKS), new PokemonMove(Moves.SLACK_OFF) ];
           greedent.passive = true;
 

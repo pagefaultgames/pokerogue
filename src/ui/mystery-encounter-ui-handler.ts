@@ -369,9 +369,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       let text: string | null;
       if (option.hasRequirements() && this.optionsMeetsReqs[i] && (option.optionMode === MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
         // Options with special requirements that are met are automatically colored green
-        text = getEncounterText(label, TextStyle.SUMMARY_GREEN);
+        text = getEncounterText(label, TextStyle.ME_OPTION_SPECIAL);
       } else {
-        text = getEncounterText(label, optionDialogue.style ? optionDialogue.style : TextStyle.WINDOW);
+        text = getEncounterText(label, optionDialogue.style ? optionDialogue.style : TextStyle.ME_OPTION_DEFAULT);
       }
 
       if (text) {

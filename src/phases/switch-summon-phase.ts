@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "#app/data/ability";
+import { applyPreSwitchOutAbAttrs, PostDamageForceSwitchAbAttr, PreSwitchOutAbAttr } from "#app/data/ability";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
@@ -166,10 +166,11 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const currentCommand = globalScene.currentBattle.turnCommands[this.fieldIndex]?.command;
     const lastPokemonIsForceSwitchedAndNotFainted = lastUsedMove?.hasAttr(ForceSwitchOutAttr) && !this.lastPokemon.isFainted();
+    const lastPokemonHasForceSwitchAbAttr = this.lastPokemon.hasAbilityWithAttr(PostDamageForceSwitchAbAttr) && !this.lastPokemon.isFainted();
 
     // Compensate for turn spent summoning
     // Or compensate for force switch move if switched out pokemon is not fainted
-    if (currentCommand === Command.POKEMON || lastPokemonIsForceSwitchedAndNotFainted) {
+    if (currentCommand === Command.POKEMON || lastPokemonIsForceSwitchedAndNotFainted || lastPokemonHasForceSwitchAbAttr) {
       pokemon.battleSummonData.turnCount--;
       pokemon.battleSummonData.waveTurnCount--;
     }

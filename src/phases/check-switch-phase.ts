@@ -5,7 +5,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
-import { PostSummonPhase } from "./post-summon-phase";
 import { SummonMissingPhase } from "./summon-missing-phase";
 import { SwitchPhase } from "./switch-phase";
 import { SwitchType } from "#enums/switch-type";
@@ -54,7 +53,6 @@ export class CheckSwitchPhase extends BattlePhase {
     globalScene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
       globalScene.ui.setMode(Mode.CONFIRM, () => {
         globalScene.ui.setMode(Mode.MESSAGE);
-        globalScene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
         globalScene.unshiftPhase(new SwitchPhase(SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
         this.end();
       }, () => {

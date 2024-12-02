@@ -312,6 +312,10 @@ export class PokemonAnimPhase extends BattlePhase {
     // Note: unlike the other Commander animation, this is played through the
     // Dondozo instead of the Tatsugiri.
     const tatsugiri = this.pokemon.getAlly();
+    if (isNullOrUndefined(tatsugiri)) {
+      console.warn("Aborting COMMANDER_REMOVE anim: Tatsugiri is undefined");
+      return this.end();
+    }
 
     const tatsuSprite = globalScene.addPokemonSprite(
       tatsugiri,

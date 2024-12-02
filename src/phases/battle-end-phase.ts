@@ -8,7 +8,7 @@ export class BattleEndPhase extends BattlePhase {
   /** If true, will increment battles won */
   isVictory: boolean;
 
-  constructor(isVictory: boolean = true) {
+  constructor(isVictory: boolean) {
     super();
 
     this.isVictory = isVictory;
@@ -17,15 +17,16 @@ export class BattleEndPhase extends BattlePhase {
   start() {
     super.start();
 
+    this.scene.gameData.gameStats.battles++;
+    if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave) {
+      this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
+    }
+
     if (this.isVictory) {
       globalScene.currentBattle.addBattleScore();
 
-      globalScene.gameData.gameStats.battles++;
       if (globalScene.currentBattle.trainer) {
         globalScene.gameData.gameStats.trainersDefeated++;
-      }
-      if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave) {
-        globalScene.gameData.gameStats.highestEndlessWave = globalScene.currentBattle.waveIndex + 1;
       }
     }
 
@@ -42,7 +43,7 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getPokemonAllowedInBattle()) {
-      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
+      applyPostBattleAbAttrs(PostBattleAbAttr, pokemon, false, this.isVictory);
     }
 
     if (globalScene.currentBattle.moneyScattered) {

@@ -8,7 +8,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../utils/encounter-phase-utils";
-import { getRandomPlayerPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { getRandomPlayerPokemon, getRandomSpeciesByStarterCost } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
@@ -174,7 +174,7 @@ export const DarkDealEncounter: MysteryEncounter =
           const roll = randSeedInt(100);
           const starterTier: number | [number, number] =
             roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [ 9, 10 ];
-          const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterTier(starterTier, excludedBosses, bossTypes));
+          const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes));
           const pokemonConfig: EnemyPokemonConfig = {
             species: bossSpecies,
             isBoss: true,

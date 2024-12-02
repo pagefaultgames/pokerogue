@@ -92,6 +92,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
           {
             species: getPokemonSpecies(Species.GARBODOR),
             isBoss: true,
+            shiny: false,
             formIndex: 1,
             bossSegmentModifier: 1,
             moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ],

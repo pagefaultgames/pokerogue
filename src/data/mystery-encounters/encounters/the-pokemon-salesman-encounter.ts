@@ -4,8 +4,8 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { catchPokemon, getRandomSpeciesByStarterTier, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { catchPokemon, getRandomSpeciesByStarterCost, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Species } from "#enums/species";
 import { PokeballType } from "#enums/pokeball";
@@ -17,6 +17,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
+import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/thePokemonSalesman";
@@ -60,24 +61,22 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
     .withOnInit(() => {
       const encounter = globalScene.currentBattle.mysteryEncounter!;
 
-      let species = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
+      let species = getSalesmanSpeciesOffer();
       let tries = 0;
 
       // Reroll any species that don't have HAs
       while ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) && tries < 5) {
-        species = getPokemonSpecies(getRandomSpeciesByStarterTier([ 0, 5 ], undefined, undefined, false, false, false));
+        species = getSalesmanSpeciesOffer();
         tries++;
       }
 
       let pokemon: PlayerPokemon;
       if (randSeedInt(SHINY_MAGIKARP_WEIGHT) === 0 || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) {
-        // If no HA mon found or you roll 1%, give shiny Magikarp
+        // If no HA mon found or you roll 1%, give shiny Magikarp with random variant
         species = getPokemonSpecies(Species.MAGIKARP);
-        const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(species, 5, hiddenIndex, species.formIndex, undefined, true, 0);
+        pokemon = new PlayerPokemon(species, 5, 2, species.formIndex, undefined, true);
       } else {
-        const hiddenIndex = species.ability2 ? 2 : 1;
-        pokemon = new PlayerPokemon(species, 5, hiddenIndex, species.formIndex);
+        pokemon = new PlayerPokemon(species, 5, 2, species.formIndex);
       }
       pokemon.generateAndPopulateMoveset();
 
@@ -87,7 +86,9 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
         fileRoot: fileRoot,
         hasShadow: true,
         repeat: true,
-        isPokemon: true
+        isPokemon: true,
+        isShiny: pokemon.shiny,
+        variant: pokemon.variant
       });
 
       const starterTier = speciesStarterCosts[species.speciesId];
@@ -164,3 +165,10 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter =
       }
     )
     .build();
+
+/**
+ * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
+ */
+export function getSalesmanSpeciesOffer(): PokemonSpecies {
+  return getPokemonSpecies(getRandomSpeciesByStarterCost([ 0, 5 ], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false));
+}

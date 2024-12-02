@@ -194,10 +194,10 @@ async function summonPlayerPokemon() {
       playerAnimationPromise = summonPlayerPokemonAnimation(playerPokemon);
     });
 
-    // Also loads Wobbuffet data
+    // Also loads Wobbuffet data (cannot be shiny)
     const enemySpecies = getPokemonSpecies(Species.WOBBUFFET);
     globalScene.currentBattle.enemyParty = [];
-    const wobbuffet = globalScene.addEnemyPokemon(enemySpecies, encounter.misc.playerPokemon.level, TrainerSlot.NONE, false);
+    const wobbuffet = globalScene.addEnemyPokemon(enemySpecies, encounter.misc.playerPokemon.level, TrainerSlot.NONE, false, true);
     wobbuffet.ivs = [ 0, 0, 0, 0, 0, 0 ];
     wobbuffet.setNature(Nature.MILD);
     wobbuffet.setAlpha(0);

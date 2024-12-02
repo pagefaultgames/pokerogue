@@ -23,21 +23,23 @@ export class TurnEndPhase extends FieldPhase {
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
 
     const handlePokemon = (pokemon: Pokemon) => {
-      pokemon.lapseTags(BattlerTagLapseType.TURN_END);
+      if (!pokemon.switchOutStatus) {
+        pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
-      globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
+        globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
-      if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
-        globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
-          Math.max(pokemon.getMaxHp() >> 4, 1), i18next.t("battle:turnEndHpRestore", { pokemonName: getPokemonNameWithAffix(pokemon) }), true));
+        if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
+          this.scene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
+            Math.max(pokemon.getMaxHp() >> 4, 1), i18next.t("battle:turnEndHpRestore", { pokemonName: getPokemonNameWithAffix(pokemon) }), true));
+        }
+
+        if (!pokemon.isPlayer()) {
+          globalScene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
+          globalScene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
+        }
+
+        applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
       }
-
-      if (!pokemon.isPlayer()) {
-        globalScene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
-        globalScene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
-      }
-
-      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
 
       globalScene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
 

@@ -21,7 +21,6 @@ import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { achvs } from "#app/system/achv";
 import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { Type } from "#enums/type";
 import { getPokeballTintColor } from "#app/data/pokeball";
@@ -518,12 +517,6 @@ function removePokemonFromPartyAndStoreHeldItems(encounter: MysteryEncounter, ch
   ];
 }
 
-function checkAchievement() {
-  if (globalScene.arena.biomeType === Biome.SPACE) {
-    globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);
-  }
-}
-
 function restorePartyAndHeldItems() {
   const encounter = globalScene.currentBattle.mysteryEncounter!;
   // Restore original party
@@ -615,8 +608,6 @@ function onGameOver() {
 function doPostEncounterCleanup() {
   const encounter = globalScene.currentBattle.mysteryEncounter!;
   if (!encounter.misc.encounterFailed) {
-    // Give achievement if in Space biome
-    checkAchievement();
     // Give 20 friendship to the chosen pokemon
     encounter.misc.chosenPokemon.addFriendship(FRIENDSHIP_ADDED);
     restorePartyAndHeldItems();

@@ -138,7 +138,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter =
             newNature = randSeedInt(25) as Nature;
           }
 
-          chosenPokemon.customPokemonData.nature = newNature;
+          chosenPokemon.setCustomNature(newNature);
           encounter.setDialogueToken("newNature", getNatureName(newNature));
           queueEncounterMessage(`${namespace}:cheap_side_effects`);
           setEncounterExp([ chosenPokemon.id ], 100);

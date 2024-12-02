@@ -118,6 +118,7 @@ export default class RunInfoUiHandler extends UiHandler {
     this.runResultContainer = globalScene.add.container(0, 24);
     const runResultWindow = addWindow(0, 0, this.statsBgWidth - 11, 65);
     runResultWindow.setOrigin(0, 0);
+    runResultWindow.setName("Run_Result_Window");
     this.runResultContainer.add(runResultWindow);
     if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
       this.parseRunResult();
@@ -254,8 +255,6 @@ export default class RunInfoUiHandler extends UiHandler {
    * Mystery Encounters contain sprites associated with MEs + the title of the specific ME.
    */
   private parseRunStatus() {
-    const runStatusText = addTextObject(6, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex} - ${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize : "65px", lineSpacing: 0.1 });
-
     const enemyContainer = globalScene.add.container(0, 0);
     this.runResultContainer.add(enemyContainer);
     if (this.runInfo.battleType === BattleType.WILD) {
@@ -271,7 +270,7 @@ export default class RunInfoUiHandler extends UiHandler {
         const pokeball = globalScene.add.sprite(0, 0, "pb");
         pokeball.setFrame(getPokeballAtlasKey(p.pokeball));
         pokeball.setScale(0.5);
-        pokeball.setPosition(52 + ((i % row_limit) * 8), (i <= 2) ? 18 : 25);
+        pokeball.setPosition(58 + ((i % row_limit) * 8), (i <= 2) ? 18 : 25);
         enemyContainer.add(pokeball);
       });
       const trainerObj = this.runInfo.trainer.toTrainer();
@@ -286,7 +285,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const descContainer = globalScene.add.container(0, 0);
       const textBox = addTextObject(0, 0, boxString, TextStyle.WINDOW, { fontSize : "35px", wordWrap: { width: 200 }});
       descContainer.add(textBox);
-      descContainer.setPosition(52, 29);
+      descContainer.setPosition(55, 32);
       this.runResultContainer.add(descContainer);
     } else if (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER) {
       const encounterExclaim = globalScene.add.sprite(0, 0, "encounter_exclaim");
@@ -303,7 +302,17 @@ export default class RunInfoUiHandler extends UiHandler {
       this.runResultContainer.add([ encounterExclaim, subSprite, descContainer ]);
     }
 
-    this.runResultContainer.add(runStatusText);
+    const runResultWindow = this.runResultContainer.getByName("Run_Result_Window") as Phaser.GameObjects.Image;
+    const windowCenterX = runResultWindow.getTopCenter().x;
+    const windowBottomY = runResultWindow.getBottomCenter().y;
+
+    const runStatusText = addTextObject(this.scene, windowCenterX, 5, `${i18next.t("saveSlotSelectUiHandler:wave")} ${this.runInfo.waveIndex}`, TextStyle.WINDOW, { fontSize : "60px", lineSpacing: 0.1 });
+    runStatusText.setOrigin(0.5, 0);
+
+    const currentBiomeText = addTextObject(this.scene, windowCenterX, windowBottomY - 5, `${getBiomeName(this.runInfo.arena.biome)}`, TextStyle.WINDOW, { fontSize: "60px" });
+    currentBiomeText.setOrigin(0.5, 1);
+
+    this.runResultContainer.add([ runStatusText, currentBiomeText ]);
     this.runContainer.add(this.runResultContainer);
   }
 
@@ -387,12 +396,12 @@ export default class RunInfoUiHandler extends UiHandler {
           tObjSprite.setPosition(-9, -3);
           tObjPartnerSprite.setScale(0.55);
           doubleContainer.add([ tObjSprite, tObjPartnerSprite ]);
-          doubleContainer.setPosition(28, 40);
+          doubleContainer.setPosition(28, 34);
         }
         enemyContainer.add(doubleContainer);
       } else {
-        const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.65;
-        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [ 12, 28 ] : [ 32, 36 ];
+        const scale = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? 0.35 : 0.55;
+        const position = (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) ? [ 12, 28 ] : [ 30, 32 ];
         tObjSprite.setScale(scale, scale);
         tObjSprite.setPosition(position[0], position[1]);
         enemyContainer.add(tObjSprite);
@@ -518,7 +527,8 @@ export default class RunInfoUiHandler extends UiHandler {
     const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
     const runMoney = Utils.formatMoney(globalScene.moneyFormat, this.runInfo.money);
-    runInfoText.appendText(`[color=${getTextColor(TextStyle.MONEY)}]${i18next.t("battleScene:moneyOwned", { formattedMoney : runMoney })}[/color]`);
+    const moneyTextColor = getTextColor(TextStyle.MONEY_WINDOW, false, this.scene.uiTheme);
+    runInfoText.appendText(`[color=${moneyTextColor}]${i18next.t("battleScene:moneyOwned", { formattedMoney : runMoney })}[/color]`);
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);
     // Luck

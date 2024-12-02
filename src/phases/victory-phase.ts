@@ -41,7 +41,7 @@ export class VictoryPhase extends PokemonPhase {
     }
 
     if (!globalScene.getEnemyParty().find(p => globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true))) {
-      globalScene.pushPhase(new BattleEndPhase());
+      globalScene.pushPhase(new BattleEndPhase(true));
       if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
         globalScene.pushPhase(new TrainerVictoryPhase());
       }

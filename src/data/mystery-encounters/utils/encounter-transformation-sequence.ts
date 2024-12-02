@@ -54,7 +54,13 @@ export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, 
     pokemonEvoTintSprite.setTintFill(0xFFFFFF);
 
     [ pokemonSprite, pokemonTintSprite, pokemonEvoSprite, pokemonEvoTintSprite ].map(sprite => {
-      sprite.play(previousPokemon.getSpriteKey(true));
+      const spriteKey = previousPokemon.getSpriteKey(true);
+      try {
+        sprite.play(spriteKey);
+      } catch (err: unknown) {
+        console.error(`Failed to play animation for ${spriteKey}`, err);
+      }
+
       sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(previousPokemon.getTeraType()) });
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", previousPokemon.getSpriteKey());
@@ -69,7 +75,13 @@ export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, 
     });
 
     [ pokemonEvoSprite, pokemonEvoTintSprite ].map(sprite => {
-      sprite.play(transformPokemon.getSpriteKey(true));
+      const spriteKey = transformPokemon.getSpriteKey(true);
+      try {
+        sprite.play(spriteKey);
+      } catch (err: unknown) {
+        console.error(`Failed to play animation for ${spriteKey}`, err);
+      }
+
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", transformPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", transformPokemon.shiny);

@@ -39,7 +39,13 @@ export class FormChangePhase extends EvolutionPhase {
     this.pokemon.getPossibleForm(this.formChange).then(transformedPokemon => {
 
       [ this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
-        sprite.play(transformedPokemon.getSpriteKey(true));
+        const spriteKey = transformedPokemon.getSpriteKey(true);
+        try {
+          sprite.play(spriteKey);
+        } catch (err: unknown) {
+          console.error(`Failed to play animation for ${spriteKey}`, err);
+        }
+
         sprite.setPipelineData("ignoreTimeTint", true);
         sprite.setPipelineData("spriteKey", transformedPokemon.getSpriteKey());
         sprite.setPipelineData("shiny", transformedPokemon.shiny);
