@@ -34,6 +34,7 @@
 - Pokémon Emerald
 - Pokémon Black/White
 
+
 # 🎨 Art
 
 ## Backgrounds
@@ -106,6 +107,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 ## Move Animations
 - Pokémon Reborn
 
+
 # ⚖️ Balance
 
 ## Balance Team
@@ -125,6 +127,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 ## Past Contributors
 - chrysomelinae (Mystery Events)
 - AsdarDevelops (Mystery Events)
+
 
 # 💻 Development
 
@@ -215,10 +218,118 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - Dakurei
 - Brain Frog
 
+
 # 🌎 Translation
 
-## 🇩🇪 German
+## In-Game Translators
+
+### 🇩🇪 German (de)
 - CodeTappert
+
+### 🇪🇸 Spanish (es-ES)
+- Dan Stevenson
+- Javi
+- Lily Alterni
+- Qyxgames
+
+### 🇫🇷 French (fr)
+- Lugiadrien
+
+### 🇮🇹 Italian (it)
+- Nicus
+
+### 🇯🇵 Japanese (ja)
+- 6mozuke9
+- Chapybara
+- PeachFresca
+
+### 🇰🇷 Korean (ko)
+- Enoch
+- KimJeongSun
+- Returntoice
+- sodamelon
+
+### 🇵🇹 Portuguese (pt-BR)
+- Zé Ricardo
+
+### 🇨🇳 Chinese (zh-CN)
+- dddsenic
+- mercurius
+- VittorioVeneto
+- Yonmaru
+
+### 🇹🇼 Chinese (zh-TW)
+- mercurius
+- Seagull
+
+### Past contributors
+- Asdar (es-ES)
+- Rafa (es-ES)
+- GINK-SS (ko)
+- prostagma (pt-BR)
+- Ei (zh-TW)
+
+## Wiki Translators
+
+### 🇪🇸 Spanish (es-ES)
+- victorcooler
+
+### 🇫🇷 French (fr)
+- Evan
+- Mitsue
+- Papier
+- Sangara
+- Voltarix
+
+### 🇮🇹 Italian (it)
+- Purce
+- T-reds
+
+### 🇰🇷 Korean (ko)
+- LeKaaN
+- Returntoice
+- sodamelon
+
+### 🇵🇱 Polish (pl)
+- Talo
+
+### 🇵🇹 Portuguese (pt-BR)
+- Beast
+- Sushi
+- Zé Ricardo
+
+### 🇨🇳 Chinese (zh-CN)
+- jw-0-
+
+### Past contributors
+- Dietaube (de)
+- Gnorpelltroll (de)
+- xRegix (de)
+- Broly Ikari (fr)
+- Leo Edgar_Zimmer (fr)
+- Telor (fr)
+- dorri (ko)
+- Little Moder_eldenring (ko)
+- Andy (zh-CN)
+- Black Feather (zh-CN)
+- itschili (zh-CN)
+- RimKnight (zh-CN)
+- Yubari (zh-CN)
+
+## 🇺🇸 English Proofreaders
+- Cheyu
+- Faust
+- HaywiredUp
+- Irridescence
+- Ke'ahi
+- Louie
+- Nully
+- PeD
+- The Programmer
+
+### Past contributors
+- I...
+
 
 # 📰 Wiki
 
@@ -258,6 +369,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - Scoom
 - BlueVaron
 
+
 # ☎️ Discord
 
 ## Head Moderator
@@ -279,6 +391,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - Kat
 - lyn
 - Pom
+
 
 # ✨ Special Thanks
 
