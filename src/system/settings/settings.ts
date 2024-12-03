@@ -928,6 +928,10 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
               //   handler: () => changeLocaleHandler("ca-ES")
               // },
               {
+                label: "Română",
+                handler: () => changeLocaleHandler("ro")
+              },
+              {
                 label: i18next.t("settings:back"),
                 handler: () => cancelHandler()
               }
