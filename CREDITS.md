@@ -191,7 +191,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - rationality6
 - Neverblade
 - Corrade
-- Admiral-Billy (also created the offline app)
+- Admiral-Billy
 - okimin
 - Arxalc
 - PrabbyDD
@@ -401,3 +401,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - Sapphire
 - Javi
 - roi
+
+## External Tools
+- Ydarissep (RogueDex)
+- Admiral-Billy (Offline App - Desktop)
