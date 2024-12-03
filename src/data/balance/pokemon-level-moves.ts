@@ -16,9 +16,9 @@ interface PokemonSpeciesFormLevelMoves {
 }
 
 /** Moves that can only be learned with a memory-mushroom */
-const RELEARN_MOVE = -1;
+export const RELEARN_MOVE = -1;
 /** Moves that can only be learned with an evolve */
-const EVOLVE_MOVE = 0;
+export const EVOLVE_MOVE = 0;
 
 export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.BULBASAUR]: [

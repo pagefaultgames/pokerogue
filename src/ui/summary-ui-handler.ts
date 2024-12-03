@@ -321,8 +321,12 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 4));
     this.numberText.setColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
     this.numberText.setShadowColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
-
-    this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
+    const spriteKey = this.pokemon.getSpriteKey(true);
+    try {
+      this.pokemonSprite.play(spriteKey);
+    } catch (err: unknown) {
+      console.error(`Failed to play animation for ${spriteKey}`, err);
+    }
     this.pokemonSprite.setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()));
     this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
     this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
