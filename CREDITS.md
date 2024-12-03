@@ -405,4 +405,4 @@ In addition to the list below, please check [the PokéRogue wiki](https://wiki.p
 ## External Tools
 - Ydarissep (RogueDex)
 - Admiral-Billy (Offline App - Desktop)
-- Red aka Red7s (iOS App)
+- Red aka StonedModder (iOS App)
