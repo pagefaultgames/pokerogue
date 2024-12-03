@@ -73,7 +73,7 @@
 - pkmn_realidea (Paid Commissions)
 
 ## Pokémon Sprites and Animation
-In addition to the list below, please check [the PokéRogue wiki](https://wiki.pokerogue.net/credits:credits) for a full list of Pokémon Sprite credits.
+In addition to the lists below, please check [the PokéRogue wiki](https://wiki.pokerogue.net/credits:credits) for a more detailed list of Pokémon Sprite credits.
 
 - GAMEFREAK (Pokémon Black/White 2)
 - Smogon Sprite Project (Various Artists)
@@ -81,7 +81,6 @@ In addition to the list below, please check [the PokéRogue wiki](https://wiki.p
 - Nolo33
 - Ebaru
 - EricLostie
-- KingOfThe-X-Roads
 - kiriaura
 - Caruban
 - Sopita_Yorita
@@ -99,10 +98,224 @@ In addition to the list below, please check [the PokéRogue wiki](https://wiki.p
 - Fleimer_
 - bizcoeindoloro
 - mangalos810
-- Involuntary-Twitch
 - selstar
-- koda_want_to_sleep
 - thedreadedden
+
+### Static Sprites and Base Shiny Replacements Credits
+- AMVictory
+- Antiant
+- Arhops
+- arinoelle
+- Arkeis
+- aXl
+- BananaToast
+- Basic Vanillite
+- BlackWhiteRobin
+- Blaquaza
+- Branflakes325
+- Brylark
+- Buna
+- Bynine
+- Corson
+- Cynda
+- “Diashi” diazhi
+- Dleep
+- doomchaos
+- Espeon Scientist
+- Farriella
+- fishbowlsoul90
+- “Follower” rulerofthesea11
+- Galifia
+- GeoisEvil
+- G.E.Z.
+- Glustora
+- Harrie
+- HealnDeal
+- Hematite
+- HM100
+- Ice-cold Claws
+- Involuntary Twitch
+- “Jay” itsamejay
+- KattenK
+- KingOfThe-X-Roads
+- KyleDove
+- Kyleo
+- Kyuzeth
+- Larryturbo
+- Layell
+- Legitimate Username
+- leParagon
+- “LJ” lj_birdman
+- Luigi Player
+- Madmadness65
+- Mega-Pokebattlerz
+- Mintly
+- mjco
+- “Momo” sphinx_sage
+- MrDollSteak
+- MyMarshlands
+- N-Kin
+- Noscium
+- “Nova” fabunova
+- “Omniv” omniv
+- paintseagull
+- princessofmusic
+- PumpkinPastel
+- Quanyails
+- RadicalCharizard
+- RedRooster
+- “♂ROMEO⚧” gerolau
+- ruleroftheseas11
+- SelenaArmorclaw
+- “serif” serifaizawa
+- Siiilver
+- Sleet
+- Snivy101
+- Speed-X
+- Sphex
+- Spook
+- Squip
+- TeraVolt
+- TheAetherPlayer
+- TheCynicalPoet
+- Tooni
+- TrainerSplash
+- Travis
+- Turtleye
+- Tyrell D. Barnes
+- \_vari\_
+- Wobblebuns
+- WolfPP
+- WPS
+- Wyverii
+- “zan” smtif
+- Zerudez
+- Z-nogyroP
+
+### Animated Sprites Credits
+- Antiant
+- arinoelle
+- Blaquaza
+- Claire Starsword
+- Coyotango
+- DanEx
+- “Diashi” diazhi
+- GalacticArtistMuffin
+- G.E.Z.
+- hexagonereal
+- HM100
+- Katten
+- LeParagon
+- localghost
+- MallowOut
+- mattiwarden
+- “Momo” sphinx_sage
+- N-Kin
+- NoelleMBrooks
+- Nyx
+- “Omniv” omniv
+- princessofmusic
+- PumpkinPastel
+- RadicalCharizard
+- seleccion
+- SelenaArmorclaw
+- TheAetherPlayer
+- Tinkatooni
+- Typhlito
+- uppa
+- “Vari” \_vari\_
+
+### Rare/Epic Shiny Variants Credits
+- “Andr06” andr06
+- “Appo” appo
+- “Ashhawk” k_redacted
+- “Auralite” _auralite
+- “Awesome_Soul” awesome_soul
+- “Bagon” bagonganda
+- “Bibble” nuts_.
+- “BloomOfWoods” bloomofwoods
+- “Buge” buge
+- “bun” bunove
+- “bukie” bukie
+- cameranian
+- “Caramel” saltedcarriemel
+- “Chocolate Niblets” choconibs
+- “CKC” ckc_
+- “ClawsHDi” clawshdi
+- “Clown Princess” clown_princess
+- “Cmac2173” cmac2173
+- “Corsola” corsola_bandit
+- “Criminon” criminon
+- “Cryptican Gogoat Enthusiast” crypticanexe
+- “Diashi” diazhi
+- “deviant.daffodil, bug enthusiast” deviant.daffodil
+- “DigitalVaporeon” digitalvaporeon
+- dingosig
+- “Eku” ekusas00
+- “Elefante”
+- “Esca” colossalsquid
+- “Folf” folf.
+- “Follower” ruleroftheseas11
+- “Fontbane” fontbane
+- “Gallow” gallowhound
+- “Giojoe” giojoe10
+- “Gonfold” gonfold
+- greenninja757
+- “Grassy_Storm” grassy_storm
+- “GreenMegaMan” greenmegaman
+- “GROWL” myflixer.to
+- “guy claiming to work on a guide” 7thatlas
+- “h. 🍄” letterh.
+- “hamez” .hamez
+- “Hanniel” hanniel.15
+- “ImaginaryNeon” imaginaryneon
+- “Jay” itsamejay
+- “Jelke” jelke
+- kalikimothy
+- “🐺Kieran/YJ 🐍” rival_kieran
+- “Koda” Koda_want_to_sleep
+- “Lana” smogonian
+- “LJ” lj_birdman
+- “Long Girl” docamakesart
+- “Lucky” luckyluckylucky
+- “MissingNo.” clickonflareblitz
+- “Momo” sphinx_sage
+- monkehestman
+- “Nexxus” nexxus_
+- “Nik :3” realniktrustme
+- “Nikolatsu”
+- “nora” ora.n
+- “NOVA” fabunova
+- officerporkchops
+- “Omniv” omniv
+- “Otterwatch” otterwatch_
+- “Pandoraz” pandoraz
+- “Papa Pepsm An” papapepsman
+- “Penguin” peng06
+- “Prodigy” lorekeeperprodigy
+- “Purpenigma” purpenigma
+- “Rage” ragerevival
+- “♂ROMEO⚧” gerolau
+- “Sagrell D'Arcadia” coffeerequired
+- “serif” serifaizawa
+- “SillyTopplingGoose” sillytopplinggoose
+- “Splash Damage” splashceles
+- “Sweg1b01” sweg1b01
+- “SyntheGrim” synthegrim
+- “TaMenace” tamariontherestless
+- “TheTRUEgge” thetruegge
+- “Thorn” crownofthorns
+- “Togepi” togepimax
+- “Toopy” .toopy
+- “Tristan” tristan.w
+- “Umbreon” umbreon\_.\_
+- “Vari” \_vari\_
+- “Waasephi”
+- wormhood
+- “Yep, it's Caio” yepitscaio
+- “Ymri” ymri
+- “zaccie” zaccie
+- “zan” smtif
 
 ## Move Animations
 - Pokémon Reborn
