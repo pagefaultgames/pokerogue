@@ -293,7 +293,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 ### 🇵🇱 Polish (pl)
 - Talo
 
-### 🇵🇹 Portuguese (pt-BR)
+### 🇧🇷 Portuguese (pt-BR)
 - Beast
 - Sushi
 - Zé Ricardo
