@@ -559,7 +559,7 @@ export const speciesEggMoves = {
   [Species.FRIGIBAX]: [ Moves.BEHEMOTH_BLADE, Moves.DRAGON_DANCE, Moves.MOUNTAIN_GALE, Moves.PRECIPICE_BLADES ],
   [Species.GIMMIGHOUL]: [ Moves.HAPPY_HOUR, Moves.AURA_SPHERE, Moves.SURF, Moves.ASTRAL_BARRAGE ],
   [Species.WO_CHIEN]: [ Moves.SPORE, Moves.FIERY_WRATH, Moves.SAPPY_SEED, Moves.STRENGTH_SAP ],
-  [Species.CHIEN_PAO]: [ Moves.KNOCK_OFF, Moves.PARTING_SHOT, Moves.MOUNTAIN_GALE, Moves.BITTER_BLADE ],
+  [Species.CHIEN_PAO]: [ Moves.KNOCK_OFF, Moves.PARTING_SHOT, Moves.TRIPLE_AXEL, Moves.BITTER_BLADE ],
   [Species.TING_LU]: [ Moves.SHORE_UP, Moves.CEASELESS_EDGE, Moves.SAPPY_SEED, Moves.PRECIPICE_BLADES ],
   [Species.CHI_YU]: [ Moves.FIERY_WRATH, Moves.HYDRO_STEAM, Moves.MORNING_SUN, Moves.BLUE_FLARE ],
   [Species.ROARING_MOON]: [ Moves.FIRE_LASH, Moves.DRAGON_HAMMER, Moves.SUCKER_PUNCH, Moves.WICKED_BLOW ],
