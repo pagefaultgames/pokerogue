@@ -56,7 +56,7 @@ import {
   PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { BooleanHolder, executeIf, NumberHolder } from "#app/utils";
+import { BooleanHolder, executeIf, isNullOrUndefined, NumberHolder } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
@@ -106,7 +106,9 @@ export class MoveEffectPhase extends PokemonPhase {
            */
           return super.end();
         }
-        user.resetTurnData();
+        if (isNullOrUndefined(user.turnData)) {
+          user.resetTurnData();
+        }
       }
     }
 

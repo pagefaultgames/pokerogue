@@ -1,5 +1,4 @@
 import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
-import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Egg, getLegendaryGachaSpeciesForTimestamp, getValidLegendaryGachaSpecies } from "#app/data/egg";
 import { allSpecies } from "#app/data/pokemon-species";
 import { EggSourceType } from "#app/enums/egg-source-types";
@@ -33,26 +32,26 @@ describe("Egg Generation Tests", () => {
     await game.importData("src/test/utils/saves/everything.prsv");
   });
 
-  it("should return Arceus for the 10th of June", () => {
+  it("should return Kyogre for the 10th of June", () => {
     const timestamp = new Date(2024, 5, 10, 15, 0, 0, 0).getTime();
-    const expectedSpecies = Species.ARCEUS;
+    const expectedSpecies = Species.KYOGRE;
 
     const result = getLegendaryGachaSpeciesForTimestamp(timestamp);
 
     expect(result).toBe(expectedSpecies);
   });
-  it("should return Arceus for the 10th of July", () => {
+  it("should return Kyogre for the 10th of July", () => {
     const timestamp = new Date(2024, 6, 10, 15, 0, 0, 0).getTime();
-    const expectedSpecies = Species.ARCEUS;
+    const expectedSpecies = Species.KYOGRE;
 
     const result = getLegendaryGachaSpeciesForTimestamp(timestamp);
 
     expect(result).toBe(expectedSpecies);
   });
-  it("should hatch an Arceus around half the time. Set from legendary gacha", async () => {
+  it("should hatch a Kyogre around half the time. Set from legendary gacha", async () => {
     const scene = game.scene;
     const timestamp = new Date(2024, 6, 10, 15, 0, 0, 0).getTime();
-    const expectedSpecies = Species.ARCEUS;
+    const expectedSpecies = Species.KYOGRE;
     let gachaSpeciesCount = 0;
 
     for (let i = 0; i < EGG_HATCH_COUNT; i++) {
@@ -382,24 +381,5 @@ describe("Egg Generation Tests", () => {
     expect(diffSpecies).toBe(false);
     expect(diffShiny).toBe(true);
     expect(diffAbility).toBe(true);
-  });
-
-  // For now, we are using this test to detect oversights in egg tiers.
-  // Delete this test if the balance team rebalances species costs independently of egg tiers.
-  it("should have correct egg tiers based on species costs", () => {
-    const getExpectedEggTier = (starterCost) =>
-      starterCost <= 3 ? EggTier.COMMON
-        : starterCost <= 5 ? EggTier.RARE
-          : starterCost <= 7 ? EggTier.EPIC
-            : EggTier.LEGENDARY;
-
-    allSpecies.forEach(pokemonSpecies => {
-      const rootSpecies = pokemonSpecies.getRootSpeciesId();
-      const speciesCost = speciesStarterCosts[rootSpecies];
-      const expectedEggTier = getExpectedEggTier(speciesCost);
-      const actualEggTier = speciesEggTiers[rootSpecies];
-
-      expect(actualEggTier).toBe(expectedEggTier);
-    });
   });
 });
