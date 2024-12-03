@@ -90,6 +90,12 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
             label: "Català",
           };
           break;
+        case "ro":
+          this.settings[languageIndex].options[0] = {
+            value: "Română",
+            label: "Română",
+          };
+          break;
         default:
           this.settings[languageIndex].options[0] = {
             value: "English",
