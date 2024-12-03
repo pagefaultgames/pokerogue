@@ -63,7 +63,7 @@
 ## Mystery Event Sprites
 - chrysomelinae
 - koda_want_to_sleep
-- thedreadedden
+- “🐺Kieran/YJ 🐍” rival_kieran aka thedreadedden
 - ImperialSympathizer
 - wormhood
 - gerolau
@@ -99,7 +99,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - bizcoeindoloro
 - mangalos810
 - selstar
-- thedreadedden
 
 ### Static Sprites and Base Shiny Replacements Credits
 - AMVictory
@@ -183,7 +182,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Travis
 - Turtleye
 - Tyrell D. Barnes
-- \_vari\_
+- “Vari” \_vari\_
 - Wobblebuns
 - WolfPP
 - WPS
@@ -272,7 +271,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - “Jay” itsamejay
 - “Jelke” jelke
 - kalikimothy
-- “🐺Kieran/YJ 🐍” rival_kieran
+- “🐺Kieran/YJ 🐍” rival_kieran aka thedreadedden
 - “Koda” Koda_want_to_sleep
 - “Lana” smogonian
 - “LJ” lj_birdman
