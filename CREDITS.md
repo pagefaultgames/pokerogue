@@ -72,8 +72,8 @@
 ## Trainer Portraits
 - pkmn_realidea (Paid Commissions)
 
-## Pokemon Sprites and Animation
-In addition to the list below, please check [the PokeRogue wiki](https://wiki.pokerogue.net/credits:credits) for a full list of Pokemon Sprite credits.
+## Pokémon Sprites and Animation
+In addition to the list below, please check [the PokéRogue wiki](https://wiki.pokerogue.net/credits:credits) for a full list of Pokémon Sprite credits.
 
 - GAMEFREAK (Pokémon Black/White 2)
 - Smogon Sprite Project (Various Artists)
@@ -211,7 +211,7 @@ In addition to the list below, please check [the PokeRogue wiki](https://wiki.po
 - AsdarDevelops
 - Vassiat
 - RedstonewolfX
-- Sam/Flashfyre (initial developer, started PokeRogue)
+- Sam/Flashfyre (initial developer, started PokéRogue)
 - Greenlamp
 - bennybroseph
 - OrangeRed

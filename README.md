@@ -39,4 +39,4 @@ Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to
 # 📝 Credits
 > If this project contains assets you have produced and you do not see your name, **please** reach out, either [here on GitHub](https://github.com/pagefaultgames/pokerogue/issues/new) or via [Discord](https://discord.gg/pokerogue).
 
-Thank you to all the wonderful people that have contributed to the PokeRogue project! You can find the credits [here](./CREDITS.md).
+Thank you to all the wonderful people that have contributed to the PokéRogue project! You can find the credits [here](./CREDITS.md).
