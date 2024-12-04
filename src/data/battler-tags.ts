@@ -2835,10 +2835,10 @@ export class StuffCheeksTag extends MoveRestrictionBattlerTag {
   // Stuff Cheeks
   private moveId: Moves = Moves.STUFF_CHEEKS;
   /**
-   * This Tag only lasts the turn the {@linkcode MoveUnselectableTag} was added.
+   * This Tag only lasts the turn the {@linkcode StuffCheeksTag} was added.
    * @param move {@linkcode Moves} that is selected
    */
-  constructor(move: Moves) {
+  constructor() {
     super(BattlerTagType.STUFF_CHEEKS, BattlerTagLapseType.TURN_END, 0, Moves.STUFF_CHEEKS);
   }
 
@@ -3201,7 +3201,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
     case BattlerTagType.STUFF_CHEEKS:
-      return new StuffCheeksTag(sourceMove);
+      return new StuffCheeksTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

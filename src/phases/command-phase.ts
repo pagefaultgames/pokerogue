@@ -149,7 +149,7 @@ export class CommandPhase extends FieldPhase {
           const move = playerPokemon.getMoveset()[cursor]!; //TODO: is this bang correct?
           this.scene.ui.setMode(Mode.MESSAGE);
 
-          // Decides between a Disabled, not selectable, Not Implemented, or No PP translation message
+          // Decides between a Disabled, Not Implemented, or No PP translation message
           const errorMessage =
           playerPokemon.isMoveRestricted(move.moveId, playerPokemon)
             ? playerPokemon.getRestrictingTag(move.moveId, playerPokemon)!.selectionDeniedText(playerPokemon, move.moveId)

@@ -7772,7 +7772,7 @@ export class StuffCheeksCondition extends MoveSelectCondition {
    * @returns true if the user is holding a berry, otherwise false
    */
   private selectableCondition(user: Pokemon): boolean {
-    return user?.getHeldItems()?.filter(m => m instanceof BerryModifier, user.isPlayer())?.length > 0;
+    return user.getHeldItems().filter(m => m instanceof BerryModifier, user.isPlayer()).length > 0;
   }
 
   /**
@@ -7791,7 +7791,7 @@ export class StuffCheeksCondition extends MoveSelectCondition {
   }
 }
 
-const hasBerryCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => user.scene.findModifiers(m => m instanceof BerryModifier, user.isPlayer()).length > 0;
+const hasBerryCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => user.getHeldItems().filter(m => m instanceof BerryModifier, user.isPlayer()).length > 0;
 
 export class MoveCondition {
   protected func: MoveConditionFunc;
