@@ -161,24 +161,26 @@ describe("Moves - Stuff Cheeks", () => {
     expect(getHeldItemCount(player)).toBe(3);
   });
 
-  // Can be enabled when Knock off correctly knocks off the held berry
-  it.todo("should fail when used after berries getting knocked off", async () => {
-    game.override.startingWave(5)
-      .startingHeldItems([
+  it("from enemy should fail when player knocks off enemy berry before", async () => {
+    game.override
+      .enemyHeldItems([
         { name: "BERRY", type: BerryType.SITRUS, count: 1 },
       ])
-      .enemyMoveset(Moves.KNOCK_OFF);
+      .enemyMoveset(Moves.STUFF_CHEEKS)
+      .moveset(Moves.KNOCK_OFF)
+      /** This is set so the enemy does not get oneshot by Knock Off */
+      .enemyLevel(100);
 
     await game.classicMode.startBattle([ Species.BULBASAUR ]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.STUFF_CHEEKS);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    game.move.select(Moves.KNOCK_OFF);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
 
     await game.toNextTurn();
 
-    expect(getHeldItemCount(player)).toBe(0);
-    expect(player.getStatStage(Stat.DEF)).toBe(0);
+    expect(getHeldItemCount(enemy)).toBe(0);
+    expect(enemy.getStatStage(Stat.DEF)).toBe(0);
   });
 });
