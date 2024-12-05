@@ -10,7 +10,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("Abilities - Stuff Cheeks", () => {
+describe("Moves - Stuff Cheeks", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -163,7 +163,7 @@ describe("Abilities - Stuff Cheeks", () => {
 
   // Can be enabled when Knock off correctly knocks off the held berry
   it.todo("should fail when used after berries getting knocked off", async () => {
-    game.override
+    game.override.startingWave(5)
       .startingHeldItems([
         { name: "BERRY", type: BerryType.SITRUS, count: 1 },
       ])
