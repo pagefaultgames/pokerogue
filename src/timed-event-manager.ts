@@ -189,7 +189,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     const secs  = Math.round(diff % 6e4 / 1e3);
 
     // Return formatted string
-    return i18next.t("eventTimer", { days: z(days), hours: z(hours), mins: z(mins), secs: z(secs) });
+    return i18next.t("menu:eventTimer", { days: z(days), hours: z(hours), mins: z(mins), secs: z(secs) });
   }
 
   updateCountdown() {
