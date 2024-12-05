@@ -121,12 +121,11 @@ export class MovePhase extends BattlePhase {
 
     // Check if move is unusable (e.g. because it's out of PP due to a mid-turn Spite).
     if (!this.canMove(true)) {
-      if (this.pokemon.isActive(true) && this.move.ppUsed >= this.move.getMovePp()) {
+      if (this.pokemon.isActive(true)) {
         this.fail();
         this.showMoveText();
         this.showFailedText();
       }
-
       return this.end();
     }
 
@@ -378,15 +377,9 @@ export class MovePhase extends BattlePhase {
     } else {
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
-      let failedText: string | undefined;
       const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
-
-      if (failureMessage) {
-        failedText = failureMessage;
-      }
-
       this.showMoveText();
-      this.showFailedText(failedText);
+      this.showFailedText(failureMessage ?? undefined);
 
       // Remove the user from its semi-invulnerable state (if applicable)
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
@@ -536,7 +529,7 @@ export class MovePhase extends BattlePhase {
    * Displays the move's usage text to the player, unless it's a charge turn (ie: {@link Moves.SOLAR_BEAM Solar Beam}),
    * the pokemon is on a recharge turn (ie: {@link Moves.HYPER_BEAM Hyper Beam}), or a 2-turn move was interrupted (ie: {@link Moves.FLY Fly}).
    */
-  protected showMoveText(): void {
+  public showMoveText(): void {
     if (this.move.moveId === Moves.NONE) {
       return;
     }
@@ -552,7 +545,7 @@ export class MovePhase extends BattlePhase {
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents()[0], this.move.getMove());
   }
 
-  protected showFailedText(failedText?: string): void {
+  public showFailedText(failedText?: string): void {
     this.scene.queueMessage(failedText ?? i18next.t("battle:attackFailed"));
   }
 }

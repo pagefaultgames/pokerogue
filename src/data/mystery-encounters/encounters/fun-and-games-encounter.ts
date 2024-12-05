@@ -194,10 +194,10 @@ async function summonPlayerPokemon(scene: BattleScene) {
       playerAnimationPromise = summonPlayerPokemonAnimation(scene, playerPokemon);
     });
 
-    // Also loads Wobbuffet data
+    // Also loads Wobbuffet data (cannot be shiny)
     const enemySpecies = getPokemonSpecies(Species.WOBBUFFET);
     scene.currentBattle.enemyParty = [];
-    const wobbuffet = scene.addEnemyPokemon(enemySpecies, encounter.misc.playerPokemon.level, TrainerSlot.NONE, false);
+    const wobbuffet = scene.addEnemyPokemon(enemySpecies, encounter.misc.playerPokemon.level, TrainerSlot.NONE, false, true);
     wobbuffet.ivs = [ 0, 0, 0, 0, 0, 0 ];
     wobbuffet.setNature(Nature.MILD);
     wobbuffet.setAlpha(0);
@@ -305,7 +305,7 @@ async function showWobbuffetHealthBar(scene: BattleScene) {
   scene.field.add(wobbuffet);
 
   const playerPokemon = scene.getPlayerPokemon() as Pokemon;
-  if (playerPokemon?.visible) {
+  if (playerPokemon?.isOnField()) {
     scene.field.moveBelow(wobbuffet, playerPokemon);
   }
   // Show health bar and trigger cry

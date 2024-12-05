@@ -15,7 +15,7 @@ import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPr
 import { Type } from "#enums/type";
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { Stat } from "#enums/stat";
-import { Variant, VariantSet, variantColorCache, variantData } from "#app/data/variant";
+import { Variant, VariantSet, variantData } from "#app/data/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
@@ -363,6 +363,12 @@ export abstract class PokemonSpeciesForm {
     }
 
     switch (this.speciesId) {
+      case Species.DODUO:
+      case Species.DODRIO:
+      case Species.MEGANIUM:
+      case Species.TORCHIC:
+      case Species.COMBUSKEN:
+      case Species.BLAZIKEN:
       case Species.HIPPOPOTAS:
       case Species.HIPPOWDON:
       case Species.UNFEZANT:
@@ -499,35 +505,14 @@ export abstract class PokemonSpeciesForm {
           scene.anims.create({
             key: this.getSpriteKey(female, formIndex, shiny, variant),
             frames: frameNames,
-            frameRate: 12,
+            frameRate: 10,
             repeat: -1
           });
         } else {
-          scene.anims.get(spriteKey).frameRate = 12;
+          scene.anims.get(spriteKey).frameRate = 10;
         }
-        let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
-        const useExpSprite = scene.experimentalSprites && scene.hasExpSprite(spriteKey);
-        if (useExpSprite) {
-          spritePath = `exp/${spritePath}`;
-        }
-        let config = variantData;
-        spritePath.split("/").map(p => config ? config = config[p] : null);
-        const variantSet = config as VariantSet;
-        if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
-          const populateVariantColors = (key: string): Promise<void> => {
-            return new Promise(resolve => {
-              if (variantColorCache.hasOwnProperty(key)) {
-                return resolve();
-              }
-              scene.cachedFetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
-                variantColorCache[key] = c;
-                resolve();
-              });
-            });
-          };
-          populateVariantColors(spriteKey).then(() => resolve());
-          return;
-        }
+        const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
+        scene.loadPokemonVariantAssets(spriteKey, spritePath, variant);
         resolve();
       });
       if (startLoad) {
@@ -888,17 +873,24 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter {
     const hasEvolution = pokemonEvolutions.hasOwnProperty(this.speciesId);
     const hasPrevolution = pokemonPrevolutions.hasOwnProperty(this.speciesId);
-    const pseudoLegendary = this.subLegendary;
+    const subLegendary = this.subLegendary;
     const legendary = this.legendary;
     const mythical = this.mythical;
     return species => {
-      return (pseudoLegendary || legendary || mythical ||
-        (pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
-        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution))
-        && species.subLegendary === pseudoLegendary
+      return (
+        subLegendary
+        || legendary
+        || mythical
+        || (
+          pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
+          && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution
+        )
+      )
+        && species.subLegendary === subLegendary
         && species.legendary === legendary
         && species.mythical === mythical
-        && (this.isTrainerForbidden() || !species.isTrainerForbidden());
+        && (this.isTrainerForbidden() || !species.isTrainerForbidden())
+        && species.speciesId !== Species.DITTO;
     };
   }
 

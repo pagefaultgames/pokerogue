@@ -125,10 +125,7 @@ export class StatStageChangePhase extends PokemonPhase {
         const whiteHerb = this.scene.applyModifier(ResetNegativeStatStageModifier, this.player, pokemon) as ResetNegativeStatStageModifier;
         // If the White Herb was applied, consume it
         if (whiteHerb) {
-          whiteHerb.stackCount--;
-          if (whiteHerb.stackCount <= 0) {
-            this.scene.removeModifier(whiteHerb);
-          }
+          pokemon.loseHeldItem(whiteHerb);
           this.scene.updateModifiers(this.player);
         }
       }
