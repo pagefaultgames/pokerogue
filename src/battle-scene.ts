@@ -1411,11 +1411,17 @@ export default class BattleScene extends SceneBase {
   }
 
   updateFieldScale(): Promise<void> {
-    return new Promise(resolve => {
-      const fieldScale = Math.floor(Math.pow(1 / this.getField(true)
-        .map(p => p.getSpriteScale())
-        .reduce((highestScale: number, scale: number) => highestScale = Math.max(scale, highestScale), 0), 0.7) * 40
-      ) / 40;
+    return new Promise((resolve) => {
+      const fieldScale =
+        Math.floor(
+          Math.pow(
+            1 /
+              this.getField(true)
+                .map((p) => p.getSpriteScale())
+                .reduce((highestScale: number, scale: number) => (highestScale = Math.max(scale, highestScale)), 0),
+            0.7,
+          ) * 40,
+        ) / 40;
       this.setFieldScale(fieldScale).then(() => resolve());
     });
   }
@@ -2655,30 +2661,27 @@ export default class BattleScene extends SceneBase {
     return true;
   }
 
-  addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
-    return new Promise(resolve => {
-      const modifiersToRemove: PersistentModifier[] = [];
-      if (modifier instanceof TerastallizeModifier) {
-        modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId, false)));
-      }
-      if ((modifier as PersistentModifier).add(this.enemyModifiers, false)) {
-        if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
-          const pokemon = this.getPokemonById(modifier.pokemonId);
-          if (pokemon) {
-            modifier.apply(pokemon, true);
-          }
-        }
-        for (const rm of modifiersToRemove) {
-          this.removeModifier(rm, true);
+  addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): void {
+    const modifiersToRemove: PersistentModifier[] = [];
+    if (modifier instanceof TerastallizeModifier) {
+      modifiersToRemove.push(
+        ...this.findModifiers((m) => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId, false),
+      );
+    }
+    if ((modifier as PersistentModifier).add(this.enemyModifiers, false)) {
+      if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
+        const pokemon = this.getPokemonById(modifier.pokemonId);
+        if (pokemon) {
+          modifier.apply(pokemon, true);
         }
       }
-      if (!ignoreUpdate) {
-        this.updateModifiers(false, instant);
-        resolve();
-      } else {
-        resolve();
+      for (const rm of modifiersToRemove) {
+        this.removeModifier(rm, true);
       }
-    });
+    }
+    if (!ignoreUpdate) {
+      this.updateModifiers(false, instant);
+    }
   }
 
   /**
@@ -2752,12 +2755,11 @@ export default class BattleScene extends SceneBase {
             }
             return true;
           } else {
-            this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => {
-              if (source && itemLost) {
-                applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-              }
-              return true;
-            });
+            this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
+            if (source && itemLost) {
+              applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+            }
+            return true;
           }
         }
         return false;
