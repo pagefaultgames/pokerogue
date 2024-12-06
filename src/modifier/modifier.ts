@@ -158,7 +158,7 @@ export abstract class Modifier {
    * Handles applying of {@linkcode Modifier}
    * @param args collection of all passed parameters
    */
-  abstract apply(...args: unknown[]): boolean | Promise<boolean>;
+  abstract apply(...args: unknown[]): boolean;
 }
 
 export abstract class PersistentModifier extends Modifier {
@@ -2015,7 +2015,7 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
    * @param args Additional arguments passed to {@linkcode ConsumablePokemonModifier.apply}
    */
-  abstract override apply(playerPokemon: PlayerPokemon, ...args: unknown[]): boolean | Promise<boolean>;
+  abstract override apply(playerPokemon: PlayerPokemon, ...args: unknown[]): boolean;
 
   getPokemon() {
     return globalScene.getPlayerParty().find(p => p.id === this.pokemonId);
@@ -2324,8 +2324,8 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
    * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
    * @returns always Promise<true>
    */
-  override async apply(playerPokemon: PlayerPokemon, playerPokemon2: PlayerPokemon): Promise<boolean> {
-    await playerPokemon.fuse(playerPokemon2);
+  override apply(playerPokemon: PlayerPokemon, playerPokemon2: PlayerPokemon): boolean {
+    playerPokemon.fuse(playerPokemon2);
     return true;
   }
 }
@@ -3185,12 +3185,10 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       }
       const randItemIndex = pokemon.randSeedInt(itemModifiers.length);
       const randItem = itemModifiers[randItemIndex];
-      heldItemTransferPromises.push(globalScene.tryTransferHeldItemModifier(randItem, pokemon, false).then(success => {
-        if (success) {
-          transferredModifierTypes.push(randItem.type);
-          itemModifiers.splice(randItemIndex, 1);
-        }
-      }));
+      if (globalScene.tryTransferHeldItemModifier(randItem, pokemon, false)) {
+        transferredModifierTypes.push(randItem.type);
+        itemModifiers.splice(randItemIndex, 1);
+      }
     }
 
     Promise.all(heldItemTransferPromises).then(() => {
