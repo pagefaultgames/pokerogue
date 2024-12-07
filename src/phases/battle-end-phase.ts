@@ -1,6 +1,6 @@
 import BattleScene from "#app/battle-scene";
 import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
-import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
+import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
 
@@ -52,14 +52,16 @@ export class BattleEndPhase extends BattlePhase {
 
     this.scene.clearEnemyHeldItemModifiers();
 
-    const lapsingModifiers = this.scene.findModifiers(m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
+    const lapsingModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isNullified || m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (PokemonHeldItemModifier | LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
     for (const m of lapsingModifiers) {
       const args: any[] = [];
       if (m instanceof LapsingPokemonHeldItemModifier) {
         args.push(this.scene.getPokemonById(m.pokemonId));
       }
       if (!m.lapse(...args)) {
-        this.scene.removeModifier(m);
+        if (!(m instanceof PokemonHeldItemModifier)) {
+          this.scene.removeModifier(m);
+        }
       }
     }
 
