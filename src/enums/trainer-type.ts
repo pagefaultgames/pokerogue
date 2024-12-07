@@ -124,6 +124,7 @@ export enum TrainerType {
   LT_SURGE,
   ERIKA,
   JANINE,
+  KOGA_GYM,
   SABRINA,
   BLAINE,
   GIOVANNI,
