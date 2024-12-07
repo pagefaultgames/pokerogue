@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import { CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectHealText } from "#app/data/status-effect";
@@ -22,8 +22,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private healStatus: boolean;
   private preventFullHeal: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string | null, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false) {
-    super(scene, battlerIndex, undefined, CommonAnim.HEALTH_UP);
+  constructor(battlerIndex: BattlerIndex, hpHealed: integer, message: string | null, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false) {
+    super(battlerIndex, undefined, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;
     this.message = message;
@@ -55,13 +55,13 @@ export class PokemonHealPhase extends CommonAnimPhase {
     let lastStatusEffect = StatusEffect.NONE;
 
     if (healBlock && this.hpHealed > 0) {
-      this.scene.queueMessage(healBlock.onActivation(pokemon));
+      globalScene.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       return super.end();
     } else if (healOrDamage) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive) {
-        this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
+        globalScene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       }
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
@@ -74,12 +74,12 @@ export class PokemonHealPhase extends CommonAnimPhase {
       }
       healAmount.value = pokemon.heal(healAmount.value);
       if (healAmount.value) {
-        this.scene.damageNumberHandler.add(pokemon, healAmount.value, HitResult.HEAL);
+        globalScene.damageNumberHandler.add(pokemon, healAmount.value, HitResult.HEAL);
       }
       if (pokemon.isPlayer()) {
-        this.scene.validateAchvs(HealAchv, healAmount);
-        if (healAmount.value > this.scene.gameData.gameStats.highestHeal) {
-          this.scene.gameData.gameStats.highestHeal = healAmount.value;
+        globalScene.validateAchvs(HealAchv, healAmount);
+        if (healAmount.value > globalScene.gameData.gameStats.highestHeal) {
+          globalScene.gameData.gameStats.highestHeal = healAmount.value;
         }
       }
       if (this.healStatus && !this.revive && pokemon.status) {
@@ -96,11 +96,11 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     if (this.message) {
-      this.scene.queueMessage(this.message);
+      globalScene.queueMessage(this.message);
     }
 
     if (this.healStatus && lastStatusEffect && !hasMessage) {
-      this.scene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
+      globalScene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
     }
 
     if (!healOrDamage && !lastStatusEffect) {

@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TextStyle, getTextColor } from "./text";
 import { Mode } from "./ui";
 import { Button } from "#enums/buttons";
@@ -7,7 +7,6 @@ import { Button } from "#enums/buttons";
  * A basic abstract class to act as a holder and processor for UI elements.
  */
 export default abstract class UiHandler {
-  protected scene: BattleScene;
   protected mode: integer | null;
   protected cursor: integer = 0;
   public active: boolean = false;
@@ -16,8 +15,7 @@ export default abstract class UiHandler {
    * @param {BattleScene} scene The same scene as everything else.
    * @param {Mode} mode The mode of the UI element. These should be unique.
    */
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    this.scene = scene;
+  constructor(mode: Mode | null = null) {
     this.mode = mode;
   }
 
@@ -32,11 +30,11 @@ export default abstract class UiHandler {
   abstract processInput(button: Button): boolean;
 
   getUi() {
-    return this.scene.ui;
+    return globalScene.ui;
   }
 
   getTextColor(style: TextStyle, shadow: boolean = false): string {
-    return getTextColor(style, shadow, this.scene.uiTheme);
+    return getTextColor(style, shadow, globalScene.uiTheme);
   }
 
   getCursor(): integer {
@@ -58,7 +56,7 @@ export default abstract class UiHandler {
    * @param cursorStyle cursor style to apply
    */
   protected setMouseCursorStyle(cursorStyle: "pointer" | "default") {
-    this.scene.input.manager.canvas.style.cursor = cursorStyle;
+    globalScene.input.manager.canvas.style.cursor = cursorStyle;
   }
 
   clear() {

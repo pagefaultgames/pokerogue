@@ -1,4 +1,3 @@
-import BattleScene from "../battle-scene";
 import i18next from "i18next";
 import { AchvTier, achvs, getAchievementDescription } from "./achv";
 import { PlayerGender } from "#enums/player-gender";
@@ -26,8 +25,8 @@ export class Voucher {
     this.conditionFunc = conditionFunc;
   }
 
-  validate(scene: BattleScene, args?: any[]): boolean {
-    return !this.conditionFunc || this.conditionFunc(scene, args);
+  validate(args?: any[]): boolean {
+    return !this.conditionFunc || this.conditionFunc(args);
   }
 
   /**

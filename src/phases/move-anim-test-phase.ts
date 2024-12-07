@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { initMoveAnim, loadMoveAnimAssets, MoveAnim } from "#app/data/battle-anims";
 import { allMoves, SelfStatusMove } from "#app/data/move";
 import { Moves } from "#app/enums/moves";
@@ -8,8 +8,8 @@ import { BattlePhase } from "./battle-phase";
 export class MoveAnimTestPhase extends BattlePhase {
   private moveQueue: Moves[];
 
-  constructor(scene: BattleScene, moveQueue?: Moves[]) {
-    super(scene);
+  constructor(moveQueue?: Moves[]) {
+    super();
 
     this.moveQueue = moveQueue || Utils.getEnumValues(Moves).slice(1);
   }
@@ -28,12 +28,12 @@ export class MoveAnimTestPhase extends BattlePhase {
       console.log(Moves[moveId]);
     }
 
-    initMoveAnim(this.scene, moveId).then(() => {
-      loadMoveAnimAssets(this.scene, [ moveId ], true)
+    initMoveAnim(moveId).then(() => {
+      loadMoveAnimAssets([ moveId ], true)
         .then(() => {
-          const user = player ? this.scene.getPlayerPokemon()! : this.scene.getEnemyPokemon()!;
-          const target = (player !== (allMoves[moveId] instanceof SelfStatusMove)) ? this.scene.getEnemyPokemon()! : this.scene.getPlayerPokemon()!;
-          new MoveAnim(moveId, user, target.getBattlerIndex()).play(this.scene, allMoves[moveId].hitsSubstitute(user, target), () => { // TODO: are the bangs correct here?
+          const user = player ? globalScene.getPlayerPokemon()! : globalScene.getEnemyPokemon()!;
+          const target = (player !== (allMoves[moveId] instanceof SelfStatusMove)) ? globalScene.getEnemyPokemon()! : globalScene.getPlayerPokemon()!;
+          new MoveAnim(moveId, user, target.getBattlerIndex()).play(allMoves[moveId].hitsSubstitute(user, target), () => { // TODO: are the bangs correct here?
             if (player) {
               this.playMoveAnim(moveQueue, false);
             } else {

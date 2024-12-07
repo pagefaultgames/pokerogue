@@ -104,8 +104,8 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     expect(FieryFalloutEncounter.onInit).toBeDefined();
 
-    FieryFalloutEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    FieryFalloutEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(FieryFalloutEncounter.enemyPartyConfigs).toEqual([
       {

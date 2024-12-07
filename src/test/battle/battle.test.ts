@@ -188,8 +188,8 @@ describe("Test Battle Phase", () => {
     game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(game.scene);
-      const selectStarterPhase = new SelectStarterPhase(game.scene);
-      game.scene.pushPhase(new EncounterPhase(game.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      game.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
     await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);

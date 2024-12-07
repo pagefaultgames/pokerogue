@@ -18,9 +18,9 @@ export class ReloadHelper extends GameManagerHelper {
     super(game);
 
     // Whenever the game saves the session, save it to the reloadHelper instead
-    vi.spyOn(game.scene.gameData, "saveAll").mockImplementation((scene) => {
+    vi.spyOn(game.scene.gameData, "saveAll").mockImplementation(() => {
       return new Promise<boolean>((resolve, reject) => {
-        this.sessionData = scene.gameData.getSessionSaveData(scene);
+        this.sessionData = game.scene.gameData.getSessionSaveData();
         resolve(true);
       });
     });
@@ -33,7 +33,7 @@ export class ReloadHelper extends GameManagerHelper {
    */
   async reloadSession() : Promise<void> {
     const scene = this.game.scene;
-    const titlePhase = new TitlePhase(scene);
+    const titlePhase = new TitlePhase();
 
     scene.clearPhaseQueue();
 

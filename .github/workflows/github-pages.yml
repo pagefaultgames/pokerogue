@@ -14,7 +14,7 @@ on:
 jobs:
   pages:
     name: Github Pages
-    if: github.repository == 'pagefaultgames/pokerogue'
+    if: github.repository == 'Despair-Games/poketernity'
     runs-on: ubuntu-latest
     env:
       api-dir: ./

@@ -87,7 +87,7 @@ describe("Moves - Tera Blast", () => {
   });
 
   // Currently abilities are bugged and can't see when a move's category is changed
-  it.skip("uses the higher stat of the user's Atk and SpAtk for damage calculation", async () => {
+  it.todo("uses the higher stat of the user's Atk and SpAtk for damage calculation", async () => {
     game.override.enemyAbility(Abilities.TOXIC_DEBRIS);
     await game.startBattle();
 

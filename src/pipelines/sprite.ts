@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { variantColorCache } from "#app/data/variant";
 import Pokemon from "../field/pokemon";
 import Trainer from "../field/trainer";

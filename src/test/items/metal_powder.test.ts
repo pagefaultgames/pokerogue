@@ -74,13 +74,13 @@ describe("Items - Metal Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
+    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
   }, 20000);
@@ -107,13 +107,13 @@ describe("Items - Metal Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
+    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
   }, 20000);
@@ -140,13 +140,13 @@ describe("Items - Metal Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
+    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
   }, 20000);
@@ -162,13 +162,13 @@ describe("Items - Metal Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const defValue = new Utils.NumberHolder(defStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
+    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
   }, 20000);

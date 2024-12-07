@@ -26,7 +26,7 @@ export class DailyModeHelper extends GameManagerHelper {
     }
 
     this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const titlePhase = new TitlePhase(this.game.scene);
+      const titlePhase = new TitlePhase();
       titlePhase.initDailyRun();
     });
 
