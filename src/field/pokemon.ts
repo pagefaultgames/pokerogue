@@ -106,7 +106,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
-  public moveset: (PokemonMove | null)[];
+  public moveset: (PokemonMove)[];
   public status: Status | null;
   public friendship: integer;
   public metLevel: integer;
@@ -148,7 +148,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
+  constructor(
+    scene: BattleScene,
+    x: number,
+    y: number,
+    species: PokemonSpecies,
+    level: integer,
+    abilityIndex?: integer,
+    formIndex?: integer,
+    gender?: Gender,
+    shiny?: boolean,
+    variant?: Variant,
+    ivs?: integer[],
+    nature?: Nature,
+    dataSource?: Pokemon | PokemonData
+  ) {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
@@ -417,7 +431,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   loadAssets(ignoreOverride: boolean = true): Promise<void> {
     return new Promise(resolve => {
-      const moveIds = this.getMoveset().map(m => m!.getMove().id); // TODO: is this bang correct?
+      const moveIds = this.getMoveset().map(m => m.getMove().id);
       Promise.allSettled(moveIds.map(m => initMoveAnim(this.scene, m)))
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
@@ -1158,7 +1172,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract isBoss(): boolean;
 
-  getMoveset(ignoreOverride?: boolean): (PokemonMove | null)[] {
+  getMoveset(ignoreOverride?: boolean): (PokemonMove)[] {
     const ret = !ignoreOverride && this.summonData?.moveset
       ? this.summonData.moveset
       : this.moveset;
@@ -1218,7 +1232,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Array.isArray(this.usedTMs) && this.usedTMs.length > 0) {
       levelMoves = this.usedTMs.filter(m => !levelMoves.includes(m)).concat(levelMoves);
     }
-    levelMoves = levelMoves.filter(lm => !this.moveset.some(m => m?.moveId === lm));
+    levelMoves = levelMoves.filter(lm => !this.moveset.some(m => m.moveId === lm));
     return levelMoves;
   }
 
@@ -1924,7 +1938,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   setMove(moveIndex: integer, moveId: Moves): void {
-    const move = moveId ? new PokemonMove(moveId) : null;
+    if (moveId === Moves.NONE) {
+      return;
+    }
+    const move = new PokemonMove(moveId);
     this.moveset[moveIndex] = move;
     if (this.summonData?.moveset) {
       this.summonData.moveset[moveIndex] = move;
@@ -4651,10 +4668,7 @@ export class PlayerPokemon extends Pokemon {
   copyMoveset(): PokemonMove[] {
     const newMoveset : PokemonMove[] = [];
     this.moveset.forEach((move) => {
-      // TODO: refactor `moveset` to not accept `null`s
-      if (move) {
-        newMoveset.push(new PokemonMove(move.moveId, 0, move.ppUp, move.virtual, move.maxPpOverride));
-      }
+      newMoveset.push(new PokemonMove(move.moveId, 0, move.ppUp, move.virtual, move.maxPpOverride));
     });
 
     return newMoveset;
@@ -4804,7 +4818,7 @@ export class EnemyPokemon extends Pokemon {
   getNextMove(): QueuedMove {
     // If this Pokemon has a move already queued, return it.
     const queuedMove = this.getMoveQueue().length
-      ? this.getMoveset().find(m => m?.moveId === this.getMoveQueue()[0].move)
+      ? this.getMoveset().find(m => m.moveId === this.getMoveQueue()[0].move)
       : null;
     if (queuedMove) {
       if (queuedMove.isUsable(this, this.getMoveQueue()[0].ignorePP)) {
@@ -4816,24 +4830,24 @@ export class EnemyPokemon extends Pokemon {
     }
 
     // Filter out any moves this Pokemon cannot use
-    let movePool = this.getMoveset().filter(m => m?.isUsable(this));
+    let movePool = this.getMoveset().filter(m => m.isUsable(this));
     // If no moves are left, use Struggle. Otherwise, continue with move selection
     if (movePool.length) {
       // If there's only 1 move in the move pool, use it.
       if (movePool.length === 1) {
-        return { move: movePool[0]!.moveId, targets: this.getNextTargets(movePool[0]!.moveId) }; // TODO: are the bangs correct?
+        return { move: movePool[0].moveId, targets: this.getNextTargets(movePool[0].moveId) };
       }
       // If a move is forced because of Encore, use it.
       const encoreTag = this.getTag(EncoreTag) as EncoreTag;
       if (encoreTag) {
-        const encoreMove = movePool.find(m => m?.moveId === encoreTag.moveId);
+        const encoreMove = movePool.find(m => m.moveId === encoreTag.moveId);
         if (encoreMove) {
           return { move: encoreMove.moveId, targets: this.getNextTargets(encoreMove.moveId) };
         }
       }
       switch (this.aiType) {
         case AiType.RANDOM: // No enemy should spawn with this AI type in-game
-          const moveId = movePool[this.scene.randBattleSeedInt(movePool.length)]!.moveId; // TODO: is the bang correct?
+          const moveId = movePool[this.scene.randBattleSeedInt(movePool.length)].moveId;
           return { move: moveId, targets: this.getNextTargets(moveId) };
         case AiType.SMART_RANDOM:
         case AiType.SMART:
@@ -4876,9 +4890,9 @@ export class EnemyPokemon extends Pokemon {
          * For more information on how benefit scores are calculated, see `docs/enemy-ai.md`.
          */
           const moveScores = movePool.map(() => 0);
-          const moveTargets = Object.fromEntries(movePool.map(m => [ m!.moveId, this.getNextTargets(m!.moveId) ])); // TODO: are those bangs correct?
+          const moveTargets = Object.fromEntries(movePool.map(m => [ m.moveId, this.getNextTargets(m.moveId) ]));
           for (const m in movePool) {
-            const pokemonMove = movePool[m]!; // TODO: is the bang correct?
+            const pokemonMove = movePool[m];
             const move = pokemonMove.getMove();
 
             let moveScore = moveScores[m];
@@ -4959,7 +4973,7 @@ export class EnemyPokemon extends Pokemon {
               r++;
             }
           }
-          console.log(movePool.map(m => m!.getName()), moveScores, r, sortedMovePool.map(m => m!.getName())); // TODO: are those bangs correct?
+          console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
           return { move: sortedMovePool[r]!.moveId, targets: moveTargets[sortedMovePool[r]!.moveId] };
       }
     }
@@ -5268,7 +5282,7 @@ export class PokemonSummonData {
   public gender: Gender;
   public fusionGender: Gender;
   public stats: number[] = [ 0, 0, 0, 0, 0, 0 ];
-  public moveset: (PokemonMove | null)[];
+  public moveset: (PokemonMove)[];
   // If not initialized this value will not be populated from save data.
   public types: Type[] = [];
   public addedType: Type | null = null;
