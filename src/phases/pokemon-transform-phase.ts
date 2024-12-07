@@ -29,6 +29,10 @@ export class PokemonTransformPhase extends PokemonPhase {
       return this.end();
     }
 
+    user.summonData.speciesForm = target.getSpeciesForm();
+    user.summonData.ability = target.getAbility().id;
+    user.summonData.gender = target.getGender();
+
     // Power Trick's effect is removed after using Transform
     user.removeTag(BattlerTagType.POWER_TRICK);
 

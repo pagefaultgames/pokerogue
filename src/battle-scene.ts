@@ -1415,17 +1415,11 @@ export default class BattleScene extends SceneBase {
   }
 
   updateFieldScale(): Promise<void> {
-    return new Promise((resolve) => {
-      const fieldScale =
-        Math.floor(
-          Math.pow(
-            1 /
-              this.getField(true)
-                .map((p) => p.getSpriteScale())
-                .reduce((highestScale: number, scale: number) => (highestScale = Math.max(scale, highestScale)), 0),
-            0.7,
-          ) * 40,
-        ) / 40;
+    return new Promise(resolve => {
+      const fieldScale = Math.floor(Math.pow(1 / this.getField(true)
+        .map(p => p.getSpriteScale())
+        .reduce((highestScale: number, scale: number) => highestScale = Math.max(scale, highestScale), 0), 0.7) * 40
+      ) / 40;
       this.setFieldScale(fieldScale).then(() => resolve());
     });
   }
