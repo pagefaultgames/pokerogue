@@ -6038,10 +6038,16 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         }
       }
       return true;
-    } else {
-      globalScene.queueMessage(i18next.t("battle:attackFailed"));
-      return false;
     }
+    return false;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) =>
+      (user instanceof PlayerPokemon && globalScene.getPlayerParty().findIndex((p) => p.isFainted()) > -1) ||
+      (user instanceof EnemyPokemon &&
+        user.hasTrainer() &&
+        globalScene.getEnemyParty().findIndex((p) => p.isFainted()) > -1);
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
