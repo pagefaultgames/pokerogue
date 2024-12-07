@@ -349,12 +349,16 @@ export class InputsController {
      * Handles the keydown event for the keyboard.
      *
      * @param event The keyboard event.
+     *
+     * @remarks On Mac the keyup event for a pressed key is not fired if the meta key is held down. To
+     * insure that that key is not repeatedly input until the user presses it again only emit events
+     * when the meta key is not held.
      */
   keyboardKeyDown(event): void {
     this.lastSource = "keyboard";
     this.ensureKeyboardIsInit();
     const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), event.keyCode);
-    if (buttonDown !== undefined) {
+    if (buttonDown !== undefined && !event.metaKey) {
       if (this.buttonLock.includes(buttonDown)) {
         return;
       }
