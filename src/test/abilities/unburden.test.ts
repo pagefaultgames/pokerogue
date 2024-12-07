@@ -391,7 +391,7 @@ describe("Abilities - Unburden", () => {
     await game.forceEnemyMove(Moves.THIEF, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2 ]);
-    game.doSelectPartyPokemon(0, "MoveEffectPhase");
+    game.doSelectPartyPokemon(0, "RevivalBlessingPhase");
     await game.toNextTurn();
 
     expect(game.scene.getPlayerField()[0]).toBe(treecko);

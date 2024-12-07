@@ -22,9 +22,8 @@ export class MoveHeaderPhase extends BattlePhase {
     super.start();
 
     if (this.canMove()) {
-      applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove()).then(() => this.end());
-    } else {
-      this.end();
+      applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove());
     }
+    this.end();
   }
 }

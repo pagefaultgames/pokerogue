@@ -123,8 +123,6 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       partyLead.level = 1000;
       partyLead.calculateStats();
       await runMysteryEncounterToEnd(game, 1, undefined, true);
-      // For some reason updateModifiers breaks in this test and does not resolve promise
-      vi.spyOn(game.scene, "updateModifiers").mockImplementation(() => new Promise(resolve => resolve()));
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
