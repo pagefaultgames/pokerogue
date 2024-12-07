@@ -6,7 +6,7 @@ import { Stat } from "#app/enums/stat";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
-import * as Utils from "#app/utils";
+import { randSeedShuffle, BooleanHolder } from "#app/utils";
 import { AttemptCapturePhase } from "./attempt-capture-phase";
 import { AttemptRunPhase } from "./attempt-run-phase";
 import { BerryPhase } from "./berry-phase";
@@ -40,11 +40,11 @@ export class TurnStartPhase extends FieldPhase {
     // We seed it with the current turn to prevent an inconsistency where it
     // was varying based on how long since you last reloaded
     this.scene.executeWithSeedOffset(() => {
-      orderedTargets = Utils.randSeedShuffle(orderedTargets);
+      orderedTargets = randSeedShuffle(orderedTargets);
     }, this.scene.currentBattle.turn, this.scene.waveSeed);
 
     // Next, a check for Trick Room is applied to determine sort order.
-    const speedReversed = new Utils.BooleanHolder(false);
+    const speedReversed = new BooleanHolder(false);
     this.scene.arena.applyTags(TrickRoomTag, false, speedReversed);
 
     // Adjust the sort function based on whether Trick Room is active.
@@ -71,8 +71,8 @@ export class TurnStartPhase extends FieldPhase {
     const battlerBypassSpeed = {};
 
     this.scene.getField(true).filter(p => p.summonData).map(p => {
-      const bypassSpeed = new Utils.BooleanHolder(false);
-      const canCheckHeldItems = new Utils.BooleanHolder(true);
+      const bypassSpeed = new BooleanHolder(false);
+      const canCheckHeldItems = new BooleanHolder(true);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
       applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
       if (canCheckHeldItems.value) {

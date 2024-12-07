@@ -11,7 +11,7 @@ import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import * as Utils from "#app/utils";
+import { fixedInt, getFrameMs, randInt } from "#app/utils";
 import { EggLapsePhase } from "./egg-lapse-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
 import { doShinySparkleAnim } from "#app/field/anims";
@@ -27,7 +27,7 @@ export class EggHatchPhase extends Phase {
   private eggHatchData: EggHatchData;
 
   /** The number of eggs that are hatching */
-  private eggsToHatchCount: integer;
+  private eggsToHatchCount: number;
   /** The container that lists how many eggs are hatching */
   private eggCounterContainer: EggCounterContainer;
 
@@ -58,7 +58,7 @@ export class EggHatchPhase extends Phase {
   /** The newly hatched {@link PlayerPokemon} */
   private pokemon: PlayerPokemon;
   /** The index of which egg move is unlocked. 0-2 is common, 3 is rare */
-  private eggMoveIndex: integer;
+  private eggMoveIndex: number;
   /** Internal booleans representing if the egg is hatched, able to be skipped, or skipped */
   private hatched: boolean;
   private canSkip: boolean;
@@ -67,7 +67,7 @@ export class EggHatchPhase extends Phase {
   private evolutionBgm: AnySound;
   private eggLapsePhase: EggLapsePhase;
 
-  constructor(scene: BattleScene, hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: integer) {
+  constructor(scene: BattleScene, hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: number) {
     super(scene);
     this.eggLapsePhase = hatchScene;
     this.egg = egg;
@@ -220,7 +220,7 @@ export class EggHatchPhase extends Phase {
    * @param count the current number of times this function has been called.
    * @returns nothing since it's a Promise<void>
    */
-  doEggShake(intensity: number, repeatCount?: integer, count?: integer): Promise<void> {
+  doEggShake(intensity: number, repeatCount?: number, count?: number): Promise<void> {
     return new Promise(resolve => {
       if (repeatCount === undefined) {
         repeatCount = 0;
@@ -286,15 +286,15 @@ export class EggHatchPhase extends Phase {
     this.canSkip = false;
     this.hatched = true;
     if (this.evolutionBgm) {
-      SoundFade.fadeOut(this.scene, this.evolutionBgm, Utils.fixedInt(100));
+      SoundFade.fadeOut(this.scene, this.evolutionBgm, fixedInt(100));
     }
     for (let e = 0; e < 5; e++) {
-      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound("se/egg_hatch", { volume: 1 - (e * 0.2) }));
+      this.scene.time.delayedCall(fixedInt(375 * e), () => this.scene.playSound("se/egg_hatch", { volume: 1 - (e * 0.2) }));
     }
     this.eggLightraysOverlay.setVisible(true);
     this.eggLightraysOverlay.play("egg_lightrays");
     this.scene.tweens.add({
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       targets: this.eggHatchOverlay,
       alpha: 1,
       ease: "Cubic.easeIn",
@@ -303,7 +303,7 @@ export class EggHatchPhase extends Phase {
         this.canSkip = true;
       }
     });
-    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
+    this.scene.time.delayedCall(fixedInt(1500), () => {
       this.canSkip = false;
       if (!this.skipped) {
         this.doReveal();
@@ -341,16 +341,16 @@ export class EggHatchPhase extends Phase {
     this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
     this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
     this.pokemonSprite.setVisible(true);
-    this.scene.time.delayedCall(Utils.fixedInt(250), () => {
+    this.scene.time.delayedCall(fixedInt(250), () => {
       this.eggsToHatchCount--;
       this.eggHatchHandler.eventTarget.dispatchEvent(new EggCountChangedEvent(this.eggsToHatchCount));
       this.pokemon.cry();
       if (isShiny) {
-        this.scene.time.delayedCall(Utils.fixedInt(500), () => {
+        this.scene.time.delayedCall(fixedInt(500), () => {
           doShinySparkleAnim(this.scene, this.pokemonShinySparkle, this.pokemon.variant);
         });
       }
-      this.scene.time.delayedCall(Utils.fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
+      this.scene.time.delayedCall(fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
         this.scene.playSoundWithoutBgm("evolution_fanfare");
@@ -368,7 +368,7 @@ export class EggHatchPhase extends Phase {
       });
     });
     this.scene.tweens.add({
-      duration: Utils.fixedInt(this.skipped ? 500 : 3000),
+      duration: fixedInt(this.skipped ? 500 : 3000),
       targets: this.eggHatchOverlay,
       alpha: 0,
       ease: "Cubic.easeOut"
@@ -381,7 +381,7 @@ export class EggHatchPhase extends Phase {
    * @param amplitude Scaling
    * @returns a number
    */
-  sin(index: integer, amplitude: integer): number {
+  sin(index: number, amplitude: number): number {
     return amplitude * Math.sin(index * (Math.PI / 128));
   }
 
@@ -390,12 +390,12 @@ export class EggHatchPhase extends Phase {
    * @param intensity number of times this is repeated (this is a badly named variable)
    * @param offsetY how much to offset the Y coordinates
    */
-  doSpray(intensity: integer, offsetY?: number) {
+  doSpray(intensity: number, offsetY?: number) {
     this.scene.tweens.addCounter({
       repeat: intensity,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
-        this.doSprayParticle(Utils.randInt(8), offsetY || 0);
+        this.doSprayParticle(randInt(8), offsetY || 0);
       }
     });
   }
@@ -405,7 +405,7 @@ export class EggHatchPhase extends Phase {
    * @param trigIndex Used to modify the particle's vertical speed, is a random number from 0-7
    * @param offsetY how much to offset the Y coordinate
    */
-  doSprayParticle(trigIndex: integer, offsetY: number) {
+  doSprayParticle(trigIndex: number, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
     const shardKey = !this.egg.isManaphyEgg() ? this.egg.tier.toString() : "1";
@@ -414,12 +414,12 @@ export class EggHatchPhase extends Phase {
 
     let f = 0;
     let yOffset = 0;
-    const speed = 3 - Utils.randInt(8);
-    const amp = 24 + Utils.randInt(32);
+    const speed = 3 - randInt(8);
+    const amp = 24 + randInt(32);
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }

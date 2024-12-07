@@ -16,14 +16,14 @@ export type StatStageChangeCallback = (target: Pokemon | null, changed: BattleSt
 export class StatStageChangePhase extends PokemonPhase {
   private stats: BattleStat[];
   private selfTarget: boolean;
-  private stages: integer;
+  private stages: number;
   private showMessage: boolean;
   private ignoreAbilities: boolean;
   private canBeCopied: boolean;
   private onChange: StatStageChangeCallback | null;
 
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], stages: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatStageChangeCallback | null = null) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], stages: number, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true, onChange: StatStageChangeCallback | null = null) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
@@ -211,7 +211,7 @@ export class StatStageChangePhase extends PokemonPhase {
     }
   }
 
-  getStatStageChangeMessages(stats: BattleStat[], stages: integer, relStages: integer[]): string[] {
+  getStatStageChangeMessages(stats: BattleStat[], stages: number, relStages: number[]): string[] {
     const messages: string[] = [];
 
     const relStageStatIndexes = {};

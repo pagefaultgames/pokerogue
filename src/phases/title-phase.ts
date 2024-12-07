@@ -1,6 +1,5 @@
 import { loggedInUser } from "#app/account";
 import { BattleType } from "#app/battle";
-import BattleScene from "#app/battle-scene";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
@@ -14,7 +13,7 @@ import { vouchers } from "#app/system/voucher";
 import { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { isLocal, isLocalServerConnected } from "#app/utils";
 import i18next from "i18next";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { EncounterPhase } from "./encounter-phase";
@@ -24,15 +23,9 @@ import { SummonPhase } from "./summon-phase";
 
 
 export class TitlePhase extends Phase {
-  private loaded: boolean;
+  private loaded: boolean = false;
   private lastSessionData: SessionSaveData;
   public gameMode: GameModes;
-
-  constructor(scene: BattleScene) {
-    super(scene);
-
-    this.loaded = false;
-  }
 
   start(): void {
     super.start();
@@ -133,7 +126,7 @@ export class TitlePhase extends Phase {
       label: i18next.t("menu:loadGame"),
       handler: () => {
         this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
-          (slotId: integer) => {
+          (slotId: number) => {
             if (slotId === -1) {
               return this.showOptions();
             }
@@ -166,7 +159,7 @@ export class TitlePhase extends Phase {
     this.scene.ui.setMode(Mode.TITLE, config);
   }
 
-  loadSaveSlot(slotId: integer): void {
+  loadSaveSlot(slotId: number): void {
     this.scene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
     this.scene.ui.setMode(Mode.MESSAGE);
     this.scene.ui.resetModeChain();
@@ -184,7 +177,7 @@ export class TitlePhase extends Phase {
   }
 
   initDailyRun(): void {
-    this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+    this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
       this.scene.clearPhaseQueue();
       if (slotId === -1) {
         this.scene.pushPhase(new TitlePhase(this.scene));
@@ -243,7 +236,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!Utils.isLocal || Utils.isLocalServerConnected) {
+      if (!isLocal || isLocalServerConnected) {
         fetchDailyRunSeed().then(seed => {
           if (seed) {
             generateDaily(seed);

@@ -16,7 +16,7 @@ import { SwitchType } from "#enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
   private readonly switchType: SwitchType;
-  private readonly slotIndex: integer;
+  private readonly slotIndex: number;
   private readonly doReturn: boolean;
 
   private lastPokemon: Pokemon;
@@ -25,12 +25,12 @@ export class SwitchSummonPhase extends SummonPhase {
      * Constructor for creating a new SwitchSummonPhase
      * @param scene {@linkcode BattleScene} the scene the phase is associated with
      * @param switchType the type of switch behavior
-     * @param fieldIndex integer representing position on the battle field
-     * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
+     * @param fieldIndex number representing position on the battle field
+     * @param slotIndex number for the index of pokemon (in party of 6) to switch into
      * @param doReturn boolean whether to render "comeback" dialogue
      * @param player boolean if the switch is from the player
      */
-  constructor(scene: BattleScene, switchType: SwitchType, fieldIndex: integer, slotIndex: integer, doReturn: boolean, player?: boolean) {
+  constructor(scene: BattleScene, switchType: SwitchType, fieldIndex: number, slotIndex: number, doReturn: boolean, player?: boolean) {
     super(scene, fieldIndex, player !== undefined ? player : true);
 
     this.switchType = switchType;

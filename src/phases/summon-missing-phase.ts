@@ -4,7 +4,7 @@ import i18next from "i18next";
 import { SummonPhase } from "./summon-phase";
 
 export class SummonMissingPhase extends SummonPhase {
-  constructor(scene: BattleScene, fieldIndex: integer) {
+  constructor(scene: BattleScene, fieldIndex: number) {
     super(scene, fieldIndex);
   }
 

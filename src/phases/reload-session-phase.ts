@@ -1,15 +1,15 @@
 import BattleScene from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { fixedInt } from "#app/utils";
 
 export class ReloadSessionPhase extends Phase {
-  private systemDataStr: string | null;
+  private systemDataStr?: string;
 
   constructor(scene: BattleScene, systemDataStr?: string) {
     super(scene);
 
-    this.systemDataStr = systemDataStr ?? null;
+    this.systemDataStr = systemDataStr;
   }
 
   start(): void {
@@ -18,7 +18,7 @@ export class ReloadSessionPhase extends Phase {
     let delayElapsed = false;
     let loaded = false;
 
-    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
+    this.scene.time.delayedCall(fixedInt(1500), () => {
       if (loaded) {
         this.end();
       } else {

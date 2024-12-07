@@ -26,7 +26,7 @@ export class SelectStarterPhase extends Phase {
 
     this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
       this.scene.ui.clearText();
-      this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+      this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
         if (slotId === -1) {
           this.scene.clearPhaseQueue();
           this.scene.pushPhase(new TitlePhase(this.scene));
@@ -45,7 +45,7 @@ export class SelectStarterPhase extends Phase {
   initBattle(starters: Starter[]) {
     const party = this.scene.getPlayerParty();
     const loadPokemonAssets: Promise<void>[] = [];
-    starters.forEach((starter: Starter, i: integer) => {
+    starters.forEach((starter: Starter, i: number) => {
       if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
         starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
       }
