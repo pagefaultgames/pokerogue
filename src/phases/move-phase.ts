@@ -529,7 +529,7 @@ export class MovePhase extends BattlePhase {
    * Displays the move's usage text to the player, unless it's a charge turn (ie: {@link Moves.SOLAR_BEAM Solar Beam}),
    * the pokemon is on a recharge turn (ie: {@link Moves.HYPER_BEAM Hyper Beam}), or a 2-turn move was interrupted (ie: {@link Moves.FLY Fly}).
    */
-  protected showMoveText(): void {
+  public showMoveText(): void {
     if (this.move.moveId === Moves.NONE) {
       return;
     }
@@ -545,7 +545,7 @@ export class MovePhase extends BattlePhase {
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents()[0], this.move.getMove());
   }
 
-  protected showFailedText(failedText?: string): void {
+  public showFailedText(failedText?: string): void {
     this.scene.queueMessage(failedText ?? i18next.t("battle:attackFailed"));
   }
 }
