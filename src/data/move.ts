@@ -3335,7 +3335,7 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / this.cutRatio), HitResult.OTHER, false, true);
-    user.updateInfo(); // TODO: This is a Promise and might cause desync issues
+    user.updateInfo();
     const ret = super.apply(user, target, move, args);
     if (this.messageCallback) {
       this.messageCallback(user);
@@ -3452,7 +3452,7 @@ export class ResetStatsAttr extends MoveEffectAttr {
     for (const s of BATTLE_STATS) {
       pokemon.setStatStage(s, 0);
     }
-    pokemon.updateInfo(); // TODO: This is still a Promise and might cause desync issues
+    pokemon.updateInfo();
   }
 }
 
@@ -3526,7 +3526,7 @@ export class HpSplitAttr extends MoveEffectAttr {
           globalScene.damageNumberHandler.add(p, damage);
         }
       }
-      p.updateInfo(); // TODO: This is still a Promise
+      p.updateInfo();
     });
 
     return true;
@@ -6016,7 +6016,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // If user is player, checks if the user has fainted pokemon
-    if (user instanceof PlayerPokemon && globalScene.getPlayerParty().findIndex((p) => p.isFainted()) > -1) {
+    if (user instanceof PlayerPokemon) {
       globalScene.unshiftPhase(new RevivalBlessingPhase(user));
       return true;
     } else if (user instanceof EnemyPokemon && user.hasTrainer() && globalScene.getEnemyParty().findIndex((p) => p.isFainted() && !p.isBoss()) > -1) {
