@@ -4612,11 +4612,13 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
     const predictedPhysDmg = target.getBaseDamage(user, move, MoveCategory.PHYSICAL, true, true);
     const predictedSpecDmg = target.getBaseDamage(user, move, MoveCategory.SPECIAL, true, true);
 
-    if (predictedPhysDmg > predictedSpecDmg) {
+    const shouldUsePhysical =
+        predictedPhysDmg > predictedSpecDmg ||
+        (predictedPhysDmg === predictedSpecDmg && user.randSeedInt(2) === 0);
+
+    if (shouldUsePhysical) {
       category.value = MoveCategory.PHYSICAL;
-      return true;
-    } else if (predictedPhysDmg === predictedSpecDmg && user.randSeedInt(2) === 0) {
-      category.value = MoveCategory.PHYSICAL;
+      move.makesContact();
       return true;
     }
     return false;
