@@ -885,8 +885,10 @@ export class PowderTag extends BattlerTag {
       const movePhase = pokemon.scene.getCurrentPhase();
       if (movePhase instanceof MovePhase) {
         const move = movePhase.move.getMove();
-        if (pokemon.getMoveType(move) === Type.FIRE) {
-          movePhase.cancel();
+        const weather = pokemon.scene.arena.weather;
+        if (pokemon.getMoveType(move) === Type.FIRE && !(weather && weather.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed(pokemon.scene))) {
+          movePhase.fail();
+          movePhase.showMoveText();
 
           pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.POWDER));
 
