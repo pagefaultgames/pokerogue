@@ -47,6 +47,21 @@ describe("Moves - Shell Side Arm", () => {
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(true);
   });
 
+  it("should make contact if the move becomes physical", async () => {
+    game.override
+      .enemySpecies(Species.SNORLAX)
+      .enemyAbility(Abilities.ROUGH_SKIN);
+
+    await game.classicMode.startBattle([ Species.RAMPARDOS ]);
+
+    const player = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.SHELL_SIDE_ARM);
+    await game.toNextTurn();
+
+    expect(player.getMaxHp()).toBeGreaterThan(player.hp);
+  });
+
   it("remains a special attack if forecasted to deal more damage as special", async () => {
     game.override.enemySpecies(Species.SLOWBRO);
 
