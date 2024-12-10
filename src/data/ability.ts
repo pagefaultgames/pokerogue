@@ -2755,11 +2755,11 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
   /**
    * Apply the {@linkcode ReflectStatStageChangeAbAttr} to an interaction
    * @param _pokemon The user pokemon
-   * @param _passive
-   * @param _simulated
+   * @param _passive N/A
+   * @param simulated `true` if the ability is being simulated by the AI
    * @param stat the {@linkcode BattleStat} being affected
    * @param cancelled The {@linkcode Utils.BooleanHolder} that will be set to true due to reflection
-   * @param _args
+   * @param args
    * @returns true because it reflects any stat being lowered
    */
   applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
