@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { applyAbAttrs, applyPostStatStageChangeAbAttrs, applyPreStatStageChangeAbAttrs, PostStatStageChangeAbAttr, ProtectStatAbAttr, ReflectStatStageChangeAbAttr, StatStageChangeCopyAbAttr, StatStageChangeMultiplierAbAttr } from "#app/data/ability";
-import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
+import { ArenaTag, ArenaTagSide, MistTag } from "#app/data/arena-tag";
 import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
@@ -11,6 +11,7 @@ import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 import { OctolockTag } from "#app/data/battler-tags";
+import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export type StatStageChangeCallback = (target: Pokemon | null, changed: BattleStat[], relativeChanges: number[]) => void;
 
@@ -61,8 +62,11 @@ export class StatStageChangePhase extends PokemonPhase {
         opponentPokemon = this.scene.getEnemyField()[this.scene.currentBattle.lastEnemyInvolved];
       } else {
         /** If this SSCP is from sticky web, then check if pokemon that last sucessfully used sticky web is on field */
+        const stickyTagID = this.scene.arena.findTagsOnSide(
+          (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
+          ArenaTagSide.PLAYER)[0].sourceId;
         this.scene.getEnemyField().forEach((e) => {
-          if (e.id === this.scene.currentBattle.lastEnemyIDUsingStickyWeb) {
+          if (e.id === stickyTagID) {
             opponentPokemon = e;
           }
         });
@@ -71,9 +75,12 @@ export class StatStageChangePhase extends PokemonPhase {
       if (!this.comingFromStickyWeb) {
         opponentPokemon = this.scene.getPlayerField()[this.scene.currentBattle.lastPlayerInvolved];
       } else {
-        this.scene.getPlayerField().forEach((p) => {
-          if (p.id === this.scene.currentBattle.lastPlayerIDUsingStickyWeb) {
-            opponentPokemon = p;
+        const stickyTagID = this.scene.arena.findTagsOnSide(
+          (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
+          ArenaTagSide.ENEMY)[0].sourceId;
+        this.scene.getPlayerField().forEach((e) => {
+          if (e.id === stickyTagID) {
+            opponentPokemon = e;
           }
         });
       }
