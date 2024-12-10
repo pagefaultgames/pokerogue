@@ -2751,9 +2751,6 @@ export class PreStatStageChangeAbAttr extends AbAttr {
 export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to reflect */
   private reflectedStat? : BattleStat;
-  constructor() {
-    super();
-  }
 
   /**
    * Apply the {@linkcode ReflectStatStageChangeAbAttr} to an interaction
