@@ -152,7 +152,7 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("does not change its move category from stat changes due to abilities", async () => {
-    game.override.enemyAbility(Abilities.HUGE_POWER);
+    game.override.ability(Abilities.HUGE_POWER);
     await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
