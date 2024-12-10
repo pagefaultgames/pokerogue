@@ -2762,9 +2762,9 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
    * @param _args
    * @returns true because it reflects any stat being lowered
    */
-  applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, _args: any[]): boolean {
-    const attacker: Pokemon = _args[0];
-    const stages = _args[1];
+  applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const attacker: Pokemon = args[0];
+    const stages = args[1];
     this.reflectedStat = stat;
     if (!simulated) {
       attacker.scene.unshiftPhase(new StatStageChangePhase(attacker.scene, attacker.getBattlerIndex(), false, [ stat ], stages, true, false, true, null, true));
