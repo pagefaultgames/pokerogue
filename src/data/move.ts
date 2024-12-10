@@ -4544,7 +4544,7 @@ export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
 
-    if (user.isTerastallized() && user.getEffectiveStat(Stat.ATK, target, move) > user.getEffectiveStat(Stat.SPATK, target, move)) {
+    if (user.isTerastallized() && user.getEffectiveStat(Stat.ATK, target, move, true, true, false, false, true) > user.getEffectiveStat(Stat.SPATK, target, move, true, true, false, false, true)) {
       category.value = MoveCategory.PHYSICAL;
       return true;
     }

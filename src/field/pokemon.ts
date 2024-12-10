@@ -935,11 +935,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreOppAbility during an attack, determines whether the opposing Pokemon's abilities should be ignored during the stat calculation.
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @param simulated if `true`, nullifies any effects that produce any changes to game state from triggering
+   * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
    * @returns the final in-battle value of a stat
    */
-  getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreAbility: boolean = false, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): integer {
+  getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreAbility: boolean = false, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true, ignoreHeldItems: boolean = false): integer {
     const statValue = new Utils.NumberHolder(this.getStat(stat, false));
-    this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
+    if (!ignoreHeldItems) {
+      this.scene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
+    }
 
     // The Ruin abilities here are never ignored, but they reveal themselves on summon anyway
     const fieldApplied = new Utils.BooleanHolder(false);
