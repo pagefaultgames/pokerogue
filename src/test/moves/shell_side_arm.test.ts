@@ -26,7 +26,7 @@ describe("Moves - Shell Side Arm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SHELL_SIDE_ARM, Moves.SPLASH ])
+      .moveset([ Moves.SHELL_SIDE_ARM ])
       .battleType("single")
       .startingLevel(100)
       .enemyLevel(100)
@@ -92,5 +92,22 @@ describe("Moves - Shell Side Arm", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
+  });
+
+  /** The move should stay special (which it does) and make no contact but the MAKES_CONTACT flag is set */
+  it.skip("should not make contact if the move stays special", async () => {
+    game.override.enemySpecies(Species.SLOWBRO).enemyAbility(Abilities.ROUGH_SKIN);
+
+    await game.classicMode.startBattle([ Species.XURKITREE ]);
+
+    const player = game.scene.getPlayerPokemon()!;
+
+    vi.spyOn(shellSideArmAttr, "apply");
+
+    game.move.select(Moves.SHELL_SIDE_ARM);
+    await game.toNextTurn();
+
+    expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
+    expect(player.getMaxHp()).toBe(player.hp);
   });
 });
