@@ -4621,6 +4621,10 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
       move.makesContact();
       return true;
     }
+    /** MoveFlags are not reset every turn so if this flag is set it needs to be reset if the move is a special attack */
+    if (move.hasFlag(MoveFlags.MAKES_CONTACT)) {
+      move.makesContact(false);
+    }
     return false;
   }
 }
