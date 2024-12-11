@@ -10397,8 +10397,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.SHELL_SIDE_ARM, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 20, 0, 8)
       .attr(ShellSideArmCategoryAttr)
-      .attr(StatusEffectAttr, StatusEffect.POISON)
-      .makesContact(false),
+      .attr(StatusEffectAttr, StatusEffect.POISON),
     new AttackMove(Moves.MISTY_EXPLOSION, Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
