@@ -2658,7 +2658,7 @@ export default class BattleScene extends SceneBase {
         }
       }
     }
-    return true;
+    return success;
   }
 
   addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
