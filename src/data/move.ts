@@ -1882,8 +1882,14 @@ export class FlameBurstAttr extends MoveEffectAttr {
 }
 
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
-  constructor() {
+  protected restorePP: boolean;
+  protected moveMessage: string;
+
+  constructor(restorePP: boolean, moveMessage: string) {
     super();
+
+    this.restorePP = restorePP;
+    this.moveMessage = moveMessage;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1894,8 +1900,18 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     // We don't know which party member will be chosen, so pick the highest max HP in the party
     const maxPartyMemberHp = globalScene.getPlayerParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
 
-    globalScene.pushPhase(new PokemonHealPhase(user.getBattlerIndex(),
-      maxPartyMemberHp, i18next.t("moveTriggers:sacrificialFullRestore", { pokemonName: getPokemonNameWithAffix(user) }), true, false, false, true), true);
+    globalScene.pushPhase(
+      new PokemonHealPhase(
+        user.getBattlerIndex(),
+        maxPartyMemberHp,
+        i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
+        true,
+        false,
+        false,
+        true,
+        false,
+        this.restorePP),
+      true);
 
     return true;
   }
@@ -8999,7 +9015,7 @@ export function initMoves() {
       .attr(GyroBallPowerAttr)
       .ballBombMove(),
     new SelfStatusMove(Moves.HEALING_WISH, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .attr(SacrificialFullRestoreAttr)
+      .attr(SacrificialFullRestoreAttr, false, "moveTriggers:sacrificialFullRestore")
       .triageMove(),
     new AttackMove(Moves.BRINE, Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
@@ -9276,10 +9292,9 @@ export function initMoves() {
     new AttackMove(Moves.SPACIAL_REND, Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, 0, 4)
       .attr(HighCritAttr),
     new SelfStatusMove(Moves.LUNAR_DANCE, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .attr(SacrificialAttrOnHit)
+      .attr(SacrificialFullRestoreAttr, true, "moveTriggers:lunarDanceRestore")
       .danceMove()
-      .triageMove()
-      .unimplemented(),
+      .triageMove(),
     new AttackMove(Moves.CRUSH_GRIP, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr, 120),
     new AttackMove(Moves.MAGMA_STORM, Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, 0, 4)
