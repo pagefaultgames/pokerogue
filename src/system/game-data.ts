@@ -39,6 +39,7 @@ import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
+import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
@@ -136,10 +137,15 @@ export interface SessionSaveData {
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
   mysteryEncounterSaveData: MysteryEncounterSaveData;
+  biomeTracker: BiomeSessionData;
 }
 
 interface Unlocks {
   [key: integer]: boolean;
+}
+
+export interface BiomeSessionData {
+  [key: number]: Biome;
 }
 
 interface AchvUnlocks {
@@ -963,7 +969,8 @@ export class GameData {
       timestamp: new Date().getTime(),
       challenges: scene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounterType: scene.currentBattle.mysteryEncounter?.encounterType ?? -1,
-      mysteryEncounterSaveData: scene.mysteryEncounterSaveData
+      mysteryEncounterSaveData: scene.mysteryEncounterSaveData,
+      biomeTracker: scene.biomeTracker
     } as SessionSaveData;
   }
 
@@ -1023,6 +1030,7 @@ export class GameData {
 
           scene.sessionPlayTime = sessionData.playTime || 0;
           scene.lastSavePlayTime = 0;
+          scene.biomeTracker = sessionData.biomeTracker || {};
 
           const loadPokemonAssets: Promise<void>[] = [];
 
