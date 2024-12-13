@@ -615,6 +615,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - roi
 
 ## External Tools
-- Ydarissep (RogueDex)
+- Ydarissep (creator of the now defunct "Yda's Dex")
 - Admiral-Billy (Offline App - Desktop)
 - Red aka StonedModder (iOS App)
