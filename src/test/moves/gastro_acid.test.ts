@@ -62,7 +62,7 @@ describe("Moves - Gastro Acid", () => {
   });
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {
-    game.override.battleType(null);
+    game.override.battleType("single");
 
     await game.startBattle();
 

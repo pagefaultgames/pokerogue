@@ -19,11 +19,11 @@ import i18next from "i18next";
 import BattleScene from "#app/battle-scene";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { Gender } from "#app/data/gender";
-import { Nature } from "#app/data/nature";
+import { Nature } from "#enums/nature";
 import { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { TrainerConfig, trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
 import PokemonSpecies from "#app/data/pokemon-species";
 import { Egg, IEggOptions } from "#app/data/egg";
@@ -37,6 +37,7 @@ import { GameOverPhase } from "#app/phases/game-over-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { Variant } from "#app/data/variant";
+import { StatusEffect } from "#enums/status-effect";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -183,7 +184,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           dataSource = config.dataSource;
           enemySpecies = config.species;
           isBoss = config.isBoss;
-          battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, dataSource);
+          battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.TRAINER, isBoss, false, dataSource);
         } else {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         }
@@ -201,7 +202,7 @@ export async function initBattleWithEnemyConfig(scene: BattleScene, partyConfig:
           enemySpecies = scene.randomSpecies(battle.waveIndex, level, true);
         }
 
-        battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss, dataSource);
+        battle.enemyParty[e] = scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, isBoss, false, dataSource);
       }
     }
 
@@ -730,7 +731,7 @@ export function handleMysteryEncounterVictory(scene: BattleScene, addHealPhase: 
     scene.pushPhase(new MysteryEncounterRewardsPhase(scene, addHealPhase));
     scene.pushPhase(new EggLapsePhase(scene));
   } else if (!scene.getEnemyParty().find(p => encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true))) {
-    scene.pushPhase(new BattleEndPhase(scene));
+    scene.pushPhase(new BattleEndPhase(scene, true));
     if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       scene.pushPhase(new TrainerVictoryPhase(scene));
     }

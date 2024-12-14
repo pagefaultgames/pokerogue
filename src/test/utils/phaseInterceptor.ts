@@ -5,13 +5,14 @@ import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
+import { FormChangePhase } from "#app/phases/form-change-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { LevelCapPhase } from "#app/phases/level-cap-phase";
 import { LoginPhase } from "#app/phases/login-phase";
@@ -54,6 +55,11 @@ import {
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { ExpPhase } from "#app/phases/exp-phase";
+import { GameOverPhase } from "#app/phases/game-over-phase";
+import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
+import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
+import { UnlockPhase } from "#app/phases/unlock-phase";
+import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -67,7 +73,6 @@ type PhaseClass =
   | typeof LoginPhase
   | typeof TitlePhase
   | typeof SelectGenderPhase
-  | typeof EncounterPhase
   | typeof NewBiomeEncounterPhase
   | typeof SelectStarterPhase
   | typeof PostSummonPhase
@@ -82,7 +87,7 @@ type PhaseClass =
   | typeof TurnStartPhase
   | typeof MovePhase
   | typeof MoveEffectPhase
-  | typeof DamagePhase
+  | typeof DamageAnimPhase
   | typeof FaintPhase
   | typeof BerryPhase
   | typeof TurnEndPhase
@@ -102,6 +107,7 @@ type PhaseClass =
   | typeof SwitchPhase
   | typeof SwitchSummonPhase
   | typeof PartyHealPhase
+  | typeof FormChangePhase
   | typeof EvolutionPhase
   | typeof EndEvolutionPhase
   | typeof LevelCapPhase
@@ -112,15 +118,20 @@ type PhaseClass =
   | typeof MysteryEncounterBattlePhase
   | typeof MysteryEncounterRewardsPhase
   | typeof PostMysteryEncounterPhase
+  | typeof RibbonModifierRewardPhase
+  | typeof GameOverModifierRewardPhase
   | typeof ModifierRewardPhase
   | typeof PartyExpPhase
-  | typeof ExpPhase;
+  | typeof ExpPhase
+  | typeof EncounterPhase
+  | typeof GameOverPhase
+  | typeof UnlockPhase
+  | typeof PostGameOverPhase;
 
 type PhaseString =
   | "LoginPhase"
   | "TitlePhase"
   | "SelectGenderPhase"
-  | "EncounterPhase"
   | "NewBiomeEncounterPhase"
   | "SelectStarterPhase"
   | "PostSummonPhase"
@@ -135,7 +146,7 @@ type PhaseString =
   | "TurnStartPhase"
   | "MovePhase"
   | "MoveEffectPhase"
-  | "DamagePhase"
+  | "DamageAnimPhase"
   | "FaintPhase"
   | "BerryPhase"
   | "TurnEndPhase"
@@ -155,6 +166,7 @@ type PhaseString =
   | "SwitchPhase"
   | "SwitchSummonPhase"
   | "PartyHealPhase"
+  | "FormChangePhase"
   | "EvolutionPhase"
   | "EndEvolutionPhase"
   | "LevelCapPhase"
@@ -165,9 +177,15 @@ type PhaseString =
   | "MysteryEncounterBattlePhase"
   | "MysteryEncounterRewardsPhase"
   | "PostMysteryEncounterPhase"
+  | "RibbonModifierRewardPhase"
+  | "GameOverModifierRewardPhase"
   | "ModifierRewardPhase"
   | "PartyExpPhase"
-  | "ExpPhase";
+  | "ExpPhase"
+  | "EncounterPhase"
+  | "GameOverPhase"
+  | "UnlockPhase"
+  | "PostGameOverPhase";
 
 type PhaseInterceptorPhase = PhaseClass | PhaseString;
 
@@ -187,12 +205,16 @@ export default class PhaseInterceptor {
 
   /**
    * List of phases with their corresponding start methods.
+   *
+   * CAUTION: If a phase and its subclasses (if any) both appear in this list,
+   * make sure that this list contains said phase AFTER all of its subclasses.
+   * This way, the phase's `prototype.start` is properly preserved during
+   * `initPhases()` so that its subclasses can use `super.start()` properly.
    */
   private PHASES = [
     [ LoginPhase, this.startPhase ],
     [ TitlePhase, this.startPhase ],
     [ SelectGenderPhase, this.startPhase ],
-    [ EncounterPhase, this.startPhase ],
     [ NewBiomeEncounterPhase, this.startPhase ],
     [ SelectStarterPhase, this.startPhase ],
     [ PostSummonPhase, this.startPhase ],
@@ -207,7 +229,7 @@ export default class PhaseInterceptor {
     [ TurnStartPhase, this.startPhase ],
     [ MovePhase, this.startPhase ],
     [ MoveEffectPhase, this.startPhase ],
-    [ DamagePhase, this.startPhase ],
+    [ DamageAnimPhase, this.startPhase ],
     [ FaintPhase, this.startPhase ],
     [ BerryPhase, this.startPhase ],
     [ TurnEndPhase, this.startPhase ],
@@ -227,6 +249,7 @@ export default class PhaseInterceptor {
     [ SwitchPhase, this.startPhase ],
     [ SwitchSummonPhase, this.startPhase ],
     [ PartyHealPhase, this.startPhase ],
+    [ FormChangePhase, this.startPhase ],
     [ EvolutionPhase, this.startPhase ],
     [ EndEvolutionPhase, this.startPhase ],
     [ LevelCapPhase, this.startPhase ],
@@ -237,9 +260,15 @@ export default class PhaseInterceptor {
     [ MysteryEncounterBattlePhase, this.startPhase ],
     [ MysteryEncounterRewardsPhase, this.startPhase ],
     [ PostMysteryEncounterPhase, this.startPhase ],
+    [ RibbonModifierRewardPhase, this.startPhase ],
+    [ GameOverModifierRewardPhase, this.startPhase ],
     [ ModifierRewardPhase, this.startPhase ],
     [ PartyExpPhase, this.startPhase ],
     [ ExpPhase, this.startPhase ],
+    [ EncounterPhase, this.startPhase ],
+    [ GameOverPhase, this.startPhase ],
+    [ UnlockPhase, this.startPhase ],
+    [ PostGameOverPhase, this.startPhase ],
   ];
 
   private endBySetMode = [

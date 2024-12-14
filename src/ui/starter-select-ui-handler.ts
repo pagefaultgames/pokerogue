@@ -10,13 +10,13 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { allMoves } from "#app/data/move";
-import { Nature, getNatureName } from "#app/data/nature";
+import { getNatureName } from "#app/data/nature";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { GameModes } from "#app/game-mode";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
@@ -39,7 +39,6 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
-import AwaitableUiHandler from "#app/ui/awaitable-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
 import { StarterContainer } from "#app/ui/starter-container";
 import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
@@ -50,6 +49,8 @@ import { TitlePhase } from "#app/phases/title-phase";
 import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 import { BooleanHolder, capitalizeString, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
+import type { Nature } from "#enums/nature";
+import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -242,6 +243,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonEggMoveContainers: Phaser.GameObjects.Container[];
   private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
   private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
+  private pokemonCandyContainer: Phaser.GameObjects.Container;
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyDarknessOverlay: Phaser.GameObjects.Sprite;
   private pokemonCandyOverlayIcon: Phaser.GameObjects.Sprite;
@@ -686,31 +688,36 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonLuckText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckText);
 
-    this.pokemonCandyIcon = this.scene.add.sprite(4.5, 18, "candy");
+    // Candy icon and count
+    this.pokemonCandyContainer = this.scene.add.container(4.5, 18);
+
+    this.pokemonCandyIcon = this.scene.add.sprite(0, 0, "candy");
     this.pokemonCandyIcon.setScale(0.5);
     this.pokemonCandyIcon.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.pokemonCandyIcon);
+    this.pokemonCandyContainer.add(this.pokemonCandyIcon);
 
-    this.pokemonFormText = addTextObject(this.scene, 6, 42, "Form", TextStyle.WINDOW_ALT, { fontSize: "42px" });
-    this.pokemonFormText.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.pokemonFormText);
-
-    this.pokemonCandyOverlayIcon = this.scene.add.sprite(4.5, 18, "candy_overlay");
+    this.pokemonCandyOverlayIcon = this.scene.add.sprite(0, 0, "candy_overlay");
     this.pokemonCandyOverlayIcon.setScale(0.5);
     this.pokemonCandyOverlayIcon.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.pokemonCandyOverlayIcon);
+    this.pokemonCandyContainer.add(this.pokemonCandyOverlayIcon);
 
-    this.pokemonCandyDarknessOverlay = this.scene.add.sprite(4.5, 18, "candy");
+    this.pokemonCandyDarknessOverlay = this.scene.add.sprite(0, 0, "candy");
     this.pokemonCandyDarknessOverlay.setScale(0.5);
     this.pokemonCandyDarknessOverlay.setOrigin(0, 0);
     this.pokemonCandyDarknessOverlay.setTint(0x000000);
     this.pokemonCandyDarknessOverlay.setAlpha(0.50);
-    this.pokemonCandyDarknessOverlay.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
-    this.starterSelectContainer.add(this.pokemonCandyDarknessOverlay);
+    this.pokemonCandyContainer.add(this.pokemonCandyDarknessOverlay);
 
-    this.pokemonCandyCountText = addTextObject(this.scene, 14, 18, "x0", TextStyle.WINDOW_ALT, { fontSize: "56px" });
+    this.pokemonCandyCountText = addTextObject(this.scene, 9.5, 0, "x0", TextStyle.WINDOW_ALT, { fontSize: "56px" });
     this.pokemonCandyCountText.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.pokemonCandyCountText);
+    this.pokemonCandyContainer.add(this.pokemonCandyCountText);
+
+    this.pokemonCandyContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 20), Phaser.Geom.Rectangle.Contains);
+    this.starterSelectContainer.add(this.pokemonCandyContainer);
+
+    this.pokemonFormText = addTextObject(this.scene, 6, 42, "Form", TextStyle.WINDOW_ALT, { fontSize: "42px" });
+    this.pokemonFormText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonFormText);
 
     this.pokemonCaughtHatchedContainer = this.scene.add.container(2, 25);
     this.pokemonCaughtHatchedContainer.setScale(0.5);
@@ -1054,15 +1061,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, moveToTop?: boolean) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
-    if (text?.indexOf("\n") === -1) {
-      this.starterSelectMessageBox.setSize(318, 28);
-      this.message.setY(-22);
+    const singleLine = text?.indexOf("\n") === -1;
+
+    this.starterSelectMessageBox.setSize(318, singleLine ? 28 : 42);
+
+    if (moveToTop) {
+      this.starterSelectMessageBox.setOrigin(0, 0);
+      this.starterSelectMessageBoxContainer.setY(0);
+      this.message.setY(4);
     } else {
-      this.starterSelectMessageBox.setSize(318, 42);
-      this.message.setY(-37);
+      this.starterSelectMessageBoxContainer.setY(this.scene.game.canvas.height / 6);
+      this.starterSelectMessageBox.setOrigin(0, 1);
+      this.message.setY(singleLine ? -22 : -37);
     }
 
     this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
@@ -1455,7 +1468,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
           const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, gen: number, i: number) => total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
           const newCost = this.scene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId);
-          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit() && this.starterSpecies.length < 6) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
+          if (!isDupe && isValidForChallenge.value && currentPartyValue + newCost <= this.getValueLimit() && this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE) { // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
@@ -1796,8 +1809,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
-                if ((this.scene.gameData.eggs.length < 99 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE)
-                  && (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost)) {
+                if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
+                  if (this.scene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                    // Egg list full, show error message at the top of the screen and abort
+                    this.showText(i18next.t("egg:tooManyEggs"), undefined, () => this.showText("", 0, () => this.tutorialActive = false), 2000, false, undefined, true);
+                    return false;
+                  }
                   if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     starterData.candyCount -= sameSpeciesEggCost;
                   }
@@ -2822,10 +2839,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonShinyIcon.setY(135);
           this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
           [
-            this.pokemonCandyIcon,
-            this.pokemonCandyOverlayIcon,
-            this.pokemonCandyDarknessOverlay,
-            this.pokemonCandyCountText,
+            this.pokemonCandyContainer,
             this.pokemonHatchedIcon,
             this.pokemonHatchedCountText
           ].map(c => c.setVisible(false));
@@ -2834,31 +2848,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonShinyIcon.setY(117);
           this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-          this.pokemonCandyIcon.setVisible(true);
           this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-          this.pokemonCandyOverlayIcon.setVisible(true);
-          this.pokemonCandyDarknessOverlay.setVisible(true);
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
-          this.pokemonCandyCountText.setVisible(true);
+          this.pokemonCandyContainer.setVisible(true);
           this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
           const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
           const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
-
-          if (this.pokemonCandyDarknessOverlay.visible) {
-            this.pokemonCandyDarknessOverlay.on("pointerover", () => {
-              this.scene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
-              this.activeTooltip = "CANDY";
-            });
-            this.pokemonCandyDarknessOverlay.on("pointerout", () => {
-              this.scene.ui.hideTooltip();
-              this.activeTooltip = undefined;
-            });
-          }
-
           this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
+
+          this.pokemonCandyContainer.on("pointerover", () => {
+            this.scene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
+            this.activeTooltip = "CANDY";
+          });
+          this.pokemonCandyContainer.on("pointerout", () => {
+            this.scene.ui.hideTooltip();
+            this.activeTooltip = undefined;
+          });
+
         }
 
 
@@ -2934,10 +2943,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonPassiveLabelText.setVisible(false);
         this.pokemonNatureLabelText.setVisible(false);
         this.pokemonCaughtHatchedContainer.setVisible(false);
-        this.pokemonCandyIcon.setVisible(false);
-        this.pokemonCandyOverlayIcon.setVisible(false);
-        this.pokemonCandyDarknessOverlay.setVisible(false);
-        this.pokemonCandyCountText.setVisible(false);
+        this.pokemonCandyContainer.setVisible(false);
         this.pokemonFormText.setVisible(false);
 
         const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, true, true);
@@ -2971,10 +2977,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonPassiveLabelText.setVisible(false);
       this.pokemonNatureLabelText.setVisible(false);
       this.pokemonCaughtHatchedContainer.setVisible(false);
-      this.pokemonCandyIcon.setVisible(false);
-      this.pokemonCandyOverlayIcon.setVisible(false);
-      this.pokemonCandyDarknessOverlay.setVisible(false);
-      this.pokemonCandyCountText.setVisible(false);
+      this.pokemonCandyContainer.setVisible(false);
       this.pokemonFormText.setVisible(false);
 
       this.setSpeciesDetails(species!, { // TODO: is this bang correct?
@@ -3005,7 +3008,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
      || !isNullOrUndefined(formIndex) || !isNullOrUndefined(shiny) || !isNullOrUndefined(variant);
 
     if (this.activeTooltip === "CANDY") {
-      if (this.lastSpecies) {
+      if (this.lastSpecies && this.pokemonCandyContainer.visible) {
         const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
         this.scene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
       } else {
@@ -3230,6 +3233,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonPassiveLockedIcon.setVisible(!isUnlocked);
           this.pokemonPassiveLockedIcon.setPosition(iconPosition.x, iconPosition.y);
 
+        } else if (this.activeTooltip === "PASSIVE") {
+          // No passive and passive tooltip is active > hide it
+          this.scene.ui.hideTooltip();
         }
 
         this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true, false, this.scene.uiTheme));
@@ -3568,9 +3574,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }, cancel, null, null, 19);
       });
     } else {
-      const handler = this.scene.ui.getHandler() as AwaitableUiHandler;
-      handler.tutorialActive = true;
-      this.scene.ui.showText(i18next.t("starterSelectUiHandler:invalidParty"), null, () => this.scene.ui.showText("", 0, () => handler.tutorialActive = false), null, true);
+      this.tutorialActive = true;
+      this.showText(i18next.t("starterSelectUiHandler:invalidParty"), undefined, () => this.showText("", 0, () => this.tutorialActive = false), undefined, true);
     }
     return true;
   }
