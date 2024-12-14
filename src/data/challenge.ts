@@ -16,6 +16,7 @@ import { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -105,23 +106,25 @@ export enum MoveSourceType {
 export abstract class Challenge {
   public id: Challenges; // The id of the challenge
 
-  public value: integer; // The "strength" of the challenge, all challenges have a numerical value.
-  public maxValue: integer; // The maximum strength of the challenge.
-  public severity: integer; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
-  public maxSeverity: integer; // The maximum severity of the challenge.
+  public value: number; // The "strength" of the challenge, all challenges have a numerical value.
+  public maxValue: number; // The maximum strength of the challenge.
+  public severity: number; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
+  public maxSeverity: number; // The maximum severity of the challenge.
+  public rand: number; // A random number applied to the challenge.
 
   public conditions: ChallengeCondition[];
 
   /**
    * @param id {@link Challenges} The enum value for the challenge
    */
-  constructor(id: Challenges, maxValue: integer = Number.MAX_SAFE_INTEGER) {
+  constructor(id: Challenges, maxValue: number = Number.MAX_SAFE_INTEGER) {
     this.id = id;
 
     this.value = 0;
     this.maxValue = maxValue;
     this.severity = 0;
     this.maxSeverity = 0;
+    this.rand = 0;
     this.conditions = [];
   }
 
@@ -131,6 +134,7 @@ export abstract class Challenge {
   reset(): void {
     this.value = 0;
     this.severity = 0;
+    this.rand = 0;
   }
 
   /**
@@ -170,7 +174,7 @@ export abstract class Challenge {
 
   /**
    * Returns the textual representation of a challenge's current value.
-   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised name for the current value.
    */
   getValue(overrideValue?: number): string {
@@ -180,7 +184,7 @@ export abstract class Challenge {
 
   /**
    * Returns the description of a challenge's current value.
-   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised description for the current value.
    */
   getDescription(overrideValue?: number): string {
@@ -245,17 +249,17 @@ export abstract class Challenge {
 
   /**
    * Gets the "difficulty" value of this challenge.
-   * @returns {@link integer} The difficulty value.
+   * @returns {@link number} The difficulty value.
    */
-  getDifficulty(): integer {
+  getDifficulty(): number {
     return this.value;
   }
 
   /**
    * Gets the minimum difficulty added by this challenge.
-   * @returns {@link integer} The difficulty value.
+   * @returns {@link number} The difficulty value.
    */
-  getMinDifficulty(): integer {
+  getMinDifficulty(): number {
     return 0;
   }
 
@@ -447,7 +451,187 @@ export class SingleGenerationChallenge extends Challenge {
 
   applyFixedBattle(waveIndex: Number, battleConfig: FixedBattleConfig): boolean {
     let trainerTypes: TrainerType[] = [];
+    if (this.rand === 0 && this.value === 3 || this.rand === 0 && this.value === 7) {
+      /** Currently used for determining the evil team when there is more than one for a given generation. */
+      const rand = Utils.randSeedInt(2, 1);
+      this.rand = rand;
+    }
     switch (waveIndex) {
+      case 35:
+        trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+        if (this.value === 3) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AQUA_GRUNT ];
+            break;
+          }
+        }
+        if (this.value === 7) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.SKULL_GRUNT ];
+            break;
+          }
+        }
+        break;
+      case 62:
+        battleConfig.setSeedOffsetWave(35);
+        trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+        if (this.value === 3) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AQUA_GRUNT ];
+            break;
+          }
+        }
+        if (this.value === 7) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.SKULL_GRUNT ];
+            break;
+          }
+        }
+        break;
+      case 64:
+        battleConfig.setSeedOffsetWave(35);
+        trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.UNKNOWN, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+        if (this.value === 3) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AQUA_GRUNT ];
+            break;
+          }
+        }
+        if (this.value === 7) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.SKULL_GRUNT ];
+            break;
+          }
+        }
+        break;
+      case 66:
+        battleConfig.setSeedOffsetWave(35);
+        trainerTypes = [ Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ]), Utils.randSeedItem([ TrainerType.ZINZOLIN, TrainerType.ROOD ]), Utils.randSeedItem([ TrainerType.XEROSIC, TrainerType.BRYONY ]), TrainerType.UNKNOWN, TrainerType.OLEANA, Utils.randSeedItem([ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]) ];
+        if (this.value === 3) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.TABITHA, TrainerType.COURTNEY ]) ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.MATT, TrainerType.SHELLY ]) ];
+            break;
+          }
+        }
+        if (this.value === 7) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.FABA ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.PLUMERIA ];
+            break;
+          }
+        }
+        break;
+      case 112:
+        battleConfig.setSeedOffsetWave(35);
+        trainerTypes = [ TrainerType.ROCKET_GRUNT, TrainerType.ROCKET_GRUNT, TrainerType.UNKNOWN, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, Utils.randSeedItem([ TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT ]), TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+        if (this.value === 3) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAGMA_GRUNT ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AQUA_GRUNT ];
+            break;
+          }
+        }
+        if (this.value === 7) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.AETHER_GRUNT ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.SKULL_GRUNT ];
+            break;
+          }
+        }
+        break;
+      case 114:
+        battleConfig.setSeedOffsetWave(35);
+        trainerTypes = [ Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), Utils.randSeedItem([ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ]), TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ]), Utils.randSeedItem([ TrainerType.ZINZOLIN, TrainerType.ROOD ]), Utils.randSeedItem([ TrainerType.XEROSIC, TrainerType.BRYONY ]), Utils.randSeedItem([ TrainerType.FABA, TrainerType.PLUMERIA ]), TrainerType.OLEANA, Utils.randSeedItem([ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]) ];
+        if (this.value === 3) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.TABITHA, TrainerType.COURTNEY ]) ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, Utils.randSeedItem([ TrainerType.MATT, TrainerType.SHELLY ]) ];
+            break;
+          }
+        }
+        if (this.value === 7) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.FABA ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.PLUMERIA ];
+            break;
+          }
+        }
+        break;
+      case 115:
+        battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
+        trainerTypes = [ TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.UNKNOWN, TrainerType.CYRUS, TrainerType.GHETSIS, TrainerType.LYSANDRE, TrainerType.UNKNOWN, TrainerType.ROSE, TrainerType.PENNY ];
+        if (this.value === 3) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAXIE ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.ARCHIE ];
+            break;
+          }
+        }
+        if (this.value === 7) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.LUSAMINE ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.GUZMA ];
+            break;
+          }
+        }
+        break;
+      case 165:
+        battleConfig.setSeedOffsetWave(35).setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false });
+        trainerTypes = [ TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.UNKNOWN, TrainerType.CYRUS_2, TrainerType.GHETSIS_2, TrainerType.LYSANDRE_2, TrainerType.UNKNOWN, TrainerType.ROSE_2, TrainerType.PENNY_2 ];
+        if (this.value === 3) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.MAXIE_2 ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.ARCHIE_2 ];
+            break;
+          }
+        }
+        if (this.value === 7) {
+          if (this.rand !== 2) {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.LUSAMINE_2 ];
+            break;
+          } else {
+            trainerTypes = [ TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.UNKNOWN, TrainerType.GUZMA_2 ];
+            break;
+          }
+        }
+        break;
       case 182:
         trainerTypes = [ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, Utils.randSeedItem([ TrainerType.HALA, TrainerType.MOLAYNE ]), TrainerType.MARNIE_ELITE, TrainerType.RIKA ];
         break;
@@ -510,6 +694,7 @@ export class SingleGenerationChallenge extends Challenge {
     const newChallenge = new SingleGenerationChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
+    newChallenge.rand = source.rand;
     return newChallenge;
   }
 }
@@ -589,7 +774,7 @@ export class SingleTypeChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -601,7 +786,7 @@ export class SingleTypeChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
+  getDescription(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -712,7 +897,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
   /**
    * @override
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -746,7 +931,7 @@ export class LowerStarterPointsChallenge extends Challenge {
   /**
    * @override
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
