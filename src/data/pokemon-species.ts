@@ -670,6 +670,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   }
 
   getTrainerSpeciesForLevel(level: number, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number = 0): Species {
+    if (currentWave === 20) { //Don't allow first gym leader wave 20 to evolve their mons
+      allowEvolving = false;
+    }
     return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
   }
 
