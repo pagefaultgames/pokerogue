@@ -24,7 +24,7 @@ describe("Items - Multi Lens", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.TACKLE, Moves.TRAILBLAZE, Moves.TACHYON_CUTTER ])
+      .moveset([ Moves.TACKLE, Moves.TRAILBLAZE, Moves.TACHYON_CUTTER, Moves.FUTURE_SIGHT ])
       .ability(Abilities.BALL_FETCH)
       .startingHeldItems([{ name: "MULTI_LENS" }])
       .battleType("single")
@@ -32,8 +32,8 @@ describe("Items - Multi Lens", () => {
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
-      .startingLevel(100)
-      .enemyLevel(100);
+      .startingLevel(99) // Check for proper rounding on Seismic Toss damage reduction
+      .enemyLevel(99);
   });
 
   it.each([
@@ -113,5 +113,100 @@ describe("Items - Multi Lens", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(magikarp.turnData.hitCount).toBe(2);
+  });
+
+  it("should enhance fixed-damage moves while also applying damage reduction", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }])
+      .moveset(Moves.SEISMIC_TOSS);
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
+
+    game.move.select(Moves.SEISMIC_TOSS);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+    const damageResults = spy.mock.results.map(result => result.value?.damage);
+
+    expect(damageResults).toHaveLength(2);
+    expect(damageResults[0]).toBe(Math.floor(playerPokemon.level * 0.75));
+    expect(damageResults[1]).toBe(Math.floor(playerPokemon.level * 0.25));
+  });
+
+  it("should result in correct damage for hp% attacks with 1 lens", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.COMPOUND_EYES)
+      .enemyLevel(1000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 5);
+  });
+
+  it("should result in correct damage for hp% attacks with 2 lenses", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.COMPOUND_EYES)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyLevel(1000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 5);
+  });
+
+  it("should result in correct damage for hp% attacks with 2 lenses + Parental Bond", async () => {
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
+      .moveset(Moves.SUPER_FANG)
+      .ability(Abilities.PARENTAL_BOND)
+      .passiveAbility(Abilities.COMPOUND_EYES)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyLevel(1000)
+      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SUPER_FANG);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.25, 5);
+  });
+
+  it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {
+    game.override.enemyLevel(1000);
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemyPokemon, "damageAndUpdate");
+
+    game.move.select(Moves.FUTURE_SIGHT);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(2);
+    await game.toNextTurn();
+
+    // TODO: Update hit count to 1 once Future Sight is fixed to not activate held items if user is off the field
+    expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
   });
 });
