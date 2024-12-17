@@ -372,7 +372,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Lily
 - PigeonBar
 
-## Past Contributors
+## Other Code Contributors
 - Admiral-Billy
 - allen925
 - arColm
