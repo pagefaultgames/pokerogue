@@ -401,6 +401,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - JonStudders
 - karl-police
 - lucfd
+- Lugiadrien
 - madibye
 - mattrossdev
 - mcmontag
@@ -431,6 +432,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Xiaphear
 - zaccie
 - zacharied
+- Zé Ricardo
 
 
 # 🌎 Translation
