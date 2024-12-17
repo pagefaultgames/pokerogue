@@ -373,6 +373,8 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - PigeonBar
 
 ## Past Contributors
+- muscode
+- geeilhan
 - Fontbane
 - sodaMelon
 - schmidtc1
