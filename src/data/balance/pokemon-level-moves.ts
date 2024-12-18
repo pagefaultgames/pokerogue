@@ -19465,7 +19465,6 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   [Species.GRENINJA]: {
     1: [
       [ EVOLVE_MOVE, Moves.WATER_SHURIKEN ],
-      [ EVOLVE_MOVE, Moves.WATER_SHURIKEN ],
       [ 1, Moves.POUND ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.WATER_GUN ],
@@ -19475,6 +19474,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 1, Moves.SMACK_DOWN ], // Previous Stage Move
       [ 1, Moves.BOUNCE ], // Previous Stage Move
       [ 1, Moves.HAZE ],
+      [ 1, Moves.MAT_BLOCK ],
       [ 1, Moves.ROLE_PLAY ],
       [ 1, Moves.NIGHT_SLASH ],
       [ 10, Moves.LICK ],

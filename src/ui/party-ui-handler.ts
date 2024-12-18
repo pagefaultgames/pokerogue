@@ -362,12 +362,12 @@ export default class PartyUiHandler extends MessageUiHandler {
             if (p !== this.transferCursor) { // this skips adding the able/not able labels on the pokemon doing the transfer
               if (matchingModifier) { // if matchingModifier exists then the item exists on the new pokemon
                 if (matchingModifier.getMaxStackCount() === matchingModifier.stackCount) { // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
-                  ableToTransfer = "Not able";
+                  ableToTransfer = i18next.t("partyUiHandler:notAble");
                 } else { // if the pokemon isn't at max stack, make the label "Able"
-                  ableToTransfer = "Able";
+                  ableToTransfer = i18next.t("partyUiHandler:able");
                 }
               } else { // if matchingModifier doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
-                ableToTransfer = "Able";
+                ableToTransfer = i18next.t("partyUiHandler:able");
               }
             } else { // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
               ableToTransfer = "";
