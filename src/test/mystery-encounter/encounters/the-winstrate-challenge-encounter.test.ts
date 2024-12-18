@@ -101,8 +101,8 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
     expect(encounter.onInit).toBeDefined();
 
-    encounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    encounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
     expect(encounter.enemyPartyConfigs.length).toBe(5);
@@ -363,7 +363,7 @@ async function skipBattleToNextBattle(game: GameManager, isFinalBattle: boolean 
     game.scene.field.remove(p);
   });
   game.phaseInterceptor["onHold"] = [];
-  game.scene.pushPhase(new VictoryPhase(game.scene, 0));
+  game.scene.pushPhase(new VictoryPhase(0));
   game.phaseInterceptor.superEndPhase();
   if (isFinalBattle) {
     await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);

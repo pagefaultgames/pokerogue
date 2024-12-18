@@ -58,7 +58,7 @@ export default class InputsHandler {
   }
 
   init(): void {
-    const touchControl = new TouchControl(this.scene);
+    const touchControl = new TouchControl();
     touchControl.deactivatePressedKey(); //test purpose
     this.events = this.inputController.events;
     this.scene.input.gamepad?.emit("connected", this.fakePad);

@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import { globalScene } from "#app/global-scene";
 import * as Utils from "../utils";
 
 export enum PokemonIconAnimMode {
@@ -13,7 +13,7 @@ export default class PokemonIconAnimHandler {
   private icons: Map<PokemonIcon, PokemonIconAnimMode>;
   private toggled: boolean;
 
-  setup(scene: BattleScene): void {
+  setup(): void {
     this.icons = new Map();
     this.toggled = false;
 
@@ -26,7 +26,7 @@ export default class PokemonIconAnimHandler {
         i.y += delta * (this.toggled ? 1 : -1);
       }
     };
-    scene.tweens.addCounter({
+    globalScene.tweens.addCounter({
       duration: Utils.fixedInt(200),
       from: 0,
       to: 1,

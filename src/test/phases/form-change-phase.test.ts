@@ -44,7 +44,7 @@ describe("Form Change Phase", () => {
     expect(zacian.calculateBaseStats()).toStrictEqual([ 92, 120, 115, 80, 115, 138 ]);
 
     // Give Zacian a Rusted Sword
-    const rustedSwordType = generateModifierType(game.scene, modifierTypes.RARE_FORM_CHANGE_ITEM)!;
+    const rustedSwordType = generateModifierType( modifierTypes.RARE_FORM_CHANGE_ITEM)!;
     const rustedSword = rustedSwordType.newModifier(zacian);
     await game.scene.addModifier(rustedSword);
 

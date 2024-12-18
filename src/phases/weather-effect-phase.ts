@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { applyPreWeatherEffectAbAttrs, SuppressWeatherEffectAbAttr, PreWeatherDamageAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPostWeatherLapseAbAttrs, PostWeatherLapseAbAttr } from "#app/data/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { Weather, getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
@@ -11,14 +11,14 @@ import { CommonAnimPhase } from "./common-anim-phase";
 export class WeatherEffectPhase extends CommonAnimPhase {
   public weather: Weather | null;
 
-  constructor(scene: BattleScene) {
-    super(scene, undefined, undefined, CommonAnim.SUNNY + ((scene?.arena?.weather?.weatherType || WeatherType.NONE) - 1));
-    this.weather = scene?.arena?.weather;
+  constructor() {
+    super(undefined, undefined, CommonAnim.SUNNY + ((globalScene?.arena?.weather?.weatherType || WeatherType.NONE) - 1));
+    this.weather = globalScene?.arena?.weather;
   }
 
   start() {
     // Update weather state with any changes that occurred during the turn
-    this.weather = this.scene?.arena?.weather;
+    this.weather = globalScene?.arena?.weather;
 
     if (!this.weather) {
       this.end();
@@ -46,7 +46,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 
           const damage = Utils.toDmgValue(pokemon.getMaxHp() / 16);
 
-          this.scene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
+          globalScene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
           pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, false, false, true);
         };
 
@@ -59,7 +59,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
       }
     }
 
-    this.scene.ui.showText(getWeatherLapseMessage(this.weather.weatherType) ?? "", null, () => {
+    globalScene.ui.showText(getWeatherLapseMessage(this.weather.weatherType) ?? "", null, () => {
       this.executeForAll((pokemon: Pokemon) => {
         if (!pokemon.switchOutStatus) {
           applyPostWeatherLapseAbAttrs(PostWeatherLapseAbAttr, pokemon, this.weather);

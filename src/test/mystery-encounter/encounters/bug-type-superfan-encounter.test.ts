@@ -209,8 +209,8 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
     expect(BugTypeSuperfanEncounter.onInit).toBeDefined();
 
-    BugTypeSuperfanEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    BugTypeSuperfanEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
     const config = BugTypeSuperfanEncounter.enemyPartyConfigs[0];
 
     expect(config).toBeDefined();
@@ -384,7 +384,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await game.phaseInterceptor.run(MysteryEncounterRewardsPhase);
 
       expect(selectOptionSpy).toHaveBeenCalledTimes(1);
-      const optionData = selectOptionSpy.mock.calls[0][1];
+      const optionData = selectOptionSpy.mock.calls[0][0];
       expect(PHYSICAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[0].label)).toBe(true);
       expect(SPECIAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[1].label)).toBe(true);
       expect(STATUS_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[2].label)).toBe(true);

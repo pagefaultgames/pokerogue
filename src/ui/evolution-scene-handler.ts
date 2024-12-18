@@ -1,8 +1,8 @@
-import BattleScene from "../battle-scene";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { Button } from "#enums/buttons";
+import { globalScene } from "#app/global-scene";
 
 export default class EvolutionSceneHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
@@ -11,8 +11,8 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
   public canCancel: boolean;
   public cancelled: boolean;
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.EVOLUTION_SCENE);
+  constructor() {
+    super(Mode.EVOLUTION_SCENE);
   }
 
   setup() {
@@ -21,21 +21,21 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    this.evolutionContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
+    this.evolutionContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
     ui.add(this.evolutionContainer);
 
-    const messageBg = this.scene.add.sprite(0, 0, "bg", this.scene.windowType);
+    const messageBg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType);
     messageBg.setOrigin(0, 1);
     messageBg.setVisible(false);
     ui.add(messageBg);
 
     this.messageBg = messageBg;
 
-    this.messageContainer = this.scene.add.container(12, -39);
+    this.messageContainer = globalScene.add.container(12, -39);
     this.messageContainer.setVisible(false);
     ui.add(this.messageContainer);
 
-    const message = addTextObject(this.scene, 0, 0, "", TextStyle.MESSAGE, {
+    const message = addTextObject(0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
       wordWrap: {
         width: 1780
@@ -51,9 +51,9 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
   show(_args: any[]): boolean {
     super.show(_args);
 
-    this.scene.ui.bringToTop(this.evolutionContainer);
-    this.scene.ui.bringToTop(this.messageBg);
-    this.scene.ui.bringToTop(this.messageContainer);
+    globalScene.ui.bringToTop(this.evolutionContainer);
+    globalScene.ui.bringToTop(this.messageBg);
+    globalScene.ui.bringToTop(this.messageContainer);
     this.messageBg.setVisible(true);
     this.messageContainer.setVisible(true);
 

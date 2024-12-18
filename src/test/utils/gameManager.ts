@@ -173,8 +173,8 @@ export default class GameManager {
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.scene.gameMode = getGameMode(mode);
       const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      this.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 
@@ -206,8 +206,8 @@ export default class GameManager {
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      this.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     }, () => this.isCurrentPhase(EncounterPhase));
 
@@ -375,7 +375,7 @@ export default class GameManager {
   exportSaveToTest(): Promise<string> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     return new Promise(async (resolve) => {
-      const sessionSaveData = this.scene.gameData.getSessionSaveData(this.scene);
+      const sessionSaveData = this.scene.gameData.getSessionSaveData();
       const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
       resolve(encryptedSaveData);
     });
@@ -403,7 +403,7 @@ export default class GameManager {
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
-      this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
+      this.scene.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
       resolve();
     });

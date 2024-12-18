@@ -2,7 +2,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
 import { Gender } from "#app/data/gender";
 import { getVariantTint } from "#app/data/variant";
 import { DexAttr } from "#app/system/game-data";
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import PokemonSpecies from "#app/data/pokemon-species";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 
@@ -12,7 +12,6 @@ import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim
  * shiny variant, hidden ability, new egg move, new catch
  */
 export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
-  public scene: BattleScene;
   public species: PokemonSpecies;
   public icon: Phaser.GameObjects.Sprite;
   public shinyIcon: Phaser.GameObjects.Image;
@@ -21,13 +20,12 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
   public eggMoveIcon: Phaser.GameObjects.Image;
 
   /**
-   * @param scene the current {@linkcode BattleScene}
    * @param x x position
    * @param y y position
    * @param hatchData the {@linkcode EggHatchData} to load the icons and sprites for
    */
-  constructor(scene: BattleScene, x: number, y: number, hatchData: EggHatchData) {
-    super(scene, x, y);
+  constructor(x: number, y: number, hatchData: EggHatchData) {
+    super(globalScene, x, y);
 
     const displayPokemon = hatchData.pokemon;
     this.species = displayPokemon.species;
@@ -41,7 +39,7 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
     const isShiny = displayPokemon.shiny;
 
     // Pokemon sprite
-    const pokemonIcon = this.scene.add.sprite(-offset, offset, species.getIconAtlasKey(formIndex, isShiny, variant));
+    const pokemonIcon = globalScene.add.sprite(-offset, offset, species.getIconAtlasKey(formIndex, isShiny, variant));
     pokemonIcon.setScale(0.5);
     pokemonIcon.setOrigin(0, 0);
     pokemonIcon.setFrame(species.getIconId(female, formIndex, isShiny, variant));
@@ -50,27 +48,27 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
     this.add(this.icon);
 
     // Shiny icon
-    this.shinyIcon = this.scene.add.image(rightSideX, offset, "shiny_star_small");
+    this.shinyIcon = globalScene.add.image(rightSideX, offset, "shiny_star_small");
     this.shinyIcon.setOrigin(0, 0);
     this.shinyIcon.setScale(0.5);
     this.add(this.shinyIcon);
 
     // Hidden ability icon
-    const haIcon = this.scene.add.image(rightSideX, offset * 4, "ha_capsule");
+    const haIcon = globalScene.add.image(rightSideX, offset * 4, "ha_capsule");
     haIcon.setOrigin(0, 0);
     haIcon.setScale(0.5);
     this.hiddenAbilityIcon = haIcon;
     this.add(this.hiddenAbilityIcon);
 
     // Pokeball icon
-    const pokeballIcon = this.scene.add.image(rightSideX, offset * 7, "icon_owned");
+    const pokeballIcon = globalScene.add.image(rightSideX, offset * 7, "icon_owned");
     pokeballIcon.setOrigin(0, 0);
     pokeballIcon.setScale(0.5);
     this.pokeballIcon = pokeballIcon;
     this.add(this.pokeballIcon);
 
     // Egg move icon
-    const eggMoveIcon = this.scene.add.image(0, offset, "icon_egg_move");
+    const eggMoveIcon = globalScene.add.image(0, offset, "icon_egg_move");
     eggMoveIcon.setOrigin(0, 0);
     eggMoveIcon.setScale(0.5);
     this.eggMoveIcon = eggMoveIcon;

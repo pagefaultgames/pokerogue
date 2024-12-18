@@ -83,8 +83,8 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     expect(LostAtSeaEncounter.onInit).toBeDefined();
 
-    LostAtSeaEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    LostAtSeaEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(LostAtSeaEncounter.dialogueTokens?.damagePercentage).toBe("25");
     expect(LostAtSeaEncounter.dialogueTokens?.option1RequiredMove).toBe(i18next.t("move:surf.name"));

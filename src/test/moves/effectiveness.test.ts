@@ -23,7 +23,7 @@ function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Sp
   const target = game.scene.addEnemyPokemon(getPokemonSpecies(targetSpecies), 5, TrainerSlot.NONE);
 
   if (teraType !== undefined) {
-    overrideHeldItems(game.scene, target, false);
+    overrideHeldItems(target, false);
   }
 
   expect(target.getMoveEffectiveness(user, allMoves[move])).toBe(expected);

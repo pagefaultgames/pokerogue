@@ -1,4 +1,3 @@
-import BattleScene from "#app/battle-scene";
 import { applyMoveAttrs, MoveHeaderAttr } from "#app/data/move";
 import Pokemon, { PokemonMove } from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
@@ -7,8 +6,8 @@ export class MoveHeaderPhase extends BattlePhase {
   public pokemon: Pokemon;
   public move: PokemonMove;
 
-  constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove) {
-    super(scene);
+  constructor(pokemon: Pokemon, move: PokemonMove) {
+    super();
 
     this.pokemon = pokemon;
     this.move = move;
