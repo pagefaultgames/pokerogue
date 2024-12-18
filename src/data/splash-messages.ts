@@ -61,7 +61,7 @@ const seasonalSplashMessages: Season[] = [
     end: "12-31"
   },
   {
-    name: "newyears",
+    name: "newYears",
     start: "12-31",
     end: "01-14"
   },
@@ -71,10 +71,9 @@ const seasonalSplashMessages: Season[] = [
 
 export function getSplashMessages(): string[] {
   const existingKeys = i18next.getResourceBundle(i18next.language, "splashMessages");
-  console.log(existingKeys);
   const splashMessages: string[] = [ ...Object.keys(existingKeys["common"]) ].map((message) => `common.${message}`);
   if (splashMessages.includes("common.battlesWon")) {
-    splashMessages.push(...Array(BATTLES_WON_WEIGHT_MULTIPLIER).fill("common.battlesWon"));
+    splashMessages.push(...Array(Math.max(BATTLES_WON_WEIGHT_MULTIPLIER - 1, 1)).fill("common.battlesWon"));
   }
 
   console.log("use seasonal splash messages", USE_SEASONAL_SPLASH_MESSAGES);
@@ -85,8 +84,13 @@ export function getSplashMessages(): string[] {
       const startDate = new Date(`${start}-${now.getFullYear()}`);
       const endDate = new Date(`${end}-${now.getFullYear()}`);
       if (endDate < startDate) { // If the end date is earlier in the year, that means it's next year
-        endDate.setFullYear(endDate.getFullYear() + 1);
+        if (now >= startDate) {
+          endDate.setFullYear(endDate.getFullYear() + 1); //Ends next year
+        } else if (now <= endDate) {
+          startDate.setFullYear(startDate.getFullYear() - 1); //Started last year
+        }
       }
+      console.log(`${name} event starts ${startDate} and ends ${endDate}`);
 
       if (existingKeys.hasOwnProperty(name) && now >= startDate && now <= endDate) {
         const existingMessages: string[] = [ ...Object.keys(existingKeys[name]) ].map(m=>`${name}.${m}`);
