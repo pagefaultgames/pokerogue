@@ -27,12 +27,12 @@ interface TimedEvent extends EventBanner {
 
 const timedEvents: TimedEvent[] = [
   {
-    name: "Halloween Update",
+    name: "Winter Holiday Update",
     eventType: EventType.SHINY,
     shinyMultiplier: 2,
-    friendshipMultiplier: 2,
-    startDate: new Date(Date.UTC(2024, 9, 27, 0)),
-    endDate: new Date(Date.UTC(2024, 10, 4, 0)),
+    friendshipMultiplier: 1,
+    startDate: new Date(Date.UTC(2024, 11, 21, 0)),
+    endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "halloween2024-event-",
     scale: 0.21,
     availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ]
