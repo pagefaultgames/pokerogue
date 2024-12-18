@@ -437,7 +437,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     if (!eggs) {
       eggs = [];
       for (let i = 1; i <= pullCount; i++) {
-        const eggOptions: IEggOptions = { scene: globalScene, pulled: true, sourceType: this.gachaCursor };
+        const eggOptions: IEggOptions = { pulled: true, sourceType: this.gachaCursor };
 
         // Before creating the last egg, check if the guaranteed egg tier was already generated
         // if not, override the egg tier

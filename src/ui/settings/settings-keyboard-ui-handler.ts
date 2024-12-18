@@ -26,7 +26,6 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
   /**
      * Creates an instance of SettingsKeyboardUiHandler.
      *
-     * @param scene - The BattleScene instance.
      * @param mode - The UI mode, optional.
      */
   constructor(mode: Mode | null = null) {

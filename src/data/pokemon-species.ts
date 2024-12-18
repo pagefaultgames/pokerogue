@@ -960,7 +960,6 @@ export const noStarterFormKeys: string[] = [
 
 /**
 * Method to get the daily list of starters with Pokerus.
-* @param scene {@linkcode BattleScene} used as part of RNG
 * @returns A list of starters with Pokerus
 */
 export function getPokerusStarters(): PokemonSpecies[] {

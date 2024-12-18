@@ -6,7 +6,6 @@ export default class SettingsUiHandler extends AbstractSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *
-   * @param scene - The BattleScene instance.
    * @param mode - The UI mode, optional.
    */
   constructor(mode: Mode | null = null) {

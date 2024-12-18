@@ -25,13 +25,11 @@ export interface EncounterRequirement {
 export abstract class EncounterSceneRequirement implements EncounterRequirement {
   /**
    * Returns whether the EncounterSceneRequirement's... requirements, are met by the given scene
-   * @param partyPokemon
    */
   abstract meetsRequirement(): boolean;
   /**
    * Returns a dialogue token key/value pair for a given Requirement.
    * Should be overridden by child Requirement classes.
-   * @param scene
    * @param pokemon
    */
   abstract getDialogueToken(pokemon?: PlayerPokemon): [string, string];
@@ -61,7 +59,6 @@ export class CombinationSceneRequirement extends EncounterSceneRequirement {
 
   /**
    * Checks if all/any requirements are met (depends on {@linkcode isAnd})
-   * @param scene The {@linkcode BattleScene} to check against
    * @returns true if all/any requirements are met (depends on {@linkcode isAnd})
    */
   override meetsRequirement(): boolean {
@@ -72,7 +69,6 @@ export class CombinationSceneRequirement extends EncounterSceneRequirement {
 
   /**
    * Retrieves a dialogue token key/value pair for the given {@linkcode EncounterSceneRequirement | requirements}.
-   * @param scene The {@linkcode BattleScene} to check against
    * @param pokemon The {@linkcode PlayerPokemon} to check against
    * @returns A dialogue token key/value pair
    * @throws An {@linkcode Error} if {@linkcode isAnd} is `true` (not supported)
@@ -98,7 +94,6 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
 
   /**
    * Returns whether the EncounterPokemonRequirement's... requirements, are met by the given scene
-   * @param partyPokemon
    */
   abstract meetsRequirement(): boolean;
 
@@ -111,7 +106,6 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
   /**
    * Returns a dialogue token key/value pair for a given Requirement.
    * Should be overridden by child Requirement classes.
-   * @param scene
    * @param pokemon
    */
   abstract getDialogueToken(pokemon?: PlayerPokemon): [string, string];
@@ -143,7 +137,6 @@ export class CombinationPokemonRequirement extends EncounterPokemonRequirement {
 
   /**
    * Checks if all/any requirements are met (depends on {@linkcode isAnd})
-   * @param scene The {@linkcode BattleScene} to check against
    * @returns true if all/any requirements are met (depends on {@linkcode isAnd})
    */
   override meetsRequirement(): boolean {
@@ -168,7 +161,6 @@ export class CombinationPokemonRequirement extends EncounterPokemonRequirement {
 
   /**
    * Retrieves a dialogue token key/value pair for the given {@linkcode EncounterPokemonRequirement | requirements}.
-   * @param scene The {@linkcode BattleScene} to check against
    * @param pokemon The {@linkcode PlayerPokemon} to check against
    * @returns A dialogue token key/value pair
    * @throws An {@linkcode Error} if {@linkcode isAnd} is `true` (not supported)

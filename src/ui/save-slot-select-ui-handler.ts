@@ -1,5 +1,4 @@
 import i18next from "i18next";
-import BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { GameMode } from "../game-mode";
@@ -420,8 +419,4 @@ class SessionSlot extends Phaser.GameObjects.Container {
       });
     });
   }
-}
-
-interface SessionSlot {
-  scene: BattleScene;
 }

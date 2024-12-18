@@ -23,7 +23,6 @@ export class SwitchSummonPhase extends SummonPhase {
 
   /**
      * Constructor for creating a new SwitchSummonPhase
-     * @param scene {@linkcode BattleScene} the scene the phase is associated with
      * @param switchType the type of switch behavior
      * @param fieldIndex integer representing position on the battle field
      * @param slotIndex integer for the index of pokemon (in party of 6) to switch into

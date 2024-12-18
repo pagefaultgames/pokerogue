@@ -13,7 +13,6 @@ export class ScrollBar extends Phaser.GameObjects.Container {
   private maxRows: number;
 
   /**
-   * @param scene the current scene
    * @param x the scrollbar's x position (origin: top left)
    * @param y the scrollbar's y position (origin: top left)
    * @param width the scrollbar's width

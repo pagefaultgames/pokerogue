@@ -74,7 +74,6 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
 
   /**
    * Returns true if all {@linkcode EncounterRequirement}s for the option are met
-   * @param scene
    */
   meetsRequirements(): boolean {
     return !this.requirements.some(requirement => !requirement.meetsRequirement())
@@ -84,7 +83,6 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
 
   /**
    * Returns true if all PRIMARY {@linkcode EncounterRequirement}s for the option are met
-   * @param scene
    * @param pokemon
    */
   pokemonMeetsPrimaryRequirements(pokemon: Pokemon): boolean {
@@ -96,7 +94,6 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
    * AND there is a valid Pokemon assigned to {@linkcode primaryPokemon}.
    * If both {@linkcode primaryPokemonRequirements} and {@linkcode secondaryPokemonRequirements} are defined,
    * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
-   * @param scene
    */
   meetsPrimaryRequirementAndPrimaryPokemonSelected(): boolean {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
@@ -154,7 +151,6 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
    * AND there is a valid Pokemon assigned to {@linkcode secondaryPokemon} (if applicable).
    * If both {@linkcode primaryPokemonRequirements} and {@linkcode secondaryPokemonRequirements} are defined,
    * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
-   * @param scene
    */
   meetsSupportingRequirementAndSupportingPokemonSelected(): boolean {
     if (!this.secondaryPokemonRequirements || this.secondaryPokemonRequirements.length === 0) {

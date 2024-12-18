@@ -296,7 +296,6 @@ export default class MysteryEncounter implements IMysteryEncounter {
   /**
    * Checks if the current scene state meets the requirements for the {@linkcode MysteryEncounter} to spawn
    * This is used to filter the pool of encounters down to only the ones with all requirements met
-   * @param scene
    * @returns
    */
   meetsRequirements(): boolean {
@@ -310,7 +309,6 @@ export default class MysteryEncounter implements IMysteryEncounter {
   /**
    * Checks if a specific player pokemon meets all given primary EncounterPokemonRequirements
    * Used automatically as part of {@linkcode meetsRequirements}, but can also be used to manually check certain Pokemon where needed
-   * @param scene
    * @param pokemon
    */
   pokemonMeetsPrimaryRequirements(pokemon: Pokemon): boolean {
@@ -322,7 +320,6 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * AND there is a valid Pokemon assigned to {@linkcode primaryPokemon}.
    * If both {@linkcode primaryPokemonRequirements} and {@linkcode secondaryPokemonRequirements} are defined,
    * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
-   * @param scene
    */
   private meetsPrimaryRequirementAndPrimaryPokemonSelected(): boolean {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
@@ -386,7 +383,6 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * AND there is a valid Pokemon assigned to {@linkcode secondaryPokemon} (if applicable).
    * If both {@linkcode primaryPokemonRequirements} and {@linkcode secondaryPokemonRequirements} are defined,
    * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
-   * @param scene
    */
   private meetsSecondaryRequirementAndSecondaryPokemonSelected(): boolean {
     if (!this.secondaryPokemonRequirements || this.secondaryPokemonRequirements.length === 0) {
@@ -409,7 +405,6 @@ export default class MysteryEncounter implements IMysteryEncounter {
 
   /**
    * Initializes encounter intro sprites based on the sprite configs defined in spriteConfigs
-   * @param scene
    */
   initIntroVisuals(): void {
     this.introVisuals = new MysteryEncounterIntroVisuals(this);
@@ -518,7 +513,6 @@ export default class MysteryEncounter implements IMysteryEncounter {
   /**
    * Maintains seed offset for RNG consistency
    * Increments if the same {@linkcode MysteryEncounter} has multiple option select cycles
-   * @param scene
    */
   updateSeedOffset() {
     const currentOffset = this.seedOffset ?? globalScene.currentBattle.waveIndex * 1000;

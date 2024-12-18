@@ -110,7 +110,6 @@ export class BattlerTag {
 
   /**
    * Helper function that retrieves the source Pokemon object
-   * @param scene medium to retrieve the source Pokemon
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
   public getSourcePokemon(): Pokemon | null {

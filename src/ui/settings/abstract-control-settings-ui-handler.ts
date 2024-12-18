@@ -72,7 +72,6 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
   /**
    * Constructor for the AbstractSettingsUiHandler.
    *
-   * @param scene - The BattleScene instance.
    * @param mode - The UI mode.
    */
   constructor(mode: Mode | null = null) {

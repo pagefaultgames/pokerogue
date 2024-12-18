@@ -179,14 +179,10 @@ export class Egg {
       }
     };
 
-    if (eggOptions?.scene) {
-      const seedOverride = Utils.randomString(24);
-      eggOptions?.scene.executeWithSeedOffset(() => {
-        generateEggProperties(eggOptions);
-      }, 0, seedOverride);
-    } else { // For legacy eggs without scene
+    const seedOverride = Utils.randomString(24);
+    globalScene.executeWithSeedOffset(() => {
       generateEggProperties(eggOptions);
-    }
+    }, 0, seedOverride);
 
     this._eggDescriptor = eggOptions?.eggDescriptor;
   }

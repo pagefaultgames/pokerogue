@@ -549,7 +549,6 @@ function hideTradeBackground() {
 
 /**
  * Initiates an "evolution-like" animation to transform a previousPokemon (presumably from the player's party) into a new one, not necessarily an evolution species.
- * @param scene
  * @param tradedPokemon
  * @param receivedPokemon
  */

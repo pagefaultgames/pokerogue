@@ -126,8 +126,6 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
 /**
  * Generic handler for using a guiding pokemon to guide you back.
- *
- * @param scene Battle scene
  */
 function handlePokemonGuidingYouPhase() {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);

@@ -74,7 +74,6 @@ export abstract class ArenaTag {
 
   /**
    * Helper function that retrieves the source Pokemon
-   * @param scene medium to retrieve the source Pokemon
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
   public getSourcePokemon(): Pokemon | null {
@@ -83,7 +82,6 @@ export abstract class ArenaTag {
 
   /**
    * Helper function that retrieves the Pokemon affected
-   * @param scene - medium to retrieve the involved Pokemon
    * @returns list of PlayerPokemon or EnemyPokemon on the field
    */
   public getAffectedPokemon(): Pokemon[] {

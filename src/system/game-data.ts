@@ -820,9 +820,9 @@ export class GameData {
     }
 
     if (device === Device.GAMEPAD) {
-      setSettingGamepad(setting as SettingGamepad, valueIndex);  // Set the gamepad setting in the current scene
+      setSettingGamepad(setting as SettingGamepad, valueIndex);
     } else if (device === Device.KEYBOARD) {
-      setSettingKeyboard(setting as SettingKeyboard, valueIndex);  // Set the keyboard setting in the current scene
+      setSettingKeyboard(setting as SettingKeyboard, valueIndex);
     }
 
     Object.keys(settingDefaults).forEach(s => {  // Iterate over the default gamepad settings

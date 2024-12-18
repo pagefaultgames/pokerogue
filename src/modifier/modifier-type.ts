@@ -1153,7 +1153,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
           let foundULTRA_Z = false,
             foundN_LUNA = false,
             foundN_SOLAR = false;
-          formChangeItemTriggers.forEach((fc, i) => {
+          formChangeItemTriggers.forEach((fc, _i) => {
             switch (fc.item) {
               case FormChangeItem.ULTRANECROZIUM_Z:
                 foundULTRA_Z = true;
@@ -1236,7 +1236,7 @@ export class EnemyAttackStatusEffectChanceModifierType extends ModifierType {
   private effect: StatusEffect;
 
   constructor(localeKey: string, iconImage: string, chancePercent: integer, effect: StatusEffect, stackCount?: integer) {
-    super(localeKey, iconImage, (type, args) => new EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent, stackCount), "enemy_status_chance");
+    super(localeKey, iconImage, (type, _args) => new EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent, stackCount), "enemy_status_chance");
 
     this.chancePercent = chancePercent;
     this.effect = effect;
@@ -1275,7 +1275,7 @@ type WeightedModifierTypeWeightFunc = (party: Pokemon[], rerollCount?: integer) 
  * @returns A WeightedModifierTypeWeightFunc
  */
 function skipInClassicAfterWave(wave: integer, defaultWeight: integer): WeightedModifierTypeWeightFunc {
-  return (party: Pokemon[]) => {
+  return () => {
     const gameMode =  globalScene.gameMode;
     const currentWave = globalScene.currentBattle.waveIndex;
     return gameMode.isClassic && currentWave >= wave ? 0 : defaultWeight;
@@ -1300,7 +1300,7 @@ function skipInLastClassicWaveOrDefault(defaultWeight: integer) : WeightedModifi
  * @returns A WeightedModifierTypeWeightFunc
  */
 function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
-  return (party: Pokemon[]) => {
+  return () => {
     const lures = globalScene.getModifiers(DoubleBattleChanceBoosterModifier);
     return !(globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex === 199) && (lures.length === 0 || lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0) ? weight : 0;
   };
@@ -1448,7 +1448,7 @@ export const modifierTypes = {
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
-  MINT: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+  MINT: () => new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Nature)) {
       return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
     }
@@ -1472,7 +1472,7 @@ export const modifierTypes = {
     return new TerastallizeModifierType(type);
   }),
 
-  BERRY: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+  BERRY: () => new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in BerryType)) {
       return new BerryModifierType(pregenArgs[0] as BerryType);
     }
@@ -1580,19 +1580,19 @@ export const modifierTypes = {
   ENEMY_ENDURE_CHANCE: () => new EnemyEndureChanceModifierType("modifierType:ModifierType.ENEMY_ENDURE_CHANCE", "wl_reset_urge", 2),
   ENEMY_FUSED_CHANCE: () => new ModifierType("modifierType:ModifierType.ENEMY_FUSED_CHANCE", "wl_custom_spliced", (type, _args) => new EnemyFusionChanceModifier(type, 1)),
 
-  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
       return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
     }
     return new PokemonBaseStatTotalModifierType(randSeedInt(20, 1));
   }),
-  MYSTERY_ENCOUNTER_OLD_GATEAU: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+  MYSTERY_ENCOUNTER_OLD_GATEAU: () => new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
       return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
     }
     return new PokemonBaseStatFlatModifierType(randSeedInt(20, 1), [ Stat.HP, Stat.ATK, Stat.DEF ]);
   }),
-  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
       return new ModifierType("modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE", "black_sludge", (type, _args) => new HealShopCostModifier(type, pregenArgs[0] as number));
     }
@@ -1608,17 +1608,16 @@ interface ModifierPool {
 
 /**
  * Used to check if the player has max of a given ball type in Classic
- * @param party The player's party, just used to access the scene
  * @param ballType The {@linkcode PokeballType} being checked
  * @returns boolean: true if the player has the maximum of a given ball type
  */
-function hasMaximumBalls(party: Pokemon[], ballType: PokeballType): boolean {
+function hasMaximumBalls(ballType: PokeballType): boolean {
   return (globalScene.gameMode.isClassic && globalScene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS);
 }
 
 const modifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
-    new WeightedModifierType(modifierTypes.POKEBALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.POKEBALL)) ? 0 : 6, 6),
+    new WeightedModifierType(modifierTypes.POKEBALL, () => (hasMaximumBalls(PokeballType.POKEBALL)) ? 0 : 6, 6),
     new WeightedModifierType(modifierTypes.RARE_CANDY, 2),
     new WeightedModifierType(modifierTypes.POTION, (party: Pokemon[]) => {
       const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 10 && p.getHpRatio() <= 0.875) && !p.isFainted()).length, 3);
@@ -1646,7 +1645,7 @@ const modifierPool: ModifierPool = {
     m.setTier(ModifierTier.COMMON); return m;
   }),
   [ModifierTier.GREAT]: [
-    new WeightedModifierType(modifierTypes.GREAT_BALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.GREAT_BALL)) ? 0 : 6, 6),
+    new WeightedModifierType(modifierTypes.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL)) ? 0 : 6, 6),
     new WeightedModifierType(modifierTypes.PP_UP, 2),
     new WeightedModifierType(modifierTypes.FULL_HEAL, (party: Pokemon[]) => {
       const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
@@ -1699,10 +1698,10 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
     new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
-    new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
+    new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, () => {
       return Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 15), 8);
     }, 8),
-    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex < 180 ? 2 : 0, 2),
+    new WeightedModifierType(modifierTypes.MAP, () => globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex < 180 ? 2 : 0, 2),
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, 2),
     new WeightedModifierType(modifierTypes.TM_GREAT, 3),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
@@ -1715,18 +1714,18 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.TERA_SHARD, 1),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => globalScene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
-    new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[], rerollCount: integer) => !globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0, 1),
+    new WeightedModifierType(modifierTypes.VOUCHER, (_party: Pokemon[], rerollCount: integer) => !globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.GREAT); return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ULTRA_BALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.ULTRA_BALL)) ? 0 : 15, 15),
+    new WeightedModifierType(modifierTypes.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL)) ? 0 : 15, 15),
     new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
-    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 15) * 4, 32), 32),
-    new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 6, 24),
+    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 15) * 4, 32), 32),
+    new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 6, 24),
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
       const { gameMode, gameData } = globalScene;
@@ -1823,14 +1822,14 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
     new WeightedModifierType(modifierTypes.EXP_SHARE, skipInLastClassicWaveOrDefault(10)),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, skipInLastClassicWaveOrDefault(3)),
-    new WeightedModifierType(modifierTypes.TERA_ORB, (party: Pokemon[]) => Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
+    new WeightedModifierType(modifierTypes.TERA_ORB, () => Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 4),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA); return m;
   }),
   [ModifierTier.ROGUE]: [
-    new WeightedModifierType(modifierTypes.ROGUE_BALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.ROGUE_BALL)) ? 0 : 16, 16),
+    new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL)) ? 0 : 16, 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
@@ -1840,28 +1839,28 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
-    new WeightedModifierType(modifierTypes.CATCHING_CHARM, (party: Pokemon[]) => !globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.getSpeciesCount(d => !!d.caughtAttr) > 100 ? 4 : 0, 4),
+    new WeightedModifierType(modifierTypes.CATCHING_CHARM, () => !globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.getSpeciesCount(d => !!d.caughtAttr) > 100 ? 4 : 0, 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
-    new WeightedModifierType(modifierTypes.LOCK_CAPSULE, (party: Pokemon[]) => globalScene.gameMode.isClassic ? 0 : 3),
+    new WeightedModifierType(modifierTypes.LOCK_CAPSULE, () => globalScene.gameMode.isClassic ? 0 : 3),
     new WeightedModifierType(modifierTypes.SUPER_EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
-    new WeightedModifierType(modifierTypes.RARE_FORM_CHANGE_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 6, 24),
-    new WeightedModifierType(modifierTypes.MEGA_BRACELET, (party: Pokemon[]) => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 9, 36),
-    new WeightedModifierType(modifierTypes.DYNAMAX_BAND, (party: Pokemon[]) => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 9, 36),
-    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (party: Pokemon[], rerollCount: integer) => !globalScene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0, 3),
+    new WeightedModifierType(modifierTypes.RARE_FORM_CHANGE_ITEM, () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 6, 24),
+    new WeightedModifierType(modifierTypes.MEGA_BRACELET, () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 9, 36),
+    new WeightedModifierType(modifierTypes.DYNAMAX_BAND, () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 9, 36),
+    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (_party: Pokemon[], rerollCount: integer) => !globalScene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0, 3),
   ].map(m => {
     m.setTier(ModifierTier.ROGUE); return m;
   }),
   [ModifierTier.MASTER]: [
-    new WeightedModifierType(modifierTypes.MASTER_BALL, (party: Pokemon[]) => (hasMaximumBalls(party, PokeballType.MASTER_BALL)) ? 0 : 24, 24),
+    new WeightedModifierType(modifierTypes.MASTER_BALL, () => (hasMaximumBalls(PokeballType.MASTER_BALL)) ? 0 : 24, 24),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 14),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
     new WeightedModifierType(modifierTypes.MULTI_LENS, 18),
-    new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (party: Pokemon[], rerollCount: integer) =>
+    new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (_party: Pokemon[], rerollCount: integer) =>
       !globalScene.gameMode.isDaily && !globalScene.gameMode.isEndless && !globalScene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !globalScene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => (globalScene.gameMode.isDaily || (!globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))) ? 1 : 0, 1),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, () => (globalScene.gameMode.isDaily || (!globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))) ? 1 : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.MASTER); return m;
   })
@@ -2060,7 +2059,7 @@ export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Ma
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
   const pool = getModifierPoolForType(poolType);
-  itemPoolChecks.forEach((v, k) => {
+  itemPoolChecks.forEach((_v, k) => {
     itemPoolChecks.set(k, false);
   });
 
@@ -2183,7 +2182,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
 
     // Guaranteed mod functions second
     if (customModifierSettings.guaranteedModifierTypeFuncs && customModifierSettings.guaranteedModifierTypeFuncs.length > 0) {
-      customModifierSettings.guaranteedModifierTypeFuncs!.forEach((mod, i) => {
+      customModifierSettings.guaranteedModifierTypeFuncs!.forEach((mod, _i) => {
         const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === mod) as string;
         let guaranteedMod: ModifierType = modifierTypes[modifierId]?.();
 

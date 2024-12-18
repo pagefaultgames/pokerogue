@@ -694,15 +694,13 @@ export function settingIndex(key: string) {
 
 /**
  * Resets all settings to their defaults
- * @param scene current BattleScene
  */
 export function resetSettings() {
   Setting.forEach(s => setSetting(s.key, s.default));
 }
 
 /**
- * Updates a setting for current BattleScene
- * @param scene current BattleScene
+ * Updates a setting
  * @param setting string ideally from SettingKeys
  * @param value value to update setting with
  * @returns true if successful, false if not

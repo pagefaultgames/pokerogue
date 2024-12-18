@@ -1,5 +1,4 @@
 import i18next from "i18next";
-import BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
@@ -236,8 +235,4 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       button.setAlpha(alphaValue);
     });
   }
-}
-
-export interface DailyRunScoreboard {
-  scene: BattleScene
 }

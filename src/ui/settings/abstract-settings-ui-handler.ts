@@ -314,7 +314,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
   activateSetting(setting: Setting): boolean {
     switch (setting.key) {
       case SettingKeys.Move_Touch_Controls:
-        globalScene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi(), globalScene);
+        globalScene.inputController.moveTouchControlsHandler.enableConfigurationMode(this.getUi());
         return true;
     }
     return false;

@@ -760,7 +760,6 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
 
   /**
    * Retrieve the {@linkcode Modifier | Modifiers} icon as a {@linkcode Phaser.GameObjects.Container | Container}
-   * @param scene The {@linkcode BattleScene}
    * @param forSummary `true` if the icon is for the summary screen
    * @returns the icon as a {@linkcode Phaser.GameObjects.Container | Container}
    */
@@ -3365,7 +3364,6 @@ export class TempExtraModifierModifier extends LapsingPersistentModifier {
    * If no existing Silver Pokeballs are found, will add a new one.
    * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
    * @param _virtual N/A
-   * @param scene
    * @returns true if the modifier was successfully added or applied, false otherwise
    */
   add(modifiers: PersistentModifier[], _virtual: boolean): boolean {
@@ -3700,7 +3698,6 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
  * Uses either `MODIFIER_OVERRIDE` in overrides.ts to set {@linkcode PersistentModifier}s for either:
  *  - The player
  *  - The enemy
- * @param scene current {@linkcode BattleScene}
  * @param isPlayer {@linkcode boolean} for whether the player (`true`) or enemy (`false`) is being overridden
  */
 export function overrideModifiers(isPlayer: boolean = true): void {
@@ -3740,7 +3737,6 @@ export function overrideModifiers(isPlayer: boolean = true): void {
  * Uses either `HELD_ITEMS_OVERRIDE` in overrides.ts to set {@linkcode PokemonHeldItemModifier}s for either:
  *  - The first member of the player's team when starting a new game
  *  - An enemy {@linkcode Pokemon} being spawned in
- * @param scene current {@linkcode BattleScene}
  * @param pokemon {@linkcode Pokemon} whose held items are being overridden
  * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's (`true`) or an enemy (`false`)
  */

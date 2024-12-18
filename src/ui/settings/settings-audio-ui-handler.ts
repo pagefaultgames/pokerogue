@@ -7,7 +7,6 @@ export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
   /**
    * Creates an instance of SettingsAudioUiHandler.
    *
-   * @param scene - The BattleScene instance.
    * @param mode - The UI mode, optional.
    */
   constructor(mode: Mode | null = null) {

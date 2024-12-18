@@ -54,7 +54,6 @@ export class NavigationManager {
 
   /**
    * Navigates modes based on given direction
-   * @param scene The current BattleScene instance
    * @param direction LEFT or RIGHT
    */
   public navigate(direction) {
@@ -98,7 +97,6 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
 
   /**
    * Creates an instance of NavigationMenu.
-   * @param scene The current BattleScene instance.
    * @param x The x position of the NavigationMenu.
    * @param y The y position of the NavigationMenu.
    */

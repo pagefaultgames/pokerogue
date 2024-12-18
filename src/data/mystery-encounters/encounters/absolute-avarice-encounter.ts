@@ -468,8 +468,6 @@ function doGreedentEatBerries() {
 }
 
 /**
- *
- * @param scene
  * @param isEat Default false. Will "create" pile when false, and remove pile when true.
  */
 function doBerrySpritePile(isEat: boolean = false) {
