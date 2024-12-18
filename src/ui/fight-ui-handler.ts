@@ -232,7 +232,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     const hasMove = cursor < moveset.length;
 
     if (hasMove) {
-      const pokemonMove = moveset[cursor]!; // TODO: is the bang correct?
+      const pokemonMove = moveset[cursor];
       const moveType = pokemon.getMoveType(pokemonMove.getMove());
       const textureKey = Utils.getLocalizedSpriteKey("types");
       this.typeIcon.setTexture(textureKey, Type[moveType].toLowerCase()).setScale(0.8);
