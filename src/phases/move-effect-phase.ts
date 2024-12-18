@@ -88,6 +88,14 @@ export class MoveEffectPhase extends PokemonPhase {
     /** All Pokemon targeted by this phase's invoked move */
     const targets = this.getTargets();
 
+
+    /** If an enemy used this move, set this as last enemy that used move or ability */
+    if (!user?.isPlayer()) {
+      this.scene.currentBattle.lastEnemyInvolved = this.fieldIndex;
+    } else {
+      this.scene.currentBattle.lastPlayerInvolved = this.fieldIndex;
+    }
+
     if (!user) {
       return super.end();
     }
