@@ -1,0 +1,26 @@
+# Git related
+.git
+.github
+.gitmodules
+.gitattributes
+.gitignore
+
+# Development configs
+.vscode
+.idea
+.dependency-cruiser.cjs
+
+# Environment and secrets
+.env
+.env.*
+
+# Documentation and logs
+docs
+*.md
+*.log
+
+# Test files
+coverage
+test
+**/*.test.*
+**/__tests__
