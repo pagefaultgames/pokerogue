@@ -2,6 +2,7 @@ import BattleScene from "#app/battle-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { nil } from "#app/utils";
 import i18next from "i18next";
+import { Species } from "./enums/species";
 
 export enum EventType {
   SHINY,
@@ -16,6 +17,11 @@ interface EventBanner {
   availableLangs?: string[];
 }
 
+interface EventEncounter {
+  species: Species;
+  allowEvolution?: boolean;
+}
+
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
@@ -23,6 +29,8 @@ interface TimedEvent extends EventBanner {
   friendshipMultiplier?: number;
   startDate: Date;
   endDate: Date;
+  uncommonBreedEncounters?: EventEncounter[];
+  delibirdyBuff?: string[];
 }
 
 const timedEvents: TimedEvent[] = [
@@ -35,7 +43,27 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "halloween2024-event-",
     scale: 0.21,
-    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ]
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    uncommonBreedEncounters: [
+      { species: Species.GIMMIGHOUL },
+      { species: Species.DELIBIRD },
+      { species: Species.STANTLER },
+      { species: Species.LITWICK, allowEvolution: true },
+      { species: Species.SNOVER, allowEvolution: true },
+      { species: Species.ROLYCOLY, allowEvolution: true },
+      { species: Species.BALTOY, allowEvolution: true },
+      { species: Species.SMOLIV, allowEvolution: true },
+      { species: Species.CHESPIN, allowEvolution: true },
+      { species: Species.PIPLUP, allowEvolution: true },
+      { species: Species.CYNDAQUIL, allowEvolution: true },
+      { species: Species.GALAR_DARUMAKA, allowEvolution: true },
+      { species: Species.MILCERY, allowEvolution: true },
+      { species: Species.ALOLA_VULPIX, allowEvolution: true },
+      { species: Species.CHINGLING, allowEvolution: true },
+      { species: Species.SWIRLIX, allowEvolution: true },
+      { species: Species.MUDBRAY, allowEvolution: true }
+    ],
+    delibirdyBuff: [ "CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM" ]
   }
 ];
 
