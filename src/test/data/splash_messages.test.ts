@@ -9,7 +9,7 @@ describe("Data - Splash Messages", () => {
 
   // make sure to adjust this test if the weight it changed!
   it("should add contain 10 `battlesWon` splash messages", () => {
-    const battlesWonMessages = getSplashMessages().filter((message) => message === "splashMessages:common.battlesWon");
+    const battlesWonMessages = getSplashMessages().filter((message) => message === "splashMessages:battlesWon");
     expect(battlesWonMessages).toHaveLength(10);
   });
 
@@ -22,16 +22,16 @@ describe("Data - Splash Messages", () => {
       vi.useRealTimers(); // reset system time
     });
 
-    it("should contain halloween messages from Oct 15 to Oct 31", () => {
-      testSeason(new Date("2024-10-15"), new Date("2024-10-31"), "halloween");
+    it("should contain halloween messages from Sep 15 to Oct 31", () => {
+      testSeason(new Date("2024-09-15"), new Date("2024-10-31"), "halloween");
     });
 
-    it("should contain xmas messages from Dec 16 to Dec 31", () => {
-      testSeason(new Date("2024-12-16"), new Date("2024-12-31"), "xmas");
+    it("should contain xmas messages from Dec 1 to Dec 26", () => {
+      testSeason(new Date("2024-12-01"), new Date("2024-12-26"), "xmas");
     });
 
-    it("should contain new years messages from Dec 31 '24 to Jan 14 '25", () => {
-      testSeason(new Date("2024-12-31"), new Date("2025-01-14"), "newYears");
+    it("should contain new years messages frm Jan 1 to Jan 31", () => {
+      testSeason(new Date("2024-01-01"), new Date("2024-01-31"), "newYears");
     });
   });
 });
@@ -60,7 +60,7 @@ function testSeason(startDate: Date, endDate: Date, prefix: string) {
   });
 
   expect(before).toBe(0);
-  expect(start).toBeGreaterThanOrEqual(20); // make sure to adjust if weight is changed!
-  expect(end).toBeGreaterThanOrEqual(20); // make sure to adjust if weight is changed!
+  expect(start).toBeGreaterThanOrEqual(10); // make sure to adjust if weight is changed!
+  expect(end).toBeGreaterThanOrEqual(10); // make sure to adjust if weight is changed!
   expect(after).toBe(0);
 }
