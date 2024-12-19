@@ -46,14 +46,10 @@ const doEventReward = (scene: BattleScene) => {
     }));
     if (candidates.length > 0) {
       scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes[randSeedItem(candidates)]));
+    } else {
+      // At max stacks, give a Voucher instead
+      scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.VOUCHER));
     }
-    //  else {
-    //   // At max stacks, give the first party pokemon a Soothe Bell instead
-    //   const sootheBell = generateModifierType(scene, modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType;
-    //   await applyModifierTypeToPlayerPokemon(scene, scene.getPlayerPokemon()!, sootheBell);
-    //   scene.playSound("item_fanfare");
-    //   await showEncounterText(scene, i18next.t("battle:rewardGain", { modifierName: sootheBell.name }), null, undefined, true);
-    // }
   }
 };
 
@@ -64,6 +60,7 @@ const doEventReward = (scene: BattleScene) => {
  */
 export const DelibirdyEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DELIBIRDY)
+    .withMaxAllowedEncounters(4)
     .withEncounterTier(MysteryEncounterTier.COMMON) //Change back after event!
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER)) // Must have enough money for it to spawn at the very least
