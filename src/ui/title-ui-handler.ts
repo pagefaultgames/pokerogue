@@ -83,7 +83,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       .then(stats => {
         if (stats) {
           this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-          if (this.splashMessage === "splashMessages:battlesWon") {
+          if (this.splashMessage === "splashMessages:common.battlesWon") {
             this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
           }
         }
@@ -98,6 +98,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     if (ret) {
       this.splashMessage = Utils.randItem(getSplashMessages());
+      console.log(this.splashMessage);
       this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
 
       this.appVersionText.setText("v" + version);
