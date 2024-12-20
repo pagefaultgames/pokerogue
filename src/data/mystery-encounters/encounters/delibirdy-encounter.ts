@@ -34,7 +34,7 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
   "PokemonBaseStatTotalModifier"
 ];
 
-const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
+const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 1.5;
 
 const doEventReward = (scene: BattleScene) => {
   const event_buff = scene.eventManager.activeEvent()?.delibirdyBuff ?? [];

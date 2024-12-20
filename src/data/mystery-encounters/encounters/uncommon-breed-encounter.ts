@@ -35,7 +35,6 @@ const namespace = "mysteryEncounters/uncommonBreed";
  */
 export const UncommonBreedEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.UNCOMMON_BREED)
-    .withMaxAllowedEncounters(4)
     .withEncounterTier(MysteryEncounterTier.COMMON)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withCatchAllowed(true)
