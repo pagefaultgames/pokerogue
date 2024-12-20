@@ -1,5 +1,4 @@
 import { USE_SEASONAL_SPLASH_MESSAGES } from "#app/constants";
-import i18next from "i18next";
 
 //#region Interfaces/Types
 
@@ -38,6 +37,8 @@ interface Season {
   start: `${Month}-${Day}`;
   /** The end day and month of the season. Format `MM-DD` */
   end: `${Month}-${Day}`;
+  /** Collection of the messages to display (without the `i18next.t()` call!) */
+  messages: string[];
 }
 
 //#region Constants
@@ -45,57 +46,176 @@ interface Season {
 /** The weight multiplier for the battles-won splash message */
 const BATTLES_WON_WEIGHT_MULTIPLIER = 10;
 /** The weight multiplier for the seasonal splash messages */
-const SEASONAL_WEIGHT_MULTIPLIER = 20;
+const SEASONAL_WEIGHT_MULTIPLIER = 10;
+
+//#region Common Messages
+
+const commonSplashMessages = [
+  ...Array(BATTLES_WON_WEIGHT_MULTIPLIER).fill("battlesWon"),
+  "joinTheDiscord",
+  "infiniteLevels",
+  "everythingIsStackable",
+  "optionalSaveScumming",
+  "biomes",
+  "openSource",
+  "playWithSpeed",
+  "liveBugTesting",
+  "heavyInfluence",
+  "pokemonRiskAndPokemonRain",
+  "nowWithMoreSalt",
+  "infiniteFusionAtHome",
+  "brokenEggMoves",
+  "magnificent",
+  "doPeopleReadThis",
+  "thatsCrazy",
+  "gottaCatchEmAll",
+  "questionableBalancing",
+  "coolShaders",
+  "aiFree",
+  "suddenDifficultySpikes",
+  "basedOnAnUnfinishedFlashGame",
+  "moreAddictiveThanIntended",
+  "mostlyConsistentSeeds",
+  "achievementPointsDontDoAnything",
+  "nothingBeatsAJellyFilledDonut",
+  "dontTalkAboutTheTinkatonIncident",
+  "alsoTryPokengine",
+  "alsoTryEmeraldRogue",
+  "alsoTryRadicalRed",
+  "eeveeExpo",
+  "checkOutYnoproject",
+  "breedersInSpace",
+  "alsoTryPokemonUnbound",
+  "tryTheJohtoDragonChallenge",
+  "basicReadingAbilityRecommended",
+  "shoutoutsToTheArtists",
+  "gamblingNotEncouraged",
+  "dontForgetToTakeABreak",
+  "wEvent",
+  "ifItsNotAccurateItsAccurate",
+  "everyLossIsProgressMade",
+  "liveWoChienReaction",
+  "itsAFeatureNotABug",
+  "theEggsAreNotForEating",
+  "7.8outOf10TooManyWaterBiomes",
+  "butNothingHappened",
+  "thePowerOfScienceIsAmazing",
+  "freeToPlay",
+  "theresATimeAndPlaceForEverything",
+  "nowWithShinierShinies",
+  "smilesGoForMiles",
+  "certainlyNotDragonFree",
+  "haveANiceDay",
+  "redacted",
+  "hi",
+  "transRights",
+  "shinyOddsHigherThanYouThink",
+  "noFalseTrades",
+  "notForProfit",
+  "timeForYourDailyRun",
+  "moreEggsThanADaycare",
+  "disclaimerHarshSunDoesNotGiveVitaminD",
+  "whoNeedsAMap",
+  "luxrayIsNotADarkType",
+  "selfDestructiveEncounters",
+  "mostOptionsAreViable",
+  "pokerogueMorse",
+  "smiley",
+  "beAwareOfPassives",
+  "asSeenOnTheWorldWideWeb",
+  "vaultinVeluzas",
+  "tooManyStarters",
+  "checkTheWiki",
+  "winWithYourFavorites",
+  "alsoTryPokerogueWait",
+  "theWayISeeItKyogreIsSurrounded",
+  "tryOutHoneyGather",
+  "notForTheFaintOfHeart",
+  "p",
+  "flipYourDeviceToEvolveInkay",
+  "inArceusWeTrust",
+  "whyDidTheTorchicCrossTheRoad",
+  "goodLuck",
+  "fuseWisely",
+  "compensation",
+  "prepareForTroubleAndMakeItDouble",
+  "anEggForYourTroubles",
+  "regirock",
+  "hereForAGoodTime",
+  "getGoodOrDont",
+  "checkTheSubreddit",
+  "betterNerfGreninja",
+  "inCaseOfUpdateClearYourCache",
+  "insertTextHere",
+  "endingEndlessNotFound",
+  "iLikeMyEggsVouchered",
+  "YOU",
+  "noAddedSugar",
+  "notSponsored",
+  "notRated",
+  "justOneMoreWaveMom",
+  "saltCured",
+  "onlyOnPokerogueNet",
+  "pixelPerfection",
+  "openSource",
+  "probablyGood",
+  "itsAMonsterHouse",
+  "dontForgetYourPassword",
+  "tripleTripleTripleAxel",
+  "questionExclamation",
+  "clownEncounters",
+  "fullOfBerries",
+  "limitsAreMeantToBeBrokenSometimes",
+  "keepItCasual",
+  "serversProbablyWorking",
+  "mew",
+  "makeItRainAndYourProblemsGoAway",
+  "customMusicTracks",
+  "youAreValid",
+  "number591IsLookingOff",
+  "timeForYourDeliDelivery",
+  "goodFirstImpression",
+  "iPreferRarerCandies",
+];
 
 //#region Seasonal Messages
 
 const seasonalSplashMessages: Season[] = [
   {
-    name: "halloween",
-    start: "10-15",
-    end: "10-31"
+    name: "Halloween",
+    start: "09-15",
+    end: "10-31",
+    messages: [ "halloween.pumpkabooAbout", "halloween.mayContainSpiders", "halloween.spookyScarySkeledirge", "halloween.gourgeistUsedTrickOrTreat", "halloween.letsSnuggleForever" ],
   },
   {
-    name: "xmas",
-    start: "12-16",
-    end: "12-31"
+    name: "XMAS",
+    start: "12-01",
+    end: "12-26",
+    messages: [ "xmas.happyHolidays", "xmas.unaffilicatedWithDelibirdServices", "xmas.delibirdSeason", "xmas.diamondsFromTheSky", "xmas.holidayStylePikachuNotIncluded" ],
   },
   {
-    name: "newYears",
-    start: "12-31",
-    end: "01-14"
+    name: "New Year's",
+    start: "01-01",
+    end: "01-31",
+    messages: [ "newYears.happyNewYear" ],
   },
 ];
 
 //#endregion
 
 export function getSplashMessages(): string[] {
-  const existingKeys = i18next.getResourceBundle(i18next.language, "splashMessages");
-  const splashMessages: string[] = [ ...Object.keys(existingKeys["common"]) ].map((message) => `common.${message}`);
-  if (splashMessages.includes("common.battlesWon")) {
-    splashMessages.push(...Array(Math.max(BATTLES_WON_WEIGHT_MULTIPLIER - 1, 1)).fill("common.battlesWon"));
-  }
-
+  const splashMessages: string[] = [ ...commonSplashMessages ];
   console.log("use seasonal splash messages", USE_SEASONAL_SPLASH_MESSAGES);
   if (USE_SEASONAL_SPLASH_MESSAGES) {
     // add seasonal splash messages if the season is active
-    for (const { name, start, end } of seasonalSplashMessages) {
+    for (const { name, start, end, messages } of seasonalSplashMessages) {
       const now = new Date();
       const startDate = new Date(`${start}-${now.getFullYear()}`);
       const endDate = new Date(`${end}-${now.getFullYear()}`);
-      if (endDate < startDate) { // If the end date is earlier in the year, that means it's next year
-        if (now >= startDate) {
-          endDate.setFullYear(endDate.getFullYear() + 1); //Ends next year
-        } else if (now <= endDate) {
-          startDate.setFullYear(startDate.getFullYear() - 1); //Started last year
-        }
-      }
-      console.log(`${name} event starts ${startDate} and ends ${endDate}`);
 
-      if (existingKeys.hasOwnProperty(name) && now >= startDate && now <= endDate) {
-        const existingMessages: string[] = [ ...Object.keys(existingKeys[name]) ].map(m=>`${name}.${m}`);
-        console.log(`Adding ${existingMessages.length} ${name} splash messages from ${i18next.language} (weight: x${SEASONAL_WEIGHT_MULTIPLIER})`);
-        existingMessages.forEach((message) => {
+      if (now >= startDate && now <= endDate) {
+        console.log(`Adding ${messages.length} ${name} splash messages (weight: x${SEASONAL_WEIGHT_MULTIPLIER})`);
+        messages.forEach((message) => {
           const weightedMessage = Array(SEASONAL_WEIGHT_MULTIPLIER).fill(message);
           splashMessages.push(...weightedMessage);
         });
