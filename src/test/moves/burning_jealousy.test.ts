@@ -82,7 +82,8 @@ describe("Moves - Burning Jealousy", () => {
     expect(enemy.status?.effect).toBeUndefined();
   });
 
-  it.skip("should ignore weakness policy", async () => { // TODO: Make this test if WP is implemented
+  // TODO: Make this test if WP is implemented
+  it.todo("should ignore weakness policy", async () => {
     await game.classicMode.startBattle();
   });
 

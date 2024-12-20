@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { SwitchType } from "#enums/switch-type";
@@ -18,7 +18,6 @@ export class SwitchPhase extends BattlePhase {
 
   /**
      * Creates a new SwitchPhase
-     * @param scene {@linkcode BattleScene} Current battle scene
      * @param switchType {@linkcode SwitchType} The type of switch logic this phase implements
      * @param fieldIndex Field index to switch out
      * @param isModal Indicates if the switch should be forced (true) or is
@@ -26,8 +25,8 @@ export class SwitchPhase extends BattlePhase {
      * @param doReturn Indicates if the party member on the field should be
      * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
      */
-  constructor(scene: BattleScene, switchType: SwitchType, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
-    super(scene);
+  constructor(switchType: SwitchType, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
+    super();
 
     this.switchType = switchType;
     this.fieldIndex = fieldIndex;
@@ -39,7 +38,7 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (this.isModal && !this.scene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    if (this.isModal && !globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
       return super.end();
     }
 
@@ -50,27 +49,27 @@ export class SwitchPhase extends BattlePhase {
      * if the mon should have already been returned but is still alive and well
      * on the field. see also; battle.test.ts
      */
-    if (this.isModal && !this.doReturn && !this.scene.getPlayerParty()[this.fieldIndex].isFainted()) {
+    if (this.isModal && !this.doReturn && !globalScene.getPlayerParty()[this.fieldIndex].isFainted()) {
       return super.end();
     }
 
     // Check if there is any space still in field
-    if (this.isModal && this.scene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= this.scene.currentBattle.getBattlerCount()) {
+    if (this.isModal && globalScene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >= globalScene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
     // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
-    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getPokemonAllowedInBattle().length > 1 ? this.fieldIndex : 0;
+    const fieldIndex = globalScene.currentBattle.getBattlerCount() === 1 || globalScene.getPokemonAllowedInBattle().length > 1 ? this.fieldIndex : 0;
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
-      if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6) {
+    globalScene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
+      if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
         // Remove any pre-existing PostSummonPhase under the same field index.
         // Pre-existing PostSummonPhases may occur when this phase is invoked during a prompt to switch at the start of a wave.
-        this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
+        globalScene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
         const switchType = (option === PartyOption.PASS_BATON) ? SwitchType.BATON_PASS : this.switchType;
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, switchType, fieldIndex, slotIndex, this.doReturn));
+        globalScene.unshiftPhase(new SwitchSummonPhase(switchType, fieldIndex, slotIndex, this.doReturn));
       }
-      this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
+      globalScene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
   }
 }

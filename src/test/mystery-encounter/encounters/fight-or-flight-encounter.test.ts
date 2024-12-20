@@ -75,8 +75,8 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     expect(FightOrFlightEncounter.onInit).toBeDefined();
 
-    FightOrFlightEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    FightOrFlightEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     const config = FightOrFlightEncounter.enemyPartyConfigs[0];
     expect(config).toBeDefined();

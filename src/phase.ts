@@ -1,19 +1,13 @@
-import BattleScene from "./battle-scene";
+import { globalScene } from "#app/global-scene";
 
 export class Phase {
-  protected scene: BattleScene;
-
-  constructor(scene: BattleScene) {
-    this.scene = scene;
-  }
-
   start() {
-    if (this.scene.abilityBar.shown) {
-      this.scene.abilityBar.resetAutoHideTimer();
+    if (globalScene.abilityBar.shown) {
+      globalScene.abilityBar.resetAutoHideTimer();
     }
   }
 
   end() {
-    this.scene.shiftPhase();
+    globalScene.shiftPhase();
   }
 }

@@ -88,8 +88,8 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
     expect(ThePokemonSalesmanEncounter.onInit).toBeDefined();
 
-    ThePokemonSalesmanEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    ThePokemonSalesmanEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.purchasePokemon).toBeDefined();
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.price).toBeDefined();
@@ -133,7 +133,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, -price, true, false);
+      expect(updateMoneySpy).toHaveBeenCalledWith(-price, true, false);
       expect(scene.money).toBe(initialMoney - price);
     });
 

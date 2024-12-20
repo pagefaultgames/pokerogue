@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 
 /**
@@ -10,8 +10,8 @@ export class PartyExpPhase extends Phase {
   useWaveIndexMultiplier?: boolean;
   pokemonParticipantIds?: Set<number>;
 
-  constructor(scene: BattleScene, expValue: number, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>) {
-    super(scene);
+  constructor(expValue: number, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>) {
+    super();
 
     this.expValue = expValue;
     this.useWaveIndexMultiplier = useWaveIndexMultiplier;
@@ -24,7 +24,7 @@ export class PartyExpPhase extends Phase {
   start() {
     super.start();
 
-    this.scene.applyPartyExp(this.expValue, false, this.useWaveIndexMultiplier, this.pokemonParticipantIds);
+    globalScene.applyPartyExp(this.expValue, false, this.useWaveIndexMultiplier, this.pokemonParticipantIds);
 
     this.end();
   }

@@ -115,8 +115,8 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
     expect(TeleportingHijinksEncounter.onInit).toBeDefined();
 
-    TeleportingHijinksEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    TeleportingHijinksEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(TeleportingHijinksEncounter.misc.price).toBeDefined();
     expect(TeleportingHijinksEncounter.dialogueTokens.price).toBeDefined();
