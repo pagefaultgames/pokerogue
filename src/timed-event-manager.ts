@@ -66,7 +66,8 @@ const timedEvents: TimedEvent[] = [
       { species: Species.MILCERY, allowEvolution: true },
       { species: Species.SMOLIV, allowEvolution: true },
       { species: Species.ALOLA_VULPIX, allowEvolution: true },
-      { species: Species.GALAR_DARUMAKA, allowEvolution: true }
+      { species: Species.GALAR_DARUMAKA, allowEvolution: true },
+      { species: Species.IRON_BUNDLE }
     ],
     delibirdyBuff: [ "CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM" ],
     weather: [{ weatherType: WeatherType.SNOW, weight: 1 }]
