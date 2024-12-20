@@ -10,7 +10,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const sourceDir = 'public/images';
-const outputDir = 'dist/images';
 const SMALL_FILE_THRESHOLD = 5 * 1024; // 5KB
 
 // 动态计算最佳参数
@@ -81,7 +80,7 @@ async function calculateOptimalParams() {
     }
     
     // 检测是否在RAM disk上
-    const isRamDisk = await checkIfRamDisk(outputDir);
+    const isRamDisk = await checkIfRamDisk(sourceDir);
     
     return {
         batchSize,
@@ -134,15 +133,13 @@ function formatBytes(bytes) {
 
 // 工作线程逻辑
 if (!isMainThread) {
-    const { files, sourceDir, outputDir, isRamDisk } = workerData;
+    const { files, sourceDir, isRamDisk } = workerData;
     
     async function optimizeImage(inputPath) {
         const relativePath = path.relative(sourceDir, inputPath);
-        const outputPath = path.join(outputDir, relativePath);
-        const outputDirPath = path.dirname(outputPath);
+        const tempPath = `${inputPath}.temp`;
         
         try {
-            await fs.mkdir(outputDirPath, { recursive: true });
             const inputStats = await fs.stat(inputPath);
             const isSmallFile = inputStats.size < SMALL_FILE_THRESHOLD;
             
@@ -164,7 +161,7 @@ if (!isMainThread) {
                         colors: 128,
                         dither: 0.4
                     })
-                    .toFile(outputPath);
+                    .toFile(tempPath);
             } else {
                 await sharpInstance
                     .png({
@@ -175,21 +172,36 @@ if (!isMainThread) {
                         dither: 0.4,
                         effort: 10
                     })
-                    .toFile(outputPath);
+                    .toFile(tempPath);
             }
             
-            const outputStats = await fs.stat(outputPath);
-            if (outputStats.size > inputStats.size) {
-                await fs.copyFile(inputPath, outputPath);
+            const outputStats = await fs.stat(tempPath);
+            if (outputStats.size < inputStats.size) {
+                // 如果优化后的文件更小，则替换原文件
+                await fs.rename(tempPath, inputPath);
+                return {
+                    success: true,
+                    inputSize: inputStats.size,
+                    outputSize: outputStats.size,
+                    path: relativePath
+                };
+            } else {
+                // 如果优化后的文件更大，则删除临时文件
+                await fs.unlink(tempPath);
+                return {
+                    success: true,
+                    inputSize: inputStats.size,
+                    outputSize: inputStats.size,
+                    path: relativePath,
+                    skipped: true
+                };
             }
-            
-            return {
-                success: true,
-                inputSize: inputStats.size,
-                outputSize: Math.min(inputStats.size, outputStats.size),
-                path: relativePath
-            };
         } catch (error) {
+            // 清理临时文件
+            try {
+                await fs.unlink(tempPath);
+            } catch {}
+            
             return {
                 success: false,
                 path: relativePath,
@@ -221,10 +233,6 @@ else {
             console.log(`RAM Disk: ${optimalParams.isRamDisk ? '是' : '否'}`);
             console.log('==================================\n');
             
-            // 清空输出目录
-            await fs.rm(outputDir, { recursive: true, force: true });
-            await fs.mkdir(outputDir, { recursive: true });
-            
             // 获取所有PNG文件
             const files = await glob(path.join(sourceDir, '**/*.png'));
             const totalFiles = files.length;
@@ -236,6 +244,7 @@ else {
             let totalOptimizedSize = 0;
             let successCount = 0;
             let failCount = 0;
+            let skippedCount = 0;
             const startTime = Date.now();
             
             const results = [];
@@ -257,7 +266,6 @@ else {
                     workerData: {
                         files: currentBatch,
                         sourceDir,
-                        outputDir,
                         isRamDisk: optimalParams.isRamDisk
                     }
                 });
@@ -304,6 +312,9 @@ else {
                     successCount++;
                     totalOriginalSize += result.inputSize;
                     totalOptimizedSize += result.outputSize;
+                    if (result.skipped) {
+                        skippedCount++;
+                    }
                 } else {
                     failCount++;
                     console.error(`\n✗ 处理 ${result.path} 时出错:`, result.error);
@@ -318,6 +329,7 @@ else {
             console.log('\n\n========== 优化结果报告 ==========');
             console.log(`处理总文件数: ${totalFiles}`);
             console.log(`成功处理: ${successCount} 个文件`);
+            console.log(`跳过处理: ${skippedCount} 个文件（优化后体积更大）`);
             console.log(`处理失败: ${failCount} 个文件`);
             console.log(`原始总大小: ${(totalOriginalSize / 1024 / 1024).toFixed(2)}MB`);
             console.log(`优化后总大小: ${(totalOptimizedSize / 1024 / 1024).toFixed(2)}MB`);
