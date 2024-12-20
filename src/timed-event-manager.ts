@@ -50,7 +50,7 @@ const timedEvents: TimedEvent[] = [
     uncommonBreedEncounters: [
       { species: Species.GIMMIGHOUL },
       { species: Species.DELIBIRD },
-      { species: Species.STANTLER },
+      { species: Species.STANTLER, allowEvolution: true },
       { species: Species.CYNDAQUIL, allowEvolution: true },
       { species: Species.PIPLUP, allowEvolution: true },
       { species: Species.CHESPIN, allowEvolution: true },
