@@ -333,7 +333,7 @@ const processDirectory = async (dir) => {
 };
 
 // 主目录
-const mainDir = path.join(__dirname, '../public/audio');
+const mainDir = path.join(__dirname, '../public');
 
 console.log('开始音视频优化处理...');
 console.log(`主目录: ${mainDir}`);

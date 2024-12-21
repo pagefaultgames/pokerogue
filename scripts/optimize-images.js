@@ -9,7 +9,7 @@ import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const sourceDir = 'public/images';
+const sourceDir = 'public';
 const SMALL_FILE_THRESHOLD = 5 * 1024; // 5KB
 
 // 动态计算最佳参数
