@@ -18,19 +18,30 @@ jobs:
           node-version: '18'
           cache: 'npm'
       
-      # 添加 FFmpeg 缓存
+      # 优化 FFmpeg 缓存
       - name: Cache FFmpeg
         id: cache-ffmpeg
         uses: actions/cache@v3
         with:
-          path: /usr/bin/ffmpeg
-          key: ${{ runner.os }}-ffmpeg
+          path: ~/.ffmpeg
+          key: ${{ runner.os }}-ffmpeg-${{ hashFiles('.github/workflows/optimize-assets.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-ffmpeg-
       
       - name: Install FFmpeg
         if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
+          mkdir -p ~/.ffmpeg
+          which ffmpeg > ~/.ffmpeg/path
+          cp $(which ffmpeg) ~/.ffmpeg/
+      
+      - name: Setup FFmpeg from cache
+        if: steps.cache-ffmpeg.outputs.cache-hit == 'true'
+        run: |
+          sudo cp ~/.ffmpeg/ffmpeg /usr/local/bin/
+          sudo chmod +x /usr/local/bin/ffmpeg
       
       # 添加 node_modules 缓存
       - name: Cache node_modules
