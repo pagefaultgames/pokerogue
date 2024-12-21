@@ -372,63 +372,67 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Lily
 - PigeonBar
 
-## Past Contributors
-- Fontbane
-- sodaMelon
-- schmidtc1
-- shayebeadling
+## Other Code Contributors
+- Admiral-Billy
+- allen925
+- arColm
+- Arxalc
+- AsdarDevelops
+- bennybroseph
+- Brain Frog
+- Corrade
+- Dakurei
 - DustinLin
-- lucfd
-- madibye
+- ElizaAlex
 - EmberCM
-- Mewtwo2387
+- EmoUsedHM01
+- EvasiveAce
+- Fontbane
+- francktrouillez
+- FredeX
+- geeilhan
+- Greenlamp
+- happinyz
 - hayuna
-- sirzento
-- ReneGV
-- mattrossdev
-- zacharied
-- NxKarim
-- td76099
-- Xiaphear
+- InfernoVulpix
 - j-diefenbach
 - jaimefd
-- EvasiveAce
-- EmoUsedHM01
-- francktrouillez
 - JakubHanko
-- FredeX
-- PigeonBar
-- prime-dialga
-- rnicar245
-- rationality6
-- Neverblade
-- Corrade
-- Admiral-Billy
-- okimin
-- Arxalc
-- PrabbyDD
 - JonStudders
 - karl-police
-- prateau
-- meepen
-- arColm
-- allen925
-- InfernoVulpix
-- snoozbuster
-- zaccie
-- happinyz
-- PyGaVS
+- lucfd
+- Lugiadrien
+- madibye
+- mattrossdev
 - mcmontag
-- ElizaAlex
-- AsdarDevelops
-- Vassiat
-- RedstonewolfX
-- Sam/Flashfyre (initial developer, started PokéRogue)
-- Greenlamp
-- bennybroseph
+- meepen
+- Mewtwo2387
+- muscode
+- Neverblade
+- NxKarim
+- okimin
 - OrangeRed
-- Dakurei
-- Brain Frog
+- PigeonBar
+- PrabbyDD
+- prateau
+- prime-dialga
+- PyGaVS
+- rationality6
+- RedstonewolfX
+- ReneGV
+- rnicar245
+- Sam aka Flashfyre (initial developer, started PokéRogue)
+- schmidtc1
+- shayebeadling
+- sirzento
+- snoozbuster
+- sodaMelon
+- td76099
+- Vassiat
+- Xiaphear
+- zaccie
+- zacharied
+- Zé Ricardo
 
 
 # 🌎 Translation
@@ -615,6 +619,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - roi
 
 ## External Tools
-- Ydarissep (RogueDex)
+- Ydarissep (creator of the now defunct "Yda's Dex")
 - Admiral-Billy (Offline App - Desktop)
 - Red aka StonedModder (iOS App)
