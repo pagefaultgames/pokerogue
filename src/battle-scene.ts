@@ -147,6 +147,7 @@ export default class BattleScene extends SceneBase {
   public damageNumbersMode: integer = 0;
   public reroll: boolean = false;
   public shopCursorTarget: number = ShopCursorTarget.REWARDS;
+  public commandCursorReset: boolean = true;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
   public showTimeOfDayWidget: boolean = true;

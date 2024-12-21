@@ -157,6 +157,7 @@ export const SettingKeys = {
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
   Shop_Cursor_Target: "SHOP_CURSOR_TARGET",
+  Command_Cursor_Reset: "COMMAND_CURSOR_RESET",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -682,6 +683,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY
   },
   {
+    key: SettingKeys.Command_Cursor_Reset,
+    label: i18next.t("settings:commandCursorReset"),
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY
+  },
+  {
     key: SettingKeys.Shop_Overlay_Opacity,
     label: i18next.t("settings:shopOverlayOpacity"),
     options: SHOP_OVERLAY_OPACITY_OPTIONS,
@@ -826,6 +834,9 @@ export function setSetting(scene: BattleScene, setting: string, value: integer):
     case SettingKeys.Shop_Cursor_Target:
       const selectedValue = shopCursorTargetIndexMap[value];
       scene.shopCursorTarget = selectedValue;
+      break;
+    case SettingKeys.Command_Cursor_Reset:
+      scene.commandCursorReset = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.EXP_Gains_Speed:
       scene.expGainsSpeed = value;
