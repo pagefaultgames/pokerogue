@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "installCommand": "npm config set ignore-scripts true && npm ci && npm rebuild",
+    "routes": [
+      { "handle": "filesystem" },
+      { "src": "/.*", "dest": "/index.html" }
+    ],
+    "env": {
+      "SKIP_POSTINSTALL": "1"
+    }
+  }

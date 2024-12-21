@@ -1,0 +1,82 @@
+name: Optimize Assets
+
+on:
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      # 优化 FFmpeg 缓存
+      - name: Cache FFmpeg
+        id: cache-ffmpeg
+        uses: actions/cache@v3
+        with:
+          path: ~/ffmpeg
+          key: ${{ runner.os }}-ffmpeg-static-6.1
+      
+      - name: Install FFmpeg
+        if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/ffmpeg
+          wget -q https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+          tar xf ffmpeg-release-amd64-static.tar.xz
+          mv ffmpeg-*-amd64-static/ffmpeg ~/ffmpeg/
+          mv ffmpeg-*-amd64-static/ffprobe ~/ffmpeg/
+          rm -rf ffmpeg-*-amd64-static*
+      
+      - name: Add FFmpeg to PATH
+        run: echo "$HOME/ffmpeg" >> $GITHUB_PATH
+      
+      # 添加 node_modules 缓存
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+      
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: |
+          npm install sharp glob
+      
+      - name: Optimize Images
+        run: node scripts/optimize-images.js
+      
+      - name: Optimize Audio
+        run: node scripts/optimize-audio.js
+        
+      - name: Optimize JSON
+        run: node scripts/optimize-json.js
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push if changed
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -A
+          git commit -m "Automatically optimize assets"
+          git push
