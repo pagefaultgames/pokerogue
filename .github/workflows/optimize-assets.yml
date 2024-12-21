@@ -23,31 +23,21 @@ jobs:
         id: cache-ffmpeg
         uses: actions/cache@v3
         with:
-          path: ~/.ffmpeg
-          key: ${{ runner.os }}-ffmpeg-${{ hashFiles('.github/workflows/optimize-assets.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-ffmpeg-
+          path: ~/ffmpeg
+          key: ${{ runner.os }}-ffmpeg-static-6.1
       
       - name: Install FFmpeg
         if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          mkdir -p ~/.ffmpeg
-          cp $(which ffmpeg) ~/.ffmpeg/
+          mkdir -p ~/ffmpeg
+          wget -q https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+          tar xf ffmpeg-release-amd64-static.tar.xz
+          mv ffmpeg-*-amd64-static/ffmpeg ~/ffmpeg/
+          mv ffmpeg-*-amd64-static/ffprobe ~/ffmpeg/
+          rm -rf ffmpeg-*-amd64-static*
       
-      - name: Setup FFmpeg from cache
-        if: steps.cache-ffmpeg.outputs.cache-hit == 'true'
-        run: |
-          mkdir -p ~/.ffmpeg
-          sudo cp ~/.ffmpeg/ffmpeg /usr/local/bin/
-          sudo chmod +x /usr/local/bin/ffmpeg
-          # 验证 FFmpeg 是否可用
-          ffmpeg -version || {
-            echo "Cached FFmpeg is not working, falling back to fresh install"
-            sudo apt-get update
-            sudo apt-get install -y ffmpeg
-          }
+      - name: Add FFmpeg to PATH
+        run: echo "$HOME/ffmpeg" >> $GITHUB_PATH
       
       # 添加 node_modules 缓存
       - name: Cache node_modules
