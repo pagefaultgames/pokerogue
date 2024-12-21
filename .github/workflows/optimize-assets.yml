@@ -45,13 +45,16 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
-          npm install sharp
+          npm install sharp glob
       
       - name: Optimize Images
         run: node scripts/optimize-images.js
       
       - name: Optimize Audio
         run: node scripts/optimize-audio.js
+        
+      - name: Optimize JSON
+        run: node scripts/optimize-json.js
       
       - name: Check for changes
         id: check_changes
