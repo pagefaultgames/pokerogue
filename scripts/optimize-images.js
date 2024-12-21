@@ -147,37 +147,143 @@ if (!isMainThread) {
             const sharpOptions = {
                 failOnError: false,
                 limitInputPixels: false,
-                sequentialRead: !isRamDisk, // 如果不是RAM disk，使用顺序读取
+                sequentialRead: !isRamDisk,
             };
             
             let sharpInstance = sharp(inputPath, sharpOptions);
             
+            // 获取图像信息
+            const metadata = await sharpInstance.metadata();
+            const isTransparent = metadata.hasAlpha;
+            const { width, height } = metadata;
+            const isLargeImage = width > 1000 || height > 1000;
+            
+            // 智能压缩策略
             if (isSmallFile) {
+                // 小文件使用相对保守的压缩
                 await sharpInstance
                     .png({
                         compressionLevel: 9,
                         effort: 10,
                         palette: true,
-                        colors: 128,
-                        dither: 0.4
+                        colors: 256,
+                        quality: 90,
+                        dither: 0.6
                     })
                     .toFile(tempPath);
+            } else if (isTransparent) {
+                // 包含透明通道的图片
+                const optimizedPng = sharpInstance.clone()
+                    .png({
+                        quality: 75,
+                        compressionLevel: 9,
+                        effort: 10,
+                        palette: true,
+                        colors: isLargeImage ? 196 : 256,
+                        dither: 0.8
+                    });
+
+                // 对于透明图片也尝试使用带Alpha通道的WebP
+                const webpVersion = sharpInstance.clone()
+                    .webp({
+                        quality: 80,
+                        alphaQuality: 85,
+                        effort: 6,
+                        lossless: false,
+                        nearLossless: false,
+                        smartSubsample: true,
+                        reductionEffort: 6
+                    });
+
+                const [pngBuffer, webpBuffer] = await Promise.all([
+                    optimizedPng.toBuffer(),
+                    webpVersion.toBuffer()
+                ]);
+
+                // 选择更小的格式
+                if (webpBuffer.length < pngBuffer.length && webpBuffer.length < inputStats.size) {
+                    await fs.writeFile(tempPath, webpBuffer);
+                } else {
+                    await fs.writeFile(tempPath, pngBuffer);
+                }
             } else {
-                await sharpInstance
+                // 不透明图片，使用更激进的压缩
+                const optimizedPng = sharpInstance.clone()
                     .png({
                         quality: 70,
                         compressionLevel: 9,
+                        effort: 10,
                         palette: true,
-                        colors: 128,
-                        dither: 0.4,
-                        effort: 10
-                    })
-                    .toFile(tempPath);
+                        colors: isLargeImage ? 128 : 196,
+                        dither: 0.6
+                    });
+
+                // 对于不透明图片尝试多种格式
+                const webpVersion = sharpInstance.clone()
+                    .webp({
+                        quality: 75,
+                        effort: 6,
+                        lossless: false,
+                        nearLossless: false,
+                        smartSubsample: true,
+                        reductionEffort: 6
+                    });
+
+                // 对于照片类型的图片，也尝试JPEG格式
+                const jpegVersion = isLargeImage ? 
+                    sharpInstance.clone()
+                        .jpeg({
+                            quality: 82,
+                            progressive: true,
+                            mozjpeg: true,
+                            chromaSubsampling: '4:2:0'
+                        }) : null;
+
+                const bufferPromises = [
+                    optimizedPng.toBuffer(),
+                    webpVersion.toBuffer()
+                ];
+
+                if (jpegVersion) {
+                    bufferPromises.push(jpegVersion.toBuffer());
+                }
+
+                const buffers = await Promise.all(bufferPromises);
+                const [pngBuffer, webpBuffer, jpegBuffer] = buffers;
+
+                // 选择最小的格式
+                let smallestBuffer = pngBuffer;
+                let smallestSize = pngBuffer.length;
+
+                if (webpBuffer.length < smallestSize) {
+                    smallestBuffer = webpBuffer;
+                    smallestSize = webpBuffer.length;
+                }
+
+                if (jpegBuffer && jpegBuffer.length < smallestSize) {
+                    smallestBuffer = jpegBuffer;
+                    smallestSize = jpegBuffer.length;
+                }
+
+                if (smallestSize < inputStats.size) {
+                    await fs.writeFile(tempPath, smallestBuffer);
+                } else {
+                    // 如果所有格式都没有达到更好的压缩效果，尝试最后的优化
+                    await sharpInstance
+                        .png({
+                            quality: 65,
+                            compressionLevel: 9,
+                            effort: 10,
+                            palette: true,
+                            colors: 128,
+                            dither: 0.5
+                        })
+                        .toFile(tempPath);
+                }
             }
             
             const outputStats = await fs.stat(tempPath);
             if (outputStats.size < inputStats.size) {
-                // 如果优化后的文件更小，则替换原文件
                 await fs.rename(tempPath, inputPath);
                 return {
                     success: true,
@@ -186,7 +292,6 @@ if (!isMainThread) {
                     path: relativePath
                 };
             } else {
-                // 如果优化后的文件更大，则删除临时文件
                 await fs.unlink(tempPath);
                 return {
                     success: true,
@@ -197,7 +302,6 @@ if (!isMainThread) {
                 };
             }
         } catch (error) {
-            // 清理临时文件
             try {
                 await fs.unlink(tempPath);
             } catch {}
