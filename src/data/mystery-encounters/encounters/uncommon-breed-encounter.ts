@@ -23,7 +23,7 @@ import { BerryModifier } from "#app/modifier/modifier";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import PokemonSpecies, { allSpecies } from "#app/data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -55,8 +55,8 @@ export const UncommonBreedEncounter: MysteryEncounter =
       let species: PokemonSpecies;
       if (scene.eventManager.isEventActive() && scene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
         const eventEncounter = randSeedItem(scene.eventManager.activeEvent()!.uncommonBreedEncounters!);
-        species = allSpecies[eventEncounter.species];
-        species.speciesId = species.getSpeciesForLevel(level, eventEncounter.allowEvolution);
+        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, scene.gameMode);
+        species = getPokemonSpecies( levelSpecies );
       } else {
         species = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);
       }
