@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # 获取完整历史以便进行比较
+          fetch-depth: 0
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -34,14 +34,20 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
           mkdir -p ~/.ffmpeg
-          which ffmpeg > ~/.ffmpeg/path
           cp $(which ffmpeg) ~/.ffmpeg/
       
       - name: Setup FFmpeg from cache
         if: steps.cache-ffmpeg.outputs.cache-hit == 'true'
         run: |
+          mkdir -p ~/.ffmpeg
           sudo cp ~/.ffmpeg/ffmpeg /usr/local/bin/
           sudo chmod +x /usr/local/bin/ffmpeg
+          # 验证 FFmpeg 是否可用
+          ffmpeg -version || {
+            echo "Cached FFmpeg is not working, falling back to fresh install"
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          }
       
       # 添加 node_modules 缓存
       - name: Cache node_modules
