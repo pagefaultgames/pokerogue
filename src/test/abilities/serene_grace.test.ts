@@ -25,10 +25,13 @@ describe("Abilities - Serene Grace", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
+      .disableCrits()
       .battleType("single")
       .ability(Abilities.SERENE_GRACE)
-      .moveset([ Moves.AIR_SLASH, Moves.TACKLE ])
+      .moveset([ Moves.AIR_SLASH ])
+      .enemySpecies(Species.ALOLA_GEODUDE)
       .enemyLevel(10)
+      .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([ Moves.SPLASH ]);
   });
 

@@ -1881,8 +1881,14 @@ export class FlameBurstAttr extends MoveEffectAttr {
 }
 
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
-  constructor() {
+  protected restorePP: boolean;
+  protected moveMessage: string;
+
+  constructor(restorePP: boolean, moveMessage: string) {
     super();
+
+    this.restorePP = restorePP;
+    this.moveMessage = moveMessage;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1893,8 +1899,19 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     // We don't know which party member will be chosen, so pick the highest max HP in the party
     const maxPartyMemberHp = user.scene.getPlayerParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
 
-    user.scene.pushPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
-      maxPartyMemberHp, i18next.t("moveTriggers:sacrificialFullRestore", { pokemonName: getPokemonNameWithAffix(user) }), true, false, false, true), true);
+    user.scene.pushPhase(
+      new PokemonHealPhase(
+        user.scene,
+        user.getBattlerIndex(),
+        maxPartyMemberHp,
+        i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
+        true,
+        false,
+        false,
+        true,
+        false,
+        this.restorePP),
+      true);
 
     return true;
   }
@@ -8666,7 +8683,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1)
       .ballBombMove(),
     new AttackMove(Moves.FUTURE_SIGHT, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 2)
-      .partial() // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc
+      .partial() // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc, should not apply abilities or held items if user is off the field
       .ignoresProtect()
       .attr(DelayedAttackAttr, ArenaTagType.FUTURE_SIGHT, ChargeAnim.FUTURE_SIGHT_CHARGING, i18next.t("moveTriggers:foresawAnAttack", { pokemonName: "{USER}" })),
     new AttackMove(Moves.ROCK_SMASH, Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, 50, 0, 2)
@@ -8976,7 +8993,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .pulseMove(),
     new AttackMove(Moves.DOOM_DESIRE, Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, 0, 3)
-      .partial() // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc
+      .partial() // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc, should not apply abilities or held items if user is off the field
       .ignoresProtect()
       .attr(DelayedAttackAttr, ArenaTagType.DOOM_DESIRE, ChargeAnim.DOOM_DESIRE_CHARGING, i18next.t("moveTriggers:choseDoomDesireAsDestiny", { pokemonName: "{USER}" })),
     new AttackMove(Moves.PSYCHO_BOOST, Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, 0, 3)
@@ -9002,7 +9019,7 @@ export function initMoves() {
       .attr(GyroBallPowerAttr)
       .ballBombMove(),
     new SelfStatusMove(Moves.HEALING_WISH, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .attr(SacrificialFullRestoreAttr)
+      .attr(SacrificialFullRestoreAttr, false, "moveTriggers:sacrificialFullRestore")
       .triageMove(),
     new AttackMove(Moves.BRINE, Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
@@ -9279,10 +9296,9 @@ export function initMoves() {
     new AttackMove(Moves.SPACIAL_REND, Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, 0, 4)
       .attr(HighCritAttr),
     new SelfStatusMove(Moves.LUNAR_DANCE, Type.PSYCHIC, -1, 10, -1, 0, 4)
-      .attr(SacrificialAttrOnHit)
+      .attr(SacrificialFullRestoreAttr, true, "moveTriggers:lunarDanceRestore")
       .danceMove()
-      .triageMove()
-      .unimplemented(),
+      .triageMove(),
     new AttackMove(Moves.CRUSH_GRIP, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr, 120),
     new AttackMove(Moves.MAGMA_STORM, Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, 0, 4)
@@ -9732,9 +9748,9 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK, Stat.SPD ], -1, false, { condition: (user, target, move) => target.status?.effect === StatusEffect.POISON || target.status?.effect === StatusEffect.TOXIC })
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.POWDER, Type.BUG, 100, 20, -1, 1, 6)
+      .attr(AddBattlerTagAttr, BattlerTagType.POWDER, false, true)
       .ignoresSubstitute()
-      .powderMove()
-      .unimplemented(),
+      .powderMove(),
     new ChargingSelfStatusMove(Moves.GEOMANCY, Type.FAIRY, -1, 10, -1, 0, 6)
       .chargeText(i18next.t("moveTriggers:isChargingPower", { pokemonName: "{USER}" }))
       .attr(StatStageChangeAttr, [ Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2, true)
