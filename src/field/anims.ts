@@ -1,6 +1,7 @@
-import BattleScene from "../battle-scene";
+import BattleScene from "#app/battle-scene";
 import { PokeballType } from "#enums/pokeball";
-import * as Utils from "../utils";
+import { Variant } from "#app/data/variant";
+import { getFrameMs, randGauss } from "#app/utils";
 
 export function addPokeballOpenParticles(scene: BattleScene, x: number, y: number, pokeballType: PokeballType): void {
   switch (pokeballType) {
@@ -127,7 +128,7 @@ function doFanOutParticle(scene: BattleScene, trigIndex: integer, x: integer, y:
 
   const particleTimer = scene.tweens.addCounter({
     repeat: -1,
-    duration: Utils.getFrameMs(1),
+    duration: getFrameMs(1),
     onRepeat: () => {
       updateParticle();
     }
@@ -159,7 +160,7 @@ export function addPokeballCaptureStars(scene: BattleScene, pokeball: Phaser.Gam
       }
     });
 
-    const dist = Utils.randGauss(25);
+    const dist = randGauss(25);
     scene.tweens.add({
       targets: particle,
       x: pokeball.x + dist,
@@ -184,4 +185,32 @@ export function sin(index: integer, amplitude: integer): number {
 
 export function cos(index: integer, amplitude: integer): number {
   return amplitude * Math.cos(index * (Math.PI / 128));
+}
+
+/**
+ * Play the shiny sparkle animation and sound effect for the given sprite
+ * First ensures that the animation has been properly initialized
+ * @param sparkleSprite the Sprite to play the animation on
+ * @param variant which shiny {@linkcode variant} to play the animation for
+ */
+export function doShinySparkleAnim(scene: BattleScene, sparkleSprite: Phaser.GameObjects.Sprite, variant: Variant) {
+  const keySuffix = variant ? `_${variant + 1}` : "";
+  const spriteKey = `shiny${keySuffix}`;
+  const animationKey = `sparkle${keySuffix}`;
+
+  // Make sure the animation exists, and create it if not
+  if (!scene.anims.exists(animationKey)) {
+    const frameNames = scene.anims.generateFrameNames(spriteKey, { suffix: ".png", end: 34 });
+    scene.anims.create({
+      key: `sparkle${keySuffix}`,
+      frames: frameNames,
+      frameRate: 32,
+      showOnStart: true,
+      hideOnComplete: true,
+    });
+  }
+
+  // Play the animation
+  sparkleSprite.play(animationKey);
+  scene.playSound("se/sparkle");
 }

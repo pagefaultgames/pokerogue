@@ -1144,7 +1144,7 @@ class FireGrassPledgeTag extends ArenaTag {
       ? arena.scene.getPlayerField()
       : arena.scene.getEnemyField();
 
-    field.filter(pokemon => !pokemon.isOfType(Type.FIRE)).forEach(pokemon => {
+    field.filter(pokemon => !pokemon.isOfType(Type.FIRE) && !pokemon.switchOutStatus).forEach(pokemon => {
       // "{pokemonNameWithAffix} was hurt by the sea of fire!"
       pokemon.scene.queueMessage(i18next.t("arenaTag:fireGrassPledgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       // TODO: Replace this with a proper animation

@@ -1,5 +1,5 @@
 import { Type } from "#enums/type";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -8,7 +8,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 
 describe("Abilities - Parental Bond", () => {
@@ -51,7 +51,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.move.select(Moves.TACKLE);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
       const firstStrikeDamage = enemyStartingHp - enemyPokemon.hp;
       enemyStartingHp = enemyPokemon.hp;
 
@@ -129,7 +129,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.move.select(Moves.SELF_DESTRUCT);
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      await game.phaseInterceptor.to("DamageAnimPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(1);
     }
@@ -147,7 +147,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.ROLLOUT);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      await game.phaseInterceptor.to("DamageAnimPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(1);
     }
@@ -181,7 +181,7 @@ describe("Abilities - Parental Bond", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       game.move.select(Moves.COUNTER);
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       const playerDamage = leadPokemon.getMaxHp() - leadPokemon.hp;
 
@@ -221,7 +221,7 @@ describe("Abilities - Parental Bond", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
 
       game.move.select(Moves.EARTHQUAKE);
-      await game.phaseInterceptor.to("DamagePhase", false);
+      await game.phaseInterceptor.to("DamageAnimPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
     }
@@ -238,7 +238,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.move.select(Moves.MIND_BLOWN);
 
-      await game.phaseInterceptor.to("DamagePhase", false);
+      await game.phaseInterceptor.to("DamageAnimPhase", false);
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
 
@@ -285,7 +285,7 @@ describe("Abilities - Parental Bond", () => {
 
       game.move.select(Moves.TACKLE);
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(3);
     }
@@ -307,7 +307,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.SEISMIC_TOSS);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(3);
 
@@ -329,7 +329,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.HYPER_BEAM);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
@@ -353,7 +353,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.ANCHOR_SHOT);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
@@ -380,7 +380,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.SMACK_DOWN);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
@@ -424,7 +424,7 @@ describe("Abilities - Parental Bond", () => {
       game.move.select(Moves.WAKE_UP_SLAP);
       await game.move.forceHit();
 
-      await game.phaseInterceptor.to("DamagePhase");
+      await game.phaseInterceptor.to("DamageAnimPhase");
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
@@ -470,4 +470,25 @@ describe("Abilities - Parental Bond", () => {
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
     }
   );
+
+  it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {
+    game.override.enemyLevel(1000)
+      .moveset(Moves.FUTURE_SIGHT);
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    vi.spyOn(enemyPokemon, "damageAndUpdate");
+
+    game.move.select(Moves.FUTURE_SIGHT);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(2);
+    await game.toNextTurn();
+
+    // TODO: Update hit count to 1 once Future Sight is fixed to not activate abilities if user is off the field
+    expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
+  });
 });

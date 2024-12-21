@@ -61,11 +61,12 @@ export const TrashToTreasureEncounter: MysteryEncounter =
     .withOnInit((scene: BattleScene) => {
       const encounter = scene.currentBattle.mysteryEncounter!;
 
-      // Calculate boss mon
+      // Calculate boss mon (shiny locked)
       const bossSpecies = getPokemonSpecies(Species.GARBODOR);
       const pokemonConfig: EnemyPokemonConfig = {
         species: bossSpecies,
         isBoss: true,
+        shiny: false, // Shiny lock because of custom intro sprite
         formIndex: 1, // Gmax
         bossSegmentModifier: 1, // +1 Segment from normal
         moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ]
