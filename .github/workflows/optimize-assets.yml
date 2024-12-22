@@ -20,6 +20,31 @@ jobs:
         with:
           fetch-depth: 0
       
+      - name: Merge main branch
+        id: merge_main
+        continue-on-error: true
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git fetch origin main
+          if git merge origin/main --no-edit; then
+            echo "merge_status=success" >> $GITHUB_OUTPUT
+          else
+            echo "merge_status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+      
+      - name: Check merge status
+        if: steps.merge_main.outputs.merge_status == 'failed'
+        run: |
+          echo "合并 main 分支失败，请手动解决冲突"
+          exit 1
+      
+      - name: Push merged changes
+        if: steps.merge_main.outputs.merge_status == 'success'
+        run: |
+          git push
+      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -81,7 +106,7 @@ jobs:
           fi
       
       - name: Commit and push if changed
-        if: steps.check_changes.outputs.changes == 'true'
+        if: steps.check_changes.outputs.changes == 'true' && steps.merge_main.outputs.merge_status == 'success'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
