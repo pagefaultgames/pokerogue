@@ -67148,6 +67148,7 @@ export const tmSpecies: TmSpecies = {
     Species.VELUZA,
     Species.DONDOZO,
     Species.TATSUGIRI,
+    Species.ANNIHILAPE,
     Species.CLODSIRE,
     Species.FARIGIRAF,
     Species.DUDUNSPARCE,

@@ -2,6 +2,9 @@ import BattleScene from "#app/battle-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { nil } from "#app/utils";
 import i18next from "i18next";
+import { Species } from "#enums/species";
+import { WeatherPoolEntry } from "#app/data/weather";
+import { WeatherType } from "#enums/weather-type";
 
 export enum EventType {
   SHINY,
@@ -16,6 +19,11 @@ interface EventBanner {
   availableLangs?: string[];
 }
 
+interface EventEncounter {
+  species: Species;
+  allowEvolution?: boolean;
+}
+
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
@@ -23,19 +31,46 @@ interface TimedEvent extends EventBanner {
   friendshipMultiplier?: number;
   startDate: Date;
   endDate: Date;
+  uncommonBreedEncounters?: EventEncounter[];
+  delibirdyBuff?: string[];
+  weather?: WeatherPoolEntry[];
 }
 
 const timedEvents: TimedEvent[] = [
   {
-    name: "Halloween Update",
+    name: "Winter Holiday Update",
     eventType: EventType.SHINY,
     shinyMultiplier: 2,
-    friendshipMultiplier: 2,
-    startDate: new Date(Date.UTC(2024, 9, 27, 0)),
-    endDate: new Date(Date.UTC(2024, 10, 4, 0)),
-    bannerKey: "halloween2024-event-",
+    friendshipMultiplier: 1,
+    startDate: new Date(Date.UTC(2024, 11, 21, 0)),
+    endDate: new Date(Date.UTC(2025, 0, 4, 0)),
+    bannerKey: "winter_holidays2024-event-",
     scale: 0.21,
-    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ]
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    uncommonBreedEncounters: [
+      { species: Species.GIMMIGHOUL },
+      { species: Species.DELIBIRD },
+      { species: Species.STANTLER, allowEvolution: true },
+      { species: Species.CYNDAQUIL, allowEvolution: true },
+      { species: Species.PIPLUP, allowEvolution: true },
+      { species: Species.CHESPIN, allowEvolution: true },
+      { species: Species.BALTOY, allowEvolution: true },
+      { species: Species.SNOVER, allowEvolution: true },
+      { species: Species.CHINGLING, allowEvolution: true },
+      { species: Species.LITWICK, allowEvolution: true },
+      { species: Species.CUBCHOO, allowEvolution: true },
+      { species: Species.SWIRLIX, allowEvolution: true },
+      { species: Species.AMAURA, allowEvolution: true },
+      { species: Species.MUDBRAY, allowEvolution: true },
+      { species: Species.ROLYCOLY, allowEvolution: true },
+      { species: Species.MILCERY, allowEvolution: true },
+      { species: Species.SMOLIV, allowEvolution: true },
+      { species: Species.ALOLA_VULPIX, allowEvolution: true },
+      { species: Species.GALAR_DARUMAKA, allowEvolution: true },
+      { species: Species.IRON_BUNDLE }
+    ],
+    delibirdyBuff: [ "CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM" ],
+    weather: [{ weatherType: WeatherType.SNOW, weight: 1 }]
   }
 ];
 
