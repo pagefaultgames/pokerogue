@@ -56,7 +56,7 @@ describe("Delibird-y - Mystery Encounter", () => {
     await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
     expect(DelibirdyEncounter.encounterType).toBe(MysteryEncounterType.DELIBIRDY);
-    expect(DelibirdyEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
+    expect(DelibirdyEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(DelibirdyEncounter.dialogue).toBeDefined();
     expect(DelibirdyEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
     expect(DelibirdyEncounter.dialogue.outro).toStrictEqual([{ text: `${namespace}:outro` }]);
