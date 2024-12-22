@@ -79,4 +79,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add -A
           git commit -m "Automatically optimize assets"
-          git push
+          git push origin HEAD:test -f
