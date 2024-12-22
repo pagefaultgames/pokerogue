@@ -157,7 +157,7 @@ export const SettingKeys = {
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
   Shop_Cursor_Target: "SHOP_CURSOR_TARGET",
-  Command_Cursor_Memory: "Command_Cursor_Memory",
+  Command_Cursor_Memory: "COMMAND_CURSOR_MEMORY",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
