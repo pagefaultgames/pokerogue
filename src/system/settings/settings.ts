@@ -341,6 +341,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.GENERAL
   },
   {
+    key: SettingKeys.Command_Cursor_Memory,
+    label: i18next.t("settings:commandCursorMemory"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
     key: SettingKeys.Enable_Retries,
     label: i18next.t("settings:enableRetries"),
     options: OFF_ON,
@@ -679,13 +686,6 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Shop_Cursor_Target,
     label: i18next.t("settings:shopCursorTarget"),
     options: SHOP_CURSOR_TARGET_OPTIONS,
-    default: 0,
-    type: SettingType.DISPLAY
-  },
-  {
-    key: SettingKeys.Command_Cursor_Memory,
-    label: i18next.t("settings:commandCursorMemory"),
-    options: OFF_ON,
     default: 0,
     type: SettingType.DISPLAY
   },
