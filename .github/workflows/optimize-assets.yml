@@ -8,6 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Sync fork
+        uses: tgymnich/fork-sync@v1.8.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          owner: pagefaultgames
+          base: main
+          head: main
+      
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
