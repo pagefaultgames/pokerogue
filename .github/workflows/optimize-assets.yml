@@ -11,7 +11,7 @@ jobs:
       - name: Sync fork
         uses: tgymnich/fork-sync@v1.8.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.FORK_SYNC_TOKEN }}
           owner: pagefaultgames
           base: main
           head: main
