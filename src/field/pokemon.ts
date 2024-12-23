@@ -3501,12 +3501,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null): boolean {
+  /**
+   * Checks if a status effect can be applied to the Pokemon.
+   *
+   * @param effect The {@linkcode StatusEffect} whose applicability is being checked
+   * @param quiet Whether in-battle messages should trigger or not
+   * @param overrideStatus Whether the Pokemon's current status can be overriden
+   * @param sourcePokemon The Pokemon that is setting the status effect
+   * @param ignoreField Whether any field effects (weather, terrain, etc.) should be considered
+   */
+  canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null, ignoreField: boolean = false): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
         return false;
       }
-      if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.MISTY) {
+      if (this.isGrounded() && (!ignoreField && this.scene.arena.terrain?.terrainType === TerrainType.MISTY)) {
         return false;
       }
     }
@@ -3556,7 +3565,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         break;
       case StatusEffect.FREEZE:
-        if (this.isOfType(Type.ICE) || (this.scene?.arena?.weather?.weatherType && [ WeatherType.SUNNY, WeatherType.HARSH_SUN ].includes(this.scene.arena.weather.weatherType))) {
+        if (this.isOfType(Type.ICE) || (!ignoreField && (this.scene?.arena?.weather?.weatherType && [ WeatherType.SUNNY, WeatherType.HARSH_SUN ].includes(this.scene.arena.weather.weatherType)))) {
           return false;
         }
         break;
@@ -5282,6 +5291,7 @@ export class PokemonBattleSummonData {
 export class PokemonTurnData {
   public flinched: boolean = false;
   public acted: boolean = false;
+  /** How many times the move should hit the target(s) */
   public hitCount: number = 0;
   /**
    * - `-1` = Calculate how many hits are left
@@ -5300,6 +5310,11 @@ export class PokemonTurnData {
   public switchedInThisTurn: boolean = false;
   public failedRunAway: boolean = false;
   public joinedRound: boolean = false;
+  /**
+   * Used to make sure multi-hits occur properly when the user is
+   * forced to act again in the same turn
+   */
+  public extraTurns: number = 0;
 }
 
 export enum AiType {

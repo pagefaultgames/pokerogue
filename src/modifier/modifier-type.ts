@@ -1093,7 +1093,10 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Moves)) {
         return new TmModifierType(pregenArgs[0] as Moves);
       }
-      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m?.moveId === tm)));
+      const partyMemberCompatibleTms = party.map(p => {
+        const previousLevelMoves = p.getLearnableLevelMoves();
+        return (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m?.moveId === tm) && !previousLevelMoves.find(lm=>lm === tm));
+      });
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(" (N)")).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length) {
         return null;
@@ -1751,19 +1754,59 @@ const modifierPool: ModifierPool = {
         || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId)))) ? 12 : 0;
     }, 12),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
-      const checkedAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ];
-      const checkedMoves = [ Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT ];
-      // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof TurnStatusEffectModifier)
-        && (checkedAbilities.some(a => p.hasAbility(a, false, true))
-        || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
+      return party.some(p => {
+        const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
+
+        const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
+        const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+
+        // Moves that take advantage of obtaining the actual status effect
+        const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
+          .some(m => moveset.includes(m));
+        // Moves that take advantage of being able to give the target a status orb
+        // TODO: Take moves from comment they are implemented
+        const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
+          .some(m => moveset.includes(m));
+        // Abilities that take advantage of obtaining the actual status effect
+        const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ]
+          .some(a => p.hasAbility(a, false, true));
+
+        if (!isHoldingOrb) {
+          if (canSetStatus) {
+            return hasRelevantAbilities || hasStatusMoves;
+          } else {
+            return hasItemMoves;
+          }
+        }
+        return false;
+      }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
-      const checkedAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ];
-      const checkedMoves = [ Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT ];
-      // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof TurnStatusEffectModifier)
-        && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
+      return party.some(p => {
+        const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
+        const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
+        const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+
+        // Moves that take advantage of obtaining the actual status effect
+        const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
+          .some(m => moveset.includes(m));
+        // Moves that take advantage of being able to give the target a status orb
+        // TODO: Take moves from comment they are implemented
+        const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
+          .some(m => moveset.includes(m));
+        // Abilities that take advantage of obtaining the actual status effect
+        const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ]
+          .some(a => p.hasAbility(a, false, true));
+
+        if (!isHoldingOrb) {
+          if (canSetStatus) {
+            return hasRelevantAbilities || hasStatusMoves;
+          } else {
+            return hasItemMoves;
+          }
+        }
+        return false;
+      }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
       const checkedAbilities = [ Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT ];
