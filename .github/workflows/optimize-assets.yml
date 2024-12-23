@@ -50,11 +50,18 @@ jobs:
             exit 0
           fi
           
-          # 重置到上游状态
-          git reset --hard upstream/main
+          # 尝试合并上游更新
+          if ! git merge upstream/main --no-edit; then
+            echo "合并失败，存在冲突"
+            # 中止合并
+            git merge --abort
+            echo "sync_status=conflict" >> $GITHUB_OUTPUT
+            exit 1
+          fi
           
-          # 强制推送更新
-          git push -f
+          # 推送合并后的更新到原分支
+          git push
+          
           echo "sync_status=updated" >> $GITHUB_OUTPUT
       
       # 只有当仓库不是最新且同步成功时，才继续执行后续步骤
