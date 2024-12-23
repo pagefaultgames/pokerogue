@@ -15,5 +15,6 @@ export enum Button {
 	CYCLE_NATURE,
 	V,
 	SPEED_UP,
-	SLOW_DOWN
+	SLOW_DOWN,
+	RANDOMIZE,
 }

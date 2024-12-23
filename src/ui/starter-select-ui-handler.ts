@@ -267,6 +267,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private natureIconElement: Phaser.GameObjects.Sprite;
   private variantIconElement: Phaser.GameObjects.Sprite;
   private goFilterIconElement: Phaser.GameObjects.Sprite;
+  private randomSelectIconElement: Phaser.GameObjects.Sprite;
   private shinyLabel: Phaser.GameObjects.Text;
   private formLabel: Phaser.GameObjects.Text;
   private genderLabel: Phaser.GameObjects.Text;
@@ -274,6 +275,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private natureLabel: Phaser.GameObjects.Text;
   private variantLabel: Phaser.GameObjects.Text;
   private goFilterLabel: Phaser.GameObjects.Text;
+  private randomSelectLabel: Phaser.GameObjects.Text;
 
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
@@ -863,6 +865,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.goFilterLabel = addTextObject(this.scene, this.filterInstructionRowX + this.instructionRowTextOffset, this.filterInstructionRowY, i18next.t("starterSelectUiHandler:goFilter"), TextStyle.PARTY, { fontSize: instructionTextSize });
     this.goFilterLabel.setName("text-goFilter-label");
 
+    this.randomSelectIconElement = new Phaser.GameObjects.Sprite(this.scene, this.instructionRowX, this.instructionRowY, "keyboard", "Q.png");
+    this.randomSelectIconElement.setName("sprite-random-icon-element");
+    this.randomSelectIconElement.setScale(0.675);
+    this.randomSelectIconElement.setOrigin(0.0, 0.0);
+    this.randomSelectLabel = addTextObject(this.scene, this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:randomize"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.randomSelectLabel.setName("text-random-label");
+
     this.hideInstructions();
 
     this.filterInstructionsContainer = this.scene.add.container(50, 5);
@@ -1437,8 +1446,79 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           success = true;
           break;
       }
-    } else {
+    } else if (button === Button.RANDOMIZE) {
+      console.log("Attempting random selection from visible starters");
+      if (this.starterSpecies.length < 6) {
+        // Get current party value
+        const currentPartyValue = this.starterSpecies
+          .map(s => s.generation)
+          .reduce((total: number, gen: number, i: number) =>
+            total += this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+        // Filter valid starters first
+        const validStarters = this.filteredStarterContainers.filter(starter => {
+          const species = starter.species;
+          const [ isDupe ] = this.isInParty(species);
+          const starterCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
+          const isValidForChallenge = new BooleanHolder(true);
+          Challenge.applyChallenges(
+            this.scene.gameMode,
+            Challenge.ChallengeType.STARTER_CHOICE,
+            species,
+            isValidForChallenge,
+            this.scene.gameData.getSpeciesDexAttrProps(
+              species,
+              this.getCurrentDexProps(species.speciesId)
+            ),
+            this.isPartyValid()
+          );
+          const isCaught = this.scene.gameData.dexData[species.speciesId].caughtAttr;
+          return !isDupe &&
+                 isValidForChallenge.value &&
+                 (currentPartyValue + starterCost <= this.getValueLimit()) &&
+                 isCaught;
+        });
 
+        if (validStarters.length > 0) {
+          // Select random starter from valid options
+          const randomIndex = Math.floor(Math.random() * validStarters.length);
+          const randomStarter = validStarters[randomIndex];
+          const randomSpecies = randomStarter.species;
+
+          // First set the species to load saved preferences and initialize default values
+          // This triggers the same flow as if the player had moved their cursor to this Pokemon
+          this.setSpecies(randomSpecies);
+
+          // Get the dex attributes after setSpecies has potentially loaded saved preferences
+          const dexAttr = this.getCurrentDexProps(randomSpecies.speciesId);
+          const props = this.scene.gameData.getSpeciesDexAttrProps(randomSpecies, dexAttr);
+
+          // Use the current cursor values which now reflect any saved preferences
+          // these are the same values the player would see in the UI
+          const abilityIndex = this.abilityCursor;
+          const nature = this.natureCursor as unknown as Nature;
+          const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
+
+          const starterCost = this.scene.gameData.getSpeciesStarterValue(randomSpecies.speciesId);
+
+          const speciesForm = getPokemonSpeciesForm(randomSpecies.speciesId, props.formIndex);
+          speciesForm.loadAssets(this.scene, props.female, props.formIndex, props.shiny, props.variant, true)
+            .then(() => {
+              if (this.tryUpdateValue(starterCost, true)) {
+                // Use addToParty with the same parameters that would be used in manual selection
+                this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, true);
+                console.log("Random starter added to party:", randomSpecies.name, "with cost:", starterCost);
+                success = true;
+              }
+            });
+        } else {
+          // No valid starters available
+          error = true;
+        }
+      } else {
+        // Party is full
+        error = true;
+      }
+    } else {
       let starterContainer;
       const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
       // prepare persistent starter data to store changes
@@ -2159,7 +2239,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return [ isDupe, removeIndex ];
   }
 
-  addToParty(species: PokemonSpecies, dexAttr: bigint, abilityIndex: integer, nature: Nature, moveset: StarterMoveset) {
+  addToParty(species: PokemonSpecies, dexAttr: bigint, abilityIndex: integer, nature: Nature, moveset: StarterMoveset, randomSelection: boolean = false) {
     const props = this.scene.gameData.getSpeciesDexAttrProps(species, dexAttr);
     this.starterIcons[this.starterSpecies.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
     this.starterIcons[this.starterSpecies.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
@@ -2170,7 +2250,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterAbilityIndexes.push(abilityIndex);
     this.starterNatures.push(nature);
     this.starterMovesets.push(moveset);
-    if (this.speciesLoaded.get(species.speciesId)) {
+    if (this.speciesLoaded.get(species.speciesId) || randomSelection ) {
       getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
     }
     this.updateInstructions();
@@ -2254,6 +2334,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           break;
         case SettingKeyboard.Button_Stats:
           iconPath = "C.png";
+          break;
+        case SettingKeyboard.Button_Randomize:
+          iconPath = "Q.png";
           break;
         default:
           break;
@@ -2340,7 +2423,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     // if filter mode is inactivated and gamepadType is not undefined, update the button icons
     if (!this.filterMode) {
       this.updateFilterButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.goFilterIconElement, this.goFilterLabel);
+      this.updateButtonIcon(SettingKeyboard.Button_Randomize, gamepadType, this.randomSelectIconElement, this.randomSelectLabel); // random icon only appears not in filter mode
     }
+
 
   }
 
@@ -3694,6 +3779,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.variantLabel.setVisible(false);
     this.goFilterIconElement.setVisible(false);
     this.goFilterLabel.setVisible(false);
+    this.randomSelectIconElement.setVisible(false);
+    this.randomSelectLabel.setVisible(false);
   }
 
   clear(): void {

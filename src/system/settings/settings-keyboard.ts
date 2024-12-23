@@ -34,6 +34,8 @@ export enum SettingKeyboard {
     Alt_Button_Cycle_Nature = "ALT_BUTTON_CYCLE_NATURE",
     Button_Cycle_Variant = "BUTTON_CYCLE_VARIANT",
     Alt_Button_Cycle_Variant = "ALT_BUTTON_CYCLE_VARIANT",
+    Button_Randomize = "BUTTON_RANDOMIZE",
+    Alt_Button_Randomize = "ALT_BUTTON_RANDOMIZE",
     Button_Speed_Up = "BUTTON_SPEED_UP",
     Alt_Button_Speed_Up = "ALT_BUTTON_SPEED_UP",
     Button_Slow_Down = "BUTTON_SLOW_DOWN",
@@ -75,6 +77,8 @@ export const settingKeyboardOptions = {
   [SettingKeyboard.Alt_Button_Cycle_Nature]: [ `KEY ${Button.CYCLE_NATURE.toString()}`, pressAction ],
   [SettingKeyboard.Button_Cycle_Variant]: [ `KEY ${Button.V.toString()}`, pressAction ],
   [SettingKeyboard.Alt_Button_Cycle_Variant]: [ `KEY ${Button.V.toString()}`, pressAction ],
+  [SettingKeyboard.Button_Randomize]: [ `KEY ${Button.RANDOMIZE.toString()}`, pressAction ],
+  [SettingKeyboard.Alt_Button_Randomize]: [ `KEY ${Button.RANDOMIZE.toString()}`, pressAction ],
   [SettingKeyboard.Button_Speed_Up]: [ `KEY ${Button.SPEED_UP.toString()}`, pressAction ],
   [SettingKeyboard.Alt_Button_Speed_Up]: [ `KEY ${Button.SPEED_UP.toString()}`, pressAction ],
   [SettingKeyboard.Button_Slow_Down]: [ `KEY ${Button.SLOW_DOWN.toString()}`, pressAction ],
@@ -114,6 +118,8 @@ export const settingKeyboardDefaults = {
   [SettingKeyboard.Alt_Button_Cycle_Nature]: 0,
   [SettingKeyboard.Button_Cycle_Variant]: 0,
   [SettingKeyboard.Alt_Button_Cycle_Variant]: 0,
+  [SettingKeyboard.Button_Randomize]: 0,
+  [SettingKeyboard.Alt_Button_Randomize]: 0,
   [SettingKeyboard.Button_Speed_Up]: 0,
   [SettingKeyboard.Alt_Button_Speed_Up]: 0,
   [SettingKeyboard.Button_Slow_Down]: 0,
@@ -149,6 +155,7 @@ export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard,
     case SettingKeyboard.Button_Cycle_Ability:
     case SettingKeyboard.Button_Cycle_Nature:
     case SettingKeyboard.Button_Cycle_Variant:
+    case SettingKeyboard.Button_Randomize:
     case SettingKeyboard.Button_Speed_Up:
     case SettingKeyboard.Button_Slow_Down:
     case SettingKeyboard.Alt_Button_Up:
@@ -165,6 +172,7 @@ export function setSettingKeyboard(scene: BattleScene, setting: SettingKeyboard,
     case SettingKeyboard.Alt_Button_Cycle_Ability:
     case SettingKeyboard.Alt_Button_Cycle_Nature:
     case SettingKeyboard.Alt_Button_Cycle_Variant:
+    case SettingKeyboard.Alt_Button_Randomize:
     case SettingKeyboard.Alt_Button_Speed_Up:
     case SettingKeyboard.Alt_Button_Slow_Down:
     case SettingKeyboard.Alt_Button_Submit:

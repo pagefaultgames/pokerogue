@@ -183,6 +183,7 @@ const cfg_keyboard_qwerty = {
     [SettingKeyboard.Button_Cycle_Variant]: Button.V,
     [SettingKeyboard.Button_Speed_Up]: Button.SPEED_UP,
     [SettingKeyboard.Button_Slow_Down]: Button.SLOW_DOWN,
+    [SettingKeyboard.Button_Randomize]: Button.RANDOMIZE,
     [SettingKeyboard.Alt_Button_Up]: Button.UP,
     [SettingKeyboard.Alt_Button_Down]: Button.DOWN,
     [SettingKeyboard.Alt_Button_Left]: Button.LEFT,
@@ -200,6 +201,7 @@ const cfg_keyboard_qwerty = {
     [SettingKeyboard.Alt_Button_Cycle_Variant]: Button.V,
     [SettingKeyboard.Alt_Button_Speed_Up]: Button.SPEED_UP,
     [SettingKeyboard.Alt_Button_Slow_Down]: Button.SLOW_DOWN,
+    [SettingKeyboard.Alt_Button_Randomize]: Button.RANDOMIZE
   },
   default: {
     KEY_ARROW_UP: SettingKeyboard.Button_Up,
@@ -230,7 +232,7 @@ const cfg_keyboard_qwerty = {
     KEY_M: SettingKeyboard.Alt_Button_Menu,
     KEY_O: -1,
     KEY_P: -1,
-    KEY_Q: -1,
+    KEY_Q: SettingKeyboard.Button_Randomize,
     KEY_S: SettingKeyboard.Alt_Button_Down,
     KEY_T: SettingKeyboard.Alt_Button_Cycle_Form,
     KEY_U: -1,
