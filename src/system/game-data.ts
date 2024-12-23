@@ -2,7 +2,7 @@ import i18next from "i18next";
 import BattleScene, { bypassLogin, PokeballCounts } from "#app/battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys } from "#app/data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import * as Utils from "#app/utils";
 import Overrides from "#app/overrides";
@@ -1625,9 +1625,6 @@ export class GameData {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       const formIndex = pokemon.formIndex;
-      if (noStarterFormKeys.includes(pokemon.getFormKey())) {
-        pokemon.formIndex = 0;
-      }
       const dexAttr = pokemon.getDexAttr();
       pokemon.formIndex = formIndex;
 
