@@ -64,7 +64,7 @@ describe("Moves - Quash", () => {
 
     await game.classicMode.startBattle([ Species.ACCELGOR, Species.RATTATA ]);
 
-    // both users are quashed - rattata is slower so rain should be up at end of turn
+    // both users are quashed - rattata is slower so sun should be up at end of turn
     game.move.select(Moves.RAIN_DANCE, 0);
     game.move.select(Moves.SUNNY_DAY, 1);
 
