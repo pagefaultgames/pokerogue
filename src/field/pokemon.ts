@@ -1479,7 +1479,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return false;
       }
     }
-    return (this.hp > 0 || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
+    return (((this.isOnField() || ability.isBypassOnField) && this.hp > 0) || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
   }
 
   /**
