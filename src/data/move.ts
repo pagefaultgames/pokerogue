@@ -40,6 +40,7 @@ import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
 import { SwitchType } from "#enums/switch-type";
 import { StatusEffect } from "enums/status-effect";
+import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -7651,6 +7652,30 @@ export class AfterYouAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Move effect to force the target to move last, ignoring priority.
+ * If applied to multiple targets, they move in speed order after all other moves.
+ * @extends MoveEffectAttr
+ */
+export class ForceLastAttr extends MoveEffectAttr {
+  /**
+   * Forces the target of this move to move last.
+   *
+   * @param user {@linkcode Pokemon} that is using the move.
+   * @param target {@linkcode Pokemon} that will be forced to move last.
+   * @param move {@linkcode Move} {@linkcode Moves.QUASH}
+   * @param _args N/A
+   * @returns true
+   */
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    const targetMovePhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    if (targetMovePhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      target.scene.prependToPhase(new MovePhase(target.scene, target, [ ...targetMovePhase.targets ], targetMovePhase.move), WeatherEffectPhase);
+    }
+    return true;
+  }
+}
+
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
@@ -9454,8 +9479,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(RemoveHeldItemAttr, true),
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
-      .condition(failIfSingleBattle)
-      .unimplemented(),
+      .condition((user, target, move) => !target.turnData.acted)
+      .attr(ForceLastAttr),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferable).reduce((v, m) => v + m.stackCount, 0))),
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
