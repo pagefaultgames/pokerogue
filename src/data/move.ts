@@ -7680,6 +7680,7 @@ export class ForceLastAttr extends MoveEffectAttr {
     return true;
   }
 }
+
 /** Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target} */
 const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
   let slower: boolean;
