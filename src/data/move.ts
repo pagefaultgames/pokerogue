@@ -7668,7 +7668,7 @@ export class ForceLastAttr extends MoveEffectAttr {
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const targetMovePhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
-    if (targetMovePhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+    if (targetMovePhase && !targetMovePhase.isForcedLast() && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       // Finding the phase to insert the move in front of -
       // Either the end of the turn or in front of another, slower move which has also been forced last
       const prependPhase = target.scene.findPhase((phase) => [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
