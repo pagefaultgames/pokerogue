@@ -31,7 +31,7 @@ describe("Moves - Quash", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([ Moves.RAIN_DANCE, Moves.SPLASH ])
       .ability(Abilities.BALL_FETCH)
-      .moveset([ Moves.QUASH, Moves.SUNNY_DAY, Moves.SPLASH ]);
+      .moveset([ Moves.QUASH, Moves.SUNNY_DAY, Moves.RAIN_DANCE, Moves.SPLASH ]);
   });
 
   it("makes the target move last in a turn, ignoring priority", async () => {
@@ -56,6 +56,23 @@ describe("Moves - Quash", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+  });
+
+  it("makes multiple quashed targets move in speed order at the end of the turn", async () => {
+    game.override.enemySpecies(Species.REGIELEKI)
+      .enemyLevel(100);
+
+    await game.classicMode.startBattle([ Species.ACCELGOR, Species.RATTATA ]);
+
+    // both users are quashed - rattata is slower so rain should be up at end of turn
+    game.move.select(Moves.RAIN_DANCE, 0);
+    game.move.select(Moves.SUNNY_DAY, 1);
+
+    await game.forceEnemyMove(Moves.QUASH, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.QUASH, BattlerIndex.PLAYER_2);
+
+    await game.phaseInterceptor.to("TurnEndPhase", false);
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
 
 });
