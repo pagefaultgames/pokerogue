@@ -7670,7 +7670,16 @@ export class ForceLastAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const targetMovePhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (targetMovePhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      target.scene.prependToPhase(new MovePhase(target.scene, target, [ ...targetMovePhase.targets ], targetMovePhase.move), WeatherEffectPhase);
+      const weatherPhase = target.scene.findPhase((phase) => phase instanceof WeatherEffectPhase)!;
+      let newMovePhaseIndex = target.scene.phaseQueue.indexOf(weatherPhase);
+      let nextMovePhase = target.scene.phaseQueue[newMovePhaseIndex - 1];
+      while (nextMovePhase instanceof MovePhase
+        && nextMovePhase.isForcedLast()
+        && nextMovePhase.pokemon.getEffectiveStat(Stat.SPD) < user.getEffectiveStat(Stat.SPD)) {
+        newMovePhaseIndex--;
+        nextMovePhase = target.scene.phaseQueue[newMovePhaseIndex];
+      }
+      target.scene.phaseQueue.splice(newMovePhaseIndex, 0, new MovePhase(target.scene, target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, true));
     }
     return true;
   }

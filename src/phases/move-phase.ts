@@ -56,6 +56,7 @@ export class MovePhase extends BattlePhase {
   protected ignorePp: boolean;
   protected failed: boolean = false;
   protected cancelled: boolean = false;
+  protected forcedLast: boolean = false;
 
   public get pokemon(): Pokemon {
     return this._pokemon;
@@ -113,6 +114,21 @@ export class MovePhase extends BattlePhase {
   public cancel(): void {
     this.cancelled = true;
   }
+
+  /**
+   * Flags that the current move has been forced to the end of the turn
+   * Needed for speed order, see {@linkcode Moves.QUASH}
+   * */
+  public forceLast(): MovePhase {
+    this.forcedLast = true;
+    return this;
+  }
+
+
+  public isForcedLast(): boolean {
+    return this.forcedLast;
+  }
+
 
   public start(): void {
     super.start();
