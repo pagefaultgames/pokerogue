@@ -3,6 +3,7 @@ import { Moves } from "#enums/moves";
 import { Abilities } from "#app/enums/abilities";
 import { BattlerIndex } from "#app/battle";
 import { WeatherType } from "#enums/weather-type";
+import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
@@ -44,6 +45,17 @@ describe("Moves - Quash", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
     // will be sunny if player_2 moved last because of quash, rainy otherwise
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+  });
+
+  it("fails if the target has already moved", async () => {
+    await game.classicMode.startBattle([ Species.ACCELGOR, Species.RATTATA ]);
+    game.move.select(Moves.SPLASH, 0);
+    game.move.select(Moves.QUASH, 1, BattlerIndex.PLAYER);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });
 
 });
