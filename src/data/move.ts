@@ -7669,6 +7669,8 @@ export class ForceLastAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const targetMovePhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (targetMovePhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      // Finding the phase to insert the move in front of -
+      // Either the end of the turn or in front of another, slower move which has also been forced last
       const prependPhase = target.scene.findPhase((phase) => [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
         || (phase instanceof MovePhase) && phaseForcedSlower(phase, target, !!target.scene.arena.getTag(ArenaTagType.TRICK_ROOM)));
       if (prependPhase) {
@@ -7678,10 +7680,10 @@ export class ForceLastAttr extends MoveEffectAttr {
     return true;
   }
 }
-
+/** Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target} */
 const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
-  const faster = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
-  return phase.isForcedLast() && faster;
+  const slower = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
+  return phase.isForcedLast() && slower;
 };
 
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
