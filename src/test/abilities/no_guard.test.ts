@@ -53,15 +53,28 @@ describe("Abilities - No Guard", () => {
     expect(moveEffectPhase.hitCheck).toHaveReturnedWith(true);
   });
 
-  it("should guarantee double battle with any one LURE", async () => {
-    game.override
-      .startingModifier([
-        { name: "LURE" },
-      ])
-      .startingWave(2);
 
+  it("should increase the chance of double battles", async () => {
+    game.override
+      .moveset(Moves.SPLASH)
+      .ability(Abilities.NO_GUARD)
+      .enemySpecies(Species.SUNKERN)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset(Moves.SPLASH)
+      .startingWave(9);
+
+    vi.spyOn(game.scene, "getDoubleBattleChance");
     await game.classicMode.startBattle();
 
-    expect(game.scene.getEnemyField().length).toBe(2);
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+    expect(game.scene.getDoubleBattleChance).toHaveLastReturnedWith(8);
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+    expect(game.scene.getDoubleBattleChance).toHaveLastReturnedWith(2);
   });
+
 });
