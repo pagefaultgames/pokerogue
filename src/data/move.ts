@@ -7669,16 +7669,11 @@ export class ForceLastAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const targetMovePhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (targetMovePhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      let newMovePhaseIndex = 1;
-      let nextMovePhase = target.scene.phaseQueue[newMovePhaseIndex];
-      // Search until a slower quashed move or end of turn is found
-      // Means that a speed tie will go in "order quashed" - need to see if this is the case (it's prob random)
-      while (nextMovePhase instanceof MovePhase
-        && (!nextMovePhase.isForcedLast() || nextMovePhase.pokemon.getEffectiveStat(Stat.SPD) >= user.getEffectiveStat(Stat.SPD))) {
-        newMovePhaseIndex++;
-        nextMovePhase = target.scene.phaseQueue[newMovePhaseIndex];
+      const prependPhase = target.scene.findPhase((phase) => [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
+        || (phase instanceof MovePhase) && (phase.isForcedLast() && phase.pokemon.getEffectiveStat(Stat.SPD) < user.getEffectiveStat(Stat.SPD)));
+      if (prependPhase) {
+        target.scene.phaseQueue.splice(target.scene.phaseQueue.indexOf(prependPhase), 0, new MovePhase(target.scene, target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, true));
       }
-      target.scene.phaseQueue.splice(newMovePhaseIndex, 0, new MovePhase(target.scene, target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, true));
     }
     return true;
   }
