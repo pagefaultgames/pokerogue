@@ -177,7 +177,7 @@ export const allMysteryEncounters: { [encounterType: number]: MysteryEncounter }
 const extremeBiomeEncounters: MysteryEncounterType[] = [];
 
 const nonExtremeBiomeEncounters: MysteryEncounterType[] = [
-  MysteryEncounterType.FIELD_TRIP,
+  // MysteryEncounterType.FIELD_TRIP, Disabled for holiday event
   MysteryEncounterType.DANCING_LESSONS, // Is also in BADLANDS, DESERT, VOLCANO, WASTELAND, ABYSS
 ];
 
@@ -185,14 +185,14 @@ const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
   MysteryEncounterType.SHADY_VITAMIN_DEALER,
   MysteryEncounterType.THE_POKEMON_SALESMAN,
-  MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE,
+  // MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, Disabled for holiday event
   MysteryEncounterType.THE_WINSTRATE_CHALLENGE,
   MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER
 ];
 
 const civilizationBiomeEncounters: MysteryEncounterType[] = [
-  MysteryEncounterType.DEPARTMENT_STORE_SALE,
-  MysteryEncounterType.PART_TIMER,
+  // MysteryEncounterType.DEPARTMENT_STORE_SALE, Disabled for holiday event
+  // MysteryEncounterType.PART_TIMER, Disabled for holiday event
   MysteryEncounterType.FUN_AND_GAMES,
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM
 ];

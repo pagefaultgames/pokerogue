@@ -26,9 +26,10 @@ import { getEncounterPokemonLevelForWave, getSpriteKeysFromPokemon, STANDARD_ENC
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt, randSeedItem } from "#app/utils";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fightOrFlight";
@@ -56,7 +57,14 @@ export const FightOrFlightEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);
+      let bossSpecies: PokemonSpecies;
+      if (scene.eventManager.isEventActive() && scene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
+        const eventEncounter = randSeedItem(scene.eventManager.activeEvent()!.uncommonBreedEncounters!);
+        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, scene.gameMode);
+        bossSpecies = getPokemonSpecies( levelSpecies );
+      } else {
+        bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);
+      }
       const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
       const config: EnemyPartyConfig = {
@@ -114,7 +122,9 @@ export const FightOrFlightEncounter: MysteryEncounter =
           tint: 0.25,
           x: -5,
           repeat: true,
-          isPokemon: true
+          isPokemon: true,
+          isShiny: bossPokemon.shiny,
+          variant: bossPokemon.variant
         },
       ];
 

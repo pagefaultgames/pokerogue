@@ -3735,16 +3735,16 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
 
   /**
    * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
-   * @param {Pokemon} pokemon Pokemon that has this ability
-   * @param {boolean} passive N/A
-   * @param {boolean} simulated true if applying in a simulated call.
-   * @param {any[]} args N/A
-   * @returns {boolean} true if any opponents are sleeping
+   * @param pokemon Pokemon that has this ability
+   * @param passive N/A
+   * @param simulated `true` if applying in a simulated call.
+   * @param args N/A
+   * @returns `true` if any opponents are sleeping
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     let hadEffect: boolean = false;
     for (const opp of pokemon.getOpponents()) {
-      if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+      if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus) {
         if (!simulated) {
           opp.damageAndUpdate(Utils.toDmgValue(opp.getMaxHp() / 8), HitResult.OTHER);
           pokemon.scene.queueMessage(i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }));
@@ -4127,9 +4127,13 @@ export class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
+  /**
+   * @param args - `[0]`: boolean for if the battle ended in a victory
+   * @returns `true` if successful
+   */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const postBattleLoot = pokemon.scene.currentBattle.postBattleLoot;
-    if (!simulated && postBattleLoot.length) {
+    if (!simulated && postBattleLoot.length && args[0]) {
       const randItem = Utils.randSeedItem(postBattleLoot);
       //@ts-ignore - TODO see below
       if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) { // TODO: fix. This is a promise!?
@@ -4590,14 +4594,15 @@ export class MoneyAbAttr extends PostBattleAbAttr {
   /**
    * @param pokemon {@linkcode Pokemon} that is the user of this ability.
    * @param passive N/A
-   * @param args N/A
-   * @returns true
+   * @param args - `[0]`: boolean for if the battle ended in a victory
+   * @returns `true` if successful
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!simulated) {
+    if (!simulated && args[0]) {
       pokemon.scene.currentBattle.moneyScattered += pokemon.scene.getWaveMoneyAmount(0.2);
+      return true;
     }
-    return true;
+    return false;
   }
 }
 
@@ -4605,13 +4610,12 @@ export class MoneyAbAttr extends PostBattleAbAttr {
  * Applies a stat change after a Pokémon is summoned,
  * conditioned on the presence of a specific arena tag.
  *
- * @extends {PostSummonStatStageChangeAbAttr}
+ * @extends PostSummonStatStageChangeAbAttr
  */
 export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageChangeAbAttr {
   /**
    * The type of arena tag that conditions the stat change.
    * @private
-   * @type {ArenaTagType}
    */
   private tagType: ArenaTagType;
 
@@ -5079,7 +5083,7 @@ class ForceSwitchOutHelper {
         pokemon.scene.clearEnemyHeldItemModifiers();
 
         if (switchOutTarget.hp) {
-          pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
+          pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene, false));
           pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
         }
       }
@@ -5821,9 +5825,7 @@ export function initAbilities() {
       .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.SHEER_FORCE, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.chance >= 1, 5461 / 4096)
-      .attr(MoveEffectChanceMultiplierAbAttr, 0)
-      .edgeCase() // Should disable shell bell and Meloetta's relic song transformation
-      .edgeCase(), // Should disable life orb, eject button, red card, kee/maranga berry if they get implemented
+      .attr(MoveEffectChanceMultiplierAbAttr, 0), // Should disable life orb, eject button, red card, kee/maranga berry if they get implemented
     new Ability(Abilities.CONTRARY, 5)
       .attr(StatStageChangeMultiplierAbAttr, -1)
       .ignorable(),
@@ -5891,9 +5893,10 @@ export function initAbilities() {
       .attr(WonderSkinAbAttr)
       .ignorable(),
     new Ability(Abilities.ANALYTIC, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) =>
-        !!target?.getLastXMoves(1).find(m => m.turn === target?.scene.currentBattle.turn)
-        || user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command !== Command.FIGHT, 1.3),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => {
+        const movePhase = user?.scene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user.id);
+        return Utils.isNullOrUndefined(movePhase);
+      }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -6049,10 +6052,10 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
       .attr(PostDamageForceSwitchAbAttr)
-      .edgeCase(), // Should not trigger when hurting itself in confusion
+      .edgeCase(), // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .attr(PostDamageForceSwitchAbAttr)
-      .edgeCase(), // Should not trigger when hurting itself in confusion
+      .edgeCase(), // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
@@ -6068,7 +6071,7 @@ export function initAbilities() {
       .bypassFaint()
       .partial(), // Meteor form should protect against status effects and yawn
     new Ability(Abilities.STAKEOUT, 7)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user?.scene.currentBattle.turnCommands[target?.getBattlerIndex() ?? BattlerIndex.ATTACKER]?.command === Command.POKEMON, 2),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => !!target?.turnData.switchedInThisTurn, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
@@ -6461,8 +6464,7 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatStagesAbAttr, [ Stat.EVA ])
       .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
-      .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1)
-      .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1),
     new Ability(Abilities.HOSPITALITY, 9)
       .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)

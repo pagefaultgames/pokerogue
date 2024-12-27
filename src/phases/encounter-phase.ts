@@ -34,6 +34,7 @@ import { Biome } from "#enums/biome";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
+import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 
@@ -217,6 +218,11 @@ export class EncounterPhase extends BattlePhase {
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         regenerateModifierPoolThresholds(this.scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
         this.scene.generateEnemyModifiers();
+        overrideModifiers(this.scene, false);
+        this.scene.getEnemyField().forEach(enemy => {
+          overrideHeldItems(this.scene, enemy, false);
+        });
+
       }
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
@@ -380,6 +386,9 @@ export class EncounterPhase extends BattlePhase {
 
       if (encounter.onVisualsStart) {
         encounter.onVisualsStart(this.scene);
+      } else if (encounter.spriteConfigs && introVisuals) {
+        // If the encounter doesn't have any special visual intro, show sparkle for shiny Pokemon
+        introVisuals.playShinySparkles();
       }
 
       const doEncounter = () => {
