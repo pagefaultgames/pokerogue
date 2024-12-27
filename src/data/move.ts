@@ -40,7 +40,6 @@ import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
 import { SwitchType } from "#enums/switch-type";
 import { StatusEffect } from "enums/status-effect";
-import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -7670,13 +7669,13 @@ export class ForceLastAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const targetMovePhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (targetMovePhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      const weatherPhase = target.scene.findPhase((phase) => phase instanceof WeatherEffectPhase)!;
-      let newMovePhaseIndex = target.scene.phaseQueue.indexOf(weatherPhase);
-      let nextMovePhase = target.scene.phaseQueue[newMovePhaseIndex - 1];
+      let newMovePhaseIndex = 1;
+      let nextMovePhase = target.scene.phaseQueue[newMovePhaseIndex];
+      // Search until a slower quashed move or end of turn is found
+      // Means that a speed tie will go in "order quashed" - need to see if this is the case (it's prob random)
       while (nextMovePhase instanceof MovePhase
-        && nextMovePhase.isForcedLast()
-        && nextMovePhase.pokemon.getEffectiveStat(Stat.SPD) < user.getEffectiveStat(Stat.SPD)) {
-        newMovePhaseIndex--;
+        && (!nextMovePhase.isForcedLast() || nextMovePhase.pokemon.getEffectiveStat(Stat.SPD) >= user.getEffectiveStat(Stat.SPD))) {
+        newMovePhaseIndex++;
         nextMovePhase = target.scene.phaseQueue[newMovePhaseIndex];
       }
       target.scene.phaseQueue.splice(newMovePhaseIndex, 0, new MovePhase(target.scene, target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, true));
