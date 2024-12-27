@@ -7670,7 +7670,7 @@ export class ForceLastAttr extends MoveEffectAttr {
     const targetMovePhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (targetMovePhase && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       const prependPhase = target.scene.findPhase((phase) => [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
-        || (phase instanceof MovePhase) && (phase.isForcedLast() && phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD)));
+        || (phase instanceof MovePhase) && phaseForcedSlower(phase, target, !!target.scene.arena.getTag(ArenaTagType.TRICK_ROOM)));
       if (prependPhase) {
         target.scene.phaseQueue.splice(target.scene.phaseQueue.indexOf(prependPhase), 0, new MovePhase(target.scene, target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, true));
       }
@@ -7678,6 +7678,11 @@ export class ForceLastAttr extends MoveEffectAttr {
     return true;
   }
 }
+
+const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
+  const faster = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
+  return phase.isForcedLast() && faster;
+};
 
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
