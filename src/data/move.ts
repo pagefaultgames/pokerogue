@@ -1410,12 +1410,10 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
         // multi lens added hit; use initialHp tracker to ensure correct damage
         (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(this.initialHp / 2);
         return true;
-        break;
       case lensCount + 1:
         // parental bond added hit; calc damage as normal
         (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(target.hp / 2);
         return true;
-        break;
     }
   }
 
@@ -6768,7 +6766,11 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // get the last move used (excluding status based failures) as well as the corresponding moveset slot
     const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE)!;
     const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove.move)!;
-    const moveTargets = lastMove.targets ?? [];
+    // If the last move used can hit more than one target,
+    // re-compute the targets for the attack
+    // (mainly for alternating double/single battle shenanigans)
+    // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct
+    const moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets!;
 
     user.scene.queueMessage(i18next.t("moveTriggers:instructingMove", {
       userPokemonName: getPokemonNameWithAffix(user),
@@ -6785,9 +6787,8 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       // TODO: Confirm behavior of instructing move known by target but called by another move
       const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE);
       const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
-      const moveTargets = lastMove?.targets ?? [];
       // TODO: Add a way of adding moves to list procedurally rather than a pre-defined blacklist
-      const unrepeatablemoves = [
+      const uninstructableMoves = [
         // Locking/Continually Executed moves
         Moves.OUTRAGE,
         Moves.RAGING_FURY,
@@ -6842,11 +6843,11 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         // TODO: Add Max/G-Move blockage if or when they are implemented
       ];
 
-      if (!movesetMove // called move not in target's moveset (dancer, forgetting the move, etc.)
+      if (!lastMove?.move // no move to instruct
+        || !movesetMove // called move not in target's moveset (dancer, forgetting the move, etc.)
         || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
-        || allMoves[lastMove?.move ?? Moves.NONE].isChargingMove() // called move is a charging/recharging move
-        || !moveTargets.length // called move has no targets
-        || unrepeatablemoves.includes(lastMove?.move ?? Moves.NONE)) { // called move is explicitly in the banlist
+        || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
+        || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist
         return false;
       }
       return true;
@@ -6854,7 +6855,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    // TODO: Make the AI acutally use instruct
+    // TODO: Make the AI actually use instruct
     /* Ideally, the AI would score instruct based on the scorings of the on-field pokemons'
     * last used moves at the time of using Instruct (by the time the instructor gets to act)
     * with respect to the user's side.
@@ -7895,6 +7896,12 @@ export type MoveTargetSet = {
   multiple: boolean;
 };
 
+/**
+ * Returns a list of potential targets for a move
+ * @param user The {@linkcode Pokemon} using the move
+ * @param move The {@linkcode Moves} being used
+ * @returns MoveTargetSet containing the applicable targets and whether the move will hit multiple targets
+ */
 export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
   const variableTarget = new Utils.NumberHolder(0);
   user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
@@ -10030,6 +10037,8 @@ export function initMoves() {
       .ignoresSubstitute()
       .attr(RepeatMoveAttr)
       .edgeCase(), // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
+    // Also has incorrect interactions with move-calling moves (Mirror Move, Copycat/Mimic, Metronome)
+    // and Dancer that will need to be cleaned up separately
     new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()

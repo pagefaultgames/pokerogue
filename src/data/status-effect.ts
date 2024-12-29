@@ -161,7 +161,7 @@ export function getNonVolatileStatusEffects():Array<StatusEffect> {
 }
 
 /**
- * Returns whether a statuss effect is non volatile.
+ * Returns whether a status effect is non volatile.
  * Non-volatile status condition is a status that remains after being switched out.
  * @param status The status to check
  */

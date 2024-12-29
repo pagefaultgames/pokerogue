@@ -853,6 +853,12 @@ export default class BattleScene extends SceneBase {
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
 
+  /**
+   * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
+   * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
+   * @param activeOnly Whether to consider only active pokemon
+   * @returns array of {@linkcode Pokemon}
+   */
   public getField(activeOnly: boolean = false): Pokemon[] {
     const ret = new Array(4).fill(null);
     const playerField = this.getPlayerField();
