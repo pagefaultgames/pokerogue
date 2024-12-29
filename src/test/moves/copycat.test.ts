@@ -1,4 +1,5 @@
 import { BattlerIndex } from "#app/battle";
+import { allMoves, RandomMoveAttr } from "#app/data/move";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
@@ -11,6 +12,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Copycat", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
+  const randomMoveAttr = allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -66,7 +69,7 @@ describe("Moves - Copycat", () => {
       .moveset([ Moves.SPLASH, Moves.METRONOME ])
       .enemyMoveset(Moves.COPYCAT);
     await game.classicMode.startBattle();
-    vi.spyOn(game.scene.getPlayerPokemon()!, "randSeedInt").mockReturnValue(Moves.SWORDS_DANCE);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.SWORDS_DANCE);
 
     game.move.select(Moves.METRONOME);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]); // Player moves first, so enemy can copy Swords Dance
