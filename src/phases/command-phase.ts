@@ -81,7 +81,7 @@ export class CommandPhase extends FieldPhase {
       moveQueue.shift();
     }
 
-    if (moveQueue.length !== 0) {
+    if (moveQueue.length > 0) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move) {
         this.handleCommand(Command.FIGHT, -1);
