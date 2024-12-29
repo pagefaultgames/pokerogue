@@ -662,11 +662,11 @@ export const Setting: Array<Setting> = [
     label: i18next.t("settings:musicPreference"),
     options: [
       {
-        value: "Gen 5",
+        value: "Gen V + PMD",
         label: i18next.t("settings:musicGenFive")
       },
       {
-        value: "All Generations",
+        value: "All Gens",
         label: i18next.t("settings:musicAllGens")
       }
     ],
