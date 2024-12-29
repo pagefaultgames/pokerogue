@@ -6514,12 +6514,12 @@ export class RandomMoveAttr extends CallMoveAttr {
 
   /**
    * User calls a random moveId
-   * @param {Pokemon} user Pokemon that used the move and will call a random move
-   * @param {Pokemon} target Pokemon that will be targeted by the random move (if single target)
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
-   * @returns {Promise<boolean>}
-   * Invalid moves are indicated by what is passed in to invalidMoves: @constant {invalidMetronomeMoves}
+   *
+   * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidMetronomeMoves}
+   * @param user Pokemon that used the move and will call a random move
+   * @param target Pokemon that will be targeted by the random move (if single target)
+   * @param move Move being used
+   * @param args Unused
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     const moveIds = Utils.getEnumValues(Moves).map(m => !this.invalidMoves.includes(m) && !allMoves[m].name.endsWith(" (N)") ? m : Moves.NONE);
