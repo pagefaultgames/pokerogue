@@ -25,9 +25,9 @@ describe("Moves - Assist", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.ASSIST, Moves.SKETCH, Moves.FLY, Moves.DRAGON_TAIL ]) // These are all moves Assist cannot call; Sketch will be used to test that it can call other moves properly
+      .moveset([ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]) // These are all moves Assist cannot call; Sketch will be used to test that it can call other moves properly
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleType("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(100)
@@ -35,10 +35,8 @@ describe("Moves - Assist", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should be able to use an ally's moves", async () => {
-    game.override
-      .battleType("double")
-      .enemyMoveset(Moves.SWORDS_DANCE);
+  it("should only use an ally's moves", async () => {
+    game.override.enemyMoveset(Moves.SWORDS_DANCE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
 
     game.move.select(Moves.ASSIST, 0);
@@ -52,17 +50,36 @@ describe("Moves - Assist", () => {
 
   it("should fail if there are no usable moves", async () => {
     await game.classicMode.startBattle([ Species.FEEBAS ]);
-    // Moves above are already unusable by Assist
+    // Moves in beforeEach are already unusable by Assist
     game.move.select(Moves.ASSIST, 0);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
+  it("should fail if ally has no usable moves", async () => {
+    game.override.enemyMoveset(Moves.SWORDS_DANCE);
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
+
+    game.move.select(Moves.SKETCH, 0);
+    game.move.select(Moves.PROTECT, 1);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ]);
+    // Player uses Sketch to copy Swords Dance, Player_2 stalls a turn. Player will attempt Assist and should have no usable moves
+    await game.toNextTurn();
+    game.move.select(Moves.ASSIST, 0);
+    game.move.select(Moves.PROTECT, 1);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ]);
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  });
+
   it("should apply secondary effects of a move", async () => {
     game.override.moveset([ Moves.ASSIST, Moves.WOOD_HAMMER, Moves.WOOD_HAMMER, Moves.WOOD_HAMMER ]);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
 
     game.move.select(Moves.ASSIST, 0);
+    game.move.select(Moves.ASSIST, 1);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ]);
     await game.toNextTurn();
 
     expect(game.scene.getPlayerPokemon()!.isFullHp()).toBeFalsy(); // should receive recoil damage from Wood Hammer
