@@ -81,10 +81,10 @@ export class CommandPhase extends FieldPhase {
       moveQueue.shift();
     }
 
-    if (moveQueue.length !== 0) {
+    if (moveQueue.length > 0) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move) {
-        this.handleCommand(Command.FIGHT, -1, undefined);
+        this.handleCommand(Command.FIGHT, -1);
       } else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m?.moveId === queuedMove.move);
         if ((moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) || queuedMove.virtual) { // TODO: is the bang correct?
