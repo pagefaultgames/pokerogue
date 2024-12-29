@@ -6471,6 +6471,12 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used to call a move.
+ * Used by other move attributes: {@linkcode RandomMoveAttr}, {@linkcode RandomMovesetMoveAttr}, {@linkcode CopyMoveAttr}
+ * @see {@linkcode apply} for move call
+ * @extends OverrideMoveEffectAttr
+ */
 export class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: Moves[];
   protected hasTarget: boolean;
@@ -6497,7 +6503,7 @@ export class CallMoveAttr extends OverrideMoveEffectAttr {
  * Attribute used to call a random move.
  * Used for {@linkcode Moves.METRONOME}
  * @see {@linkcode apply} for move selection and move call
- * @extends OverrideMoveEffectAttr
+ * @extends CallMoveAttr to call a selected move
  */
 export class RandomMoveAttr extends CallMoveAttr {
   constructor(invalidMoves: Moves[]) {
@@ -6513,7 +6519,7 @@ export class RandomMoveAttr extends CallMoveAttr {
   }
 
   /**
-   * User calls a random moveId
+   * User calls a random moveId.
    *
    * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidMetronomeMoves}
    * @param user Pokemon that used the move and will call a random move
@@ -6533,9 +6539,9 @@ export class RandomMoveAttr extends CallMoveAttr {
 }
 
 /**
- * Attribute used to call a random move in the user or party's moveset
+ * Attribute used to call a random move in the user or party's moveset.
  * Used for {@linkcode Moves.ASSIST} and {@linkcode Moves.SLEEP_TALK}
- * @extends RandomMoveAttr to use the callMove function on a moveId
+ * @extends CallMoveAttr to use the apply function on a moveId
  * @see {@linkcode getCondition} for move selection
  * Fails if the user has no callable moves
  * Invalid moves are indicated by what is passed in to invalidMoves: {@constant invalidAssistMoves} or {@constant invalidSleepTalkMoves}
@@ -6566,7 +6572,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
       // includeParty will be true for Assist, false for Sleep Talk
       let allies: Pokemon[];
       if (this.includeParty) {
-        allies = user.isPlayer() ? user.scene.getPlayerParty() : user.scene.getEnemyParty();
+        allies = user.isPlayer() ? user.scene.getPlayerParty().filter(p => p !== user) : user.scene.getEnemyParty().filter(p => p !== user);
       } else {
         allies = [ user ];
       }
@@ -7001,6 +7007,12 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used to copy a previously-used move.
+ * Used for {@linkcode Moves.COPYCAT} and {@linkcode Moves.MIRROR_MOVE}
+ * @see {@linkcode apply} for move selection and move call
+ * @extends CallMoveAttr to call a selected move
+ */
 export class CopyMoveAttr extends CallMoveAttr {
   private mirrorMove: boolean;
   constructor(mirrorMove: boolean, invalidMoves: Moves[] = []) {
