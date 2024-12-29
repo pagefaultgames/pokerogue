@@ -180,8 +180,8 @@ export const SettingKeys = {
 };
 
 export enum MusicPreference {
-  CONSISTENT,
-  MIXED
+  GENFIVE,
+  ALLGENS
 }
 
 /**
@@ -662,15 +662,15 @@ export const Setting: Array<Setting> = [
     label: i18next.t("settings:musicPreference"),
     options: [
       {
-        value: "Consistent",
+        value: "Gen 5",
         label: i18next.t("settings:musicGenFive")
       },
       {
-        value: "Mixed",
+        value: "All Generations",
         label: i18next.t("settings:musicAllGens")
       }
     ],
-    default: MusicPreference.MIXED,
+    default: MusicPreference.ALLGENS,
     type: SettingType.AUDIO,
     requireReload: true
   },
