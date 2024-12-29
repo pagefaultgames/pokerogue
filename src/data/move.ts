@@ -8193,10 +8193,16 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
   const variableTarget = new Utils.NumberHolder(0);
   user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
 
-  const moveTarget = allMoves[move].hasAttr(VariableTargetAttr) ? variableTarget.value :
-    replaceTarget !== undefined ? replaceTarget :
-      move ? allMoves[move].moveTarget :
-        move === undefined ? MoveTarget.NEAR_ENEMY : [];
+  let moveTarget: MoveTarget | undefined;
+  if (allMoves[move].hasAttr(VariableTargetAttr)) {
+    moveTarget = variableTarget.value;
+  } else if (replaceTarget !== undefined) {
+    moveTarget = replaceTarget;
+  } else if (move) {
+    moveTarget = allMoves[move].moveTarget;
+  } else if (move === undefined) {
+    moveTarget = MoveTarget.NEAR_ENEMY;
+  }
   const opponents = user.getOpponents();
 
   let set: Pokemon[] = [];
