@@ -663,11 +663,11 @@ export const Setting: Array<Setting> = [
     options: [
       {
         value: "Consistent",
-        label: i18next.t("settings:consistent")
+        label: i18next.t("settings:musicGenFive")
       },
       {
         value: "Mixed",
-        label: i18next.t("settings:mixed")
+        label: i18next.t("settings:musicAllGens")
       }
     ],
     default: MusicPreference.MIXED,
