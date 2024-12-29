@@ -1,6 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -66,8 +67,8 @@ describe("Moves - Assist", () => {
     // Player uses Sketch to copy Swords Dance, Player_2 stalls a turn. Player will attempt Assist and should have no usable moves
     await game.toNextTurn();
     game.move.select(Moves.ASSIST, 0);
+    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(Moves.PROTECT, 1);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ]);
     await game.toNextTurn();
 
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -78,8 +79,8 @@ describe("Moves - Assist", () => {
     await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
 
     game.move.select(Moves.ASSIST, 0);
+    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(Moves.ASSIST, 1);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ]);
     await game.toNextTurn();
 
     expect(game.scene.getPlayerPokemon()!.isFullHp()).toBeFalsy(); // should receive recoil damage from Wood Hammer

@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle";
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { allMoves, RandomMoveAttr } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
+import { CommandPhase } from "#app/phases/command-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
@@ -85,9 +85,9 @@ describe("Moves - Metronome", () => {
     const [ leftOpp, rightOpp ] = game.scene.getEnemyField();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.AROMATIC_MIST);
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(Moves.METRONOME, 0);
+    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(Moves.SPLASH, 1);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ]);
     await game.toNextTurn();
 
     expect(rightPlayer.getStatStage(Stat.SPDEF)).toBe(1);
