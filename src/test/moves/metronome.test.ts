@@ -1,4 +1,6 @@
+import { BattlerIndex } from "#app/battle";
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
+import { allMoves, RandomMoveAttr } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
@@ -10,6 +12,8 @@ import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vite
 describe("Moves - Metronome", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
+  const randomMoveAttr = allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -38,13 +42,13 @@ describe("Moves - Metronome", () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
-    vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.DIVE);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.DIVE);
+    vi.spyOn(allMoves[Moves.DIVE], "accuracy", "get").mockReturnValue(100);
 
     game.move.select(Moves.METRONOME);
     await game.toNextTurn();
 
     expect(player.getTag(SemiInvulnerableTag)).toBeTruthy();
-    await game.move.forceHit(); // Force hit on Dive, required due to randSeedInt mock making hitCheck return false every time.
 
     await game.toNextTurn();
     expect(player.getTag(SemiInvulnerableTag)).toBeFalsy();
@@ -54,11 +58,9 @@ describe("Moves - Metronome", () => {
   it("should apply secondary effects of a move", async () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
-    vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.WOOD_HAMMER);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.WOOD_HAMMER);
 
     game.move.select(Moves.METRONOME);
-    await game.phaseInterceptor.to("MoveEffectPhase"); // Metronome has its own MoveEffectPhase, followed by Wood Hammer's MoveEffectPhase
-    await game.move.forceHit(); // Calls forceHit on Wood Hammer's MoveEffectPhase, required due to randSeedInt mock making hitCheck return false every time.
     await game.toNextTurn();
 
     expect(player.isFullHp()).toBeFalsy();
@@ -67,11 +69,10 @@ describe("Moves - Metronome", () => {
   it("should recharge after using recharge move", async () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
-    vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.HYPER_BEAM);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.HYPER_BEAM);
+    vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
     game.move.select(Moves.METRONOME);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-    await game.move.forceHit();
     await game.toNextTurn();
 
     expect(player.getTag(RechargingTag)).toBeTruthy();
@@ -82,12 +83,11 @@ describe("Moves - Metronome", () => {
     await game.classicMode.startBattle([ Species.REGIELEKI, Species.RATTATA ]);
     const [ leftPlayer, rightPlayer ] = game.scene.getPlayerField();
     const [ leftOpp, rightOpp ] = game.scene.getEnemyField();
-    vi.spyOn(leftPlayer, "randSeedInt").mockReturnValue(Moves.AROMATIC_MIST);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.AROMATIC_MIST);
 
     game.move.select(Moves.METRONOME);
     game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-    await game.move.forceHit();
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2 ]);
     await game.toNextTurn();
 
     expect(rightPlayer.getStatStage(Stat.SPDEF)).toBe(1);
@@ -98,14 +98,11 @@ describe("Moves - Metronome", () => {
 
   it("should cause opponent to flee, and not crash for Roar", async () => {
     await game.classicMode.startBattle();
-    const player = game.scene.getPlayerPokemon()!;
-    vi.spyOn(player, "randSeedInt").mockReturnValue(Moves.ROAR);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.ROAR);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.METRONOME);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-    await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase");
 
     const isVisible = enemyPokemon.visible;

@@ -56,7 +56,7 @@ describe("Moves - Assist", () => {
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
-  it("should fail if ally has no usable moves", async () => {
+  it("should fail if ally has no usable moves and user has usable moves", async () => {
     game.override.enemyMoveset(Moves.SWORDS_DANCE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
 
