@@ -23,6 +23,7 @@ enum MenuOptions {
   RUN_HISTORY,
   EGG_LIST,
   EGG_GACHA,
+  POKEDEX,
   MANAGE_DATA,
   COMMUNITY,
   SAVE_AND_QUIT,
@@ -524,6 +525,11 @@ export default class MenuUiHandler extends MessageUiHandler {
         case MenuOptions.EGG_GACHA:
           ui.revertMode();
           ui.setOverlayMode(Mode.EGG_GACHA);
+          success = true;
+          break;
+        case MenuOptions.POKEDEX:
+          ui.revertMode();
+          ui.setOverlayMode(Mode.POKEDEX);
           success = true;
           break;
         case MenuOptions.MANAGE_DATA:

@@ -10,6 +10,7 @@ export enum Tutorial {
   Access_Menu = "ACCESS_MENU",
   Menu = "MENU",
   Starter_Select = "STARTER_SELECT",
+  Pokedex = "POKEDEX",
   Pokerus = "POKERUS",
   Stat_Change = "STAT_CHANGE",
   Select_Item = "SELECT_ITEM",
@@ -39,6 +40,11 @@ const tutorialHandlers = {
   [Tutorial.Starter_Select]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
       scene.ui.showText(i18next.t("tutorial:starterSelect"), null, () => scene.ui.showText("", null, () => resolve()), null, true);
+    });
+  },
+  [Tutorial.Pokedex]: (scene: BattleScene) => {
+    return new Promise<void>(resolve => {
+      scene.ui.showText(i18next.t("tutorial:pokedex"), null, () => scene.ui.showText("", null, () => resolve()), null, true);
     });
   },
   [Tutorial.Pokerus]: (scene: BattleScene) => {

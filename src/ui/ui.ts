@@ -23,6 +23,7 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
+import PokedexUiHandler from "./pokedex-ui-handler";
 import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
@@ -84,6 +85,7 @@ export enum Mode {
   GAME_STATS,
   EGG_LIST,
   EGG_GACHA,
+  POKEDEX,
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
@@ -108,6 +110,7 @@ const transitionModes = [
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
+  Mode.POKEDEX,
   Mode.CHALLENGE_SELECT,
   Mode.RUN_HISTORY,
 ];
@@ -192,6 +195,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new GameStatsUiHandler(scene),
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),
+      new PokedexUiHandler(scene),
       new LoginFormUiHandler(scene),
       new RegistrationFormUiHandler(scene),
       new LoadingModalUiHandler(scene),
@@ -561,15 +565,20 @@ export default class UI extends Phaser.GameObjects.Container {
 
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
+
+      console.log("logging revert", this?.modeChain?.length, this?.modeChain);
+
       if (!this?.modeChain?.length) {
         return resolve(false);
       }
 
       const lastMode = this.mode;
+      console.log("lastmode", lastMode);
 
       const doRevertMode = () => {
         this.getHandler().clear();
         this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
+        console.log("mode", this.mode);
         (this.scene as BattleScene).updateGameInfo();
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
