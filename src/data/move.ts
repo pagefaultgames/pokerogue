@@ -6494,7 +6494,7 @@ export class CallMoveAttr extends OverrideMoveEffectAttr {
 }
 
 /**
- * Attribute used to call a random move
+ * Attribute used to call a random move.
  * Used for {@linkcode Moves.METRONOME}
  * @see {@linkcode apply} for move selection and move call
  * @extends OverrideMoveEffectAttr
