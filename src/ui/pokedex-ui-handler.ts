@@ -551,6 +551,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.setVisible(true);
 
+    this.getUi().bringToTop(this.starterSelectContainer);
+
     // Making caught pokemon visible icons, etc
     this.allSpecies.forEach((species, s) => {
       const icon = this.starterContainers[s].icon;

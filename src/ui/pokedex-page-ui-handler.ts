@@ -1,4 +1,3 @@
-import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -40,10 +39,6 @@ import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import { StarterContainer } from "#app/ui/starter-container";
-import { ScrollBar } from "#app/ui/scroll-bar";
-import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { TitlePhase } from "#app/phases/title-phase";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 import { BooleanHolder, capitalizeString, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
 import type { Nature } from "#enums/nature";
@@ -125,35 +120,6 @@ const valueReductionMax = 2;
 // Position of UI elements
 const filterBarHeight = 17;
 const speciesContainerX = 109; // if team on the RIGHT: 109 / if on the LEFT: 143
-const teamWindowX = 285; // if team on the RIGHT: 285 / if on the LEFT: 109
-const teamWindowY = 18;
-const teamWindowWidth = 34;
-const teamWindowHeight = 132;
-
-/**
- * Calculates the starter position for a Pokemon of a given UI index
- * @param index UI index to calculate the starter position of
- * @returns An interface with an x and y property
- */
-function calcStarterPosition(index: number, scrollCursor:number = 0): {x: number, y: number} {
-  const yOffset = 13;
-  const height = 17;
-  const x = (index % 9) * 18;
-  const y = yOffset + (Math.floor(index / 9) - scrollCursor) * height;
-
-  return { x: x, y: y };
-}
-
-/**
- * Calculates the y position for the icon of stater pokemon selected for the team
- * @param index index of the Pokemon in the team (0-5)
- * @returns the y position to use for the icon
- */
-function calcStarterIconY(index: number) {
-  const starterSpacing = teamWindowHeight / 7;
-  const firstStarterY = teamWindowY + starterSpacing / 2;
-  return Math.round(firstStarterY + starterSpacing * index);
-}
 
 interface SpeciesDetails {
   shiny?: boolean,
@@ -167,7 +133,6 @@ interface SpeciesDetails {
 
 export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
-  private starterSelectScrollBar: ScrollBar;
   private shinyOverlay: Phaser.GameObjects.Image;
   private starterContainers: StarterContainer[] = [];
   private filteredStarterContainers: StarterContainer[] = [];
@@ -243,9 +208,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private dexAttrCursor: bigint = 0n;
   private abilityCursor: number = -1;
   private natureCursor: number = -1;
-  private filterBarCursor: integer = 0;
   private starterMoveset: StarterMoveset | null;
-  private scrollCursor: number;
 
   private allSpecies: PokemonSpecies[] = [];
   private lastSpecies: PokemonSpecies;
@@ -269,8 +232,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   public cursorObj: Phaser.GameObjects.Image;
   private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
-  private starterIcons: Phaser.GameObjects.Sprite[];
-  private starterIconsCursorObj: Phaser.GameObjects.Image;
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
 
@@ -317,12 +278,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.shinyOverlay);
 
     const starterContainerWindow = addWindow(this.scene, speciesContainerX, filterBarHeight + 1, 175, 161);
-    const starterContainerBg = this.scene.add.image(speciesContainerX + 1, filterBarHeight + 2, "starter_container_bg");
-    starterContainerBg.setOrigin(0, 0);
-    this.starterSelectContainer.add(starterContainerBg);
 
-    this.starterSelectContainer.add(addWindow(this.scene, teamWindowX, teamWindowY, teamWindowWidth, teamWindowHeight));
-    this.starterSelectContainer.add(addWindow(this.scene, teamWindowX, teamWindowY + teamWindowHeight - 5, teamWindowWidth, teamWindowWidth, true));
     this.starterSelectContainer.add(starterContainerWindow);
 
 
@@ -417,26 +373,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonEggMoveBgs = [];
     this.pokemonEggMoveLabels = [];
 
-    this.valueLimitLabel = addTextObject(this.scene, teamWindowX + 17, 150, "0/10", TextStyle.TOOLTIP_CONTENT);
-    this.valueLimitLabel.setOrigin(0.5, 0);
-    this.starterSelectContainer.add(this.valueLimitLabel);
-
-    const startLabel = addTextObject(this.scene, teamWindowX + 17, 162, i18next.t("common:start"), TextStyle.TOOLTIP_CONTENT);
-    startLabel.setOrigin(0.5, 0);
-    this.starterSelectContainer.add(startLabel);
-
-    this.startCursorObj = this.scene.add.nineslice(teamWindowX + 4, 160, "select_cursor", undefined, 26, 15, 6, 6, 6, 6);
-    this.startCursorObj.setVisible(false);
-    this.startCursorObj.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.startCursorObj);
-
     const starterSpecies: Species[] = [];
 
     const starterBoxContainer = this.scene.add.container(speciesContainerX + 6, 9); //115
-
-    this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 5, starterContainerWindow.height - 6, 9);
-
-    starterBoxContainer.add(this.starterSelectScrollBar);
 
     this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
       const cursorObj = this.scene.add.image(0, 0, "select_cursor_pokerus");
@@ -454,16 +393,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return cursorObj;
     });
 
-    this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
-    this.cursorObj.setOrigin(0, 0);
-    this.starterIconsCursorObj = this.scene.add.image(289, 64, "select_gen_cursor");
-    this.starterIconsCursorObj.setName("starter-icons-cursor");
-    this.starterIconsCursorObj.setVisible(false);
-    this.starterIconsCursorObj.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.starterIconsCursorObj);
-
-    starterBoxContainer.add(this.cursorObj);
-
     for (const species of allSpecies) {
       if (!speciesStarterCosts.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
         continue;
@@ -480,16 +409,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     this.starterSelectContainer.add(starterBoxContainer);
-
-    this.starterIcons = new Array(6).fill(null).map((_, i) => {
-      const icon = this.scene.add.sprite(teamWindowX + 7, calcStarterIconY(i), "pokemon_icons_0");
-      icon.setScale(0.5);
-      icon.setOrigin(0, 0);
-      icon.setFrame("unknown");
-      this.starterSelectContainer.add(icon);
-      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
-      return icon;
-    });
 
     this.pokemonSprite = this.scene.add.sprite(53, 63, "pkmn__sub");
     this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
@@ -731,8 +650,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.initTutorialOverlay(this.starterSelectContainer);
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
 
-    this.scene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, (e) => this.onCandyUpgradeDisplayChanged(e));
-
     this.updateInstructions();
   }
 
@@ -760,6 +677,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.setVisible(true);
 
+    this.getUi().bringToTop(this.starterSelectContainer);
+
     this.allSpecies.forEach((species, s) => {
       const icon = this.starterContainers[s].icon;
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
@@ -777,6 +696,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     });
 
     this.setSpecies(this.lastSpecies);
+    this.updateInstructions();
 
     return true;
 
@@ -1039,33 +959,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
   }
 
-  /**
-   * Processes an {@linkcode CandyUpgradeNotificationChangedEvent} sent when the corresponding setting changes
-   * @param event {@linkcode Event} sent by the callback
-   */
-  onCandyUpgradeDisplayChanged(event: Event): void {
-    const candyUpgradeDisplayEvent = event as CandyUpgradeNotificationChangedEvent;
-    if (!candyUpgradeDisplayEvent) {
-      return;
-    }
-
-    // Loop through all visible candy icons when set to 'Icon' mode
-    if (this.scene.candyUpgradeDisplay === 0) {
-      this.filteredStarterContainers.forEach((starter) => {
-        this.setUpgradeIcon(starter);
-      });
-
-      return;
-    }
-
-    // Loop through all animations when set to 'Animation' mode
-    this.filteredStarterContainers.forEach((starter, s) => {
-      const icon = this.filteredStarterContainers[s].icon;
-
-      this.setUpgradeAnimation(icon, starter.species);
-    });
-  }
-
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
@@ -1076,16 +969,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     let success = false;
     let error = false;
 
+    console.log("Processing input", button);
+
     if (button === Button.SUBMIT) {
       success = true;
     } else if (button === Button.CANCEL) {
       if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
-      } else if (this.starterSpecies.length) {
-        this.popStarter(this.starterSpecies.length - 1);
-        success = true;
-        this.updateInstructions();
       } else {
         console.log(this.getUi().getModeChain());
         this.getUi().revertMode();
@@ -1098,14 +989,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
       // prepare persistent starter data to store changes
       let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
-
-      // this gets the correct pokemon cursor depending on whether you're in the starter screen or the party icons
-      if (!this.starterIconsCursorObj.visible) {
-        starterContainer = this.filteredStarterContainers[this.cursor];
-      } else {
-        // if species is in filtered starters, get the starter container from the filtered starters, it can be undefined if the species is not in the filtered starters
-        starterContainer = this.filteredStarterContainers[this.filteredStarterContainers.findIndex(container => container.species === this.lastSpecies)];
-      }
 
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
@@ -1265,85 +1148,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           }
 
           const passiveAttr = starterData.passiveAttr;
-          if (passiveAttr & PassiveAttr.UNLOCKED) { // this is for enabling and disabling the passive
-            if (!(passiveAttr & PassiveAttr.ENABLED)) {
-              options.push({
-                label: i18next.t("starterSelectUiHandler:enablePassive"),
-                handler: () => {
-                  starterData.passiveAttr |= PassiveAttr.ENABLED;
-                  ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                  this.setSpeciesDetails(this.lastSpecies);
-                  return true;
-                }
-              });
-            } else {
-              options.push({
-                label: i18next.t("starterSelectUiHandler:disablePassive"),
-                handler: () => {
-                  starterData.passiveAttr ^= PassiveAttr.ENABLED;
-                  ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                  this.setSpeciesDetails(this.lastSpecies);
-                  return true;
-                }
-              });
-            }
-          }
-          // if container.favorite is false, show the favorite option
-          const isFavorite = starterAttributes?.favorite ?? false;
-          if (!isFavorite) {
-            options.push({
-              label: i18next.t("starterSelectUiHandler:addToFavorites"),
-              handler: () => {
-                starterAttributes.favorite = true;
-                // if the starter container not exists, it means the species is not in the filtered starters
-                if (starterContainer) {
-                  starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
-                }
-                ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                return true;
-              }
-            });
-          } else {
-            options.push({
-              label: i18next.t("starterSelectUiHandler:removeFromFavorites"),
-              handler: () => {
-                starterAttributes.favorite = false;
-                // if the starter container not exists, it means the species is not in the filtered starters
-                if (starterContainer) {
-                  starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
-                }
-                ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                return true;
-              }
-            });
-          }
-          options.push({
-            label: i18next.t("menu:rename"),
-            handler: () => {
-              ui.playSelect();
-              let nickname = starterAttributes.nickname ? String(starterAttributes.nickname) : "";
-              nickname = decodeURIComponent(escape(atob(nickname)));
-              ui.setModeWithoutClear(Mode.RENAME_POKEMON, {
-                buttonActions: [
-                  (sanitizedName: string) => {
-                    ui.playSelect();
-                    starterAttributes.nickname = sanitizedName;
-                    const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
-                    if (name.length > 0) {
-                      this.pokemonNameText.setText(name);
-                    } else {
-                      this.pokemonNameText.setText(this.lastSpecies.name);
-                    }
-                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                  },
-                  () => {
-                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                  }
-                ]
-              }, nickname);
-              return true;
-            }
-          });
 
           // Purchases with Candy
           const candyCount = starterData.candyCount;
@@ -1496,6 +1300,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
         switch (button) {
           case Button.CYCLE_SHINY:
+            console.log("Pressing Button.CYCLE_SHINY");
             if (this.canCycleShiny) {
               starterAttributes.shiny = starterAttributes.shiny !== undefined ? !starterAttributes.shiny : false;
 
@@ -1821,9 +1626,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor), 0);
     changed = super.setCursor(cursor);
 
-    const pos = calcStarterPosition(cursor, this.scrollCursor);
-    this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
-
     const species = this.filteredStarterContainers[cursor]?.species;
 
     if (species) {
@@ -1838,19 +1640,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     return changed;
-  }
-
-
-  moveStarterIconsCursor(index: number): void {
-    this.starterIconsCursorObj.x = this.starterIcons[index].x + this.starterIconsCursorXOffset;
-    this.starterIconsCursorObj.y = this.starterIcons[index].y + this.starterIconsCursorYOffset;
-    if (this.starterSpecies.length > 0) {
-      this.starterIconsCursorObj.setVisible(true);
-      this.setSpecies(this.starterSpecies[index]);
-    } else {
-      this.starterIconsCursorObj.setVisible(false);
-      this.setSpecies(null);
-    }
   }
 
   getFriendship(speciesId: number) {
@@ -2473,79 +2262,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
   }
 
-  popStarter(index: number): void {
-    this.starterSpecies.splice(index, 1);
-    this.starterAttr.splice(index, 1);
-    this.starterAbilityIndexes.splice(index, 1);
-    this.starterNatures.splice(index, 1);
-    this.starterMovesets.splice(index, 1);
-
-    for (let s = 0; s < this.starterSpecies.length; s++) {
-      const species = this.starterSpecies[s];
-      const currentDexAttr = this.getCurrentDexProps(species.speciesId);
-      const props = this.scene.gameData.getSpeciesDexAttrProps(species, currentDexAttr);
-      this.starterIcons[s].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
-      this.starterIcons[s].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
-      this.checkIconId(this.starterIcons[s], species, props.female, props.formIndex, props.shiny, props.variant);
-      if (s >= index) {
-        this.starterCursorObjs[s].setPosition(this.starterCursorObjs[s + 1].x, this.starterCursorObjs[s + 1].y);
-        this.starterCursorObjs[s].setVisible(this.starterCursorObjs[s + 1].visible);
-      }
-    }
-    this.starterCursorObjs[this.starterSpecies.length].setVisible(false);
-    this.starterIcons[this.starterSpecies.length].setTexture("pokemon_icons_0");
-    this.starterIcons[this.starterSpecies.length].setFrame("unknown");
-
-    if (this.starterIconsCursorObj.visible) {
-      if (this.starterIconsCursorIndex === this.starterSpecies.length) {
-        if (this.starterSpecies.length > 0) {
-          this.starterIconsCursorIndex--;
-        } else {
-          // No more Pokemon selected, go back to filters
-          this.starterIconsCursorObj.setVisible(false);
-          this.setSpecies(null);
-        }
-      }
-      this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-    } else if (this.startCursorObj.visible && this.starterSpecies.length === 0) {
-      // On the start button and no more Pokemon in party
-      this.startCursorObj.setVisible(false);
-      if (this.filteredStarterContainers.length > 0) {
-        // Back to the first Pokemon if there is one
-        this.cursorObj.setVisible(true);
-        this.setCursor(0 + this.scrollCursor * 9);
-      }
-    }
-  }
-
-
-  tryExit(): boolean {
-    this.blockInput = true;
-    const ui = this.getUi();
-
-    const cancel = () => {
-      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-      this.clearText();
-      this.blockInput = false;
-    };
-    ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(Mode.CONFIRM, () => {
-        ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-        this.scene.clearPhaseQueue();
-        if (this.scene.gameMode.isChallenge) {
-          this.scene.pushPhase(new SelectChallengePhase(this.scene));
-          this.scene.pushPhase(new EncounterPhase(this.scene, false));
-        } else {
-          this.scene.pushPhase(new TitlePhase(this.scene));
-        }
-        this.clearText();
-        this.scene.getCurrentPhase()?.end();
-      }, cancel, null, null, 19);
-    });
-
-    return true;
-  }
-
 
   /**
    * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
@@ -2660,10 +2376,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
-
-    while (this.starterSpecies.length) {
-      this.popStarter(this.starterSpecies.length - 1);
-    }
 
     if (this.statsMode) {
       this.toggleStatsMode(false);
