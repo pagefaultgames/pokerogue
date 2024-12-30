@@ -46,7 +46,7 @@ describe("Moves - Sleep Talk", () => {
   });
 
   it("should fail if the user has no valid moves", async () => {
-    game.override.moveset([ Moves.SLEEP_TALK, Moves.DIG, Moves.METRONOME, Moves.SOLAR_BEAM, Moves.SLEEP_TALK ]);
+    game.override.moveset([ Moves.SLEEP_TALK, Moves.DIG, Moves.METRONOME, Moves.SOLAR_BEAM ]);
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     game.move.select(Moves.SLEEP_TALK);

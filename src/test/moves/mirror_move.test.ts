@@ -34,7 +34,7 @@ describe("Moves - Mirror Move", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should use the last move that the target", async () => {
+  it("should use the last move that the target used on the user", async () => {
     game.override
       .battleType("double")
       .enemyMoveset([ Moves.TACKLE, Moves.GROWL ]);

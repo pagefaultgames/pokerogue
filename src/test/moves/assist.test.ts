@@ -25,8 +25,9 @@ describe("Moves - Assist", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    // Manual moveset overrides are required for the player pokemon in these tests
+    // because the normal moveset override doesn't allow for accurate testing of moveset changes
     game.override
-      .moveset([ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]) // These are all moves Assist cannot call; Sketch will be used to test that it can call other moves properly
       .ability(Abilities.BALL_FETCH)
       .battleType("double")
       .disableCrits()
@@ -40,6 +41,11 @@ describe("Moves - Assist", () => {
     game.override.enemyMoveset(Moves.SWORDS_DANCE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
 
+    const [ feebas, shuckle ] = game.scene.getPlayerField();
+    // These are all moves Assist cannot call; Sketch will be used to test that it can call other moves properly
+    game.move.changeMoveset(feebas, [ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]);
+    game.move.changeMoveset(shuckle, [ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]);
+
     game.move.select(Moves.ASSIST, 0);
     game.move.select(Moves.SKETCH, 1);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER ]);
@@ -49,9 +55,12 @@ describe("Moves - Assist", () => {
     expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(2); // Stat raised from Assist -> Swords Dance
   });
 
-  it("should fail if there are no usable moves", async () => {
+  it("should fail if there are no allies", async () => {
     await game.classicMode.startBattle([ Species.FEEBAS ]);
-    // Moves in beforeEach are already unusable by Assist
+
+    const feebas = game.scene.getPlayerPokemon()!;
+    game.move.changeMoveset(feebas, [ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]);
+
     game.move.select(Moves.ASSIST, 0);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -60,6 +69,10 @@ describe("Moves - Assist", () => {
   it("should fail if ally has no usable moves and user has usable moves", async () => {
     game.override.enemyMoveset(Moves.SWORDS_DANCE);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
+
+    const [ feebas, shuckle ] = game.scene.getPlayerField();
+    game.move.changeMoveset(feebas, [ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]);
+    game.move.changeMoveset(shuckle, [ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]);
 
     game.move.select(Moves.SKETCH, 0);
     game.move.select(Moves.PROTECT, 1);
@@ -77,6 +90,10 @@ describe("Moves - Assist", () => {
   it("should apply secondary effects of a move", async () => {
     game.override.moveset([ Moves.ASSIST, Moves.WOOD_HAMMER, Moves.WOOD_HAMMER, Moves.WOOD_HAMMER ]);
     await game.classicMode.startBattle([ Species.FEEBAS, Species.SHUCKLE ]);
+
+    const [ feebas, shuckle ] = game.scene.getPlayerField();
+    game.move.changeMoveset(feebas, [ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]);
+    game.move.changeMoveset(shuckle, [ Moves.ASSIST, Moves.SKETCH, Moves.PROTECT, Moves.DRAGON_TAIL ]);
 
     game.move.select(Moves.ASSIST, 0);
     await game.phaseInterceptor.to(CommandPhase);

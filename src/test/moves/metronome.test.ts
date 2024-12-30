@@ -43,7 +43,6 @@ describe("Moves - Metronome", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.DIVE);
-    vi.spyOn(allMoves[Moves.DIVE], "accuracy", "get").mockReturnValue(100);
 
     game.move.select(Moves.METRONOME);
     await game.toNextTurn();
@@ -109,6 +108,6 @@ describe("Moves - Metronome", () => {
     const hasFled = enemyPokemon.switchOutStatus;
     expect(!isVisible && hasFled).toBe(true);
 
-    await game.phaseInterceptor.to("BattleEndPhase");
+    await game.phaseInterceptor.to("CommandPhase");
   });
 });
