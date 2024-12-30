@@ -6,12 +6,16 @@ import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { isNullOrUndefined } from "#app/utils";
 import { Mode } from "./ui";
 import { FilterTextRow } from "./filter-text";
+import { allAbilities } from "#app/data/ability";
+import { allMoves } from "#app/data/move";
 
 export default class PokedexScanUiHandler extends FormModalUiHandler {
 
   keys: string[];
   reducedKeys: string[];
   parallelKeys: string[];
+  moveKeys: string[];
+  abilityKeys: string[];
 
   constructor(scene, mode) {
     super(scene, mode);
@@ -39,6 +43,10 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
 
     const keysInArrays = flattenKeys(i18next.getDataByLanguage(String(i18next.resolvedLanguage))).filter((t) => t.length > 0); // Array of arrays
     const keys = keysInArrays.flat(Infinity).map(String); // One array of string
+
+    this.moveKeys = allMoves.map(a => a.name);
+    this.abilityKeys = allAbilities.map(a => a.name);
+
     this.keys = keys;
   }
 
@@ -77,22 +85,18 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
     switch (row) {
       case FilterTextRow.NAME: {
         const startString = "pokemon:";
-        const endString = "";
-        this.reducedKeys = this.keys.filter(str => str.startsWith(startString) && str.endsWith(endString));
+        // TODO: nameKeys
+        this.reducedKeys = this.keys.filter(str => str.startsWith(startString));
         break;
       }
       case FilterTextRow.MOVE_1:
       case FilterTextRow.MOVE_2: {
-        const startString = "move:";
-        const endString = ".name";
-        this.reducedKeys = this.keys.filter(str => str.startsWith(startString) && str.endsWith(endString));
+        this.reducedKeys = this.moveKeys;
         break;
       }
       case FilterTextRow.ABILITY_1:
       case FilterTextRow.ABILITY_2: {
-        const startString = "ability:";
-        const endString = ".name";
-        this.reducedKeys = this.keys.filter(str => str.startsWith(startString) && str.endsWith(endString));
+        this.reducedKeys = this.abilityKeys;
         break;
       }
       default: {

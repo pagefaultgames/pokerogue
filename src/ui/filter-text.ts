@@ -278,7 +278,6 @@ export class FilterText extends Phaser.GameObjects.Container {
   }
 
   getValue(row: number): string {
-    console.log("Getting value", this.selections[row].getWrappedText()[0]);
     return this.selections[row].getWrappedText()[0];
   }
 

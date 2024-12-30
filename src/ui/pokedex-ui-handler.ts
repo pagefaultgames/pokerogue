@@ -37,6 +37,10 @@ import { addWindow, WindowVariant } from "./ui-theme";
 import * as Utils from "../utils";
 import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
+import { allAbilities } from "#app/data/ability";
+import { starterPassiveAbilities } from "#app/data/balance/passives";
+import { allMoves } from "#app/data/move";
+import { speciesTmMoves } from "#app/data/balance/tms";
 
 
 export interface Starter {
@@ -1358,8 +1362,30 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(container.species.speciesId);
 
       // Name filter
-      console.log(container.species.name);
-      const fitsName = [ container.species.name, this.filterText.defaultText ].includes(this.filterText.getValue(FilterTextRow.NAME));
+      const selectedName = this.filterText.getValue(FilterTextRow.NAME);
+      const fitsName = container.species.name === selectedName || selectedName === this.filterText.defaultText;
+
+      // Move filter
+      const levelMoves = pokemonSpeciesLevelMoves[container.species.speciesId].map(m => allMoves[m[1]].name);
+      const eggMoves = speciesEggMoves[container.species.speciesId]?.map(m => allMoves[m].name) ?? [];
+      const tmMoves = speciesTmMoves[container.species.speciesId]?.map(m => allMoves[m].name) ?? [];
+      const selectedMove1 = this.filterText.getValue(FilterTextRow.MOVE_1);
+      const selectedMove2 = this.filterText.getValue(FilterTextRow.MOVE_2);
+
+      const fitsMove1 = levelMoves.includes(selectedMove1) || eggMoves.includes(selectedMove1) || tmMoves.includes(selectedMove1) || selectedMove1 === this.filterText.defaultText;
+      const fitsMove2 = levelMoves.includes(selectedMove2) || eggMoves.includes(selectedMove2) || tmMoves.includes(selectedMove2) || selectedMove2 === this.filterText.defaultText;
+
+      // Ability filter
+      // allAbilities already contains the localized names of the abilities
+      const abilities = [ container.species.ability1, container.species.ability2, container.species.abilityHidden ].map(a => allAbilities[a].name);
+      // console.log(abilities);
+      const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
+      const fitsAbility1 = abilities.includes(selectedAbility1) || selectedAbility1 === this.filterText.defaultText;
+
+      const passive = starterPassiveAbilities[container.species.speciesId] ?? 0;
+      const selectedAbility2 = this.filterText.getValue(FilterTextRow.ABILITY_2);
+      const fitsAbility2 = allAbilities[passive].name === selectedAbility2 || selectedAbility2 === this.filterText.defaultText;
+
 
       // Gen filter
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
@@ -1482,7 +1508,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsName && fitsGen && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
+      if (fitsName && fitsAbility1 && fitsAbility2 && fitsMove1 && fitsMove2 && fitsGen && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
         this.filteredStarterContainers.push(container);
       }
     });
