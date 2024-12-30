@@ -55,6 +55,7 @@ import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import { Device } from "#enums/devices";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 import PokedexScanUiHandler from "./pokedex-scan-ui-handler";
+import PokedexPageUiHandler from "./pokedex-page-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -88,6 +89,7 @@ export enum Mode {
   EGG_GACHA,
   POKEDEX,
   POKEDEX_SCAN,
+  POKEDEX_PAGE,
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
@@ -113,6 +115,7 @@ const transitionModes = [
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
   Mode.POKEDEX,
+  Mode.POKEDEX_PAGE,
   Mode.CHALLENGE_SELECT,
   Mode.RUN_HISTORY,
 ];
@@ -200,6 +203,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new EggGachaUiHandler(scene),
       new PokedexUiHandler(scene),
       new PokedexScanUiHandler(scene, Mode.TEST_DIALOGUE),
+      new PokedexPageUiHandler(scene),
       new LoginFormUiHandler(scene),
       new RegistrationFormUiHandler(scene),
       new LoadingModalUiHandler(scene),

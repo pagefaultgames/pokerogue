@@ -1,5 +1,4 @@
 import { BattleSceneEventType, CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
-import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -34,7 +33,6 @@ import type { Nature } from "#enums/nature";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { addWindow, WindowVariant } from "./ui-theme";
-import * as Utils from "../utils";
 import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/ability";
@@ -553,11 +551,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.setVisible(true);
 
+    // Making caught pokemon visible icons, etc
     this.allSpecies.forEach((species, s) => {
       const icon = this.starterContainers[s].icon;
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
 
-      // Initialize the StarterAttributes for this species
       this.starterPreferences[species.speciesId] = this.initStarterPrefs(species);
 
       if (dexEntry.caughtAttr) {
@@ -574,41 +572,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.setFilterMode(false);
     this.filterBarCursor = 0;
-    this.setCursor(0);
-
-    handleTutorial(this.scene, Tutorial.Pokedex);
-
-
-    if (false) {
-      //////
-      this.filterTextOptions = Utils.getEnumKeys(FilterTextOptions)
-        .map(m => parseInt(FilterTextOptions[m]) as FilterTextOptions);
-
-      console.log(this.filterTextOptions);
-
-      this.optionSelectText = addTextObject(this.scene, 0, 0, this.filterTextOptions.map(o => `${i18next.t(`pokedex-ui-handler:${FilterTextOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.filterTextOptions.length });
-      this.optionSelectText.setLineSpacing(12);
-
-      // Positioning the menu
-      this.menuBg = addWindow(this.scene, 6, 0,
-        this.optionSelectText.displayWidth + 69 + 24 * this.scale,
-        100
-      );
-      this.menuBg.setOrigin(0, 0);
-
-      this.optionSelectText.setPositionRelative(this.menuBg, 10 + 24 * this.scale, 6);
-
-      this.filterTextContainer.add(this.menuBg);
-      this.filterTextContainer.add(this.optionSelectText);
-      //////
-    }
-
     this.setFilterTextMode(false);
     this.filterTextCursor = 0;
     this.setCursor(0);
 
-    this.filterTextContainer.setVisible(true);
+    handleTutorial(this.scene, Tutorial.Pokedex);
 
+    this.filterTextContainer.setVisible(true);
 
     console.log("POKEDEX called show", true);
     console.log(this.getUi().getMode(), this.getUi().getModeChain());
@@ -1090,51 +1060,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else {
 
       if (button === Button.ACTION) {
-        if (!this.speciesStarterDexEntry?.caughtAttr) {
-          error = true;
-        } else if (this.starterSpecies.length <= 6) { // checks to see if the party has 6 or fewer pokemon
-          const ui = this.getUi();
-          let options: any[] = []; // TODO: add proper type
-
-          options = [];
-
-          // Purchases with Candy
-          const showUseCandies = () => {
-            const options: any[] = []; // TODO: add proper type
-            options.push({
-              label: i18next.t("menu:cancel"),
-              handler: () => {
-                ui.setMode(Mode.POKEDEX, "refresh");
-                return true;
-              }
-            });
-            ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-              options: options,
-              yOffset: 47
-            });
-          };
-          if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
-            options.push({
-              label: i18next.t("pokedex-ui-handler:useCandies"),
-              handler: () => {
-                ui.setMode(Mode.POKEDEX, "refresh").then(() => showUseCandies());
-                return true;
-              }
-            });
-          }
-          options.push({
-            label: i18next.t("menu:cancel"),
-            handler: () => {
-              ui.setMode(Mode.POKEDEX, "refresh");
-              return true;
-            }
-          });
-          ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-            options: options,
-            yOffset: 47
-          });
-          success = true;
-        }
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies);
+        success = true;
       } else {
         switch (button) {
           case Button.UP:
