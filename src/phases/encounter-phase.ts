@@ -1,7 +1,7 @@
 import { BattlerIndex, BattleType } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
+import { applyAbAttrs, SyncEncounterNatureAbAttr, applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/ability";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -196,6 +196,7 @@ export class EncounterPhase extends BattlePhase {
         }
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
+            applyPreSummonAbAttrs(PreSummonAbAttr, enemyPokemon, []);
             this.scene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = this.scene.getPlayerPokemon();
@@ -445,7 +446,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
-      if (enemyPokemon.isShiny()) {
+      if (enemyPokemon.isShiny(true)) {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
       }
       /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
