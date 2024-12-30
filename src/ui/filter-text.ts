@@ -19,6 +19,8 @@ export enum FilterTextRow{
 export class FilterText extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
   private labels:  Phaser.GameObjects.Text[] = [];
+  private selections:  Phaser.GameObjects.Text[] = [];
+  private selectionStrings: string[] = [];
   //  private dropDowns: DropDown[] = [];
   private rows: FilterTextRow[] = [];
   public cursorObj: Phaser.GameObjects.Image;
@@ -33,8 +35,14 @@ export class FilterText extends Phaser.GameObjects.Container {
   private readonly textPadding = 8;
   private readonly defaultWordWrapWidth = 1224;
 
-  constructor(scene: BattleScene, x: number, y: number, width: number, height: number) {
+  private onChange: () => void;
+
+  public defaultText: string = "---";
+
+  constructor(scene: BattleScene, x: number, y: number, width: number, height: number, onChange: () => void,) {
     super(scene, x, y);
+
+    this.onChange = onChange;
 
     this.width = width;
     this.height = height;
@@ -84,6 +92,7 @@ export class FilterText extends Phaser.GameObjects.Container {
 
     const paddingX = 6;
     const cursorOffset = 8;
+    const extraSpaceX = 50;
 
     if (this.rows.includes(row)) {
       return false;
@@ -94,6 +103,12 @@ export class FilterText extends Phaser.GameObjects.Container {
     const filterTypesLabel = addTextObject(this.scene, paddingX + cursorOffset, 3, title, TextStyle.TOOLTIP_CONTENT);
     this.labels.push(filterTypesLabel);
     this.add(filterTypesLabel);
+
+    const filterTypesSelection = addTextObject(this.scene, paddingX + cursorOffset + extraSpaceX, 3, this.defaultText, TextStyle.TOOLTIP_CONTENT);
+    this.selections.push(filterTypesSelection);
+    this.add(filterTypesSelection);
+
+    this.selectionStrings.push("");
 
     this.calcFilterPositions();
     this.numFilters++;
@@ -110,6 +125,11 @@ export class FilterText extends Phaser.GameObjects.Container {
     return this.dropDowns[this.rows.indexOf(row)];
   }
 
+  resetSelection(index: number): void {
+    this.selections[index].setText(this.defaultText);
+    this.selectionStrings[index] = "";
+    this.onChange();
+  }
 
   startSearch(index: number, ui: UI): void {
 
@@ -121,36 +141,27 @@ export class FilterText extends Phaser.GameObjects.Container {
         //        ui.revertMode();
         ui.playSelect();
         const dialogueTestName = sanitizedName;
+        console.log("1", dialogueTestName);
+        //TODO: Is it really necessary to encode and decode?
         const dialogueName = decodeURIComponent(escape(atob(dialogueTestName)));
+        console.log("2", dialogueName);
         const handler = ui.getHandler() as AwaitableUiHandler;
         handler.tutorialActive = true;
-        const interpolatorOptions: any = {};
-        const splitArr = dialogueName.split(" "); // this splits our inputted text into words to cycle through later
-        const translatedString = splitArr[0]; // this is our outputted i18 string
-        const regex = RegExp("\\{\\{(\\w*)\\}\\}", "g"); // this is a regex expression to find all the text between {{ }} in the i18 output
-        const matches = i18next.t(translatedString).match(regex) ?? [];
-        if (matches.length > 0) {
-          for (let match = 0; match < matches.length; match++) {
-            // we add 1 here  because splitArr[0] is our first value for the translatedString, and after that is where the variables are
-            // the regex here in the replace (/\W/g) is to remove the {{ and }} and just give us all alphanumeric characters
-            if (typeof splitArr[match + 1] !== "undefined") {
-              interpolatorOptions[matches[match].replace(/\W/g, "")] = i18next.t(splitArr[match + 1]);
-            }
-          }
-        }
         // Switch to the dialog test window
-        this.setDialogTestMode(true);
-        ui.showText(String(i18next.t(translatedString, interpolatorOptions)), null, () => this.scene.ui.showText("", 0, () => {
-          handler.tutorialActive = false;
-          // Go back to the default message window
-          this.setDialogTestMode(false);
-        }), null, true);
+        console.log("6", "switch");
+        this.selections[index].setText(String(i18next.t(dialogueName)));
+        console.log("6.5", "revert");
+        ui.revertMode();
+        this.onChange();
       },
       () => {
+        console.log("7", "revert");
         ui.revertMode();
+        this.onChange;
       }
     ];
-    ui.setMode(Mode.TEST_DIALOGUE, buttonAction, prefilledText);
+    console.log("8", "setmode");
+    ui.setOverlayMode(Mode.POKEDEX_SCAN, buttonAction, prefilledText, index);
   }
 
 
@@ -206,9 +217,11 @@ export class FilterText extends Phaser.GameObjects.Container {
     for (let i = 0; i < this.labels.length; i++) {
       if (i === 0) {
         this.labels[i].y = paddingY;
+        this.selections[i].y = paddingY;
       } else {
         const lastBottom = this.labels[i - 1].y + this.labels[i - 1].displayHeight;
         this.labels[i].y = lastBottom + spacing;
+        this.selections[i].y = lastBottom + spacing;
       }
       // Uncomment and adjust if necessary to position dropdowns vertically
       // this.dropDowns[i].y = this.labels[i].y + this.labels[i].displayHeight + paddingY;
@@ -264,8 +277,9 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.dropDowns[this.lastCursor].toggleOptionState();
   }
 
-  getVals(row: FilterTextRow): any[] {
-    return this.getFilter(row).getVals();
+  getValue(row: number): string {
+    console.log("Getting value", this.selections[row].getWrappedText()[0]);
+    return this.selections[row].getWrappedText()[0];
   }
 
   setValsToDefault(): void {

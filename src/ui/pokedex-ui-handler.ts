@@ -194,7 +194,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     // Create and initialise filter text fields
 
     this.filterTextContainer = this.scene.add.container(0, 0);
-    this.filterText = new FilterText(this.scene, 1, filterBarHeight + 2, 110, 100);
+    this.filterText = new FilterText(this.scene, 1, filterBarHeight + 2, 140, 100, this.updateStarters);
 
     //    const nameTextField: TextField = new TextField(this.scene, 0, 0, genOptions, this.updateStarters, DropDownType.HYBRID);
     this.filterText.addFilter(FilterTextRow.NAME, i18next.t("filterText:nameField"));
@@ -291,15 +291,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     // gen filter
     const genOptions: DropDownOption[] = [
-      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("PokedexUiHandler:gen1"))),
-      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("PokedexUiHandler:gen2"))),
-      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("PokedexUiHandler:gen3"))),
-      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("PokedexUiHandler:gen4"))),
-      new DropDownOption(this.scene, 5, new DropDownLabel(i18next.t("PokedexUiHandler:gen5"))),
-      new DropDownOption(this.scene, 6, new DropDownLabel(i18next.t("PokedexUiHandler:gen6"))),
-      new DropDownOption(this.scene, 7, new DropDownLabel(i18next.t("PokedexUiHandler:gen7"))),
-      new DropDownOption(this.scene, 8, new DropDownLabel(i18next.t("PokedexUiHandler:gen8"))),
-      new DropDownOption(this.scene, 9, new DropDownLabel(i18next.t("PokedexUiHandler:gen9"))),
+      new DropDownOption(this.scene, 1, new DropDownLabel(i18next.t("pokedex-ui-handler:gen1"))),
+      new DropDownOption(this.scene, 2, new DropDownLabel(i18next.t("pokedex-ui-handler:gen2"))),
+      new DropDownOption(this.scene, 3, new DropDownLabel(i18next.t("pokedex-ui-handler:gen3"))),
+      new DropDownOption(this.scene, 4, new DropDownLabel(i18next.t("pokedex-ui-handler:gen4"))),
+      new DropDownOption(this.scene, 5, new DropDownLabel(i18next.t("pokedex-ui-handler:gen5"))),
+      new DropDownOption(this.scene, 6, new DropDownLabel(i18next.t("pokedex-ui-handler:gen6"))),
+      new DropDownOption(this.scene, 7, new DropDownLabel(i18next.t("pokedex-ui-handler:gen7"))),
+      new DropDownOption(this.scene, 8, new DropDownLabel(i18next.t("pokedex-ui-handler:gen8"))),
+      new DropDownOption(this.scene, 9, new DropDownLabel(i18next.t("pokedex-ui-handler:gen9"))),
     ];
     const genDropDown: DropDown = new DropDown(this.scene, 0, 0, genOptions, this.updateStarters, DropDownType.HYBRID);
     this.filterBar.addFilter(DropDownColumn.GEN, i18next.t("filterBar:genFilter"), genDropDown);
@@ -582,7 +582,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       console.log(this.filterTextOptions);
 
-      this.optionSelectText = addTextObject(this.scene, 0, 0, this.filterTextOptions.map(o => `${i18next.t(`pokedexUiHandler:${FilterTextOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.filterTextOptions.length });
+      this.optionSelectText = addTextObject(this.scene, 0, 0, this.filterTextOptions.map(o => `${i18next.t(`pokedex-ui-handler:${FilterTextOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.filterTextOptions.length });
       this.optionSelectText.setLineSpacing(12);
 
       // Positioning the menu
@@ -951,12 +951,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         success = true;
 
       } else if (this.filterTextMode) {
-        if (numberOfStarters > 0) {
-          this.setFilterTextMode(false);
-          this.scrollCursor = 0;
-          this.updateScroll();
-          this.setCursor(0);
-        }
+        this.filterText.resetSelection(this.filterTextCursor);
         success = true;
       }  else if (this.statsMode) {
         this.toggleStatsMode(false);
@@ -1116,7 +1111,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
           };
           if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
             options.push({
-              label: i18next.t("PokedexUiHandler:useCandies"),
+              label: i18next.t("pokedex-ui-handler:useCandies"),
               handler: () => {
                 ui.setMode(Mode.POKEDEX, "refresh").then(() => showUseCandies());
                 return true;
@@ -1357,9 +1352,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
       container.cost = this.scene.gameData.getSpeciesStarterValue(container.species.speciesId);
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
+      // TODO: This might be removed depending on how accessible we want the pokedex function to be
       const caughtAttr = this.scene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
       const starterData = this.scene.gameData.starterData[container.species.speciesId];
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(container.species.speciesId);
+
+      // Name filter
+      console.log(container.species.name);
+      const fitsName = [ container.species.name, this.filterText.defaultText ].includes(this.filterText.getValue(FilterTextRow.NAME));
 
       // Gen filter
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
@@ -1482,7 +1482,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsGen && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
+      if (fitsName && fitsGen && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
         this.filteredStarterContainers.push(container);
       }
     });
@@ -1615,6 +1615,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       const pos = calcStarterPosition(cursor, this.scrollCursor);
       this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
+
+      const species = this.filteredStarterContainers[cursor]?.species;
+
+      if (species) {
+        this.setSpecies(species);
+      }
     }
 
     return changed;
@@ -2064,7 +2070,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.clearText();
       this.blockInput = false;
     };
-    ui.showText(i18next.t("PokedexUiHandler:confirmExit"), null, () => {
+    ui.showText(i18next.t("pokedex-ui-handler:confirmExit"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
         ui.setMode(Mode.POKEDEX, "refresh");
         console.log("Press exit", ui.getModeChain(), ui.getMode());

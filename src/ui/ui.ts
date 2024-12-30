@@ -54,6 +54,7 @@ import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import { Device } from "#enums/devices";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
+import PokedexScanUiHandler from "./pokedex-scan-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -86,6 +87,7 @@ export enum Mode {
   EGG_LIST,
   EGG_GACHA,
   POKEDEX,
+  POKEDEX_SCAN,
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
@@ -130,6 +132,7 @@ const noTransitionModes = [
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
+  Mode.POKEDEX_SCAN,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
@@ -196,6 +199,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),
       new PokedexUiHandler(scene),
+      new PokedexScanUiHandler(scene, Mode.TEST_DIALOGUE),
       new LoginFormUiHandler(scene),
       new RegistrationFormUiHandler(scene),
       new LoadingModalUiHandler(scene),
