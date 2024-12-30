@@ -70,6 +70,27 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Override the wave level cap
+   * @param cap the level cap value to set; 0 uses normal level caps and negative values
+   * disable it completely
+   * @returns `this`
+   */
+  public levelCap(cap: number): this {
+    vi.spyOn(Overrides, "LEVEL_CAP_OVERRIDE", "get").mockReturnValue(cap);
+    let capStr: string;
+    switch (true) {
+      case (cap > 0):
+        capStr = "Level cap set to " + cap.toString() + "!";
+      case (cap === 0):
+        capStr = "Level cap reset to default value for wave.";
+      case (cap < 0):
+        capStr = "Level cap disabled!";
+    }
+    this.log(capStr!); // cap is guaranteed to be either more, less or equal to 0; if not I will scream
+    return this;
+  }
+
+  /**
    * Override the player (pokemon) starting held items
    * @param items the items to hold
    * @returns `this`

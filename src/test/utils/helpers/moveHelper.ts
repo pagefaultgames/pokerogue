@@ -119,8 +119,10 @@ export class MoveHelper extends GameManagerHelper {
             this.game.scene.ui.processInput(Button.DOWN);
           }
           this.game.scene.ui.processInput(Button.ACTION);
-          if (slot === 4) { // confirm 1 last time to give up on learning move
-            this.game.scene.ui.processInput(Button.ACTION);
+          if (slot === 4) { // hit confirm 1 last time to give up on learning move
+            this.game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
+              this.game.scene.ui.processInput(Button.ACTION);
+            });
           }
         });
       }
