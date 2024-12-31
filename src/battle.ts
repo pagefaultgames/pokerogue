@@ -7,7 +7,7 @@ import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/mod
 import { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import Pokemon, { EnemyPokemon, PlayerPokemon, QueuedMove } from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon, PlayerPokemon, TurnMove } from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { Moves } from "#enums/moves";
@@ -44,12 +44,12 @@ export enum BattlerIndex {
 }
 
 export interface TurnCommand {
-  command: Command;
-  cursor?: number;
-  move?: QueuedMove;
-  targets?: BattlerIndex[];
-  skip?: boolean;
-  args?: any[];
+    command: Command;
+    cursor?: number;
+    move?: TurnMove;
+    targets?: BattlerIndex[];
+    skip?: boolean;
+    args?: any[];
 }
 
 export interface FaintLogEntry {
@@ -90,6 +90,7 @@ export default class Battle {
   public enemyFaints: number = 0;
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
+
 
   public mysteryEncounterType?: MysteryEncounterType;
   /** If the current battle is a Mystery Encounter, this will always be defined */
