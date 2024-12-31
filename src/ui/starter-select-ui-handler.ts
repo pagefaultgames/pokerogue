@@ -441,6 +441,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const costReductionLabels = [
       new DropDownLabel(i18next.t("filterBar:costReduction"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:costReductionUnlocked"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedOne"), undefined, DropDownState.ONE),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedTwo"), undefined, DropDownState.TWO),
       new DropDownLabel(i18next.t("filterBar:costReductionUnlockable"), undefined, DropDownState.UNLOCKABLE),
       new DropDownLabel(i18next.t("filterBar:costReductionLocked"), undefined, DropDownState.EXCLUDE),
     ];
@@ -2466,13 +2468,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       // Cost Reduction Filter
-      const isCostReduced = starterData.valueReduction > 0;
+      const isCostReducedByOne = starterData.valueReduction === 1;
+      const isCostReducedByTwo = starterData.valueReduction === 2;
       const isCostReductionUnlockable = this.isValueReductionAvailable(container.species.speciesId);
       const fitsCostReduction = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
         if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.ON) {
-          return isCostReduced;
+          return isCostReducedByOne || isCostReducedByTwo;
+        } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.ONE) {
+          return isCostReducedByOne;
+        } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.TWO) {
+          return isCostReducedByTwo;
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.EXCLUDE) {
-          return isStarterProgressable && !isCostReduced;
+          return isStarterProgressable && !(isCostReducedByOne || isCostReducedByTwo);
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.UNLOCKABLE) {
           return isCostReductionUnlockable;
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.OFF) {
