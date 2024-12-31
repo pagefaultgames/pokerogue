@@ -103,8 +103,18 @@ describe("Learn Move Phase", () => {
     expect(mrMime.getMoveset()).toEqual(prevMoveset);
   });
 
-  it("macro should work", async () => {
-    await game.classicMode.startBattle([ Species.GALAR_MR_MIME ]); // many level up moves
+  it("macro should add moves in free slots normally", async () => {
+    await game.classicMode.startBattle([ Species.GALAR_MR_MIME ]);
+    const mrMime = game.scene.getPlayerPokemon()!;
+
+    game.move.changeMoveset(mrMime, [ Moves.SPLASH, Moves.ABSORB, Moves.ACID ]);
+    await game.move.learnMove(Moves.SACRED_FIRE, 0, 1);
+    expect(mrMime.getMoveset()).toEqual([ Moves.SPLASH, Moves.ABSORB, Moves.ACID, Moves.SACRED_FIRE ]);
+
+  });
+
+  it("macro should replace moves", async () => {
+    await game.classicMode.startBattle([ Species.GALAR_MR_MIME ]);
     const mrMime = game.scene.getPlayerPokemon()!;
 
     game.move.changeMoveset(mrMime, [ Moves.SPLASH, Moves.ABSORB, Moves.ACID, Moves.VINE_WHIP ]);
@@ -113,8 +123,8 @@ describe("Learn Move Phase", () => {
 
   });
 
-  it("macro should work V2", async () => {
-    await game.classicMode.startBattle([ Species.GALAR_MR_MIME ]); // many level up moves
+  it("macro should cancel move learning", async () => {
+    await game.classicMode.startBattle([ Species.GALAR_MR_MIME ]);
     const mrMime = game.scene.getPlayerPokemon()!;
 
     game.move.changeMoveset(mrMime, [ Moves.SPLASH, Moves.ABSORB, Moves.ACID, Moves.VINE_WHIP ]);
