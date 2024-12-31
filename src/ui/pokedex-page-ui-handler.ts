@@ -13,7 +13,7 @@ import { getNatureName } from "#app/data/nature";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
-import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { Type } from "#enums/type";
 import { GameModes } from "#app/game-mode";
@@ -23,7 +23,7 @@ import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { StatsContainer } from "#app/ui/stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "#app/ui/text";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextStyleOptions } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import { addWindow } from "#app/ui/ui-theme";
 import { Egg } from "#app/data/egg";
@@ -42,6 +42,9 @@ import { StarterContainer } from "#app/ui/starter-container";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 import { BooleanHolder, capitalizeString, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
 import type { Nature } from "#enums/nature";
+import BgmBar from "./bgm-bar";
+import * as Utils from "../utils";
+import { speciesTmMoves } from "#app/data/balance/tms";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -118,7 +121,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 const valueReductionMax = 2;
 
 // Position of UI elements
-const filterBarHeight = 17;
 const speciesContainerX = 109; // if team on the RIGHT: 109 / if on the LEFT: 143
 
 interface SpeciesDetails {
@@ -130,6 +132,19 @@ interface SpeciesDetails {
   natureIndex?: integer,
   forSeen?: boolean, // default = false
 }
+
+enum MenuOptions {
+  BASE_STATS,
+  ABILITIES,
+  LEVEL_MOVES,
+  EGG_MOVES,
+  TM_MOVES,
+  BIOMES,
+  NATURES,
+  TOGGLE_IVS,
+  EVOLUTIONS
+}
+
 
 export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
@@ -219,6 +234,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterAbilityIndexes: integer[] = [];
   private starterNatures: Nature[] = [];
   private starterMovesets: StarterMoveset[] = [];
+  private levelMoves: LevelMoves;
+  private eggMoves: Moves[] = [];
+  private hasEggMoves: boolean[] = [];
+  private tmMoves: Moves[] = [];
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: Moves[];
   private canCycleShiny: boolean;
@@ -230,14 +249,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
-  private starterCursorObjs: Phaser.GameObjects.Image[];
-  private pokerusCursorObjs: Phaser.GameObjects.Image[];
-  private valueLimitLabel: Phaser.GameObjects.Text;
-  private startCursorObj: Phaser.GameObjects.NineSlice;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
-  //variables to keep track of the dynamically rendered list of instruction prompts for starter select
+  // variables to keep track of the dynamically rendered list of instruction prompts for starter select
   private instructionRowX = 0;
   private instructionRowY = 0;
   private instructionRowTextOffset = 9;
@@ -249,6 +264,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterPreferences: StarterPreferences;
 
   protected blockInput: boolean = false;
+
+  // Menu
+  private menuContainer: Phaser.GameObjects.Container;
+  private menuBg: Phaser.GameObjects.NineSlice;
+  protected optionSelectText: Phaser.GameObjects.Text;
+  public bgmBar: BgmBar;
+  private menuOptions: MenuOptions[];
+  protected scale: number = 0.1666666667;
+
 
   constructor(scene: BattleScene) {
     super(scene, Mode.POKEDEX_PAGE);
@@ -276,15 +300,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.shinyOverlay.setOrigin(0, 0);
     this.shinyOverlay.setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
-
-    const starterContainerWindow = addWindow(this.scene, speciesContainerX, filterBarHeight + 1, 175, 161);
-
-    this.starterSelectContainer.add(starterContainerWindow);
-
-
-    if (!this.scene.uiTheme) {
-      starterContainerWindow.setVisible(false);
-    }
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup(this.scene);
@@ -376,22 +391,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const starterSpecies: Species[] = [];
 
     const starterBoxContainer = this.scene.add.container(speciesContainerX + 6, 9); //115
-
-    this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
-      const cursorObj = this.scene.add.image(0, 0, "select_cursor_pokerus");
-      cursorObj.setVisible(false);
-      cursorObj.setOrigin(0, 0);
-      starterBoxContainer.add(cursorObj);
-      return cursorObj;
-    });
-
-    this.starterCursorObjs = new Array(6).fill(null).map(() => {
-      const cursorObj = this.scene.add.image(0, 0, "select_cursor_highlight");
-      cursorObj.setVisible(false);
-      cursorObj.setOrigin(0, 0);
-      starterBoxContainer.add(cursorObj);
-      return cursorObj;
-    });
 
     for (const species of allSpecies) {
       if (!speciesStarterCosts.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
@@ -636,6 +635,48 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.statsContainer);
 
+
+    // Adding menu container
+    this.menuContainer = this.scene.add.container(-130, 0);
+    this.menuContainer.setName("menu");
+    this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+
+    this.bgmBar = new BgmBar(this.scene);
+    this.bgmBar.setup();
+
+    ui.bgmBar = this.bgmBar;
+
+    this.menuContainer.add(this.bgmBar);
+
+    this.menuContainer.setVisible(false);
+
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions);
+
+    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
+    this.optionSelectText.setLineSpacing(12);
+
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale;
+    this.menuBg = addWindow(this.scene,
+      (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25),
+      0,
+      this.optionSelectText.displayWidth + 19 + 24 * this.scale,
+      (this.scene.game.canvas.height / 6) - 2
+    );
+    console.log("Logging sizes", this.optionSelectText.displayWidth + 25, this.scene.game.canvas.width / 6);
+    this.menuBg.setOrigin(0, 0);
+
+    this.optionSelectText.setPositionRelative(this.menuBg, 10 + 24 * this.scale, 6);
+
+    this.menuContainer.add(this.menuBg);
+
+    this.menuContainer.add(this.optionSelectText);
+
+    ui.add(this.menuContainer);
+
+    this.starterSelectContainer.add(this.menuContainer);
+
+
     // add the info overlay last to be the top most ui element and prevent the IVs from overlaying this
     const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay(this.scene, {
@@ -662,11 +703,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return false;
     } else {
       this.lastSpecies = args[0];
+      this.starterSetup(this.lastSpecies);
       console.log("this.lastSpecies", this.lastSpecies);
     }
 
+    // We want the normal appearence here
     if (!this.starterPreferences) {
-      // starterPreferences haven't been loaded yet
       this.starterPreferences = StarterPrefs.load();
     }
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
@@ -676,7 +718,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     super.show(args);
 
     this.starterSelectContainer.setVisible(true);
-
     this.getUi().bringToTop(this.starterSelectContainer);
 
     this.allSpecies.forEach((species, s) => {
@@ -695,11 +736,27 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.setUpgradeAnimation(icon, species);
     });
 
+
+    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions);
+
+    this.menuContainer.setVisible(true);
+
+    this.setCursor(0);
+
+
     this.setSpecies(this.lastSpecies);
     this.updateInstructions();
 
     return true;
 
+  }
+
+
+  starterSetup(species): void {
+    this.levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
+    this.eggMoves = speciesEggMoves[species.speciesId] ?? [];
+    this.hasEggMoves = Array.from({ length: 4 }, (_, em) => (this.scene.gameData.starterData[species.speciesId].eggMoves & (1 << em)) !== 0);
+    this.tmMoves =  speciesTmMoves[species.speciesId].sort() ?? [];
   }
 
   /**
@@ -960,6 +1017,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   processInput(button: Button): boolean {
+
+
     if (this.blockInput) {
       return false;
     }
@@ -968,8 +1027,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     let success = false;
     let error = false;
-
-    console.log("Processing input", button);
 
     if (button === Button.SUBMIT) {
       success = true;
@@ -991,6 +1048,174 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
 
       if (button === Button.ACTION) {
+
+        console.log("Cursor", this.cursor);
+
+        switch (this.cursor) {
+          case MenuOptions.LEVEL_MOVES:
+
+            this.blockInput = true;
+            console.log("level moves", MenuOptions.LEVEL_MOVES);
+
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.showText(i18next.t("pokedexUiHandler:movesLearntOnLevelUp"), null, () => {
+
+                console.log(this.levelMoves);
+                console.log(this.levelMoves[0]);
+                this.moveInfoOverlay.show(allMoves[this.levelMoves[0][1]]);
+
+                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  options: this.levelMoves.map(m => {
+                    const option: OptionSelectItem = {
+                      label: String(m[0]).padEnd(4, " ") + allMoves[m[1]].name,
+                      handler: () => {
+                        return false;
+                      },
+                      onHover: () => {
+                        this.moveInfoOverlay.show(allMoves[m[1]]);
+                      },
+                    };
+                    return option;
+                  }).concat({
+                    label: i18next.t("menu:cancel"),
+                    handler: () => {
+                      this.moveInfoOverlay.clear();
+                      this.clearText();
+                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      return true;
+                    },
+                    onHover: () => {
+                      this.moveInfoOverlay.clear();
+                    },
+                  }),
+                  supportHover: true,
+                  maxOptions: 8,
+                  yOffset: 19
+                });
+                console.log("We did the thing");
+                this.blockInput = false;
+              });
+            });
+            break;
+
+          case MenuOptions.EGG_MOVES:
+
+            this.blockInput = true;
+
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+
+              if (this.eggMoves.length === 0) {
+                ui.showText(i18next.t("pokedexUiHandler:noEggMoves"));
+                this.blockInput = false;
+                return true;
+              }
+
+              ui.showText(i18next.t("pokedexUiHandler:movesLearntFromEgg"), null, () => {
+
+                this.moveInfoOverlay.show(allMoves[this.eggMoves[0]]);
+
+                ui.setModeWithoutClear(Mode.LOCKABLE_SELECT, {
+                  options: [
+                    // Add the "Common" title option
+                    {
+                      label: "Common",
+                      title: true, // Marks it as a title
+                      locked: false, // Titles are not lockable
+                      handler: () => false, // Non-selectable, but handler is required
+                      onHover: () => {} // No hover behavior for titles
+                    },
+                    // Add the first 3 egg moves
+                    ...this.eggMoves.slice(0, 3).map((m, i) => ({
+                      label: allMoves[m].name,
+                      locked: !this.hasEggMoves[i],
+                      handler: () => false,
+                      onHover: () => this.moveInfoOverlay.show(allMoves[m])
+                    })),
+                    // Add the "Rare" title option
+                    {
+                      label: "Rare",
+                      title: true,
+                      locked: false,
+                      handler: () => false,
+                      onHover: () => {}
+                    },
+                    // Add the remaining egg moves (4th onwards)
+                    {
+                      label: allMoves[this.eggMoves[3]].name,
+                      locked: !this.hasEggMoves[3],
+                      handler: () => false,
+                      onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                    },
+                    // Add the "Cancel" option at the end
+                    {
+                      label: i18next.t("menu:cancel"),
+                      handler: () => {
+                        this.moveInfoOverlay.clear();
+                        this.clearText();
+                        ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                        return true;
+                      },
+                      onHover: () => this.moveInfoOverlay.clear()
+                    }
+                  ],
+                  supportHover: true,
+                  maxOptions: 8,
+                  yOffset: 19
+                });
+
+                this.blockInput = false;
+              });
+            });
+            break;
+
+          case MenuOptions.TM_MOVES:
+
+            this.blockInput = true;
+
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.showText(i18next.t("pokedexUiHandler:movesLearntFromTM"), null, () => {
+
+                this.moveInfoOverlay.show(allMoves[this.tmMoves[0]]);
+
+                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  options: this.tmMoves.map(m => {
+                    const option: OptionSelectItem = {
+                      label: allMoves[m].name,
+                      handler: () => {
+                        return false;
+                      },
+                      onHover: () => {
+                        this.moveInfoOverlay.show(allMoves[m]);
+                      },
+                    };
+                    return option;
+                  }).concat({
+                    label: i18next.t("menu:cancel"),
+                    handler: () => {
+                      this.moveInfoOverlay.clear();
+                      this.clearText();
+                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      return true;
+                    },
+                    onHover: () => {
+                      this.moveInfoOverlay.clear();
+                    },
+                  }),
+                  supportHover: true,
+                  maxOptions: 8,
+                  yOffset: 19
+                });
+                this.blockInput = false;
+              });
+            });
+            break;
+
+          default:
+            return true;
+        }
+
+        return true;
+
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
         } else if (this.starterSpecies.length <= 6) { // checks to see if the party has 6 or fewer pokemon
@@ -1422,8 +1647,18 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.UP:
+            if (this.cursor) {
+              success = this.setCursor(this.cursor - 1);
+            } else {
+              success = this.setCursor(this.menuOptions.length - 1);
+            }
             break;
           case Button.DOWN:
+            if (this.cursor + 1 < this.menuOptions.length) {
+              success = this.setCursor(this.cursor + 1);
+            } else {
+              success = this.setCursor(0);
+            }
             break;
           case Button.LEFT:
             break;
@@ -1621,26 +1856,20 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
 
   setCursor(cursor: integer): boolean {
-    let changed = false;
+    const ret = super.setCursor(cursor);
 
-    cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor), 0);
-    changed = super.setCursor(cursor);
-
-    const species = this.filteredStarterContainers[cursor]?.species;
-
-    if (species) {
-      const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
-      const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-      const variant = this.starterPreferences[species.speciesId]?.variant ? this.starterPreferences[species.speciesId].variant as Variant : defaultProps.variant;
-      const tint = getVariantTint(variant);
-      this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
-      this.pokemonShinyIcon.setTint(tint);
-      this.setSpecies(species);
-      this.updateInstructions();
+    if (!this.cursorObj) {
+      this.cursorObj = this.scene.add.image(0, 0, "cursor");
+      this.cursorObj.setOrigin(0, 0);
+      this.menuContainer.add(this.cursorObj);
     }
 
-    return changed;
+    this.cursorObj.setScale(this.scale * 6);
+    this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
+
+    return ret;
   }
+
 
   getFriendship(speciesId: number) {
     let currentFriendship = this.scene.gameData.starterData[speciesId].friendship;
@@ -2368,7 +2597,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   clear(): void {
     super.clear();
 
-    StarterPrefs.save(this.starterPreferences);
+    //    StarterPrefs.save(this.starterPreferences);
     this.cursor = -1;
     this.hideInstructions();
     this.activeTooltip = undefined;

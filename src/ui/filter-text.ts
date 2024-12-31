@@ -92,7 +92,7 @@ export class FilterText extends Phaser.GameObjects.Container {
 
     const paddingX = 6;
     const cursorOffset = 8;
-    const extraSpaceX = 50;
+    const extraSpaceX = 40;
 
     if (this.rows.includes(row)) {
       return false;

@@ -29,7 +29,6 @@ import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, padInt, randIntRange, rgbHexToRgba } from "#app/utils";
 import type { Nature } from "#enums/nature";
-
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { addWindow, WindowVariant } from "./ui-theme";
@@ -536,7 +535,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     console.log("POKEDEX calling show");
 
     if (!this.starterPreferences) {
-      // starterPreferences haven't been loaded yet
       this.starterPreferences = StarterPrefs.load();
     }
 
@@ -2135,7 +2133,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   clear(): void {
     super.clear();
 
-    StarterPrefs.save(this.starterPreferences);
+    //    StarterPrefs.save(this.starterPreferences);
     this.cursor = -1;
     this.activeTooltip = undefined;
     this.scene.ui.hideTooltip();

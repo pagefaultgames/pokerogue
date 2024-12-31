@@ -56,6 +56,7 @@ import { Device } from "#enums/devices";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 import PokedexScanUiHandler from "./pokedex-scan-ui-handler";
 import PokedexPageUiHandler from "./pokedex-page-ui-handler";
+import LockableSelectUiHandler from "./lockable-select-ui-handler";
 
 export enum Mode {
   MESSAGE,
@@ -90,6 +91,7 @@ export enum Mode {
   POKEDEX,
   POKEDEX_SCAN,
   POKEDEX_PAGE,
+  LOCKABLE_SELECT,
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
@@ -136,6 +138,7 @@ const noTransitionModes = [
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
   Mode.POKEDEX_SCAN,
+  Mode.LOCKABLE_SELECT,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
@@ -204,6 +207,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new PokedexUiHandler(scene),
       new PokedexScanUiHandler(scene, Mode.TEST_DIALOGUE),
       new PokedexPageUiHandler(scene),
+      new LockableSelectUiHandler(scene, Mode.LOCKABLE_SELECT),
       new LoginFormUiHandler(scene),
       new RegistrationFormUiHandler(scene),
       new LoadingModalUiHandler(scene),

@@ -12,6 +12,7 @@ import BattleScene from "./battle-scene";
 import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
 import RunInfoUiHandler from "./ui/run-info-ui-handler";
+import PokedexPageUiHandler from "./ui/pokedex-page-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -142,7 +143,7 @@ export class UiInputs {
   }
 
   buttonGoToFilter(button: Button): void {
-    const whitelist = [ StarterSelectUiHandler ];
+    const whitelist = [ StarterSelectUiHandler, PokedexPageUiHandler ];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
@@ -180,6 +181,7 @@ export class UiInputs {
         this.scene.ui.setOverlayMode(Mode.MENU);
         break;
       case Mode.STARTER_SELECT:
+      case Mode.POKEDEX_PAGE:
         this.buttonTouch();
         break;
       case Mode.MENU:
@@ -192,7 +194,7 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    const whitelist = [ StarterSelectUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler ];
+    const whitelist = [ StarterSelectUiHandler, PokedexPageUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler ];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
