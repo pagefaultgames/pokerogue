@@ -98,30 +98,27 @@ export class MoveHelper extends GameManagerHelper {
   * Simulates learning a move for a player pokemon.
   * @param move The {@linkcode Moves} being learnt
   * @param partyIndex The party position of the {@linkcode PlayerPokemon} learning the move (defaults to 0)
-  * @param slot The move slot index (0-4) to replace if existent move slots are full;
+  * @param moveSlotIndex The INDEX (0-4) of the move slot to replace if existent move slots are full;
   * defaults to 0 (first slot) and 4 aborts the procedure
   * @returns a promise that resolves once the move has been successfully learnt
  */
-  public async learnMove(move: Moves, partyIndex?: number, slot?: integer) {
+  public async learnMove(move: Moves | integer, partyIndex: integer = 0, moveSlotIndex: integer = 0) {
     return new Promise<void>(async (resolve, reject) => {
-      if (partyIndex === undefined || partyIndex >= this.game.scene.getPlayerParty().length) {
-        partyIndex = 0;
-      }
       this.game.scene.pushPhase(new LearnMovePhase(this.game.scene, partyIndex, move));
 
       // if slots are full, queue up inputs to replace existing moves
       if (this.game.scene.getPlayerParty()[partyIndex].moveset.filter(m => m).length === 4) {
         this.game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
-          this.game.scene.ui.processInput(Button.ACTION);
+          this.game.scene.ui.processInput(Button.ACTION); // "Should a move be forgotten and replaced with XXX?"
         });
         this.game.onNextPrompt("LearnMovePhase", Mode.SUMMARY, () => {
-          for (let x = 0; x < (slot ?? 0); x++) {
-            this.game.scene.ui.processInput(Button.DOWN);
+          for (let x = 0; x < (moveSlotIndex ?? 0); x++) {
+            this.game.scene.ui.processInput(Button.DOWN); // Scrolling in summary pane to move position
           }
           this.game.scene.ui.processInput(Button.ACTION);
-          if (slot === 4) { // hit confirm 1 last time to give up on learning move
+          if (moveSlotIndex === 4) {
             this.game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
-              this.game.scene.ui.processInput(Button.ACTION);
+              this.game.scene.ui.processInput(Button.ACTION); // "Give up on learning XXX?"
             });
           }
         });

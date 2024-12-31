@@ -2383,7 +2383,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param exp The amount of experience to add
    * @param ignoreLevelCap Whether to ignore level caps when adding experience (defaults to false)
    */
-  addExp(exp: integer, ignoreLevelCap?: boolean) {
+  addExp(exp: integer, ignoreLevelCap: boolean = false) {
     const maxExpLevel = this.scene.getMaxExpLevel(ignoreLevelCap);
     const initialExp = this.exp;
     this.exp += exp;
