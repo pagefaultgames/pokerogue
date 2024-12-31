@@ -6477,7 +6477,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
  * @see {@linkcode apply} for move call
  * @extends OverrideMoveEffectAttr
  */
-export class CallMoveAttr extends OverrideMoveEffectAttr {
+class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: Moves[];
   protected hasTarget: boolean;
   async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
