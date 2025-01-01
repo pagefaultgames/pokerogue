@@ -5,7 +5,7 @@ import { SceneBase } from "#app/scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
 import * as Utils from "#app/utils";
-import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonForms } from "#app/data/pokemon-forms";
@@ -353,6 +353,7 @@ export class LoadingScene extends SceneBase {
     initVouchers();
     initStatsKeys();
     initPokemonPrevolutions();
+    initPokemonStarters();
     initBiomes();
     initEggMoves();
     initPokemonForms();

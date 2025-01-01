@@ -11,6 +11,7 @@ import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { speciesStarterCosts } from "./starters";
 
 
 export enum SpeciesWildEvolutionDelay {
@@ -1687,6 +1688,24 @@ export function initPokemonPrevolutions(): void {
         continue;
       }
       pokemonPrevolutions[ev.speciesId] = parseInt(pk) as Species;
+    }
+  });
+  console.log("Prevo", pokemonPrevolutions[Species.IVYSAUR]);
+  console.log("Prevo", pokemonPrevolutions[Species.VENUSAUR]);
+}
+
+
+// TODO: This may cause funny business for double starters such as Pichu/Pikachu
+export const pokemonStarters: PokemonPrevolutions = {};
+
+export function initPokemonStarters(): void {
+  const starterKeys = Object.keys(pokemonPrevolutions);
+  starterKeys.forEach(pk => {
+    const prevolution = pokemonPrevolutions[pk];
+    if (speciesStarterCosts.hasOwnProperty(prevolution)) {
+      pokemonStarters[pk] = prevolution;
+    } else {
+      pokemonStarters[pk] = pokemonPrevolutions[prevolution];
     }
   });
 }

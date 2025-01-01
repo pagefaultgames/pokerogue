@@ -753,6 +753,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
 
   starterSetup(species): void {
+    // TODO: Make sure this takes into account all of pokemonFormLevelMoves properly! Should change when toggling forms.
     this.levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
     this.eggMoves = speciesEggMoves[species.speciesId] ?? [];
     this.hasEggMoves = Array.from({ length: 4 }, (_, em) => (this.scene.gameData.starterData[species.speciesId].eggMoves & (1 << em)) !== 0);
@@ -1210,6 +1211,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             });
             break;
 
+          case MenuOptions.TOGGLE_IVS:
+            this.toggleStatsMode();
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+            return true;
+
           default:
             return true;
         }
@@ -1233,93 +1239,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 return true;
               }
             });
-          if (this.speciesStarterMoves.length > 1) { // this lets you change the pokemon moves
-            const showSwapOptions = (moveset: StarterMoveset) => {
 
-              this.blockInput = true;
-
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-                ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
-                  this.moveInfoOverlay.show(allMoves[moveset[0]]);
-
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                    options: moveset.map((m: Moves, i: number) => {
-                      const option: OptionSelectItem = {
-                        label: allMoves[m].name,
-                        handler: () => {
-                          this.blockInput = true;
-                          ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-                            ui.showText(`${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`, null, () => {
-                              const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
-                              this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
-
-                              ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                                options: possibleMoves.map(sm => {
-                                  // make an option for each available starter move
-                                  const option = {
-                                    label: allMoves[sm].name,
-                                    handler: () => {
-                                      this.switchMoveHandler(i, sm, m);
-                                      showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
-                                      return true;
-                                    },
-                                    onHover: () => {
-                                      this.moveInfoOverlay.show(allMoves[sm]);
-                                    },
-                                  };
-                                  return option;
-                                }).concat({
-                                  label: i18next.t("menu:cancel"),
-                                  handler: () => {
-                                    showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
-                                    return true;
-                                  },
-                                  onHover: () => {
-                                    this.moveInfoOverlay.clear();
-                                  },
-                                }),
-                                supportHover: true,
-                                maxOptions: 8,
-                                yOffset: 19
-                              });
-                              this.blockInput = false;
-                            });
-                          });
-                          return true;
-                        },
-                        onHover: () => {
-                          this.moveInfoOverlay.show(allMoves[m]);
-                        },
-                      };
-                      return option;
-                    }).concat({
-                      label: i18next.t("menu:cancel"),
-                      handler: () => {
-                        this.moveInfoOverlay.clear();
-                        this.clearText();
-                        ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                        return true;
-                      },
-                      onHover: () => {
-                        this.moveInfoOverlay.clear();
-                      },
-                    }),
-                    supportHover: true,
-                    maxOptions: 8,
-                    yOffset: 19
-                  });
-                  this.blockInput = false;
-                });
-              });
-            };
-            options.push({
-              label: i18next.t("starterSelectUiHandler:manageMoves"),
-              handler: () => {
-                showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
-                return true;
-              }
-            });
-          }
           if (this.canCycleNature) {
             // if we could cycle natures, enable the improved nature menu
             const showNatureOptions = () => {
