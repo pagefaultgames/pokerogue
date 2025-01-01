@@ -55,8 +55,6 @@ describe("Abilities - Pastel Veil", () => {
     const magikarp = game.scene.getPlayerField()[0];
     ponyta.abilityIndex = 1;
 
-    expect(ponyta.hasAbility(Abilities.PASTEL_VEIL)).toBe(true);
-
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
 

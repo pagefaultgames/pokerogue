@@ -222,3 +222,45 @@ describe("Abilities - Commander", () => {
     expect(enemy.isFullHp()).toBeTruthy();
   });
 });
+
+describe("Abilities - Commander", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+  });
+
+  it("should increase the chance of double battles", async () => {
+    game.override
+      .moveset(Moves.SPLASH)
+      .ability(Abilities.COMMANDER)
+      .enemySpecies(Species.SUNKERN)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset(Moves.SPLASH)
+      .startingWave(9);
+
+    vi.spyOn(game.scene, "getDoubleBattleChance");
+    await game.classicMode.startBattle();
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+    expect(game.scene.getDoubleBattleChance).toHaveLastReturnedWith(8);
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+    expect(game.scene.getDoubleBattleChance).toHaveLastReturnedWith(2);
+  });
+});
