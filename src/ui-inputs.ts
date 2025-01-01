@@ -12,6 +12,7 @@ import BattleScene from "./battle-scene";
 import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
 import RunInfoUiHandler from "./ui/run-info-ui-handler";
+import PokedexUiHandler from "./ui/pokedex-ui-handler";
 import PokedexPageUiHandler from "./ui/pokedex-page-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
@@ -143,7 +144,7 @@ export class UiInputs {
   }
 
   buttonGoToFilter(button: Button): void {
-    const whitelist = [ StarterSelectUiHandler, PokedexPageUiHandler ];
+    const whitelist = [ StarterSelectUiHandler, PokedexUiHandler ];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
