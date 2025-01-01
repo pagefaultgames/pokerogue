@@ -111,8 +111,6 @@ export default class GameManager {
       this.scene.shiftPhase();
 
       this.gameWrapper.scene = this.scene;
-
-      (this.scene.ui.handlers[Mode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
     }
     this.textInterceptor = new TextInterceptor(this.scene);
     this.override = new OverridesHelper(this);
