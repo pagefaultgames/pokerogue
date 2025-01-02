@@ -397,8 +397,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             }
           } else if (this.cursor) {
             success = this.setCursor(this.cursor - 1);
-          } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
-            success = this.setRowCursor(0);
+          } else {
+            success = this.setCursor(this.getRowItems(this.rowCursor) - 1);
           }
           break;
         case Button.RIGHT:
@@ -427,8 +427,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             }
           } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
             success = this.setCursor(this.cursor + 1);
-          } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
-            success = this.setRowCursor(0);
+          } else {
+            success = this.setCursor(0);
           }
           break;
       }
