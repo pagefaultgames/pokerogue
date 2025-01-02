@@ -78,15 +78,14 @@ export class OverridesHelper extends GameManagerHelper {
   public levelCap(cap: number): this {
     vi.spyOn(Overrides, "LEVEL_CAP_OVERRIDE", "get").mockReturnValue(cap);
     let capStr: string;
-    switch (true) {
-      case (cap > 0):
-        capStr = "Level cap set to " + cap.toString() + "!";
-      case (cap === 0):
-        capStr = "Level cap reset to default value for wave.";
-      case (cap < 0):
-        capStr = "Level cap disabled!";
+    if (cap > 0) {
+      capStr = `Level cap set to ${cap}!`;
+    } else if (cap < 0) {
+      capStr = "Level cap disabled!";
+    } else {
+      capStr = "Level cap reset to default value for wave.";
     }
-    this.log(capStr!); // cap is guaranteed to be either more, less or equal to 0; if not I will scream
+    this.log(capStr);
     return this;
   }
 
