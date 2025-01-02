@@ -2,9 +2,8 @@ import { pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-
 import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import BattleScene, { starterColors } from "#app/battle-scene";
-import { allAbilities } from "#app/data/ability";
+import { Ability, allAbilities } from "#app/data/ability";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
@@ -23,7 +22,7 @@ import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { StatsContainer } from "#app/ui/stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextStyleOptions } from "#app/ui/text";
+import { TextStyle, addTextObject, getTextStyleOptions } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import { addWindow } from "#app/ui/ui-theme";
 import { Egg } from "#app/data/egg";
@@ -163,12 +162,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private pokemonLuckText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
   private pokemonUncaughtText: Phaser.GameObjects.Text;
-  private pokemonAbilityLabelText: Phaser.GameObjects.Text;
-  private pokemonAbilityText: Phaser.GameObjects.Text;
-  private pokemonPassiveLabelText: Phaser.GameObjects.Text;
-  private pokemonPassiveText: Phaser.GameObjects.Text;
-  private pokemonNatureLabelText: Phaser.GameObjects.Text;
-  private pokemonNatureText: BBCodeText;
   private pokemonMovesContainer: Phaser.GameObjects.Container;
   private pokemonMoveContainers: Phaser.GameObjects.Container[];
   private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
@@ -189,8 +182,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
   private pokemonShinyIcon: Phaser.GameObjects.Sprite;
-  private pokemonPassiveDisabledIcon: Phaser.GameObjects.Sprite;
-  private pokemonPassiveLockedIcon: Phaser.GameObjects.Sprite;
 
   private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
   private instructionsContainer: Phaser.GameObjects.Container;
@@ -238,6 +229,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private eggMoves: Moves[] = [];
   private hasEggMoves: boolean[] = [];
   private tmMoves: Moves[] = [];
+  private ability1: Ability;
+  private ability2: Ability;
+  private abilityHidden: Ability;
+  private passive: Ability;
+  private hasPassive: boolean;
+  private hasAbilities: number[];
+
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: Moves[];
   private canCycleShiny: boolean;
@@ -328,57 +326,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:uncaught"), TextStyle.SUMMARY_ALT, { fontSize: "56px" });
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
-
-
-    // The position should be set per language
-    const starterInfoXPos = textSettings?.starterInfoXPos || 31;
-    const starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
-
-    // The font size should be set per language
-    const starterInfoTextSize = textSettings?.starterInfoTextSize || 56;
-
-    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 127 + starterInfoYOffset, i18next.t("starterSelectUiHandler:ability"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
-    this.pokemonAbilityLabelText.setOrigin(0, 0);
-    this.pokemonAbilityLabelText.setVisible(false);
-
-    this.starterSelectContainer.add(this.pokemonAbilityLabelText);
-
-    this.pokemonAbilityText = addTextObject(this.scene, starterInfoXPos, 127 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
-    this.pokemonAbilityText.setOrigin(0, 0);
-    this.pokemonAbilityText.setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
-
-    this.starterSelectContainer.add(this.pokemonAbilityText);
-
-    this.pokemonPassiveLabelText = addTextObject(this.scene, 6, 136 + starterInfoYOffset, i18next.t("starterSelectUiHandler:passive"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
-    this.pokemonPassiveLabelText.setOrigin(0, 0);
-    this.pokemonPassiveLabelText.setVisible(false);
-    this.starterSelectContainer.add(this.pokemonPassiveLabelText);
-
-    this.pokemonPassiveText = addTextObject(this.scene, starterInfoXPos, 136 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
-    this.pokemonPassiveText.setOrigin(0, 0);
-    this.pokemonPassiveText.setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
-    this.starterSelectContainer.add(this.pokemonPassiveText);
-
-    this.pokemonPassiveDisabledIcon = this.scene.add.sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_stop");
-    this.pokemonPassiveDisabledIcon.setOrigin(0, 0.5);
-    this.pokemonPassiveDisabledIcon.setScale(0.35);
-    this.pokemonPassiveDisabledIcon.setVisible(false);
-    this.starterSelectContainer.add(this.pokemonPassiveDisabledIcon);
-
-    this.pokemonPassiveLockedIcon = this.scene.add.sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_lock");
-    this.pokemonPassiveLockedIcon.setOrigin(0, 0.5);
-    this.pokemonPassiveLockedIcon.setScale(0.42, 0.38);
-    this.pokemonPassiveLockedIcon.setVisible(false);
-    this.starterSelectContainer.add(this.pokemonPassiveLockedIcon);
-
-    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 145 + starterInfoYOffset, i18next.t("starterSelectUiHandler:nature"), TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
-    this.pokemonNatureLabelText.setOrigin(0, 0);
-    this.pokemonNatureLabelText.setVisible(false);
-    this.starterSelectContainer.add(this.pokemonNatureLabelText);
-
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, starterInfoXPos, 145 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, { fontSize: starterInfoTextSize });
-    this.pokemonNatureText.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.pokemonNatureText);
 
     this.pokemonMoveContainers = [];
     this.pokemonMoveBgs = [];
@@ -752,14 +699,32 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
 
-  starterSetup(species): void {
+  starterSetup(species: PokemonSpecies): void {
     // TODO: Make sure this takes into account all of pokemonFormLevelMoves properly! Should change when toggling forms.
     this.levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
     this.eggMoves = speciesEggMoves[this.getStarterSpeciesId(species.speciesId)] ?? [];
     this.hasEggMoves = Array.from({ length: 4 }, (_, em) => (this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].eggMoves & (1 << em)) !== 0);
-    console.log(speciesTmMoves[species.speciesId ?? []]);
     this.tmMoves = (speciesTmMoves[species.speciesId] ?? []).sort((a, b) => allMoves[a].name > allMoves[b].name ? 1 : -1);
-    console.log(this.tmMoves);
+    this.ability1 = species.ability1;
+    this.ability2 = (species.ability2 === species.ability1) ? null : species.ability2;
+    this.abilityHidden = species.abilityHidden;
+    this.passive = starterPassiveAbilities[this.getStarterSpeciesId(species.speciesId)];
+
+    const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)];
+    const abilityAttr = starterData.abilityAttr;
+    this.hasPassive = starterData.passiveAttr > 0;
+
+    const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
+    const hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
+    const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
+    // Due to a past bug it is possible that some Pokemon with a single ability have the ability2 flag
+    // In this case, we only count ability2 as valid if ability1 was not unlocked, otherwise we ignore it
+    this.hasAbilities = [
+      hasAbility1,
+      hasAbility2,
+      hasHiddenAbility
+    ];
+    console.log(this.hasAbilities);
   }
 
   /**
@@ -1064,7 +1029,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       let starterContainer;
       const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
       // prepare persistent starter data to store changes
-      let starterAttributes = this.starterPreferences[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
+      const starterAttributes = this.starterPreferences[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
 
       if (button === Button.ACTION) {
 
@@ -1229,10 +1194,123 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             });
             break;
 
+          case MenuOptions.ABILITIES:
+
+            this.blockInput = true;
+
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+
+              ui.showText(i18next.t("pokedexUiHandler:abilities"), null, () => {
+
+                //                this.moveInfoOverlay.show(allMoves[this.eggMoves[0]]);
+
+                const options: any[] = [];
+
+                if (this.ability1) {
+                  options.push({
+                    label: allAbilities[this.ability1].name,
+                    color: this.hasAbilities[0] > 0 ? "#ffffff" : "#6b5a73",
+                    handler: () => false,
+                    onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                  });
+                }
+                if (this.ability2) {
+                  options.push({
+                    label: allAbilities[this.ability2].name,
+                    color: this.hasAbilities[1] > 0 ? "#ffffff" : "#6b5a73",
+                    handler: () => false,
+                    onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                  });
+                }
+
+                if (this.abilityHidden) {
+                  options.push({
+                    label: "Hidden:",
+                    skip: true,
+                    color: "#ccbe00",
+                    handler: () => false,
+                    onHover: () => this.moveInfoOverlay.clear()
+                  });
+                  options.push({
+                    label: allAbilities[this.abilityHidden].name,
+                    color: this.hasAbilities[2] > 0 ? "#ffffff" : "#6b5a73",
+                    handler: () => false,
+                    onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                  });
+                }
+
+                if (this.passive) {
+                  options.push({
+                    label: "Passive:",
+                    skip: true,
+                    color: "#ccbe00",
+                    handler: () => false,
+                    onHover: () => this.moveInfoOverlay.clear()
+                  });
+                  options.push({
+                    label: allAbilities[this.passive].name,
+                    color: this.hasPassive ? "#ffffff" : "#6b5a73",
+                    handler: () => false,
+                    onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                  });
+                }
+
+                options.push({
+                  label: i18next.t("menu:cancel"),
+                  handler: () => {
+                    this.moveInfoOverlay.clear();
+                    this.clearText();
+                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                    return true;
+                  },
+                  onHover: () => this.moveInfoOverlay.clear()
+                });
+
+                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  options: options,
+                  supportHover: true,
+                  maxOptions: 8,
+                  yOffset: 19
+                });
+
+                this.blockInput = false;
+              });
+            });
+            break;
+
           case MenuOptions.TOGGLE_IVS:
             this.toggleStatsMode();
             ui.setMode(Mode.POKEDEX_PAGE, "refresh");
             return true;
+
+          case MenuOptions.NATURES:
+            this.blockInput = true;
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.showText(i18next.t("pokedexUiHandler:showNature"), null, () => {
+                const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
+                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  options: natures.map((n: Nature, i: number) => {
+                    const option: OptionSelectItem = {
+                      label: getNatureName(n, true, true, true, this.scene.uiTheme),
+                      handler: () => {
+                        return false;
+                      }
+                    };
+                    return option;
+                  }).concat({
+                    label: i18next.t("menu:cancel"),
+                    handler: () => {
+                      this.clearText();
+                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      this.blockInput = false;
+                      return true;
+                    }
+                  }),
+                  maxOptions: 8,
+                  yOffset: 19
+                });
+              });
+            });
 
           default:
             return true;
@@ -1257,58 +1335,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 return true;
               }
             });
-
-          if (this.canCycleNature) {
-            // if we could cycle natures, enable the improved nature menu
-            const showNatureOptions = () => {
-
-              this.blockInput = true;
-
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-                ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
-                  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                    options: natures.map((n: Nature, i: number) => {
-                      const option: OptionSelectItem = {
-                        label: getNatureName(n, true, true, true, this.scene.uiTheme),
-                        handler: () => {
-                          // update default nature in starter save data
-                          if (!starterAttributes) {
-                            starterAttributes = this.starterPreferences[this.getStarterSpeciesId(this.lastSpecies.speciesId)] = {};
-                          }
-                          starterAttributes.nature = n;
-                          this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                          // set nature for starter
-                          this.setSpeciesDetails(this.lastSpecies, { natureIndex: n });
-                          this.blockInput = false;
-                          return true;
-                        }
-                      };
-                      return option;
-                    }).concat({
-                      label: i18next.t("menu:cancel"),
-                      handler: () => {
-                        this.clearText();
-                        ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                        this.blockInput = false;
-                        return true;
-                      }
-                    }),
-                    maxOptions: 8,
-                    yOffset: 19
-                  });
-                });
-              });
-            };
-            options.push({
-              label: i18next.t("starterSelectUiHandler:manageNature"),
-              handler: () => {
-                showNatureOptions();
-                return true;
-              }
-            });
-          }
 
           const passiveAttr = starterData.passiveAttr;
 
@@ -1831,9 +1857,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.scene.ui.hideTooltip();
     }
 
-    this.pokemonAbilityText.off("pointerover");
-    this.pokemonPassiveText.off("pointerover");
-
     const starterAttributes : StarterAttributes | null = species ? { ...this.starterPreferences[species.speciesId] } : null;
 
     if (starterAttributes?.nature) {
@@ -1888,9 +1911,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
         this.pokemonGrowthRateLabelText.setVisible(true);
         this.pokemonUncaughtText.setVisible(false);
-        this.pokemonAbilityLabelText.setVisible(true);
-        this.pokemonPassiveLabelText.setVisible(true);
-        this.pokemonNatureLabelText.setVisible(true);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
         if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
@@ -1999,9 +2019,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonLuckText.setVisible(false);
         this.pokemonShinyIcon.setVisible(false);
         this.pokemonUncaughtText.setVisible(true);
-        this.pokemonAbilityLabelText.setVisible(false);
-        this.pokemonPassiveLabelText.setVisible(false);
-        this.pokemonNatureLabelText.setVisible(false);
         this.pokemonCaughtHatchedContainer.setVisible(false);
         this.pokemonCandyContainer.setVisible(false);
         this.pokemonFormText.setVisible(false);
@@ -2033,9 +2050,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.pokemonLuckText.setVisible(false);
       this.pokemonShinyIcon.setVisible(false);
       this.pokemonUncaughtText.setVisible(!!species);
-      this.pokemonAbilityLabelText.setVisible(false);
-      this.pokemonPassiveLabelText.setVisible(false);
-      this.pokemonNatureLabelText.setVisible(false);
       this.pokemonCaughtHatchedContainer.setVisible(false);
       this.pokemonCandyContainer.setVisible(false);
       this.pokemonFormText.setVisible(false);
@@ -2094,10 +2108,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     this.pokemonSprite.setVisible(false);
-    this.pokemonPassiveLabelText.setVisible(false);
-    this.pokemonPassiveText.setVisible(false);
-    this.pokemonPassiveDisabledIcon.setVisible(false);
-    this.pokemonPassiveLockedIcon.setVisible(false);
 
     if (this.assetLoadCancelled) {
       this.assetLoadCancelled.value = true;
@@ -2224,77 +2234,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr) {
-        const ability = allAbilities[this.lastSpecies.getAbility(abilityIndex!)]; // TODO: is this bang correct?
-        this.pokemonAbilityText.setText(ability.name);
-
-        const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
-        this.pokemonAbilityText.setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD));
-        this.pokemonAbilityText.setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
-
-        const passiveAttr = this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].passiveAttr;
-        const passiveAbility = allAbilities[starterPassiveAbilities[this.getStarterSpeciesId(this.lastSpecies.speciesId)]];
-
-        if (this.pokemonAbilityText.visible) {
-          if (this.activeTooltip === "ABILITY") {
-            this.scene.ui.editTooltip(`${ability.name}`, `${ability.description}`);
-          }
-
-          this.pokemonAbilityText.on("pointerover", () => {
-            this.scene.ui.showTooltip(`${ability.name}`, `${ability.description}`, true);
-            this.activeTooltip = "ABILITY";
-          });
-          this.pokemonAbilityText.on("pointerout", () => {
-            this.scene.ui.hideTooltip();
-            this.activeTooltip = undefined;
-          });
-        }
-
-        if (passiveAbility) {
-          const isUnlocked = !!(passiveAttr & PassiveAttr.UNLOCKED);
-          const isEnabled = !!(passiveAttr & PassiveAttr.ENABLED);
-
-          const textStyle = isUnlocked && isEnabled ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY;
-          const textAlpha = isUnlocked && isEnabled ? 1 : 0.5;
-
-          this.pokemonPassiveLabelText.setVisible(true);
-          this.pokemonPassiveLabelText.setColor(this.getTextColor(TextStyle.SUMMARY_ALT));
-          this.pokemonPassiveLabelText.setShadowColor(this.getTextColor(TextStyle.SUMMARY_ALT, true));
-          this.pokemonPassiveText.setVisible(true);
-          this.pokemonPassiveText.setText(passiveAbility.name);
-          this.pokemonPassiveText.setColor(this.getTextColor(textStyle));
-          this.pokemonPassiveText.setAlpha(textAlpha);
-          this.pokemonPassiveText.setShadowColor(this.getTextColor(textStyle, true));
-
-          if (this.activeTooltip === "PASSIVE") {
-            this.scene.ui.editTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`);
-          }
-
-          if (this.pokemonPassiveText.visible) {
-            this.pokemonPassiveText.on("pointerover", () => {
-              this.scene.ui.showTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`, true);
-              this.activeTooltip = "PASSIVE";
-            });
-            this.pokemonPassiveText.on("pointerout", () => {
-              this.scene.ui.hideTooltip();
-              this.activeTooltip = undefined;
-            });
-          }
-
-          const iconPosition = {
-            x: this.pokemonPassiveText.x + this.pokemonPassiveText.displayWidth + 1,
-            y: this.pokemonPassiveText.y + this.pokemonPassiveText.displayHeight / 2
-          };
-          this.pokemonPassiveDisabledIcon.setVisible(isUnlocked && !isEnabled);
-          this.pokemonPassiveDisabledIcon.setPosition(iconPosition.x, iconPosition.y);
-          this.pokemonPassiveLockedIcon.setVisible(!isUnlocked);
-          this.pokemonPassiveLockedIcon.setPosition(iconPosition.x, iconPosition.y);
-
-        } else if (this.activeTooltip === "PASSIVE") {
-          // No passive and passive tooltip is active > hide it
-          this.scene.ui.hideTooltip();
-        }
-
-        this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true, false, this.scene.uiTheme));
 
         let levelMoves: LevelMoves;
         if (pokemonFormLevelMoves.hasOwnProperty(species.speciesId) && formIndex && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)) {
@@ -2343,9 +2282,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
-        this.pokemonAbilityText.setText("");
-        this.pokemonPassiveText.setText("");
-        this.pokemonNatureText.setText("");
         this.setTypeIcons(null, null);
       }
     } else {
@@ -2353,9 +2289,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.pokemonNumberText.setColor(this.getTextColor(TextStyle.SUMMARY));
       this.pokemonNumberText.setShadowColor(this.getTextColor(TextStyle.SUMMARY, true));
       this.pokemonGenderText.setText("");
-      this.pokemonAbilityText.setText("");
-      this.pokemonPassiveText.setText("");
-      this.pokemonNatureText.setText("");
       this.setTypeIcons(null, null);
     }
 
