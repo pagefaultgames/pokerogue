@@ -1,11 +1,12 @@
 import BattleScene from "../battle-scene";
-import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
+import { TextStyle, addBBCodeTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -21,8 +22,10 @@ export interface OptionSelectItem {
   label: string;
   handler: () => boolean;
   onHover?: () => void;
+  skip?: boolean;
   keepOpen?: boolean;
   overrideSound?: boolean;
+  color?: string;
   item?: string;
   itemArgs?: any[];
 }
@@ -33,7 +36,7 @@ const scrollDownLabel = "↓";
 export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
-  protected optionSelectText: Phaser.GameObjects.Text;
+  protected optionSelectText: BBCodeText;
   protected optionSelectIcons: Phaser.GameObjects.Sprite[];
 
   protected config: OptionSelectConfig | null;
@@ -45,6 +48,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected scale: number = 0.1666666667;
 
   private cursorObj: Phaser.GameObjects.Image | null;
+
+  protected unskippedIndices: number[];
+
 
   constructor(scene: BattleScene, mode: Mode | null) {
     super(scene, mode);
@@ -93,6 +99,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       options = configOptions;
     }
 
+    this.unskippedIndices = this.getUnskippedIndices(options);
+
     if (this.optionSelectText) {
       this.optionSelectText.destroy();
     }
@@ -101,10 +109,15 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
     }
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, { maxLines: options.length });
-    this.optionSelectText.setLineSpacing(this.scale * 72);
+    this.optionSelectText = addBBCodeTextObject(
+      this.scene, 0, 0, options.map(o => o.item
+        ? `[color=${o.color || "white"}]    ${o.label}[/color]`
+        : `[color=${o.color || "white"}]${o.label}[/color]`
+      ).join("\n"),
+      TextStyle.WINDOW, { maxLines: options.length, lineSpacing: 12 }
+    );
+    this.optionSelectText.setOrigin(0, 0);
     this.optionSelectText.setName("text-option-select");
-    this.optionSelectText.setLineSpacing(12);
     this.optionSelectContainer.add(this.optionSelectText);
     this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
 
@@ -116,7 +129,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectBg.height = this.getWindowHeight();
 
-    this.optionSelectText.setPositionRelative(this.optionSelectBg, 12 + 24 * this.scale, 2 + 42 * this.scale);
+    this.optionSelectText.setPosition(this.optionSelectBg.x - this.optionSelectBg.width + 12 + 24 * this.scale, this.optionSelectBg.y - this.optionSelectBg.height + 2 + 42 * this.scale);
 
     options.forEach((option: OptionSelectItem, i: integer) => {
       if (option.item) {
@@ -178,6 +191,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     let success = false;
 
     const options = this.getOptionsWithScroll();
+    const unskippedIndices = this.getUnskippedIndices(options);
 
     let playSound = true;
 
@@ -226,11 +240,11 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           if (this.cursor) {
             success = this.setCursor(this.cursor - 1);
           } else if (this.cursor === 0) {
-            success = this.setCursor(options.length - 1);
+            success = this.setCursor(unskippedIndices.length - 1);
           }
           break;
         case Button.DOWN:
-          if (this.cursor < options.length - 1) {
+          if (this.cursor < unskippedIndices.length - 1) {
             success = this.setCursor(this.cursor + 1);
           } else {
             success = this.setCursor(0);
@@ -295,11 +309,19 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     return options;
   }
 
+  getUnskippedIndices(options: OptionSelectItem[]) {
+    const unskippedIndices = options
+      .map((option, index) => (option.skip ? null : index)) // Map to index or null if skipped
+      .filter(index => index !== null) as number[];
+    return unskippedIndices;
+  }
+
   setCursor(cursor: integer): boolean {
     const changed = this.cursor !== cursor;
 
     let isScroll = false;
     const options = this.getOptionsWithScroll();
+    const unskippedIndices = this.getUnskippedIndices(options);
     if (changed && this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
       if (Math.abs(cursor - this.cursor) === options.length - 1) {
         // Wrap around the list
@@ -337,7 +359,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.cursorObj.setScale(this.scale * 6);
-    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 102 * this.scale + this.cursor * (114 * this.scale - 3));
+    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 102 * this.scale + unskippedIndices[this.cursor] * (114 * this.scale - 3));
 
     return changed;
   }

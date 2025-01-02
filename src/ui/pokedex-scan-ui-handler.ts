@@ -131,6 +131,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   }
 
   // args[2] is an index of FilterTextRow
+  //TODO: This logic is probably way more complex than we need, and actually messes things up for moves and abilities with a space like "Leech Seed"
   show(args: any[]): boolean {
     const ui = this.getUi();
     const hasTitle = !!this.getModalTitle();
