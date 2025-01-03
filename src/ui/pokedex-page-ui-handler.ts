@@ -1,4 +1,4 @@
-import { pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
+import { EvolutionItem, pokemonEvolutions, pokemonPrevolutions, pokemonStarters, SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -44,6 +44,9 @@ import type { Nature } from "#enums/nature";
 import BgmBar from "./bgm-bar";
 import * as Utils from "../utils";
 import { speciesTmMoves } from "#app/data/balance/tms";
+import { BiomePoolTier, BiomeTierTod, catchableSpecies } from "#app/data/balance/biomes";
+import { Biome } from "#app/enums/biome";
+import { TimeOfDay } from "#app/enums/time-of-day";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -235,6 +238,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private passive: Ability;
   private hasPassive: boolean;
   private hasAbilities: number[];
+  private biomes: BiomeTierTod[];
+  private baseStats: number[];
+  private baseTotal: number;
+  private evolutions: SpeciesFormEvolution[];
 
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: Moves[];
@@ -498,7 +505,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     // The font size should be set per language
     const instructionTextSize = textSettings.instructionTextSize;
 
-    this.instructionsContainer = this.scene.add.container(4, 156);
+    this.instructionsContainer = this.scene.add.container(4, 128);
     this.instructionsContainer.setVisible(true);
     this.starterSelectContainer.add(this.instructionsContainer);
 
@@ -724,7 +731,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       hasAbility2,
       hasHiddenAbility
     ];
-    console.log(this.hasAbilities);
+
+    this.biomes = catchableSpecies[species.speciesId];
+
+    this.baseStats = species.baseStats;
+    this.baseTotal = species.baseTotal;
+
+    this.evolutions = pokemonEvolutions[species.speciesId];
   }
 
   /**
@@ -1036,6 +1049,55 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         console.log("Cursor", this.cursor);
 
         switch (this.cursor) {
+
+          case MenuOptions.BASE_STATS:
+
+            this.blockInput = true;
+            console.log("level moves", MenuOptions.LEVEL_MOVES);
+
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.showText(i18next.t("pokedexUiHandler:baseStats"), null, () => {
+                const options: any[] = [];
+                const shortStats = [ "HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD" ];
+
+                this.baseStats.map((bst, index) => {
+                  options.push({
+                    label: i18next.t(`pokemonInfo:Stat.${shortStats[index]}shortened`).padEnd(5, " ") + ": " + `${bst}`,
+                    handler: () => {
+                      return false;
+                    }
+                  });
+                });
+                options.push({
+                  label: i18next.t("pokedexUiHandler:baseTotal") + ": " + `${this.baseTotal}`,
+                  color: "#ccbe00",
+                  handler: () => {
+                    return false;
+                  }
+                });
+                options.push({
+                  label: i18next.t("menu:cancel"),
+                  handler: () => {
+                    this.moveInfoOverlay.clear();
+                    this.clearText();
+                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                    return true;
+                  },
+                  onHover: () => this.moveInfoOverlay.clear()
+                });
+
+                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  options: options,
+                  supportHover: true,
+                  maxOptions: 8,
+                  yOffset: 19
+                });
+
+                this.blockInput = false;
+              });
+            });
+            break;
+
           case MenuOptions.LEVEL_MOVES:
 
             this.blockInput = true;
@@ -1254,6 +1316,105 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
                   });
                 }
+
+                options.push({
+                  label: i18next.t("menu:cancel"),
+                  handler: () => {
+                    this.moveInfoOverlay.clear();
+                    this.clearText();
+                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                    return true;
+                  },
+                  onHover: () => this.moveInfoOverlay.clear()
+                });
+
+                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  options: options,
+                  supportHover: true,
+                  maxOptions: 8,
+                  yOffset: 19
+                });
+
+                this.blockInput = false;
+              });
+            });
+            break;
+
+          case MenuOptions.BIOMES:
+
+            this.blockInput = true;
+
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+
+              const options: any[] = [];
+
+              ui.showText(i18next.t("pokedexUiHandler:abilities"), null, () => {
+
+                this.biomes.map(b => {
+                  options.push({
+                    label: i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) + " - " +
+                      i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
+                      ( b.tod.length === 1 && b.tod[0] === -1 ? "" : " (" + b.tod.map(tod => i18next.t(`biome:${TimeOfDay[tod].toUpperCase()}`)).join(", ") + ")"),
+                    handler: () => false
+                  });
+                });
+
+                options.push({
+                  label: i18next.t("menu:cancel"),
+                  handler: () => {
+                    this.moveInfoOverlay.clear();
+                    this.clearText();
+                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                    return true;
+                  },
+                  onHover: () => this.moveInfoOverlay.clear()
+                });
+
+                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  options: options,
+                  supportHover: true,
+                  maxOptions: 8,
+                  yOffset: 19
+                });
+
+                this.blockInput = false;
+              });
+            });
+            break;
+
+          case MenuOptions.EVOLUTIONS:
+
+            this.blockInput = true;
+
+            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+
+              const options: any[] = [];
+
+              ui.showText(i18next.t("pokedexUiHandler:abilities"), null, () => {
+
+                if (!this.evolutions) {
+                  this.blockInput = false;
+                  return true;
+                }
+                if (this.evolutions.length === 0) {
+                  this.blockInput = false;
+                  return true;
+                }
+
+                this.evolutions.map(evo => {
+                  console.log(evo);
+                  console.log(Species[evo.speciesId]);
+                  options.push({
+                    label: i18next.t(`pokemon:${Species[evo.speciesId].toUpperCase()}`),
+                    color: "#ccbe00",
+                    handler: () => false
+                  });
+                  options.push({
+                    label: evo.level > 1 ? `${evo.level}` : (evo.item ? i18next.t(`modifier-type:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) : ""),
+                    skip: true,
+                    handler: () => false
+                  });
+                });
 
                 options.push({
                   label: i18next.t("menu:cancel"),

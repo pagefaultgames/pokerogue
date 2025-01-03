@@ -8,6 +8,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 export enum DropDownColumn {
   GEN,
   TYPES,
+  BIOME,
   CAUGHT,
   UNLOCKS,
   MISC,
@@ -96,7 +97,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * Position the filter dropdowns evenly across the width of the container
    */
   private calcFilterPositions(): void {
-    const paddingX = 6;
+    const paddingX = 0;
     const cursorOffset = 8;
 
     let totalWidth = paddingX * 2 + cursorOffset;

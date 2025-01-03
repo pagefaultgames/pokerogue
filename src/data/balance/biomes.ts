@@ -101,6 +101,18 @@ export interface BiomePokemonPools {
   [key: integer]: BiomeTierPokemonPools
 }
 
+export interface BiomeTierTod {
+  biome: Biome,
+  tier: BiomePoolTier,
+  tod: TimeOfDay[]
+}
+
+export interface CatchableSpecies{
+  [key: integer]: BiomeTierTod[]
+}
+
+export const catchableSpecies: CatchableSpecies = {};
+
 export interface BiomeTierTrainerPools {
   [key: integer]: TrainerType[]
 }
@@ -7715,6 +7727,10 @@ export function initBiomes() {
       uncatchableSpecies.push(speciesId);
     }
 
+    // prepares new array in catchableSpecies to host available biomes
+    //TODO: this must be improved to only make arrays for starters
+    catchableSpecies[speciesId] = [];
+
     for (const b of biomeEntries) {
       const biome = b[0];
       const tier = b[1];
@@ -7723,6 +7739,12 @@ export function initBiomes() {
           ? b[2]
           : [ b[2] ]
         : [ TimeOfDay.ALL ];
+
+      catchableSpecies[speciesId].push({
+        biome: biome,
+        tier: tier,
+        tod: timesOfDay
+      });
 
       for (const tod of timesOfDay) {
         if (!biomePokemonPools.hasOwnProperty(biome) || !biomePokemonPools[biome].hasOwnProperty(tier) || !biomePokemonPools[biome][tier].hasOwnProperty(tod)) {

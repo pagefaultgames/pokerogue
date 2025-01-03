@@ -7,6 +7,7 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters, PokemonForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
+import { catchableSpecies } from "#app/data/balance/biomes";
 import { Type } from "#enums/type";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
@@ -38,6 +39,7 @@ import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { allMoves } from "#app/data/move";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
+import { Biome } from "#enums/biome";
 
 
 // We don't need this interface here
@@ -352,7 +354,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     // Create and initialise filter bar
     this.filterBarContainer = this.scene.add.container(0, 0);
-    this.filterBar = new FilterBar(this.scene, speciesContainerX, 1, 175, filterBarHeight);
+    this.filterBar = new FilterBar(this.scene, speciesContainerX - 10, 1, 175 + 10, filterBarHeight);
 
     // gen filter
     const genOptions: DropDownOption[] = [
@@ -382,6 +384,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
       typeOptions.push(new DropDownOption(this.scene, index, new DropDownLabel("", typeSprite)));
     });
     this.filterBar.addFilter(DropDownColumn.TYPES, i18next.t("filterBar:typeFilter"), new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.HYBRID, 0.5));
+
+    // biome filter. Making an entry in the dropdown for each biome
+    const biomeOptions = Object.values(Biome)
+      .filter((value) => typeof value === "number") // Filter numeric values from the enum
+      .map((biomeValue, index) =>
+        new DropDownOption(this.scene, index, new DropDownLabel(i18next.t(`biome:${Biome[biomeValue].toUpperCase()}`)))
+      );
+    const biomeDropDown: DropDown = new DropDown(this.scene, 0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
+    this.filterBar.addFilter(DropDownColumn.BIOME, i18next.t("filterBar:biomeFilter"), biomeDropDown);
 
     // caught filter
     const shiny1Sprite = this.scene.add.sprite(0, 0, "shiny_icons");
@@ -1361,6 +1372,18 @@ export default class PokedexUiHandler extends MessageUiHandler {
       // Type filter
       const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => container.species.isOfType((type as number) - 1));
 
+      // Biome filter
+      const indexToBiome = new Map(
+        Object.values(Biome).map((value, index) => [ index, value ])
+      );
+
+      // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
+      // TODO: We might also need to do it the other way around.
+      //      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
+      const biomes = catchableSpecies[container.species.speciesId].map(b => Biome[b.biome]);
+      const fitsBiome = this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item)));
+
+
       // Caught / Shiny filter
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
       const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
@@ -1476,7 +1499,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsName && fitsAbilities && fitsMoves && fitsGen && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
+      if (fitsName && fitsAbilities && fitsMoves && fitsGen && fitsBiome && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
         this.filteredStarterContainers.push(container);
       }
     });
