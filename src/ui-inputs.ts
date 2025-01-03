@@ -79,7 +79,6 @@ export class UiInputs {
       [Button.SUBMIT]:          () => this.buttonTouch(),
       [Button.ACTION]:          () => this.buttonAb(Button.ACTION),
       [Button.CANCEL]:          () => this.buttonAb(Button.CANCEL),
-      [Button.RANDOMIZE]:       () => this.buttonAb(Button.RANDOMIZE),
       [Button.MENU]:            () => this.buttonMenu(),
       [Button.STATS]:           () => this.buttonGoToFilter(Button.STATS),
       [Button.CYCLE_SHINY]:     () => this.buttonCycleOption(Button.CYCLE_SHINY),
@@ -111,7 +110,6 @@ export class UiInputs {
       [Button.CYCLE_ABILITY]:   () => undefined,
       [Button.CYCLE_NATURE]:    () => undefined,
       [Button.V]:               () => this.buttonInfo(false),
-      [Button.RANDOMIZE]:       () => undefined,
       [Button.SPEED_UP]:        () => undefined,
       [Button.SLOW_DOWN]:       () => undefined,
     };
