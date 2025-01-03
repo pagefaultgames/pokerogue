@@ -26,7 +26,7 @@ describe("Moves - Shell Side Arm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SHELL_SIDE_ARM, Moves.SPLASH ])
+      .moveset([ Moves.SHELL_SIDE_ARM ])
       .battleType("single")
       .startingLevel(100)
       .enemyLevel(100)
@@ -45,6 +45,21 @@ describe("Moves - Shell Side Arm", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(true);
+  });
+
+  it("should make contact if the move becomes physical", async () => {
+    game.override
+      .enemySpecies(Species.SNORLAX)
+      .enemyAbility(Abilities.ROUGH_SKIN);
+
+    await game.classicMode.startBattle([ Species.RAMPARDOS ]);
+
+    const player = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.SHELL_SIDE_ARM);
+    await game.toNextTurn();
+
+    expect(player.getMaxHp()).toBeGreaterThan(player.hp);
   });
 
   it("remains a special attack if forecasted to deal more damage as special", async () => {
@@ -78,4 +93,21 @@ describe("Moves - Shell Side Arm", () => {
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
   });
+
+  it("should not make contact if the move stays special", async () => {
+    game.override.enemySpecies(Species.SLOWBRO).enemyAbility(Abilities.ROUGH_SKIN);
+
+    await game.classicMode.startBattle([ Species.XURKITREE ]);
+
+    const player = game.scene.getPlayerPokemon()!;
+
+    vi.spyOn(shellSideArmAttr, "apply");
+
+    game.move.select(Moves.SHELL_SIDE_ARM);
+    await game.toNextTurn();
+
+    expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
+    expect(player.getMaxHp()).toBe(player.hp);
+  });
+
 });

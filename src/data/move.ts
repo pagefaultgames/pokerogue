@@ -4612,14 +4612,28 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
     const predictedPhysDmg = target.getBaseDamage(user, move, MoveCategory.PHYSICAL, true, true);
     const predictedSpecDmg = target.getBaseDamage(user, move, MoveCategory.SPECIAL, true, true);
 
-    if (predictedPhysDmg > predictedSpecDmg) {
+    const shouldUsePhysical =
+        predictedPhysDmg > predictedSpecDmg ||
+        (predictedPhysDmg === predictedSpecDmg && user.randSeedInt(2) === 0);
+
+    if (shouldUsePhysical) {
       category.value = MoveCategory.PHYSICAL;
-      return true;
-    } else if (predictedPhysDmg === predictedSpecDmg && user.randSeedInt(2) === 0) {
-      category.value = MoveCategory.PHYSICAL;
+      move.makesContact();
       return true;
     }
+    this.resetContactFlag(move);
     return false;
+  }
+
+  /**
+   * MoveFlags are not reset every turn so if this flag is set it needs to be reset if the move is a special attack
+   * This fucntion resets the {@linkcode MoveFlags.MAKES_CONTACT}
+   * @param move this move should be Shell Side Arm
+   */
+  private resetContactFlag(move: Move): void {
+    if (move.hasFlag(MoveFlags.MAKES_CONTACT)) {
+      move.makesContact(false);
+    }
   }
 }
 
@@ -10395,8 +10409,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.SHELL_SIDE_ARM, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 20, 0, 8)
       .attr(ShellSideArmCategoryAttr)
-      .attr(StatusEffectAttr, StatusEffect.POISON)
-      .partial(), // Physical version of the move does not make contact
+      .attr(StatusEffectAttr, StatusEffect.POISON),
     new AttackMove(Moves.MISTY_EXPLOSION, Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
