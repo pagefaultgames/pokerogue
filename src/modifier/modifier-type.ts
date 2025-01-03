@@ -1040,7 +1040,8 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       for (const p of party) {
         const speciesId = p.getSpeciesForm(true).speciesId;
         const fusionSpeciesId = p.isFusion() ? p.getFusionSpeciesForm(true).speciesId : null;
-        const hasFling = p.getMoveset(true).some(m => m?.moveId === Moves.FLING);
+        // TODO: Use commented boolean when Fling is implemented
+        const hasFling = false; /* p.getMoveset(true).some(m => m?.moveId === Moves.FLING) */
 
         for (const i in values) {
           const checkedSpecies = values[i].species;
@@ -1755,56 +1756,75 @@ const modifierPool: ModifierPool = {
     }, 12),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
       return party.some(p => {
-        const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
-
-        const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
         const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
 
-        // Moves that take advantage of obtaining the actual status effect
-        const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
-          .some(m => moveset.includes(m));
-        // Moves that take advantage of being able to give the target a status orb
-        // TODO: Take moves from comment they are implemented
-        const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
-          .some(m => moveset.includes(m));
-        // Abilities that take advantage of obtaining the actual status effect
-        const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ]
-          .some(a => p.hasAbility(a, false, true));
-
         if (!isHoldingOrb) {
+          const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
+          const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
+
+          // Moves that take advantage of obtaining the actual status effect
+          const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
+            .some(m => moveset.includes(m));
+          // Moves that take advantage of being able to give the target a status orb
+          // TODO: Take moves (Trick, Fling, Switcheroo) from comment they are implemented
+          const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
+            .some(m => moveset.includes(m));
+
           if (canSetStatus) {
-            return hasRelevantAbilities || hasStatusMoves;
+            // Abilities that take advantage of obtaining the actual status effect, separated based on specificity to the orb
+            const hasGeneralAbility = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.MAGIC_GUARD ]
+              .some(a => p.hasAbility(a, false, true));
+            const hasSpecificAbility = [ Abilities.TOXIC_BOOST, Abilities.POISON_HEAL ]
+              .some(a => p.hasAbility(a, false, true));
+            const hasOppositeAbility = [ Abilities.FLARE_BOOST ]
+              .some(a => p.hasAbility(a, false, true));
+
+            if (hasGeneralAbility) {
+              return (hasSpecificAbility || !hasOppositeAbility) || hasStatusMoves;
+            }
+            return hasSpecificAbility || hasStatusMoves;
           } else {
             return hasItemMoves;
           }
         }
+
         return false;
       }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
       return party.some(p => {
-        const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
-        const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
         const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
 
-        // Moves that take advantage of obtaining the actual status effect
-        const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
-          .some(m => moveset.includes(m));
-        // Moves that take advantage of being able to give the target a status orb
-        // TODO: Take moves from comment they are implemented
-        const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
-          .some(m => moveset.includes(m));
-        // Abilities that take advantage of obtaining the actual status effect
-        const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ]
-          .some(a => p.hasAbility(a, false, true));
-
         if (!isHoldingOrb) {
+          const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
+          const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
+
+          // Moves that take advantage of obtaining the actual status effect
+          const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
+            .some(m => moveset.includes(m));
+          // Moves that take advantage of being able to give the target a status orb
+          // TODO: Take moves (Trick, Fling, Switcheroo) from comment they are implemented
+          const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
+            .some(m => moveset.includes(m));
+
           if (canSetStatus) {
-            return hasRelevantAbilities || hasStatusMoves;
+            // Abilities that take advantage of obtaining the actual status effect, separated based on specificity to the orb
+            const hasGeneralAbility = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.MAGIC_GUARD ]
+              .some(a => p.hasAbility(a, false, true));
+            const hasSpecificAbility = [ Abilities.FLARE_BOOST ]
+              .some(a => p.hasAbility(a, false, true));
+            const hasOppositeAbility = [ Abilities.TOXIC_BOOST, Abilities.POISON_HEAL ]
+              .some(a => p.hasAbility(a, false, true));
+
+            if (hasGeneralAbility) {
+              return (hasSpecificAbility || !hasOppositeAbility) || hasStatusMoves;
+            }
+            return hasSpecificAbility || hasStatusMoves;
           } else {
             return hasItemMoves;
           }
         }
+
         return false;
       }) ? 10 : 0;
     }, 10),
