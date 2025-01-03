@@ -54,6 +54,7 @@ export class MovePhase extends BattlePhase {
   protected _targets: BattlerIndex[];
   protected followUp: boolean;
   protected ignorePp: boolean;
+  protected forcedLast: boolean;
   protected failed: boolean = false;
   protected cancelled: boolean = false;
 
@@ -85,7 +86,7 @@ export class MovePhase extends BattlePhase {
    * @param followUp Indicates that the move being uses is a "follow-up" - for example, a move being used by Metronome or Dancer.
    *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze and volatile status checks, etc.
    */
-  constructor(scene: BattleScene, pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false) {
+  constructor(scene: BattleScene, pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false, forcedLast: boolean = false) {
     super(scene);
 
     this.pokemon = pokemon;
@@ -93,6 +94,7 @@ export class MovePhase extends BattlePhase {
     this.move = move;
     this.followUp = followUp;
     this.ignorePp = ignorePp;
+    this.forcedLast = forcedLast;
   }
 
   /**
@@ -113,6 +115,15 @@ export class MovePhase extends BattlePhase {
   public cancel(): void {
     this.cancelled = true;
   }
+
+  /**
+   * Shows whether the current move has been forced to the end of the turn
+   * Needed for speed order, see {@linkcode Moves.QUASH}
+   * */
+  public isForcedLast(): boolean {
+    return this.forcedLast;
+  }
+
 
   public start(): void {
     super.start();
