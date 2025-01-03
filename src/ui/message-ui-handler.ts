@@ -2,6 +2,7 @@ import BattleScene from "../battle-scene";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
+import i18next from "i18next";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
@@ -73,6 +74,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     }
 
     if (text) {
+      // text = this.runWrapSpecialCase(text); // TODO
       // Predetermine overflow line breaks to avoid words breaking while displaying
       const textWords = text.split(" ");
       let lastLineCount = 1;
@@ -84,7 +86,8 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           newText = nextWordText;
           lastLineCount++;
         } else {
-          const lineCount = this.message.runWordWrap(nextWordText).split(/\n/g).length;
+          const runWrap = this.message.runWordWrap(nextWordText);
+          const lineCount = runWrap.split(/\n/g).length;
           if (lineCount > lastLineCount) {
             lastLineCount = lineCount;
             newText = `${newText}\n${textWords[w]}`;
@@ -94,8 +97,19 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
         }
       }
 
-      text = newText;
+      const wasTextAdjusted = this.message.data?.values?.originalMaxWidth || this.message.data?.values?.originalFontSize || this.message.data?.values?.originalMaxLines;
+      if (!!wasTextAdjusted) {
+        const isWidthOverflow = (this.message.style.wordWrapWidth && this.textSize(newText).width > this.message.style.wordWrapWidth);
+        const isHeightOverflow = (this.textHeight(newText) + (this.message.y / this.message.scale) > this.textHeight(text));
+        const isOverflow = isWidthOverflow || isHeightOverflow;
+        if (!isOverflow) {
+          text = newText;
+        }
+      } else {
+        text = newText;
+      }
     }
+
 
     if (this.textTimer) {
       this.textTimer.remove();
@@ -189,15 +203,24 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   }
 
   showPrompt(callback?: Function | null, callbackDelay?: integer | null) {
-    const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
-    const textLinesCount = wrappedTextLines.length;
-    const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
-    const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: "96px emerald" });
-    lastLineTest.setScale(this.message.scale);
-    const lastLineWidth = lastLineTest.displayWidth;
-    lastLineTest.destroy();
     if (this.prompt) {
-      this.prompt.setPosition(this.message.x + lastLineWidth + 2, this.message.y + (textLinesCount - 1) * 18 + 2);
+      const fontScale = parseInt(this.message.style.fontSize.toString()) / 100 + 0.04;
+      const scale = this.message.scale;
+      this.prompt.setScale(fontScale);
+      const textSize = this.textSize(this.message.text);
+      const lastLineWidth = textSize.lineWidths[textSize.lineWidths.length - 1];
+
+      let x = lastLineWidth * scale + this.message.x + 2;
+      let y = this.message.y + (textSize.lineHeight * scale * (textSize.lines - 1)) + (textSize.lineSpacing * scale * (textSize.lines - 1)) + 2;
+      // wrap prompt
+      if (this.message.style.wordWrapWidth) {
+        if (lastLineWidth + this.prompt.getBounds().width >= this.message.style.wordWrapWidth) {
+          x = this.message.x;
+          y = y * 1.5;
+        }
+      }
+
+      this.prompt.setPosition(x, y);
       this.prompt.play("prompt");
     }
     this.pendingPrompt = false;
@@ -206,6 +229,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       if (this.prompt) {
         this.prompt.anims.stop();
         this.prompt.setVisible(false);
+        this.prompt.setScale(1);
       }
       if (callback) {
         if (callbackDelay) {
@@ -239,4 +263,164 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   clear() {
     super.clear();
   }
+
+  /**
+   * @example Use before showText():
+   * ``` ts
+   *  // Handler extends MessageUiHandler.ts...
+   *  const ui = this.getUi();
+   *  this.tryAdjustText(text, opts); // Or ui.getMessageHandler().tryAdjustText()...
+   *  ui.showText(...);
+   *
+   *  // Or in showText():
+   *  showText(...) {
+   *    this.tryAdjustText(text, opts);
+   *    super.showText(...);
+   *  }
+   * ```
+   * @description It tests a text before showing it to adjust it to a graphic element
+   * @param text
+   * @param opts options additional
+   * @argument ignoreLanguages ignore adjust for some languages or for all.
+   * @argument maxWidth default this.message.style.wordWrapWidth or this.message.parentContainer.getBounds().width.
+   * @argument guideHeight default this.message.parentContainer, If the container has many elements or `this.message` does not have a clear guide, use the parent container as a reference guide by default.
+   * @argument padding default { right: this.message.x, bottom: this.message.y }.
+   */
+
+  tryAdjustText(text: string, opts?: argsAdjustText): void {
+    const currentLanguage = i18next.resolvedLanguage!;
+    if (opts?.ignoreLanguages && opts.ignoreLanguages[0] && (opts.ignoreLanguages === "all" || opts.ignoreLanguages.some(localKey => localKey === currentLanguage)) || !text) {
+      return;
+    }
+
+    const textPaddingScale = 1.2;
+    const posX = (opts?.padding?.right ?? this.message.x) * textPaddingScale || 1;
+    const posY = (opts?.padding?.bottom ?? this.message.y) * textPaddingScale || 1;
+
+    // text = this.runWrapSpecialCase(text); // TODO
+
+    const referenceGuide = opts?.guideHeight ?? this.message.parentContainer;
+
+    // If any style changes were made in previous tryAdjustText() calls, revert to the original data.
+    // [Note] Be aware that if dynamic styles are being applied to the same this.message from another source for attributes such as fontSize, maxLines, wordWrap, this may cause issues.
+    if (this.message.data?.values?.originalMaxLines) {
+      this.message.style.setMaxLines(this.message.data?.values?.originalMaxLines);
+      this.message.data.remove("originalMaxLines");
+    }
+
+    const paddingX = posX / this.message.scale;
+    const paddingY = posY / this.message.scale - this.message.lineSpacing;
+
+    const maxHeight = referenceGuide.getBounds().height - (paddingY * 2);
+    const maxWidth = this.message.data?.values?.originalMaxWidth ?? Math.floor(opts?.maxWidth ?? this.message.style.wordWrapWidth ?? referenceGuide.getBounds().width) - paddingX;
+    this.message.setData("originalMaxWidth", this.message.data?.values?.originalMaxWidth ?? maxWidth);
+    this.message.setWordWrapWidth(maxWidth);
+
+    const fontSize = this.message.data?.values?.originalFontSize ?? parseInt(this.message.style.fontSize.toString());
+    this.message.setData("originalFontSize", fontSize);
+    this.message.setFontSize(fontSize);
+
+    const getFontSize = () => parseInt(this.message.style.fontSize.toString());
+
+    const wrapWidthAdjust = () => {
+      if (this.textSize(text).width
+        + Math.ceil(this.message.style.wordWrapWidth! + (paddingX / (posX / 2)) - this.textSize(text).width)
+        >= maxWidth) {
+        while (
+          this.textSize(text).width
+          + Math.ceil(this.message.style.wordWrapWidth! + (paddingX / (posX / 2)) - this.textSize(text).width)
+          >= maxWidth
+          && this.message.style.wordWrapWidth! > 10) {
+          this.message.setWordWrapWidth(--this.message.style.wordWrapWidth!);
+        }
+
+      }
+      // If after trying to adjust the wordWrapWidth it remains the same, it means that..
+      //.. there is no space between words, so the fontSize is adjusted to fit.
+      if (this.textSize(text).width + (posX * 2) >= maxWidth) {
+        if (this.textSize(text).width >= maxWidth) {
+          this.message.setWordWrapWidth(maxWidth);
+        }
+        while (this.textSize(text).width + (posX * 2) >= maxWidth && getFontSize() > 30) {
+          this.message.setFontSize(getFontSize() - 1);
+        }
+      }
+    };
+    wrapWidthAdjust();
+
+    if (
+      this.textHeight(text) > maxHeight
+      + Math.floor(this.textHeight(text) + (paddingY / posY) - this.textSize(text).height)
+      || this.textWrapped(text).length > this.message.style.maxLines
+    ) {
+
+      while (
+        this.textHeight(text) > maxHeight
+        + Math.floor(this.textHeight(text) + (paddingY / posY) - this.textSize(text).height)
+        || this.textWrapped(text).length > this.message.style.maxLines
+        && getFontSize() > 10
+      ) {
+        this.message.setFontSize(getFontSize() - 1);
+
+        if (!this.message.data?.values?.originalMaxLines) {
+          this.message.setData("originalMaxLines", this.message.style.maxLines);
+        }
+        this.message.setMaxLines(Math.ceil(this.textHeight(text) / (this.textSize(text).lineHeight + posY + this.textWrapped(text).length)));
+
+
+        if (this.textSize(text).width >= maxWidth) {
+          this.message.setWordWrapWidth(maxWidth);
+        }
+        wrapWidthAdjust();
+      }
+
+    }
+  }
+
+
+  protected textWrapped(text: string): string[] {
+    return this.message.getWrappedText(text);
+  }
+
+  protected textSize(text: string): Phaser.Types.GameObjects.Text.GetTextSizeObject {
+    return Phaser.GameObjects.GetTextSize(this.message, this.message.style.getTextMetrics(), this.textWrapped(text));
+  }
+
+  protected textHeight(text: string): number {
+    return this.textSize(text).lineHeight * this.textWrapped(text).length + (this.textSize(text).lineSpacing * (this.textWrapped(text).length - 1));
+  }
+
+  // // TODO: Line breaking rules about the beginning/end of a line, for more information see  https://en.wikipedia.org/wiki/Line_breaking_rules_in_East_Asian_languages#Line_breaking_rules_in_Japanese_text_(Kinsoku_Shori)
+  // private runWrapSpecialCase(text: string): string {
+  //   let newText = "";
+  //   if (text) {
+
+  //     const textWords = text.split(/[ 　。？！!.,-]/g);
+  //     const space = text.match(/[ 　。？！!.,-]/g);
+  //     for (let w = 0; w < textWords.length; w++) {
+  //       let spaceType: string = " ";
+  //       if (space?.[0]) {
+  //         spaceType = space[w - 1];
+  //       }
+  //       let nextWordText: string = newText ? `${newText}${spaceType}${textWords[w]}` : textWords[w];
+
+  //       const sizeNewText = this.textSize(nextWordText);
+  //       const isWidthOverflow = this.message.style.wordWrapWidth && sizeNewText.width > this.message.style.wordWrapWidth;
+  //       if (isWidthOverflow && textWords[w]) {
+  //         nextWordText = newText !== "" ? `${newText}${spaceType}\n${textWords[w]}` : textWords[w];
+  //       }
+
+  //       newText = nextWordText;
+  //     }
+  //   }
+
+  //   return newText;
+  // }
+}
+
+interface argsAdjustText {
+  ignoreLanguages?: Array<string> | "all" | null;
+  maxWidth?: number;
+  guideHeight?: Phaser.GameObjects.Container | Phaser.GameObjects.Sprite | Phaser.GameObjects.NineSlice;
+  padding?: { right?: number, bottom?: number };
 }
