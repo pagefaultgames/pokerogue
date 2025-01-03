@@ -2404,7 +2404,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       if (move.hitsSubstitute(user, target)) {
         return resolve(false);
       }
-      const rand = Phaser.Math.RND.realInRange(0, 1);
+      const rand = user.randSeedInt(100);
       if (rand >= this.chance) {
         return resolve(false);
       }
@@ -8424,7 +8424,7 @@ export function initMoves() {
       .attr(MultiHitPowerIncrementAttr, 3)
       .checkAllHits(),
     new AttackMove(Moves.THIEF, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 2)
-      .attr(StealHeldItemChanceAttr, 0.3),
+      .attr(StealHeldItemChanceAttr, 30),
     new StatusMove(Moves.SPIDER_WEB, Type.BUG, -1, 10, -1, 0, 2)
       .condition(failIfGhostTypeCondition)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
@@ -8966,7 +8966,7 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON),
     new AttackMove(Moves.COVET, Type.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 3)
-      .attr(StealHeldItemChanceAttr, 0.3),
+      .attr(StealHeldItemChanceAttr, 30),
     new AttackMove(Moves.VOLT_TACKLE, Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 3)
       .attr(RecoilAttr, false, 0.33)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
