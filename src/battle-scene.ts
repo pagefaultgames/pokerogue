@@ -10,7 +10,7 @@ import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets
 import { Phase } from "#app/phase";
 import { initGameSpeed } from "#app/system/game-speed";
 import { Arena, ArenaBase } from "#app/field/arena";
-import { GameData } from "#app/system/game-data";
+import { GameData, BiomeSessionData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "#app/data/move";
 import { MusicPreference } from "#app/system/settings/settings";
@@ -260,6 +260,7 @@ export default class BattleScene extends SceneBase {
   public pokeballCounts: PokeballCounts;
   public money: integer;
   public pokemonInfoContainer: PokemonInfoContainer;
+  public biomeTracker: BiomeSessionData;
   private party: PlayerPokemon[];
   /** Session save data that pertains to Mystery Encounters */
   public mysteryEncounterSaveData: MysteryEncounterSaveData = new MysteryEncounterSaveData();
@@ -1133,7 +1134,7 @@ export default class BattleScene extends SceneBase {
 
     [ this.luckLabelText, this.luckText ].map(t => t.setVisible(false));
 
-    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
+    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN, false);
 
     this.field.setVisible(true);
 
@@ -1376,7 +1377,22 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: Biome): Arena {
+  newArena(biome: Biome, isReset: boolean = true): Arena {
+    const biomeTrackerLimit = 22;
+    if (Utils.isNullOrUndefined(this.biomeTracker)) {
+      this.biomeTracker = {};
+    }
+    if (isReset) {
+      if (this.currentBattle) {
+        this.biomeTracker[this.currentBattle.waveIndex] = biome;
+      }
+    }
+    const biomeTrackerKeys = Object.keys(this.biomeTracker).map(Number);
+    // Arbitrary limit of 22 entries per session --> Can increase or decrease
+    while (biomeTrackerKeys.length >= biomeTrackerLimit ) {
+      const smallestWave = Math.min.apply(Math, biomeTrackerKeys);
+      delete this.biomeTracker[smallestWave];
+    }
     this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 

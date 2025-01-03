@@ -233,8 +233,10 @@ export class TitlePhase extends Phase {
         Promise.all(loadPokemonAssets).then(() => {
           this.scene.time.delayedCall(500, () => this.scene.playBgm());
           this.scene.gameData.gameStats.dailyRunSessionsPlayed++;
-          this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
+          const startingBiome = this.scene.gameMode.getStartingBiome(this.scene);
+          this.scene.newArena(startingBiome);
           this.scene.newBattle();
+          this.scene.biomeTracker[this.scene.currentBattle.waveIndex] = startingBiome;
           this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
           this.scene.lastSavePlayTime = 0;
