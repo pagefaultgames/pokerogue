@@ -2369,7 +2369,9 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Clears the phaseQueue
+   * Clears the phaseQueue, but does not clear any other phase-related stuff.
+   *
+   * TODO: Should this function be replaced by {@linkcode clearAllPhases}?
    */
   clearPhaseQueue(): void {
     this.phaseQueue.splice(0, this.phaseQueue.length);
@@ -2377,8 +2379,6 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Clears all phase-related stuff, including all phase queues, the current and standby phases, and a splice index.
-   *
-   * Currently, this is a utility function only used by unit tests.
    */
   clearAllPhases(): void {
     for (const queue of [ this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue ]) {
