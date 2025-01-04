@@ -639,8 +639,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.setUpgradeAnimation(icon, species);
     });
 
-    console.log("Allspecies", this.starterContainers.length);
-
     this.resetFilters();
     this.updateStarters();
 
@@ -748,6 +746,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
    */
   resetFilters() : void {
     this.filterBar.setValsToDefault();
+    this.filterText.setValsToDefault();
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, moveToTop?: boolean) {
@@ -1004,9 +1003,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         success = true;
       }
     } else if (button === Button.STATS) {
-      console.log("Pressed button");
       this.showDecorations = !this.showDecorations;
-      console.log(this.showDecorations);
       this.updateScroll();
       success = true;
     } else if (this.filterMode) {
@@ -1296,6 +1293,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
 
     this.filterBar.updateFilterLabels();
+    this.filterText.updateFilterLabels();
 
     this.validStarterContainers = this.starterContainers;
 
@@ -1495,52 +1493,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       if (fitsName && fitsAbilities && fitsMoves && fitsGen && fitsBiome && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
         this.filteredStarterContainers.push(container);
-      } else {
-        console.log(container.species.name);
-        if (!fitsName) {
-          console.log("fitsName is false");
-        }
-        if (!fitsAbilities) {
-          console.log("fitsAbilities is false");
-        }
-        if (!fitsMoves) {
-          console.log("fitsMoves is false");
-        }
-        if (!fitsGen) {
-          console.log("fitsGen is false");
-        }
-        if (!fitsBiome) {
-          console.log("fitsBiome is false");
-        }
-        if (!fitsType) {
-          console.log("fitsType is false");
-        }
-        if (!fitsCaught) {
-          console.log("fitsCaught is false");
-        }
-        if (!fitsPassive) {
-          console.log("fitsPassive is false");
-        }
-        if (!fitsCostReduction) {
-          console.log("fitsCostReduction is false");
-        }
-        if (!fitsFavorite) {
-          console.log("fitsFavorite is false");
-        }
-        if (!fitsWin) {
-          console.log("fitsWin is false");
-        }
-        if (!fitsHA) {
-          console.log("fitsHA is false");
-        }
-        if (!fitsEgg) {
-          console.log("fitsEgg is false");
-        }
-        if (!fitsPokerus) {
-          console.log("fitsPokerus is false");
-        }
       }
-      console.log(this.filteredStarterContainers.length);
     });
 
     this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
