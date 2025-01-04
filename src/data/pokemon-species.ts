@@ -944,19 +944,6 @@ export class PokemonForm extends PokemonSpeciesForm {
   }
 }
 
-export const noStarterFormKeys: string[] = [
-  SpeciesFormKey.MEGA,
-  SpeciesFormKey.MEGA_X,
-  SpeciesFormKey.MEGA_Y,
-  SpeciesFormKey.PRIMAL,
-  SpeciesFormKey.ORIGIN,
-  SpeciesFormKey.THERIAN,
-  SpeciesFormKey.GIGANTAMAX,
-  SpeciesFormKey.GIGANTAMAX_RAPID,
-  SpeciesFormKey.GIGANTAMAX_SINGLE,
-  SpeciesFormKey.ETERNAMAX
-].map(k => k.toString());
-
 /**
 * Method to get the daily list of starters with Pokerus.
 * @param scene {@linkcode BattleScene} used as part of RNG
