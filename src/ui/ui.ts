@@ -574,19 +574,15 @@ export default class UI extends Phaser.GameObjects.Container {
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
 
-      console.log("logging revert", this?.modeChain?.length, this?.modeChain);
-
       if (!this?.modeChain?.length) {
         return resolve(false);
       }
 
       const lastMode = this.mode;
-      console.log("lastmode", lastMode);
 
       const doRevertMode = () => {
         this.getHandler().clear();
         this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
-        console.log("mode", this.mode);
         (this.scene as BattleScene).updateGameInfo();
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {

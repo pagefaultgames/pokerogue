@@ -715,9 +715,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             }
             break;
           case Button.CANCEL:
-            console.log(this.getUi().getModeChain());
             this.getUi().revertMode();
-            console.log(this.getUi().getModeChain());
             success = true;
             break;
           case Button.UP:
