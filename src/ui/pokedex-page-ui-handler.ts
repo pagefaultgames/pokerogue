@@ -11,13 +11,12 @@ import { allMoves } from "#app/data/move";
 import { getNatureName } from "#app/data/nature";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
-import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, PokemonForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { Type } from "#enums/type";
 import { GameModes } from "#app/game-mode";
-import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
-import { Tutorial, handleTutorial } from "#app/tutorial";
+import { AbilityAttr, DexAttr, DexEntry, StarterAttributes  } from "#app/system/game-data";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
@@ -31,6 +30,7 @@ import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
 import * as Challenge from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
+import PokedexInfoOverlay from "#app/ui/pokedex-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
 import { Moves } from "#enums/moves";
@@ -47,19 +47,8 @@ import { speciesTmMoves } from "#app/data/balance/tms";
 import { BiomePoolTier, BiomeTierTod, catchableSpecies } from "#app/data/balance/biomes";
 import { Biome } from "#app/enums/biome";
 import { TimeOfDay } from "#app/enums/time-of-day";
+import { SpeciesFormKey } from "#app/enums/species-form-key";
 
-export type StarterSelectCallback = (starters: Starter[]) => void;
-
-export interface Starter {
-  species: PokemonSpecies;
-  dexAttr: bigint;
-  abilityIndex: integer,
-  passive: boolean;
-  nature: Nature;
-  moveset?: StarterMoveset;
-  pokerus: boolean;
-  nickname?: string;
-}
 
 interface LanguageSetting {
   starterInfoTextSize: string,
@@ -130,8 +119,6 @@ interface SpeciesDetails {
   formIndex?: integer
   female?: boolean,
   variant?: Variant,
-  abilityIndex?: integer,
-  natureIndex?: integer,
   forSeen?: boolean, // default = false
 }
 
@@ -165,15 +152,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private pokemonLuckText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
   private pokemonUncaughtText: Phaser.GameObjects.Text;
-  private pokemonMovesContainer: Phaser.GameObjects.Container;
-  private pokemonMoveContainers: Phaser.GameObjects.Container[];
-  private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
-  private pokemonMoveLabels: Phaser.GameObjects.Text[];
-  private pokemonAdditionalMoveCountLabel: Phaser.GameObjects.Text;
-  private pokemonEggMovesContainer: Phaser.GameObjects.Container;
-  private pokemonEggMoveContainers: Phaser.GameObjects.Container[];
-  private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
-  private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
   private pokemonCandyContainer: Phaser.GameObjects.Container;
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyDarknessOverlay: Phaser.GameObjects.Sprite;
@@ -202,27 +180,18 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
   private moveInfoOverlay : MoveInfoOverlay;
+  private infoOverlay : PokedexInfoOverlay;
 
   private statsMode: boolean;
   private starterIconsCursorXOffset: number = -3;
   private starterIconsCursorYOffset: number = 1;
   private starterIconsCursorIndex: number;
-  private filterMode: boolean;
-  private dexAttrCursor: bigint = 0n;
-  private abilityCursor: number = -1;
-  private natureCursor: number = -1;
-  private starterMoveset: StarterMoveset | null;
 
   private allSpecies: PokemonSpecies[] = [];
   private lastSpecies: PokemonSpecies;
   private lastFormIndex: number;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
   public starterSpecies: PokemonSpecies[] = [];
-  private pokerusSpecies: PokemonSpecies[] = [];
-  private starterAttr: bigint[] = [];
-  private starterAbilityIndexes: integer[] = [];
-  private starterNatures: Nature[] = [];
-  private starterMovesets: StarterMoveset[] = [];
   private levelMoves: LevelMoves;
   private eggMoves: Moves[] = [];
   private hasEggMoves: boolean[] = [];
@@ -237,14 +206,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private baseStats: number[];
   private baseTotal: number;
   private evolutions: SpeciesFormEvolution[];
+  private battleForms: PokemonForm[];
 
   private speciesStarterDexEntry: DexEntry | null;
-  private speciesStarterMoves: Moves[];
   private canCycleShiny: boolean;
   private canCycleForm: boolean;
   private canCycleGender: boolean;
-  private canCycleAbility: boolean;
-  private canCycleNature: boolean;
   private canCycleVariant: boolean;
 
   private assetLoadCancelled: BooleanHolder | null;
@@ -259,9 +226,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private filterInstructionRowX = 0;
   private filterInstructionRowY = 0;
 
-  private starterSelectCallback: StarterSelectCallback | null;
-
-  private starterPreferences: StarterPreferences;
+  private starterAttributes: StarterAttributes;
 
   protected blockInput: boolean = false;
 
@@ -328,14 +293,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t("starterSelectUiHandler:uncaught"), TextStyle.SUMMARY_ALT, { fontSize: "56px" });
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
-
-    this.pokemonMoveContainers = [];
-    this.pokemonMoveBgs = [];
-    this.pokemonMoveLabels = [];
-
-    this.pokemonEggMoveContainers = [];
-    this.pokemonEggMoveBgs = [];
-    this.pokemonEggMoveLabels = [];
 
     const starterSpecies: Species[] = [];
 
@@ -437,65 +394,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonHatchedCountText = addTextObject(this.scene, 24, 19, "0", TextStyle.SUMMARY_ALT);
     this.pokemonHatchedCountText.setOrigin(0, 0);
     this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedCountText);
-
-    this.pokemonMovesContainer = this.scene.add.container(102, 16);
-    this.pokemonMovesContainer.setScale(0.375);
-
-    for (let m = 0; m < 4; m++) {
-      const moveContainer = this.scene.add.container(0, 14 * m);
-
-      const moveBg = this.scene.add.nineslice(0, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
-      moveBg.setOrigin(1, 0);
-
-      const moveLabel = addTextObject(this.scene, -moveBg.width / 2, 0, "-", TextStyle.PARTY);
-      moveLabel.setOrigin(0.5, 0);
-
-      this.pokemonMoveBgs.push(moveBg);
-      this.pokemonMoveLabels.push(moveLabel);
-
-      moveContainer.add(moveBg);
-      moveContainer.add(moveLabel);
-
-      this.pokemonMoveContainers.push(moveContainer);
-      this.pokemonMovesContainer.add(moveContainer);
-    }
-
-    this.pokemonAdditionalMoveCountLabel = addTextObject(this.scene, -this.pokemonMoveBgs[0].width / 2, 56, "(+0)", TextStyle.PARTY);
-    this.pokemonAdditionalMoveCountLabel.setOrigin(0.5, 0);
-
-    this.pokemonMovesContainer.add(this.pokemonAdditionalMoveCountLabel);
-
-    this.starterSelectContainer.add(this.pokemonMovesContainer);
-
-    this.pokemonEggMovesContainer = this.scene.add.container(102, 85);
-    this.pokemonEggMovesContainer.setScale(0.375);
-
-    const eggMovesLabel = addTextObject(this.scene, -46, 0, i18next.t("starterSelectUiHandler:eggMoves"), TextStyle.WINDOW_ALT);
-    eggMovesLabel.setOrigin(0.5, 0);
-
-    this.pokemonEggMovesContainer.add(eggMovesLabel);
-
-    for (let m = 0; m < 4; m++) {
-      const eggMoveContainer = this.scene.add.container(0, 16 + 14 * m);
-
-      const eggMoveBg = this.scene.add.nineslice(0, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
-      eggMoveBg.setOrigin(1, 0);
-
-      const eggMoveLabel = addTextObject(this.scene, -eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
-      eggMoveLabel.setOrigin(0.5, 0);
-
-      this.pokemonEggMoveBgs.push(eggMoveBg);
-      this.pokemonEggMoveLabels.push(eggMoveLabel);
-
-      eggMoveContainer.add(eggMoveBg);
-      eggMoveContainer.add(eggMoveLabel);
-
-      this.pokemonEggMoveContainers.push(eggMoveContainer);
-
-      this.pokemonEggMovesContainer.add(eggMoveContainer);
-    }
-
-    this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
     // The font size should be set per language
     const instructionTextSize = textSettings.instructionTextSize;
@@ -615,6 +513,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
 
+    this.infoOverlay = new PokedexInfoOverlay(this.scene, {
+      scale: overlayScale,
+      top: true,
+      x: 1,
+      y: this.scene.game.canvas.height / 6 - PokedexInfoOverlay.getHeight(overlayScale) - 29,
+    });
+    this.starterSelectContainer.add(this.infoOverlay);
+
     // Filter bar sits above everything, except the tutorial overlay and message box
     this.initTutorialOverlay(this.starterSelectContainer);
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
@@ -634,25 +540,26 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       console.log("Calling", args[0], args[1] ?? 0);
       this.lastSpecies = args[0];
       this.lastFormIndex = args[1] ?? 0;
+      this.starterAttributes = args[2] ?? { shiny:false, female:true, variant:0, form:0 };
       this.starterSetup();
       console.log("this.lastSpecies", this.lastSpecies);
-      console.log("this.lastForm", this.lastFormIndex);
+      console.log("this.lastFormIndex", this.lastFormIndex);
+      console.log("A this.starterAttributes", this.starterAttributes);
     }
 
-    // We want the normal appearence here
-    if (!this.starterPreferences) {
-      this.starterPreferences = StarterPrefs.load();
-    }
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
-    this.pokerusSpecies = getPokerusStarters(this.scene);
-
+    this.infoOverlay.clear();
 
     super.show(args);
+
+    console.log("B this.starterAttributes", this.starterAttributes);
 
     this.starterSelectContainer.setVisible(true);
     this.getUi().bringToTop(this.starterSelectContainer);
 
-    this.starterPreferences[this.lastSpecies.speciesId] = this.initStarterPrefs(this.lastSpecies);
+    this.starterAttributes = this.initStarterPrefs();
+
+    console.log("C this.starterAttributes", this.starterAttributes);
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions);
 
@@ -660,6 +567,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.setCursor(0);
 
+    console.log("D this.starterAttributes", this.starterAttributes);
 
     this.setSpecies(this.lastSpecies);
     this.updateInstructions();
@@ -667,7 +575,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return true;
 
   }
-
 
   starterSetup(): void {
 
@@ -685,7 +592,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.levelMoves = (formIndex > 0 && pokemonFormLevelMoves.hasOwnProperty(formIndex)) ? pokemonFormLevelMoves[species.speciesId][formIndex] : pokemonSpeciesLevelMoves[species.speciesId];
       this.ability1 = form.ability1;
       this.ability2 = (form.ability2 === form.ability1) ? null : form.ability2;
-      this.abilityHidden = form.abilityHidden;
+      this.abilityHidden = (form.abilityHidden === form.ability1) ? null : form.abilityHidden;
 
       this.evolutions = allEvolutions.filter(e => (e.preFormKey === form.formKey || e.preFormKey === null));
       this.baseStats = form.baseStats;
@@ -695,7 +602,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
       this.ability1 = species.ability1;
       this.ability2 = (species.ability2 === species.ability1) ? null : species.ability2;
-      this.abilityHidden = species.abilityHidden;
+      this.abilityHidden = (species.abilityHidden === species.ability1) ? null : species.abilityHidden;
 
       this.evolutions = allEvolutions;
       this.baseStats = species.baseStats;
@@ -724,6 +631,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     ];
 
     this.biomes = catchableSpecies[species.speciesId];
+
+    this.battleForms = species.forms.filter(f => !f.isStarterSelectable);
   }
 
   /**
@@ -734,10 +643,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * @param species The species to get Starter Preferences for
    * @returns StarterAttributes for the species
    */
-  initStarterPrefs(species: PokemonSpecies): StarterAttributes {
-    const starterAttributes = this.starterPreferences[species.speciesId];
-    const dexEntry = this.scene.gameData.dexData[species.speciesId];
-    const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)];
+  initStarterPrefs(): StarterAttributes {
+    const starterAttributes = this.starterAttributes;
+    const dexEntry = this.scene.gameData.dexData[this.lastSpecies.speciesId];
+    const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
 
     // no preferences or Pokemon wasn't caught, return empty attribute
     if (!starterAttributes || !dexEntry.caughtAttr) {
@@ -777,7 +686,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (starterAttributes.ability !== undefined) {
-      const speciesHasSingleAbility = species.ability2 === species.ability1;
+      const speciesHasSingleAbility = this.lastSpecies.ability2 === this.lastSpecies.ability1;
       const abilityAttr = starterData.abilityAttr;
       const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
       const hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
@@ -796,8 +705,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     const selectedForm = starterAttributes.form;
-    if (selectedForm !== undefined && (!species.forms[selectedForm]?.isStarterSelectable || !(caughtAttr & this.scene.gameData.getFormAttr(selectedForm)))) {
-      // requested form wasn't unlocked/isn't a starter form, purging setting
+    if (selectedForm !== undefined && (this.lastSpecies.forms[selectedForm]?.isStarterSelectable && !(caughtAttr & this.scene.gameData.getFormAttr(selectedForm)))) {
+      // requested form wasn't unlocked and is selectable as a starter
       delete starterAttributes.form;
     }
 
@@ -1000,8 +909,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   processInput(button: Button): boolean {
-
-
     if (this.blockInput) {
       return false;
     }
@@ -1028,7 +935,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       let starterContainer;
       const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
       // prepare persistent starter data to store changes
-      const starterAttributes = this.starterPreferences[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
+      const starterAttributes = this.starterAttributes;
 
       if (button === Button.ACTION) {
 
@@ -1148,7 +1055,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                 ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                   options: [
-                    // Add the "Common" title option
                     {
                       label: "Common:",
                       skip: true,
@@ -1156,14 +1062,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => false, // Non-selectable, but handler is required
                       onHover: () => this.moveInfoOverlay.clear() // No hover behavior for titles
                     },
-                    // Add the first 3 egg moves
                     ...this.eggMoves.slice(0, 3).map((m, i) => ({
                       label: allMoves[m].name,
                       color: this.hasEggMoves[i] ? "#ffffff" : "#6b5a73",
                       handler: () => false,
                       onHover: () => this.moveInfoOverlay.show(allMoves[m])
                     })),
-                    // Add the "Rare" title option
                     {
                       label: "Rare:",
                       skip: true,
@@ -1171,14 +1075,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => false,
                       onHover: () => this.moveInfoOverlay.clear()
                     },
-                    // Add the remaining egg moves (4th onwards)
                     {
                       label: allMoves[this.eggMoves[3]].name,
                       color: this.hasEggMoves[3] ? "#ffffff" : "#6b5a73",
                       handler: () => false,
                       onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
                     },
-                    // Add the "Cancel" option at the end
                     {
                       label: i18next.t("menu:cancel"),
                       handler: () => {
@@ -1248,9 +1150,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
             ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
 
-              ui.showText(i18next.t("pokedexUiHandler:abilities"), null, () => {
-
-                //                this.moveInfoOverlay.show(allMoves[this.eggMoves[0]]);
+              ui.showText(i18next.t("pokedexUiHandler:showAbilities"), null, () => {
 
                 const options: any[] = [];
 
@@ -1259,7 +1159,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     label: allAbilities[this.ability1].name,
                     color: this.hasAbilities[0] > 0 ? "#ffffff" : "#6b5a73",
                     handler: () => false,
-                    onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                    onHover: () => this.infoOverlay.show(allAbilities[this.ability1].description)
                   });
                 }
                 if (this.ability2) {
@@ -1267,7 +1167,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     label: allAbilities[this.ability2].name,
                     color: this.hasAbilities[1] > 0 ? "#ffffff" : "#6b5a73",
                     handler: () => false,
-                    onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                    onHover: () => this.infoOverlay.show(allAbilities[this.ability2].description)
                   });
                 }
 
@@ -1277,13 +1177,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     skip: true,
                     color: "#ccbe00",
                     handler: () => false,
-                    onHover: () => this.moveInfoOverlay.clear()
+                    onHover: () => this.infoOverlay.clear()
                   });
                   options.push({
                     label: allAbilities[this.abilityHidden].name,
                     color: this.hasAbilities[2] > 0 ? "#ffffff" : "#6b5a73",
                     handler: () => false,
-                    onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                    onHover: () => this.infoOverlay.show(allAbilities[this.abilityHidden].description)
                   });
                 }
 
@@ -1293,25 +1193,25 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     skip: true,
                     color: "#ccbe00",
                     handler: () => false,
-                    onHover: () => this.moveInfoOverlay.clear()
+                    onHover: () => this.infoOverlay.clear()
                   });
                   options.push({
                     label: allAbilities[this.passive].name,
                     color: this.hasPassive ? "#ffffff" : "#6b5a73",
                     handler: () => false,
-                    onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                    onHover: () => this.infoOverlay.show(allAbilities[this.passive].description)
                   });
                 }
 
                 options.push({
                   label: i18next.t("menu:cancel"),
                   handler: () => {
-                    this.moveInfoOverlay.clear();
+                    this.infoOverlay.clear();
                     this.clearText();
                     ui.setMode(Mode.POKEDEX_PAGE, "refresh");
                     return true;
                   },
-                  onHover: () => this.moveInfoOverlay.clear()
+                  onHover: () => this.infoOverlay.clear()
                 });
 
                 ui.setModeWithoutClear(Mode.OPTION_SELECT, {
@@ -1334,7 +1234,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
               const options: any[] = [];
 
-              ui.showText(i18next.t("pokedexUiHandler:abilities"), null, () => {
+              ui.showText(i18next.t("pokedexUiHandler:biomes"), null, () => {
 
                 this.biomes.map(b => {
                   options.push({
@@ -1376,45 +1276,76 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
               const options: any[] = [];
 
-              ui.showText(i18next.t("pokedexUiHandler:abilities"), null, () => {
+              ui.showText(i18next.t("pokedexUiHandler:evolutionsAndForms"), null, () => {
 
-                if (!this.evolutions) {
-                  this.blockInput = false;
-                  return true;
-                }
-                if (this.evolutions.length === 0) {
+                if (!this.evolutions && !this.battleForms) {
                   this.blockInput = false;
                   return true;
                 }
 
-                this.evolutions.map(evo => {
-                  console.log(evo);
-                  console.log(Species[evo.speciesId]);
-                  options.push({
-                    label: i18next.t(`pokemon:${Species[evo.speciesId].toUpperCase()}`),
-                    color: "#ccbe00",
-                    handler: () => {
-                      const newSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
-                      const newFormIndex = evo.evoFormKey;
-                      ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex);
-                      return true;
+                if (this.evolutions.length > 0) {
+                  this.evolutions.map(evo => {
+                    console.log(evo);
+                    console.log(Species[evo.speciesId]);
+                    options.push({
+                      label: i18next.t(`pokemon:${Species[evo.speciesId].toUpperCase()}`),
+                      color: "#ccbe00",
+                      handler: () => {
+                        const newSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
+                        // Attempts to find the formIndex of the evolved species
+                        const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.lastSpecies.forms.length > 0 ? this.lastSpecies.forms[this.lastFormIndex].formKey : "");
+                        const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
+                        const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+                        this.starterAttributes.form = newFormIndex;
+                        this.moveInfoOverlay.clear();
+                        this.clearText();
+                        ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                        return true;
+                      }
+                    });
+                    let label:string = "";
+                    if (evo.level > 1) {
+                      label = `${evo.level}`;
+                    } else if (evo.item) {
+                      label = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
+                        " (" + (evo.item > 50 ? "Ultra" : "Great") + ")";
+                    } else {
+                      label = "";
                     }
+                    options.push({
+                      label: label,
+                      skip: true,
+                      handler: () => false
+                    });
                   });
-                  let label:string = "";
-                  if (evo.level > 1) {
-                    label = `${evo.level}`;
-                  } else if (evo.item) {
-                    label = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
-                      " (" + (evo.item > 50 ? "Ultra" : "Great") + ")";
-                  } else {
-                    label = "";
-                  }
-                  options.push({
-                    label: label,
-                    skip: true,
-                    handler: () => false
+                }
+
+                if (this.battleForms.length > 0) {
+                  this.battleForms.map(bf => {
+                    const formText = capitalizeString(bf.formKey, "-", false, false);
+                    const speciesName = capitalizeString(this.getStarterSpecies(this.lastSpecies).name, "_", true, false);
+                    const label = Object.values(SpeciesFormKey).includes(bf.formKey as SpeciesFormKey) ?
+                      i18next.t(`battlePokemonForm:${bf.formKey}`, { pokemonName:this.lastSpecies.name }) : (
+                        this.lastSpecies.speciesId === Species.ARCEUS ?
+                          i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`) :
+                          formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : ""
+                      );
+                    options.push({
+                      label: label,
+                      color: "#ccbe00",
+                      handler: () => {
+                        const newSpecies = this.lastSpecies;
+                        const newFormIndex = bf.formIndex;
+                        this.starterAttributes.form = newFormIndex;
+                        this.moveInfoOverlay.clear();
+                        this.clearText();
+                        console.log("Pressing form", newSpecies, newFormIndex);
+                        ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                        return true;
+                      }
+                    });
                   });
-                });
+                }
 
                 options.push({
                   label: i18next.t("menu:cancel"),
@@ -1656,8 +1587,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
               if (starterAttributes.shiny) {
               // Change to shiny, we need to get the proper default variant
-                const newProps = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
-                const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : newProps.variant;
+                const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : 0;
                 this.setSpeciesDetails(this.lastSpecies, { shiny: true, variant: newVariant });
 
                 this.scene.playSound("se/sparkle");
@@ -1666,6 +1596,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
                 this.pokemonShinyIcon.setTint(tint);
                 this.pokemonShinyIcon.setVisible(true);
+                console.log(starterAttributes.shiny, starterAttributes.variant);
               } else {
                 this.setSpeciesDetails(this.lastSpecies, { shiny: false, variant: 0 });
                 this.pokemonShinyIcon.setVisible(false);
@@ -1674,6 +1605,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.V:
+            console.log("before", starterAttributes.shiny, starterAttributes.variant);
             if (this.canCycleVariant) {
               let newVariant = props.variant;
               do {
@@ -1698,6 +1630,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               const tint = getVariantTint(newVariant as Variant);
               this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
               this.pokemonShinyIcon.setTint(tint);
+              console.log("after", starterAttributes.shiny, starterAttributes.variant);
               success = true;
             }
             break;
@@ -1755,50 +1688,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     return success || error;
-  }
-
-  switchMoveHandler(i: number, newMove: Moves, move: Moves) {
-    const speciesId = this.lastSpecies.speciesId;
-    const existingMoveIndex = this.starterMoveset?.indexOf(newMove)!; // TODO: is this bang correct?
-    this.starterMoveset![i] = newMove; // TODO: is this bang correct?
-    if (existingMoveIndex > -1) {
-      this.starterMoveset![existingMoveIndex] = move; // TODO: is this bang correct?
-    }
-    const props: DexAttrProps = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
-    // species has different forms
-    if (pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
-      // starterMoveData doesn't have base form moves or is using the single form format
-      if (!this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)].moveset || Array.isArray(this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)].moveset)) {
-        this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)].moveset = { [props.formIndex]: this.starterMoveset?.slice(0) as StarterMoveset };
-      }
-      const starterMoveData = this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)].moveset;
-
-      // starterMoveData doesn't have active form moves
-      if (!starterMoveData.hasOwnProperty(props.formIndex)) {
-        this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)].moveset[props.formIndex] = this.starterMoveset?.slice(0) as StarterMoveset;
-      }
-
-      // does the species' starter move data have its form's starter moves and has it been updated
-      if (starterMoveData.hasOwnProperty(props.formIndex)) {
-        // active form move hasn't been updated
-        if (starterMoveData[props.formIndex][existingMoveIndex] !== newMove) {
-          this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)].moveset[props.formIndex] = this.starterMoveset?.slice(0) as StarterMoveset;
-        }
-      }
-    } else {
-      this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)].moveset = this.starterMoveset?.slice(0) as StarterMoveset;
-    }
-    this.setSpeciesDetails(this.lastSpecies, { forSeen: false });
-
-    // switch moves of starter if exists
-    if (this.starterMovesets.length) {
-      Array.from({ length: this.starterSpecies.length }, (_, i) => {
-        const starterSpecies = this.starterSpecies[i];
-        if (starterSpecies.speciesId === speciesId) {
-          this.starterMovesets[i] = this.starterMoveset!; // TODO: is this bang correct?
-        }
-      });
-    }
   }
 
   updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
@@ -1943,24 +1832,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   setSpecies(species: PokemonSpecies | null) {
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
-    this.dexAttrCursor = species ? this.getCurrentDexProps(species.speciesId) : 0n;
-    this.abilityCursor = species ? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(this.getStarterSpecies(species)) : 0;
-    this.natureCursor = species ? this.scene.gameData.getSpeciesDefaultNature(this.getStarterSpecies(species)) : 0;
 
     if (!species && this.scene.ui.getTooltip().visible) {
       this.scene.ui.hideTooltip();
     }
 
-    const starterAttributes : StarterAttributes | null = species ? { ...this.starterPreferences[species.speciesId] } : null;
-
-    if (starterAttributes?.nature) {
-      // load default nature from stater save data, if set
-      this.natureCursor = starterAttributes.nature;
-    }
-    if (starterAttributes?.ability && !isNaN(starterAttributes.ability)) {
-      // load default ability from stater save data, if set
-      this.abilityCursor = starterAttributes.ability;
-    }
+    const starterAttributes : StarterAttributes | null = species ? { ...this.starterAttributes } : null;
 
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
@@ -2061,49 +1938,40 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
         const starterIndex = this.starterSpecies.indexOf(species);
 
-        let props: DexAttrProps;
+        let props: StarterAttributes;
 
         if (starterIndex > -1) {
-          props = this.scene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
+          props = this.starterAttributes;
           this.setSpeciesDetails(species, {
             shiny: props.shiny,
-            formIndex: props.formIndex,
+            formIndex: props.form,
             female: props.female,
             variant: props.variant,
-            abilityIndex: this.starterAbilityIndexes[starterIndex],
-            natureIndex: this.starterNatures[starterIndex]
           });
         } else {
           const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
-          const defaultAbilityIndex = starterAttributes?.ability ?? this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(this.getStarterSpecies(species));
           // load default nature from stater save data, if set
-          const defaultNature = starterAttributes?.nature || this.scene.gameData.getSpeciesDefaultNature(this.getStarterSpecies(species));
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
           if (starterAttributes?.variant && !isNaN(starterAttributes.variant)) {
             if (props.shiny) {
               props.variant = starterAttributes.variant as Variant;
             }
           }
-          props.formIndex = starterAttributes?.form ?? props.formIndex;
+          props.form = starterAttributes?.form ?? props.form;
           props.female = starterAttributes?.female ?? props.female;
 
           this.setSpeciesDetails(species, {
             shiny: props.shiny,
-            formIndex: props.formIndex,
+            formIndex: props.form,
             female: props.female,
             variant: props.variant,
-            abilityIndex: defaultAbilityIndex,
-            natureIndex: defaultNature
           });
         }
 
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
+        const speciesForm = getPokemonSpeciesForm(species.speciesId, props.form);
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.pokemonSprite.clearTint();
-        if (this.pokerusSpecies.includes(species)) {
-          handleTutorial(this.scene, Tutorial.Pokerus);
-        }
       } else {
         this.pokemonGrowthRateText.setText("");
         this.pokemonGrowthRateLabelText.setVisible(false);
@@ -2118,8 +1986,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonFormText.setVisible(false);
 
         const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, true, true);
-        const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(this.getStarterSpecies(species));
-        const defaultNature = this.scene.gameData.getSpeciesDefaultNature(this.getStarterSpecies(species));
         const props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
 
         this.setSpeciesDetails(species, {
@@ -2127,8 +1993,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           formIndex: props.formIndex,
           female: props.female,
           variant: props.variant,
-          abilityIndex: defaultAbilityIndex,
-          natureIndex: defaultNature,
           forSeen: true
         });
         this.pokemonSprite.setTint(0x808080);
@@ -2153,22 +2017,17 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         formIndex: 0,
         female: false,
         variant: 0,
-        abilityIndex: 0,
-        natureIndex: 0
       });
       this.pokemonSprite.clearTint();
     }
   }
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
-    let { shiny, formIndex, female, variant, abilityIndex, natureIndex } = options;
+    let { shiny, formIndex, female, variant } = options;
     const forSeen: boolean = options.forSeen ?? false;
-    const oldProps = species ? this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
-    const oldAbilityIndex = this.abilityCursor > -1 ? this.abilityCursor : this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(this.getStarterSpecies(species));
-    const oldNatureIndex = this.natureCursor > -1 ? this.natureCursor : this.scene.gameData.getSpeciesDefaultNature(this.getStarterSpecies(species));
-    this.dexAttrCursor = 0n;
-    this.abilityCursor = -1;
-    this.natureCursor = -1;
+    const oldProps = species ? this.starterAttributes : null;
+
+    console.log("A new beginning", shiny, formIndex, female, variant);
 
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
@@ -2193,12 +2052,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (species) {
-      this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny)) ? DexAttr.NON_SHINY : DexAttr.SHINY;
-      this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps?.female)) ? DexAttr.MALE : DexAttr.FEMALE;
-      this.dexAttrCursor |= (variant !== undefined ? !variant : !(variant = oldProps?.variant)) ? DexAttr.DEFAULT_VARIANT : variant === 1 ? DexAttr.VARIANT_2 : DexAttr.VARIANT_3;
-      this.dexAttrCursor |= this.scene.gameData.getFormAttr(formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex)); // TODO: is this bang correct?
-      this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
-      this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
+      // Only assign shiny, female, and variant if they are undefined
+      if (shiny === undefined) {
+        shiny = oldProps?.shiny ?? false;
+      }
+      if (female === undefined) {
+        female = oldProps?.female ?? false;
+      }
+      if (variant === undefined) {
+        variant = oldProps?.variant ?? 0;
+      }
+      if (formIndex === undefined) {
+        formIndex = oldProps?.form ?? 0;
+      }
     }
 
     this.pokemonSprite.setVisible(false);
@@ -2213,32 +2079,24 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
-      const abilityAttr = this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].abilityAttr;
 
       const caughtAttr = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
 
       if (!dexEntry.caughtAttr) {
-        const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
-        const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(this.getStarterSpecies(species));
-        const defaultNature = this.scene.gameData.getSpeciesDefaultNature(this.getStarterSpecies(species));
+        const props = this.starterAttributes;
 
         if (shiny === undefined || shiny !== props.shiny) {
           shiny = props.shiny;
+          console.log("Uh oh shiny:", shiny);
         }
-        if (formIndex === undefined || formIndex !== props.formIndex) {
-          formIndex = props.formIndex;
+        if (formIndex === undefined || formIndex !== props.form) {
+          formIndex = props.form;
         }
         if (female === undefined || female !== props.female) {
           female = props.female;
         }
         if (variant === undefined || variant !== props.variant) {
           variant = props.variant;
-        }
-        if (abilityIndex === undefined || abilityIndex !== defaultAbilityIndex) {
-          abilityIndex = defaultAbilityIndex;
-        }
-        if (natureIndex === undefined || natureIndex !== defaultNature) {
-          natureIndex = defaultNature;
         }
       }
 
@@ -2247,36 +2105,32 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.pokemonNumberText.setShadowColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true));
 
       if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
-        const starterIndex = this.starterSpecies.indexOf(species);
-
-        if (starterIndex > -1) {
-          this.starterAttr[starterIndex] = this.dexAttrCursor;
-          this.starterAbilityIndexes[starterIndex] = this.abilityCursor;
-          this.starterNatures[starterIndex] = this.natureCursor;
-        }
 
         const assetLoadCancelled = new BooleanHolder(false);
         this.assetLoadCancelled = assetLoadCancelled;
 
+        console.log("Updating sprite?", shouldUpdateSprite);
         if (shouldUpdateSprite) {
           species.loadAssets(this.scene, female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
             if (assetLoadCancelled.value) {
               return;
             }
+            console.log("Updating sprite...");
             this.assetLoadCancelled = null;
             this.speciesLoaded.set(species.speciesId, true);
             this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+            console.log(female, formIndex, shiny, variant); // TODO: is this bang correct?
+            console.log(species.getSpriteKey(female!, formIndex, shiny, variant));
             this.pokemonSprite.setPipelineData("shiny", shiny);
             this.pokemonSprite.setPipelineData("variant", variant);
             this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
             this.pokemonSprite.setVisible(!this.statsMode);
+            console.log("Was it updated?");
           });
         } else {
           this.pokemonSprite.setVisible(!this.statsMode);
         }
 
-        const isValidForChallenge = new BooleanHolder(true);
-        Challenge.applyChallenges(this.scene.gameMode, Challenge.ChallengeType.STARTER_CHOICE, species, isValidForChallenge, this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor), !!this.starterSpecies.length);
         const currentFilteredContainer = this.filteredStarterContainers.find(p => p.species.speciesId === species.speciesId);
         if (currentFilteredContainer) {
           const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
@@ -2297,24 +2151,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
         this.canCycleGender = isMaleCaught && isFemaleCaught;
 
-        const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
-        let hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
-        const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
-
-        /*
-         * Check for Pokemon with a single ability (at some point it was possible to catch them with their ability 2 attribute)
-         * This prevents cycling between ability 1 and 2 if they are both unlocked and the same
-         * but we still need to account for the possibility ability 1 was never unlocked and fallback on ability 2 in this case
-         */
-        if (hasAbility1 && hasAbility2 && species.ability1 === species.ability2) {
-          hasAbility2 = 0;
-        }
-
-        this.canCycleAbility = [ hasAbility1, hasAbility2, hasHiddenAbility ].filter(a => a).length > 1;
-
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
-        this.canCycleNature = this.scene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
 
       }
 
@@ -2328,52 +2166,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr) {
-
-        let levelMoves: LevelMoves;
-        if (pokemonFormLevelMoves.hasOwnProperty(species.speciesId) && formIndex && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)) {
-          levelMoves = pokemonFormLevelMoves[species.speciesId][formIndex];
-        } else {
-          levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
-        }
-        this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
-        if (speciesEggMoves.hasOwnProperty(species.speciesId)) {
-          for (let em = 0; em < 4; em++) {
-            if (this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].eggMoves & (1 << em)) {
-              this.speciesStarterMoves.push(speciesEggMoves[species.speciesId][em]);
-            }
-          }
-        }
-
-        const speciesMoveData = this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].moveset;
-        const moveData: StarterMoveset | null = speciesMoveData
-          ? Array.isArray(speciesMoveData)
-            ? speciesMoveData
-            : speciesMoveData[formIndex!] // TODO: is this bang correct?
-          : null;
-        const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves.hasOwnProperty(species.speciesId) ? speciesEggMoves[species.speciesId].filter((_, em: integer) => this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].eggMoves & (1 << em)) : []);
-        this.starterMoveset = (moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset)).filter(m => availableStarterMoves.find(sm => sm === m)) as StarterMoveset;
-        // Consolidate move data if it contains an incompatible move
-        if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length) {
-          this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset?.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
-        }
-
-        // Remove duplicate moves
-        this.starterMoveset = this.starterMoveset.filter(
-          (move, i) => {
-            return this.starterMoveset?.indexOf(move) === i;
-          }) as StarterMoveset;
-
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
-        const formText = capitalizeString(species?.forms[formIndex!]?.formKey, "-", false, false); // TODO: is the bang correct?
-
-        const speciesName = capitalizeString(Species[species.speciesId], "_", true, false);
-
-        if (species.speciesId === Species.ARCEUS) {
-          this.pokemonFormText.setText(i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`));
-        } else {
-          this.pokemonFormText.setText(formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : "");
-        }
-
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.setTypeIcons(null, null);
@@ -2385,31 +2178,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.pokemonGenderText.setText("");
       this.setTypeIcons(null, null);
     }
-
-    if (!this.starterMoveset) {
-      this.starterMoveset = this.speciesStarterMoves.slice(0, 4) as StarterMoveset;
-    }
-
-    for (let m = 0; m < 4; m++) {
-      const move = m < this.starterMoveset.length ? allMoves[this.starterMoveset[m]] : null;
-      this.pokemonMoveBgs[m].setFrame(Type[move ? move.type : Type.UNKNOWN].toString().toLowerCase());
-      this.pokemonMoveLabels[m].setText(move ? move.name : "-");
-      this.pokemonMoveContainers[m].setVisible(!!move);
-    }
-
-    const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
-
-    for (let em = 0; em < 4; em++) {
-      const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
-      const eggMoveUnlocked = eggMove && this.scene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].eggMoves & (1 << em);
-      this.pokemonEggMoveBgs[em].setFrame(Type[eggMove ? eggMove.type : Type.UNKNOWN].toString().toLowerCase());
-      this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
-    }
-
-    this.pokemonEggMovesContainer.setVisible(!!this.speciesStarterDexEntry?.caughtAttr && hasEggMoves);
-
-    this.pokemonAdditionalMoveCountLabel.setText(`(+${Math.max(this.speciesStarterMoves.length - 4, 0)})`);
-    this.pokemonAdditionalMoveCountLabel.setVisible(this.speciesStarterMoves.length > 4);
 
     this.updateInstructions();
   }
@@ -2432,7 +2200,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   /**
    * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
-   * and to display the correct shiny, variant, and form based on the StarterPreferences
+   * and to display the correct shiny, variant, and form based on this.starterAttributes
    *
    * @param speciesId the id of the species to get props for
    * @returns the dex props
@@ -2445,7 +2213,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
      *  If neither of these pass, we add DexAttr.MALE to our temp props
      */
-    if (this.starterPreferences[speciesId]?.female || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)) {
+    if (this.starterAttributes?.female || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)) {
       props += DexAttr.FEMALE;
     } else {
       props += DexAttr.MALE;
@@ -2453,10 +2221,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     /* This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences.
      * If they're not there, it enables shiny state by default if any shiny was caught
      */
-    if (this.starterPreferences[speciesId]?.shiny || ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)) {
+    if (this.starterAttributes?.shiny || ((caughtAttr & DexAttr.SHINY) > 0n && this.starterAttributes?.shiny !== false)) {
       props += DexAttr.SHINY;
-      if (this.starterPreferences[speciesId]?.variant !== undefined) {
-        props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
+      if (this.starterAttributes?.variant !== undefined) {
+        props += BigInt(Math.pow(2, this.starterAttributes?.variant)) * DexAttr.DEFAULT_VARIANT;
       } else {
         /*  This calculates the correct variant if there's no starter preferences for it.
          *  This gets the highest tier variant that you've caught and adds it to the temp props
@@ -2473,8 +2241,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       props += DexAttr.NON_SHINY;
       props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
     }
-    if (this.starterPreferences[speciesId]?.form) { // this checks for the form of the pokemon
-      props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.form)) * DexAttr.DEFAULT_FORM;
+    if (this.starterAttributes?.form) { // this checks for the form of the pokemon
+      props += BigInt(Math.pow(2, this.starterAttributes?.form)) * DexAttr.DEFAULT_FORM;
     } else {
       // Get the first unlocked form
       props += this.scene.gameData.getFormAttr(this.scene.gameData.getFormIndex(caughtAttr));
@@ -2529,7 +2297,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   clear(): void {
     super.clear();
 
-    //    StarterPrefs.save(this.starterPreferences);
     this.cursor = -1;
     this.hideInstructions();
     this.activeTooltip = undefined;
