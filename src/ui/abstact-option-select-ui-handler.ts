@@ -116,10 +116,6 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       ).join("\n"),
       TextStyle.WINDOW, { maxLines: options.length, lineSpacing: 12 }
     );
-    console.log(options.map(o => o.item
-      ? `[color=${o.color || "white"}]    ${o.label}[/color]`
-      : `[color=${o.color || "white"}]${o.label}[/color]`
-    ).join("\n"));
     this.optionSelectText.setOrigin(0, 0);
     this.optionSelectText.setName("text-option-select");
     this.optionSelectContainer.add(this.optionSelectText);
@@ -199,8 +195,6 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     let playSound = true;
 
-    console.log(button);
-
     if (button === Button.ACTION || button === Button.CANCEL) {
       if (this.blockInput) {
         ui.playError();
@@ -209,29 +203,22 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
       success = true;
       if (button === Button.CANCEL) {
-        console.log("Pressed CANCEL");
         if (this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
           this.scrollCursor = (this.config.options.length - this.config.maxOptions) + 1;
           this.cursor = unskippedIndices.length - 1;
-          console.log("A", this.scrollCursor, this.cursor);
         } else if (!this.config?.noCancel) {
           this.setCursor(unskippedIndices.length - 1);
-          console.log("B", this.scrollCursor, this.cursor);
         } else {
-          console.log("C", this.scrollCursor, this.cursor);
           return false;
         }
       }
       const option = this.config?.options[unskippedIndices[this.cursor] + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
-      console.log("CD", option);
       if (option?.handler()) {
         if (!option.keepOpen) {
-          console.log("D", this.scrollCursor, this.cursor);
           this.clear();
         }
         playSound = !option.overrideSound;
       } else {
-        console.log("E", this.scrollCursor, this.cursor);
         ui.playError();
       }
     } else if (button === Button.SUBMIT && ui.getMode() === Mode.AUTO_COMPLETE) {

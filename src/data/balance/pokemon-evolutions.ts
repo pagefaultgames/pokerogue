@@ -1690,8 +1690,6 @@ export function initPokemonPrevolutions(): void {
       pokemonPrevolutions[ev.speciesId] = parseInt(pk) as Species;
     }
   });
-  console.log("Prevo", pokemonPrevolutions[Species.IVYSAUR]);
-  console.log("Prevo", pokemonPrevolutions[Species.VENUSAUR]);
 }
 
 
