@@ -1424,7 +1424,7 @@ export default class BattleScene extends SceneBase {
       return 0;
     }
 
-    const isEggPhase: boolean = this.getCurrentPhase()?.constructor.name === "EggLapsePhase";
+    const isEggPhase: boolean = [ "EggLapsePhase", "EggHatchPhase" ].includes(this.getCurrentPhase()?.constructor.name ?? "");
 
     switch (species.speciesId) {
       case Species.UNOWN:
