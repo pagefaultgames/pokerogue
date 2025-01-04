@@ -207,6 +207,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private baseTotal: number;
   private evolutions: SpeciesFormEvolution[];
   private battleForms: PokemonForm[];
+  private prevolution: SpeciesFormEvolution;
+  private baseForm: PokemonForm;
 
   private speciesStarterDexEntry: DexEntry | null;
   private canCycleShiny: boolean;
@@ -633,6 +635,30 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.biomes = catchableSpecies[species.speciesId];
 
     this.battleForms = species.forms.filter(f => !f.isStarterSelectable);
+
+    this.prevolution = null;
+    const preSpecies = pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId) ? allSpecies.find(sp => sp.speciesId === pokemonPrevolutions[this.lastSpecies.speciesId]) : null;
+    console.log("Prespecies", preSpecies?.name);
+    if (preSpecies) {
+      const preEvolutions = pokemonEvolutions.hasOwnProperty(preSpecies.speciesId) ? pokemonEvolutions[preSpecies.speciesId] : [];
+      console.log(preEvolutions);
+      if (species.forms.length > 0) {
+        console.log("A");
+        this.prevolution = preEvolutions.filter(e => (e.evoFormKey === species.forms[formIndex].formKey || e.evoFormKey === null))[0];
+      } else {
+        console.log("B");
+        this.prevolution = preEvolutions[0];
+      }
+
+    }
+
+    if (this.battleForms.find(bf => bf.formIndex === this.lastFormIndex)) {
+      const indexToRemove = this.battleForms.findIndex(form => form.formIndex === this.lastFormIndex);
+      if (indexToRemove !== -1) {
+        this.battleForms.splice(indexToRemove, 1);
+      }
+      this.battleForms.unshift(this.lastSpecies.forms[0]);
+    }
   }
 
   /**
@@ -1278,12 +1304,89 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
               ui.showText(i18next.t("pokedexUiHandler:evolutionsAndForms"), null, () => {
 
-                if (!this.evolutions && !this.battleForms) {
+                if (!this.prevolution && !this.baseForm && !this.evolutions && !this.battleForms) {
                   this.blockInput = false;
                   return true;
                 }
 
+                if (this.prevolution) {
+                  options.push({
+                    label: i18next.t("pokedexUiHandler:prevolution") + ":",
+                    skip: true,
+                    handler: () => false
+                  });
+
+                  const pre = this.prevolution;
+                  console.log("Prevolution", pre);
+                  options.push({
+                    label: i18next.t(`pokemon:${Species[pokemonPrevolutions[pre.speciesId]].toUpperCase()}`),
+                    color: "#ccbe00",
+                    handler: () => {
+                      const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
+                      // Attempts to find the formIndex of the evolved species
+                      const newFormKey = pre.evoFormKey ? pre.evoFormKey : (this.lastSpecies.forms.length > 0 ? this.lastSpecies.forms[this.lastFormIndex].formKey : "");
+                      const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
+                      const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+                      this.starterAttributes.form = newFormIndex;
+                      this.moveInfoOverlay.clear();
+                      this.clearText();
+                      ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                      return true;
+                    }
+                  });
+
+                  let label:string = "";
+                  if (pre.level > 1) {
+                    label = `${pre.level}`;
+                  } else if (pre.item) {
+                    label = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[pre.item].toUpperCase()}`) +
+                      " (" + (pre.item > 50 ? "Ultra" : "Great") + ")";
+                  } else {
+                    label = "";
+                  }
+                  options.push({
+                    label: label,
+                    skip: true,
+                    handler: () => false
+                  });
+
+                } else if (this.baseForm) {
+                  options.push({
+                    label: i18next.t("pokedexUiHandler:baseForm") + ":",
+                    skip: true,
+                    handler: () => false
+                  });
+                  const bf = this.baseForm;
+                  const formText = capitalizeString(bf.formKey, "-", false, false);
+                  const speciesName = capitalizeString(this.getStarterSpecies(this.lastSpecies).name, "_", true, false);
+                  const label = Object.values(SpeciesFormKey).includes(bf.formKey as SpeciesFormKey) ?
+                    i18next.t(`battlePokemonForm:${bf.formKey}`, { pokemonName:this.lastSpecies.name }) : (
+                      this.lastSpecies.speciesId === Species.ARCEUS ?
+                        i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`) :
+                        formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : ""
+                    );
+                  options.push({
+                    label: label,
+                    color: "#ccbe00",
+                    handler: () => {
+                      const newSpecies = this.lastSpecies;
+                      const newFormIndex = bf.formIndex;
+                      this.starterAttributes.form = newFormIndex;
+                      this.moveInfoOverlay.clear();
+                      this.clearText();
+                      console.log("Pressing form", newSpecies, newFormIndex);
+                      ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                      return true;
+                    }
+                  });
+                }
+
                 if (this.evolutions.length > 0) {
+                  options.push({
+                    label: i18next.t("pokedexUiHandler:evolutions") + ":",
+                    skip: true,
+                    handler: () => false
+                  });
                   this.evolutions.map(evo => {
                     console.log(evo);
                     console.log(Species[evo.speciesId]);
@@ -1321,15 +1424,24 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 }
 
                 if (this.battleForms.length > 0) {
+                  options.push({
+                    label: i18next.t("pokedexUiHandler:forms") + ":",
+                    skip: true,
+                    handler: () => false
+                  });
                   this.battleForms.map(bf => {
+                    let label: string;
                     const formText = capitalizeString(bf.formKey, "-", false, false);
                     const speciesName = capitalizeString(this.getStarterSpecies(this.lastSpecies).name, "_", true, false);
-                    const label = Object.values(SpeciesFormKey).includes(bf.formKey as SpeciesFormKey) ?
+                    label = Object.values(SpeciesFormKey).includes(bf.formKey as SpeciesFormKey) ?
                       i18next.t(`battlePokemonForm:${bf.formKey}`, { pokemonName:this.lastSpecies.name }) : (
                         this.lastSpecies.speciesId === Species.ARCEUS ?
                           i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`) :
                           formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : ""
                       );
+                    if (!label && bf.formIndex === 0) {
+                      label = i18next.t(`pokemon:${Species[bf.speciesId].toUpperCase()}`);
+                    }
                     options.push({
                       label: label,
                       color: "#ccbe00",
