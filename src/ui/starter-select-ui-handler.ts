@@ -3648,7 +3648,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (!this.starterSpecies.length) {
       return false;
     }
-    console.log("reached tryStart");
 
     const ui = this.getUi();
 
