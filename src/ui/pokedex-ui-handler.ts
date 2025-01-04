@@ -1363,7 +1363,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Biome filter
       const indexToBiome = new Map(
-        Object.values(Biome).map((value, index) => [ index, value ])
+        Object.values(Biome)
+          .map((value, index) => (typeof value === "string" ? [ index, value ] : undefined))
+          .filter((entry): entry is [number, string] => entry !== undefined)
       );
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
@@ -1373,7 +1375,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       // Only show uncatchable mons if all biomes are selected.
       // TODO: Have an entry for uncatchable mons.
       const showUncatchable = (biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 35) ? true : false;
-      const fitsBiome = this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item))) || showUncatchable;
+      const fitsBiome = this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? "")) || showUncatchable;
 
 
       // Caught / Shiny filter

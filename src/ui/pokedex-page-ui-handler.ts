@@ -3,7 +3,7 @@ import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import BattleScene, { starterColors } from "#app/battle-scene";
-import { Ability, allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/ability";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
@@ -48,6 +48,7 @@ import { BiomePoolTier, BiomeTierTod, catchableSpecies } from "#app/data/balance
 import { Biome } from "#app/enums/biome";
 import { TimeOfDay } from "#app/enums/time-of-day";
 import { SpeciesFormKey } from "#app/enums/species-form-key";
+import { Abilities } from "#app/enums/abilities";
 
 
 interface LanguageSetting {
@@ -118,7 +119,7 @@ interface SpeciesDetails {
   shiny?: boolean,
   formIndex?: integer
   female?: boolean,
-  variant?: Variant,
+  variant?: integer,
   forSeen?: boolean, // default = false
 }
 
@@ -193,10 +194,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private eggMoves: Moves[] = [];
   private hasEggMoves: boolean[] = [];
   private tmMoves: Moves[] = [];
-  private ability1: Ability;
-  private ability2: Ability;
-  private abilityHidden: Ability;
-  private passive: Ability;
+  private ability1: Abilities;
+  private ability2: Abilities | undefined;
+  private abilityHidden: Abilities | undefined;
+  private passive: Abilities;
   private hasPassive: boolean;
   private hasAbilities: number[];
   private biomes: BiomeTierTod[];
@@ -204,7 +205,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private baseTotal: number;
   private evolutions: SpeciesFormEvolution[];
   private battleForms: PokemonForm[];
-  private prevolution: SpeciesFormEvolution;
+  private prevolution: SpeciesFormEvolution | null;
 
   private speciesStarterDexEntry: DexEntry | null;
   private canCycleShiny: boolean;
@@ -572,8 +573,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       // If this form has a specific set of moves, we get them.
       this.levelMoves = (formIndex > 0 && pokemonFormLevelMoves.hasOwnProperty(formIndex)) ? pokemonFormLevelMoves[species.speciesId][formIndex] : pokemonSpeciesLevelMoves[species.speciesId];
       this.ability1 = form.ability1;
-      this.ability2 = (form.ability2 === form.ability1) ? null : form.ability2;
-      this.abilityHidden = (form.abilityHidden === form.ability1) ? null : form.abilityHidden;
+      this.ability2 = (form.ability2 === form.ability1) ? undefined : form.ability2;
+      this.abilityHidden = (form.abilityHidden === form.ability1) ? undefined : form.abilityHidden;
 
       this.evolutions = allEvolutions.filter(e => (e.preFormKey === form.formKey || e.preFormKey === null));
       this.baseStats = form.baseStats;
@@ -582,8 +583,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     } else {
       this.levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
       this.ability1 = species.ability1;
-      this.ability2 = (species.ability2 === species.ability1) ? null : species.ability2;
-      this.abilityHidden = (species.abilityHidden === species.ability1) ? null : species.abilityHidden;
+      this.ability2 = (species.ability2 === species.ability1) ? undefined : species.ability2;
+      this.abilityHidden = (species.abilityHidden === species.ability1) ? undefined : species.abilityHidden;
 
       this.evolutions = allEvolutions;
       this.baseStats = species.baseStats;
@@ -769,7 +770,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     if (this.scene.gameData.starterData.hasOwnProperty(species.speciesId)) {
       return species;
     } else {
-      return allSpecies.find(sp => sp.speciesId === pokemonStarters[species.speciesId]);
+      return allSpecies.find(sp => sp.speciesId === pokemonStarters[species.speciesId]) ?? species;
     }
   }
 
@@ -1157,11 +1158,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   });
                 }
                 if (this.ability2) {
+                  const ability = allAbilities[this.ability2];
                   options.push({
-                    label: allAbilities[this.ability2].name,
+                    label: ability?.name,
                     color: this.hasAbilities[1] > 0 ? "#ffffff" : "#6b5a73",
                     handler: () => false,
-                    onHover: () => this.infoOverlay.show(allAbilities[this.ability2].description)
+                    onHover: () => this.infoOverlay.show(ability?.description)
                   });
                 }
 
@@ -1173,11 +1175,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     handler: () => false,
                     onHover: () => this.infoOverlay.clear()
                   });
+                  const ability = allAbilities[this.abilityHidden];
                   options.push({
                     label: allAbilities[this.abilityHidden].name,
                     color: this.hasAbilities[2] > 0 ? "#ffffff" : "#6b5a73",
                     handler: () => false,
-                    onHover: () => this.infoOverlay.show(allAbilities[this.abilityHidden].description)
+                    onHover: () => this.infoOverlay.show(ability?.description)
                   });
                 }
 
@@ -1988,7 +1991,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             shiny: props.shiny,
             formIndex: props.form,
             female: props.female,
-            variant: props.variant,
+            variant: props.variant ?? 0,
           });
         } else {
           const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -2006,11 +2009,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             shiny: props.shiny,
             formIndex: props.form,
             female: props.female,
-            variant: props.variant,
+            variant: props.variant ?? 0,
           });
         }
 
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, props.form);
+        const speciesForm = getPokemonSpeciesForm(species.speciesId, props.form ?? 0);
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.pokemonSprite.clearTint();
@@ -2114,9 +2117,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.assetLoadCancelled = null;
     }
 
-    this.starterMoveset = null;
-    this.speciesStarterMoves = [];
-
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
 
@@ -2149,7 +2149,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.assetLoadCancelled = assetLoadCancelled;
 
         if (shouldUpdateSprite) {
-          species.loadAssets(this.scene, female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
+          species.loadAssets(this.scene, female!, formIndex, shiny, variant as Variant, true).then(() => { // TODO: is this bang correct?
             if (assetLoadCancelled.value) {
               return;
             }
