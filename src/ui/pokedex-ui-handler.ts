@@ -7,7 +7,7 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters, PokemonForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
-import { catchableSpecies, uncatchableSpecies } from "#app/data/balance/biomes";
+import { catchableSpecies } from "#app/data/balance/biomes";
 import { Type } from "#enums/type";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
@@ -639,6 +639,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.setUpgradeAnimation(icon, species);
     });
 
+    console.log("Allspecies", this.starterContainers.length);
+
     this.resetFilters();
     this.updateStarters();
 
@@ -745,17 +747,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
    * Set the selections for all filters to their default starting value
    */
   resetFilters() : void {
-    const caughtDropDown: DropDown = this.filterBar.getFilter(DropDownColumn.CAUGHT);
-
     this.filterBar.setValsToDefault();
-
-    // initial setting, in caught filter, select the options excluding the uncaught option
-    for (let i = 0; i < caughtDropDown.options.length; i++) {
-      // if the option is not "ALL" or "UNCAUGHT", toggle it
-      if (caughtDropDown.options[i].val !== "ALL" && caughtDropDown.options[i].val !== "UNCAUGHT") {
-        caughtDropDown.toggleOptionState(i);
-      }
-    }
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, moveToTop?: boolean) {
@@ -1382,7 +1374,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const biomes = catchableSpecies[container.species.speciesId].map(b => Biome[b.biome]);
       // Only show uncatchable mons if all biomes are selected.
       // TODO: Have an entry for uncatchable mons.
-      const showUncatchable = (uncatchableSpecies.includes(container.species.speciesId) && this.filterBar.getVals(DropDownColumn.BIOME).length === 35) ? true : false;
+      const showUncatchable = (biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 35) ? true : false;
       const fitsBiome = this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item))) || showUncatchable;
 
 
@@ -1503,7 +1495,52 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       if (fitsName && fitsAbilities && fitsMoves && fitsGen && fitsBiome && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
         this.filteredStarterContainers.push(container);
+      } else {
+        console.log(container.species.name);
+        if (!fitsName) {
+          console.log("fitsName is false");
+        }
+        if (!fitsAbilities) {
+          console.log("fitsAbilities is false");
+        }
+        if (!fitsMoves) {
+          console.log("fitsMoves is false");
+        }
+        if (!fitsGen) {
+          console.log("fitsGen is false");
+        }
+        if (!fitsBiome) {
+          console.log("fitsBiome is false");
+        }
+        if (!fitsType) {
+          console.log("fitsType is false");
+        }
+        if (!fitsCaught) {
+          console.log("fitsCaught is false");
+        }
+        if (!fitsPassive) {
+          console.log("fitsPassive is false");
+        }
+        if (!fitsCostReduction) {
+          console.log("fitsCostReduction is false");
+        }
+        if (!fitsFavorite) {
+          console.log("fitsFavorite is false");
+        }
+        if (!fitsWin) {
+          console.log("fitsWin is false");
+        }
+        if (!fitsHA) {
+          console.log("fitsHA is false");
+        }
+        if (!fitsEgg) {
+          console.log("fitsEgg is false");
+        }
+        if (!fitsPokerus) {
+          console.log("fitsPokerus is false");
+        }
       }
+      console.log(this.filteredStarterContainers.length);
     });
 
     this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
