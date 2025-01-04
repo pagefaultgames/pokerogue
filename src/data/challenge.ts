@@ -17,6 +17,7 @@ import { TypeColor, TypeShadow } from "#enums/color";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 
+
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
 
@@ -702,6 +703,39 @@ export class InverseBattleChallenge extends Challenge {
 }
 
 /**
+  * Begin Scoom Code
+  */
+
+/**
+ * Implements a fresh start challenge.
+ */
+export class FlipStatChallenge extends Challenge {
+  constructor() {
+    super(Challenges.FLIP_STAT, 1);
+  }
+
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
+    return true;
+  }
+
+  applyStarterCost(species: Species, cost: Utils.NumberHolder): boolean {
+    return true;
+  }
+
+
+  override getDifficulty(): number {
+    return 0;
+  }
+
+  static loadChallenge(source: FlipStatChallenge | any): FlipStatChallenge {
+    const newChallenge = new FlipStatChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
  * Lowers the amount of starter points available.
  */
 export class LowerStarterMaxCostChallenge extends Challenge {
@@ -886,6 +920,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_WEIGHT, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, weight: Utils.IntegerHolder): boolean;
+
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FLIP_STAT, pokemon: Pokemon, baseStats: number[]): boolean;
+
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -955,6 +992,9 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return FreshStartChallenge.loadChallenge(source);
     case Challenges.INVERSE_BATTLE:
       return InverseBattleChallenge.loadChallenge(source);
+    case Challenges.FLIP_STAT:
+      return FlipStatChallenge.loadChallenge(source);
+
   }
   throw new Error("Unknown challenge copied");
 }
@@ -967,5 +1007,6 @@ export function initChallenges() {
     new SingleTypeChallenge(),
     new FreshStartChallenge(),
     new InverseBattleChallenge(),
+    new FlipStatChallenge()
   );
 }

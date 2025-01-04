@@ -81,6 +81,11 @@ export class GameMode implements GameModeConfig {
     return this.hasChallenge(Challenges.FRESH_START);
   }
 
+  isFlipStatChallenge(): boolean {
+    return this.hasChallenge(Challenges.FLIP_STAT);
+  }
+
+
   /**
    * @returns either:
    * - override from overrides.ts
