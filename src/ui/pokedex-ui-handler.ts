@@ -354,7 +354,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     // Create and initialise filter bar
     this.filterBarContainer = this.scene.add.container(0, 0);
-    this.filterBar = new FilterBar(this.scene, speciesContainerX - 10, 1, 175 + 10, filterBarHeight);
+    this.filterBar = new FilterBar(this.scene, speciesContainerX, 1, 175, filterBarHeight, 2, 0, 6);
 
     // gen filter
     const genOptions: DropDownOption[] = [

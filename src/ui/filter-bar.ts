@@ -25,12 +25,19 @@ export class FilterBar extends Phaser.GameObjects.Container {
   public openDropDown: boolean = false;
   private lastCursor: number = -1;
   private uiTheme: UiTheme;
+  private leftPaddingX: number;
+  private rightPaddingX: number;
+  private cursorOffset: number;
 
-  constructor(scene: BattleScene, x: number, y: number, width: number, height: number) {
+  constructor(scene: BattleScene, x: number, y: number, width: number, height: number, leftPaddingX: number = 6, rightPaddingX: number = 6, cursorOffset: number = 8) {
     super(scene, x, y);
 
     this.width = width;
     this.height = height;
+
+    this.leftPaddingX = leftPaddingX;
+    this.rightPaddingX = rightPaddingX;
+    this.cursorOffset = cursorOffset;
 
     this.window = addWindow(scene, 0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(this.window);
@@ -97,23 +104,21 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * Position the filter dropdowns evenly across the width of the container
    */
   private calcFilterPositions(): void {
-    const paddingX = 6;
-    const cursorOffset = 8;
 
-    let totalWidth = paddingX * 2 + cursorOffset;
+    let totalWidth = this.leftPaddingX + this.rightPaddingX + this.cursorOffset;
     this.labels.forEach(label => {
-      totalWidth += label.displayWidth + cursorOffset;
+      totalWidth += label.displayWidth + this.cursorOffset;
     });
     const spacing = (this.width - totalWidth) / (this.labels.length - 1);
     for (let i = 0; i < this.labels.length; i++) {
       if (i === 0) {
-        this.labels[i].x = paddingX + cursorOffset;
+        this.labels[i].x = this.leftPaddingX + this.cursorOffset;
       } else {
         const lastRight = this.labels[i - 1].x + this.labels[i - 1].displayWidth;
-        this.labels[i].x = lastRight + spacing + cursorOffset;
+        this.labels[i].x = lastRight + spacing + this.cursorOffset;
       }
 
-      this.dropDowns[i].x = this.labels[i].x - cursorOffset - paddingX;
+      this.dropDowns[i].x = this.labels[i].x - this.cursorOffset - this.leftPaddingX;
       this.dropDowns[i].y = this.height;
     }
   }
@@ -140,8 +145,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
       }
     }
 
-    const cursorOffset = 8;
-    this.cursorObj.setPosition(this.labels[cursor].x - cursorOffset + 2, 6);
+    this.cursorObj.setPosition(this.labels[cursor].x - this.cursorOffset + 2, 6);
     this.lastCursor = cursor;
   }
 
