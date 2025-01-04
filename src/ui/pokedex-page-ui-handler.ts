@@ -183,9 +183,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private infoOverlay : PokedexInfoOverlay;
 
   private statsMode: boolean;
-  private starterIconsCursorXOffset: number = -3;
-  private starterIconsCursorYOffset: number = 1;
-  private starterIconsCursorIndex: number;
 
   private allSpecies: PokemonSpecies[] = [];
   private lastSpecies: PokemonSpecies;
@@ -2374,7 +2371,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     } else {
       this.statsMode = false;
       this.statsContainer.setVisible(false);
-      this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
+      this.pokemonSprite.setVisible(true);
       //@ts-ignore
       this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. !?!?
     }

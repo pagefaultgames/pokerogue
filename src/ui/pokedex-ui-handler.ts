@@ -1776,7 +1776,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   }
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
-    let { shiny, formIndex, female, variant, abilityIndex, natureIndex } = options;
+    let { shiny, formIndex, female, variant } = options;
     const forSeen: boolean = options.forSeen ?? false;
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
@@ -1811,8 +1811,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       if (!dexEntry.caughtAttr) {
         const props = this.getSanitizedProps(this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)));
-        const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-        const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
 
         if (shiny === undefined || shiny !== props.shiny) {
           shiny = props.shiny;
@@ -1825,12 +1823,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
         if (variant === undefined || variant !== props.variant) {
           variant = props.variant;
-        }
-        if (abilityIndex === undefined || abilityIndex !== defaultAbilityIndex) {
-          abilityIndex = defaultAbilityIndex;
-        }
-        if (natureIndex === undefined || natureIndex !== defaultNature) {
-          natureIndex = defaultNature;
         }
       }
 
