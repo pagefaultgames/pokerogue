@@ -581,7 +581,7 @@ export type SpeciesStatBoosterItem = keyof typeof SpeciesStatBoosterModifierType
  * @implements GeneratedPersistentModifierType
  */
 export class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
-  private key: SpeciesStatBoosterItem;
+  public key: SpeciesStatBoosterItem;
 
   constructor(key: SpeciesStatBoosterItem) {
     const item = SpeciesStatBoosterModifierTypeGenerator.items[key];
@@ -1024,6 +1024,8 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
     THICK_CLUB: { stats: [ Stat.ATK ], multiplier: 2, species: [ Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK ]},
     METAL_POWDER: { stats: [ Stat.DEF ], multiplier: 2, species: [ Species.DITTO ]},
     QUICK_POWDER: { stats: [ Stat.SPD ], multiplier: 2, species: [ Species.DITTO ]},
+    DEEP_SEA_SCALE: { stats: [ Stat.SPDEF ], multiplier: 2, species: [ Species.CLAMPERL ]},
+    DEEP_SEA_TOOTH: { stats: [ Stat.SPATK ], multiplier: 2, species: [ Species.CLAMPERL ]},
   };
 
   constructor() {
