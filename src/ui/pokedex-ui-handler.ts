@@ -440,6 +440,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.filterBar.addFilter(DropDownColumn.UNLOCKS, i18next.t("filterBar:unlocksFilter"), new DropDown(this.scene, 0, 0, unlocksOptions, this.updateStarters, DropDownType.RADIAL));
 
     // misc filter
+    const starters = [
+      new DropDownLabel(i18next.t("filterBar:starter"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isStarter"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:notStarter"), undefined, DropDownState.EXCLUDE),
+    ];
     const favoriteLabels = [
       new DropDownLabel(i18next.t("filterBar:favorite"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:isFavorite"), undefined, DropDownState.ON),
@@ -464,6 +469,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:hasPokerus"), undefined, DropDownState.ON),
     ];
     const miscOptions = [
+      new DropDownOption(this.scene, "STARTER", starters),
       new DropDownOption(this.scene, "FAVORITE", favoriteLabels),
       new DropDownOption(this.scene, "WIN", winLabels),
       new DropDownOption(this.scene, "HIDDEN_ABILITY", hiddenAbilityLabels),
@@ -1425,6 +1431,20 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
       });
 
+      // Starter Filter
+      const isStarter = this.getStarterSpeciesId(container.species.speciesId) === container.species.speciesId;
+      const fitsStarter = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "STARTER" && misc.state === DropDownState.ON) {
+          return isStarter;
+        }
+        if (misc.val === "STARTER" && misc.state === DropDownState.EXCLUDE) {
+          return !isStarter;
+        }
+        if (misc.val === "STARTER" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
       // Favorite Filter
       const isFavorite = this.starterPreferences[container.species.speciesId]?.favorite ?? false;
       const fitsFavorite = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
@@ -1489,7 +1509,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
       });
 
-      if (fitsName && fitsAbilities && fitsMoves && fitsGen && fitsBiome && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
+      if (fitsName && fitsAbilities && fitsMoves && fitsGen && fitsBiome && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsStarter && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
         this.filteredStarterContainers.push(container);
       }
     });
