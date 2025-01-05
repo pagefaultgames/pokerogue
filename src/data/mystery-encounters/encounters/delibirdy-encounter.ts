@@ -34,7 +34,7 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
   "PokemonBaseStatTotalModifier"
 ];
 
-const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 1.5;
+const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
 const doEventReward = (scene: BattleScene) => {
   const event_buff = scene.eventManager.activeEvent()?.delibirdyBuff ?? [];
@@ -60,8 +60,7 @@ const doEventReward = (scene: BattleScene) => {
  */
 export const DelibirdyEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.DELIBIRDY)
-    .withMaxAllowedEncounters(4)
-    .withEncounterTier(MysteryEncounterTier.COMMON) //Change back after event!
+    .withEncounterTier(MysteryEncounterTier.GREAT)
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER)) // Must have enough money for it to spawn at the very least
     .withPrimaryPokemonRequirement(
