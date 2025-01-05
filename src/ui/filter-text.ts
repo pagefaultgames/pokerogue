@@ -63,7 +63,7 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.menuMessageBoxContainer.setVisible(false);
 
     // Full-width window used for testing dialog messages in debug mode
-    this.dialogueMessageBox = addWindow(this.scene, -this.textPadding, 0, this.scene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
+    this.dialogueMessageBox = addWindow(scene, -this.textPadding, 0, this.scene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
     this.dialogueMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(this.dialogueMessageBox);
 
@@ -160,20 +160,6 @@ export class FilterText extends Phaser.GameObjects.Container {
 
     this.cursorObj.setPosition(cursorOffset, this.labels[cursor].y + 3);
     this.lastCursor = cursor;
-  }
-
-  /**
-   * Switch the message window style and size when we are replaying dialog for debug purposes
-   * In "dialog test mode", the window takes the whole width of the screen and the text
-   * is set up to wrap around the same way as the dialogue during the game
-   * @param isDialogMode whether to use the dialog test
-   */
-  setDialogTestMode(isDialogMode: boolean) {
-    this.dialogueMessageBox.setVisible(isDialogMode);
-    // If we're testing dialog, we use the same word wrapping as the battle message handler
-    this.message.setWordWrapWidth(isDialogMode ? this.scene.ui.getMessageHandler().wordWrapWidth : this.defaultWordWrapWidth);
-    this.message.setX(isDialogMode ? this.textPadding + 1 : this.textPadding);
-    this.message.setY(isDialogMode ? this.textPadding + 0.4 : this.textPadding);
   }
 
 

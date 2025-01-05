@@ -68434,23 +68434,24 @@ export const tmSpecies: TmSpecies = {
 };
 
 interface SpeciesTmMoves {
-  [key: number]: Array<Moves>
+  [key: integer]: Moves[]
 }
 
 function flipTmSpecies(tmSpecies: TmSpecies): SpeciesTmMoves {
   const flipped: SpeciesTmMoves = {};
 
-  for (const move in tmSpecies) {
-    const speciesList = tmSpecies[move]; // Convert the move key back to a number
+  for (const move in Object.keys(tmSpecies)) {
+    const moveKey = Number(move);
+    const speciesList = tmSpecies[moveKey];
 
     for (const species of speciesList) {
-      if (!flipped[species]) {
-        flipped[species] = [];
+      const speciesKey = Number(species);
+      if (!flipped[speciesKey]) {
+        flipped[speciesKey] = [];
       }
-      flipped[species].push(move);
+      flipped[speciesKey].push(moveKey);
     }
   }
-
   return flipped;
 }
 

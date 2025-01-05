@@ -8,6 +8,7 @@ import { FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/ability";
 import { allMoves } from "#app/data/move";
 import { allSpecies } from "#app/data/pokemon-species";
+import i18next from "i18next";
 
 export default class PokedexScanUiHandler extends FormModalUiHandler {
 
@@ -17,6 +18,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   nameKeys: string[];
   moveKeys: string[];
   abilityKeys: string[];
+  row: number;
 
   constructor(scene, mode) {
     super(scene, mode);
@@ -31,7 +33,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   }
 
   getModalTitle(config?: ModalConfig): string {
-    return "Choose option";
+    return i18next.t("pokedexUiHandler:scanChooseOption");
   }
 
   getWidth(config?: ModalConfig): number {
@@ -43,7 +45,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ "Select", "Cancel" ];
+    return [ i18next.t("pokedexUiHandler:scanSelect"), i18next.t("pokedexUiHandler:scanCancel") ];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -56,13 +58,29 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   }
 
   override getInputFieldConfigs(): InputFieldConfig[] {
-    return [{ label: "Dialogue" }];
+    switch (this.row) {
+      case FilterTextRow.NAME: {
+        return [{ label: i18next.t("pokedexUiHandler:scanLabelName") }];
+      }
+      case FilterTextRow.MOVE_1:
+      case FilterTextRow.MOVE_2: {
+        return [{ label: i18next.t("pokedexUiHandler:scanLabelMove") }];
+      }
+      case FilterTextRow.ABILITY_1:{
+        return [{ label: i18next.t("pokedexUiHandler:scanLabelAbility") }];
+      }
+      case FilterTextRow.ABILITY_2: {
+        return [{ label: i18next.t("pokedexUiHandler:scanLabelPassive") }];
+      }
+      default: {
+        return [{ label: "" }];
+      }
+    }
+
   }
 
-  reduceKeys(row: FilterTextRow): void {
-    console.log("Function was called!");
-    console.log(this.keys);
-    switch (row) {
+  reduceKeys(): void {
+    switch (this.row) {
       case FilterTextRow.NAME: {
         this.reducedKeys = this.nameKeys;
         break;
@@ -87,6 +105,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   // args[2] is an index of FilterTextRow
   //TODO: This logic is probably way more complex than we need, and actually messes things up for moves and abilities with a space like "Leech Seed"
   show(args: any[]): boolean {
+    this.row = args[2];
     const ui = this.getUi();
     const hasTitle = !!this.getModalTitle();
     this.updateFields(this.getInputFieldConfigs(), hasTitle);
@@ -94,8 +113,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
     const input = this.inputs[0];
     input.setMaxLength(255);
 
-    console.log(args[2]);
-    this.reduceKeys(args[2]);
+    this.reduceKeys();
 
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if ([ "escape", "space" ].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {

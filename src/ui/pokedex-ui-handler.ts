@@ -311,12 +311,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
                 }
               }
             }
-            // Switch to the dialog test window
-            this.setDialogTestMode(true);
             ui.showText(String(i18next.t(translatedString, interpolatorOptions)), null, () => this.scene.ui.showText("", 0, () => {
               handler.tutorialActive = false;
-              // Go back to the default message window
-              this.setDialogTestMode(false);
             }), null, true);
           },
           () => {
@@ -2057,15 +2053,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     while (this.starterSpecies.length) {
       this.popStarter(this.starterSpecies.length - 1);
     }
-  }
-
-  setDialogTestMode(isDialogMode: boolean) {
-    this.menuMessageBox.setVisible(!isDialogMode);
-    this.dialogueMessageBox.setVisible(isDialogMode);
-    // If we're testing dialog, we use the same word wrapping as the battle message handler
-    this.message.setWordWrapWidth(isDialogMode ? this.scene.ui.getMessageHandler().wordWrapWidth : this.defaultWordWrapWidth);
-    this.message.setX(isDialogMode ? this.textPadding + 1 : this.textPadding);
-    this.message.setY(isDialogMode ? this.textPadding + 0.4 : this.textPadding);
   }
 
   checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female: boolean, formIndex: number, shiny: boolean, variant: number) {

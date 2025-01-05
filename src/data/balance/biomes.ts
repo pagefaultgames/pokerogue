@@ -7741,9 +7741,9 @@ export function initBiomes() {
         : [ TimeOfDay.ALL ];
 
       catchableSpecies[speciesId].push({
-        biome: biome,
-        tier: tier,
-        tod: timesOfDay
+        biome: biome as Biome,
+        tier: tier as BiomePoolTier,
+        tod: timesOfDay as TimeOfDay[]
       });
 
       for (const tod of timesOfDay) {
