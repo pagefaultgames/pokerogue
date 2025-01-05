@@ -102,8 +102,17 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.unskippedIndices = this.getUnskippedIndices(options);
 
     if (this.optionSelectText) {
-      this.optionSelectText.destroy();
+      if (this.optionSelectText instanceof BBCodeText) {
+        try {
+          this.optionSelectText.destroy();
+        } catch (error) {
+          console.error("Error while destroying optionSelectText:", error);
+        }
+      } else {
+        console.warn("optionSelectText is not an instance of BBCodeText.");
+      }
     }
+
     if (this.optionSelectIcons?.length) {
       this.optionSelectIcons.map(i => i.destroy());
       this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
