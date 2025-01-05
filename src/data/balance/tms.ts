@@ -68442,10 +68442,7 @@ function flipTmSpecies(tmSpecies: TmSpecies): SpeciesTmMoves {
 
   for (const move in tmSpecies) {
     const moveKey = Number(move);
-    console.log(move, moveKey);
     const speciesList = tmSpecies[move];
-    console.log(tmSpecies);
-    console.log(speciesList, tmSpecies[0]);
 
     for (const species of speciesList) {
       const speciesKey = Number(species);
