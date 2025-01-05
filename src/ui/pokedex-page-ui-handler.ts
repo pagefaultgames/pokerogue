@@ -256,7 +256,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     bgColor.setOrigin(0, 0);
     this.starterSelectContainer.add(bgColor);
 
-    const starterSelectBg = this.scene.add.image(0, 0, "starter_select_bg");
+    const starterSelectBg = this.scene.add.image(0, 0, "pokedex_summary_bg");
     starterSelectBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterSelectBg);
 
