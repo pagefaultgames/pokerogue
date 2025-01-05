@@ -7,7 +7,7 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters, PokemonForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
-import { catchableSpecies } from "#app/data/balance/biomes";
+import { catchableSpecies, uncatchableSpecies } from "#app/data/balance/biomes";
 import { Type } from "#enums/type";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
@@ -387,6 +387,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       .map((biomeValue, index) =>
         new DropDownOption(this.scene, index, new DropDownLabel(i18next.t(`biome:${Biome[biomeValue].toUpperCase()}`)))
       );
+    biomeOptions.push(new DropDownOption(this.scene, biomeOptions.length, new DropDownLabel(i18next.t("filterBar:uncatchable"))));
     const biomeDropDown: DropDown = new DropDown(this.scene, 0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
     this.filterBar.addFilter(DropDownColumn.BIOME, i18next.t("filterBar:biomeFilter"), biomeDropDown);
 
@@ -1369,15 +1370,21 @@ export default class PokedexUiHandler extends MessageUiHandler {
           .map((value, index) => (typeof value === "string" ? [ index, value ] : undefined))
           .filter((entry): entry is [number, string] => entry !== undefined)
       );
+      indexToBiome.set(35, "Uncatchable");
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
       //      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
       const biomes = catchableSpecies[container.species.speciesId].map(b => Biome[b.biome]);
+      if (uncatchableSpecies.includes(container.species.speciesId) && biomes.length === 0) {
+        console.log(Species[container.species.speciesId]);
+        biomes.push("Uncatchable");
+        console.log(biomes);
+      }
       // Only show uncatchable mons if all biomes are selected.
       // TODO: Have an entry for uncatchable mons.
-      const showUncatchable = (biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 35) ? true : false;
-      const fitsBiome = this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? "")) || showUncatchable;
+      const showNoBiome = (biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36) ? true : false;
+      const fitsBiome = this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? "")) || showNoBiome;
 
 
       // Caught / Shiny filter
