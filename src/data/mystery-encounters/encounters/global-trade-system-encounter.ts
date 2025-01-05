@@ -107,7 +107,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
       // Load bgm
       let bgmKey: string;
-      if (scene.musicPreference === MusicPreference.CONSISTENT) {
+      if (scene.musicPreference === MusicPreference.GENFIVE) {
         bgmKey = "mystery_encounter_gen_5_gts";
         scene.loadBgm(bgmKey, `${bgmKey}.mp3`);
       } else {
