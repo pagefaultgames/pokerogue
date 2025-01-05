@@ -5,7 +5,7 @@ import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
-import { Challenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
+import { Challenge, FlipStatChallenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
 import { ConditionFn } from "#app/@types/common";
 import { Stat, getShortenedStatKey } from "#app/enums/stat";
 import { Challenges } from "#app/enums/challenges";
