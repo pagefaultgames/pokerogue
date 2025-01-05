@@ -7789,7 +7789,7 @@ export class StuffCheeksCondition extends MoveSelectCondition {
    * @returns true if the user is holding a berry, otherwise false
    */
   private selectableCondition(user: Pokemon): boolean {
-    return user.getHeldItems().filter(m => m instanceof BerryModifier, user.isPlayer()).length > 0;
+    return user.getHeldItems().filter(m => m instanceof BerryModifier).length > 0;
   }
 
   /**
