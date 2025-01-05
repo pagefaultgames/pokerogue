@@ -1052,10 +1052,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       baseStats[3] = origStats[2];
       baseStats[4] = origStats[1];
       baseStats[5] = origStats[0];
-      console.log("In FLIP STAT");
     }
-    console.log(JSON.stringify(baseStats) + " BLARG");
-    console.log(JSON.stringify(origStats) + " BLARG2");
     // Shuckle Juice
     this.scene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
     // Old Gateau
