@@ -178,9 +178,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   private starterIconsCursorIndex: number;
   private filterMode: boolean;
-  private dexAttrCursor: bigint = 0n;
-  private abilityCursor: number = -1;
-  private natureCursor: number = -1;
   private filterBarCursor: integer = 0;
   private starterMoveset: StarterMoveset | null;
   private scrollCursor: number;
@@ -199,9 +196,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
-  private starterCursorObjs: Phaser.GameObjects.Image[];
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
-  private starterIconsCursorObj: Phaser.GameObjects.Image;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -230,8 +225,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private filterTextCursor: integer = 0;
 
   private showDecorations: boolean = false;
-  private goFilterIconElement: Phaser.GameObjects.Sprite;
+  private goFilterIconElement1: Phaser.GameObjects.Sprite;
+  private goFilterIconElement2: Phaser.GameObjects.Sprite;
   private goFilterLabel: Phaser.GameObjects.Text;
+  private toggleDecorationsIconElement: Phaser.GameObjects.Sprite;
+  private toggleDecorationsLabel: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.POKEDEX);
@@ -526,21 +524,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       return cursorObj;
     });
 
-    this.starterCursorObjs = new Array(6).fill(null).map(() => {
-      const cursorObj = this.scene.add.image(0, 0, "select_cursor_highlight");
-      cursorObj.setVisible(false);
-      cursorObj.setOrigin(0, 0);
-      starterBoxContainer.add(cursorObj);
-      return cursorObj;
-    });
-
     this.cursorObj = this.scene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
-    this.starterIconsCursorObj = this.scene.add.image(289, 64, "select_gen_cursor");
-    this.starterIconsCursorObj.setName("starter-icons-cursor");
-    this.starterIconsCursorObj.setVisible(false);
-    this.starterIconsCursorObj.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.starterIconsCursorObj);
 
     starterBoxContainer.add(this.cursorObj);
 
@@ -583,14 +568,28 @@ export default class PokedexUiHandler extends MessageUiHandler {
     // Instruction for "C" button to toggle showDecorations
     const instructionTextSize = textSettings.instructionTextSize;
 
-    this.goFilterIconElement = new Phaser.GameObjects.Sprite(this.scene, 10, 10, "keyboard", "C.png");
-    this.goFilterIconElement.setName("sprite-goFilter-icon-element");
-    this.goFilterIconElement.setScale(0.675);
-    this.goFilterIconElement.setOrigin(0.0, 0.0);
-    this.goFilterLabel = addTextObject(this.scene, 20, 10, i18next.t("pokedexUiHandler:toggleDecorations"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.goFilterIconElement1 = new Phaser.GameObjects.Sprite(this.scene, 10, 2, "keyboard", "C.png");
+    this.goFilterIconElement1.setName("sprite-goFilter1-icon-element");
+    this.goFilterIconElement1.setScale(0.675);
+    this.goFilterIconElement1.setOrigin(0.0, 0.0);
+    this.goFilterIconElement2 = new Phaser.GameObjects.Sprite(this.scene, 20, 2, "keyboard", "V.png");
+    this.goFilterIconElement2.setName("sprite-goFilter2-icon-element");
+    this.goFilterIconElement2.setScale(0.675);
+    this.goFilterIconElement2.setOrigin(0.0, 0.0);
+    this.goFilterLabel = addTextObject(this.scene, 30, 2, i18next.t("pokedexUiHandler:goFilters"), TextStyle.PARTY, { fontSize: instructionTextSize });
     this.goFilterLabel.setName("text-goFilter-label");
-    this.starterSelectContainer.add(this.goFilterIconElement);
+    this.starterSelectContainer.add(this.goFilterIconElement1);
+    this.starterSelectContainer.add(this.goFilterIconElement2);
     this.starterSelectContainer.add(this.goFilterLabel);
+
+    this.toggleDecorationsIconElement = new Phaser.GameObjects.Sprite(this.scene, 10, 10, "keyboard", "R.png");
+    this.toggleDecorationsIconElement.setName("sprite-toggleDecorations-icon-element");
+    this.toggleDecorationsIconElement.setScale(0.675);
+    this.toggleDecorationsIconElement.setOrigin(0.0, 0.0);
+    this.toggleDecorationsLabel = addTextObject(this.scene, 20, 10, i18next.t("pokedexUiHandler:toggleDecorations"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.toggleDecorationsLabel.setName("text-toggleDecorations-label");
+    this.starterSelectContainer.add(this.toggleDecorationsIconElement);
+    this.starterSelectContainer.add(this.toggleDecorationsLabel);
 
     this.message = addTextObject(this.scene, 8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     this.message.setOrigin(0, 0);
@@ -1005,7 +1004,25 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.tryExit();
         success = true;
       }
-    } else if (button === Button.STATS) {
+    }  else if (button === Button.STATS) {
+      if (!this.filterMode) {
+        this.cursorObj.setVisible(false);
+        this.setSpecies(null);
+        this.filterText.cursorObj.setVisible(false);
+        this.filterTextMode = false;
+        this.filterBarCursor = 0;
+        this.setFilterMode(true);
+      }
+    }  else if (button === Button.V) {
+      if (!this.filterTextMode) {
+        this.cursorObj.setVisible(false);
+        this.setSpecies(null);
+        this.filterBar.cursorObj.setVisible(false);
+        this.filterMode = false;
+        this.filterTextCursor = 0;
+        this.setFilterTextMode(true);
+      }
+    } else if (button === Button.CYCLE_SHINY) {
       this.showDecorations = !this.showDecorations;
       this.updateScroll();
       success = true;
@@ -1124,57 +1141,34 @@ export default class PokedexUiHandler extends MessageUiHandler {
       } else {
         switch (button) {
           case Button.UP:
-            if (!this.starterIconsCursorObj.visible) {
-              if (currentRow > 0) {
-                if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
-                  this.scrollCursor--;
-                  this.updateScroll();
-                }
-                success = this.setCursor(this.cursor - 9);
-              } else {
-                this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
-                this.setFilterMode(true);
-                success = true;
+            if (currentRow > 0) {
+              if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
+                this.scrollCursor--;
+                this.updateScroll();
               }
+              success = this.setCursor(this.cursor - 9);
             } else {
-              if (this.starterIconsCursorIndex === 0) {
-              // Up from first Pokemon in the team > go to filter
-                this.starterIconsCursorObj.setVisible(false);
-                this.setSpecies(null);
-                this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
-                this.setFilterMode(true);
-              } else {
-                this.starterIconsCursorIndex--;
-              }
+              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+              this.setFilterMode(true);
               success = true;
             }
             break;
           case Button.DOWN:
-            if (!this.starterIconsCursorObj.visible) {
-              if (currentRow < numOfRows - 1) { // not last row
-                if (currentRow - this.scrollCursor === 8) { // last row of visible starters
-                  this.scrollCursor++;
-                }
-                success = this.setCursor(this.cursor + 9);
-                this.updateScroll();
-              } else if (numOfRows > 1) {
-              // DOWN from last row of Pokemon > Wrap around to first row
-                this.scrollCursor = 0;
-                this.updateScroll();
-                success = this.setCursor(this.cursor % 9);
-              } else {
-              // DOWN from single row of Pokemon > Go to filters
-                this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
-                this.setFilterMode(true);
-                success = true;
+            if (currentRow < numOfRows - 1) { // not last row
+              if (currentRow - this.scrollCursor === 8) { // last row of visible starters
+                this.scrollCursor++;
               }
+              success = this.setCursor(this.cursor + 9);
+              this.updateScroll();
+            } else if (numOfRows > 1) {
+            // DOWN from last row of Pokemon > Wrap around to first row
+              this.scrollCursor = 0;
+              this.updateScroll();
+              success = this.setCursor(this.cursor % 9);
             } else {
-              if (this.starterIconsCursorIndex <= this.starterSpecies.length - 2) {
-                this.starterIconsCursorIndex++;
-              } else {
-                this.starterIconsCursorObj.setVisible(false);
-                this.setSpecies(null);
-              }
+            // DOWN from single row of Pokemon > Go to filters
+              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+              this.setFilterMode(true);
               success = true;
             }
             break;
@@ -1293,7 +1287,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.validStarterContainers = [];
 
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
-    this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
 
     this.filterBar.updateFilterLabels();
     this.filterText.updateFilterLabels();
@@ -1377,9 +1370,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       //      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
       const biomes = catchableSpecies[container.species.speciesId].map(b => Biome[b.biome]);
       if (uncatchableSpecies.includes(container.species.speciesId) && biomes.length === 0) {
-        console.log(Species[container.species.speciesId]);
         biomes.push("Uncatchable");
-        console.log(biomes);
       }
       // Only show uncatchable mons if all biomes are selected.
       // TODO: Have an entry for uncatchable mons.
@@ -1571,11 +1562,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
           this.pokerusCursorObjs[pokerusCursorIndex].setVisible(false);
           pokerusCursorIndex++;
         }
-
-        if (this.starterSpecies.includes(container.species)) {
-          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setPosition(pos.x - 1, pos.y + 1);
-          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(false);
-        }
         return;
       } else {
         container.setVisible(true);
@@ -1584,11 +1570,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
           this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
           this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
           pokerusCursorIndex++;
-        }
-
-        if (this.starterSpecies.includes(container.species)) {
-          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setPosition(pos.x - 1, pos.y + 1);
-          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)].setVisible(true);
         }
 
         if (this.showDecorations) {
@@ -1685,10 +1666,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       if (filterMode) {
         this.setSpecies(null);
       }
-
       return true;
     }
-
     return false;
   }
 
@@ -1723,7 +1702,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   setSpecies(species: PokemonSpecies | null) {
 
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
-    this.dexAttrCursor = species ? this.getCurrentDexProps(species.speciesId) : 0n;
 
     if (!species && this.scene.ui.getTooltip().visible) {
       this.scene.ui.hideTooltip();
@@ -1803,9 +1781,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     let { shiny, formIndex, female, variant } = options;
     const forSeen: boolean = options.forSeen ?? false;
-    this.dexAttrCursor = 0n;
-    this.abilityCursor = -1;
-    this.natureCursor = -1;
 
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
@@ -1852,13 +1827,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
 
       if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
-        const starterIndex = this.starterSpecies.indexOf(species);
-
-        if (starterIndex > -1) {
-          this.starterAttr[starterIndex] = this.dexAttrCursor;
-          this.starterAbilityIndexes[starterIndex] = this.abilityCursor;
-          this.starterNatures[starterIndex] = this.natureCursor;
-        }
 
         const assetLoadCancelled = new BooleanHolder(false);
         this.assetLoadCancelled = assetLoadCancelled;
@@ -1878,7 +1846,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             this.pokemonSprite.setVisible(true);
           });
         } else {
-          this.pokemonSprite.setVisible(true);
+          this.pokemonSprite.setVisible(!(this.filterMode || this.filterTextMode));
         }
       }
 
@@ -1923,27 +1891,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterNatures.splice(index, 1);
     this.starterMovesets.splice(index, 1);
 
-    for (let s = 0; s < this.starterSpecies.length; s++) {
-      if (s >= index) {
-        this.starterCursorObjs[s].setPosition(this.starterCursorObjs[s + 1].x, this.starterCursorObjs[s + 1].y);
-        this.starterCursorObjs[s].setVisible(this.starterCursorObjs[s + 1].visible);
-      }
-    }
-    this.starterCursorObjs[this.starterSpecies.length].setVisible(false);
-
-    if (this.starterIconsCursorObj.visible) {
-      if (this.starterIconsCursorIndex === this.starterSpecies.length) {
-        if (this.starterSpecies.length > 0) {
-          this.starterIconsCursorIndex--;
-        } else {
-          // No more Pokemon selected, go back to filters
-          this.starterIconsCursorObj.setVisible(false);
-          this.setSpecies(null);
-          this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
-          this.setFilterMode(true);
-        }
-      }
-    } else if (this.starterSpecies.length === 0) {
+    if (this.starterSpecies.length === 0) {
       if (this.filteredStarterContainers.length > 0) {
         // Back to the first Pokemon if there is one
         this.cursorObj.setVisible(true);
