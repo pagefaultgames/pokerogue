@@ -7808,7 +7808,7 @@ export class StuffCheeksCondition extends MoveSelectCondition {
   }
 }
 
-const hasBerryCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => user.getHeldItems().filter(m => m instanceof BerryModifier, user.isPlayer()).length > 0;
+const hasBerryCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => user.getHeldItems().filter(m => m instanceof BerryModifier).length > 0;
 
 export class MoveCondition {
   protected func: MoveConditionFunc;
