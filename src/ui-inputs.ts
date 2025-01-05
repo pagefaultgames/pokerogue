@@ -144,7 +144,7 @@ export class UiInputs {
   }
 
   buttonGoToFilter(button: Button): void {
-    const whitelist = [ StarterSelectUiHandler, PokedexUiHandler ];
+    const whitelist = [ StarterSelectUiHandler, PokedexUiHandler, PokedexPageUiHandler ];
     const uiHandler = this.scene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       this.scene.ui.processInput(button);
