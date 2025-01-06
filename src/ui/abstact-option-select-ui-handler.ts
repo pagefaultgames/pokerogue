@@ -264,7 +264,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       }
       if (this.config?.supportHover) {
         // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
-        this.config?.options[this.fullCursor]?.onHover?.();
+        this.config?.options[this.unskippedIndices[this.fullCursor]]?.onHover?.();
       }
     }
 
