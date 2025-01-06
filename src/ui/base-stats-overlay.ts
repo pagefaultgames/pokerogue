@@ -46,15 +46,13 @@ export default class BaseStatsOverlay extends Phaser.GameObjects.Container imple
     this.add(this.statsBg);
 
     for (let i = 0; i < 6; i++) {
-      const shadow = this.scene.add.rectangle(0, BORDER + 3 + i * 15, 100, 5, 0x006860);
+      const shadow = this.scene.add.rectangle(this.width - BORDER + 1, BORDER + 3 + i * 15, 100, 5, 0x006860);
       shadow.setOrigin(1, 0);
-      shadow.setX(this.width - BORDER + 1);
       this.statsShadows.push(shadow);
       this.add(shadow);
 
-      const rectangle = this.scene.add.rectangle(0, BORDER + 2 + i * 15, 100, 5, 0x66aa99);
+      const rectangle = this.scene.add.rectangle(this.width - BORDER, BORDER + 2 + i * 15, 100, 5, 0x66aa99);
       rectangle.setOrigin(1, 0);
-      rectangle.setX(this.width - BORDER);
       this.statsRectangles.push(rectangle);
       this.add(rectangle);
 
