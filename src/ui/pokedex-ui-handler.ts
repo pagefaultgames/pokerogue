@@ -7,7 +7,7 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import PokemonSpecies, { allSpecies, getPokemonSpeciesForm, getPokerusStarters, PokemonForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
-import { catchableSpecies, uncatchableSpecies } from "#app/data/balance/biomes";
+import { catchableSpecies } from "#app/data/balance/biomes";
 import { Type } from "#enums/type";
 import { AbilityAttr, DexAttr, DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences, StarterPrefs } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
@@ -1369,7 +1369,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       // TODO: We might also need to do it the other way around.
       //      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
       const biomes = catchableSpecies[container.species.speciesId].map(b => Biome[b.biome]);
-      if (uncatchableSpecies.includes(container.species.speciesId) && biomes.length === 0) {
+      //      if (uncatchableSpecies.includes(container.species.speciesId) && biomes.length === 0) {
+      if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }
       // Only show uncatchable mons if all biomes are selected.
