@@ -1727,7 +1727,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
 
-      this.pokemonNumberText.setText("No. " + padInt(species.speciesId, 4));
+      this.pokemonNumberText.setText("pokedexUiHandler:pokemonNumber" + padInt(species.speciesId, 4));
 
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
