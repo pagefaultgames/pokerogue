@@ -1,5 +1,5 @@
 import BattleScene, { InfoToggle } from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import i18next from "i18next";
@@ -61,7 +61,7 @@ export default class BaseStatsOverlay extends Phaser.GameObjects.Container imple
       this.add(label);
     }
 
-    this.statsTotalLabel = addTextObject(scene, BORDER, BORDER + 6 * 15, "A", TextStyle.BATTLE_INFO, { color: "#ccbe00" });
+    this.statsTotalLabel = addTextObject(scene, BORDER, BORDER + 6 * 15, "A", TextStyle.BATTLE_INFO, { color: getTextColor(TextStyle.MONEY_WINDOW) });
     this.add(this.statsTotalLabel);
 
     // hide this component for now
