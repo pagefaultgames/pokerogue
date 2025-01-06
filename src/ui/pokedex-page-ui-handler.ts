@@ -205,6 +205,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private hasPassive: boolean;
   private hasAbilities: number[];
   private biomes: BiomeTierTod[];
+  private preBiomes: BiomeTierTod[];
   private baseStats: number[];
   private baseTotal: number;
   private evolutions: SpeciesFormEvolution[];
@@ -624,7 +625,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       hasHiddenAbility
     ];
 
-    this.biomes = catchableSpecies[species.speciesId];
+    const allBiomes = catchableSpecies[species.speciesId] ?? [];
+    this.preBiomes = this.sanitizeBiomes(
+      (catchableSpecies[this.getStarterSpeciesId(species.speciesId)] ?? [])
+        .filter(b => !allBiomes.some(bm => (b.biome === bm.biome && b.tier === bm.tier)) && !(b.biome === Biome.TOWN)),
+      this.getStarterSpeciesId(species.speciesId));
+    this.biomes = this.sanitizeBiomes(allBiomes, species.speciesId);
 
     this.battleForms = species.forms.filter(f => !f.isStarterSelectable);
 
@@ -647,6 +653,67 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
       this.battleForms.unshift(this.lastSpecies.forms[0]);
     }
+  }
+
+  // Function to ensure that forms appear in the appropriate biome and tod
+  sanitizeBiomes(biomes: BiomeTierTod[], speciesId: number): BiomeTierTod[] {
+
+    if (speciesId === Species.BURMY || speciesId === Species.WORMADAM) {
+      return biomes.filter(b => {
+        const formIndex = (() => {
+          switch (b.biome) {
+            case Biome.BEACH:
+              return 1;
+            case Biome.SLUM:
+              return 2;
+            default:
+              return 0;
+          }
+        })();
+        return this.lastFormIndex === formIndex;
+      });
+
+    } else if (speciesId === Species.ROTOM) {
+      return biomes.filter(b => {
+        const formIndex = (() => {
+          switch (b.biome) {
+            case Biome.VOLCANO:
+              return 1;
+            case Biome.SEA:
+              return 2;
+            case Biome.ICE_CAVE:
+              return 3;
+            case Biome.MOUNTAIN:
+              return 4;
+            case Biome.TALL_GRASS:
+              return 5;
+            default:
+              return 0;
+          }
+        })();
+        return this.lastFormIndex === formIndex;
+      });
+
+    } else if (speciesId === Species.LYCANROC) {
+      return biomes.filter(b => {
+        const formIndex = (() => {
+          switch (b.tod[0]) {
+            case TimeOfDay.DAY:
+            case TimeOfDay.DAWN:
+              return 0;
+            case TimeOfDay.DUSK:
+              return 2;
+            case TimeOfDay.NIGHT:
+              return 1;
+            default:
+              return 0;
+          }
+        })();
+        return this.lastFormIndex === formIndex;
+      });
+    }
+
+    return biomes;
   }
 
   /**
@@ -1239,6 +1306,23 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   });
                 });
 
+
+                if (this.preBiomes.length > 0) {
+                  options.push({
+                    label: i18next.t("pokedexUiHandler:preBiomes"),
+                    skip: true,
+                    handler: () => false
+                  });
+                  this.preBiomes.map(b => {
+                    options.push({
+                      label: i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) + " - " +
+                        i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
+                        ( b.tod.length === 1 && b.tod[0] === -1 ? "" : " (" + b.tod.map(tod => i18next.t(`biome:${TimeOfDay[tod].toUpperCase()}`)).join(", ") + ")"),
+                      handler: () => false
+                    });
+                  });
+                }
+
                 options.push({
                   label: i18next.t("menu:cancel"),
                   handler: () => {
@@ -1279,7 +1363,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                 if (this.prevolution) {
                   options.push({
-                    label: i18next.t("pokedexUiHandler:prevolution") + ":",
+                    label: i18next.t("pokedexUiHandler:prevolution"),
                     skip: true,
                     handler: () => false
                   });
@@ -1320,7 +1404,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                 if (this.evolutions.length > 0) {
                   options.push({
-                    label: i18next.t("pokedexUiHandler:evolutions") + ":",
+                    label: i18next.t("pokedexUiHandler:evolutions"),
                     skip: true,
                     handler: () => false
                   });
@@ -1360,7 +1444,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                 if (this.battleForms.length > 0) {
                   options.push({
-                    label: i18next.t("pokedexUiHandler:forms") + ":",
+                    label: i18next.t("pokedexUiHandler:forms"),
                     skip: true,
                     handler: () => false
                   });
