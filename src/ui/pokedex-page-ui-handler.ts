@@ -49,6 +49,7 @@ import { Biome } from "#app/enums/biome";
 import { TimeOfDay } from "#app/enums/time-of-day";
 import { SpeciesFormKey } from "#app/enums/species-form-key";
 import { Abilities } from "#app/enums/abilities";
+import BaseStatsOverlay from "./base-stats-overlay";
 
 
 interface LanguageSetting {
@@ -182,8 +183,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
-  private moveInfoOverlay : MoveInfoOverlay;
-  private infoOverlay : PokedexInfoOverlay;
+  private moveInfoOverlay: MoveInfoOverlay;
+  private infoOverlay: PokedexInfoOverlay;
+  private baseStatsOverlay: BaseStatsOverlay;
 
   private statsMode: boolean;
 
@@ -230,6 +232,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterAttributes: StarterAttributes;
 
   protected blockInput: boolean = false;
+  protected blockInputOverlay: boolean = false;
 
   // Menu
   private menuContainer: Phaser.GameObjects.Container;
@@ -238,7 +241,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   public bgmBar: BgmBar;
   private menuOptions: MenuOptions[];
   protected scale: number = 0.1666666667;
-
 
   constructor(scene: BattleScene) {
     super(scene, Mode.POKEDEX_PAGE);
@@ -477,13 +479,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.bgmBar = new BgmBar(this.scene);
     this.bgmBar.setup();
-
     ui.bgmBar = this.bgmBar;
-
     this.menuContainer.add(this.bgmBar);
-
     this.menuContainer.setVisible(false);
-
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions);
 
@@ -509,6 +507,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.menuContainer);
 
+
+    // adding base stats
+    this.baseStatsOverlay = new BaseStatsOverlay(this.scene, { x: 317, y: 0, width:133 });
+    this.menuContainer.add(this.baseStatsOverlay);
+    this.menuContainer.bringToTop(this.baseStatsOverlay);
 
     // add the info overlay last to be the top most ui element and prevent the IVs from overlaying this
     const overlayScale = 1;
@@ -929,6 +932,21 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     let success = false;
     let error = false;
 
+    if (this.blockInputOverlay) {
+      if (button === Button.CANCEL || button === Button.ACTION) {
+        this.blockInputOverlay = false;
+        this.baseStatsOverlay.clear();
+        ui.showText("");
+        return true;
+      } else if (button === Button.UP || button === Button.DOWN) {
+        this.blockInputOverlay = false;
+        this.baseStatsOverlay.clear();
+        ui.showText("");
+      } else {
+        return false;
+      }
+    }
+
     if (button === Button.SUBMIT) {
       success = true;
     } else if (button === Button.CANCEL) {
@@ -956,43 +974,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
             ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
               ui.showText(i18next.t("pokedexUiHandler:baseStats"), null, () => {
-                const options: any[] = [];
-                const shortStats = [ "HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD" ];
 
-                this.baseStats.map((bst, index) => {
-                  options.push({
-                    label: i18next.t(`pokemonInfo:Stat.${shortStats[index]}shortened`).padEnd(5, " ") + ": " + `${bst}`,
-                    handler: () => {
-                      return false;
-                    }
-                  });
-                });
-                options.push({
-                  label: i18next.t("pokedexUiHandler:baseTotal") + ": " + `${this.baseTotal}`,
-                  color: "#ccbe00",
-                  handler: () => {
-                    return false;
-                  }
-                });
-                options.push({
-                  label: i18next.t("menu:cancel"),
-                  handler: () => {
-                    this.moveInfoOverlay.clear();
-                    this.clearText();
-                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                    return true;
-                  },
-                  onHover: () => this.moveInfoOverlay.clear()
-                });
-
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: options,
-                  supportHover: true,
-                  maxOptions: 8,
-                  yOffset: 19
-                });
+                this.baseStatsOverlay.show(this.baseStats, this.baseTotal);
 
                 this.blockInput = false;
+                this.blockInputOverlay = true;
+
+                return true;
               });
             });
             break;
