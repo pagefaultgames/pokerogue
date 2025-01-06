@@ -2096,7 +2096,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.gender = Gender.MALE;
     }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.DIALGIA, Species.PALKIA ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.DIALGA, Species.PALKIA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
