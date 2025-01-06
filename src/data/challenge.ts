@@ -977,7 +977,6 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return InverseBattleChallenge.loadChallenge(source);
     case Challenges.FLIP_STAT:
       return FlipStatChallenge.loadChallenge(source);
-
   }
   throw new Error("Unknown challenge copied");
 }
