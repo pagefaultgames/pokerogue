@@ -1349,7 +1349,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.starterIconsCursorIndex = this.starterSpecies.length - 1;
             this.moveStarterIconsCursor(this.starterIconsCursorIndex);
           } else {
-            //TODO how can we get here if start button can't be selected? this is reduantant shoudld i renmove this?
+            // TODO: how can we get here if start button can't be selected? this appears to be redundant
             this.startCursorObj.setVisible(false);
             this.randomCursorObj.setVisible(true);
           }
