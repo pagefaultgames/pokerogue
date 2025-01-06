@@ -1461,7 +1461,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             error = true;
             break;
           }
-          const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, _gen : number, i : number ) => total + this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+          const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, _gen: number, i: number ) => total + this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
           // Filter valid starters
           const validStarters = this.filteredStarterContainers.filter(starter => {
             const species = starter.species;
