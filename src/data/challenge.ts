@@ -702,10 +702,6 @@ export class InverseBattleChallenge extends Challenge {
 }
 
 /**
-  * Begin Scoom Code
-  */
-
-/**
  * Implements a fresh start challenge.
  */
 export class FlipStatChallenge extends Challenge {
