@@ -787,7 +787,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   }
 
   getStarterSpeciesId(speciesId): number {
-    if (this.scene.gameData.starterData.hasOwnProperty(speciesId)) {
+    if (speciesStarterCosts.hasOwnProperty(speciesId)) {
       return speciesId;
     } else {
       return pokemonStarters[speciesId];
