@@ -2274,8 +2274,8 @@ export const trainerConfigs: TrainerConfigs = {
       p.abilityIndex = 2; // Sharpness Hisui Samurott, Adaptability Crawdaunt
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.BUTTERFREE, Species.ORBEETLE ], TrainerSlot.TRAINER, true, p => {
-      p.formIndex = 1; // G-Max Butterfree, G-Max Orbeetle
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.CENTISKORCH, Species.ORBEETLE ], TrainerSlot.TRAINER, true, p => {
+      p.formIndex = 1; // G-Max Centiskorch, G-Max Orbeetle
       p.generateAndPopulateMoveset();
       p.generateName();
     }))
