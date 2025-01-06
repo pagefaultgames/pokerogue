@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { TextStyle, addBBCodeTextObject, getTextStyleOptions } from "./text";
+import { TextStyle, addBBCodeTextObject, getTextColor, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
@@ -25,7 +25,7 @@ export interface OptionSelectItem {
   skip?: boolean;
   keepOpen?: boolean;
   overrideSound?: boolean;
-  color?: string;
+  style?: TextStyle;
   item?: string;
   itemArgs?: any[];
 }
@@ -51,6 +51,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   private cursorObj: Phaser.GameObjects.Image | null;
 
   protected unskippedIndices: number[] = [];
+
+  protected defaultTextStyle: TextStyle = TextStyle.SETTINGS_VALUE;
 
 
   constructor(scene: BattleScene, mode: Mode | null) {
@@ -121,8 +123,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectText = addBBCodeTextObject(
       this.scene, 0, 0, options.map(o => o.item
-        ? `[color=${o.color || "white"}]    ${o.label}[/color]`
-        : `[color=${o.color || "white"}]${o.label}[/color]`
+        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.SETTINGS_VALUE)}]    ${o.label}[/color]`
+        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.SETTINGS_VALUE)}]${o.label}[/color]`
       ).join("\n"),
       TextStyle.WINDOW, { maxLines: options.length, lineSpacing: 12 }
     );
@@ -135,8 +137,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.item
-        ? `[color=${o.color || "white"}]    ${o.label}[/color]`
-        : `[color=${o.color || "white"}]${o.label}[/color]`
+        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.SETTINGS_VALUE)}]    ${o.label}[/color]`
+        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.SETTINGS_VALUE)}]${o.label}[/color]`
       ).join("\n"));
     }
 
@@ -305,14 +307,14 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         options.unshift({
           label: scrollUpLabel,
           handler: () => true,
-          color: "#ffffff"
+          style: this.defaultTextStyle
         });
       }
       if (optionEndIndex < optionsScrollTotal) {
         options.push({
           label: scrollDownLabel,
           handler: () => true,
-          color: "#ffffff"
+          style: this.defaultTextStyle
         });
       }
     }

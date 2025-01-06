@@ -1158,26 +1158,26 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     {
                       label: "Common:",
                       skip: true,
-                      color: this.getTextColor(TextStyle.MONEY_WINDOW),
+                      style: TextStyle.MONEY_WINDOW,
                       handler: () => false, // Non-selectable, but handler is required
                       onHover: () => this.moveInfoOverlay.clear() // No hover behavior for titles
                     },
                     ...this.eggMoves.slice(0, 3).map((m, i) => ({
                       label: allMoves[m].name,
-                      color: this.hasEggMoves[i] ? this.getTextColor(TextStyle.SETTINGS_VALUE) : this.getTextColor(TextStyle.SETTINGS_VALUE, true),
+                      style: this.hasEggMoves[i] ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
                       handler: () => false,
                       onHover: () => this.moveInfoOverlay.show(allMoves[m])
                     })),
                     {
                       label: "Rare:",
                       skip: true,
-                      color: this.getTextColor(TextStyle.MONEY_WINDOW),
+                      style: TextStyle.MONEY_WINDOW,
                       handler: () => false,
                       onHover: () => this.moveInfoOverlay.clear()
                     },
                     {
                       label: allMoves[this.eggMoves[3]].name,
-                      color: this.hasEggMoves[3] ? this.getTextColor(TextStyle.SETTINGS_VALUE) : this.getTextColor(TextStyle.SETTINGS_VALUE, true),
+                      style: this.hasEggMoves[3] ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
                       handler: () => false,
                       onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
                     },
@@ -1262,7 +1262,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 if (this.ability1) {
                   options.push({
                     label: allAbilities[this.ability1].name,
-                    color: this.hasAbilities[0] > 0 ? this.getTextColor(TextStyle.SETTINGS_VALUE) : this.getTextColor(TextStyle.SETTINGS_VALUE, true),
+                    style: this.hasAbilities[0] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
                     handler: () => false,
                     onHover: () => this.infoOverlay.show(allAbilities[this.ability1].description)
                   });
@@ -1271,7 +1271,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   const ability = allAbilities[this.ability2];
                   options.push({
                     label: ability?.name,
-                    color: this.hasAbilities[1] > 0 ? this.getTextColor(TextStyle.SETTINGS_VALUE) : this.getTextColor(TextStyle.SETTINGS_VALUE, true),
+                    style: this.hasAbilities[1] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
                     handler: () => false,
                     onHover: () => this.infoOverlay.show(ability?.description)
                   });
@@ -1281,14 +1281,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   options.push({
                     label: "Hidden:",
                     skip: true,
-                    color: this.getTextColor(TextStyle.MONEY_WINDOW),
+                    style: TextStyle.MONEY_WINDOW,
                     handler: () => false,
                     onHover: () => this.infoOverlay.clear()
                   });
                   const ability = allAbilities[this.abilityHidden];
                   options.push({
                     label: allAbilities[this.abilityHidden].name,
-                    color: this.hasAbilities[2] > 0 ? this.getTextColor(TextStyle.SETTINGS_VALUE) : this.getTextColor(TextStyle.SETTINGS_VALUE, true),
+                    style: this.hasAbilities[2] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
                     handler: () => false,
                     onHover: () => this.infoOverlay.show(ability?.description)
                   });
@@ -1298,13 +1298,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   options.push({
                     label: "Passive:",
                     skip: true,
-                    color: this.getTextColor(TextStyle.MONEY_WINDOW),
+                    style: TextStyle.MONEY_WINDOW,
                     handler: () => false,
                     onHover: () => this.infoOverlay.clear()
                   });
                   options.push({
                     label: allAbilities[this.passive].name,
-                    color: this.hasPassive ? this.getTextColor(TextStyle.SETTINGS_VALUE) : this.getTextColor(TextStyle.SETTINGS_VALUE, true),
+                    style: this.hasPassive ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
                     handler: () => false,
                     onHover: () => this.infoOverlay.show(allAbilities[this.passive].description)
                   });
@@ -1433,7 +1433,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       label: pre.preFormKey ?
                         this.getFormString(pre.preFormKey, preSpecies ?? this.lastSpecies, true) :
                         this.getRegionName(preSpecies ?? this.lastSpecies),
-                      color: this.getTextColor(TextStyle.MONEY_WINDOW),
+                      style: TextStyle.MONEY_WINDOW,
                       handler: () => {
                         const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
                         // Attempts to find the formIndex of the evolved species
@@ -1477,7 +1477,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       label: evo.evoFormKey ?
                         this.getFormString(evo.evoFormKey, evoSpecies ?? this.lastSpecies, true) :
                         this.getRegionName(evoSpecies ?? this.lastSpecies),
-                      color: this.getTextColor(TextStyle.MONEY_WINDOW),
+                      style: TextStyle.MONEY_WINDOW,
                       handler: () => {
                         const newSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
                         // Attempts to find the formIndex of the evolved species
@@ -1523,7 +1523,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     }
                     options.push({
                       label: label,
-                      color: this.getTextColor(TextStyle.MONEY_WINDOW),
+                      style: TextStyle.MONEY_WINDOW,
                       handler: () => {
                         const newSpecies = this.lastSpecies;
                         const newFormIndex = bf.formIndex;
