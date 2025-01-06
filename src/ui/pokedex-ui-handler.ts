@@ -1367,8 +1367,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
-      //      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
-      const biomes = catchableSpecies[container.species.speciesId].map(b => Biome[b.biome]);
+      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
+      //const biomes = catchableSpecies[container.species.speciesId].map(b => Biome[b.biome]);
       //      if (uncatchableSpecies.includes(container.species.speciesId) && biomes.length === 0) {
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
