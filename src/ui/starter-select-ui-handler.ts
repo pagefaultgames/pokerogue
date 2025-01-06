@@ -1400,13 +1400,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = this.filterBar.decDropDownCursor();
           } else if (this.filterBarCursor === this.filterBar.numFilters - 1 ) {
           // UP from the last filter, move to start button
+            this.setFilterMode(false);
+            this.cursorObj.setVisible(false);
             if (this.starterSpecies.length > 0) {
-              this.setFilterMode(false);
-              this.cursorObj.setVisible(false);
               this.startCursorObj.setVisible(true);
             } else {
-              this.setFilterMode(false);
-              this.cursorObj.setVisible(false);
               this.randomCursorObj.setVisible(true);
             }
             success = true;
