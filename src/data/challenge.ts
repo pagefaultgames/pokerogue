@@ -714,18 +714,6 @@ export class FlipStatChallenge extends Challenge {
     super(Challenges.FLIP_STAT, 1);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
-    return true;
-  }
-
-  applyStarterCost(species: Species, cost: Utils.NumberHolder): boolean {
-    return true;
-  }
-
-
-  override getDifficulty(): number {
-    return 0;
-  }
 
   static loadChallenge(source: FlipStatChallenge | any): FlipStatChallenge {
     const newChallenge = new FlipStatChallenge();
