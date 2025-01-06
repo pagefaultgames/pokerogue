@@ -2,7 +2,7 @@ import { EvolutionItem, pokemonEvolutions, pokemonPrevolutions, pokemonStarters,
 import { Variant, getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import BattleScene, { starterColors } from "#app/battle-scene";
+import BattleScene, { AnySound, starterColors } from "#app/battle-scene";
 import { allAbilities } from "#app/data/ability";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
@@ -581,6 +581,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.setSpecies(this.lastSpecies);
     this.updateInstructions();
 
+    const key = this.lastSpecies.getCryKey(this.lastFormIndex);
+    const rate = 0.85;
+    this.scene.playSound(key, { rate: rate }) as AnySound;
+
     return true;
 
   }
@@ -653,10 +657,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const preSpecies = pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId) ? allSpecies.find(sp => sp.speciesId === pokemonPrevolutions[this.lastSpecies.speciesId]) : null;
     if (preSpecies) {
       const preEvolutions = pokemonEvolutions.hasOwnProperty(preSpecies.speciesId) ? pokemonEvolutions[preSpecies.speciesId] : [];
-      console.log(preEvolutions);
       this.prevolutions = preEvolutions.filter(
         e => e.speciesId === species.speciesId && ((e.evoFormKey === "" || e.evoFormKey === null) || e.evoFormKey === species.forms[formIndex]?.formKey));
-      console.log(this.prevolutions);
     }
 
     if (this.battleForms.find(bf => bf.formIndex === this.lastFormIndex)) {
@@ -1088,6 +1090,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 return true;
               });
             });
+            success = true;
             break;
 
           case MenuOptions.LEVEL_MOVES:
@@ -1131,6 +1134,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.blockInput = false;
               });
             });
+            success = true;
             break;
 
           case MenuOptions.EGG_MOVES:
@@ -1196,6 +1200,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.blockInput = false;
               });
             });
+            success = true;
             break;
 
           case MenuOptions.TM_MOVES:
@@ -1239,6 +1244,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.blockInput = false;
               });
             });
+            success = true;
             break;
 
           case MenuOptions.ABILITIES:
@@ -1325,6 +1331,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.blockInput = false;
               });
             });
+            success = true;
             break;
 
           case MenuOptions.BIOMES:
@@ -1336,6 +1343,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if ((!this.biomes || this.biomes?.length === 0) &&
                   (!this.preBiomes || this.preBiomes?.length === 0)) {
                 ui.showText(i18next.t("pokedexUiHandler:noBiomes"));
+                ui.playError();
                 this.blockInput = false;
                 return true;
               }
@@ -1391,6 +1399,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.blockInput = false;
               });
             });
+            success = true;
             break;
 
           case MenuOptions.EVOLUTIONS:
@@ -1405,6 +1414,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   (!this.evolutions || this.evolutions?.length === 0) &&
                   (!this.battleForms || this.battleForms?.length === 0)) {
                 ui.showText(i18next.t("pokedexUiHandler:noEvolutions"));
+                ui.playError();
                 this.blockInput = false;
                 return true;
               }
@@ -1548,12 +1558,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.blockInput = false;
               });
             });
+            success = true;
             break;
 
           case MenuOptions.TOGGLE_IVS:
             this.toggleStatsMode();
             ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-            return true;
+            success = true;
+            break;
 
           case MenuOptions.NATURES:
             this.blockInput = true;
@@ -1583,9 +1595,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 });
               });
             });
-
-          default:
-            return true;
+            success = true;
+            break;
         }
 
         return true;
