@@ -241,6 +241,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   public bgmBar: BgmBar;
   private menuOptions: MenuOptions[];
   protected scale: number = 0.1666666667;
+  private menuDescriptions: string[];
 
   constructor(scene: BattleScene) {
     super(scene, Mode.POKEDEX_PAGE);
@@ -487,6 +488,18 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`).join("\n"), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setLineSpacing(12);
+
+    this.menuDescriptions = [
+      i18next.t("pokedexUiHandler:showBaseStats"),
+      i18next.t("pokedexUiHandler:showAbilities"),
+      i18next.t("pokedexUiHandler:showLevelMoves"),
+      i18next.t("pokedexUiHandler:showEggMoves"),
+      i18next.t("pokedexUiHandler:showTmMoves"),
+      i18next.t("pokedexUiHandler:showBiomes"),
+      i18next.t("pokedexUiHandler:showNatures"),
+      i18next.t("pokedexUiHandler:toggleIVs"),
+      i18next.t("pokedexUiHandler:showEvolutions")
+    ];
 
     this.scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale;
     this.menuBg = addWindow(this.scene,
@@ -1065,7 +1078,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = true;
 
             ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-              ui.showText(i18next.t("pokedexUiHandler:baseStats"), null, () => {
+              ui.showText(i18next.t("pokedexUiHandler:showBaseStats"), null, () => {
 
                 this.baseStatsOverlay.show(this.baseStats, this.baseTotal);
 
@@ -1082,7 +1095,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = true;
 
             ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-              ui.showText(i18next.t("pokedexUiHandler:movesLearntOnLevelUp"), null, () => {
+              ui.showText(i18next.t("pokedexUiHandler:showLevelMoves"), null, () => {
 
                 this.moveInfoOverlay.show(allMoves[this.levelMoves[0][1]]);
 
@@ -1114,6 +1127,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   maxOptions: 8,
                   yOffset: 19
                 });
+
                 this.blockInput = false;
               });
             });
@@ -1131,7 +1145,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 return true;
               }
 
-              ui.showText(i18next.t("pokedexUiHandler:movesLearntFromEgg"), null, () => {
+              ui.showText(i18next.t("pokedexUiHandler:showEggMoves"), null, () => {
 
                 this.moveInfoOverlay.show(allMoves[this.eggMoves[0]]);
 
@@ -1189,7 +1203,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = true;
 
             ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-              ui.showText(i18next.t("pokedexUiHandler:movesLearntFromTM"), null, () => {
+              ui.showText(i18next.t("pokedexUiHandler:showTmMoves"), null, () => {
 
                 this.moveInfoOverlay.show(allMoves[this.tmMoves[0]]);
 
@@ -1221,6 +1235,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   maxOptions: 8,
                   yOffset: 19
                 });
+
                 this.blockInput = false;
               });
             });
@@ -1318,9 +1333,16 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
             ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
 
+              if ((!this.biomes || this.biomes?.length === 0) &&
+                  (!this.preBiomes || this.preBiomes?.length === 0)) {
+                ui.showText(i18next.t("pokedexUiHandler:noBiomes"));
+                this.blockInput = false;
+                return true;
+              }
+
               const options: any[] = [];
 
-              ui.showText(i18next.t("pokedexUiHandler:biomes"), null, () => {
+              ui.showText(i18next.t("pokedexUiHandler:showBiomes"), null, () => {
 
                 this.biomes.map(b => {
                   options.push({
@@ -1379,12 +1401,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
               const options: any[] = [];
 
-              ui.showText(i18next.t("pokedexUiHandler:evolutionsAndForms"), null, () => {
+              if ((!this.prevolutions || this.prevolutions?.length === 0) &&
+                  (!this.evolutions || this.evolutions?.length === 0) &&
+                  (!this.battleForms || this.battleForms?.length === 0)) {
+                ui.showText(i18next.t("pokedexUiHandler:noEvolutions"));
+                this.blockInput = false;
+                return true;
+              }
 
-                if (!this.prevolutions && !this.evolutions && !this.battleForms) {
-                  this.blockInput = false;
-                  return true;
-                }
+              ui.showText(i18next.t("pokedexUiHandler:showEvolutions"), null, () => {
 
                 if (this.prevolutions?.length > 0) {
                   options.push({
@@ -1940,6 +1965,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.cursorObj.setScale(this.scale * 6);
     this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
+
+    const ui = this.getUi();
+    ui.showText(this.menuDescriptions[cursor]);
 
     return ret;
   }
