@@ -103,7 +103,6 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
 
 
   // args[2] is an index of FilterTextRow
-  //TODO: This logic is probably way more complex than we need, and actually messes things up for moves and abilities with a space like "Leech Seed"
   show(args: any[]): boolean {
     this.row = args[2];
     const ui = this.getUi();
@@ -178,5 +177,14 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
       return true;
     }
     return false;
+  }
+
+  clear(): void {
+    super.clear();
+
+    // Clearing the labels so they don't appear again and overlap
+    this.formLabels.forEach(label => {
+      label.destroy();
+    });
   }
 }
