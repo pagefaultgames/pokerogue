@@ -84,6 +84,11 @@ export enum ChallengeType {
    * Modifies what weight AI pokemon have when generating movesets. UNIMPLEMENTED.
    */
   MOVE_WEIGHT,
+  /**
+   * Modifies what the pokemon stats for Flip Stat Mode.
+   */
+  FLIP_STAT,
+
 }
 
 /**
