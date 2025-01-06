@@ -1766,7 +1766,7 @@ const modifierPool: ModifierPool = {
           const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
             .some(m => moveset.includes(m));
           // Moves that take advantage of being able to give the target a status orb
-          // TODO: Take moves (Trick, Fling, Switcheroo) from comment they are implemented
+          // TODO: Take moves (Trick, Fling, Switcheroo) from comment when they are implemented
           const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
             .some(m => moveset.includes(m));
 
@@ -1779,10 +1779,7 @@ const modifierPool: ModifierPool = {
             const hasOppositeAbility = [ Abilities.FLARE_BOOST ]
               .some(a => p.hasAbility(a, false, true));
 
-            if (hasGeneralAbility) {
-              return (hasSpecificAbility || !hasOppositeAbility) || hasStatusMoves;
-            }
-            return hasSpecificAbility || hasStatusMoves;
+            return hasSpecificAbility || (hasGeneralAbility && !hasOppositeAbility) || hasStatusMoves;
           } else {
             return hasItemMoves;
           }
@@ -1803,7 +1800,7 @@ const modifierPool: ModifierPool = {
           const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
             .some(m => moveset.includes(m));
           // Moves that take advantage of being able to give the target a status orb
-          // TODO: Take moves (Trick, Fling, Switcheroo) from comment they are implemented
+          // TODO: Take moves (Trick, Fling, Switcheroo) from comment when they are implemented
           const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
             .some(m => moveset.includes(m));
 
@@ -1816,10 +1813,7 @@ const modifierPool: ModifierPool = {
             const hasOppositeAbility = [ Abilities.TOXIC_BOOST, Abilities.POISON_HEAL ]
               .some(a => p.hasAbility(a, false, true));
 
-            if (hasGeneralAbility) {
-              return (hasSpecificAbility || !hasOppositeAbility) || hasStatusMoves;
-            }
-            return hasSpecificAbility || hasStatusMoves;
+            return hasSpecificAbility || (hasGeneralAbility && !hasOppositeAbility) || hasStatusMoves;
           } else {
             return hasItemMoves;
           }
