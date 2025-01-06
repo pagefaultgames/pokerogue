@@ -441,7 +441,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   /**
    * Checks if the enemy trainer already has the Pokemon species in their party
-   * @param {PokemonSpecies} baseSpecies {@linkcode Species} - The base species of the current Pokemon
+   * @param baseSpecies - The base {@linkcode Species} of the current Pokemon
    * @returns `true` if the species is already present in the party
    */
   checkDuplicateSpecies(baseSpecies: Species): boolean {
