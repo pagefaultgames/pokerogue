@@ -1415,12 +1415,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                     let label:string = "";
                     if (pre.level > 1) {
-                      label = `${pre.level}`;
+                      label = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${pre.level}`;
                     } else if (pre.item) {
-                      label = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[pre.item].toUpperCase()}`) +
+                      label = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[pre.item].toUpperCase()}`) +
                         " (" + (pre.item > 50 ? "Ultra" : "Great") + ")";
                     } else {
-                      label = "";
+                      label = i18next.t("pokedexUiHandler:evolveGeneric");
                     }
                     options.push({
                       label: label,
@@ -1457,13 +1457,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       }
                     });
                     let label:string = "";
-                    if (evo.level > 1) {
-                      label = `${evo.level}`;
+                    if (evo.condition) {
+                      label = i18next.t("pokedexUiHandler:evolveGeneric");
+                    } else if (evo.level > 1) {
+                      label = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${evo.level}`;
                     } else if (evo.item) {
-                      label = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
+                      label = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
                         " (" + (evo.item > 50 ? "Ultra" : "Great") + ")";
                     } else {
-                      label = "";
+                      label = i18next.t("pokedexUiHandler:evolveGeneric");
                     }
                     options.push({
                       label: label,
