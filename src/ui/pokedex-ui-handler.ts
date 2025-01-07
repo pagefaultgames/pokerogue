@@ -908,7 +908,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
         success = true;
 
-      } else if (this.filterTextMode) {
+      } else if (this.filterTextMode && !(this.filterText.getValue(this.filterTextCursor) === this.filterText.defaultText)) {
         this.filterText.resetSelection(this.filterTextCursor);
         success = true;
       } else {
