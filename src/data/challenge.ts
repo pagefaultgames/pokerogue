@@ -975,6 +975,9 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         case ChallengeType.MOVE_WEIGHT:
           ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
           break;
+        case ChallengeType.FLIP_STAT:
+          ret ||= c.applyFlipStat(args[0], args[1]);
+          break;
       }
     }
   });
