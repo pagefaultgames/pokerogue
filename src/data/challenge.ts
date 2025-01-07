@@ -707,7 +707,7 @@ export class InverseBattleChallenge extends Challenge {
 }
 
 /**
- * Implements a fresh start challenge.
+ * Implements a flip stat challenge.
  */
 export class FlipStatChallenge extends Challenge {
   constructor() {
