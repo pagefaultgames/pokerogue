@@ -190,7 +190,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private lastSpecies: PokemonSpecies;
   private lastFormIndex: number;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
-  public starterSpecies: PokemonSpecies[] = [];
   private levelMoves: LevelMoves;
   private eggMoves: Moves[] = [];
   private hasEggMoves: boolean[] = [];
@@ -291,8 +290,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
-    const starterSpecies: Species[] = [];
-
     const starterBoxContainer = this.scene.add.container(speciesContainerX + 6, 9); //115
 
     for (const species of allSpecies) {
@@ -300,7 +297,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         continue;
       }
 
-      starterSpecies.push(species.speciesId);
       this.speciesLoaded.set(species.speciesId, false);
       this.allSpecies.push(species);
 
@@ -857,44 +853,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     } else {
       return allSpecies.find(sp => sp.speciesId === pokemonStarters[species.speciesId]) ?? species;
     }
-  }
-
-  /**
-   * Determines if a passive upgrade is available for the given species ID
-   * @param speciesId The ID of the species to check the passive of
-   * @returns true if the user has enough candies and a passive has not been unlocked already
-   */
-  isPassiveAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)];
-
-    return starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])
-      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
-  }
-
-  /**
-   * Determines if a value reduction upgrade is available for the given species ID
-   * @param speciesId The ID of the species to check the value reduction of
-   * @returns true if the user has enough candies and all value reductions have not been unlocked already
-   */
-  isValueReductionAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)];
-
-    return starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])[starterData.valueReduction]
-        && starterData.valueReduction < valueReductionMax;
-  }
-
-  /**
-   * Determines if an same species egg can be bought for the given species ID
-   * @param speciesId The ID of the species to check the value reduction of
-   * @returns true if the user has enough candies
-   */
-  isSameSpeciesEggAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)];
-
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(speciesId)]);
   }
 
   getFormString(formKey: string, species: PokemonSpecies, append: boolean = false): string {
@@ -1574,7 +1532,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           case Button.STATS:
             if (!this.speciesStarterDexEntry?.caughtAttr) {
               error = true;
-            } else if (this.starterSpecies.length <= 6) { // checks to see if the party has 6 or fewer pokemon
+            } else { // checks to see if the party has 6 or fewer pokemon
               const ui = this.getUi();
               const options: any[] = []; // TODO: add proper type
 
@@ -1978,37 +1936,22 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
         }
 
-        const starterIndex = this.starterSpecies.indexOf(species);
-
-        let props: StarterAttributes;
-
-        if (starterIndex > -1) {
-          props = this.starterAttributes;
-          this.setSpeciesDetails(species, {
-            shiny: props.shiny,
-            formIndex: props.form,
-            female: props.female,
-            variant: props.variant ?? 0,
-          });
-        } else {
-          const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
-          // load default nature from stater save data, if set
-          props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-          if (starterAttributes?.variant && !isNaN(starterAttributes.variant)) {
-            if (props.shiny) {
-              props.variant = starterAttributes.variant as Variant;
-            }
+        // load default nature from stater save data, if set
+        const props: StarterAttributes = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        if (starterAttributes?.variant && !isNaN(starterAttributes.variant)) {
+          if (props.shiny) {
+            props.variant = starterAttributes.variant as Variant;
           }
-          props.form = starterAttributes?.form ?? props.form;
-          props.female = starterAttributes?.female ?? props.female;
-
-          this.setSpeciesDetails(species, {
-            shiny: props.shiny,
-            formIndex: props.form,
-            female: props.female,
-            variant: props.variant ?? 0,
-          });
         }
+        props.form = starterAttributes?.form ?? props.form;
+        props.female = starterAttributes?.female ?? props.female;
+
+        this.setSpeciesDetails(species, {
+          shiny: props.shiny,
+          formIndex: props.form,
+          female: props.female,
+          variant: props.variant ?? 0,
+        });
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, props.form ?? 0);
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
