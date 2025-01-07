@@ -406,6 +406,16 @@ export abstract class Challenge {
   applyMoveWeight(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
     return false;
   }
+
+  /**
+   * An apply function for FlipStats. Derived classes should alter this.
+   * @param pokemon {@link Pokemon} What pokemon would learn the move.
+   * @param baseStats  What are the stats to flip.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyFlipStat(pokemon: Pokemon, baseStats: number[]) {
+    return false;
+  }
 }
 
 type ChallengeCondition = (data: GameData) => boolean;
@@ -714,6 +724,16 @@ export class FlipStatChallenge extends Challenge {
     super(Challenges.FLIP_STAT, 1);
   }
 
+  override applyFlipStat(pokemon: Pokemon, baseStats: number[]) {
+    const origStats = Utils.deepCopy(baseStats);
+    baseStats[0] = origStats[5];
+    baseStats[1] = origStats[4];
+    baseStats[2] = origStats[3];
+    baseStats[3] = origStats[2];
+    baseStats[4] = origStats[1];
+    baseStats[5] = origStats[0];
+    return true;
+  }
 
   static loadChallenge(source: FlipStatChallenge | any): FlipStatChallenge {
     const newChallenge = new FlipStatChallenge();
