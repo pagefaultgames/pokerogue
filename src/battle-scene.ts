@@ -1424,6 +1424,8 @@ export default class BattleScene extends SceneBase {
       return 0;
     }
 
+    const isEggPhase: boolean = [ "EggLapsePhase", "EggHatchPhase" ].includes(this.getCurrentPhase()?.constructor.name ?? "");
+
     switch (species.speciesId) {
       case Species.UNOWN:
       case Species.SHELLOS:
@@ -1455,7 +1457,7 @@ export default class BattleScene extends SceneBase {
         }
         return Utils.randSeedInt(8);
       case Species.EEVEE:
-        if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
+        if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30 && !isEggPhase) {
           return 0; // No Partner Eevee for Wave 12 Preschoolers
         }
         return Utils.randSeedInt(2);
@@ -1483,7 +1485,7 @@ export default class BattleScene extends SceneBase {
         return 0;
       case Species.GIMMIGHOUL:
       // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
-        if (this.gameMode.hasMysteryEncounters) {
+        if (this.gameMode.hasMysteryEncounters && !isEggPhase) {
           return 1; // Wandering form
         } else {
           return Utils.randSeedInt(species.forms.length);
