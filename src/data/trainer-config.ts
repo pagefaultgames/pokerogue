@@ -1339,17 +1339,17 @@ export const signatureSpecies: SignatureSpecies = {
   DRAYTON: [ Species.DRAGONITE, Species.ARCHALUDON, Species.HAXORUS, Species.SCEPTILE ],
   BLUE: [[ Species.GYARADOS, Species.EXEGGUTOR, Species.ARCANINE ], Species.HO_OH, [ Species.RHYPERIOR, Species.MAGNEZONE ]], // Alakazam lead, Mega Pidgeot
   RED: [ Species.LUGIA, Species.SNORLAX, [ Species.ESPEON, Species.UMBREON, Species.SYLVEON ]], // GMax Pikachu lead, Mega gen 1 starter
-  LANCE_CHAMPION: [ Species.DRAGONITE, Species.KINGDRA, Species.ALOLA_EXEGGUTOR ], // Aerodactyl lead, Mega Latias/Latios
+  LANCE_CHAMPION: [ Species.DRAGONITE, Species.KINGDRA, Species.ALOLA_EXEGGUTOR ], // Aerodactyl lead, Mega Salamence
   STEVEN: [ Species.AGGRON, [ Species.ARMALDO, Species.CRADILY ], Species.IRON_CROWN ], // Skarmory lead, Mega Metagross
-  WALLACE: [ Species.MILOTIC, Species.WALKING_WAKE, Species.LUDICOLO ], // Pelipper lead, Mega Salamence
+  WALLACE: [ Species.MILOTIC, Species.WALKING_WAKE, Species.LUDICOLO ], // Pelipper lead, Mega Latios/Latias
   CYNTHIA: [ Species.GIRATINA, Species.LUCARIO, Species.TOGEKISS ], // Spiritomb lead, Mega Garchomp
   ALDER: [ Species.VOLCARONA, Species.ZEKROM, [ Species.ACCELGOR, Species.ESCAVALIER ], Species.KELDEO ], // Bouffalant/Braviary lead
   IRIS: [ Species.HAXORUS, Species.RESHIRAM, Species.ARCHEOPS ], // Druddigon lead, Gmax Lapras
   DIANTHA: [ Species.HAWLUCHA, Species.XERNEAS, Species.GOODRA ], // Gourgeist lead, Mega Gardevoir
   HAU: [[ Species.SOLGALEO, Species.LUNALA ], Species.NOIVERN, [ Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA ], [ Species.TAPU_BULU, Species.TAPU_FINI, Species.TAPU_KOKO, Species.TAPU_LELE ]], // Alola Raichu lead
   LEON: [ Species.DRAGAPULT, Species.ZACIAN, Species.AEGISLASH ], // Rillaboom/Cinderace/Inteleon lead, GMax Charizard
-  GEETA: [ Species.MIRAIDON, [ Species.ESPATHRA, Species.VELUZA ], [ Species.AVALUGG, Species.HISUI_AVALUGG ], Species.KINGAMBIT ], // Glimmora lead
-  NEMONA: [ Species.KORAIDON, Species.PAWMOT, [ Species.DUDUNSPARCE, Species.ORTHWORM ], [ Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL ]], // Lycanroc lead
+  GEETA: [ Species.MIRAIDON, [ Species.ESPATHRA, Species.VELUZA ], [ Species.CHI_YU, Species.WO_CHIEN ], Species.KINGAMBIT ], // Glimmora lead
+  NEMONA: [ Species.KORAIDON, Species.PAWMOT, [ Species.CHIEN_PAO, Species.TING_LU ], [ Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL ]], // Lycanroc lead
   KIERAN: [[ Species.GRIMMSNARL, Species.INCINEROAR, Species.PORYGON_Z ], Species.OGERPON, Species.TERAPAGOS, Species.HYDRAPPLE ], // Poliwrath/Politoed lead
 };
 
@@ -1771,8 +1771,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.AERODACTYL ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.LATIAS, Species.LATIOS ], TrainerSlot.TRAINER, true, p => {
-      p.formIndex = 1; // Mega Latias or Mega Latios
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.SALAMENCE ], TrainerSlot.TRAINER, true, p => {
+      p.formIndex = 1; // Mega Salamence
       p.generateAndPopulateMoveset();
       p.generateName();
     })),
@@ -1790,8 +1790,8 @@ export const trainerConfigs: TrainerConfigs = {
       p.abilityIndex = 1; // Drizzle
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.SALAMENCE ], TrainerSlot.TRAINER, true, p => {
-      p.formIndex = 1; // Mega Salamence
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.LATIOS, Species.LATIAS ], TrainerSlot.TRAINER, true, p => {
+      p.formIndex = 1; // Mega Latios or Mega Latias
       p.generateAndPopulateMoveset();
       p.generateName();
     })),
