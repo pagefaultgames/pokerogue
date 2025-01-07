@@ -19,7 +19,6 @@ import { GameModes } from "#app/game-mode";
 import { AbilityAttr, DexAttr, DexEntry, StarterAttributes  } from "#app/system/game-data";
 import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { StatsContainer } from "#app/ui/stats-container";
 import { TextStyle, addTextObject, getTextStyleOptions } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
@@ -39,7 +38,7 @@ import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import { StarterContainer } from "#app/ui/starter-container";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
-import { BooleanHolder, capitalizeString, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
+import { BooleanHolder, capitalizeString, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, rgbHexToRgba, toReadableString } from "#app/utils";
 import type { Nature } from "#enums/nature";
 import BgmBar from "./bgm-bar";
 import * as Utils from "../utils";
@@ -141,7 +140,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private shinyOverlay: Phaser.GameObjects.Image;
   private starterContainers: StarterContainer[] = [];
   private filteredStarterContainers: StarterContainer[] = [];
-  private validStarterContainers: StarterContainer[] = [];
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNameText: Phaser.GameObjects.Text;
@@ -220,8 +218,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
 
-  private iconAnimHandler: PokemonIconAnimHandler;
-
   // variables to keep track of the dynamically rendered list of instruction prompts for starter select
   private instructionRowX = 0;
   private instructionRowY = 0;
@@ -270,9 +266,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.shinyOverlay.setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
 
-    this.iconAnimHandler = new PokemonIconAnimHandler();
-    this.iconAnimHandler.setup(this.scene);
-
     this.pokemonNumberText = addTextObject(this.scene, 17, 1, "0000", TextStyle.SUMMARY);
     this.pokemonNumberText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
@@ -312,7 +305,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.allSpecies.push(species);
 
       const starterContainer = new StarterContainer(this.scene, species).setVisible(false);
-      this.iconAnimHandler.addOrUpdate(starterContainer.icon, PokemonIconAnimMode.NONE);
       this.starterContainers.push(starterContainer);
       starterBoxContainer.add(starterContainer);
     }
@@ -543,8 +535,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     });
     this.starterSelectContainer.add(this.infoOverlay);
 
-    // Filter bar sits above everything, except the tutorial overlay and message box
-    this.initTutorialOverlay(this.starterSelectContainer);
+    // Filter bar sits above everything, except the message box
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
 
     this.updateInstructions();
@@ -906,104 +897,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(speciesId)]);
   }
 
-  /**
-   * Sets a bounce animation if enabled and the Pokemon has an upgrade
-   * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
-   * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
-   * @param startPaused Should this animation be paused after it is added?
-   */
-  setUpgradeAnimation(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, startPaused: boolean = false): void {
-    this.scene.tweens.killTweensOf(icon);
-    // Skip animations if they are disabled
-    if (this.scene.candyUpgradeDisplay === 0 || species.speciesId !== species.getRootSpeciesId(false)) {
-      return;
-    }
-
-    icon.y = 2;
-
-    const tweenChain: Phaser.Types.Tweens.TweenChainBuilderConfig = {
-      targets: icon,
-      loop: -1,
-      // Make the initial bounce a little randomly delayed
-      delay: randIntRange(0, 50) * 5,
-      loopDelay: 1000,
-      tweens: [
-        {
-          targets: icon,
-          y: 2 - 5,
-          duration: fixedInt(125),
-          ease: "Cubic.easeOut",
-          yoyo: true
-        },
-        {
-          targets: icon,
-          y: 2 - 3,
-          duration: fixedInt(150),
-          ease: "Cubic.easeOut",
-          yoyo: true
-        }
-      ], };
-
-    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
-    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
-    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
-
-    // 'Passives Only' mode
-    if (this.scene.candyUpgradeNotification === 1) {
-      if (isPassiveAvailable) {
-        this.scene.tweens.chain(tweenChain).paused = startPaused;
-      }
-    // 'On' mode
-    } else if (this.scene.candyUpgradeNotification === 2) {
-      if (isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable) {
-        this.scene.tweens.chain(tweenChain).paused = startPaused;
-      }
-    }
-  }
-
-  /**
-   * Sets the visibility of a Candy Upgrade Icon
-   */
-  setUpgradeIcon(starter: StarterContainer): void {
-    const species = starter.species;
-    const slotVisible = !!species?.speciesId;
-
-    if (!species || this.scene.candyUpgradeNotification === 0 || species.speciesId !== species.getRootSpeciesId(false)) {
-      starter.candyUpgradeIcon.setVisible(false);
-      starter.candyUpgradeOverlayIcon.setVisible(false);
-      return;
-    }
-
-    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
-    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
-    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
-
-    // 'Passive Only' mode
-    if (this.scene.candyUpgradeNotification === 1) {
-      starter.candyUpgradeIcon.setVisible(slotVisible && isPassiveAvailable);
-      starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
-
-      // 'On' mode
-    } else if (this.scene.candyUpgradeNotification === 2) {
-      starter.candyUpgradeIcon.setVisible(
-        slotVisible && ( isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable ));
-      starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
-    }
-  }
-
-  /**
-   * Update the display of candy upgrade icons or animations for the given StarterContainer
-   * @param starterContainer the container for the Pokemon to update
-   */
-  updateCandyUpgradeDisplay(starterContainer: StarterContainer) {
-    if (this.isUpgradeIconEnabled() ) {
-      this.setUpgradeIcon(starterContainer);
-    }
-    if (this.isUpgradeAnimationEnabled()) {
-      this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
-    }
-  }
-
   getFormString(formKey: string, species: PokemonSpecies, append: boolean = false): string {
     let label: string;
     const formText = capitalizeString(formKey, "-", false, false) ?? "";
@@ -1066,7 +959,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     } else {
 
-      let starterContainer;
       const starterData = this.scene.gameData.starterData[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
       // prepare persistent starter data to store changes
       const starterAttributes = this.starterAttributes;
@@ -1710,11 +1602,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         this.setSpeciesDetails(this.lastSpecies);
                         this.scene.playSound("se/buy");
 
-                        // update the passive background and icon/animation for available upgrade
-                        if (starterContainer) {
-                          this.updateCandyUpgradeDisplay(starterContainer);
-                          starterContainer.starterPassiveBgs.setVisible(!!this.scene.gameData.starterData[this.getStarterSpeciesId(this.lastSpecies.speciesId)].passiveAttr);
-                        }
                         return true;
                       }
                       return false;
@@ -1745,10 +1632,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         ui.setMode(Mode.POKEDEX_PAGE, "refresh");
                         this.scene.playSound("se/buy");
 
-                        // update the value label and icon/animation for available upgrade
-                        if (starterContainer) {
-                          this.updateCandyUpgradeDisplay(starterContainer);
-                        }
                         return true;
                       }
                       return false;
@@ -1784,11 +1667,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       });
                       ui.setMode(Mode.POKEDEX_PAGE, "refresh");
                       this.scene.playSound("se/buy");
-
-                      // update the icon/animation for available upgrade
-                      if (starterContainer) {
-                        this.updateCandyUpgradeDisplay(starterContainer);
-                      }
 
                       return true;
                     }
@@ -1982,7 +1860,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     return ret;
   }
-
 
   getFriendship(speciesId: number) {
     let currentFriendship = this.scene.gameData.starterData[this.getStarterSpeciesId(speciesId)].friendship;

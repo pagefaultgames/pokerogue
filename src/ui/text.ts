@@ -360,6 +360,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
         return !shadow ? "#f8b050" : "#c07800"; // Gold
       }
       return !shadow ? "#78c850" : "#306850"; // Green
+    // Leaving the logic in place, in case someone wants to pick an even darker hue for the shadow down the line
     case TextStyle.SHADOW_TEXT:
       if (isLegacyTheme) {
         return !shadow ? "#d0d0c8" : "#d0d0c8";

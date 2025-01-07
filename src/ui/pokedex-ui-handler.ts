@@ -29,9 +29,7 @@ import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#app/utils";
 import type { Nature } from "#enums/nature";
-import AutoCompleteUiHandler from "./autocomplete-ui-handler";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { addWindow, WindowVariant } from "./ui-theme";
+import { addWindow } from "./ui-theme";
 import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/ability";
@@ -158,8 +156,6 @@ interface SpeciesDetails {
 export default class PokedexUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
-  //  private filterTextContainer: Phaser.GameObjects.Container;
-  private autocomplete: AutoCompleteUiHandler;
   private filterBarContainer: Phaser.GameObjects.Container;
   private filterBar: FilterBar;
   private starterContainers: StarterContainer[] = [];
@@ -171,12 +167,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private type1Icon: Phaser.GameObjects.Sprite;
   private type2Icon: Phaser.GameObjects.Sprite;
 
-  private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
-
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
 
-  private starterIconsCursorIndex: number;
   private filterMode: boolean;
   private filterBarCursor: integer = 0;
   private starterMoveset: StarterMoveset | null;
@@ -185,7 +178,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private allSpecies: PokemonSpecies[] = [];
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
-  public starterSpecies: PokemonSpecies[] = [];
   private pokerusSpecies: PokemonSpecies[] = [];
   private starterAttr: bigint[] = [];
   private starterAbilityIndexes: integer[] = [];
@@ -272,80 +264,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.filterTextContainer);
 
 
-    //    this.filterTextContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
-    //    this.starterSelectContainer.setVisible(false);
-    //    ui.add(this.filterTextContainer);
-
-
-    this.autocomplete = new AutoCompleteUiHandler(this.scene);
-
-    const manageDataOptions: any[] = []; // TODO: proper type
-
-    manageDataOptions.push({
-      label: "Test Dialogue",
-      handler: () => {
-        ui.playSelect();
-        const prefilledText = "";
-        const buttonAction: any = {};
-        buttonAction["buttonActions"] = [
-          (sanitizedName: string) => {
-            ui.revertMode();
-            ui.playSelect();
-            const dialogueTestName = sanitizedName;
-            const dialogueName = decodeURIComponent(escape(atob(dialogueTestName)));
-            const handler = ui.getHandler() as AwaitableUiHandler;
-            handler.tutorialActive = true;
-            const interpolatorOptions: any = {};
-            const splitArr = dialogueName.split(" "); // this splits our inputted text into words to cycle through later
-            const translatedString = splitArr[0]; // this is our outputted i18 string
-            const regex = RegExp("\\{\\{(\\w*)\\}\\}", "g"); // this is a regex expression to find all the text between {{ }} in the i18 output
-            const matches = i18next.t(translatedString).match(regex) ?? [];
-            if (matches.length > 0) {
-              for (let match = 0; match < matches.length; match++) {
-                // we add 1 here  because splitArr[0] is our first value for the translatedString, and after that is where the variables are
-                // the regex here in the replace (/\W/g) is to remove the {{ and }} and just give us all alphanumeric characters
-                if (typeof splitArr[match + 1] !== "undefined") {
-                  interpolatorOptions[matches[match].replace(/\W/g, "")] = i18next.t(splitArr[match + 1]);
-                }
-              }
-            }
-            ui.showText(String(i18next.t(translatedString, interpolatorOptions)), null, () => this.scene.ui.showText("", 0, () => {
-              handler.tutorialActive = false;
-            }), null, true);
-          },
-          () => {
-            ui.revertMode();
-          }
-        ];
-        ui.setMode(Mode.TEST_DIALOGUE, buttonAction, prefilledText);
-        return true;
-      },
-      keepOpen: true
-    });
-
-
-    this.menuMessageBoxContainer = this.scene.add.container(0, 130);
-    this.menuMessageBoxContainer.setName("menu-message-box");
-    this.menuMessageBoxContainer.setVisible(false);
-
-    // Window for general messages
-    this.menuMessageBox = addWindow(this.scene, 0, 0, this.defaultMessageBoxWidth, 48);
-    this.menuMessageBox.setOrigin(0, 0);
-    this.menuMessageBoxContainer.add(this.menuMessageBox);
-
-    // Full-width window used for testing dialog messages in debug mode
-    this.dialogueMessageBox = addWindow(this.scene, -this.textPadding, 0, this.scene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
-    this.dialogueMessageBox.setOrigin(0, 0);
-    this.menuMessageBoxContainer.add(this.dialogueMessageBox);
-
-
-    this.manageDataConfig = {
-      xOffset: 98,
-      options: manageDataOptions,
-      maxOptions: 7
-    };
-
-
     // Create and initialise filter bar
     this.filterBarContainer = this.scene.add.container(0, 0);
     this.filterBar = new FilterBar(this.scene, speciesContainerX, 1, 175, filterBarHeight, 2, 0, 6);
@@ -379,7 +297,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     });
     this.filterBar.addFilter(DropDownColumn.TYPES, i18next.t("filterBar:typeFilter"), new DropDown(this.scene, 0, 0, typeOptions, this.updateStarters, DropDownType.HYBRID, 0.5));
 
-    // biome filter. Making an entry in the dropdown for each biome
+    // biome filter, making an entry in the dropdown for each biome
     const biomeOptions = Object.values(Biome)
       .filter((value) => typeof value === "number") // Filter numeric values from the enum
       .map((biomeValue, index) =>
@@ -508,8 +426,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
-    const starterSpecies: Species[] = [];
-
     const starterBoxContainer = this.scene.add.container(speciesContainerX + 6, 9); //115
 
     this.starterSelectScrollBar = new ScrollBar(this.scene, 161, 12, 5, starterContainerWindow.height - 6, 9);
@@ -530,8 +446,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     starterBoxContainer.add(this.cursorObj);
 
     for (const species of allSpecies) {
-
-      starterSpecies.push(species.speciesId);
       this.speciesLoaded.set(species.speciesId, false);
       this.allSpecies.push(species);
 
@@ -997,9 +911,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       } else if (this.filterTextMode) {
         this.filterText.resetSelection(this.filterTextCursor);
         success = true;
-      } else if (this.starterSpecies.length) {
-        this.popStarter(this.starterSpecies.length - 1);
-        success = true;
       } else {
         this.tryExit();
         success = true;
@@ -1045,7 +956,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         case Button.UP:
           if (this.filterBar.openDropDown) {
             success = this.filterBar.decDropDownCursor();
-          } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
+          } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
           // UP from the last filter, move to start button
             this.setFilterMode(false);
             this.cursorObj.setVisible(false);
@@ -1068,11 +979,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
         case Button.DOWN:
           if (this.filterBar.openDropDown) {
             success = this.filterBar.incDropDownCursor();
-          } else if (this.filterBarCursor === this.filterBar.numFilters - 1 && this.starterSpecies.length > 0) {
+          } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
           // DOWN from the last filter, move to Pokemon in party if any
             this.setFilterMode(false);
             this.cursorObj.setVisible(false);
-            this.starterIconsCursorIndex = 0;
             success = true;
           } else if (numberOfStarters > 0) {
           // DOWN from filter bar to top of Pokemon list
@@ -1215,18 +1125,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       switch (iconSetting) {
         case SettingKeyboard.Button_Cycle_Shiny:
           iconPath = "R.png";
-          break;
-        case SettingKeyboard.Button_Cycle_Form:
-          iconPath = "F.png";
-          break;
-        case SettingKeyboard.Button_Cycle_Gender:
-          iconPath = "G.png";
-          break;
-        case SettingKeyboard.Button_Cycle_Ability:
-          iconPath = "E.png";
-          break;
-        case SettingKeyboard.Button_Cycle_Nature:
-          iconPath = "N.png";
           break;
         case SettingKeyboard.Button_Cycle_Variant:
           iconPath = "V.png";
@@ -1606,7 +1504,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
             container.candyUpgradeIcon.setTint(argbFromRgba(rgbHexToRgba(starterColors[this.getStarterSpeciesId(speciesId)][0])));
             container.candyUpgradeOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(starterColors[this.getStarterSpeciesId(speciesId)][1])));
 
-            //          this.setUpgradeIcon(container);
           } else if (this.scene.candyUpgradeDisplay === 1) {
             container.candyUpgradeIcon.setVisible(false);
             container.candyUpgradeOverlayIcon.setVisible(false);
@@ -1699,7 +1596,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     return { currentFriendship, friendshipCap };
   }
 
-  // setSpecies(null) might be broken; it doesn't hide the sprite on its own.
   setSpecies(species: PokemonSpecies | null) {
 
     this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
@@ -1758,9 +1654,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.setSpeciesDetails(species, {});
 
         this.pokemonSprite.clearTint();
-        if (this.pokerusSpecies.includes(species)) {
-          handleTutorial(this.scene, Tutorial.Pokerus);
-        }
       } else {
         this.type1Icon.setVisible(false);
         this.type2Icon.setVisible(false);
@@ -1807,8 +1700,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
-
-      //      const caughtAttr = this.scene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
 
       if (!dexEntry.caughtAttr) {
         const props = this.getSanitizedProps(this.scene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)));
@@ -1860,8 +1751,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.setTypeIcons(null, null);
       }
     } else {
-      //      this.pokemonNumberText.setColor(this.getTextColor(TextStyle.SUMMARY));
-      //      this.pokemonNumberText.setShadowColor(this.getTextColor(TextStyle.SUMMARY, true));
       this.setTypeIcons(null, null);
     }
 
@@ -1882,26 +1771,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.type2Icon.setFrame(Type[type2].toLowerCase());
     } else {
       this.type2Icon.setVisible(false);
-    }
-  }
-
-  popStarter(index: number): void {
-    this.starterSpecies.splice(index, 1);
-    this.starterAttr.splice(index, 1);
-    this.starterAbilityIndexes.splice(index, 1);
-    this.starterNatures.splice(index, 1);
-    this.starterMovesets.splice(index, 1);
-
-    if (this.starterSpecies.length === 0) {
-      if (this.filteredStarterContainers.length > 0) {
-        // Back to the first Pokemon if there is one
-        this.cursorObj.setVisible(true);
-        this.setCursor(0 + this.scrollCursor * 9);
-      } else {
-        // Back to filters
-        this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
-        this.setFilterMode(true);
-      }
     }
   }
 
@@ -2020,15 +1889,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     //    StarterPrefs.save(this.starterPreferences);
     this.cursor = -1;
-    this.activeTooltip = undefined;
     this.scene.ui.hideTooltip();
 
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
-
-    while (this.starterSpecies.length) {
-      this.popStarter(this.starterSpecies.length - 1);
-    }
   }
 
   checkIconId(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, female: boolean, formIndex: number, shiny: boolean, variant: number) {
