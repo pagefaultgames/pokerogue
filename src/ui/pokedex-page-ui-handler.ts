@@ -1644,12 +1644,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   options: options,
                   yOffset: 47
                 });
+                success = true;
+              } else {
+                error = true;
               }
-              ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                options: options,
-                yOffset: 47
-              });
-              success = true;
             }
             break;
           case Button.UP:
@@ -1709,38 +1707,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
     }
     iconElement.setTexture(gamepadType, iconPath);
-    iconElement.setPosition(this.instructionRowX, this.instructionRowY + 8);
-    controlLabel.setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY + 8);
+    iconElement.setPosition(this.instructionRowX, this.instructionRowY);
+    controlLabel.setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY);
     iconElement.setVisible(true);
     controlLabel.setVisible(true);
     this.instructionsContainer.add([ iconElement, controlLabel ]);
     this.instructionRowY += 8;
-    if (this.instructionRowY >= 16) {
-      this.instructionRowY = 0;
+    if (this.instructionRowY >= 24) {
+      this.instructionRowY = 8;
       this.instructionRowX += 50;
-    }
-  }
-
-  updateFilterButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
-    let iconPath;
-    // touch controls cannot be rebound as is, and are just emulating a keyboard event.
-    // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
-    if (gamepadType === "touch") {
-      gamepadType = "keyboard";
-      iconPath = "C.png";
-    } else {
-      iconPath = this.scene.inputController?.getIconForLatestInputRecorded(iconSetting);
-    }
-    iconElement.setTexture(gamepadType, iconPath);
-    iconElement.setPosition(this.filterInstructionRowX, this.filterInstructionRowY);
-    controlLabel.setPosition(this.filterInstructionRowX + this.instructionRowTextOffset, this.filterInstructionRowY);
-    iconElement.setVisible(true);
-    controlLabel.setVisible(true);
-    this.filterInstructionsContainer.add([ iconElement, controlLabel ]);
-    this.filterInstructionRowY += 8;
-    if (this.filterInstructionRowY >= 24) {
-      this.filterInstructionRowY = 0;
-      this.filterInstructionRowX += 50;
     }
   }
 
@@ -1763,12 +1738,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return;
     }
 
-    this.candyUpgradeIconElement.setVisible(true);
-    this.candyUpgradeLabel.setVisible(true);
-    this.instructionsContainer.add(this.candyUpgradeIconElement);
-    this.instructionsContainer.add(this.candyUpgradeLabel);
-
     if (this.speciesStarterDexEntry?.caughtAttr) {
+      if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+        this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
+      }
       if (this.canCycleShiny) {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
       }
