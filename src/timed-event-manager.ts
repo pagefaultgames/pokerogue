@@ -1,10 +1,11 @@
 import BattleScene from "#app/battle-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
-import { nil } from "#app/utils";
+import { isNullOrUndefined, nil } from "#app/utils";
 import i18next from "i18next";
 import { Species } from "#enums/species";
 import { WeatherPoolEntry } from "#app/data/weather";
 import { WeatherType } from "#enums/weather-type";
+import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
 
 export enum EventType {
   SHINY,
@@ -21,14 +22,15 @@ interface EventBanner {
 
 interface EventEncounter {
   species: Species;
-  allowEvolution?: boolean;
+  blockEvolution?: boolean;
 }
 
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
   shinyMultiplier?: number;
-  friendshipMultiplier?: number;
+  classicFriendshipMultiplier?: number;
+  upgradeUnlockedVouchers?: boolean;
   startDate: Date;
   endDate: Date;
   uncommonBreedEncounters?: EventEncounter[];
@@ -41,32 +43,32 @@ const timedEvents: TimedEvent[] = [
     name: "Winter Holiday Update",
     eventType: EventType.SHINY,
     shinyMultiplier: 2,
-    friendshipMultiplier: 1,
+    upgradeUnlockedVouchers: true,
     startDate: new Date(Date.UTC(2024, 11, 21, 0)),
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "winter_holidays2024-event-",
     scale: 0.21,
     availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
     uncommonBreedEncounters: [
-      { species: Species.GIMMIGHOUL },
+      { species: Species.GIMMIGHOUL, blockEvolution: true },
       { species: Species.DELIBIRD },
-      { species: Species.STANTLER, allowEvolution: true },
-      { species: Species.CYNDAQUIL, allowEvolution: true },
-      { species: Species.PIPLUP, allowEvolution: true },
-      { species: Species.CHESPIN, allowEvolution: true },
-      { species: Species.BALTOY, allowEvolution: true },
-      { species: Species.SNOVER, allowEvolution: true },
-      { species: Species.CHINGLING, allowEvolution: true },
-      { species: Species.LITWICK, allowEvolution: true },
-      { species: Species.CUBCHOO, allowEvolution: true },
-      { species: Species.SWIRLIX, allowEvolution: true },
-      { species: Species.AMAURA, allowEvolution: true },
-      { species: Species.MUDBRAY, allowEvolution: true },
-      { species: Species.ROLYCOLY, allowEvolution: true },
-      { species: Species.MILCERY, allowEvolution: true },
-      { species: Species.SMOLIV, allowEvolution: true },
-      { species: Species.ALOLA_VULPIX, allowEvolution: true },
-      { species: Species.GALAR_DARUMAKA, allowEvolution: true },
+      { species: Species.STANTLER },
+      { species: Species.CYNDAQUIL },
+      { species: Species.PIPLUP },
+      { species: Species.CHESPIN },
+      { species: Species.BALTOY },
+      { species: Species.SNOVER },
+      { species: Species.CHINGLING },
+      { species: Species.LITWICK },
+      { species: Species.CUBCHOO },
+      { species: Species.SWIRLIX },
+      { species: Species.AMAURA },
+      { species: Species.MUDBRAY },
+      { species: Species.ROLYCOLY },
+      { species: Species.MILCERY },
+      { species: Species.SMOLIV },
+      { species: Species.ALOLA_VULPIX },
+      { species: Species.GALAR_DARUMAKA },
       { species: Species.IRON_BUNDLE }
     ],
     delibirdyBuff: [ "CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM" ],
@@ -97,16 +99,6 @@ export class TimedEventManager {
     return activeEvents.length > 0;
   }
 
-  getFriendshipMultiplier(): number {
-    let multiplier = 1;
-    const friendshipEvents = timedEvents.filter((te) => this.isActive(te));
-    friendshipEvents.forEach((fe) => {
-      multiplier *= fe.friendshipMultiplier ?? 1;
-    });
-
-    return multiplier;
-  }
-
   getShinyMultiplier(): number {
     let multiplier = 1;
     const shinyEvents = timedEvents.filter((te) => te.eventType === EventType.SHINY && this.isActive(te));
@@ -120,6 +112,68 @@ export class TimedEventManager {
   getEventBannerFilename(): string {
     return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey ?? "";
   }
+
+  getEventEncounters(): EventEncounter[] {
+    const ret: EventEncounter[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.uncommonBreedEncounters)) {
+        ret.push(...te.uncommonBreedEncounters);
+      }
+    });
+    return ret;
+  }
+
+  /**
+   * For events that change the classic candy friendship multiplier
+   * @returns The highest classic friendship multiplier among the active events, or the default CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER
+   */
+  getClassicFriendshipMultiplier(): number {
+    let multiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
+    const classicFriendshipEvents = timedEvents.filter((te) => this.isActive(te));
+    classicFriendshipEvents.forEach((fe) => {
+      if (!isNullOrUndefined(fe.classicFriendshipMultiplier) && fe.classicFriendshipMultiplier > multiplier) {
+        multiplier = fe.classicFriendshipMultiplier;
+      }
+    });
+    return multiplier;
+  }
+
+  /**
+   * For events where defeated bosses (Gym Leaders, E4 etc) give out Voucher Plus even if they were defeated before
+   * @returns Whether vouchers should be upgraded
+   */
+  getUpgradeUnlockedVouchers(): boolean {
+    return timedEvents.some((te) => this.isActive(te) && (te.upgradeUnlockedVouchers ?? false));
+  }
+
+  /**
+   * For events where Delibirdy gives extra items
+   * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
+   */
+  getDelibirdyBuff(): string[] {
+    const ret: string[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.delibirdyBuff)) {
+        ret.push(...te.delibirdyBuff);
+      }
+    });
+    return ret;
+  }
+
+  /**
+   * For events where there's a set weather for town biome (other biomes are hard)
+   * @returns Event weathers for town
+   */
+  getWeather(): WeatherPoolEntry[] {
+    const ret: WeatherPoolEntry[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.weather)) {
+        ret.push(...te.weather);
+      }
+    });
+    return ret;
+  }
+
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {

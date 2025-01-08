@@ -58,9 +58,10 @@ export const FightOrFlightEncounter: MysteryEncounter =
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
       let bossSpecies: PokemonSpecies;
-      if (scene.eventManager.isEventActive() && scene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
-        const eventEncounter = randSeedItem(scene.eventManager.activeEvent()!.uncommonBreedEncounters!);
-        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, scene.gameMode);
+      const eventEncounters = scene.eventManager.getEventEncounters();
+      if (eventEncounters.length > 0 && randSeedInt(2) === 1) {
+        const eventEncounter = randSeedItem(eventEncounters);
+        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, !(eventEncounter.blockEvolution ?? true), true, scene.gameMode);
         bossSpecies = getPokemonSpecies( levelSpecies );
       } else {
         bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);

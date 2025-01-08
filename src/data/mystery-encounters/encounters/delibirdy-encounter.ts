@@ -37,7 +37,7 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
 const doEventReward = (scene: BattleScene) => {
-  const event_buff = scene.eventManager.activeEvent()?.delibirdyBuff ?? [];
+  const event_buff = scene.eventManager.getDelibirdyBuff();
   if (event_buff.length > 0) {
     const candidates = event_buff.filter((c => {
       const mtype = generateModifierType(scene, modifierTypes[c]);
