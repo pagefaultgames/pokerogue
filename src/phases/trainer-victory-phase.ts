@@ -39,7 +39,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     // Validate Voucher for boss trainers
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
       if (!this.scene.validateVoucher(vouchers[TrainerType[trainerType]]) && this.scene.currentBattle.trainer?.config.isBoss) {
-        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [ modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
+        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [ modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
       }
     }
     // Breeders in Space achievement
