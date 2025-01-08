@@ -7,6 +7,7 @@ import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import { UiTheme } from "#app/enums/ui-theme";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -52,7 +53,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   protected unskippedIndices: number[] = [];
 
-  protected defaultTextStyle: TextStyle = TextStyle.SETTINGS_VALUE;
+  protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
+
+  protected uiTheme: UiTheme;
 
 
   constructor(scene: BattleScene, mode: Mode | null) {
@@ -67,6 +70,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
+    this.uiTheme = (this.scene as BattleScene).uiTheme;
 
     this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -48);
     this.optionSelectContainer.setName(`option-select-${this.mode ? Mode[this.mode] : "UNKNOWN"}`);
@@ -80,7 +84,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectIcons = [];
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, (this.scene as BattleScene).uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, this.uiTheme).scale;
 
     this.setCursor(0);
   }
@@ -123,8 +127,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectText = addBBCodeTextObject(
       this.scene, 0, 0, options.map(o => o.item
-        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.SETTINGS_VALUE)}]    ${o.label}[/color]`
-        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.SETTINGS_VALUE)}]${o.label}[/color]`
+        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, this.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, this.uiTheme)}]    ${o.label}[/color]`
+        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, this.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, this.uiTheme)}]${o.label}[/color]`
       ).join("\n"),
       TextStyle.WINDOW, { maxLines: options.length, lineSpacing: 12 }
     );
@@ -137,8 +141,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.item
-        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.SETTINGS_VALUE)}]    ${o.label}[/color]`
-        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.SETTINGS_VALUE)}]${o.label}[/color]`
+        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, this.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, this.uiTheme)}]    ${o.label}[/color]`
+        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, this.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, this.uiTheme)}]${o.label}[/color]`
       ).join("\n"));
     }
 
