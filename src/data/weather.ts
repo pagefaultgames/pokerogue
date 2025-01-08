@@ -373,8 +373,8 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       break;
   }
 
-  if (arena.biomeType === Biome.TOWN && arena.scene.eventManager.isEventActive() && arena.scene.eventManager.activeEvent()?.weather?.length > 0) {
-    arena.scene.eventManager.activeEvent().weather.map(w => weatherPool.push(w));
+  if (arena.biomeType === Biome.TOWN && arena.scene.eventManager.isEventActive()) {
+    arena.scene.eventManager.getWeather()?.map(w => weatherPool.push(w));
   }
 
   if (weatherPool.length > 1) {
