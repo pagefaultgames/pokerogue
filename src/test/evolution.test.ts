@@ -78,12 +78,15 @@ describe("Evolution", () => {
     const nincada = game.scene.getPlayerPokemon()!;
     nincada.abilityIndex = 2;
     nincada.metBiome = -1;
+    nincada.gender = 1;
 
     nincada.evolve(pokemonEvolutions[Species.NINCADA][0], nincada.getSpeciesForm());
     const ninjask = game.scene.getPlayerParty()[0];
     const shedinja = game.scene.getPlayerParty()[1];
     expect(ninjask.abilityIndex).toBe(2);
     expect(shedinja.abilityIndex).toBe(1);
+    expect(ninjask.gender).toBe(1);
+    expect(shedinja.gender).toBe(-1);
     // Regression test for https://github.com/pagefaultgames/pokerogue/issues/3842
     expect(shedinja.metBiome).toBe(-1);
   });
