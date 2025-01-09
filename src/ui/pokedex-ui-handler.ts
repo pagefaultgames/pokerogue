@@ -1604,8 +1604,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.scene.ui.hideTooltip();
     }
 
-    const starterAttributes : StarterAttributes | null = species ? { ...this.starterPreferences[species.speciesId] } : null;
-
     if (this.lastSpecies) {
       const dexAttr = this.getCurrentDexProps(this.lastSpecies.speciesId);
       const props = this.getSanitizedProps(this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr));
@@ -1625,12 +1623,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       this.pokemonNumberText.setText(i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4));
 
-      if (starterAttributes?.nickname) {
-        const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
-        this.pokemonNameText.setText(name);
-      } else {
-        this.pokemonNameText.setText(species.name);
-      }
+      this.pokemonNameText.setText(species.name);
 
       if (this.speciesStarterDexEntry?.caughtAttr) {
 
@@ -1654,9 +1647,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.setSpeciesDetails(species, {});
 
         this.pokemonSprite.clearTint();
+
+        this.type1Icon.clearTint();
+        this.type2Icon.clearTint();
       } else {
-        this.type1Icon.setVisible(false);
-        this.type2Icon.setVisible(false);
+        this.type1Icon.setVisible(true);
+        this.type2Icon.setVisible(true);
 
         this.setSpeciesDetails(species, {
           forSeen: true
@@ -1664,11 +1660,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
-      this.pokemonNumberText.setText("");
+      this.pokemonNumberText.setText(species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
       this.type1Icon.setVisible(false);
       this.type2Icon.setVisible(false);
-      this.pokemonSprite.clearTint();
+      if (species) {
+        this.pokemonSprite.setTint(0x000000);
+        this.setSpeciesDetails(species, {});
+      }
     }
   }
 
@@ -1718,31 +1717,28 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
       }
 
-      if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
+      const assetLoadCancelled = new BooleanHolder(false);
+      this.assetLoadCancelled = assetLoadCancelled;
 
-        const assetLoadCancelled = new BooleanHolder(false);
-        this.assetLoadCancelled = assetLoadCancelled;
+      if (shouldUpdateSprite) {
 
-        if (shouldUpdateSprite) {
-
-          species.loadAssets(this.scene, female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
-            if (assetLoadCancelled.value) {
-              return;
-            }
-            this.assetLoadCancelled = null;
-            this.speciesLoaded.set(species.speciesId, true);
-            this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
-            this.pokemonSprite.setPipelineData("shiny", shiny);
-            this.pokemonSprite.setPipelineData("variant", variant);
-            this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
-            this.pokemonSprite.setVisible(true);
-          });
-        } else {
-          this.pokemonSprite.setVisible(!(this.filterMode || this.filterTextMode));
-        }
+        species.loadAssets(this.scene, female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
+          if (assetLoadCancelled.value) {
+            return;
+          }
+          this.assetLoadCancelled = null;
+          this.speciesLoaded.set(species.speciesId, true);
+          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+          this.pokemonSprite.setPipelineData("shiny", shiny);
+          this.pokemonSprite.setPipelineData("variant", variant);
+          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+          this.pokemonSprite.setVisible(true);
+        });
+      } else {
+        this.pokemonSprite.setVisible(!(this.filterMode || this.filterTextMode));
       }
 
-      if (dexEntry.caughtAttr) {
+      if (dexEntry.caughtAttr || forSeen) {
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, 0); // TODO: always selecting the first form
 

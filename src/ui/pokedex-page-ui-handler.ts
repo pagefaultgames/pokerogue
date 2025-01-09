@@ -286,7 +286,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonGenderText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGenderText);
 
-    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t("pokedexUiHandler:uncaught"), TextStyle.SUMMARY_ALT, { fontSize: "56px" });
+    this.pokemonUncaughtText = addTextObject(this.scene, 6, 127, i18next.t("pokedexUiHandler:uncaught"), TextStyle.WINDOW, { fontSize: "56px" });
     this.pokemonUncaughtText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonUncaughtText);
 
@@ -927,111 +927,53 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.BASE_STATS:
 
-            this.blockInput = true;
+            if (!this.speciesStarterDexEntry?.caughtAttr) {
+              error = true;
+            } else {
 
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-              ui.showText(i18next.t("pokedexUiHandler:showBaseStats"), null, () => {
+              this.blockInput = true;
 
-                this.baseStatsOverlay.show(this.baseStats, this.baseTotal);
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+                ui.showText(i18next.t("pokedexUiHandler:showBaseStats"), null, () => {
 
-                this.blockInput = false;
-                this.blockInputOverlay = true;
+                  this.baseStatsOverlay.show(this.baseStats, this.baseTotal);
 
-                return true;
+                  this.blockInput = false;
+                  this.blockInputOverlay = true;
+
+                  return true;
+                });
+                success = true;
               });
-            });
-            success = true;
+            }
             break;
 
           case MenuOptions.LEVEL_MOVES:
 
-            this.blockInput = true;
+            if (!this.speciesStarterDexEntry?.caughtAttr) {
+              error = true;
+            } else {
 
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-              ui.showText(i18next.t("pokedexUiHandler:showLevelMoves"), null, () => {
+              this.blockInput = true;
 
-                this.moveInfoOverlay.show(allMoves[this.levelMoves[0][1]]);
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+                ui.showText(i18next.t("pokedexUiHandler:showLevelMoves"), null, () => {
 
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: this.levelMoves.map(m => {
-                    const option: OptionSelectItem = {
-                      label: String(m[0]).padEnd(4, " ") + allMoves[m[1]].name,
-                      handler: () => {
-                        return false;
-                      },
-                      onHover: () => {
-                        this.moveInfoOverlay.show(allMoves[m[1]]);
-                      },
-                    };
-                    return option;
-                  }).concat({
-                    label: i18next.t("menu:cancel"),
-                    handler: () => {
-                      this.moveInfoOverlay.clear();
-                      this.clearText();
-                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                      return true;
-                    },
-                    onHover: () => {
-                      this.moveInfoOverlay.clear();
-                    },
-                  }),
-                  supportHover: true,
-                  maxOptions: 8,
-                  yOffset: 19
-                });
+                  this.moveInfoOverlay.show(allMoves[this.levelMoves[0][1]]);
 
-                this.blockInput = false;
-              });
-            });
-            success = true;
-            break;
-
-          case MenuOptions.EGG_MOVES:
-
-            this.blockInput = true;
-
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-
-              if (this.eggMoves.length === 0) {
-                ui.showText(i18next.t("pokedexUiHandler:noEggMoves"));
-                this.blockInput = false;
-                return true;
-              }
-
-              ui.showText(i18next.t("pokedexUiHandler:showEggMoves"), null, () => {
-
-                this.moveInfoOverlay.show(allMoves[this.eggMoves[0]]);
-
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: [
-                    {
-                      label: "Common:",
-                      skip: true,
-                      style: TextStyle.MONEY_WINDOW,
-                      handler: () => false, // Non-selectable, but handler is required
-                      onHover: () => this.moveInfoOverlay.clear() // No hover behavior for titles
-                    },
-                    ...this.eggMoves.slice(0, 3).map((m, i) => ({
-                      label: allMoves[m].name,
-                      style: this.hasEggMoves[i] ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
-                      handler: () => false,
-                      onHover: () => this.moveInfoOverlay.show(allMoves[m])
-                    })),
-                    {
-                      label: "Rare:",
-                      skip: true,
-                      style: TextStyle.MONEY_WINDOW,
-                      handler: () => false,
-                      onHover: () => this.moveInfoOverlay.clear()
-                    },
-                    {
-                      label: allMoves[this.eggMoves[3]].name,
-                      style: this.hasEggMoves[3] ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
-                      handler: () => false,
-                      onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
-                    },
-                    {
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: this.levelMoves.map(m => {
+                      const option: OptionSelectItem = {
+                        label: String(m[0]).padEnd(4, " ") + allMoves[m[1]].name,
+                        handler: () => {
+                          return false;
+                        },
+                        onHover: () => {
+                          this.moveInfoOverlay.show(allMoves[m[1]]);
+                        },
+                      };
+                      return option;
+                    }).concat({
                       label: i18next.t("menu:cancel"),
                       handler: () => {
                         this.moveInfoOverlay.clear();
@@ -1039,186 +981,256 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         ui.setMode(Mode.POKEDEX_PAGE, "refresh");
                         return true;
                       },
-                      onHover: () => this.moveInfoOverlay.clear()
-                    }
-                  ],
-                  supportHover: true,
-                  maxOptions: 8,
-                  yOffset: 19
-                });
+                      onHover: () => {
+                        this.moveInfoOverlay.clear();
+                      },
+                    }),
+                    supportHover: true,
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
 
-                this.blockInput = false;
+                  this.blockInput = false;
+                });
               });
-            });
-            success = true;
+              success = true;
+            }
+            break;
+
+          case MenuOptions.EGG_MOVES:
+
+
+            if (!this.speciesStarterDexEntry?.caughtAttr) {
+              error = true;
+            } else {
+
+              this.blockInput = true;
+
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+
+                if (this.eggMoves.length === 0) {
+                  ui.showText(i18next.t("pokedexUiHandler:noEggMoves"));
+                  this.blockInput = false;
+                  return true;
+                }
+
+                ui.showText(i18next.t("pokedexUiHandler:showEggMoves"), null, () => {
+
+                  this.moveInfoOverlay.show(allMoves[this.eggMoves[0]]);
+
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: [
+                      {
+                        label: "Common:",
+                        skip: true,
+                        style: TextStyle.MONEY_WINDOW,
+                        handler: () => false, // Non-selectable, but handler is required
+                        onHover: () => this.moveInfoOverlay.clear() // No hover behavior for titles
+                      },
+                      ...this.eggMoves.slice(0, 3).map((m, i) => ({
+                        label: allMoves[m].name,
+                        style: this.hasEggMoves[i] ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+                        handler: () => false,
+                        onHover: () => this.moveInfoOverlay.show(allMoves[m])
+                      })),
+                      {
+                        label: "Rare:",
+                        skip: true,
+                        style: TextStyle.MONEY_WINDOW,
+                        handler: () => false,
+                        onHover: () => this.moveInfoOverlay.clear()
+                      },
+                      {
+                        label: allMoves[this.eggMoves[3]].name,
+                        style: this.hasEggMoves[3] ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+                        handler: () => false,
+                        onHover: () => this.moveInfoOverlay.show(allMoves[this.eggMoves[3]])
+                      },
+                      {
+                        label: i18next.t("menu:cancel"),
+                        handler: () => {
+                          this.moveInfoOverlay.clear();
+                          this.clearText();
+                          ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                          return true;
+                        },
+                        onHover: () => this.moveInfoOverlay.clear()
+                      }
+                    ],
+                    supportHover: true,
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
+
+                  this.blockInput = false;
+                });
+              });
+              success = true;
+            }
             break;
 
           case MenuOptions.TM_MOVES:
 
-            this.blockInput = true;
+            if (!this.speciesStarterDexEntry?.caughtAttr) {
+              error = true;
+            } else {
+              this.blockInput = true;
 
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-              ui.showText(i18next.t("pokedexUiHandler:showTmMoves"), null, () => {
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+                ui.showText(i18next.t("pokedexUiHandler:showTmMoves"), null, () => {
 
-                this.moveInfoOverlay.show(allMoves[this.tmMoves[0]]);
+                  this.moveInfoOverlay.show(allMoves[this.tmMoves[0]]);
 
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: this.tmMoves.map(m => {
-                    const option: OptionSelectItem = {
-                      label: allMoves[m].name,
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: this.tmMoves.map(m => {
+                      const option: OptionSelectItem = {
+                        label: allMoves[m].name,
+                        handler: () => {
+                          return false;
+                        },
+                        onHover: () => {
+                          this.moveInfoOverlay.show(allMoves[m]);
+                        },
+                      };
+                      return option;
+                    }).concat({
+                      label: i18next.t("menu:cancel"),
                       handler: () => {
-                        return false;
+                        this.moveInfoOverlay.clear();
+                        this.clearText();
+                        ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                        return true;
                       },
                       onHover: () => {
-                        this.moveInfoOverlay.show(allMoves[m]);
+                        this.moveInfoOverlay.clear();
                       },
-                    };
-                    return option;
-                  }).concat({
-                    label: i18next.t("menu:cancel"),
-                    handler: () => {
-                      this.moveInfoOverlay.clear();
-                      this.clearText();
-                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                      return true;
-                    },
-                    onHover: () => {
-                      this.moveInfoOverlay.clear();
-                    },
-                  }),
-                  supportHover: true,
-                  maxOptions: 8,
-                  yOffset: 19
-                });
+                    }),
+                    supportHover: true,
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
 
-                this.blockInput = false;
+                  this.blockInput = false;
+                });
               });
-            });
-            success = true;
+              success = true;
+            }
             break;
 
           case MenuOptions.ABILITIES:
 
-            this.blockInput = true;
+            if (!this.speciesStarterDexEntry?.caughtAttr) {
+              error = true;
+            } else {
 
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              this.blockInput = true;
 
-              ui.showText(i18next.t("pokedexUiHandler:showAbilities"), null, () => {
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
 
-                this.infoOverlay.show(allAbilities[this.ability1].description);
+                ui.showText(i18next.t("pokedexUiHandler:showAbilities"), null, () => {
 
-                const options: any[] = [];
+                  this.infoOverlay.show(allAbilities[this.ability1].description);
 
-                if (this.ability1) {
+                  const options: any[] = [];
+
+                  if (this.ability1) {
+                    options.push({
+                      label: allAbilities[this.ability1].name,
+                      style: this.hasAbilities[0] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+                      handler: () => false,
+                      onHover: () => this.infoOverlay.show(allAbilities[this.ability1].description)
+                    });
+                  }
+                  if (this.ability2) {
+                    const ability = allAbilities[this.ability2];
+                    options.push({
+                      label: ability?.name,
+                      style: this.hasAbilities[1] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+                      handler: () => false,
+                      onHover: () => this.infoOverlay.show(ability?.description)
+                    });
+                  }
+
+                  if (this.abilityHidden) {
+                    options.push({
+                      label: "Hidden:",
+                      skip: true,
+                      style: TextStyle.MONEY_WINDOW,
+                      handler: () => false,
+                      onHover: () => this.infoOverlay.clear()
+                    });
+                    const ability = allAbilities[this.abilityHidden];
+                    options.push({
+                      label: allAbilities[this.abilityHidden].name,
+                      style: this.hasAbilities[2] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+                      handler: () => false,
+                      onHover: () => this.infoOverlay.show(ability?.description)
+                    });
+                  }
+
+                  if (this.passive) {
+                    options.push({
+                      label: "Passive:",
+                      skip: true,
+                      style: TextStyle.MONEY_WINDOW,
+                      handler: () => false,
+                      onHover: () => this.infoOverlay.clear()
+                    });
+                    options.push({
+                      label: allAbilities[this.passive].name,
+                      style: this.hasPassive ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+                      handler: () => false,
+                      onHover: () => this.infoOverlay.show(allAbilities[this.passive].description)
+                    });
+                  }
+
                   options.push({
-                    label: allAbilities[this.ability1].name,
-                    style: this.hasAbilities[0] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
-                    handler: () => false,
-                    onHover: () => this.infoOverlay.show(allAbilities[this.ability1].description)
-                  });
-                }
-                if (this.ability2) {
-                  const ability = allAbilities[this.ability2];
-                  options.push({
-                    label: ability?.name,
-                    style: this.hasAbilities[1] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
-                    handler: () => false,
-                    onHover: () => this.infoOverlay.show(ability?.description)
-                  });
-                }
-
-                if (this.abilityHidden) {
-                  options.push({
-                    label: "Hidden:",
-                    skip: true,
-                    style: TextStyle.MONEY_WINDOW,
-                    handler: () => false,
+                    label: i18next.t("menu:cancel"),
+                    handler: () => {
+                      this.infoOverlay.clear();
+                      this.clearText();
+                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      return true;
+                    },
                     onHover: () => this.infoOverlay.clear()
                   });
-                  const ability = allAbilities[this.abilityHidden];
-                  options.push({
-                    label: allAbilities[this.abilityHidden].name,
-                    style: this.hasAbilities[2] > 0 ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
-                    handler: () => false,
-                    onHover: () => this.infoOverlay.show(ability?.description)
-                  });
-                }
 
-                if (this.passive) {
-                  options.push({
-                    label: "Passive:",
-                    skip: true,
-                    style: TextStyle.MONEY_WINDOW,
-                    handler: () => false,
-                    onHover: () => this.infoOverlay.clear()
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: options,
+                    supportHover: true,
+                    maxOptions: 8,
+                    yOffset: 19
                   });
-                  options.push({
-                    label: allAbilities[this.passive].name,
-                    style: this.hasPassive ?  TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
-                    handler: () => false,
-                    onHover: () => this.infoOverlay.show(allAbilities[this.passive].description)
-                  });
-                }
 
-                options.push({
-                  label: i18next.t("menu:cancel"),
-                  handler: () => {
-                    this.infoOverlay.clear();
-                    this.clearText();
-                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                    return true;
-                  },
-                  onHover: () => this.infoOverlay.clear()
+                  this.blockInput = false;
                 });
-
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: options,
-                  supportHover: true,
-                  maxOptions: 8,
-                  yOffset: 19
-                });
-
-                this.blockInput = false;
               });
-            });
-            success = true;
+              success = true;
+            }
             break;
 
           case MenuOptions.BIOMES:
 
-            this.blockInput = true;
+            if (!(this.speciesStarterDexEntry?.caughtAttr || this.speciesStarterDexEntry?.seenAttr)) {
+              error = true;
+            } else {
+              this.blockInput = true;
 
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
 
-              if ((!this.biomes || this.biomes?.length === 0) &&
-                  (!this.preBiomes || this.preBiomes?.length === 0)) {
-                ui.showText(i18next.t("pokedexUiHandler:noBiomes"));
-                ui.playError();
-                this.blockInput = false;
-                return true;
-              }
+                if ((!this.biomes || this.biomes?.length === 0) &&
+                    (!this.preBiomes || this.preBiomes?.length === 0)) {
+                  ui.showText(i18next.t("pokedexUiHandler:noBiomes"));
+                  ui.playError();
+                  this.blockInput = false;
+                  return true;
+                }
 
-              const options: any[] = [];
+                const options: any[] = [];
 
-              ui.showText(i18next.t("pokedexUiHandler:showBiomes"), null, () => {
+                ui.showText(i18next.t("pokedexUiHandler:showBiomes"), null, () => {
 
-                this.biomes.map(b => {
-                  options.push({
-                    label: i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) + " - " +
-                      i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
-                      ( b.tod.length === 1 && b.tod[0] === -1 ? "" : " (" + b.tod.map(tod => i18next.t(`biome:${TimeOfDay[tod].toUpperCase()}`)).join(", ") + ")"),
-                    handler: () => false
-                  });
-                });
-
-
-                if (this.preBiomes.length > 0) {
-                  options.push({
-                    label: i18next.t("pokedexUiHandler:preBiomes"),
-                    skip: true,
-                    handler: () => false
-                  });
-                  this.preBiomes.map(b => {
+                  this.biomes.map(b => {
                     options.push({
                       label: i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) + " - " +
                         i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
@@ -1226,230 +1238,263 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => false
                     });
                   });
-                }
 
-                options.push({
-                  label: i18next.t("menu:cancel"),
-                  handler: () => {
-                    this.moveInfoOverlay.clear();
-                    this.clearText();
-                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                    return true;
-                  },
-                  onHover: () => this.moveInfoOverlay.clear()
+
+                  if (this.preBiomes.length > 0) {
+                    options.push({
+                      label: i18next.t("pokedexUiHandler:preBiomes"),
+                      skip: true,
+                      handler: () => false
+                    });
+                    this.preBiomes.map(b => {
+                      options.push({
+                        label: i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) + " - " +
+                          i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
+                          ( b.tod.length === 1 && b.tod[0] === -1 ? "" : " (" + b.tod.map(tod => i18next.t(`biome:${TimeOfDay[tod].toUpperCase()}`)).join(", ") + ")"),
+                        handler: () => false
+                      });
+                    });
+                  }
+
+                  options.push({
+                    label: i18next.t("menu:cancel"),
+                    handler: () => {
+                      this.moveInfoOverlay.clear();
+                      this.clearText();
+                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      return true;
+                    },
+                    onHover: () => this.moveInfoOverlay.clear()
+                  });
+
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: options,
+                    supportHover: true,
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
+
+                  this.blockInput = false;
                 });
-
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: options,
-                  supportHover: true,
-                  maxOptions: 8,
-                  yOffset: 19
-                });
-
-                this.blockInput = false;
               });
-            });
-            success = true;
+              success = true;
+            }
             break;
 
           case MenuOptions.EVOLUTIONS:
 
-            this.blockInput = true;
+            if (!this.speciesStarterDexEntry?.caughtAttr) {
+              error = true;
+            } else {
 
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              this.blockInput = true;
 
-              const options: any[] = [];
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
 
-              if ((!this.prevolutions || this.prevolutions?.length === 0) &&
-                  (!this.evolutions || this.evolutions?.length === 0) &&
-                  (!this.battleForms || this.battleForms?.length === 0)) {
-                ui.showText(i18next.t("pokedexUiHandler:noEvolutions"));
-                ui.playError();
-                this.blockInput = false;
-                return true;
-              }
+                const options: any[] = [];
 
-              ui.showText(i18next.t("pokedexUiHandler:showEvolutions"), null, () => {
+                if ((!this.prevolutions || this.prevolutions?.length === 0) &&
+                    (!this.evolutions || this.evolutions?.length === 0) &&
+                    (!this.battleForms || this.battleForms?.length === 0)) {
+                  ui.showText(i18next.t("pokedexUiHandler:noEvolutions"));
+                  ui.playError();
+                  this.blockInput = false;
+                  return true;
+                }
 
-                if (this.prevolutions?.length > 0) {
-                  options.push({
-                    label: i18next.t("pokedexUiHandler:prevolutions"),
-                    skip: true,
-                    handler: () => false
-                  });
-                  this.prevolutions.map(pre => {
-                    const preSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.lastSpecies.speciesId]);
+                ui.showText(i18next.t("pokedexUiHandler:showEvolutions"), null, () => {
+
+                  if (this.prevolutions?.length > 0) {
                     options.push({
-                      label: pre.preFormKey ?
-                        this.getFormString(pre.preFormKey, preSpecies ?? this.lastSpecies, true) :
-                        this.getRegionName(preSpecies ?? this.lastSpecies),
+                      label: i18next.t("pokedexUiHandler:prevolutions"),
                       style: TextStyle.MONEY_WINDOW,
-                      handler: () => {
-                        const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
-                        // Attempts to find the formIndex of the evolved species
-                        const newFormKey = pre.evoFormKey ? pre.evoFormKey : (this.lastSpecies.forms.length > 0 ? this.lastSpecies.forms[this.lastFormIndex].formKey : "");
-                        const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
-                        const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
-                        this.starterAttributes.form = newFormIndex;
-                        this.moveInfoOverlay.clear();
-                        this.clearText();
-                        ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
-                        return true;
-                      }
-                    });
-
-                    let label:string = "";
-                    if (pre.level > 1) {
-                      label = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${pre.level}`;
-                    } else if (pre.item) {
-                      label = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[pre.item].toUpperCase()}`) +
-                        " (" + (pre.item > 50 ? "Ultra" : "Great") + ")";
-                    } else {
-                      label = i18next.t("pokedexUiHandler:evolveGeneric");
-                    }
-                    options.push({
-                      label: label,
                       skip: true,
                       handler: () => false
                     });
-                  });
-                }
+                    this.prevolutions.map(pre => {
+                      const preSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.lastSpecies.speciesId]);
+                      options.push({
+                        label: pre.preFormKey ?
+                          this.getFormString(pre.preFormKey, preSpecies ?? this.lastSpecies, true) :
+                          this.getRegionName(preSpecies ?? this.lastSpecies),
+                        handler: () => {
+                          const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
+                          // Attempts to find the formIndex of the evolved species
+                          const newFormKey = pre.evoFormKey ? pre.evoFormKey : (this.lastSpecies.forms.length > 0 ? this.lastSpecies.forms[this.lastFormIndex].formKey : "");
+                          const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
+                          const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+                          this.starterAttributes.form = newFormIndex;
+                          this.moveInfoOverlay.clear();
+                          this.clearText();
+                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                          return true;
+                        }
+                      });
 
-                if (this.evolutions.length > 0) {
-                  options.push({
-                    label: i18next.t("pokedexUiHandler:evolutions"),
-                    skip: true,
-                    handler: () => false
-                  });
-                  this.evolutions.map(evo => {
-                    const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
-                    options.push({
-                      label: evo.evoFormKey ?
-                        this.getFormString(evo.evoFormKey, evoSpecies ?? this.lastSpecies, true) :
-                        this.getRegionName(evoSpecies ?? this.lastSpecies),
-                      style: TextStyle.MONEY_WINDOW,
-                      handler: () => {
-                        const newSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
-                        // Attempts to find the formIndex of the evolved species
-                        const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.lastSpecies.forms.length > 0 ? this.lastSpecies.forms[this.lastFormIndex].formKey : "");
-                        const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
-                        const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
-                        this.starterAttributes.form = newFormIndex;
-                        this.moveInfoOverlay.clear();
-                        this.clearText();
-                        ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
-                        return true;
+                      let label:string = "";
+                      if (pre.level > 1) {
+                        label = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${pre.level}`;
+                      } else if (pre.item) {
+                        label = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[pre.item].toUpperCase()}`) +
+                          " (" + (pre.item > 50 ? "Ultra" : "Great") + ")";
+                      } else {
+                        label = i18next.t("pokedexUiHandler:evolveGeneric");
                       }
+                      options.push({
+                        label: label,
+                        skip: true,
+                        handler: () => false
+                      });
                     });
-                    let label:string = "";
-                    if (evo.condition) {
-                      label = i18next.t("pokedexUiHandler:evolveGeneric");
-                    } else if (evo.level > 1) {
-                      label = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${evo.level}`;
-                    } else if (evo.item) {
-                      label = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
-                        " (" + (evo.item > 50 ? "Ultra" : "Great") + ")";
-                    } else {
-                      label = i18next.t("pokedexUiHandler:evolveGeneric");
-                    }
+                  }
+
+                  if (this.evolutions.length > 0) {
                     options.push({
-                      label: label,
+                      label: i18next.t("pokedexUiHandler:evolutions"),
+                      style: TextStyle.MONEY_WINDOW,
                       skip: true,
                       handler: () => false
                     });
-                  });
-                }
-
-                if (this.battleForms.length > 0) {
-                  options.push({
-                    label: i18next.t("pokedexUiHandler:forms"),
-                    skip: true,
-                    handler: () => false
-                  });
-                  this.battleForms.map(bf => {
-                    let label: string = this.getFormString(bf.formKey, this.lastSpecies);
-                    if (!label && bf.formIndex === 0) {
-                      label = this.lastSpecies.name;
-                    }
-                    options.push({
-                      label: label,
-                      style: TextStyle.MONEY_WINDOW,
-                      handler: () => {
-                        const newSpecies = this.lastSpecies;
-                        const newFormIndex = bf.formIndex;
-                        this.starterAttributes.form = newFormIndex;
-                        this.moveInfoOverlay.clear();
-                        this.clearText();
-                        ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
-                        return true;
+                    this.evolutions.map(evo => {
+                      const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
+                      const evoSpeciesStarterDexEntry = evoSpecies ? this.scene.gameData.dexData[evoSpecies.speciesId] : null;
+                      const isCaughtEvo = evoSpeciesStarterDexEntry?.caughtAttr ? true : false;
+                      options.push({
+                        label: evo.evoFormKey ?
+                          this.getFormString(evo.evoFormKey, evoSpecies ?? this.lastSpecies, true) :
+                          this.getRegionName(evoSpecies ?? this.lastSpecies),
+                        style: isCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+                        handler: () => {
+                          const newSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
+                          // Attempts to find the formIndex of the evolved species
+                          const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.lastSpecies.forms.length > 0 ? this.lastSpecies.forms[this.lastFormIndex].formKey : "");
+                          const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
+                          const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+                          this.starterAttributes.form = newFormIndex;
+                          this.moveInfoOverlay.clear();
+                          this.clearText();
+                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                          return true;
+                        }
+                      });
+                      let label:string = "";
+                      if (evo.condition) {
+                        label = i18next.t("pokedexUiHandler:evolveGeneric");
+                      } else if (evo.level > 1) {
+                        label = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${evo.level}`;
+                      } else if (evo.item) {
+                        label = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
+                          " (" + (evo.item > 50 ? "Ultra" : "Great") + ")";
+                      } else {
+                        label = i18next.t("pokedexUiHandler:evolveGeneric");
                       }
+                      options.push({
+                        label: label,
+                        skip: true,
+                        handler: () => false
+                      });
                     });
+                  }
+
+                  if (this.battleForms.length > 0) {
+                    options.push({
+                      label: i18next.t("pokedexUiHandler:forms"),
+                      style: TextStyle.MONEY_WINDOW,
+                      skip: true,
+                      handler: () => false
+                    });
+                    this.battleForms.map(bf => {
+                      let label: string = this.getFormString(bf.formKey, this.lastSpecies);
+                      if (!label && bf.formIndex === 0) {
+                        label = this.lastSpecies.name;
+                      }
+                      options.push({
+                        label: label,
+                        handler: () => {
+                          const newSpecies = this.lastSpecies;
+                          const newFormIndex = bf.formIndex;
+                          this.starterAttributes.form = newFormIndex;
+                          this.moveInfoOverlay.clear();
+                          this.clearText();
+                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                          return true;
+                        }
+                      });
+                    });
+                  }
+
+                  options.push({
+                    label: i18next.t("menu:cancel"),
+                    handler: () => {
+                      this.moveInfoOverlay.clear();
+                      this.clearText();
+                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      return true;
+                    },
+                    onHover: () => this.moveInfoOverlay.clear()
                   });
-                }
 
-                options.push({
-                  label: i18next.t("menu:cancel"),
-                  handler: () => {
-                    this.moveInfoOverlay.clear();
-                    this.clearText();
-                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                    return true;
-                  },
-                  onHover: () => this.moveInfoOverlay.clear()
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: options,
+                    supportHover: true,
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
+
+                  this.blockInput = false;
                 });
-
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: options,
-                  supportHover: true,
-                  maxOptions: 8,
-                  yOffset: 19
-                });
-
-                this.blockInput = false;
               });
-            });
-            success = true;
+              success = true;
+            }
             break;
 
           case MenuOptions.TOGGLE_IVS:
-            this.toggleStatsMode();
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-            success = true;
+
+            if (!this.speciesStarterDexEntry?.caughtAttr) {
+              error = true;
+            } else {
+              this.toggleStatsMode();
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+              success = true;
+            }
             break;
 
           case MenuOptions.NATURES:
-            this.blockInput = true;
-            ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
-              ui.showText(i18next.t("pokedexUiHandler:showNature"), null, () => {
-                const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: natures.map((n: Nature, i: number) => {
-                    const option: OptionSelectItem = {
-                      label: getNatureName(n, true, true, true, this.scene.uiTheme),
+
+            if (!this.speciesStarterDexEntry?.caughtAttr) {
+              error = true;
+            } else {
+              this.blockInput = true;
+              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+                ui.showText(i18next.t("pokedexUiHandler:showNature"), null, () => {
+                  const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: natures.map((n: Nature, i: number) => {
+                      const option: OptionSelectItem = {
+                        label: getNatureName(n, true, true, true, this.scene.uiTheme),
+                        handler: () => {
+                          return false;
+                        }
+                      };
+                      return option;
+                    }).concat({
+                      label: i18next.t("menu:cancel"),
                       handler: () => {
-                        return false;
+                        this.clearText();
+                        ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                        this.blockInput = false;
+                        return true;
                       }
-                    };
-                    return option;
-                  }).concat({
-                    label: i18next.t("menu:cancel"),
-                    handler: () => {
-                      this.clearText();
-                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                      this.blockInput = false;
-                      return true;
-                    }
-                  }),
-                  maxOptions: 8,
-                  yOffset: 19
+                    }),
+                    maxOptions: 8,
+                    yOffset: 19
+                  });
                 });
               });
-            });
-            success = true;
+              success = true;
+            }
             break;
         }
-
-        return true;
 
       } else {
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
@@ -1672,6 +1717,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
+    console.log(success, error);
     if (success) {
       ui.playSelect();
     } else if (error) {
@@ -1787,7 +1833,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
     const ui = this.getUi();
-    ui.showText(this.menuDescriptions[cursor]);
+    if (this.speciesStarterDexEntry?.caughtAttr || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
+      ui.showText(this.menuDescriptions[cursor]);
+    } else {
+      ui.showText("");
+    }
 
     return ret;
   }
@@ -1956,7 +2006,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
-      this.pokemonNumberText.setText(padInt(0, 4));
+      this.pokemonNumberText.setText(species ? padInt(species.speciesId, 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonGrowthRateText.setText("");
       this.pokemonGrowthRateLabelText.setVisible(false);
@@ -1976,13 +2026,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         female: false,
         variant: 0,
       });
-      this.pokemonSprite.clearTint();
+      this.pokemonSprite.setTint(0x000000);
     }
   }
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     let { shiny, formIndex, female, variant } = options;
-    const forSeen: boolean = options.forSeen ?? false;
     const oldProps = species ? this.starterAttributes : null;
 
     // We will only update the sprite if there is a change to form, shiny/variant
@@ -2056,52 +2105,50 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
       this.pokemonNumberText.setShadowColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true));
 
-      if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
 
-        const assetLoadCancelled = new BooleanHolder(false);
-        this.assetLoadCancelled = assetLoadCancelled;
+      const assetLoadCancelled = new BooleanHolder(false);
+      this.assetLoadCancelled = assetLoadCancelled;
 
-        if (shouldUpdateSprite) {
-          species.loadAssets(this.scene, female!, formIndex, shiny, variant as Variant, true).then(() => { // TODO: is this bang correct?
-            if (assetLoadCancelled.value) {
-              return;
-            }
-            this.assetLoadCancelled = null;
-            this.speciesLoaded.set(species.speciesId, true);
-            this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
-            this.pokemonSprite.setPipelineData("shiny", shiny);
-            this.pokemonSprite.setPipelineData("variant", variant);
-            this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
-            this.pokemonSprite.setVisible(!this.statsMode);
-          });
-        } else {
+      if (shouldUpdateSprite) {
+        species.loadAssets(this.scene, female!, formIndex, shiny, variant as Variant, true).then(() => { // TODO: is this bang correct?
+          if (assetLoadCancelled.value) {
+            return;
+          }
+          this.assetLoadCancelled = null;
+          this.speciesLoaded.set(species.speciesId, true);
+          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+          this.pokemonSprite.setPipelineData("shiny", shiny);
+          this.pokemonSprite.setPipelineData("variant", variant);
+          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
           this.pokemonSprite.setVisible(!this.statsMode);
-        }
-
-        const currentFilteredContainer = this.filteredStarterContainers.find(p => p.species.speciesId === species.speciesId);
-        if (currentFilteredContainer) {
-          const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
-          starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant));
-          currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
-        }
-
-        const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
-        const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
-        const isVariant1Caught = isShinyCaught && !!(caughtAttr & DexAttr.DEFAULT_VARIANT);
-        const isVariant2Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_2);
-        const isVariant3Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_3);
-
-        this.canCycleShiny = isNonShinyCaught && isShinyCaught;
-        this.canCycleVariant = !!shiny && [ isVariant1Caught, isVariant2Caught, isVariant3Caught ].filter(v => v).length > 1;
-
-        const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
-        const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
-        this.canCycleGender = isMaleCaught && isFemaleCaught;
-
-        this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
-          .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
-
+        });
+      } else {
+        this.pokemonSprite.setVisible(!this.statsMode);
       }
+
+      const currentFilteredContainer = this.filteredStarterContainers.find(p => p.species.speciesId === species.speciesId);
+      if (currentFilteredContainer) {
+        const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
+        starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant));
+        currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
+      }
+
+      const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
+      const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
+      const isVariant1Caught = isShinyCaught && !!(caughtAttr & DexAttr.DEFAULT_VARIANT);
+      const isVariant2Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_2);
+      const isVariant3Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_3);
+
+      this.canCycleShiny = isNonShinyCaught && isShinyCaught;
+      this.canCycleVariant = !!shiny && [ isVariant1Caught, isVariant2Caught, isVariant3Caught ].filter(v => v).length > 1;
+
+      const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
+      const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
+      this.canCycleGender = isMaleCaught && isFemaleCaught;
+
+      this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
+        .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(f => f).length > 1;
+
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
         const gender = !female ? Gender.MALE : Gender.FEMALE;
