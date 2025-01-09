@@ -1983,13 +1983,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       } else {
         this.pokemonGrowthRateText.setText("");
         this.pokemonGrowthRateLabelText.setVisible(false);
-        this.type1Icon.setVisible(false);
-        this.type2Icon.setVisible(false);
+        this.type1Icon.setVisible(true);
+        this.type2Icon.setVisible(true);
         this.pokemonLuckLabelText.setVisible(false);
         this.pokemonLuckText.setVisible(false);
         this.pokemonShinyIcon.setVisible(false);
         this.pokemonUncaughtText.setVisible(true);
-        this.pokemonCaughtHatchedContainer.setVisible(false);
+        this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonCandyContainer.setVisible(false);
         this.pokemonFormText.setVisible(false);
 
@@ -2032,6 +2032,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     let { shiny, formIndex, female, variant } = options;
+    const forSeen: boolean = options.forSeen ?? false;
     const oldProps = species ? this.starterAttributes : null;
 
     // We will only update the sprite if there is a change to form, shiny/variant
@@ -2160,7 +2161,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
 
 
-      if (dexEntry.caughtAttr) {
+      if (dexEntry.caughtAttr || forSeen) {
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
         this.pokemonFormText.setText(this.getFormString((speciesForm as PokemonForm).formKey, species));
