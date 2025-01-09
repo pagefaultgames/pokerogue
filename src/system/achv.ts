@@ -281,6 +281,8 @@ export function getAchievementDescription(localizationKey: string): string {
       return i18next.t("achv:INVERSE_BATTLE.description", { context: genderStr });
     case "FLIP_STATS":
       return i18next.t("achv:FLIP_STATS.description", { context: genderStr });
+    case "FLIP_INVERSE":
+      return i18next.t("achv:FLIP_INVERSE.description", { context: genderStr });
     case "BREEDERS_IN_SPACE":
       return i18next.t("achv:BREEDERS_IN_SPACE.description", { context: genderStr });
     default:
@@ -360,8 +362,9 @@ export const achvs = {
   MONO_DARK: new ChallengeAchv("MONO_DARK", "", "MONO_DARK.description", "black_glasses", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 17 && !scene.gameMode.challenges.some(c => [ Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT ].includes(c.id) && c.value > 0)),
   MONO_FAIRY: new ChallengeAchv("MONO_FAIRY", "", "MONO_FAIRY.description", "fairy_feather", 100, (c, scene) => c instanceof SingleTypeChallenge && c.value === 18 && !scene.gameMode.challenges.some(c => [ Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT ].includes(c.id) && c.value > 0)),
   FRESH_START: new ChallengeAchv("FRESH_START", "", "FRESH_START.description", "reviver_seed", 100, (c, scene) => c instanceof FreshStartChallenge && c.value > 0 && !scene.gameMode.challenges.some(c => [ Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT ].includes(c.id) && c.value > 0)),
-  INVERSE_BATTLE: new ChallengeAchv("INVERSE_BATTLE", "", "INVERSE_BATTLE.description", "inverse", 100, (c, scene) => c instanceof InverseBattleChallenge && c.value > 0 && !scene.gameMode.challenges.some(c => [ Challenges.FLIP_STAT ].includes(c.id) && c.value > 0)),
-  FLIP_STATS: new ChallengeAchv("FLIP_STATS", "", "FLIP_STATS.description", "flipstat", 100, (c, scene) => c instanceof FlipStatChallenge && c.value > 0),
+  INVERSE_BATTLE: new ChallengeAchv("INVERSE_BATTLE", "", "INVERSE_BATTLE.description", "inverse", 100, (c, scene) => c instanceof InverseBattleChallenge && c.value > 0),
+  FLIP_STATS: new ChallengeAchv("FLIP_STATS", "", "FLIP_STATS.description", "dubious_disc", 100, (c, scene) => c instanceof FlipStatChallenge && c.value > 0),
+  FLIP_INVERSE: new ChallengeAchv("FLIP_INVERSE", "", "FLIP_INVERSE.description", "cracked_pot", 100, (c, scene) => c instanceof FlipStatChallenge && c.value > 0 && scene.gameMode.challenges.some(c => [ Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT ].includes(c.id) && c.value > 0)),
   BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 50).setSecret(),
 };
 
