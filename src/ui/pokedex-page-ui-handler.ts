@@ -1369,7 +1369,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   this.battleForms.map(bf => {
                     let label: string = this.getFormString(bf.formKey, this.lastSpecies);
                     if (!label && bf.formIndex === 0) {
-                      label = i18next.t(`pokemon:${Species[bf.speciesId].toUpperCase()}`);
+                      label = this.lastSpecies.name;
                     }
                     options.push({
                       label: label,
