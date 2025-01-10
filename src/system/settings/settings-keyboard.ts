@@ -1,6 +1,6 @@
 import { Button } from "#enums/buttons";
 import { Mode } from "#app/ui/ui";
-import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
+import type SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 

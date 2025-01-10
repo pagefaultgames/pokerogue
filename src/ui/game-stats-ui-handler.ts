@@ -1,10 +1,11 @@
 import Phaser from "phaser";
 import { TextStyle, addTextObject } from "#app/ui/text";
-import { Mode } from "#app/ui/ui";
+import type { Mode } from "#app/ui/ui";
 import UiHandler from "#app/ui/ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
 import * as Utils from "#app/utils";
-import { DexAttr, GameData } from "#app/system/game-data";
+import type { GameData } from "#app/system/game-data";
+import { DexAttr } from "#app/system/game-data";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";

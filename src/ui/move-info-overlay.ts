@@ -1,9 +1,10 @@
-import { InfoToggle } from "#app/battle-scene";
+import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
-import Move, { MoveCategory } from "../data/move";
+import type Move from "../data/move";
+import { MoveCategory } from "../data/move";
 import { Type } from "#enums/type";
 import i18next from "i18next";
 

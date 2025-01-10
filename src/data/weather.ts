@@ -1,9 +1,10 @@
 import { Biome } from "#enums/biome";
 import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
-import Pokemon from "../field/pokemon";
+import type Pokemon from "../field/pokemon";
 import { Type } from "#enums/type";
-import Move, { AttackMove } from "./move";
+import type Move from "./move";
+import { AttackMove } from "./move";
 import * as Utils from "../utils";
 import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";

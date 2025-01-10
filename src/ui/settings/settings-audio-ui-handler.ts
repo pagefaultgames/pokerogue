@@ -1,4 +1,4 @@
-import { Mode } from "../ui";
+import type { Mode } from "../ui";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { SettingType } from "#app/system/settings/settings";
 "#app/inputs-controller";

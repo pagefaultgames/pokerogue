@@ -1,4 +1,4 @@
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { getFrameMs } from "#app/utils";
 import { cos, sin } from "#app/field/anims";
 import { getTypeRgb } from "#app/data/type";

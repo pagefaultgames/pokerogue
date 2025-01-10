@@ -1,6 +1,6 @@
 import { EggTier } from "#enums/egg-type";
 import { UiTheme } from "#enums/ui-theme";
-import Phaser from "phaser";
+import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { globalScene } from "#app/global-scene";

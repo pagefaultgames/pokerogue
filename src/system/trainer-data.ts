@@ -1,4 +1,4 @@
-import { TrainerType } from "#enums/trainer-type";
+import type { TrainerType } from "#enums/trainer-type";
 import Trainer, { TrainerVariant } from "../field/trainer";
 
 export default class TrainerData {

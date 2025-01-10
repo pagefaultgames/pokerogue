@@ -1,8 +1,11 @@
 import i18next from "i18next";
-import { classicFixedBattles, FixedBattleConfig, FixedBattleConfigs } from "./battle";
-import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
-import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
-import { Arena } from "./field/arena";
+import type { FixedBattleConfigs } from "./battle";
+import { classicFixedBattles, FixedBattleConfig } from "./battle";
+import type { Challenge } from "./data/challenge";
+import { allChallenges, applyChallenges, ChallengeType, copyChallenge } from "./data/challenge";
+import type PokemonSpecies from "./data/pokemon-species";
+import { allSpecies } from "./data/pokemon-species";
+import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
 import * as Utils from "./utils";
 import { Biome } from "#enums/biome";

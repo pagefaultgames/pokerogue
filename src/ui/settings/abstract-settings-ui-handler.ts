@@ -4,9 +4,10 @@ import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { Button } from "#enums/buttons";
-import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
+import type { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
 import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
-import { Setting, SettingKeys, SettingType } from "#app/system/settings/settings";
+import type { SettingType } from "#app/system/settings/settings";
+import { Setting, SettingKeys } from "#app/system/settings/settings";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 

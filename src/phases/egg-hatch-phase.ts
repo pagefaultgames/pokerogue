@@ -1,20 +1,20 @@
-import { AnySound } from "#app/battle-scene";
+import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { Egg } from "#app/data/egg";
+import type { Egg } from "#app/data/egg";
 import { EggCountChangedEvent } from "#app/events/egg";
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Phase } from "#app/phase";
 import { achvs } from "#app/system/achv";
 import EggCounterContainer from "#app/ui/egg-counter-container";
-import EggHatchSceneHandler from "#app/ui/egg-hatch-scene-handler";
+import type EggHatchSceneHandler from "#app/ui/egg-hatch-scene-handler";
 import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import * as Utils from "#app/utils";
-import { EggLapsePhase } from "./egg-lapse-phase";
-import { EggHatchData } from "#app/data/egg-hatch-data";
+import type { EggLapsePhase } from "./egg-lapse-phase";
+import type { EggHatchData } from "#app/data/egg-hatch-data";
 import { doShinySparkleAnim } from "#app/field/anims";
 
 

@@ -6,13 +6,13 @@ import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from
 import { StatusEffect } from "#enums/status-effect";
 import { Type } from "#enums/type";
 import { WeatherType } from "#enums/weather-type";
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
-import { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
+import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
 import { isNullOrUndefined } from "#app/utils";
-import { Abilities } from "#enums/abilities";
+import type { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";

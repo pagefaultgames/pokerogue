@@ -8,7 +8,8 @@ import {
   ReverseDrainAbAttr
 } from "#app/data/ability";
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
-import Move, {
+import type Move from "#app/data/move";
+import {
   allMoves,
   applyMoveAttrs,
   ConsecutiveUseDoublePowerAttr,
@@ -21,14 +22,16 @@ import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
 import { Type } from "#enums/type";
-import Pokemon, { HitResult, MoveResult } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { StatStageChangeCallback, StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
 import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";

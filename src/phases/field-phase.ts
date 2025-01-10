@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
 
 type PokemonFunc = (pokemon: Pokemon) => void;

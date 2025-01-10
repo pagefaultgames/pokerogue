@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, getTextColor } from "./text";
-import { Mode } from "./ui";
-import { Button } from "#enums/buttons";
+import type { TextStyle } from "./text";
+import { getTextColor } from "./text";
+import type { Mode } from "./ui";
+import type { Button } from "#enums/buttons";
 
 /**
  * A basic abstract class to act as a holder and processor for UI elements.

@@ -5,8 +5,8 @@ import { vi } from "vitest";
 import { BattleStyle } from "#app/enums/battle-style";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { SessionSaveData } from "#app/system/game-data";
-import GameManager from "../gameManager";
+import type { SessionSaveData } from "#app/system/game-data";
+import type GameManager from "../gameManager";
 
 /**
  * Helper to allow reloading sessions in unit tests.

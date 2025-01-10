@@ -6,9 +6,9 @@ import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-spec
 import { PlayerPokemon } from "#app/field/pokemon";
 import { GameModes, getGameMode } from "#app/game-mode";
 import type { StarterMoveset } from "#app/system/game-data";
-import { Starter } from "#app/ui/starter-select-ui-handler";
+import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import type { Species } from "#enums/species";
 
 /** Function to convert Blob to string */
 export function blobToString(blob) {

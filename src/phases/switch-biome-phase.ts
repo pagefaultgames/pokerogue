@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { Biome } from "#app/enums/biome";
+import type { Biome } from "#app/enums/biome";
 import { getBiomeKey } from "#app/field/arena";
 import { BattlePhase } from "./battle-phase";
 

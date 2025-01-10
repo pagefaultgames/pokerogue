@@ -11,7 +11,7 @@ import {
   RedirectMoveAbAttr,
   ReduceStatusEffectDurationAbAttr
 } from "#app/data/ability";
-import { DelayedAttackTag } from "#app/data/arena-tag";
+import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
 import {
@@ -31,7 +31,9 @@ import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/dat
 import { Type } from "#enums/type";
 import { getTerrainBlockMessage } from "#app/data/weather";
 import { MoveUsedEvent } from "#app/events/battle-scene";
-import Pokemon, { MoveResult, PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import { MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";

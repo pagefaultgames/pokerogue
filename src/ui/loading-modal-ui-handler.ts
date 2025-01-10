@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import { ModalUiHandler } from "./modal-ui-handler";
 import { addTextObject, TextStyle } from "./text";
-import { Mode } from "./ui";
+import type { Mode } from "./ui";
 
 export default class LoadingModalUiHandler extends ModalUiHandler {
   constructor(mode: Mode | null = null) {

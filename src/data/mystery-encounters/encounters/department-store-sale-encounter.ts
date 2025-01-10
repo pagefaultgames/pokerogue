@@ -2,11 +2,13 @@ import {
   leaveEncounterWithoutBattle,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { ModifierTypeFunc, modifierTypes } from "#app/modifier/modifier-type";
+import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import MysteryEncounter, {
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import {
   MysteryEncounterBuilder,
 } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";

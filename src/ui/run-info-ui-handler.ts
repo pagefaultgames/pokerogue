@@ -1,12 +1,12 @@
 import { GameModes } from "../game-mode";
 import UiHandler from "./ui-handler";
-import { SessionSaveData } from "../system/game-data";
+import type { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import * as Utils from "../utils";
-import PokemonData from "../system/pokemon-data";
+import type PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
 import { Button } from "../enums/buttons";
 import { BattleType } from "../battle";
@@ -20,11 +20,11 @@ import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/data/variant";
 import * as Modifier from "../modifier/modifier";
-import { Species } from "#enums/species";
+import type { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 
 /**

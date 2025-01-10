@@ -1,10 +1,12 @@
-import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
-import { Moves } from "#app/enums/moves";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import type { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import type { Moves } from "#app/enums/moves";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { Type } from "#enums/type";
+import type { Type } from "#enums/type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
+import type { CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
+import { CanLearnMoveRequirement } from "./requirements/can-learn-move-requirement";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 

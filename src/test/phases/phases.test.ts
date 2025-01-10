@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { LoginPhase } from "#app/phases/login-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { UnavailablePhase } from "#app/phases/unavailable-phase";

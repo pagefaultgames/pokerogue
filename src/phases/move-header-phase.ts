@@ -1,5 +1,6 @@
 import { applyMoveAttrs, MoveHeaderAttr } from "#app/data/move";
-import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
 
 export class MoveHeaderPhase extends BattlePhase {

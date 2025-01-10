@@ -1,5 +1,6 @@
 import { BattlerTagLapseType } from "#app/data/battler-tags";
-import MysteryEncounterOption, { OptionPhaseCallback } from "#app/data/mystery-encounters/mystery-encounter-option";
+import type { OptionPhaseCallback } from "#app/data/mystery-encounters/mystery-encounter-option";
+import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
@@ -19,7 +20,8 @@ import { SwitchType } from "#enums/switch-type";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { getCharVariantFromDialogue } from "../data/dialogue";
-import { OptionSelectSettings, transitionMysteryEncounterIntroVisuals } from "../data/mystery-encounters/utils/encounter-phase-utils";
+import type { OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
+import { transitionMysteryEncounterIntroVisuals } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { TrainerSlot } from "../data/trainer-config";
 import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";

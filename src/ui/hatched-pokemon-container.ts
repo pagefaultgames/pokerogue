@@ -1,10 +1,11 @@
-import { EggHatchData } from "#app/data/egg-hatch-data";
+import type { EggHatchData } from "#app/data/egg-hatch-data";
 import { Gender } from "#app/data/gender";
 import { getVariantTint } from "#app/data/variant";
 import { DexAttr } from "#app/system/game-data";
 import { globalScene } from "#app/global-scene";
-import PokemonSpecies from "#app/data/pokemon-species";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import type PokemonIconAnimHandler from "./pokemon-icon-anim-handler";
+import { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 
 /**
  * A container for a Pokemon's sprite and icons to get displayed in the egg summary screen

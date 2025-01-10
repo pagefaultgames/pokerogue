@@ -1,5 +1,7 @@
-import { BattlerIndex, BattleType, ClassicFixedBossWaves } from "#app/battle";
-import { CustomModifierSettings, modifierTypes } from "#app/modifier/modifier-type";
+import type { BattlerIndex } from "#app/battle";
+import { BattleType, ClassicFixedBossWaves } from "#app/battle";
+import type { CustomModifierSettings } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";

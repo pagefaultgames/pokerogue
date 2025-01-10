@@ -4,7 +4,7 @@ import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
 import { updateWindowType } from "#app/ui/ui-theme";
 import { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
-import SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
+import type SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";

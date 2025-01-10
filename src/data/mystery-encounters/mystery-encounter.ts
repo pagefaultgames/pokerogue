@@ -1,20 +1,25 @@
-import { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import Pokemon, { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { capitalizeFirstLetter, isNullOrUndefined } from "#app/utils";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import MysteryEncounterIntroVisuals, { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
+import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
 import * as Utils from "#app/utils";
-import { StatusEffect } from "#enums/status-effect";
-import MysteryEncounterDialogue, { OptionTextDisplay } from "./mystery-encounter-dialogue";
-import MysteryEncounterOption, { MysteryEncounterOptionBuilder, OptionPhaseCallback } from "./mystery-encounter-option";
+import type { StatusEffect } from "#enums/status-effect";
+import type { OptionTextDisplay } from "./mystery-encounter-dialogue";
+import type MysteryEncounterDialogue from "./mystery-encounter-dialogue";
+import type { OptionPhaseCallback } from "./mystery-encounter-option";
+import type MysteryEncounterOption from "./mystery-encounter-option";
+import { MysteryEncounterOptionBuilder } from "./mystery-encounter-option";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, HealthRatioRequirement, PartySizeRequirement, StatusEffectRequirement, WaveRangeRequirement } from "./mystery-encounter-requirements";
-import { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#app/battle";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { GameModes } from "#app/game-mode";
-import { EncounterAnim } from "#enums/encounter-anims";
-import { Challenges } from "#enums/challenges";
+import type { GameModes } from "#app/game-mode";
+import type { EncounterAnim } from "#enums/encounter-anims";
+import type { Challenges } from "#enums/challenges";
 import { globalScene } from "#app/global-scene";
 
 export interface EncounterStartOfBattleEffect {

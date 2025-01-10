@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { SubstituteTag } from "#app/data/battler-tags";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { isNullOrUndefined } from "#app/utils";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";

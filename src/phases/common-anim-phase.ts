@@ -1,6 +1,7 @@
-import { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#app/battle";
 import { globalScene } from "#app/global-scene";
-import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
+import type { CommonAnim } from "#app/data/battle-anims";
+import { CommonBattleAnim } from "#app/data/battle-anims";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class CommonAnimPhase extends PokemonPhase {

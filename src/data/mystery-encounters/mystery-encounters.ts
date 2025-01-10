@@ -10,7 +10,7 @@ import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounte
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
 import { SlumberingSnorlaxEncounter } from "./encounters/slumbering-snorlax-encounter";
 import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
-import MysteryEncounter from "./mystery-encounter";
+import type MysteryEncounter from "./mystery-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";

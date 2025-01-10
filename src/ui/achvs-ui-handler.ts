@@ -1,10 +1,12 @@
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
-import { Achv, achvs, getAchievementDescription } from "#app/system/achv";
-import { Voucher, getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#app/system/voucher";
+import type { Achv } from "#app/system/achv";
+import { achvs, getAchievementDescription } from "#app/system/achv";
+import type { Voucher } from "#app/system/voucher";
+import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#app/system/voucher";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { Mode } from "#app/ui/ui";
+import type { Mode } from "#app/ui/ui";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { PlayerGender } from "#enums/player-gender";

@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { FieldPhase } from "./field-phase";
 
 export abstract class PokemonPhase extends FieldPhase {

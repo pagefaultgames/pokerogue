@@ -23,6 +23,8 @@ import {
   SemiInvulnerableTag,
   SubstituteTag,
 } from "#app/data/battler-tags";
+import type {
+  MoveAttr } from "#app/data/move";
 import {
   applyFilteredMoveAttrs,
   applyMoveAttrs,
@@ -31,7 +33,6 @@ import {
   FlinchAttr,
   HitsTagAttr,
   MissEffectAttr,
-  MoveAttr,
   MoveCategory,
   MoveEffectAttr,
   MoveEffectTrigger,
@@ -46,7 +47,9 @@ import {
 } from "#app/data/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { Type } from "#enums/type";
-import Pokemon, { HitResult, MoveResult, PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
   ContactHeldItemTransferChanceModifier,
@@ -58,7 +61,7 @@ import {
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, executeIf, isNullOrUndefined, NumberHolder } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+import type { Moves } from "#enums/moves";
 import i18next from "i18next";
 
 export class MoveEffectPhase extends PokemonPhase {

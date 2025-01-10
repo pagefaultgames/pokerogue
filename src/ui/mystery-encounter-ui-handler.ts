@@ -3,18 +3,18 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
+import type { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
-import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
+import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
-import { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import type { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import i18next from "i18next";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { globalScene } from "#app/global-scene";
 
 export default class MysteryEncounterUiHandler extends UiHandler {

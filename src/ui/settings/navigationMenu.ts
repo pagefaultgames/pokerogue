@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Mode } from "#app/ui/ui";
-import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
+import type { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
 import { addTextObject, setTextStyle, TextStyle } from "#app/ui/text";
 import { addWindow } from "#app/ui/ui-theme";
 import { Button } from "#enums/buttons";

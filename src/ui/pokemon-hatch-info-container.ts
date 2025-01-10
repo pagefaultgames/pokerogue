@@ -10,8 +10,8 @@ import { getEggTierForSpecies } from "#app/data/egg";
 import { starterColors } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { argbFromRgba } from "@material/material-color-utilities";
-import { EggHatchData } from "#app/data/egg-hatch-data";
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { EggHatchData } from "#app/data/egg-hatch-data";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
 
 /**

@@ -5,9 +5,9 @@ import { Species } from "#enums/species";
 import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { Mode } from "#app/ui/ui";
 import { Button } from "#enums/buttons";
-import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
+import type MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import MessageUiHandler from "#app/ui/message-ui-handler";
+import type MessageUiHandler from "#app/ui/message-ui-handler";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import i18next from "i18next";
 

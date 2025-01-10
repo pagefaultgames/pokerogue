@@ -1,5 +1,5 @@
 import { addTextObject, TextStyle } from "../text";
-import { Mode } from "../ui";
+import type { Mode } from "../ui";
 import {
   setSettingGamepad,
   SettingGamepad,
@@ -10,7 +10,7 @@ import {
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
 import pad_dualshock from "#app/configs/inputs/pad_dualshock";
 import pad_unlicensedSNES from "#app/configs/inputs/pad_unlicensedSNES";
-import { InterfaceConfig } from "#app/inputs-controller";
+import type { InterfaceConfig } from "#app/inputs-controller";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
 import { Device } from "#enums/devices";
 import { truncateString } from "#app/utils";

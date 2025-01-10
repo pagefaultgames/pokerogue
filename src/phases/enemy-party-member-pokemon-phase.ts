@@ -1,4 +1,4 @@
-import { EnemyPokemon } from "#app/field/pokemon";
+import type { EnemyPokemon } from "#app/field/pokemon";
 import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
 
 export abstract class EnemyPartyMemberPokemonPhase extends PartyMemberPokemonPhase {

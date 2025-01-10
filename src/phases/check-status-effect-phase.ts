@@ -1,6 +1,6 @@
 import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
 import { Phase } from "#app/phase";
-import { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 
 export class CheckStatusEffectPhase extends Phase {

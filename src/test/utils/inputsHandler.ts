@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
-import { InputsController } from "#app/inputs-controller";
+import type { InputsController } from "#app/inputs-controller";
 import TouchControl from "#app/touch-controls";
 import { holdOn } from "#test/utils/gameManagerUtils";
 import fs from "fs";

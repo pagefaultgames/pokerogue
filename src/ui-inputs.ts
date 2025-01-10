@@ -1,7 +1,7 @@
-import Phaser from "phaser";
+import type Phaser from "phaser";
 import { Mode } from "./ui/ui";
-import { InputsController } from "./inputs-controller";
-import MessageUiHandler from "./ui/message-ui-handler";
+import type { InputsController } from "./inputs-controller";
+import type MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import { Setting, SettingKeys, settingIndex } from "./system/settings/settings";
 import SettingsUiHandler from "./ui/settings/settings-ui-handler";

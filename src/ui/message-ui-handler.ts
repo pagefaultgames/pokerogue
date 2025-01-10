@@ -1,5 +1,5 @@
 import AwaitableUiHandler from "./awaitable-ui-handler";
-import { Mode } from "./ui";
+import type { Mode } from "./ui";
 import * as Utils from "../utils";
 import { globalScene } from "#app/global-scene";
 

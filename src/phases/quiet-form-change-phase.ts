@@ -1,10 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
-import { SpeciesFormChange, getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
+import type { SpeciesFormChange } from "#app/data/pokemon-forms";
+import { getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
 import { getTypeRgb } from "#app/data/type";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
 import { MovePhase } from "./move-phase";

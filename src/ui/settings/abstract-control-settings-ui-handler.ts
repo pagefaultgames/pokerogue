@@ -1,12 +1,12 @@
 import UiHandler from "#app/ui/ui-handler";
-import { Mode } from "#app/ui/ui";
-import { InterfaceConfig } from "#app/inputs-controller";
+import type { Mode } from "#app/ui/ui";
+import type { InterfaceConfig } from "#app/inputs-controller";
 import { addWindow } from "#app/ui/ui-theme";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { getIconWithSettingName } from "#app/configs/inputs/configHandler";
 import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
-import { Device } from "#enums/devices";
+import type { Device } from "#enums/devices";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";

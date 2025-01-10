@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#app/battle";
 import { CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { StatusEffect } from "#app/enums/status-effect";
-import { HitResult, DamageResult } from "#app/field/pokemon";
+import type { DamageResult } from "#app/field/pokemon";
+import { HitResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HealingBoosterModifier } from "#app/modifier/modifier";
 import { HealAchv } from "#app/system/achv";
@@ -11,7 +12,7 @@ import i18next from "i18next";
 import * as Utils from "#app/utils";
 import { CommonAnimPhase } from "./common-anim-phase";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { HealBlockTag } from "#app/data/battler-tags";
+import type { HealBlockTag } from "#app/data/battler-tags";
 
 export class PokemonHealPhase extends CommonAnimPhase {
   private hpHealed: integer;

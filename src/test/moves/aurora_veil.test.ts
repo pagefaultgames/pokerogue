@@ -1,8 +1,9 @@
 import type BattleScene from "#app/battle-scene";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import Move, { allMoves } from "#app/data/move";
+import type Move from "#app/data/move";
+import { allMoves } from "#app/data/move";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";

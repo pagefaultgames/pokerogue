@@ -1,7 +1,8 @@
 import { applyAbAttrs, RunSuccessAbAttr } from "#app/data/ability";
 import { Stat } from "#app/enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
-import Pokemon, { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
 import * as Utils from "#app/utils";
 import { BattleEndPhase } from "./battle-end-phase";

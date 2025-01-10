@@ -4,9 +4,9 @@ import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
 import { Button } from "#enums/buttons";
-import { Moves } from "#enums/moves";
-import Pokemon from "#app/field/pokemon";
-import { ModifierBar } from "#app/modifier/modifier";
+import type { Moves } from "#enums/moves";
+import type Pokemon from "#app/field/pokemon";
+import type { ModifierBar } from "#app/modifier/modifier";
 import { SubstituteTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
 

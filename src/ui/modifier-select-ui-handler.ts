@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption, TmModifierType } from "../modifier/modifier-type";
+import type { ModifierTypeOption } from "../modifier/modifier-type";
+import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "../modifier/modifier-type";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";

@@ -1,4 +1,4 @@
-import { InfoToggle } from "#app/battle-scene";
+import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "./text";
 import { getTypeDamageMultiplierColor } from "#app/data/type";
@@ -10,8 +10,9 @@ import * as Utils from "../utils";
 import { MoveCategory } from "#app/data/move";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
-import Pokemon, { PokemonMove } from "#app/field/pokemon";
-import { CommandPhase } from "#app/phases/command-phase";
+import type { PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
 import { BattleType } from "#app/battle";
 

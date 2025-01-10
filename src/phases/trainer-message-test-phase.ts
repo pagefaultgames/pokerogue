@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { trainerConfigs } from "#app/data/trainer-config";
-import { TrainerType } from "#app/enums/trainer-type";
+import type { TrainerType } from "#app/enums/trainer-type";
 import { BattlePhase } from "./battle-phase";
 import { TestMessagePhase } from "./test-message-phase";
 

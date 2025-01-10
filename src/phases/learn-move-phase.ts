@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
-import Move, { allMoves } from "#app/data/move";
+import type Move from "#app/data/move";
+import { allMoves } from "#app/data/move";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
 import { Moves } from "#enums/moves";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -10,7 +11,7 @@ import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 export enum LearnMoveType {

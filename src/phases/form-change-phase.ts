@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import * as Utils from "../utils";
 import { achvs } from "../system/achv";
-import { SpeciesFormChange, getSpeciesFormChangeMessage } from "../data/pokemon-forms";
-import { PlayerPokemon } from "../field/pokemon";
+import type { SpeciesFormChange } from "../data/pokemon-forms";
+import { getSpeciesFormChangeMessage } from "../data/pokemon-forms";
+import type { PlayerPokemon } from "../field/pokemon";
 import { Mode } from "../ui/ui";
-import PartyUiHandler from "../ui/party-ui-handler";
+import type PartyUiHandler from "../ui/party-ui-handler";
 import { getPokemonNameWithAffix } from "../messages";
 import { EndEvolutionPhase } from "./end-evolution-phase";
 import { EvolutionPhase } from "./evolution-phase";

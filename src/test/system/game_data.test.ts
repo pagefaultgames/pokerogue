@@ -1,6 +1,6 @@
 import * as BattleScene from "#app/battle-scene";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { SessionSaveData } from "#app/system/game-data";
+import type { SessionSaveData } from "#app/system/game-data";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";

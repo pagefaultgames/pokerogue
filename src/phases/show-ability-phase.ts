@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#app/battle";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class ShowAbilityPhase extends PokemonPhase {

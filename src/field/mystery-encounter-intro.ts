@@ -1,10 +1,10 @@
-import { GameObjects } from "phaser";
+import type { GameObjects } from "phaser";
 import { globalScene } from "#app/global-scene";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { Species } from "#enums/species";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import type { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { Variant } from "#app/data/variant";
+import type { Variant } from "#app/data/variant";
 import { doShinySparkleAnim } from "#app/field/anims";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 

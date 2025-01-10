@@ -1,8 +1,8 @@
 import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
+import type { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";
-import { Button } from "#enums/buttons";
+import type { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
 
 export interface ModalConfig {

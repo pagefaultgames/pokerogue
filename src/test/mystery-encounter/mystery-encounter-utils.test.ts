@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { getEncounterText, queueEncounterMessage, showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";

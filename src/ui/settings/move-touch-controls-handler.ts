@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import TouchControl from "#app/touch-controls";
-import UI from "#app/ui/ui";
+import type TouchControl from "#app/touch-controls";
+import type UI from "#app/ui/ui";
 
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
 export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
