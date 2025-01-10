@@ -826,7 +826,7 @@ export function setSetting(setting: string, value: integer): boolean {
       globalScene.shopCursorTarget = selectedValue;
       break;
     case SettingKeys.Command_Cursor_Memory:
-      scene.commandCursorMemory = Setting[index].options[value].value === "On";
+      globalScene.commandCursorMemory = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.EXP_Gains_Speed:
       globalScene.expGainsSpeed = value;

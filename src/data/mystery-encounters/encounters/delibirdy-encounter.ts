@@ -36,19 +36,19 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
 
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
-const doEventReward = (scene: BattleScene) => {
-  const event_buff = scene.eventManager.activeEvent()?.delibirdyBuff ?? [];
+const doEventReward = () => {
+  const event_buff = globalScene.eventManager.activeEvent()?.delibirdyBuff ?? [];
   if (event_buff.length > 0) {
     const candidates = event_buff.filter((c => {
-      const mtype = generateModifierType(scene, modifierTypes[c]);
-      const existingCharm = scene.findModifier(m => m.type.id === mtype?.id);
-      return !(existingCharm && existingCharm.getStackCount() >= existingCharm.getMaxStackCount(scene));
+      const mtype = generateModifierType(modifierTypes[c]);
+      const existingCharm = globalScene.findModifier(m => m.type.id === mtype?.id);
+      return !(existingCharm && existingCharm.getStackCount() >= existingCharm.getMaxStackCount());
     }));
     if (candidates.length > 0) {
-      scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes[randSeedItem(candidates)]));
+      globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes[randSeedItem(candidates)]));
     } else {
       // At max stacks, give a Voucher instead
-      scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.VOUCHER));
+      globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.VOUCHER));
     }
   }
 };
@@ -154,10 +154,10 @@ export const DelibirdyEncounter: MysteryEncounter =
             await applyModifierTypeToPlayerPokemon(globalScene.getPlayerPokemon()!, shellBell);
             globalScene.playSound("item_fanfare");
             await showEncounterText(i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
-            doEventReward(scene);
+            doEventReward();
           } else {
             globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.AMULET_COIN));
-            doEventReward(scene);
+            doEventReward();
           }
 
           leaveEncounterWithoutBattle(true);
@@ -231,10 +231,10 @@ export const DelibirdyEncounter: MysteryEncounter =
               await applyModifierTypeToPlayerPokemon(globalScene.getPlayerPokemon()!, shellBell);
               globalScene.playSound("item_fanfare");
               await showEncounterText(i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
-              doEventReward(scene);
+              doEventReward();
             } else {
               globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.CANDY_JAR));
-              doEventReward(scene);
+              doEventReward();
             }
           } else {
             // Check if the player has max stacks of that Berry Pouch already
@@ -246,10 +246,10 @@ export const DelibirdyEncounter: MysteryEncounter =
               await applyModifierTypeToPlayerPokemon(globalScene.getPlayerPokemon()!, shellBell);
               globalScene.playSound("item_fanfare");
               await showEncounterText(i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
-              doEventReward(scene);
+              doEventReward();
             } else {
               globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.BERRY_POUCH));
-              doEventReward(scene);
+              doEventReward();
             }
           }
 
@@ -324,10 +324,10 @@ export const DelibirdyEncounter: MysteryEncounter =
             await applyModifierTypeToPlayerPokemon(globalScene.getPlayerParty()[0], shellBell);
             globalScene.playSound("item_fanfare");
             await showEncounterText(i18next.t("battle:rewardGain", { modifierName: shellBell.name }), null, undefined, true);
-            doEventReward(scene);
+            doEventReward();
           } else {
             globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.HEALING_CHARM));
-            doEventReward(scene);
+            doEventReward();
           }
 
           chosenPokemon.loseHeldItem(modifier, false);

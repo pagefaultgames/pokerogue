@@ -1170,7 +1170,7 @@ function getGymLeaderPartyTemplate() {
 export function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void) {
   return (level: number, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
-    if (scene.gameMode.isClassic && scene.currentBattle.waveIndex === 20) {
+    if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex === 20) {
       ignoreEvolution = true;
     }
     if (!ignoreEvolution) {

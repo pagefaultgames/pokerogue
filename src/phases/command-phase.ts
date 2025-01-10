@@ -37,9 +37,9 @@ export class CommandPhase extends FieldPhase {
     const commandUiHandler = globalScene.ui.handlers[Mode.COMMAND];
 
     // If one of these conditions is true, we always reset the cursor to Command.FIGHT
-    const cursorResetEvent = this.scene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ||
-                              this.scene.currentBattle.battleType === BattleType.TRAINER ||
-                              this.scene.arena.biomeType === Biome.END;
+    const cursorResetEvent = globalScene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ||
+                              globalScene.currentBattle.battleType === BattleType.TRAINER ||
+                              globalScene.arena.biomeType === Biome.END;
 
     if (commandUiHandler) {
       if ((globalScene.currentBattle.turn === 1 && (!globalScene.commandCursorMemory || cursorResetEvent)) || commandUiHandler.getCursor() === Command.POKEMON) {
