@@ -33,15 +33,15 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
   }, () => game.isCurrentPhase(MysteryEncounterBattlePhase) || game.isCurrentPhase(MysteryEncounterRewardsPhase));
 
   if (isBattle) {
-    game.onNextPrompt("DamageAnimPhase", Mode.MESSAGE, () => {
-      game.setMode(Mode.MESSAGE);
-      game.endPhase();
-    }, () => game.isCurrentPhase(CommandPhase));
-
-    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      game.setMode(Mode.MESSAGE);
-      game.endPhase();
-    }, () => game.isCurrentPhase(CommandPhase));
+    game.onNextPrompt(
+      "CheckSwitchPhase",
+      Mode.CONFIRM,
+      () => {
+        game.setMode(Mode.MESSAGE);
+        game.endPhase();
+      },
+      () => game.isCurrentPhase(CommandPhase),
+    );
 
     game.onNextPrompt("CheckSwitchPhase", Mode.MESSAGE, () => {
       game.setMode(Mode.MESSAGE);

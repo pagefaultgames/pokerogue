@@ -186,6 +186,8 @@ export class GameWrapper {
     this.scene.time = new MockClock(this.scene);
     this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
     this.scene.eventManager = new MockTimedEventManager(); // Disable Timed Events
+
+    Pokemon.prototype.updateInfo = async () => {};
   }
 }
 
