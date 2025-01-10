@@ -6,17 +6,6 @@ export default defineProject(({ mode }) => ({
   test: {
     testTimeout: 20000,
     setupFiles: ["./test/fontFace.setup.ts", "./test/vitest.setup.ts"],
-    server: {
-      deps: {
-        inline: ["vitest-canvas-mock"],
-        //@ts-ignore
-        optimizer: {
-          web: {
-            include: ["vitest-canvas-mock"],
-          },
-        },
-      },
-    },
     environment: "jsdom" as const,
     environmentOptions: {
       jsdom: {

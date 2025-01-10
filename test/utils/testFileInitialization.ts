@@ -14,12 +14,13 @@ import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { setCookie } from "#app/utils";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
+import { mockContext } from "#test/testUtils/mocks/mockContext";
+import { MockFetch } from "#test/testUtils/mocks/mockFetch";
 import { mockLocalStorage } from "#test/testUtils/mocks/mockLocalStorage";
 import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
 import Phaser from "phaser";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { vi } from "vitest";
-import { MockFetch } from "./mocks/mockFetch";
 
 /**
  * An initialization function that is run at the beginning of every test file (via `beforeAll()`).
@@ -77,6 +78,7 @@ export function initTestFile() {
   Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
   Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
   Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
+  HTMLCanvasElement.prototype.getContext = () => mockContext;
 
   // Initialize all of these things if and only if they have not been initialized yet
   if (allMoves.length === 0) {
