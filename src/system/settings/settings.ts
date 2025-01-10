@@ -149,6 +149,7 @@ export const SettingKeys = {
   Move_Animations: "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
   Shop_Cursor_Target: "SHOP_CURSOR_TARGET",
+  Command_Cursor_Memory: "COMMAND_CURSOR_MEMORY",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -172,8 +173,8 @@ export const SettingKeys = {
 };
 
 export enum MusicPreference {
-  CONSISTENT,
-  MIXED
+  GENFIVE,
+  ALLGENS
 }
 
 /**
@@ -328,6 +329,13 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:set")
       }
     ],
+    default: 0,
+    type: SettingType.GENERAL
+  },
+  {
+    key: SettingKeys.Command_Cursor_Memory,
+    label: i18next.t("settings:commandCursorMemory"),
+    options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL
   },
@@ -654,15 +662,15 @@ export const Setting: Array<Setting> = [
     label: i18next.t("settings:musicPreference"),
     options: [
       {
-        value: "Consistent",
-        label: i18next.t("settings:consistent")
+        value: "Gen V + PMD",
+        label: i18next.t("settings:musicGenFive")
       },
       {
-        value: "Mixed",
-        label: i18next.t("settings:mixed")
+        value: "All Gens",
+        label: i18next.t("settings:musicAllGens")
       }
     ],
-    default: MusicPreference.MIXED,
+    default: MusicPreference.ALLGENS,
     type: SettingType.AUDIO,
     requireReload: true
   },
@@ -816,6 +824,9 @@ export function setSetting(setting: string, value: integer): boolean {
     case SettingKeys.Shop_Cursor_Target:
       const selectedValue = shopCursorTargetIndexMap[value];
       globalScene.shopCursorTarget = selectedValue;
+      break;
+    case SettingKeys.Command_Cursor_Memory:
+      scene.commandCursorMemory = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.EXP_Gains_Speed:
       globalScene.expGainsSpeed = value;

@@ -27,9 +27,10 @@ import { getEncounterPokemonLevelForWave, getSpriteKeysFromPokemon, STANDARD_ENC
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt, randSeedItem } from "#app/utils";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fightOrFlight";
@@ -57,7 +58,14 @@ export const FightOrFlightEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
+      let bossSpecies: PokemonSpecies;
+      if (globalScene.eventManager.isEventActive() && globalScene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
+        const eventEncounter = randSeedItem(globalScene.eventManager.activeEvent()!.uncommonBreedEncounters!);
+        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, globalScene.gameMode);
+        bossSpecies = getPokemonSpecies( levelSpecies );
+      } else {
+        bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
+      }
       const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
       const config: EnemyPartyConfig = {

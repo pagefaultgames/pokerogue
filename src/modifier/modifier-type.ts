@@ -1093,7 +1093,10 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && (pregenArgs.length === 1) && (pregenArgs[0] in Moves)) {
         return new TmModifierType(pregenArgs[0] as Moves);
       }
-      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m?.moveId === tm)));
+      const partyMemberCompatibleTms = party.map(p => {
+        const previousLevelMoves = p.getLearnableLevelMoves();
+        return (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m?.moveId === tm) && !previousLevelMoves.find(lm=>lm === tm));
+      });
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(" (N)")).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length) {
         return null;
@@ -1839,7 +1842,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
-    new WeightedModifierType(modifierTypes.CATCHING_CHARM, () => !globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.getSpeciesCount(d => !!d.caughtAttr) > 100 ? 4 : 0, 4),
+    new WeightedModifierType(modifierTypes.CATCHING_CHARM, () => globalScene.gameMode.isDaily || (!globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.getSpeciesCount(d => !!d.caughtAttr) > 100) ? 4 : 0, 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),

@@ -1170,6 +1170,9 @@ function getGymLeaderPartyTemplate() {
 export function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSlot = TrainerSlot.TRAINER, ignoreEvolution: boolean = false, postProcess?: (enemyPokemon: EnemyPokemon) => void) {
   return (level: number, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
+    if (scene.gameMode.isClassic && scene.currentBattle.waveIndex === 20) {
+      ignoreEvolution = true;
+    }
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex);
     }
@@ -1229,7 +1232,7 @@ export const signatureSpecies: SignatureSpecies = {
   GIOVANNI: [ Species.SANDILE, Species.MURKROW, Species.NIDORAN_M, Species.NIDORAN_F ],
   FALKNER: [ Species.PIDGEY, Species.HOOTHOOT, Species.DODUO ],
   BUGSY: [ Species.SCYTHER, Species.HERACROSS, Species.SHUCKLE, Species.PINSIR ],
-  WHITNEY: [ Species.GIRAFARIG, Species.MILTANK ],
+  WHITNEY: [ Species.JIGGLYPUFF, Species.MILTANK, Species.AIPOM, Species.GIRAFARIG ],
   MORTY: [ Species.GASTLY, Species.MISDREAVUS, Species.SABLEYE ],
   CHUCK: [ Species.POLIWRATH, Species.MANKEY ],
   JASMINE: [ Species.MAGNEMITE, Species.STEELIX ],
@@ -1239,7 +1242,7 @@ export const signatureSpecies: SignatureSpecies = {
   BRAWLY: [ Species.MACHOP, Species.MAKUHITA ],
   WATTSON: [ Species.MAGNEMITE, Species.VOLTORB, Species.ELECTRIKE ],
   FLANNERY: [ Species.SLUGMA, Species.TORKOAL, Species.NUMEL ],
-  NORMAN: [ Species.SLAKOTH, Species.SPINDA, Species.CHANSEY, Species.KANGASKHAN ],
+  NORMAN: [ Species.SLAKOTH, Species.SPINDA, Species.ZIGZAGOON, Species.KECLEON ],
   WINONA: [ Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY ],
   TATE: [ Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE ],
   LIZA: [ Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR ],
@@ -1247,16 +1250,16 @@ export const signatureSpecies: SignatureSpecies = {
   ROARK: [ Species.CRANIDOS, Species.LARVITAR, Species.GEODUDE ],
   GARDENIA: [ Species.ROSELIA, Species.TANGELA, Species.TURTWIG ],
   MAYLENE: [ Species.LUCARIO, Species.MEDITITE, Species.CHIMCHAR ],
-  CRASHER_WAKE: [ Species.BUIZEL, Species.MAGIKARP, Species.PIPLUP ],
+  CRASHER_WAKE: [ Species.BUIZEL, Species.WOOPER, Species.PIPLUP, Species.MAGIKARP ],
   FANTINA: [ Species.MISDREAVUS, Species.DRIFLOON, Species.SPIRITOMB ],
   BYRON: [ Species.SHIELDON, Species.BRONZOR, Species.AGGRON ],
   CANDICE: [ Species.SNEASEL, Species.SNOVER, Species.SNORUNT ],
   VOLKNER: [ Species.SHINX, Species.CHINCHOU, Species.ROTOM ],
-  CILAN: [ Species.PANSAGE, Species.COTTONEE, Species.PETILIL ],
-  CHILI: [ Species.PANSEAR, Species.DARUMAKA, Species.HEATMOR ],
-  CRESS: [ Species.PANPOUR, Species.BASCULIN, Species.TYMPOLE ],
-  CHEREN: [ Species.LILLIPUP, Species.MINCCINO, Species.PATRAT ],
-  LENORA: [ Species.KANGASKHAN, Species.DEERLING, Species.AUDINO ],
+  CILAN: [ Species.PANSAGE, Species.FOONGUS, Species.PETILIL ],
+  CHILI: [ Species.PANSEAR, Species.DARUMAKA, Species.NUMEL ],
+  CRESS: [ Species.PANPOUR, Species.TYMPOLE, Species.SLOWPOKE ],
+  CHEREN: [ Species.LILLIPUP, Species.MINCCINO, Species.PIDOVE ],
+  LENORA: [ Species.PATRAT, Species.DEERLING, Species.AUDINO ],
   ROXIE: [ Species.VENIPEDE, Species.TRUBBISH, Species.SKORUPI ],
   BURGH: [ Species.SEWADDLE, Species.SHELMET, Species.KARRABLAST ],
   ELESA: [ Species.EMOLGA, Species.BLITZLE, Species.JOLTIK ],
@@ -1289,7 +1292,7 @@ export const signatureSpecies: SignatureSpecies = {
   BRASSIUS: [ Species.SMOLIV, Species.SHROOMISH, Species.ODDISH ],
   IONO: [ Species.TADBULB, Species.WATTREL, Species.VOLTORB ],
   KOFU: [ Species.VELUZA, Species.WIGLETT, Species.WINGULL ],
-  LARRY: [ Species.STARLY, Species.DUNSPARCE, Species.KOMALA ],
+  LARRY: [ Species.STARLY, Species.DUNSPARCE, Species.LECHONK, Species.KOMALA ],
   RYME: [ Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU ],
   TULIP: [ Species.GIRAFARIG, Species.FLITTLE, Species.RALTS ],
   GRUSHA: [ Species.CETODDLE, Species.ALOLA_VULPIX, Species.CUBCHOO ],
@@ -1852,7 +1855,7 @@ export const trainerConfigs: TrainerConfigs = {
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setMixedBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL)
     .setModifierRewardFuncs(() => modifierTypes.SUPER_EXP_CHARM, () => modifierTypes.EXP_SHARE)
-    .setEventModifierRewardFuncs(() => modifierTypes.SHINY_CHARM, () => modifierTypes.ABILITY_CHARM)
+    .setEventModifierRewardFuncs(() => modifierTypes.SHINY_CHARM, () => modifierTypes.ABILITY_CHARM, () => modifierTypes.CATCHING_CHARM)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE, Species.TREECKO, Species.TORCHIC, Species.MUDKIP, Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP, Species.SNIVY, Species.TEPIG, Species.OSHAWOTT, Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE, Species.ROWLET, Species.LITTEN, Species.POPPLIO, Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE, Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY ], TrainerSlot.TRAINER, true,
       (p => p.abilityIndex = 0)))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEY, Species.HOOTHOOT, Species.TAILLOW, Species.STARLY, Species.PIDOVE, Species.FLETCHLING, Species.PIKIPEK, Species.ROOKIDEE, Species.WATTREL ], TrainerSlot.TRAINER, true)),

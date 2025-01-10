@@ -17,7 +17,7 @@ import {
   modifierTypes,
   regenerateModifierPoolThresholds,
 } from "#app/modifier/modifier-type";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt, randSeedItem } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
@@ -35,6 +35,7 @@ import { BerryType } from "#enums/berry-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/berriesAbound";
@@ -62,7 +63,14 @@ export const BerriesAboundEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
+      let bossSpecies: PokemonSpecies;
+      if (globalScene.eventManager.isEventActive() && globalScene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
+        const eventEncounter = randSeedItem(globalScene.eventManager.activeEvent()!.uncommonBreedEncounters!);
+        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, globalScene.gameMode);
+        bossSpecies = getPokemonSpecies( levelSpecies );
+      } else {
+        bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
+      }
       const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
       const config: EnemyPartyConfig = {
