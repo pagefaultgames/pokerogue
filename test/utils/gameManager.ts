@@ -120,8 +120,8 @@ export default class GameManager {
     this.reload = new ReloadHelper(this);
     this.modifiers = new ModifierHelper(this);
 
-    // Disables Mystery Encounters on all tests (can be overridden at test level)
-    this.override.mysteryEncounterChance(0);
+    // Sanitize overrides for each test
+    this.override.mysteryEncounterChance(0).moveset([]).enemyMoveset([]).startingHeldItems([]).enemyHeldItems([]);
   }
 
   /**
