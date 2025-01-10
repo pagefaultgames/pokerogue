@@ -5813,6 +5813,61 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
   }
 }
 
+
+export class RemoveSafeguard extends MoveEffectAttr {
+
+  private targetBothSides: boolean;
+
+  constructor(targetBothSides: boolean = false) {
+    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
+    this.targetBothSides = targetBothSides;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    if (this.targetBothSides) {
+      user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY);
+
+    } else {
+      user.scene.arena.removeTagOnSide(ArenaTagType.SAFEGUARD, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+    }
+
+    return true;
+  }
+}
+
+export class RemoveMist extends MoveEffectAttr {
+
+  private targetBothSides: boolean;
+
+  constructor(targetBothSides: boolean = false) {
+    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
+    this.targetBothSides = targetBothSides;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    if (this.targetBothSides) {
+      user.scene.arena.removeTagOnSide(ArenaTagType.MIST, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.MIST, ArenaTagSide.ENEMY);
+
+    } else {
+      user.scene.arena.removeTagOnSide(ArenaTagType.MIST, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+    }
+
+    return true;
+  }
+}
+
 export class RemoveScreensAttr extends MoveEffectAttr {
 
   private targetBothSides: boolean;
@@ -9220,7 +9275,9 @@ export function initMoves() {
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr)
       .attr(RemoveScreensAttr, false)
-      .attr(RemoveArenaTrapAttr, true),
+      .attr(RemoveArenaTrapAttr, true)
+      .attr(RemoveSafeguard, false)
+      .attr(RemoveMist, false),
     new StatusMove(Moves.TRICK_ROOM, Type.PSYCHIC, -1, 5, -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
       .ignoresProtect()
