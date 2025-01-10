@@ -5813,7 +5813,6 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
   }
 }
 
-
 export class RemoveScreensAttr extends MoveEffectAttr {
 
   private targetBothSides: boolean;
