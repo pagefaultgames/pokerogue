@@ -21,6 +21,7 @@ import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
 import Phaser from "phaser";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { vi } from "vitest";
+import { manageListeners } from "./listenersManager";
 
 /**
  * An initialization function that is run at the beginning of every test file (via `beforeAll()`).
@@ -95,4 +96,6 @@ export function initTestFile() {
     initLoggedInUser();
     initMysteryEncounters();
   }
+
+  manageListeners();
 }
