@@ -13,7 +13,7 @@ import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { setCookie } from "#app/utils";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
-import { mockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
+import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
 import { mockLocalStorage } from "#test/testUtils/mocks/mockLocalStorage";
 import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
 import Phaser from "phaser";
@@ -32,7 +32,7 @@ export function initTestFile() {
     value: mockLocalStorage(),
   });
   Object.defineProperty(window, "console", {
-    value: mockConsoleLog(false),
+    value: new MockConsoleLog(false),
   });
   Object.defineProperty(document, "fonts", {
     writable: true,
