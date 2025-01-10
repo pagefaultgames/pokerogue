@@ -185,7 +185,6 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       }
     }
 
-    console.log(this.cursor, this.scrollCursor);
     if (success) {
       ui.playSelect();
     } else if (error) {
