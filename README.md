@@ -33,6 +33,9 @@ For detailed guidelines on documenting your code, refer to the [comments.md](./d
 - The translations were moved to the [dedicated translation repository](https://github.com/pagefaultgames/pokerogue-locales) and are now applied as a submodule in this project.
 - The command to retrieve the translations is `git submodule update --init --recursive`. If you still struggle to get it working, please reach out to #dev-corner channel in Discord.
 
+> [!NOTE]
+> We have recently made major changes to our testing framework (see #158 and #247). If you experience any weird issues with unit tests, especially issues that only occur when running multiple test files in a single run, please feel free to reach out for help.
+
 ## 🪧 To Do
 Check out [Github Issues](https://github.com/pagefaultgames/pokerogue/issues) to see how can you help us!
 
