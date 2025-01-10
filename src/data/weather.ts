@@ -10,6 +10,7 @@ import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import type { Arena } from "#app/field/arena";
 
 export class Weather {
   public weatherType: WeatherType;
@@ -248,7 +249,7 @@ export interface WeatherPoolEntry {
   weight: integer;
 }
 
-export function getRandomWeatherType(arena: any /* Importing from arena causes a circular dependency */): WeatherType {
+export function getRandomWeatherType(arena: Arena): WeatherType {
   let weatherPool: WeatherPoolEntry[] = [];
   const hasSun = arena.getTimeOfDay() < 2;
   switch (arena.biomeType) {
@@ -374,8 +375,8 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       break;
   }
 
-  if (arena.biomeType === Biome.TOWN && arena.scene.eventManager.isEventActive() && arena.scene.eventManager.activeEvent()?.weather?.length > 0) {
-    arena.scene.eventManager.activeEvent().weather.map(w => weatherPool.push(w));
+  if (arena.biomeType === Biome.TOWN && globalScene.eventManager.isEventActive() && (globalScene.eventManager.activeEvent()?.weather?.length ?? 0) > 0) {
+    globalScene.eventManager.activeEvent()?.weather?.map(w => weatherPool.push(w));
   }
 
   if (weatherPool.length > 1) {
