@@ -8,11 +8,16 @@ import { PokerogueSystemSavedataApi } from "#app/plugins/api/pokerogue-system-sa
 import type { SystemSaveData } from "#app/system/game-data";
 import { getApiBaseUrl } from "#test/utils/testUtils";
 import { http, HttpResponse } from "msw";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { initServerForApiTests } from "#test/utils/testFileInitialization";
 
 const apiBase = getApiBaseUrl();
 const systemSavedataApi = new PokerogueSystemSavedataApi(getApiBaseUrl());
-const { server } = global;
+
+let server;
+beforeAll(async () => {
+  server = await initServerForApiTests();
+});
 
 afterEach(() => {
   server.resetHandlers();

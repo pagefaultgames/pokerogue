@@ -57,6 +57,7 @@ import fs from "fs";
 import { expect, vi } from "vitest";
 import { globalScene } from "#app/global-scene";
 import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
+import { MockFetch } from "./mocks/mockFetch";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -122,6 +123,8 @@ export default class GameManager {
 
     // Sanitize overrides for each test
     this.override.mysteryEncounterChance(0).moveset([]).enemyMoveset([]).startingHeldItems([]).enemyHeldItems([]);
+
+    global.fetch = vi.fn(MockFetch) as any;
   }
 
   /**

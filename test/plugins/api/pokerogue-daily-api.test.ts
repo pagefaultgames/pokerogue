@@ -3,11 +3,16 @@ import { PokerogueDailyApi } from "#app/plugins/api/pokerogue-daily-api";
 import { getApiBaseUrl } from "#test/utils/testUtils";
 import { ScoreboardCategory, type RankingEntry } from "#app/ui/daily-run-scoreboard";
 import { http, HttpResponse } from "msw";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
 
 const apiBase = getApiBaseUrl();
 const dailyApi = new PokerogueDailyApi(apiBase);
-const { server } = global;
+
+let server;
+beforeAll(async () => {
+  server = await initServerForApiTests();
+});
 
 afterEach(() => {
   server.resetHandlers();

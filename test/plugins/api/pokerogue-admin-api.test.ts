@@ -7,13 +7,18 @@ import type {
   UnlinkAccountFromGoogledIdRequest,
 } from "#app/@types/PokerogueAdminApi";
 import { PokerogueAdminApi } from "#app/plugins/api/pokerogue-admin-api";
+import { initServerForApiTests } from "#test/utils/testFileInitialization";
 import { getApiBaseUrl } from "#test/utils/testUtils";
 import { http, HttpResponse } from "msw";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const adminApi = new PokerogueAdminApi(apiBase);
-const { server } = global;
+
+let server;
+beforeAll(async () => {
+  server = await initServerForApiTests();
+});
 
 afterEach(() => {
   server.resetHandlers();
