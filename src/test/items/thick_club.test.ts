@@ -29,7 +29,7 @@ describe("Items - Thick Club", () => {
   });
 
   it("THICK_CLUB activates in battle correctly", async() => {
-    game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "THICK_CLUB" }]);
+    game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "THICK_CLUB" }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.startBattle([
       Species.CUBONE
@@ -79,7 +79,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -101,7 +101,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -123,7 +123,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -160,7 +160,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -197,7 +197,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
@@ -219,7 +219,7 @@ describe("Items - Thick Club", () => {
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);

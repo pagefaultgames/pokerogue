@@ -29,7 +29,7 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL activates in battle correctly", async() => {
-    game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "LIGHT_BALL" }]);
+    game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "LIGHT_BALL" }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.startBattle([
       Species.PIKACHU
@@ -83,7 +83,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -122,7 +122,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -161,7 +161,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -189,7 +189,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 

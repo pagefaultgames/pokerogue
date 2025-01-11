@@ -29,7 +29,7 @@ describe("Items - Quick Powder", () => {
   });
 
   it("QUICK_POWDER activates in battle correctly", async() => {
-    game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
+    game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.startBattle([
       Species.DITTO
@@ -79,7 +79,7 @@ describe("Items - Quick Powder", () => {
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(2);
@@ -112,7 +112,7 @@ describe("Items - Quick Powder", () => {
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(2);
@@ -145,7 +145,7 @@ describe("Items - Quick Powder", () => {
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(2);
@@ -167,7 +167,7 @@ describe("Items - Quick Powder", () => {
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
+    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
     partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(1);
