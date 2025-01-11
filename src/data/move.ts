@@ -6784,10 +6784,8 @@ export class RepeatMoveAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      // TODO: Confirm behavior of instructing move known by target but called by another move
       const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE);
       const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
-      // TODO: Add a way of adding moves to list procedurally rather than a pre-defined blacklist
       const uninstructableMoves = [
         // Locking/Continually Executed moves
         Moves.OUTRAGE,
@@ -6844,7 +6842,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       ];
 
       if (!lastMove?.move // no move to instruct
-        || !movesetMove // called move not in target's moveset (dancer, forgetting the move, etc.)
+        || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
         || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
         || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
         || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist

@@ -21,7 +21,7 @@ import { WeatherType } from "#enums/weather-type";
  *
  * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}
  *
- * If an override name starts with "STARTING", it will apply when a new run begins
+ * If an override name starts with "STARTING", it will only apply when a new run begins.
  *
  * @example
  * ```
@@ -31,14 +31,19 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {
+  OPP_MOVESET_OVERRIDE: Moves.INSTRUCT,
+  XP_MULTIPLIER_OVERRIDE: 50,
+  BATTLE_TYPE_OVERRIDE: "single",
+  ITEM_REWARD_OVERRIDE: [{ name: "MEMORY_MUSHROOM", count: 1 }]
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
  * ---
  * Defaults for Overrides that are used when testing different in game situations
  *
- * If an override name starts with "STARTING", it will apply when a new run begins
+ * If an override name starts with "STARTING", it will only apply when a new run begins.
  */
 class DefaultOverrides {
   // -----------------

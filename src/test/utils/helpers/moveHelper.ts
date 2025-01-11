@@ -75,9 +75,10 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Used when the normal moveset override can't be used (such as when it's necessary to check updated properties of the moveset).
+  * Changes a pokemon's moveset to the given move(s).
+   * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
    * @param pokemon - The {@linkcode Pokemon} being modified
-   * @param moveset - The {@linkcode Moves} (single or array) to set the Pokemon's moveset to
+   * @param moveset - The {@linkcode Moves} (single or array) to change the Pokemon's moveset to
    */
   public changeMoveset(pokemon: Pokemon, moveset: Moves | Moves[]): void {
     if (!Array.isArray(moveset)) {

@@ -25,7 +25,7 @@ export enum LearnMoveType {
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
   private messageMode: Mode;
-  private learnMoveType;
+  private learnMoveType: LearnMoveType;
   private cost: number;
 
   constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves, learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE, cost: number = -1) {
