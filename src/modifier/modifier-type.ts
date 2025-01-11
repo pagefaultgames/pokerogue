@@ -1709,7 +1709,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
     new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
-    new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 8),
+    new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
     }, 8),
