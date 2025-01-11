@@ -23,26 +23,13 @@ export default defineProject(({ mode }) => ({
   test: {
     testTimeout: 20000,
     setupFiles: ["./test/fontFace.setup.ts", "./test/vitest.setup.ts"],
-    server: {
-      deps: {
-        inline: ["vitest-canvas-mock"],
-        optimizer: {
-          web: {
-            include: ["vitest-canvas-mock"],
-          },
-        },
-      },
-    },
     sequence: {
       sequencer: class Seqencer extends BaseSequencer {
         async sort(files: [any, string][]) {
           files = await super.sort(files);
 
-          // Sort files so that `inputs.test.ts` gets run first; otherwise, `inputs.test.ts` randomly breaks
-          return files.sort((a, b) => {
-            return getTestOrder(a[1]) - getTestOrder(b[1]);
-            b;
-          });
+          // Sort files so that certain tests get run first
+          return files.sort((a, b) => getTestOrder(a[1]) - getTestOrder(b[1]));
         }
       },
     },
