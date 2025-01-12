@@ -1,5 +1,5 @@
 import MockGraphics from "./mocksContainer/mockGraphics";
-import MockTextureManager from "./mockTextureManager";
+import type MockTextureManager from "./mockTextureManager";
 
 export class MockGameObjectCreator {
   private readonly textureManager: MockTextureManager;
