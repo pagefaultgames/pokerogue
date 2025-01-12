@@ -7886,6 +7886,61 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
     return true;
   }
 }
+/**
+ * Nullifies a Pokemon's held item until the battle ends.
+ * Simulates the item being removed, but it just neutralizes it until the next battle
+ * Used by: {@linkcode Moves.CORROSIVE_GAS | Corrosive Gas}
+ *
+ * @extends MoveEffectAttr
+ * @see {@linkcode apply}
+ */
+export class NullifyHeldItemAttr extends MoveEffectAttr {
+  public turnCount: integer;
+  constructor(turnCount: integer) {
+    super(false, { trigger: MoveEffectTrigger.HIT });
+    this.turnCount = turnCount;
+  }
+
+  /**
+   *
+   * @param user {@linkcode Pokemon} that used the move
+   * @param target Target {@linkcode Pokemon} that the moves applies to
+   * @param move {@linkcode Move} that is used
+   * @param args N/A
+   * @returns {boolean} True if an item was nullified
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (move.hitsSubstitute(user, target)) {
+      return false;
+    }
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // Check for abilities that block item theft
+    if (cancelled.value === true) {
+      return false;
+    }
+
+    const heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable && !i.isNullified);
+
+    if (heldItems.length) {
+      const nullifiedItem = heldItems[user.randSeedInt(heldItems.length)];
+
+      nullifiedItem.nullify(this.turnCount);
+      target.scene.updateModifiers(target.isPlayer());
+
+      user.scene.queueMessage(i18next.t("moveTriggers:corrosiveGasItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: nullifiedItem.type.name }));
+
+    }
+    if (move.id === Moves.CORROSIVE_GAS) {
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, target, false);
+    }
+    return true;
+  }
+
+  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
+    return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+  }
+}
 
 
 const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
@@ -10425,7 +10480,7 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.CORROSIVE_GAS, Type.POISON, 100, 40, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .unimplemented(),
+      .attr(NullifyHeldItemAttr, 1),
     new StatusMove(Moves.COACHING, Type.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], 1)
       .target(MoveTarget.NEAR_ALLY)
