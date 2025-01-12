@@ -614,11 +614,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.startCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.startCursorObj);
 
-    const randomSelectLabel = addTextObject(this.scene, teamWindowX + 17, 23, i18next.t("starterSelectUiHandler:randomize"), TextStyle.TOOLTIP_CONTENT);
+    const randomSelectLabel = addTextObject(teamWindowX + 17, 23, i18next.t("starterSelectUiHandler:randomize"), TextStyle.TOOLTIP_CONTENT);
     randomSelectLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(randomSelectLabel);
 
-    this.randomCursorObj = this.scene.add.nineslice(teamWindowX + 4, 21, "select_cursor", undefined, 26, 15, 6, 6, 6, 6);
+    this.randomCursorObj = globalScene.add.nineslice(teamWindowX + 4, 21, "select_cursor", undefined, 26, 15, 6, 6, 6, 6);
     this.randomCursorObj.setVisible(false);
     this.randomCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.randomCursorObj);
@@ -1465,25 +1465,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             error = true;
             break;
           }
-          const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, _gen: number, i: number ) => total + this.scene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+          const currentPartyValue = this.starterSpecies.map(s => s.generation).reduce((total: number, _gen: number, i: number ) => total + globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
           // Filter valid starters
           const validStarters = this.filteredStarterContainers.filter(starter => {
             const species = starter.species;
             const [ isDupe ] = this.isInParty(species);
-            const starterCost = this.scene.gameData.getSpeciesStarterValue(species.speciesId);
+            const starterCost = globalScene.gameData.getSpeciesStarterValue(species.speciesId);
             const isValidForChallenge = new BooleanHolder(true);
             Challenge.applyChallenges(
-              this.scene.gameMode,
+              globalScene.gameMode,
               Challenge.ChallengeType.STARTER_CHOICE,
               species,
               isValidForChallenge,
-              this.scene.gameData.getSpeciesDexAttrProps(
+              globalScene.gameData.getSpeciesDexAttrProps(
                 species,
                 this.getCurrentDexProps(species.speciesId)
               ),
               this.isPartyValid()
             );
-            const isCaught = this.scene.gameData.dexData[species.speciesId].caughtAttr;
+            const isCaught = globalScene.gameData.dexData[species.speciesId].caughtAttr;
             return (
               !isDupe &&
               isValidForChallenge.value &&
@@ -1501,15 +1501,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           // Set species and prepare attributes
           this.setSpecies(randomSpecies);
           const dexAttr = this.getCurrentDexProps(randomSpecies.speciesId);
-          const props = this.scene.gameData.getSpeciesDexAttrProps(randomSpecies, dexAttr);
+          const props = globalScene.gameData.getSpeciesDexAttrProps(randomSpecies, dexAttr);
           const abilityIndex = this.abilityCursor;
           const nature = this.natureCursor as unknown as Nature;
           const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
-          const starterCost = this.scene.gameData.getSpeciesStarterValue(randomSpecies.speciesId);
+          const starterCost = globalScene.gameData.getSpeciesStarterValue(randomSpecies.speciesId);
           const speciesForm = getPokemonSpeciesForm(randomSpecies.speciesId, props.formIndex);
           // Load assets and add to party
           speciesForm
-            .loadAssets(this.scene, props.female, props.formIndex, props.shiny, props.variant, true)
+            .loadAssets(props.female, props.formIndex, props.shiny, props.variant, true)
             .then(() => {
               if (this.tryUpdateValue(starterCost, true)) {
                 this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, true);
