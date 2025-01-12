@@ -1,6 +1,6 @@
 import * as BattleScene from "#app/battle-scene";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { SessionSaveData } from "#app/system/game-data";
+import type { SessionSaveData } from "#app/system/game-data";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/utils/gameManager";
@@ -41,7 +41,7 @@ describe("System - Game Data", () => {
     it("should return [true, true] if bypassLogin is true", async () => {
       vi.spyOn(BattleScene, "bypassLogin", "get").mockReturnValue(true);
 
-      const result = await game.scene.gameData.tryClearSession(game.scene, 0);
+      const result = await game.scene.gameData.tryClearSession(0);
 
       expect(result).toEqual([ true, true ]);
     });
@@ -49,7 +49,7 @@ describe("System - Game Data", () => {
     it("should return [true, true] if successful", async () => {
       vi.spyOn(pokerogueApi.savedata.session, "clear").mockResolvedValue({ success: true });
 
-      const result = await game.scene.gameData.tryClearSession(game.scene, 0);
+      const result = await game.scene.gameData.tryClearSession(0);
 
       expect(result).toEqual([ true, true ]);
       expect(account.updateUserInfo).toHaveBeenCalled();
@@ -58,7 +58,7 @@ describe("System - Game Data", () => {
     it("should return [true, false] if not successful", async () => {
       vi.spyOn(pokerogueApi.savedata.session, "clear").mockResolvedValue({ success: false });
 
-      const result = await game.scene.gameData.tryClearSession(game.scene, 0);
+      const result = await game.scene.gameData.tryClearSession(0);
 
       expect(result).toEqual([ true, false ]);
       expect(account.updateUserInfo).toHaveBeenCalled();
@@ -67,7 +67,7 @@ describe("System - Game Data", () => {
     it("should return [false, false] session is out of date", async () => {
       vi.spyOn(pokerogueApi.savedata.session, "clear").mockResolvedValue({ error: "session out of date" });
 
-      const result = await game.scene.gameData.tryClearSession(game.scene, 0);
+      const result = await game.scene.gameData.tryClearSession(0);
 
       expect(result).toEqual([ false, false ]);
       expect(account.updateUserInfo).toHaveBeenCalled();

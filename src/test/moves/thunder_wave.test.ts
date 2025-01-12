@@ -1,4 +1,4 @@
-import { EnemyPokemon } from "#app/field/pokemon";
+import type { EnemyPokemon } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

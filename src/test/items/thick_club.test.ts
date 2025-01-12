@@ -74,13 +74,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
   }, 20000);
@@ -96,13 +96,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
   }, 20000);
@@ -118,13 +118,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
   }, 20000);
@@ -155,13 +155,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
   }, 20000);
@@ -192,13 +192,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
   }, 20000);
@@ -214,13 +214,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.addModifier(modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], [ "THICK_CLUB" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
   }, 20000);
