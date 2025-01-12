@@ -1,12 +1,9 @@
 import type { Variant } from "#app/data/variant";
 import { Weather } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
-import * as GameMode from "#app/game-mode";
-import type { GameModes } from "#app/game-mode";
-import { getGameMode } from "#app/game-mode";
+import { Abilities } from "#enums/abilities";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BattleStyle } from "#app/overrides";
-import Overrides from "#app/overrides";
+import Overrides, { defaultOverrides } from "#app/overrides";
 import type { Unlockables } from "#app/system/unlockables";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
@@ -15,8 +12,9 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
-import { vi } from "vitest";
-import { GameManagerHelper } from "./gameManagerHelper";
+import { expect, vi } from "vitest";
+import { GameManagerHelper } from "#test/utils/helpers/gameManagerHelper";
+import { shiftCharCodes } from "#app/utils";
 
 /**
  * Helper to handle overrides in tests
@@ -226,12 +224,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public disableTrainerWaves(): this {
-    const realFn = getGameMode;
-    vi.spyOn(GameMode, "getGameMode").mockImplementation((gameMode: GameModes) => {
-      const mode = realFn(gameMode);
-      mode.hasTrainers = false;
-      return mode;
-    });
+    vi.spyOn(Overrides, "DISABLE_TRAINERS_OVERRIDE", "get").mockReturnValue(true);
     this.log("Standard trainer waves are disabled!");
     return this;
   }
@@ -263,11 +256,8 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public seed(seed: string): this {
-    vi.spyOn(this.game.scene, "resetSeed").mockImplementation(() => {
-      this.game.scene.waveSeed = seed;
-      Phaser.Math.RND.sow([ seed ]);
-      this.game.scene.rngCounter = 0;
-    });
+    // Shift the seed here with a negative wave number, to compensate for `resetSeed()` shifting the seed itself.
+    this.game.scene.setSeed(shiftCharCodes(seed, (this.game.scene.currentBattle?.waveIndex ?? 0) * -1));
     this.game.scene.resetSeed();
     this.log(`Seed set to "${seed}"!`);
     return this;
@@ -538,5 +528,15 @@ export class OverridesHelper extends GameManagerHelper {
 
   private log(...params: any[]) {
     console.log("Overrides:", ...params);
+  }
+
+  public sanitizeOverrides(): void {
+    for (const key of Object.keys(defaultOverrides)) {
+      if (Overrides[key] !== defaultOverrides[key]) {
+        vi.spyOn(Overrides, key as any, "get").mockReturnValue(defaultOverrides[key]);
+      }
+    }
+    expect(Overrides).toEqual(defaultOverrides);
+    this.log("Sanitizing all overrides!");
   }
 }

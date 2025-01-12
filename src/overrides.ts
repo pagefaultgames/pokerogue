@@ -244,6 +244,11 @@ class DefaultOverrides {
    * Note that, for all items in the array, `count` is not used.
    */
   readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
+
+  /**
+   * If `true`, disable all non-scripted opponent trainer encounters.
+   */
+  readonly DISABLE_TRAINERS_OVERRIDE: boolean = false;
 }
 
 export const defaultOverrides = new DefaultOverrides();
