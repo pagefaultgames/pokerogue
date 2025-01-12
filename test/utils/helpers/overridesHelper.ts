@@ -220,12 +220,12 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override each wave to not have standard trainer battles
+   * Override each wave to not have random trainer battles
    * @returns `this`
    */
   public disableTrainerWaves(): this {
-    vi.spyOn(Overrides, "DISABLE_TRAINERS_OVERRIDE", "get").mockReturnValue(true);
-    this.log("Standard trainer waves are disabled!");
+    vi.spyOn(Overrides, "DISABLE_RANDOM_TRAINERS_OVERRIDE", "get").mockReturnValue(true);
+    this.log("Random trainer waves are disabled!");
     return this;
   }
 

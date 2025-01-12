@@ -248,7 +248,7 @@ class DefaultOverrides {
   /**
    * If `true`, disable all non-scripted opponent trainer encounters.
    */
-  readonly DISABLE_TRAINERS_OVERRIDE: boolean = false;
+  readonly DISABLE_RANDOM_TRAINERS_OVERRIDE: boolean = false;
 }
 
 export const defaultOverrides = new DefaultOverrides();
