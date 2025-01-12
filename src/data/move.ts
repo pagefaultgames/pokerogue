@@ -36,6 +36,7 @@ import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "./pokemon-forms";
+import { ModifierTier } from "#app/modifier/modifier-tier";
 import { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "./challenge";
 import { SwitchType } from "#enums/switch-type";
@@ -7856,6 +7857,91 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
 }
 
 /**
+ * Attribute used for transferring items between a user Pokemon and target Pokemon
+ */
+export class SwapHeldItemsAttr extends MoveEffectAttr {
+  /**
+   * A random item is taken from user and given to target, and a random item is taken from target and given to user
+   * @param {Pokemon} user Pokemon that used the move
+   * @param {Pokemon} target Enemy Pokemon
+   * @param {Move} move Unused
+   * @param {any[]} args Unused
+   * @returns {boolean} Returns true if an item swap occured, false if not
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    const targetHeldItems = target.getHeldItems().filter(i => i.isTransferable);
+    const userHeldItems = user.getHeldItems().filter(i => i.isTransferable);
+
+    if (!user.hasTrainer() || target.hasAbility(Abilities.STICKY_HOLD) || (!userHeldItems.length && !targetHeldItems.length)) {
+      user.scene.queueMessage(i18next.t("battle:attackFailed"));
+      return false;
+    }
+
+    user.scene.queueMessage(i18next.t("moveTriggers:trickOnSwap", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(user),
+    }));
+
+    if (targetHeldItems.length) {
+      let swapItemIdx = 0;
+      const targetPool = target.isPlayer() ? ModifierPoolType.PLAYER : ModifierPoolType.TRAINER;
+
+      for (let idx = 1; idx < targetHeldItems.length; idx++) {
+        const currentItemFlameOrToxic = targetHeldItems[swapItemIdx].type.id === "TOXIC_ORB" || targetHeldItems[swapItemIdx].type.id === "FLAME_ORB";
+        const nextItemNotFlameOrToxic = targetHeldItems[idx].type.id !== "TOXIC_ORB" && targetHeldItems[idx].type.id !== "FLAME_ORB";
+        let nextItemTier = targetHeldItems[idx].type.getOrInferTier(targetPool);
+        let currentItemTier = targetHeldItems[swapItemIdx].type.getOrInferTier(targetPool);
+        nextItemTier = nextItemTier !== null ? nextItemTier : ModifierTier.COMMON;
+        currentItemTier = currentItemTier !== null ? currentItemTier : ModifierTier.COMMON;
+
+        if (nextItemNotFlameOrToxic && (nextItemTier > currentItemTier || currentItemFlameOrToxic)) {
+          swapItemIdx = idx;
+        }
+
+        if (targetHeldItems[swapItemIdx].type.tier === ModifierTier.LUXURY) {
+          break;
+        }
+      }
+      user.scene.tryTransferHeldItemModifier(targetHeldItems[swapItemIdx], user, false);
+    }
+
+    if (userHeldItems.length) {
+      let swapItemIdx = 0;
+      const userPool = user.isPlayer() ? ModifierPoolType.PLAYER : ModifierPoolType.TRAINER;
+
+      for (let idx = 1; idx < userHeldItems.length; idx++) {
+        if (userHeldItems[swapItemIdx].type.id === "TOXIC_ORB" || userHeldItems[swapItemIdx].type.id === "FLAME_ORB") {
+          break;
+        }
+
+        if (userHeldItems[idx].type.id === "TOXIC_ORB" || userHeldItems[idx].type.id === "FLAME_ORB") {
+          swapItemIdx = idx;
+          break;
+        }
+
+        let nextItemTier = userHeldItems[idx].type.getOrInferTier(userPool);
+        let currentItemTier = userHeldItems[swapItemIdx].type.getOrInferTier(userPool);
+        nextItemTier = nextItemTier !== null ? nextItemTier : ModifierTier.COMMON;
+        currentItemTier = currentItemTier !== null ? currentItemTier : ModifierTier.COMMON;
+
+        if (nextItemTier < currentItemTier) {
+          swapItemIdx = idx;
+        }
+      }
+
+      const swappedItemName = userHeldItems[swapItemIdx].type.name;
+      target.scene.tryTransferHeldItemModifier(userHeldItems[swapItemIdx], target, false);
+
+      user.scene.queueMessage(i18next.t("moveTriggers:trickFoeNewItem", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(target),
+        itemName: swappedItemName,
+      }));
+    }
+    return true;
+  }
+}
+
+/**
  * Drops the target's immunity to types it is immune to
  * and makes its evasiveness be ignored during accuracy
  * checks. Used by: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth}, {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}
@@ -7886,7 +7972,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
     return true;
   }
 }
-
 
 const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
 
@@ -8764,7 +8849,7 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ALLY)
       .condition(failIfSingleBattle),
     new StatusMove(Moves.TRICK, Type.PSYCHIC, 100, 10, -1, 0, 3)
-      .unimplemented(),
+      .attr(SwapHeldItemsAttr),
     new StatusMove(Moves.ROLE_PLAY, Type.PSYCHIC, -1, 10, -1, 0, 3)
       .ignoresSubstitute()
       .attr(AbilityCopyAttr),
