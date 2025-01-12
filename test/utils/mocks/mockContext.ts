@@ -5,11 +5,15 @@ import { mockCanvas } from "#test/utils/mocks/mockCanvas";
  */
 export const mockContext: any = {
   font: "",
-  //@ts-ignore
-  measureText: () => new TextMetrics(""),
+  measureText: () => {
+    return {};
+  },
   save: () => {},
   scale: () => {},
   clearRect: () => {},
+  fillRect: () => {},
+  fillText: () => {},
+  getImageData: () => {},
   canvas: mockCanvas,
   restore: () => {},
 };
