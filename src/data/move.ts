@@ -2236,14 +2236,14 @@ export class MultiHitAttr extends MoveAttr {
     switch (this.multiHitType) {
       case MultiHitType._2_TO_5:
       {
-        const rand = user.randSeedInt(16);
-        const hitValue = new Utils.IntegerHolder(rand);
+        const rand = user.randSeedInt(20);
+        const hitValue = new Utils.NumberHolder(rand);
         applyAbAttrs(MaxMultiHitAbAttr, user, null, false, hitValue);
-        if (hitValue.value >= 10) {
+        if (hitValue.value >= 13) {
           return 2;
-        } else if (hitValue.value >= 4) {
+        } else if (hitValue.value >= 6) {
           return 3;
-        } else if (hitValue.value >= 2) {
+        } else if (hitValue.value >= 3) {
           return 4;
         } else {
           return 5;
