@@ -5,7 +5,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { EFFECTIVE_STATS } from "#app/enums/stat";
-import { EnemyPokemon } from "#app/field/pokemon";
+import type { EnemyPokemon } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils";
 
 describe("Boss Pokemon / Shields", () => {

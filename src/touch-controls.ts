@@ -1,6 +1,6 @@
+import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import EventEmitter = Phaser.Events.EventEmitter;
-import BattleScene from "./battle-scene";
 
 const repeatInputDelayMillis = 250;
 
@@ -13,8 +13,8 @@ export default class TouchControl {
   /** Whether the last touch event has finished before disabling */
   private finishedLastTouch: boolean = false;
 
-  constructor(scene: BattleScene) {
-    this.events = scene.game.events;
+  constructor() {
+    this.events = globalScene.game.events;
     this.init();
   }
 

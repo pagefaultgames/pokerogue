@@ -1,9 +1,10 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
-import { isNullOrUndefined, nil } from "#app/utils";
+import type { nil } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils";
 import i18next from "i18next";
 import { Species } from "#enums/species";
-import { WeatherPoolEntry } from "#app/data/weather";
+import type { WeatherPoolEntry } from "#app/data/weather";
 import { WeatherType } from "#enums/weather-type";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
 
@@ -183,9 +184,9 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   private availableWidth: number;
   private eventTimer: NodeJS.Timeout | null;
 
-  constructor(scene: BattleScene, x: number, y: number, event?: TimedEvent) {
-    super(scene, x, y);
-    this.availableWidth = scene.scaledCanvas.width;
+  constructor(x: number, y: number, event?: TimedEvent) {
+    super(globalScene, x, y);
+    this.availableWidth = globalScene.scaledCanvas.width;
     this.event = event;
     this.setVisible(false);
   }
@@ -221,14 +222,13 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       console.log(this.event.bannerKey);
       const padding = 5;
       const showTimer = this.event.eventType !== EventType.NO_TIMER_DISPLAY;
-      const yPosition = this.scene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
-      this.banner = new Phaser.GameObjects.Image(this.scene, this.availableWidth / 2, yPosition - padding, key);
+      const yPosition = globalScene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
+      this.banner = new Phaser.GameObjects.Image(globalScene, this.availableWidth / 2, yPosition - padding, key);
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.5, 1);
       this.banner.setScale(this.event.scale ?? 0.18);
       if (showTimer) {
         this.eventTimerText = addTextObject(
-          this.scene,
           this.banner.x,
           this.banner.y + 2,
           this.timeToGo(this.event.endDate),
