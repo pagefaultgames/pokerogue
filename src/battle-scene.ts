@@ -397,6 +397,7 @@ export default class BattleScene extends SceneBase {
     this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController(this);
+    /// 컨트롤러 초기화
     this.uiInputs = new UiInputs(this, this.inputController);
 
     this.gameData = new GameData(this);
@@ -410,7 +411,7 @@ export default class BattleScene extends SceneBase {
 
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
     (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
-
+    ///배틀 시작
     this.launchBattle();
   }
 
@@ -430,13 +431,13 @@ export default class BattleScene extends SceneBase {
       a.setOrigin(0);
       a.setSize(320, 240);
     });
-
+    /// 전투 영역과 관련 게임 오브젝트를 담고 있으며, 6배로 확장됩니다.
     const field = this.add.container(0, 0);
     field.setName("field");
     field.setScale(6);
 
     this.field = field;
-
+    /// UI 요소를 담고 있으며, 필드 아래에 위치하고 깊이(Depth)는 1로 설정됩니다.
     const fieldUI = this.add.container(0, this.game.canvas.height);
     fieldUI.setName("field-ui");
     fieldUI.setDepth(1);
@@ -470,7 +471,7 @@ export default class BattleScene extends SceneBase {
     uiContainer.setScale(6);
 
     this.uiContainer = uiContainer;
-
+    ///fieldOverlay와 shopOverlay라는 두 개의 사각형이 fieldUI에 추가되어 특정 상황(예: 상점 상호작용)에서 UI 오버레이로 사용됩니다.
     const overlayWidth = this.game.canvas.width / 6;
     const overlayHeight = (this.game.canvas.height / 6) - 48;
     this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
@@ -484,6 +485,8 @@ export default class BattleScene extends SceneBase {
     this.shopOverlay.setOrigin(0, 0);
     this.shopOverlay.setAlpha(0);
     this.fieldUI.add(this.shopOverlay);
+    ///플레이어와 적을 위한 modifierBar와 enemyModifierBar가 초기화되어 UI 컨테이너(uiContainer)에 추가됩니다.
+
 
     this.modifiers = [];
     this.enemyModifiers = [];
@@ -497,13 +500,13 @@ export default class BattleScene extends SceneBase {
     this.enemyModifierBar.setName("enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
     uiContainer.add(this.enemyModifierBar);
-
+    ///플레이어 캐릭터를 나타내는 charSprite가 생성되어 fieldUI에 추가됩니다.
     this.charSprite = new CharSprite(this);
     this.charSprite.setName("sprite-char");
     this.charSprite.setup();
 
     this.fieldUI.add(this.charSprite);
-
+    ///플레이어와 적의 포켓볼을 표시하는 pbTray와 pbTrayEnemy가 각각 초기화됩니다.
     this.pbTray = new PokeballTray(this, true);
     this.pbTray.setName("pb-tray");
     this.pbTray.setup();
@@ -576,7 +579,10 @@ export default class BattleScene extends SceneBase {
     this.party = [];
 
     const loadPokemonAssets = [];
-
+    /* arenaPlayer, arenaPlayerTransition, arenaEnemy, arenaNextEnemy가 ArenaBase 인스턴스로 초기화됩니다.
+  이들은 전투 중 플레이어와 적의 포켓몬을 나타내며, 전환 시에 사용됩니다.
+  트레이너 스프라이트는 addFieldSprite 메서드를 사용해 생성되어 필드에 추가됩니다.
+    */
     this.arenaPlayer = new ArenaBase(this, true);
     this.arenaPlayer.setName("arena-player");
     this.arenaPlayerTransition = new ArenaBase(this, true);
@@ -623,7 +629,7 @@ export default class BattleScene extends SceneBase {
     });
 
     this.reset(false, false, true);
-
+    ///ui 초기화
     const ui = new UI(this);
     this.uiContainer.add(ui);
 
@@ -632,20 +638,28 @@ export default class BattleScene extends SceneBase {
     ui.setup();
 
     const defaultMoves = [ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ];
-
+    /*
+    initCommonAnims: 공통 애니메이션을 초기화.
+    initMoveAnim: 특정 기술 애니메이션을 로드.
+    loadMoveAnimAssets: 기본 기술과 관련된 자산을 로드.
+    */
     Promise.all([
       Promise.all(loadPokemonAssets),
       initCommonAnims(this).then(() => loadCommonAnimAssets(this, true)),
       Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(this, m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
       this.initStarterColors()
     ]).then(() => {
+      /*
+      LoginPhase: 플레이어 로그인 또는 세션 시작을 처리.
+      TitlePhase: 게임 타이틀 화면을 표시.
+      */
       this.pushPhase(new LoginPhase(this));
       this.pushPhase(new TitlePhase(this));
-
+      ///shiftPhase를 호출하여 첫 번째 단계를 시작
       this.shiftPhase();
     });
   }
-
+  ///세션 초기화
   initSession(): void {
     if (this.sessionPlayTime === null) {
       this.sessionPlayTime = 0;
@@ -678,7 +692,7 @@ export default class BattleScene extends SceneBase {
     this.updateMoneyText();
     this.updateScoreText();
   }
-
+  ///경험치 이미지 초기화
   async initExpSprites(): Promise<void> {
     if (expSpriteKeys.length) {
       return;
@@ -690,7 +704,7 @@ export default class BattleScene extends SceneBase {
       Promise.resolve();
     });
   }
-
+  ///포켓몬 변형(variant) 데이터 초기화
   async initVariantData(): Promise<void> {
     Object.keys(variantData).forEach(key => delete variantData[key]);
     await this.cachedFetch("./images/pokemon/variant/_masterlist.json").then(res => res.json())
@@ -719,7 +733,9 @@ export default class BattleScene extends SceneBase {
         Promise.resolve();
       });
   }
-
+  /*
+  fetch API를 래핑하여 타임스탬프 쿼리 매개변수를 URL에 추가합니다. 이렇게 하면 브라우저 캐싱을 우회하여 항상 최신 버전의 자산을 가져올 수 있습니다.
+  */
   cachedFetch(url: string, init?: RequestInit): Promise<Response> {
     const manifest = this.game["manifest"];
     if (manifest) {
@@ -730,7 +746,18 @@ export default class BattleScene extends SceneBase {
     }
     return fetch(url, init);
   }
+  /*
+  이 메서드는 starterColors 객체를 초기화합니다. 이를 위해 starter-colors.json 파일에서 색상 데이터를 가져와 파싱한 후, 해당 데이터를 저장합니다.
 
+작동 방식:
+
+starterColors가 이미 정의되어 있으면 즉시 resolve를 호출하여 중복 초기화를 방지합니다.
+정의되지 않은 경우 cachedFetch를 사용하여 JSON 파일을 가져옵니다.
+가져온 데이터를 파싱한 후:
+starterColors를 빈 객체로 초기화합니다.
+가져온 데이터(sc)의 각 키와 값을 starterColors에 추가합니다.
+초기화가 완료되면 resolve를 호출하여 Promise를 완료합니다.
+  */
   initStarterColors(): Promise<void> {
     return new Promise(resolve => {
       if (starterColors) {
@@ -769,7 +796,8 @@ export default class BattleScene extends SceneBase {
       });
     });
   }
-
+  /*
+  이 메서드는 주어진 포켓몬 스프라이트 키가 실험적 스프라이트인지 여부를 확인합니다*/
   hasExpSprite(key: string): boolean {
     const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
     if (!keyMatch) {
@@ -794,7 +822,7 @@ export default class BattleScene extends SceneBase {
     }
     return true;
   }
-
+  ///플레이어 파티 가져오는 함수
   public getPlayerParty(): PlayerPokemon[] {
     return this.party;
   }
@@ -803,6 +831,7 @@ export default class BattleScene extends SceneBase {
    * @returns An array of {@linkcode PlayerPokemon} filtered from the player's party
    * that are {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
    */
+  ///이 메서드는 전투에 참여할 수 있는 플레이어의 포켓몬 목록을 반환
   public getPokemonAllowedInBattle(): PlayerPokemon[] {
     return this.getPlayerParty().filter(p => p.isAllowedInBattle());
   }
@@ -814,6 +843,7 @@ export default class BattleScene extends SceneBase {
    * or `undefined` if there are no valid pokemon
    * @param includeSwitching Whether a pokemon that is currently switching out is valid, default `true`
    */
+  ///는 첫 번째 활성 포켓몬을 반환하는 역할을 합니다
   public getPlayerPokemon(includeSwitching: boolean = true): PlayerPokemon | undefined {
     return this.getPlayerField().find(p => p.isActive() && (includeSwitching || p.switchOutStatus === false));
   }
@@ -823,36 +853,54 @@ export default class BattleScene extends SceneBase {
    * Does not actually check if the pokemon are on the field or not.
    * @returns array of {@linkcode PlayerPokemon}
    */
+  ///상대 필드 위의 포켓몬
   public getPlayerField(): PlayerPokemon[] {
     const party = this.getPlayerParty();
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
-
+  /// 상대팀 파티 가져옴
   public getEnemyParty(): EnemyPokemon[] {
     return this.currentBattle?.enemyParty ?? [];
   }
 
   /**
-   * @returns The first {@linkcode EnemyPokemon} that is {@linkcode getEnemyField on the field}
-   * and {@linkcode EnemyPokemon.isActive is active}
-   * (aka {@linkcode EnemyPokemon.isAllowedInBattle is allowed in battle}),
-   * or `undefined` if there are no valid pokemon
-   * @param includeSwitching Whether a pokemon that is currently switching out is valid, default `true`
+   * Retrieves the first active enemy Pokémon on the field.
+   * If `includeSwitching` is `true`, it includes Pokémon currently switching out.
+   *
+   * @param includeSwitching - Whether to include Pokémon that are switching out, default is `true`.
+   * @returns The first active enemy Pokémon on the field that is allowed in battle,
+   *          or `undefined` if there are no valid Pokémon.
    */
   public getEnemyPokemon(includeSwitching: boolean = true): EnemyPokemon | undefined {
     return this.getEnemyField().find(p => p.isActive() && (includeSwitching || p.switchOutStatus === false));
   }
 
   /**
-   * Returns an array of EnemyPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does not actually check if the pokemon are on the field or not.
-   * @returns array of {@linkcode EnemyPokemon}
+   * Retrieves an array of enemy Pokémon for the current battle.
+   * The length of the returned array is either 1 (single battle) or 2 (double battle),
+   * depending on the current battle mode.
+   *
+   * This method does not check if the Pokémon are actually on the field.
+   *
+   * @returns An array of enemy Pokémon, with a length of 1 or 2 depending on the battle mode.
    */
   public getEnemyField(): EnemyPokemon[] {
     const party = this.getEnemyParty();
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
 
+
+  /**
+   * Retrieves all Pokémon currently on the field, including both player and enemy Pokémon.
+   * The returned array has a fixed length of 4, with the following structure:
+   * - [0, 1]: Player's Pokémon.
+   * - [2, 3]: Enemy's Pokémon.
+   *
+   * If `activeOnly` is `true`, it filters out any Pokémon that are not active.
+   *
+   * @param activeOnly - Whether to include only active Pokémon, default is `false`.
+   * @returns An array of Pokémon on the field, optionally filtered by active status.
+   */
   public getField(activeOnly: boolean = false): Pokemon[] {
     const ret = new Array(4).fill(null);
     const playerField = this.getPlayerField();
@@ -864,11 +912,13 @@ export default class BattleScene extends SceneBase {
       : ret;
   }
 
+
   /**
    * Used in doubles battles to redirect moves from one pokemon to another when one faints or is removed from the field
    * @param removedPokemon {@linkcode Pokemon} the pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
    * @param allyPokemon {@linkcode Pokemon} the pokemon that will have the moves be redirected TO
    */
+  /// 더블배틀에서 하나 죽으면 옆엣놈으로 이전하는 함수
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
     // failsafe: if not a double battle just return
     if (this.currentBattle.double === false) {
@@ -886,9 +936,12 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
-   * @param isEnemy Whether to return the enemy's modifier bar
-   * @returns {ModifierBar}
+   * Returns the `ModifierBar` of the current scene.
+   * If `isEnemy` is true, it returns the enemy's modifier bar (`enemyModifierBar`),
+   * otherwise it returns the player's modifier bar (`modifierBar`).
+   *
+   * @param isEnemy - Optional boolean to determine whether to return the enemy's modifier bar.
+   * @returns {ModifierBar} The appropriate `ModifierBar` (either player's or enemy's).
    */
   getModifierBar(isEnemy?: boolean): ModifierBar {
     return isEnemy ? this.enemyModifierBar : this.modifierBar;
@@ -904,12 +957,47 @@ export default class BattleScene extends SceneBase {
     return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
   }
 
+  /**
+   * Retrieves a Pokémon from either the player's party or the enemy's party
+   * by its unique `pokemonId`.
+   *
+   * @param pokemonId - The unique ID of the Pokémon to search for.
+   * @returns {Pokemon | null} The Pokémon with the specified ID, or `null` if not found.
+   */
   getPokemonById(pokemonId: integer): Pokemon | null {
     const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
     return (findInParty(this.getPlayerParty()) || findInParty(this.getEnemyParty())) ?? null;
   }
 
-  addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
+  /**
+   * Adds a new Pokémon to the player's party.
+   *
+   * @param species - The species of the Pokémon.
+   * @param level - The level of the Pokémon.
+   * @param abilityIndex - (Optional) The index of the Pokémon's ability.
+   * @param formIndex - (Optional) The form index of the Pokémon.
+   * @param gender - (Optional) The gender of the Pokémon.
+   * @param shiny - (Optional) Whether the Pokémon is shiny.
+   * @param variant - (Optional) The variant of the Pokémon.
+   * @param ivs - (Optional) An array of individual values (IVs) for the Pokémon's stats.
+   * @param nature - (Optional) The nature of the Pokémon.
+   * @param dataSource - (Optional) Data source for initializing the Pokémon.
+   * @param postProcess - (Optional) A callback function for post-processing the Pokémon.
+   * @returns {PlayerPokemon} The newly created `PlayerPokemon` instance.
+   */
+  addPlayerPokemon(
+    species: PokemonSpecies,
+    level: integer,
+    abilityIndex?: integer,
+    formIndex?: integer,
+    gender?: Gender,
+    shiny?: boolean,
+    variant?: Variant,
+    ivs?: integer[],
+    nature?: Nature,
+    dataSource?: Pokemon | PokemonData,
+    postProcess?: (playerPokemon: PlayerPokemon) => void
+  ): PlayerPokemon {
     const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
     if (postProcess) {
       postProcess(pokemon);
@@ -918,6 +1006,19 @@ export default class BattleScene extends SceneBase {
     return pokemon;
   }
 
+  /**
+ * Creates and adds a new enemy Pokémon to the battle.
+ * Overrides level and species if applicable, and applies special logic for boss Pokémon.
+ *
+ * @param species - The species of the Pokémon.
+ * @param level - The level of the Pokémon.
+ * @param trainerSlot - The slot assigned to the trainer.
+ * @param boss - (Optional) Whether the Pokémon is a boss, default is `false`.
+ * @param shinyLock - (Optional) Whether the Pokémon is shiny-locked, default is `false`.
+ * @param dataSource - (Optional) Data source for initializing the Pokémon.
+ * @param postProcess - (Optional) A callback function for further processing of the Pokémon.
+ * @returns {EnemyPokemon} The newly created `EnemyPokemon` instance.
+ */
   addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, shinyLock: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
     if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
       level = Overrides.OPP_LEVEL_OVERRIDE;
@@ -953,13 +1054,13 @@ export default class BattleScene extends SceneBase {
     pokemon.init();
     return pokemon;
   }
-
   /**
-   * Removes a {@linkcode PlayerPokemon} from the party, and clears modifiers for that Pokemon's id
-   * Useful for MEs/Challenges that remove Pokemon from the player party temporarily or permanently
-   * @param pokemon
-   * @param destroy Default true. If true, will destroy the {@linkcode PlayerPokemon} after removing
-   */
+ * Removes a player Pokémon from the party and clears associated modifiers.
+ * This is useful for events or challenges where Pokémon may be temporarily or permanently removed.
+ *
+ * @param pokemon - The `PlayerPokemon` instance to be removed.
+ * @param destroy - Whether to destroy the Pokémon object after removal, default is `true`.
+ */
   removePokemonFromPlayerParty(pokemon: PlayerPokemon, destroy: boolean = true) {
     if (!pokemon) {
       return;
@@ -973,7 +1074,13 @@ export default class BattleScene extends SceneBase {
     }
     this.updateModifiers(true);
   }
-
+  /**
+   * Removes a player Pokémon from the party and clears associated modifiers.
+   * This is useful for events or challenges where Pokémon may be temporarily or permanently removed.
+   *
+   * @param pokemon - The `PlayerPokemon` instance to be removed.
+   * @param destroy - Whether to destroy the Pokémon object after removal, default is `true`.
+   */
   addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
     container.setName(`${pokemon.name}-icon`);
@@ -1052,7 +1159,7 @@ export default class BattleScene extends SceneBase {
 
     return container;
   }
-
+  ///뭔가 시드 설정
   setSeed(seed: string): void {
     this.seed = seed;
     this.rngCounter = 0;
@@ -1184,14 +1291,35 @@ export default class BattleScene extends SceneBase {
       });
     }
   }
-
+  /**
+   * Calculates the chance of a double battle occurring in the specified wave.
+   *
+   * The base chance is determined by whether the wave index is a multiple of 10.
+   * - If the wave index is a multiple of 10, the base chance is set to 32.
+   * - Otherwise, the base chance is set to 8.
+   *
+   * Modifiers and abilities are applied to adjust the base chance.
+   *
+   * @param newWaveIndex - The index of the new wave.
+   * @param playerField - An array of `PlayerPokemon` instances currently on the field.
+   * @returns {number} The calculated chance of a double battle, with a minimum value of 1.
+   */
   getDoubleBattleChance(newWaveIndex: number, playerField: PlayerPokemon[]) {
     const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
     this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
     playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
     return Math.max(doubleChance.value, 1);
   }
-
+  /**
+ * Initializes a new battle based on the given wave index, battle type, and other parameters.
+ *
+ * @param waveIndex - (Optional) The wave index for the new battle. If not provided, it defaults to the next wave.
+ * @param battleType - (Optional) The type of battle (Trainer, Wild, Mystery Encounter).
+ * @param trainerData - (Optional) Predefined trainer data for the battle.
+ * @param double - (Optional) Whether the battle should be a double battle.
+ * @param mysteryEncounterType - (Optional) Specifies the type of mystery encounter, if applicable.
+ * @returns {Battle | null} The newly created `Battle` instance or `null` if initialization fails.
+ */
   newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean, mysteryEncounterType?: MysteryEncounterType): Battle | null {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (_startingWave - 1)) + 1);
@@ -1204,7 +1332,7 @@ export default class BattleScene extends SceneBase {
     this.resetSeed(newWaveIndex);
 
     const playerField = this.getPlayerField();
-
+    /// 고정배틀요소가 따로 있는듯
     if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
       battleConfig = this.gameMode.getFixedBattle(newWaveIndex);
       newDouble = battleConfig.double;
@@ -1221,7 +1349,7 @@ export default class BattleScene extends SceneBase {
       } else {
         newBattleType = battleType;
       }
-
+      ///트레이너 배틀일시
       if (newBattleType === BattleType.TRAINER) {
         const trainerType = this.arena.randomTrainerType(newWaveIndex);
         let doubleTrainer = false;
@@ -1358,7 +1486,7 @@ export default class BattleScene extends SceneBase {
       for (const pokemon of this.getPlayerParty()) {
         this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
       }
-
+      ///바이옴 변경
       if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
         this.pushPhase(new NextEncounterPhase(this));
       } else {
@@ -1374,7 +1502,7 @@ export default class BattleScene extends SceneBase {
 
     return this.currentBattle;
   }
-
+  ///바이옴 변경되면 새로운 데이터 설정
   newArena(biome: Biome): Arena {
     this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
     this.eventTarget.dispatchEvent(new NewArenaEvent());
@@ -1383,7 +1511,7 @@ export default class BattleScene extends SceneBase {
 
     return this.arena;
   }
-
+  ///필드 설정
   updateFieldScale(): Promise<void> {
     return new Promise(resolve => {
       const fieldScale = Math.floor(Math.pow(1 / this.getField(true)
@@ -1417,7 +1545,15 @@ export default class BattleScene extends SceneBase {
       });
     });
   }
-
+  /**
+ * Determines the form index for a given Pokémon species based on various conditions. 지역별로 생김새나 그게 다른놈들
+ *
+ * @param species - The species of the Pokémon.
+ * @param gender - (Optional) The gender of the Pokémon.
+ * @param nature - (Optional) The nature of the Pokémon.
+ * @param ignoreArena - (Optional) Whether to ignore arena-specific form changes.
+ * @returns {integer} The form index of the Pokémon.
+ */
   getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena?: boolean): integer {
     if (!species.forms?.length) {
       return 0;
@@ -1502,7 +1638,13 @@ export default class BattleScene extends SceneBase {
 
     return this.arena.getSpeciesFormIndex(species);
   }
-
+  /**
+ * Generates a random boolean value indicating whether the gym offset is applied.
+ *
+ * The result is consistent for the same seed due to the use of `executeWithSeedOffset`.
+ *
+ * @returns {boolean} Whether the offset gym is generated.
+ */
   private getGeneratedOffsetGym(): boolean {
     let ret = false;
     this.executeWithSeedOffset(() => {
@@ -1510,7 +1652,13 @@ export default class BattleScene extends SceneBase {
     }, 0, this.seed.toString());
     return ret;
   }
-
+  /**
+ * Generates a random wave cycle offset between 0 and 35, in increments of 5.
+ *
+ * The result is consistent for the same seed due to the use of `executeWithSeedOffset`.
+ *
+ * @returns {integer} The generated wave cycle offset.
+ */
   private getGeneratedWaveCycleOffset(): integer {
     let ret = 0;
     this.executeWithSeedOffset(() => {
@@ -1518,7 +1666,15 @@ export default class BattleScene extends SceneBase {
     }, 0, this.seed.toString());
     return ret;
   }
-
+  /**
+ * Determines the number of health segments for a boss Pokémon encounter.
+ *
+ * @param waveIndex - The wave index of the current battle.
+ * @param level - The level of the enemy Pokémon.
+ * @param species - (Optional) The species of the enemy Pokémon.
+ * @param forceBoss - (Optional) Whether to force the Pokémon to be treated as a boss.
+ * @returns {integer} The number of health segments for the boss encounter.
+ */
   getEncounterBossSegments(waveIndex: integer, level: integer, species?: PokemonSpecies, forceBoss: boolean = false): integer {
     if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1) {
       return Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE;
@@ -1812,7 +1968,7 @@ export default class BattleScene extends SceneBase {
     this.fieldUI.sendToBack(this.moneyText);
     this.fieldUI.sendToBack(this.scoreText);
   }
-
+  ///기절한 적 점수?
   addFaintedEnemyScore(enemy: EnemyPokemon): void {
     let scoreIncrease = enemy.getSpeciesForm().getBaseExp() * (enemy.level / this.getMaxExpLevel()) * ((enemy.ivs.reduce((iv: integer, total: integer) => total += iv, 0) / 93) * 0.2 + 0.8);
     this.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id, false).map(m => scoreIncrease *= (m as PokemonHeldItemModifier).getScoreMultiplier());
@@ -1821,7 +1977,7 @@ export default class BattleScene extends SceneBase {
     }
     this.currentBattle.battleScore += Math.ceil(scoreIncrease);
   }
-
+  /// 최대 레벨 계산
   getMaxExpLevel(ignoreLevelCap?: boolean): integer {
     if (ignoreLevelCap) {
       return Number.MAX_SAFE_INTEGER;
@@ -1846,7 +2002,7 @@ export default class BattleScene extends SceneBase {
     })) ] : allSpecies.filter(s => s.isCatchable());
     return filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
   }
-
+  ///랜덤바이옴 선택
   generateRandomBiome(waveIndex: integer): Biome {
     const relWave = waveIndex % 250;
     const biomes = Utils.getEnumValues(Biome).slice(1, Utils.getEnumValues(Biome).filter(b => b >= 40).length * -1);
@@ -2297,6 +2453,8 @@ export default class BattleScene extends SceneBase {
    * @param {Phase} phase - The phase to be added to the conditional queue.
    * @param {() => boolean} condition - A function that returns a boolean indicating whether the phase should be executed.
    *
+   * This method allows deferring the execution of a phase until a specific condition is met.
+Phases added through this method are stored in conditionalQueue, and they will only be executed if the corresponding condition function returns true.
    */
   pushConditionalPhase(phase: Phase, condition: () => boolean): void {
     this.conditionalQueue.push([ condition, phase ]);
@@ -2306,6 +2464,9 @@ export default class BattleScene extends SceneBase {
    * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
    * @param phase {@linkcode Phase} the phase to add
    * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
+   * This method adds a phase to one of two different queues:
+phaseQueue: The main phase queue where phases are executed in order.
+nextCommandPhaseQueue: A queue for phases that should be executed later (deferred).
    */
   pushPhase(phase: Phase, defer: boolean = false): void {
     (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
@@ -2314,6 +2475,11 @@ export default class BattleScene extends SceneBase {
   /**
    * Adds Phase to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
    * @param phase {@linkcode Phase} the phase to add
+   *
+   * This method inserts a phase at the beginning of the phase queue (phaseQueuePrepend) or at a specific index.
+If phaseQueuePrependSpliceIndex is -1, the phase is simply added to the end of phaseQueuePrepend.
+If phaseQueuePrependSpliceIndex is set, the phase is inserted at the specified index.
+Use Case: This is used for phases that need to be executed immediately or in a specific order (e.g., high-priority phases).
    */
   unshiftPhase(phase: Phase): void {
     if (this.phaseQueuePrependSpliceIndex === -1) {
@@ -2516,7 +2682,7 @@ export default class BattleScene extends SceneBase {
     }
     this.phaseQueue.push(new TurnInitPhase(this));
   }
-
+  ///돈 더하기
   addMoney(amount: integer): void {
     this.money = Math.min(this.money + amount, Number.MAX_SAFE_INTEGER);
     this.updateMoneyText();
@@ -2531,69 +2697,142 @@ export default class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
-  addModifier(modifier: Modifier | null, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean, cost?: number): Promise<boolean> {
+  /**
+ * 배틀에서 새 Modifier(수정자)를 추가한다.
+ * - Modifier는 'PersistentModifier'(지속성) 또는 'ConsumableModifier'(일회성)으로 구분된다.
+ * - 추가 성공 여부를 Promise<boolean>로 반환한다.
+ *
+ * @param modifier     추가할 Modifier(또는 null)
+ * @param ignoreUpdate 업데이트 과정을 무시할지 여부
+ * @param playSound    사운드를 재생할지 여부
+ * @param virtual      실제 적용 여부(virtual이면 실제로 Modifier를 추가하지 않고 테스트만)
+ * @param instant      업데이트 시 즉시 반영할지 여부
+ * @param cost         소모 비용(주로 기술이나 아이템의 사용 비용)
+ * @returns            Promise<boolean> - 추가 또는 적용 여부
+ */
+  addModifier(
+    modifier: Modifier | null,
+    ignoreUpdate?: boolean,
+    playSound?: boolean,
+    virtual?: boolean,
+    instant?: boolean,
+    cost?: number
+  ): Promise<boolean> {
+    // modifier가 null이면 즉시 false 반환
     if (!modifier) {
       return Promise.resolve(false);
     }
+
+    // 비동기로 진행하는 Promise 생성
     return new Promise(resolve => {
-      let success = false;
-      const soundName = modifier.type.soundName;
+      let success = false;                 // 처리 성공 여부를 추적
+      const soundName = modifier.type.soundName; // Modifier에 설정된 사운드 이름
+
+      // 업적(achievements) 관련 검증을 수행
       this.validateAchvs(ModifierAchv, modifier);
+
+      // 제거가 필요한 Modifier 목록과, 후속 Promise 리스트 초기화
       const modifiersToRemove: PersistentModifier[] = [];
       const modifierPromises: Promise<boolean>[] = [];
+
+      // ──────────────────────────
+      // 1) PersistentModifier 처리
+      // ──────────────────────────
       if (modifier instanceof PersistentModifier) {
+        // 테라스탈라이즈 Modifier는 이미 적용된 동일 PokemonId에 대한 테라스탈라이즈를 먼저 제거
         if (modifier instanceof TerastallizeModifier) {
-          modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
+          modifiersToRemove.push(
+            ...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId))
+          );
         }
+
+        // 실제(virtual이 false)로 modifiers 배열에 add 성공 시에만 내부 로직 진행
         if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
+          // 폼체인지나 테라스탈라이즈의 경우, 해당 포켓몬 객체를 찾아서 즉시 effect를 apply
           if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
             const pokemon = this.getPokemonById(modifier.pokemonId);
             if (pokemon) {
+              // apply 결과가 true면 success 갱신
               success = modifier.apply(pokemon, true);
             }
           }
+
+          // 사운드를 재생해야 하고, 아직 로드되지 않은 사운드라면 playSound로 재생
           if (playSound && !this.sound.get(soundName)) {
             this.playSound(soundName);
           }
         } else if (!virtual) {
+          // PersistentModifier 추가가 실패했고(스택이 가득 참 등),
+          // virtual이 아니면 기본 tier에 대한 Modifier로 재시도
           const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
-          this.queueMessage(i18next.t("battle:itemStackFull", { fullItemName: modifier.type.name, itemName: defaultModifierType.name }), undefined, true);
-          return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(success => resolve(success));
+          this.queueMessage(
+            i18next.t("battle:itemStackFull", {
+              fullItemName: modifier.type.name,
+              itemName: defaultModifierType.name
+            }),
+            undefined,
+            true
+          );
+
+          // 기본 Modifier를 새로 생성해서 다시 add 시도
+          return this.addModifier(
+            defaultModifierType.newModifier(),
+            ignoreUpdate,
+            playSound,
+            false,
+            instant
+          ).then(success => resolve(success));
         }
 
+        // 같은 종류(예: 테라스탈) Modifier가 중복되어 있으면 제거
         for (const rm of modifiersToRemove) {
           this.removeModifier(rm);
         }
 
+        // ignoreUpdate가 아니면서 가상 적용이 아니면, Modifier 목록을 업데이트 후 결과 반환
         if (!ignoreUpdate && !virtual) {
           return this.updateModifiers(true, instant).then(() => resolve(success));
         }
+
+      // ──────────────────────────
+      // 2) ConsumableModifier 처리
+      // ──────────────────────────
       } else if (modifier instanceof ConsumableModifier) {
+        // 사운드가 설정되어 있고 playSound 옵션이 true라면 재생
         if (playSound && !this.sound.get(soundName)) {
           this.playSound(soundName);
         }
 
+        // 포켓몬에 직접 적용하는 Consumable
         if (modifier instanceof ConsumablePokemonModifier) {
+          // 파티에 있는 모든 포켓몬에게 일괄적으로 적용 시도
           for (const p in this.party) {
             const pokemon = this.party[p];
 
+            // Modifier별 추가 인자가 필요한 경우 준비
             const args: unknown[] = [];
             if (modifier instanceof PokemonHpRestoreModifier) {
-              if (!(modifier as PokemonHpRestoreModifier).fainted) {
+              // fainted(기절) 상태가 아닌지, 또는 부활시키는지에 따라 회복량을 계산
+              if (!modifier.fainted) {
                 const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+                // HealingBoosterModifier가 걸려 있다면 회복 배율 증가
                 this.applyModifiers(HealingBoosterModifier, true, hpRestoreMultiplier);
                 args.push(hpRestoreMultiplier.value);
               } else {
-                args.push(1);
+                args.push(1); // 기절 후 부활의 경우 기본 1배
               }
             } else if (modifier instanceof FusePokemonModifier) {
+              // FusePokemonModifier는 fusePokemonId가 필요
               args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
             } else if (modifier instanceof RememberMoveModifier && !Utils.isNullOrUndefined(cost)) {
+              // RememberMoveModifier는 기술 재학습에 필요한 cost를 인자로 받음
               args.push(cost);
             }
 
+            // shouldApply로 실제 적용 가능성을 먼저 체크
             if (modifier.shouldApply(pokemon, ...args)) {
               const result = modifier.apply(pokemon, ...args);
+              // apply 결과가 Promise라면 비동기 처리 후에 success값을 반영
               if (result instanceof Promise) {
                 modifierPromises.push(result.then(s => success ||= s));
               } else {
@@ -2602,11 +2841,18 @@ export default class BattleScene extends SceneBase {
             }
           }
 
-          return Promise.allSettled([ this.party.map(p => p.updateInfo(instant)), ...modifierPromises ]).then(() => resolve(success));
+          // 모든 포켓몬에 대해 적용이 끝나면, 파티 정보 갱신 후 Promise 전체 결과 반환
+          return Promise.allSettled([
+            this.party.map(p => p.updateInfo(instant)),  // 각 포켓몬의 업데이트
+            ...modifierPromises
+          ]).then(() => resolve(success));
+
         } else {
+          // 기타 ConsumableModifier (Party 전체가 아닌 Scene 자체에 적용되는 것 등)
           const args = [ this ];
           if (modifier.shouldApply(...args)) {
             const result = modifier.apply(...args);
+            // apply가 비동기면 처리 완료 후 resolve
             if (result instanceof Promise) {
               return result.then(success => resolve(success));
             } else {
@@ -2616,10 +2862,12 @@ export default class BattleScene extends SceneBase {
         }
       }
 
+      // 이 시점까지 특별 처리에 해당되지 않으면, 성공 여부로 resolve
       resolve(success);
     });
   }
 
+  ///적 modifier 추가
   addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
       const modifiersToRemove: PersistentModifier[] = [];
@@ -2720,7 +2968,7 @@ export default class BattleScene extends SceneBase {
       });
     });
   }
-
+  ///파티 멤버 modifier 제거
   removePartyMemberModifiers(partyMemberIndex: integer): Promise<void> {
     return new Promise(resolve => {
       const pokemonId = this.getPlayerParty()[partyMemberIndex].id;
@@ -2992,7 +3240,7 @@ export default class BattleScene extends SceneBase {
 
     return null;
   }
-
+  ///뭔가 폼체인지
   triggerPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: Constructor<SpeciesFormChangeTrigger>, delayed: boolean = false, modal: boolean = false): boolean {
     if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
 
@@ -3096,6 +3344,9 @@ export default class BattleScene extends SceneBase {
       modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
+
+    // Log the game info to the console
+    console.log("Game Info Updated:", gameInfo);
   }
 
   /**
