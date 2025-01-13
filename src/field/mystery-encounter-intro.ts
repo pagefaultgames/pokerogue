@@ -1,9 +1,11 @@
-import { GameObjects } from "phaser";
-import BattleScene from "../battle-scene";
-import MysteryEncounter from "../data/mystery-encounters/mystery-encounter";
-import { Species } from "#enums/species";
+import type { GameObjects } from "phaser";
+import { globalScene } from "#app/global-scene";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import type { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import type { Variant } from "#app/data/variant";
+import { doShinySparkleAnim } from "#app/field/anims";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 
 type KnownFileRoot =
@@ -59,6 +61,10 @@ export class MysteryEncounterSpriteConfig {
   scale?: number;
   /** If you are using a Pokemon sprite, set to `true`. This will ensure variant, form, gender, shiny sprites are loaded properly */
   isPokemon?: boolean;
+  /** If using a Pokemon shiny sprite, needs to be set to ensure the correct variant assets get loaded and displayed */
+  isShiny?: boolean;
+  /** If using a Pokemon shiny sprite, needs to be set to ensure the correct variant assets get loaded and displayed */
+  variant?: Variant;
   /** If you are using an item sprite, set to `true` */
   isItem?: boolean;
   /** The sprites alpha. `0` - `1` The lower the number, the more transparent */
@@ -74,9 +80,10 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   public encounter: MysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
   public enterFromRight: boolean;
+  private shinySparkleSprites: { sprite: Phaser.GameObjects.Sprite, variant: Variant }[];
 
-  constructor(scene: BattleScene, encounter: MysteryEncounter) {
-    super(scene, -72, 76);
+  constructor(encounter: MysteryEncounter) {
+    super(globalScene, -72, 76);
     this.encounter = encounter;
     this.enterFromRight = encounter.enterIntroVisualsFromRight ?? false;
     // Shallow copy configs to allow visual config updates at runtime without dirtying master copy of Encounter
@@ -86,7 +93,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       };
 
       if (!isNullOrUndefined(result.species)) {
-        const keys = getSpriteKeysFromSpecies(result.species);
+        const keys = getSpriteKeysFromSpecies(result.species, undefined, undefined, result.isShiny, result.variant);
         result.spriteKey = keys.spriteKey;
         result.fileRoot = keys.fileRoot;
         result.isPokemon = true;
@@ -99,16 +106,16 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     }
 
     const getSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
-      const ret = this.scene.addFieldSprite(0, 0, spriteKey);
+      const ret = globalScene.addFieldSprite(0, 0, spriteKey);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
+      ret.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
       return ret;
     };
 
     const getItemSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
-      const icon = this.scene.add.sprite(-19, 2, "items", spriteKey);
+      const icon = globalScene.add.sprite(-19, 2, "items", spriteKey);
       icon.setOrigin(0.5, 1);
-      icon.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
+      icon.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
       return icon;
     };
 
@@ -120,18 +127,36 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     // Sprites with custom X or Y defined will not count for normal spacing requirements
     const spacingValue = Math.round((maxX - minX) / Math.max(this.spriteConfigs.filter(s => !s.x && !s.y).length, 1));
 
+    this.shinySparkleSprites = [];
+    const shinySparkleSprites = globalScene.add.container(0, 0);
     this.spriteConfigs?.forEach((config) => {
-      const { spriteKey, isItem, hasShadow, scale, x, y, yShadow, alpha } = config;
+      const { spriteKey, isItem, hasShadow, scale, x, y, yShadow, alpha, isPokemon, isShiny, variant } = config;
 
       let sprite: GameObjects.Sprite;
       let tintSprite: GameObjects.Sprite;
+      let pokemonShinySparkle: Phaser.GameObjects.Sprite | undefined;
 
-      if (!isItem) {
-        sprite = getSprite(spriteKey, hasShadow, yShadow);
-        tintSprite = getSprite(spriteKey);
-      } else {
+      if (isItem) {
         sprite = getItemSprite(spriteKey, hasShadow, yShadow);
         tintSprite = getItemSprite(spriteKey);
+      } else {
+        sprite = getSprite(spriteKey, hasShadow, yShadow);
+        tintSprite = getSprite(spriteKey);
+        if (isPokemon && isShiny) {
+          // Set Pipeline for shiny variant
+          sprite.setPipelineData("spriteKey", spriteKey);
+          tintSprite.setPipelineData("spriteKey", spriteKey);
+          sprite.setPipelineData("shiny", true);
+          sprite.setPipelineData("variant", variant);
+          tintSprite.setPipelineData("shiny", true);
+          tintSprite.setPipelineData("variant", variant);
+          // Create Sprite for shiny Sparkle
+          pokemonShinySparkle = globalScene.add.sprite(sprite.x, sprite.y, "shiny");
+          pokemonShinySparkle.setOrigin(0.5, 1);
+          pokemonShinySparkle.setVisible(false);
+          this.shinySparkleSprites.push({ sprite: pokemonShinySparkle, variant: variant ?? 0 });
+          shinySparkleSprites.add(pokemonShinySparkle);
+        }
       }
 
       sprite.setVisible(!config.hidden);
@@ -165,6 +190,11 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         }
       }
 
+      if (!isNullOrUndefined(pokemonShinySparkle)) {
+        // Offset the sparkle to match the Pokemon's position
+        pokemonShinySparkle.setPosition(sprite.x, sprite.y);
+      }
+
       if (!isNullOrUndefined(alpha)) {
         sprite.setAlpha(alpha);
         tintSprite.setAlpha(alpha);
@@ -173,6 +203,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       this.add(sprite);
       this.add(tintSprite);
     });
+    this.add(shinySparkleSprites);
   }
 
   /**
@@ -186,15 +217,18 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
 
       this.spriteConfigs.forEach((config) => {
         if (config.isPokemon) {
-          this.scene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
+          globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
+          if (config.isShiny) {
+            globalScene.loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant);
+          }
         } else if (config.isItem) {
-          this.scene.loadAtlas("items", "");
+          globalScene.loadAtlas("items", "");
         } else {
-          this.scene.loadAtlas(config.spriteKey, config.fileRoot);
+          globalScene.loadAtlas(config.spriteKey, config.fileRoot);
         }
       });
 
-      this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         this.spriteConfigs.every((config) => {
           if (config.isItem) {
             return true;
@@ -205,14 +239,14 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           // Ignore warnings for missing frames, because there will be a lot
           console.warn = () => {
           };
-          const frameNames = this.scene.anims.generateFrameNames(config.spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 128 });
+          const frameNames = globalScene.anims.generateFrameNames(config.spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 128 });
 
           console.warn = originalWarn;
-          if (!(this.scene.anims.exists(config.spriteKey))) {
-            this.scene.anims.create({
+          if (!(globalScene.anims.exists(config.spriteKey))) {
+            globalScene.anims.create({
               key: config.spriteKey,
               frames: frameNames,
-              frameRate: 12,
+              frameRate: 10,
               repeat: -1
             });
           }
@@ -223,8 +257,8 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         resolve();
       });
 
-      if (!this.scene.load.isLoading()) {
-        this.scene.load.start();
+      if (!globalScene.load.isLoading()) {
+        globalScene.load.start();
       }
     });
   }
@@ -240,11 +274,21 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     this.getSprites().map((sprite, i) => {
       if (!this.spriteConfigs[i].isItem) {
         sprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
+        if (sprite.texture.frameTotal > 1) {
+          // Show the first animation frame for a smooth transition when the animation starts.
+          const firstFrame = sprite.texture.frames["0001.png"];
+          sprite.setFrame(firstFrame ?? 0);
+        }
       }
     });
     this.getTintSprites().map((tintSprite, i) => {
       if (!this.spriteConfigs[i].isItem) {
         tintSprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
+        if (tintSprite.texture.frameTotal > 1) {
+          // Show the first frame for a smooth transition when the animation starts.
+          const firstFrame = tintSprite.texture.frames["0001.png"];
+          tintSprite.setFrame(firstFrame ?? 0);
+        }
       }
     });
 
@@ -286,6 +330,17 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     tintSprite.play(animConfig);
 
     return true;
+  }
+
+  /**
+   * Play shiny sparkle animations if there are shiny Pokemon
+   */
+  playShinySparkles() {
+    for (const sparkleConfig of this.shinySparkleSprites) {
+      globalScene.time.delayedCall(500, () => {
+        doShinySparkleAnim(sparkleConfig.sprite, sparkleConfig.variant);
+      });
+    }
   }
 
   /**
@@ -374,7 +429,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     if (duration) {
       sprite.setAlpha(0);
 
-      this.scene.tweens.add({
+      globalScene.tweens.add({
         targets: sprite,
         alpha: alpha || 1,
         duration: duration,
@@ -407,7 +462,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
    */
   private untint(sprite, duration: integer, ease?: string): void {
     if (duration) {
-      this.scene.tweens.add({
+      globalScene.tweens.add({
         targets: sprite,
         alpha: 0,
         duration: duration,
@@ -446,11 +501,4 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     });
     return super.setVisible(value);
   }
-}
-
-/**
- * Interface is required so as not to override {@link Phaser.GameObjects.Container.scene}
- */
-export default interface MysteryEncounterIntroVisuals {
-  scene: BattleScene
 }

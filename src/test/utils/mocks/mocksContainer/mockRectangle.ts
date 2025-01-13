@@ -1,4 +1,4 @@
-import { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "../mockGameObject";
 
 export default class MockRectangle implements MockGameObject {
   private fillColor;

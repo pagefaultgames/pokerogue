@@ -1,21 +1,23 @@
+import type BattleScene from "#app/battle-scene";
 import { allMoves, MoveCategory } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { AiType, EnemyPokemon } from "#app/field/pokemon";
+import type { EnemyPokemon } from "#app/field/pokemon";
+import { AiType } from "#app/field/pokemon";
 import { randSeedInt } from "#app/utils";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-
+let globalScene: BattleScene;
 const NUM_TRIALS = 300;
 
 type MoveChoiceSet = { [key: number]: number };
 
 function getEnemyMoveChoices(pokemon: EnemyPokemon, moveChoices: MoveChoiceSet): void {
   // Use an unseeded random number generator in place of the mocked-out randBattleSeedInt
-  vi.spyOn(pokemon.scene, "randBattleSeedInt").mockImplementation((range, min?) => {
+  vi.spyOn(globalScene, "randBattleSeedInt").mockImplementation((range, min?) => {
     return randSeedInt(range, min);
   });
   for (let i = 0; i < NUM_TRIALS; i++) {
@@ -44,6 +46,7 @@ describe("Enemy Commands - Move Selection", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    globalScene = game.scene;
 
     game.override
       .ability(Abilities.BALL_FETCH)

@@ -5,7 +5,7 @@ import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
@@ -55,6 +55,11 @@ import {
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { ExpPhase } from "#app/phases/exp-phase";
+import { GameOverPhase } from "#app/phases/game-over-phase";
+import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
+import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
+import { UnlockPhase } from "#app/phases/unlock-phase";
+import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -82,7 +87,7 @@ type PhaseClass =
   | typeof TurnStartPhase
   | typeof MovePhase
   | typeof MoveEffectPhase
-  | typeof DamagePhase
+  | typeof DamageAnimPhase
   | typeof FaintPhase
   | typeof BerryPhase
   | typeof TurnEndPhase
@@ -113,10 +118,15 @@ type PhaseClass =
   | typeof MysteryEncounterBattlePhase
   | typeof MysteryEncounterRewardsPhase
   | typeof PostMysteryEncounterPhase
+  | typeof RibbonModifierRewardPhase
+  | typeof GameOverModifierRewardPhase
   | typeof ModifierRewardPhase
   | typeof PartyExpPhase
   | typeof ExpPhase
-  | typeof EncounterPhase;
+  | typeof EncounterPhase
+  | typeof GameOverPhase
+  | typeof UnlockPhase
+  | typeof PostGameOverPhase;
 
 type PhaseString =
   | "LoginPhase"
@@ -136,7 +146,7 @@ type PhaseString =
   | "TurnStartPhase"
   | "MovePhase"
   | "MoveEffectPhase"
-  | "DamagePhase"
+  | "DamageAnimPhase"
   | "FaintPhase"
   | "BerryPhase"
   | "TurnEndPhase"
@@ -167,10 +177,15 @@ type PhaseString =
   | "MysteryEncounterBattlePhase"
   | "MysteryEncounterRewardsPhase"
   | "PostMysteryEncounterPhase"
+  | "RibbonModifierRewardPhase"
+  | "GameOverModifierRewardPhase"
   | "ModifierRewardPhase"
   | "PartyExpPhase"
   | "ExpPhase"
-  | "EncounterPhase";
+  | "EncounterPhase"
+  | "GameOverPhase"
+  | "UnlockPhase"
+  | "PostGameOverPhase";
 
 type PhaseInterceptorPhase = PhaseClass | PhaseString;
 
@@ -214,7 +229,7 @@ export default class PhaseInterceptor {
     [ TurnStartPhase, this.startPhase ],
     [ MovePhase, this.startPhase ],
     [ MoveEffectPhase, this.startPhase ],
-    [ DamagePhase, this.startPhase ],
+    [ DamageAnimPhase, this.startPhase ],
     [ FaintPhase, this.startPhase ],
     [ BerryPhase, this.startPhase ],
     [ TurnEndPhase, this.startPhase ],
@@ -245,10 +260,15 @@ export default class PhaseInterceptor {
     [ MysteryEncounterBattlePhase, this.startPhase ],
     [ MysteryEncounterRewardsPhase, this.startPhase ],
     [ PostMysteryEncounterPhase, this.startPhase ],
+    [ RibbonModifierRewardPhase, this.startPhase ],
+    [ GameOverModifierRewardPhase, this.startPhase ],
     [ ModifierRewardPhase, this.startPhase ],
     [ PartyExpPhase, this.startPhase ],
     [ ExpPhase, this.startPhase ],
     [ EncounterPhase, this.startPhase ],
+    [ GameOverPhase, this.startPhase ],
+    [ UnlockPhase, this.startPhase ],
+    [ PostGameOverPhase, this.startPhase ],
   ];
 
   private endBySetMode = [
@@ -490,7 +510,13 @@ export default class PhaseInterceptor {
         const currentHandler = this.scene.ui.getHandler();
         if (expireFn) {
           this.prompts.shift();
-        } else if (currentMode === actionForNextPrompt.mode && currentPhase === actionForNextPrompt.phaseTarget && currentHandler.active && (!actionForNextPrompt.awaitingActionInput || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))) {
+        } else if (
+          currentMode === actionForNextPrompt.mode
+          && currentPhase === actionForNextPrompt.phaseTarget
+          && currentHandler.active
+          && (!actionForNextPrompt.awaitingActionInput
+            || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))
+        ) {
           const prompt = this.prompts.shift();
           if (prompt?.callback) {
             prompt.callback();

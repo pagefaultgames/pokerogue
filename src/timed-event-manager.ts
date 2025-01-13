@@ -1,7 +1,10 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
-import { nil } from "#app/utils";
+import type { nil } from "#app/utils";
 import i18next from "i18next";
+import { Species } from "#enums/species";
+import type { WeatherPoolEntry } from "#app/data/weather";
+import { WeatherType } from "#enums/weather-type";
 
 export enum EventType {
   SHINY,
@@ -16,6 +19,11 @@ interface EventBanner {
   availableLangs?: string[];
 }
 
+interface EventEncounter {
+  species: Species;
+  allowEvolution?: boolean;
+}
+
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
@@ -23,19 +31,46 @@ interface TimedEvent extends EventBanner {
   friendshipMultiplier?: number;
   startDate: Date;
   endDate: Date;
+  uncommonBreedEncounters?: EventEncounter[];
+  delibirdyBuff?: string[];
+  weather?: WeatherPoolEntry[];
 }
 
 const timedEvents: TimedEvent[] = [
   {
-    name: "Halloween Update",
+    name: "Winter Holiday Update",
     eventType: EventType.SHINY,
     shinyMultiplier: 2,
-    friendshipMultiplier: 2,
-    startDate: new Date(Date.UTC(2024, 9, 27, 0)),
-    endDate: new Date(Date.UTC(2024, 10, 4, 0)),
-    bannerKey: "halloween2024-event-",
+    friendshipMultiplier: 1,
+    startDate: new Date(Date.UTC(2024, 11, 21, 0)),
+    endDate: new Date(Date.UTC(2025, 0, 4, 0)),
+    bannerKey: "winter_holidays2024-event-",
     scale: 0.21,
-    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ]
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    uncommonBreedEncounters: [
+      { species: Species.GIMMIGHOUL },
+      { species: Species.DELIBIRD },
+      { species: Species.STANTLER, allowEvolution: true },
+      { species: Species.CYNDAQUIL, allowEvolution: true },
+      { species: Species.PIPLUP, allowEvolution: true },
+      { species: Species.CHESPIN, allowEvolution: true },
+      { species: Species.BALTOY, allowEvolution: true },
+      { species: Species.SNOVER, allowEvolution: true },
+      { species: Species.CHINGLING, allowEvolution: true },
+      { species: Species.LITWICK, allowEvolution: true },
+      { species: Species.CUBCHOO, allowEvolution: true },
+      { species: Species.SWIRLIX, allowEvolution: true },
+      { species: Species.AMAURA, allowEvolution: true },
+      { species: Species.MUDBRAY, allowEvolution: true },
+      { species: Species.ROLYCOLY, allowEvolution: true },
+      { species: Species.MILCERY, allowEvolution: true },
+      { species: Species.SMOLIV, allowEvolution: true },
+      { species: Species.ALOLA_VULPIX, allowEvolution: true },
+      { species: Species.GALAR_DARUMAKA, allowEvolution: true },
+      { species: Species.IRON_BUNDLE }
+    ],
+    delibirdyBuff: [ "CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM" ],
+    weather: [{ weatherType: WeatherType.SNOW, weight: 1 }]
   }
 ];
 
@@ -94,9 +129,9 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   private availableWidth: number;
   private eventTimer: NodeJS.Timeout | null;
 
-  constructor(scene: BattleScene, x: number, y: number, event?: TimedEvent) {
-    super(scene, x, y);
-    this.availableWidth = scene.scaledCanvas.width;
+  constructor(x: number, y: number, event?: TimedEvent) {
+    super(globalScene, x, y);
+    this.availableWidth = globalScene.scaledCanvas.width;
     this.event = event;
     this.setVisible(false);
   }
@@ -132,14 +167,13 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       console.log(this.event.bannerKey);
       const padding = 5;
       const showTimer = this.event.eventType !== EventType.NO_TIMER_DISPLAY;
-      const yPosition = this.scene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
-      this.banner = new Phaser.GameObjects.Image(this.scene, this.availableWidth / 2, yPosition - padding, key);
+      const yPosition = globalScene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
+      this.banner = new Phaser.GameObjects.Image(globalScene, this.availableWidth / 2, yPosition - padding, key);
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.5, 1);
       this.banner.setScale(this.event.scale ?? 0.18);
       if (showTimer) {
         this.eventTimerText = addTextObject(
-          this.scene,
           this.banner.x,
           this.banner.y + 2,
           this.timeToGo(this.event.endDate),
@@ -189,7 +223,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     const secs  = Math.round(diff % 6e4 / 1e3);
 
     // Return formatted string
-    return "Event Ends in : " + z(days) + "d " + z(hours) + "h " + z(mins) + "m " + z(secs) + "s";
+    return i18next.t("menu:eventTimer", { days: z(days), hours: z(hours), mins: z(mins), secs: z(secs) });
   }
 
   updateCountdown() {

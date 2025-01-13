@@ -10,8 +10,9 @@ import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encount
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
-import BattleScene from "#app/battle-scene";
-import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import type BattleScene from "#app/battle-scene";
+import type Pokemon from "#app/field/pokemon";
+import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -22,11 +23,12 @@ import { TrainerType } from "#enums/trainer-type";
 import { Abilities } from "#enums/abilities";
 import { PostMysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { Button } from "#enums/buttons";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
-import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import type PartyUiHandler from "#app/ui/party-ui-handler";
+import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { Type } from "#enums/type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -105,8 +107,8 @@ describe("Clowning Around - Mystery Encounter", () => {
 
     expect(ClowningAroundEncounter.onInit).toBeDefined();
 
-    ClowningAroundEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    ClowningAroundEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
     const config = ClowningAroundEncounter.enemyPartyConfigs[0];
 
     expect(config.doubleBattle).toBe(true);
@@ -255,26 +257,29 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       // 2 Sitrus Berries on lead
       scene.modifiers = [];
-      let itemType = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ]) as PokemonHeldItemModifierType;
+      let itemType = generateModifierType(modifierTypes.BERRY, [ BerryType.SITRUS ]) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 2, itemType);
       // 2 Ganlon Berries on lead
-      itemType = generateModifierType(scene, modifierTypes.BERRY, [ BerryType.GANLON ]) as PokemonHeldItemModifierType;
+      itemType = generateModifierType(modifierTypes.BERRY, [ BerryType.GANLON ]) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 2, itemType);
       // 5 Golden Punch on lead (ultra)
-      itemType = generateModifierType(scene, modifierTypes.GOLDEN_PUNCH) as PokemonHeldItemModifierType;
+      itemType = generateModifierType(modifierTypes.GOLDEN_PUNCH) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
       // 5 Lucky Egg on lead (ultra)
-      itemType = generateModifierType(scene, modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType;
+      itemType = generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
+      // 3 Soothe Bell on lead (great tier, but counted as ultra by this ME)
+      itemType = generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType;
+      await addItemToPokemon(scene, scene.getPlayerParty()[0], 3, itemType);
       // 5 Soul Dew on lead (rogue)
-      itemType = generateModifierType(scene, modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
+      itemType = generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
       // 2 Golden Egg on lead (rogue)
-      itemType = generateModifierType(scene, modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType;
+      itemType = generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 2, itemType);
 
       // 5 Soul Dew on second party pokemon (these should not change)
-      itemType = generateModifierType(scene, modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
+      itemType = generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[1], 5, itemType);
 
       await runMysteryEncounterToEnd(game, 2);
@@ -286,7 +291,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       const rogueCountAfter = leadItemsAfter
         .filter(m => m.type.tier === ModifierTier.ROGUE)
         .reduce((a, b) => a + b.stackCount, 0);
-      expect(ultraCountAfter).toBe(10);
+      expect(ultraCountAfter).toBe(13);
       expect(rogueCountAfter).toBe(7);
 
       const secondItemsAfter = scene.getPlayerParty()[1].getHeldItems();
