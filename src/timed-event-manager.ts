@@ -7,6 +7,8 @@ import { Species } from "#enums/species";
 import type { WeatherPoolEntry } from "#app/data/weather";
 import { WeatherType } from "#enums/weather-type";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
+import { MysteryEncounterType } from "./enums/mystery-encounter-type";
+import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
 
 export enum EventType {
   SHINY,
@@ -26,6 +28,12 @@ interface EventEncounter {
   blockEvolution?: boolean;
 }
 
+interface EventMysteryEncounterTier {
+  mysteryEncounter: MysteryEncounterType;
+  tier?: MysteryEncounterTier;
+  disable?: boolean;
+}
+
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
@@ -37,6 +45,7 @@ interface TimedEvent extends EventBanner {
   uncommonBreedEncounters?: EventEncounter[];
   delibirdyBuff?: string[];
   weather?: WeatherPoolEntry[];
+  mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
 }
 
 const timedEvents: TimedEvent[] = [
@@ -46,7 +55,7 @@ const timedEvents: TimedEvent[] = [
     shinyMultiplier: 2,
     upgradeUnlockedVouchers: true,
     startDate: new Date(Date.UTC(2024, 11, 21, 0)),
-    endDate: new Date(Date.UTC(2025, 0, 4, 0)),
+    endDate: new Date(Date.UTC(2025, 0, 30, 0)),
     bannerKey: "winter_holidays2024-event-",
     scale: 0.21,
     availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
@@ -73,7 +82,14 @@ const timedEvents: TimedEvent[] = [
       { species: Species.IRON_BUNDLE }
     ],
     delibirdyBuff: [ "CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM" ],
-    weather: [{ weatherType: WeatherType.SNOW, weight: 1 }]
+    weather: [{ weatherType: WeatherType.SNOW, weight: 1 }],
+    mysteryEncounterTierChanges: [
+      { mysteryEncounter: MysteryEncounterType.DELIBIRDY, tier: MysteryEncounterTier.COMMON },
+      { mysteryEncounter: MysteryEncounterType.PART_TIMER, disable: true },
+      { mysteryEncounter: MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, disable: true },
+      { mysteryEncounter: MysteryEncounterType.FIELD_TRIP, disable: true },
+      { mysteryEncounter: MysteryEncounterType.DEPARTMENT_STORE_SALE, disable: true }
+    ]
   }
 ];
 
@@ -171,6 +187,40 @@ export class TimedEventManager {
       if (!isNullOrUndefined(te.weather)) {
         ret.push(...te.weather);
       }
+    });
+    return ret;
+  }
+
+  getAllMysteryEncounterChanges(): EventMysteryEncounterTier[] {
+    const ret: EventMysteryEncounterTier[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.mysteryEncounterTierChanges)) {
+        ret.push(...te.mysteryEncounterTierChanges);
+      }
+    });
+    return ret;
+  }
+
+  getEventMysteryEncountersDisabled(): MysteryEncounterType[] {
+    const ret: MysteryEncounterType[] = [];
+    timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges)).map((te) => {
+      te.mysteryEncounterTierChanges?.map((metc) => {
+        if (metc.disable) {
+          ret.push(metc.mysteryEncounter);
+        }
+      });
+    });
+    return ret;
+  }
+
+  getMysteryEncounterTierForEvent(encounterType: MysteryEncounterType, normal: MysteryEncounterTier): MysteryEncounterTier {
+    let ret = normal;
+    timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges)).map((te) => {
+      te.mysteryEncounterTierChanges?.map((metc) => {
+        if (metc.mysteryEncounter === encounterType) {
+          ret = metc.tier ?? normal;
+        }
+      });
     });
     return ret;
   }
