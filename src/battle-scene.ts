@@ -1878,9 +1878,9 @@ export default class BattleScene extends SceneBase {
 
     const randInt = Utils.randSeedInt(totalWeight);
 
-    for (const biome of biomes) {
-      if (randInt < biomeThresholds[biome]) {
-        return biome;
+    for (let i = 0; i < biomes.length; i++) {
+      if (randInt < biomeThresholds[i]) {
+        return biomes[i];
       }
     }
 
