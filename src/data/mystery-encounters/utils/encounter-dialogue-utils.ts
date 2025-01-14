@@ -1,23 +1,24 @@
-import BattleScene from "#app/battle-scene";
-import { getTextWithColors, TextStyle } from "#app/ui/text";
+import { globalScene } from "#app/global-scene";
+import type { TextStyle } from "#app/ui/text";
+import { getTextWithColors } from "#app/ui/text";
 import { UiTheme } from "#enums/ui-theme";
 import { isNullOrUndefined } from "#app/utils";
 import i18next from "i18next";
 
 /**
- * Will inject all relevant dialogue tokens that exist in the {@linkcode BattleScene.currentBattle.mysteryEncounter.dialogueTokens}, into i18n text.
+ * Will inject all relevant dialogue tokens that exist in the {@linkcode BattlegScene.currentBattle.mysteryEncounter.dialogueTokens}, into i18n text.
  * Also adds BBCodeText fragments for colored text, if applicable
  * @param keyOrString
  * @param primaryStyle Can define a text style to be applied to the entire string. Must be defined for BBCodeText styles to be applied correctly
  */
-export function getEncounterText(scene: BattleScene, keyOrString?: string, primaryStyle?: TextStyle): string | null {
+export function getEncounterText(keyOrString?: string, primaryStyle?: TextStyle): string | null {
   if (isNullOrUndefined(keyOrString)) {
     return null;
   }
 
-  const uiTheme = scene.uiTheme ?? UiTheme.DEFAULT;
+  const uiTheme = globalScene.uiTheme ?? UiTheme.DEFAULT;
 
-  let textString: string | null = getTextWithDialogueTokens(scene, keyOrString);
+  let textString: string | null = getTextWithDialogueTokens(keyOrString);
 
   // Can only color the text if a Primary Style is defined
   // primaryStyle is applied to all text that does not have its own specified style
@@ -29,12 +30,12 @@ export function getEncounterText(scene: BattleScene, keyOrString?: string, prima
 }
 
 /**
- * Helper function to inject {@linkcode BattleScene.currentBattle.mysteryEncounter.dialogueTokens} into a given content string
+ * Helper function to inject {@linkcode globalScene.currentBattle.mysteryEncounter.dialogueTokens} into a given content string
  * @param scene
  * @param keyOrString
  */
-function getTextWithDialogueTokens(scene: BattleScene, keyOrString: string): string | null {
-  const tokens = scene.currentBattle?.mysteryEncounter?.dialogueTokens;
+function getTextWithDialogueTokens(keyOrString: string): string | null {
+  const tokens = globalScene.currentBattle?.mysteryEncounter?.dialogueTokens;
 
   if (i18next.exists(keyOrString, tokens)) {
     return i18next.t(keyOrString, tokens) as string;
@@ -48,9 +49,9 @@ function getTextWithDialogueTokens(scene: BattleScene, keyOrString: string): str
  * @param scene
  * @param contentKey
  */
-export function queueEncounterMessage(scene: BattleScene, contentKey: string): void {
-  const text: string | null = getEncounterText(scene, contentKey);
-  scene.queueMessage(text ?? "", null, true);
+export function queueEncounterMessage(contentKey: string): void {
+  const text: string | null = getEncounterText(contentKey);
+  globalScene.queueMessage(text ?? "", null, true);
 }
 
 /**
@@ -62,10 +63,10 @@ export function queueEncounterMessage(scene: BattleScene, contentKey: string): v
  * @param callbackDelay
  * @param promptDelay
  */
-export function showEncounterText(scene: BattleScene, contentKey: string, delay: number | null = null, callbackDelay: number = 0, prompt: boolean = true, promptDelay: number | null = null): Promise<void> {
+export function showEncounterText(contentKey: string, delay: number | null = null, callbackDelay: number = 0, prompt: boolean = true, promptDelay: number | null = null): Promise<void> {
   return new Promise<void>(resolve => {
-    const text: string | null = getEncounterText(scene, contentKey);
-    scene.ui.showText(text ?? "", delay, () => resolve(), callbackDelay, prompt, promptDelay);
+    const text: string | null = getEncounterText(contentKey);
+    globalScene.ui.showText(text ?? "", delay, () => resolve(), callbackDelay, prompt, promptDelay);
   });
 }
 
@@ -77,10 +78,10 @@ export function showEncounterText(scene: BattleScene, contentKey: string, delay:
  * @param speakerContentKey
  * @param callbackDelay
  */
-export function showEncounterDialogue(scene: BattleScene, textContentKey: string, speakerContentKey: string, delay: number | null = null, callbackDelay: number = 0): Promise<void> {
+export function showEncounterDialogue(textContentKey: string, speakerContentKey: string, delay: number | null = null, callbackDelay: number = 0): Promise<void> {
   return new Promise<void>(resolve => {
-    const text: string | null = getEncounterText(scene, textContentKey);
-    const speaker: string | null = getEncounterText(scene, speakerContentKey);
-    scene.ui.showDialogue(text ?? "", speaker ?? "", delay, () => resolve(), callbackDelay);
+    const text: string | null = getEncounterText(textContentKey);
+    const speaker: string | null = getEncounterText(speakerContentKey);
+    globalScene.ui.showDialogue(text ?? "", speaker ?? "", delay, () => resolve(), callbackDelay);
   });
 }

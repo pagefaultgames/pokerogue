@@ -1,8 +1,9 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, setEncounterRewards, transitionMysteryEncounterIntroVisuals, updatePlayerMoney } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { globalScene } from "#app/global-scene";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -10,7 +11,8 @@ import { Stat } from "#enums/stat";
 import { CHARMING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import i18next from "i18next";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
@@ -52,20 +54,20 @@ export const PartTimerEncounter: MysteryEncounter =
         text: `${namespace}:intro_dialogue`,
       },
     ])
-    .withOnInit((scene: BattleScene) => {
+    .withOnInit(() => {
       // Load sfx
-      scene.loadSe("PRSFX- Horn Drill1", "battle_anims", "PRSFX- Horn Drill1.wav");
-      scene.loadSe("PRSFX- Horn Drill3", "battle_anims", "PRSFX- Horn Drill3.wav");
-      scene.loadSe("PRSFX- Guillotine2", "battle_anims", "PRSFX- Guillotine2.wav");
-      scene.loadSe("PRSFX- Heavy Slam2", "battle_anims", "PRSFX- Heavy Slam2.wav");
+      globalScene.loadSe("PRSFX- Horn Drill1", "battle_anims", "PRSFX- Horn Drill1.wav");
+      globalScene.loadSe("PRSFX- Horn Drill3", "battle_anims", "PRSFX- Horn Drill3.wav");
+      globalScene.loadSe("PRSFX- Guillotine2", "battle_anims", "PRSFX- Guillotine2.wav");
+      globalScene.loadSe("PRSFX- Heavy Slam2", "battle_anims", "PRSFX- Heavy Slam2.wav");
 
-      scene.loadSe("PRSFX- Agility", "battle_anims", "PRSFX- Agility.wav");
-      scene.loadSe("PRSFX- Extremespeed1", "battle_anims", "PRSFX- Extremespeed1.wav");
-      scene.loadSe("PRSFX- Accelerock1", "battle_anims", "PRSFX- Accelerock1.wav");
+      globalScene.loadSe("PRSFX- Agility", "battle_anims", "PRSFX- Agility.wav");
+      globalScene.loadSe("PRSFX- Extremespeed1", "battle_anims", "PRSFX- Extremespeed1.wav");
+      globalScene.loadSe("PRSFX- Accelerock1", "battle_anims", "PRSFX- Accelerock1.wav");
 
-      scene.loadSe("PRSFX- Captivate", "battle_anims", "PRSFX- Captivate.wav");
-      scene.loadSe("PRSFX- Attract2", "battle_anims", "PRSFX- Attract2.wav");
-      scene.loadSe("PRSFX- Aurora Veil2", "battle_anims", "PRSFX- Aurora Veil2.wav");
+      globalScene.loadSe("PRSFX- Captivate", "battle_anims", "PRSFX- Captivate.wav");
+      globalScene.loadSe("PRSFX- Attract2", "battle_anims", "PRSFX- Attract2.wav");
+      globalScene.loadSe("PRSFX- Aurora Veil2", "battle_anims", "PRSFX- Aurora Veil2.wav");
 
       return true;
     })
@@ -84,8 +86,8 @@ export const PartTimerEncounter: MysteryEncounter =
           }
         ]
       })
-      .withPreOptionPhase(async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter!;
+      .withPreOptionPhase(async () => {
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -109,41 +111,41 @@ export const PartTimerEncounter: MysteryEncounter =
             }
           });
 
-          setEncounterExp(scene, pokemon.id, 100);
+          setEncounterExp(pokemon.id, 100);
 
           // Hide intro visuals
-          transitionMysteryEncounterIntroVisuals(scene, true, false);
+          transitionMysteryEncounterIntroVisuals(true, false);
           // Play sfx for "working"
-          doDeliverySfx(scene);
+          doDeliverySfx();
         };
 
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
         };
 
-        return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
+        return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
       })
-      .withOptionPhase(async (scene: BattleScene) => {
+      .withOptionPhase(async () => {
         // Pick Deliveries
         // Bring visuals back in
-        await transitionMysteryEncounterIntroVisuals(scene, false, false);
+        await transitionMysteryEncounterIntroVisuals(false, false);
 
-        const moneyMultiplier = scene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
+        const moneyMultiplier = globalScene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
-          await showEncounterDialogue(scene, `${namespace}:job_complete_good`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
         } else {
-          await showEncounterDialogue(scene, `${namespace}:job_complete_bad`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
         }
-        const moneyChange = scene.getWaveMoneyAmount(moneyMultiplier);
-        updatePlayerMoney(scene, moneyChange, true, false);
-        await showEncounterText(scene, i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
-        await showEncounterText(scene, `${namespace}:pokemon_tired`);
+        const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
+        updatePlayerMoney(moneyChange, true, false);
+        await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
+        await showEncounterText(`${namespace}:pokemon_tired`);
 
-        setEncounterRewards(scene, { fillRemaining: true });
-        leaveEncounterWithoutBattle(scene);
+        setEncounterRewards({ fillRemaining: true });
+        leaveEncounterWithoutBattle();
       })
       .build()
     )
@@ -158,8 +160,8 @@ export const PartTimerEncounter: MysteryEncounter =
           }
         ]
       })
-      .withPreOptionPhase(async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter!;
+      .withPreOptionPhase(async () => {
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
@@ -186,41 +188,41 @@ export const PartTimerEncounter: MysteryEncounter =
             }
           });
 
-          setEncounterExp(scene, pokemon.id, 100);
+          setEncounterExp(pokemon.id, 100);
 
           // Hide intro visuals
-          transitionMysteryEncounterIntroVisuals(scene, true, false);
+          transitionMysteryEncounterIntroVisuals(true, false);
           // Play sfx for "working"
-          doStrongWorkSfx(scene);
+          doStrongWorkSfx();
         };
 
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, scene, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
         };
 
-        return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
+        return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
       })
-      .withOptionPhase(async (scene: BattleScene) => {
+      .withOptionPhase(async () => {
         // Pick Move Warehouse items
         // Bring visuals back in
-        await transitionMysteryEncounterIntroVisuals(scene, false, false);
+        await transitionMysteryEncounterIntroVisuals(false, false);
 
-        const moneyMultiplier = scene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
+        const moneyMultiplier = globalScene.currentBattle.mysteryEncounter!.misc.moneyMultiplier;
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
-          await showEncounterDialogue(scene, `${namespace}:job_complete_good`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
         } else {
-          await showEncounterDialogue(scene, `${namespace}:job_complete_bad`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
         }
-        const moneyChange = scene.getWaveMoneyAmount(moneyMultiplier);
-        updatePlayerMoney(scene, moneyChange, true, false);
-        await showEncounterText(scene, i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
-        await showEncounterText(scene, `${namespace}:pokemon_tired`);
+        const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
+        updatePlayerMoney(moneyChange, true, false);
+        await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
+        await showEncounterText(`${namespace}:pokemon_tired`);
 
-        setEncounterRewards(scene, { fillRemaining: true });
-        leaveEncounterWithoutBattle(scene);
+        setEncounterRewards({ fillRemaining: true });
+        leaveEncounterWithoutBattle();
       })
       .build()
     )
@@ -238,8 +240,8 @@ export const PartTimerEncounter: MysteryEncounter =
             },
           ],
         })
-        .withPreOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withPreOptionPhase(async () => {
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const selectedPokemon = encounter.selectedOption?.primaryPokemon!;
           encounter.setDialogueToken("selectedPokemon", selectedPokemon.getNameToRender());
 
@@ -251,28 +253,28 @@ export const PartTimerEncounter: MysteryEncounter =
             }
           });
 
-          setEncounterExp(scene, selectedPokemon.id, 100);
+          setEncounterExp(selectedPokemon.id, 100);
 
           // Hide intro visuals
-          transitionMysteryEncounterIntroVisuals(scene, true, false);
+          transitionMysteryEncounterIntroVisuals(true, false);
           // Play sfx for "working"
-          doSalesSfx(scene);
+          doSalesSfx();
           return true;
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Assist with Sales
           // Bring visuals back in
-          await transitionMysteryEncounterIntroVisuals(scene, false, false);
+          await transitionMysteryEncounterIntroVisuals(false, false);
 
           // Give money and do dialogue
-          await showEncounterDialogue(scene, `${namespace}:job_complete_good`, `${namespace}:speaker`);
-          const moneyChange = scene.getWaveMoneyAmount(2.5);
-          updatePlayerMoney(scene, moneyChange, true, false);
-          await showEncounterText(scene, i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
-          await showEncounterText(scene, `${namespace}:pokemon_tired`);
+          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+          const moneyChange = globalScene.getWaveMoneyAmount(2.5);
+          updatePlayerMoney(moneyChange, true, false);
+          await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
+          await showEncounterText(`${namespace}:pokemon_tired`);
 
-          setEncounterRewards(scene, { fillRemaining: true });
-          leaveEncounterWithoutBattle(scene);
+          setEncounterRewards({ fillRemaining: true });
+          leaveEncounterWithoutBattle();
         })
         .build()
     )
@@ -284,51 +286,51 @@ export const PartTimerEncounter: MysteryEncounter =
     ])
     .build();
 
-function doStrongWorkSfx(scene: BattleScene) {
-  scene.playSound("battle_anims/PRSFX- Horn Drill1");
-  scene.playSound("battle_anims/PRSFX- Horn Drill1");
+function doStrongWorkSfx() {
+  globalScene.playSound("battle_anims/PRSFX- Horn Drill1");
+  globalScene.playSound("battle_anims/PRSFX- Horn Drill1");
 
-  scene.time.delayedCall(1000, () => {
-    scene.playSound("battle_anims/PRSFX- Guillotine2");
+  globalScene.time.delayedCall(1000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Guillotine2");
   });
 
-  scene.time.delayedCall(2000, () => {
-    scene.playSound("battle_anims/PRSFX- Heavy Slam2");
+  globalScene.time.delayedCall(2000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Heavy Slam2");
   });
 
-  scene.time.delayedCall(2500, () => {
-    scene.playSound("battle_anims/PRSFX- Guillotine2");
-  });
-}
-
-function doDeliverySfx(scene: BattleScene) {
-  scene.playSound("battle_anims/PRSFX- Accelerock1");
-
-  scene.time.delayedCall(1500, () => {
-    scene.playSound("battle_anims/PRSFX- Extremespeed1");
-  });
-
-  scene.time.delayedCall(2000, () => {
-    scene.playSound("battle_anims/PRSFX- Extremespeed1");
-  });
-
-  scene.time.delayedCall(2250, () => {
-    scene.playSound("battle_anims/PRSFX- Agility");
+  globalScene.time.delayedCall(2500, () => {
+    globalScene.playSound("battle_anims/PRSFX- Guillotine2");
   });
 }
 
-function doSalesSfx(scene: BattleScene) {
-  scene.playSound("battle_anims/PRSFX- Captivate");
+function doDeliverySfx() {
+  globalScene.playSound("battle_anims/PRSFX- Accelerock1");
 
-  scene.time.delayedCall(1500, () => {
-    scene.playSound("battle_anims/PRSFX- Attract2");
+  globalScene.time.delayedCall(1500, () => {
+    globalScene.playSound("battle_anims/PRSFX- Extremespeed1");
   });
 
-  scene.time.delayedCall(2000, () => {
-    scene.playSound("battle_anims/PRSFX- Aurora Veil2");
+  globalScene.time.delayedCall(2000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Extremespeed1");
   });
 
-  scene.time.delayedCall(3000, () => {
-    scene.playSound("battle_anims/PRSFX- Attract2");
+  globalScene.time.delayedCall(2250, () => {
+    globalScene.playSound("battle_anims/PRSFX- Agility");
+  });
+}
+
+function doSalesSfx() {
+  globalScene.playSound("battle_anims/PRSFX- Captivate");
+
+  globalScene.time.delayedCall(1500, () => {
+    globalScene.playSound("battle_anims/PRSFX- Attract2");
+  });
+
+  globalScene.time.delayedCall(2000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Aurora Veil2");
+  });
+
+  globalScene.time.delayedCall(3000, () => {
+    globalScene.playSound("battle_anims/PRSFX- Attract2");
   });
 }
