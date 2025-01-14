@@ -6491,10 +6491,10 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
       ? moveTargets.targets
       : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
     user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
-    user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
+    globalScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
 
-    await Promise.resolve(initMoveAnim(user.scene, move.id).then(() => {
-      loadMoveAnimAssets(user.scene, [ move.id ], true);
+    await Promise.resolve(initMoveAnim(move.id).then(() => {
+      loadMoveAnimAssets([ move.id ], true);
     }));
     return true;
   }
@@ -6574,7 +6574,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
       // includeParty will be true for Assist, false for Sleep Talk
       let allies: Pokemon[];
       if (this.includeParty) {
-        allies = user.isPlayer() ? user.scene.getPlayerParty().filter(p => p !== user) : user.scene.getEnemyParty().filter(p => p !== user);
+        allies = user.isPlayer() ? globalScene.getPlayerParty().filter(p => p !== user) : globalScene.getEnemyParty().filter(p => p !== user);
       } else {
         allies = [ user ];
       }
@@ -7025,7 +7025,7 @@ export class CopyMoveAttr extends CallMoveAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     this.hasTarget = this.mirrorMove;
-    const lastMove = this.mirrorMove ? target.getLastXMoves()[0].move : user.scene.currentBattle.lastMove;
+    const lastMove = this.mirrorMove ? target.getLastXMoves()[0].move : globalScene.currentBattle.lastMove;
     return super.apply(user, target, allMoves[lastMove], args);
   }
 
@@ -7034,7 +7034,7 @@ export class CopyMoveAttr extends CallMoveAttr {
       if (this.mirrorMove) {
         return target.getMoveHistory().length !== 0;
       } else {
-        const lastMove = user.scene.currentBattle.lastMove;
+        const lastMove = globalScene.currentBattle.lastMove;
         return lastMove !== undefined && !this.invalidMoves.includes(lastMove);
       }
     };
