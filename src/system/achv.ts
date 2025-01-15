@@ -365,7 +365,7 @@ export const achvs = {
   FRESH_START: new ChallengeAchv("FRESH_START", "", "FRESH_START.description", "reviver_seed", 100, (c) => c instanceof FreshStartChallenge && c.value > 0 && !globalScene.gameMode.challenges.some(c => [ Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT ].includes(c.id) && c.value > 0)),
   INVERSE_BATTLE: new ChallengeAchv("INVERSE_BATTLE", "", "INVERSE_BATTLE.description", "inverse", 100, (c) => c instanceof InverseBattleChallenge && c.value > 0),
   FLIP_STATS: new ChallengeAchv("FLIP_STATS", "", "FLIP_STATS.description", "dubious_disc", 100, (c) => c instanceof FlipStatChallenge && c.value > 0),
-  FLIP_INVERSE: new ChallengeAchv("FLIP_INVERSE", "", "FLIP_INVERSE.description", "cracked_pot", 100, (c) => c instanceof FlipStatChallenge && c.value > 0 && scene.gameMode.challenges.every(c => [ Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT ].includes(c.id) && c.value > 0)),
+  FLIP_INVERSE: new ChallengeAchv("FLIP_INVERSE", "", "FLIP_INVERSE.description", "cracked_pot", 100, (c) => c instanceof FlipStatChallenge && c.value > 0 && globalScene.gameMode.challenges.every(c => [ Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT ].includes(c.id) && c.value > 0)),
   BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 50).setSecret(),
 };
 
