@@ -2226,7 +2226,7 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.NECROZMA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
-      p.formIndex = 2; // Dawn Wings   
+      p.formIndex = 2; // Dawn Wings
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     })),
