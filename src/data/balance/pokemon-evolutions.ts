@@ -12,7 +12,7 @@ import { Species } from "#enums/species";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
 import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier, SpeciesStatBoosterModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
-import { SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
+import type { SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -1572,8 +1572,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DUSKNOIR, 1, EvolutionItem.REAPER_CLOTH, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.CLAMPERL]: [
-    new SpeciesEvolution(Species.HUNTAIL, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!p.scene.findModifier(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_TOOTH")), SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(Species.GOREBYSS, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!p.scene.findModifier(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_SCALE")), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.HUNTAIL, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!globalScene.findModifier(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_TOOTH")), SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(Species.GOREBYSS, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!globalScene.findModifier(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_SCALE")), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.BOLDORE]: [
     new SpeciesEvolution(Species.GIGALITH, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
