@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
-import { InputsController } from "#app/inputs-controller";
+import type { InputsController } from "#app/inputs-controller";
 import TouchControl from "#app/touch-controls";
 import { holdOn } from "#test/utils/gameManagerUtils";
 import fs from "fs";
@@ -58,7 +58,7 @@ export default class InputsHandler {
   }
 
   init(): void {
-    const touchControl = new TouchControl(this.scene);
+    const touchControl = new TouchControl();
     touchControl.deactivatePressedKey(); //test purpose
     this.events = this.inputController.events;
     this.scene.input.gamepad?.emit("connected", this.fakePad);

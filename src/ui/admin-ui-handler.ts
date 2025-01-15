@@ -1,11 +1,12 @@
-import BattleScene from "#app/battle-scene";
 import { Button } from "#app/enums/buttons";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { formatText } from "#app/utils";
-import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
-import { ModalConfig } from "./modal-ui-handler";
+import type { InputFieldConfig } from "./form-modal-ui-handler";
+import { FormModalUiHandler } from "./form-modal-ui-handler";
+import type { ModalConfig } from "./modal-ui-handler";
 import { TextStyle } from "./text";
 import { Mode } from "./ui";
+import { globalScene } from "#app/global-scene";
 
 type AdminUiHandlerService = "discord" | "google";
 type AdminUiHandlerServiceMode = "Link" | "Unlink";
@@ -31,8 +32,8 @@ export default class AdminUiHandler extends FormModalUiHandler {
     return `Username and ${service} successfully ${mode.toLowerCase()}ed`;
   };
 
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
   }
 
   override getModalTitle(): string {
@@ -126,10 +127,10 @@ export default class AdminUiHandler extends FormModalUiHandler {
         const adminSearchResult: AdminSearchInfo = this.convertInputsToAdmin(); // this converts the input texts into a single object for use later
         const validFields = this.areFieldsValid(this.adminMode);
         if (validFields.error) {
-          this.scene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
+          globalScene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
           return this.showMessage(validFields.errorMessage ?? "", adminSearchResult, true);
         }
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
+        globalScene.ui.setMode(Mode.LOADING, { buttonActions: []});
         if (this.adminMode === AdminMode.LINK) {
           this.adminLinkUnlink(adminSearchResult, "discord", "Link") // calls server to link discord
             .then(response => {
@@ -157,11 +158,11 @@ export default class AdminUiHandler extends FormModalUiHandler {
   }
 
   showMessage(message: string, adminResult: AdminSearchInfo, isError: boolean) {
-    this.scene.ui.setMode(Mode.ADMIN, Object.assign(this.config, { errorMessage: message?.trim() }), this.adminMode, adminResult, isError);
+    globalScene.ui.setMode(Mode.ADMIN, Object.assign(this.config, { errorMessage: message?.trim() }), this.adminMode, adminResult, isError);
     if (isError) {
-      this.scene.ui.playError();
+      globalScene.ui.playError();
     } else {
-      this.scene.ui.playSelect();
+      globalScene.ui.playSelect();
     }
   }
 
@@ -185,7 +186,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
           this.inputs[i].setText(adminResult[aR]);
           if (aR === "discordId" || aR === "googleId") { // this is here to add the icons for linking/unlinking of google/discord IDs
             const nineSlice = this.inputContainers[i].list.find(iC => iC.type === "NineSlice");
-            const img = this.scene.add.image(this.inputContainers[i].x + nineSlice!.width + this.buttonGap, this.inputContainers[i].y + (Math.floor(nineSlice!.height / 2)), adminResult[aR] === "" ? "link_icon" : "unlink_icon");
+            const img = globalScene.add.image(this.inputContainers[i].x + nineSlice!.width + this.buttonGap, this.inputContainers[i].y + (Math.floor(nineSlice!.height / 2)), adminResult[aR] === "" ? "link_icon" : "unlink_icon");
             img.setName(`adminBtn_${aR}`);
             img.setOrigin(0.5, 0.5);
             img.setInteractive();
@@ -194,15 +195,15 @@ export default class AdminUiHandler extends FormModalUiHandler {
               const mode = adminResult[aR] === "" ? "Link" : "Unlink"; // this figures out if we're linking or unlinking a service
               const validFields = this.areFieldsValid(this.adminMode, service);
               if (validFields.error) {
-                this.scene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
+                globalScene.ui.setMode(Mode.LOADING, { buttonActions: []}); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
                 return this.showMessage(validFields.errorMessage ?? "", adminResult, true);
               }
               this.adminLinkUnlink(this.convertInputsToAdmin(), service as AdminUiHandlerService, mode).then(response => { // attempts to link/unlink depending on the service
                 if (response.error) {
-                  this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
+                  globalScene.ui.setMode(Mode.LOADING, { buttonActions: []});
                   return this.showMessage(response.errorType, adminResult, true); // fail
                 } else { // success, reload panel with new results
-                  this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
+                  globalScene.ui.setMode(Mode.LOADING, { buttonActions: []});
                   this.adminSearch(adminResult)
                     .then(response => {
                       if (response.error) {
@@ -340,16 +341,16 @@ export default class AdminUiHandler extends FormModalUiHandler {
 
   private updateAdminPanelInfo(adminSearchResult: AdminSearchInfo, mode?: AdminMode) {
     mode = mode ?? AdminMode.ADMIN;
-    this.scene.ui.setMode(Mode.ADMIN, {
+    globalScene.ui.setMode(Mode.ADMIN, {
       buttonActions: [
         // we double revert here and below to go back 2 layers of menus
         () => {
-          this.scene.ui.revertMode();
-          this.scene.ui.revertMode();
+          globalScene.ui.revertMode();
+          globalScene.ui.revertMode();
         },
         () => {
-          this.scene.ui.revertMode();
-          this.scene.ui.revertMode();
+          globalScene.ui.revertMode();
+          globalScene.ui.revertMode();
         }
       ]
     }, mode, adminSearchResult);

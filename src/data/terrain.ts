@@ -1,8 +1,8 @@
-import Pokemon from "../field/pokemon";
-import Move from "./move";
+import type Pokemon from "../field/pokemon";
+import type Move from "./move";
 import { Type } from "#enums/type";
 import { ProtectAttr } from "./move";
-import { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#app/battle";
 import i18next from "i18next";
 
 export enum TerrainType {
