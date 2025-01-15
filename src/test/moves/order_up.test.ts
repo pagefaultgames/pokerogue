@@ -1,7 +1,8 @@
 import { BattlerIndex } from "#app/battle";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { EffectiveStat, Stat } from "#enums/stat";
+import type { EffectiveStat } from "#enums/stat";
+import { Stat } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

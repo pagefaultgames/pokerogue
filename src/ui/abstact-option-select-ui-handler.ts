@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import { globalScene } from "#app/global-scene";
 import { TextStyle, addBBCodeTextObject, getTextColor, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -55,11 +55,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
 
-  protected uiTheme: UiTheme;
 
-
-  constructor(scene: BattleScene, mode: Mode | null) {
-    super(scene, mode);
+  constructor(mode: Mode | null) {
+    super(mode);
   }
 
   abstract getWindowWidth(): integer;
@@ -70,21 +68,20 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    this.uiTheme = (this.scene as BattleScene).uiTheme;
 
-    this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -48);
+    this.optionSelectContainer = globalScene.add.container((globalScene.game.canvas.width / 6) - 1, -48);
     this.optionSelectContainer.setName(`option-select-${this.mode ? Mode[this.mode] : "UNKNOWN"}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
-    this.optionSelectBg = addWindow(this.scene, 0, 0, this.getWindowWidth(), this.getWindowHeight());
+    this.optionSelectBg = addWindow(0, 0, this.getWindowWidth(), this.getWindowHeight());
     this.optionSelectBg.setName("option-select-bg");
     this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 
     this.optionSelectIcons = [];
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, this.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
 
     this.setCursor(0);
   }
@@ -97,7 +94,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     // for performance reasons, this limits how many options we can see at once. Without this, it would try to make text options for every single options
     // which makes the performance take a hit. If there's not enough options to do this (set to 10 at the moment) and the ui mode !== Mode.AUTO_COMPLETE,
     // this is ignored and the original code is untouched, with the options array being all the options from the config
-    if (configOptions.length >= 10 && this.scene.ui.getMode() === Mode.AUTO_COMPLETE) {
+    if (configOptions.length >= 10 && globalScene.ui.getMode() === Mode.AUTO_COMPLETE) {
       const optionsScrollTotal = configOptions.length;
       const optionStartIndex = this.scrollCursor;
       const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config?.maxOptions! - 1) >= optionsScrollTotal ? this.config?.maxOptions! - 1 : this.config?.maxOptions! - 2));
@@ -126,23 +123,23 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.optionSelectText = addBBCodeTextObject(
-      this.scene, 0, 0, options.map(o => o.item
-        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, this.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, this.uiTheme)}]    ${o.label}[/color]`
-        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, this.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, this.uiTheme)}]${o.label}[/color]`
+      0, 0, options.map(o => o.item
+        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color]`
+        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color]`
       ).join("\n"),
       TextStyle.WINDOW, { maxLines: options.length, lineSpacing: 12 }
     );
     this.optionSelectText.setOrigin(0, 0);
     this.optionSelectText.setName("text-option-select");
     this.optionSelectContainer.add(this.optionSelectText);
-    this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
+    this.optionSelectContainer.setPosition((globalScene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
 
     if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
       this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.item
-        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, this.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, this.uiTheme)}]    ${o.label}[/color]`
-        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, this.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, this.uiTheme)}]${o.label}[/color]`
+        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color]`
+        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color]`
       ).join("\n"));
     }
 
@@ -152,7 +149,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     options.forEach((option: OptionSelectItem, i: integer) => {
       if (option.item) {
-        const itemIcon = this.scene.add.sprite(0, 0, "items", option.item);
+        const itemIcon = globalScene.add.sprite(0, 0, "items", option.item);
         itemIcon.setScale(3 * this.scale);
         this.optionSelectIcons.push(itemIcon);
 
@@ -161,7 +158,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         itemIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
         if (option.item === "candy") {
-          const itemOverlayIcon = this.scene.add.sprite(0, 0, "items", "candy_overlay");
+          const itemOverlayIcon = globalScene.add.sprite(0, 0, "items", "candy_overlay");
           itemOverlayIcon.setScale(3 * this.scale);
           this.optionSelectIcons.push(itemOverlayIcon);
 
@@ -188,7 +185,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.config = args[0] as OptionSelectConfig;
     this.setupOptions();
 
-    this.scene.ui.bringToTop(this.optionSelectContainer);
+    globalScene.ui.bringToTop(this.optionSelectContainer);
 
     this.optionSelectContainer.setVisible(true);
     this.scrollCursor = 0;
@@ -198,7 +195,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.blockInput = true;
       this.optionSelectText.setAlpha(0.5);
       this.cursorObj?.setAlpha(0.8);
-      this.scene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
+      globalScene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
     }
 
     return true;
@@ -385,7 +382,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.setupOptions();
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.image(0, 0, "cursor");
+      this.cursorObj = globalScene.add.image(0, 0, "cursor");
       this.optionSelectContainer.add(this.cursorObj);
     }
 

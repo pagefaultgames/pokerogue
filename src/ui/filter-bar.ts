@@ -1,9 +1,10 @@
-import BattleScene from "#app/battle-scene";
-import { DropDown, DropDownType } from "./dropdown";
-import { StarterContainer } from "./starter-container";
+import type { DropDown } from "./dropdown";
+import { DropDownType } from "./dropdown";
+import type { StarterContainer } from "./starter-container";
 import { addTextObject, getTextColor, TextStyle } from "./text";
-import { UiTheme } from "#enums/ui-theme";
+import type { UiTheme } from "#enums/ui-theme";
 import { addWindow, WindowVariant } from "./ui-theme";
+import { globalScene } from "#app/global-scene";
 
 export enum DropDownColumn {
   GEN,
@@ -29,8 +30,8 @@ export class FilterBar extends Phaser.GameObjects.Container {
   private rightPaddingX: number;
   private cursorOffset: number;
 
-  constructor(scene: BattleScene, x: number, y: number, width: number, height: number, leftPaddingX: number = 6, rightPaddingX: number = 6, cursorOffset: number = 8) {
-    super(scene, x, y);
+  constructor(x: number, y: number, width: number, height: number, leftPaddingX: number = 6, rightPaddingX: number = 6, cursorOffset: number = 8) {
+    super(globalScene, x, y);
 
     this.width = width;
     this.height = height;
@@ -39,16 +40,16 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.rightPaddingX = rightPaddingX;
     this.cursorOffset = cursorOffset;
 
-    this.window = addWindow(scene, 0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
+    this.window = addWindow(0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(this.window);
 
-    this.cursorObj = this.scene.add.image(1, 1, "cursor");
+    this.cursorObj = globalScene.add.image(1, 1, "cursor");
     this.cursorObj.setScale(0.5);
     this.cursorObj.setVisible(false);
     this.cursorObj.setOrigin(0, 0);
     this.add(this.cursorObj);
 
-    this.uiTheme = scene.uiTheme;
+    this.uiTheme = globalScene.uiTheme;
   }
 
   /**
@@ -66,7 +67,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
     this.columns.push(column);
 
-    const filterTypesLabel = addTextObject(this.scene, 0, 3, title, TextStyle.TOOLTIP_CONTENT);
+    const filterTypesLabel = addTextObject(0, 3, title, TextStyle.TOOLTIP_CONTENT);
     this.labels.push(filterTypesLabel);
     this.add(filterTypesLabel);
     this.dropDowns.push(dropDown);

@@ -1,9 +1,8 @@
-import BattleScene from "../battle-scene";
-import PokemonSpecies from "../data/pokemon-species";
+import { globalScene } from "#app/global-scene";
+import type PokemonSpecies from "../data/pokemon-species";
 import { addTextObject, TextStyle } from "./text";
 
 export class StarterContainer extends Phaser.GameObjects.Container {
-  public scene: BattleScene;
   public species: PokemonSpecies;
   public icon: Phaser.GameObjects.Sprite;
   public shinyIcons: Phaser.GameObjects.Image[] = [];
@@ -16,16 +15,16 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   public candyUpgradeOverlayIcon: Phaser.GameObjects.Image;
   public cost: number = 0;
 
-  constructor(scene: BattleScene, species: PokemonSpecies) {
-    super(scene, 0, 0);
+  constructor(species: PokemonSpecies) {
+    super(globalScene, 0, 0);
 
     this.species = species;
 
-    const defaultDexAttr = scene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-    const defaultProps = scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+    const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
 
     // starter passive bg
-    const starterPassiveBg = this.scene.add.image(2, 5, "passive_bg");
+    const starterPassiveBg = globalScene.add.image(2, 5, "passive_bg");
     starterPassiveBg.setOrigin(0, 0);
     starterPassiveBg.setScale(0.75);
     starterPassiveBg.setVisible(false);
@@ -33,7 +32,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.starterPassiveBgs = starterPassiveBg;
 
     // icon
-    this.icon = this.scene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+    this.icon = globalScene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
     this.icon.setScale(0.5);
     this.icon.setOrigin(0, 0);
     this.icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
@@ -43,7 +42,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
 
     // shiny icons
     for (let i = 0; i < 3; i++) {
-      const shinyIcon = this.scene.add.image(i * -3 + 12, 2, "shiny_star_small");
+      const shinyIcon = globalScene.add.image(i * -3 + 12, 2, "shiny_star_small");
       shinyIcon.setScale(0.5);
       shinyIcon.setOrigin(0, 0);
       shinyIcon.setVisible(false);
@@ -52,7 +51,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.add(this.shinyIcons);
 
     // value label
-    const label = addTextObject(this.scene, 1, 2, "0", TextStyle.WINDOW, { fontSize: "32px" });
+    const label = addTextObject(1, 2, "0", TextStyle.WINDOW, { fontSize: "32px" });
     label.setShadowOffset(2, 2);
     label.setOrigin(0, 0);
     label.setVisible(false);
@@ -60,7 +59,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.label = label;
 
     // hidden ability icon
-    const abilityIcon = this.scene.add.image(12, 7, "ha_capsule");
+    const abilityIcon = globalScene.add.image(12, 7, "ha_capsule");
     abilityIcon.setOrigin(0, 0);
     abilityIcon.setScale(0.5);
     abilityIcon.setVisible(false);
@@ -68,7 +67,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.hiddenAbilityIcon = abilityIcon;
 
     // favorite icon
-    const favoriteIcon = this.scene.add.image(0, 7, "favorite");
+    const favoriteIcon = globalScene.add.image(0, 7, "favorite");
     favoriteIcon.setOrigin(0, 0);
     favoriteIcon.setScale(0.5);
     favoriteIcon.setVisible(false);
@@ -76,7 +75,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.favoriteIcon = favoriteIcon;
 
     // classic win icon
-    const classicWinIcon = this.scene.add.image(0, 12, "champion_ribbon");
+    const classicWinIcon = globalScene.add.image(0, 12, "champion_ribbon");
     classicWinIcon.setOrigin(0, 0);
     classicWinIcon.setScale(0.5);
     classicWinIcon.setVisible(false);
@@ -84,7 +83,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.classicWinIcon = classicWinIcon;
 
     // candy upgrade icon
-    const candyUpgradeIcon = this.scene.add.image(12, 12, "candy");
+    const candyUpgradeIcon = globalScene.add.image(12, 12, "candy");
     candyUpgradeIcon.setOrigin(0, 0);
     candyUpgradeIcon.setScale(0.25);
     candyUpgradeIcon.setVisible(false);
@@ -92,7 +91,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.candyUpgradeIcon = candyUpgradeIcon;
 
     // candy upgrade overlay icon
-    const candyUpgradeOverlayIcon = this.scene.add.image(12, 12, "candy_overlay");
+    const candyUpgradeOverlayIcon = globalScene.add.image(12, 12, "candy_overlay");
     candyUpgradeOverlayIcon.setOrigin(0, 0);
     candyUpgradeOverlayIcon.setScale(0.25);
     candyUpgradeOverlayIcon.setVisible(false);
