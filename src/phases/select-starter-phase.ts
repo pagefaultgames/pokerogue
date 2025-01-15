@@ -1,4 +1,4 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Gender } from "#app/data/gender";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
@@ -8,31 +8,31 @@ import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
-import { Starter } from "#app/ui/starter-select-ui-handler";
+import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { Mode } from "#app/ui/ui";
-import { Species } from "#enums/species";
+import type { Species } from "#enums/species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 export class SelectStarterPhase extends Phase {
 
-  constructor(scene: BattleScene) {
-    super(scene);
+  constructor() {
+    super();
   }
 
   start() {
     super.start();
 
-    this.scene.playBgm("menu");
+    globalScene.playBgm("menu");
 
-    this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
-      this.scene.ui.clearText();
-      this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+    globalScene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
+      globalScene.ui.clearText();
+      globalScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
         if (slotId === -1) {
-          this.scene.clearPhaseQueue();
-          this.scene.pushPhase(new TitlePhase(this.scene));
+          globalScene.clearPhaseQueue();
+          globalScene.pushPhase(new TitlePhase());
           return this.end();
         }
-        this.scene.sessionSlotId = slotId;
+        globalScene.sessionSlotId = slotId;
         this.initBattle(starters);
       });
     });
@@ -43,13 +43,13 @@ export class SelectStarterPhase extends Phase {
    * @param starters {@linkcode Pokemon} with which to start the first battle
    */
   initBattle(starters: Starter[]) {
-    const party = this.scene.getPlayerParty();
+    const party = globalScene.getPlayerParty();
     const loadPokemonAssets: Promise<void>[] = [];
     starters.forEach((starter: Starter, i: integer) => {
       if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
         starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
       }
-      const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+      const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
       let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
       if (
         starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
@@ -64,13 +64,13 @@ export class SelectStarterPhase extends Phase {
       if (Overrides.GENDER_OVERRIDE !== null) {
         starterGender = Overrides.GENDER_OVERRIDE;
       }
-      const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-      const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
+      const starterIvs = globalScene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
+      const starterPokemon = globalScene.addPlayerPokemon(starter.species, globalScene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
       starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
       if (starter.passive) {
         starterPokemon.passive = true;
       }
-      starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
+      starterPokemon.luck = globalScene.gameData.getDexAttrLuck(globalScene.gameData.dexData[starter.species.speciesId].caughtAttr);
       if (starter.pokerus) {
         starterPokemon.pokerus = true;
       }
@@ -79,31 +79,31 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.nickname = starter.nickname;
       }
 
-      if (this.scene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {
+      if (globalScene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
-      applyChallenges(this.scene.gameMode, ChallengeType.STARTER_MODIFY, starterPokemon);
+      applyChallenges(globalScene.gameMode, ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
-    overrideModifiers(this.scene);
-    overrideHeldItems(this.scene, party[0]);
+    overrideModifiers();
+    overrideHeldItems(party[0]);
     Promise.all(loadPokemonAssets).then(() => {
-      SoundFade.fadeOut(this.scene, this.scene.sound.get("menu"), 500, true);
-      this.scene.time.delayedCall(500, () => this.scene.playBgm());
-      if (this.scene.gameMode.isClassic) {
-        this.scene.gameData.gameStats.classicSessionsPlayed++;
+      SoundFade.fadeOut(globalScene, globalScene.sound.get("menu"), 500, true);
+      globalScene.time.delayedCall(500, () => globalScene.playBgm());
+      if (globalScene.gameMode.isClassic) {
+        globalScene.gameData.gameStats.classicSessionsPlayed++;
       } else {
-        this.scene.gameData.gameStats.endlessSessionsPlayed++;
+        globalScene.gameData.gameStats.endlessSessionsPlayed++;
       }
-      this.scene.newBattle();
-      this.scene.arena.init();
-      this.scene.sessionPlayTime = 0;
-      this.scene.lastSavePlayTime = 0;
+      globalScene.newBattle();
+      globalScene.arena.init();
+      globalScene.sessionPlayTime = 0;
+      globalScene.lastSavePlayTime = 0;
       // Ensures Keldeo (or any future Pokemon that have this type of form change) starts in the correct form
-      this.scene.getPlayerParty().forEach((p) => {
-        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeMoveLearnedTrigger);
+      globalScene.getPlayerParty().forEach((p) => {
+        globalScene.triggerPokemonFormChange(p, SpeciesFormChangeMoveLearnedTrigger);
       });
       this.end();
     });

@@ -9,7 +9,7 @@ import { Abilities } from "#app/enums/abilities";
 import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
 import { Mode } from "#app/ui/ui";
 import { Button } from "#app/enums/buttons";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 
