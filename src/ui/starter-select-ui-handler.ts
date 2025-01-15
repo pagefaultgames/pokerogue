@@ -2698,6 +2698,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.updateScroll();
   };
 
+  override destroy(): void {
+    this.starterContainers = [];
+  }
+
   updateScroll = () => {
     const maxColumns = 9;
     const maxRows = 9;
