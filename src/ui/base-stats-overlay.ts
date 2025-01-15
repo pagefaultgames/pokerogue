@@ -1,8 +1,9 @@
-import BattleScene, { InfoToggle } from "../battle-scene";
+import type { InfoToggle } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import i18next from "i18next";
+import { globalScene } from "#app/global-scene";
 
 export interface BaseStatsOverlaySettings {
     scale?:number; // scale the box? A scale of 0.5 is recommended
@@ -33,35 +34,35 @@ export default class BaseStatsOverlay extends Phaser.GameObjects.Container imple
   public scale: number;
   public width: number;
 
-  constructor(scene: BattleScene, options?: BaseStatsOverlaySettings) {
-    super(scene, options?.x, options?.y);
+  constructor(options?: BaseStatsOverlaySettings) {
+    super(globalScene, options?.x, options?.y);
     this.scale = options?.scale || 1; // set up the scale
     this.setScale(this.scale);
     this.options = options || {};
 
     // prepare the description box
-    this.width = (options?.width || BaseStatsOverlay.getWidth(this.scale, scene)) / this.scale; // divide by scale as we always want this to be half a window wide
-    this.statsBg = addWindow(scene,  0, 0, this.width, HEIGHT);
+    this.width = (options?.width || BaseStatsOverlay.getWidth(this.scale)) / this.scale; // divide by scale as we always want this to be half a window wide
+    this.statsBg = addWindow(0, 0, this.width, HEIGHT);
     this.statsBg.setOrigin(0, 0);
     this.add(this.statsBg);
 
     for (let i = 0; i < 6; i++) {
-      const shadow = this.scene.add.rectangle(this.width - BORDER + 1, BORDER + 3 + i * 15, 100, 5, 0x006860);
+      const shadow = globalScene.add.rectangle(this.width - BORDER + 1, BORDER + 3 + i * 15, 100, 5, 0x006860);
       shadow.setOrigin(1, 0);
       this.statsShadows.push(shadow);
       this.add(shadow);
 
-      const rectangle = this.scene.add.rectangle(this.width - BORDER, BORDER + 2 + i * 15, 100, 5, 0x66aa99);
+      const rectangle = globalScene.add.rectangle(this.width - BORDER, BORDER + 2 + i * 15, 100, 5, 0x66aa99);
       rectangle.setOrigin(1, 0);
       this.statsRectangles.push(rectangle);
       this.add(rectangle);
 
-      const label = addTextObject(scene, BORDER, BORDER - 2 + i * 15, "A", TextStyle.BATTLE_INFO);
+      const label = addTextObject(BORDER, BORDER - 2 + i * 15, "A", TextStyle.BATTLE_INFO);
       this.statsLabels.push(label);
       this.add(label);
     }
 
-    this.statsTotalLabel = addTextObject(scene, BORDER, BORDER + 6 * 15, "A", TextStyle.MONEY_WINDOW);
+    this.statsTotalLabel = addTextObject(BORDER, BORDER + 6 * 15, "A", TextStyle.MONEY_WINDOW);
     this.add(this.statsTotalLabel);
 
     // hide this component for now
@@ -96,7 +97,7 @@ export default class BaseStatsOverlay extends Phaser.GameObjects.Container imple
     if (visible) {
       this.setVisible(true);
     }
-    this.scene.tweens.add({
+    globalScene.tweens.add({
       targets: this.statsLabels,
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
@@ -112,8 +113,8 @@ export default class BaseStatsOverlay extends Phaser.GameObjects.Container imple
   }
 
   // width of this element
-  static getWidth(scale:number, scene: BattleScene):number {
-    return scene.game.canvas.width / GLOBAL_SCALE / 2;
+  static getWidth(scale:number):number {
+    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
   }
 
   // height of this element

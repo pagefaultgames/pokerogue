@@ -48,8 +48,6 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.cursorObj.setVisible(false);
     this.cursorObj.setOrigin(0, 0);
     this.add(this.cursorObj);
-
-    this.uiTheme = globalScene.uiTheme;
   }
 
   /**
@@ -94,9 +92,9 @@ export class FilterBar extends Phaser.GameObjects.Container {
   updateFilterLabels(): void {
     for (let i = 0; i < this.numFilters; i++) {
       if (this.dropDowns[i].hasDefaultValues()) {
-        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false, this.uiTheme));
+        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false, globalScene.uiTheme));
       } else {
-        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false, this.uiTheme));
+        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false, globalScene.uiTheme));
       }
     }
   }

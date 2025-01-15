@@ -1,7 +1,8 @@
-import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
-import { ModalConfig } from "./modal-ui-handler";
-import { PlayerPokemon } from "#app/field/pokemon";
-import { OptionSelectItem } from "./abstact-option-select-ui-handler";
+import type { InputFieldConfig } from "./form-modal-ui-handler";
+import { FormModalUiHandler } from "./form-modal-ui-handler";
+import type { ModalConfig } from "./modal-ui-handler";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { isNullOrUndefined } from "#app/utils";
 import { Mode } from "./ui";
 import { FilterTextRow } from "./filter-text";
@@ -21,7 +22,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   row: number;
 
   constructor(scene, mode) {
-    super(scene, mode);
+    super(mode);
   }
 
   setup() {

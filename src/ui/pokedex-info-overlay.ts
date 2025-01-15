@@ -1,8 +1,9 @@
-import BattleScene, { InfoToggle } from "../battle-scene";
+import type { InfoToggle } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import i18next from "i18next";
+import { globalScene } from "#app/global-scene";
 
 export interface PokedexInfoOverlaySettings {
     delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
@@ -38,20 +39,20 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
   public scale: number;
   public width: number;
 
-  constructor(scene: BattleScene, options?: PokedexInfoOverlaySettings) {
-    super(scene, options?.x, options?.y);
+  constructor(options?: PokedexInfoOverlaySettings) {
+    super(globalScene, options?.x, options?.y);
     this.scale = options?.scale || 1; // set up the scale
     this.setScale(this.scale);
     this.options = options || {};
 
     // prepare the description box
-    this.width = (options?.width || PokedexInfoOverlay.getWidth(this.scale, scene)) / this.scale; // divide by scale as we always want this to be half a window wide
-    this.descBg = addWindow(scene,  0, 0, this.width, DESC_HEIGHT);
+    this.width = (options?.width || PokedexInfoOverlay.getWidth(this.scale)) / this.scale; // divide by scale as we always want this to be half a window wide
+    this.descBg = addWindow(0, 0, this.width, DESC_HEIGHT);
     this.descBg.setOrigin(0, 0);
     this.add(this.descBg);
 
     // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
-    this.desc = addTextObject(scene, BORDER, BORDER - 2, "", TextStyle.BATTLE_INFO, { wordWrap: { width: (this.width - (BORDER - 2) * 2) * GLOBAL_SCALE }});
+    this.desc = addTextObject(BORDER, BORDER - 2, "", TextStyle.BATTLE_INFO, { wordWrap: { width: (this.width - (BORDER - 2) * 2) * GLOBAL_SCALE }});
     this.desc.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
 
     // limit the text rendering, required for scrolling later on
@@ -59,13 +60,13 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
     this.maskPointOriginY = options?.y || 0;
 
     if (this.maskPointOriginX < 0) {
-      this.maskPointOriginX += this.scene.game.canvas.width / GLOBAL_SCALE;
+      this.maskPointOriginX += globalScene.game.canvas.width / GLOBAL_SCALE;
     }
     if (this.maskPointOriginY < 0) {
-      this.maskPointOriginY += this.scene.game.canvas.height / GLOBAL_SCALE;
+      this.maskPointOriginY += globalScene.game.canvas.height / GLOBAL_SCALE;
     }
 
-    this.textMaskRect = this.scene.make.graphics();
+    this.textMaskRect = globalScene.make.graphics();
     this.textMaskRect.fillStyle(0xFF0000);
     this.textMaskRect.fillRect(
       this.maskPointOriginX + BORDER * this.scale, this.maskPointOriginY + (BORDER - 2) * this.scale,
@@ -86,7 +87,7 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
 
   // show this component with infos for the specific move
   show(text: string):boolean {
-    if (!(this.scene as BattleScene).enableMoveInfo) {
+    if (!globalScene.enableMoveInfo) {
       return false; // move infos have been disabled // TODO:: is `false` correct? i used to be `undeefined`
     }
 
@@ -120,7 +121,7 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
 
     if (lineCount > 3) {
       // generate scrolling effects
-      this.descScroll = this.scene.tweens.add({
+      this.descScroll = globalScene.tweens.add({
         targets: this.desc,
         delay: Utils.fixedInt(2000),
         loop: -1,
@@ -146,7 +147,7 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
     if (visible) {
       this.setVisible(true);
     }
-    this.scene.tweens.add({
+    globalScene.tweens.add({
       targets: this.desc,
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
@@ -162,8 +163,8 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
   }
 
   // width of this element
-  static getWidth(scale:number, scene: BattleScene):number {
-    return scene.game.canvas.width / GLOBAL_SCALE / 2;
+  static getWidth(scale:number):number {
+    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
   }
 
   // height of this element

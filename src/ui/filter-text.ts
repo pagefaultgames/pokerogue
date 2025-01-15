@@ -1,11 +1,12 @@
-import BattleScene from "#app/battle-scene";
-import { StarterContainer } from "./starter-container";
+import type { StarterContainer } from "./starter-container";
 import { addTextObject, getTextColor, TextStyle } from "./text";
-import { UiTheme } from "#enums/ui-theme";
+import type { UiTheme } from "#enums/ui-theme";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import UI, { Mode } from "./ui";
+import type AwaitableUiHandler from "./awaitable-ui-handler";
+import type UI from "./ui";
+import { Mode } from "./ui";
+import { globalScene } from "#app/global-scene";
 
 export enum FilterTextRow{
   NAME,
@@ -38,36 +39,33 @@ export class FilterText extends Phaser.GameObjects.Container {
 
   public defaultText: string = "---";
 
-  constructor(scene: BattleScene, x: number, y: number, width: number, height: number, onChange: () => void,) {
-    super(scene, x, y);
+  constructor(x: number, y: number, width: number, height: number, onChange: () => void,) {
+    super(globalScene, x, y);
 
     this.onChange = onChange;
 
     this.width = width;
     this.height = height;
 
-    this.window = addWindow(scene, 0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
+    this.window = addWindow(0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(this.window);
 
-    this.cursorObj = this.scene.add.image(1, 1, "cursor");
+    this.cursorObj = globalScene.add.image(1, 1, "cursor");
     this.cursorObj.setScale(0.5);
     this.cursorObj.setVisible(false);
     this.cursorObj.setOrigin(0, 0);
     this.add(this.cursorObj);
 
-    this.uiTheme = scene.uiTheme;
-
-
-    this.menuMessageBoxContainer = this.scene.add.container(0, 130);
+    this.menuMessageBoxContainer = globalScene.add.container(0, 130);
     this.menuMessageBoxContainer.setName("menu-message-box");
     this.menuMessageBoxContainer.setVisible(false);
 
     // Full-width window used for testing dialog messages in debug mode
-    this.dialogueMessageBox = addWindow(scene, -this.textPadding, 0, this.scene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
+    this.dialogueMessageBox = addWindow(-this.textPadding, 0, globalScene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
     this.dialogueMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(this.dialogueMessageBox);
 
-    const menuMessageText = addTextObject(this.scene, this.textPadding, this.textPadding, "", TextStyle.WINDOW, { maxLines: 2 });
+    const menuMessageText = addTextObject(this.textPadding, this.textPadding, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
@@ -99,11 +97,11 @@ export class FilterText extends Phaser.GameObjects.Container {
 
     this.rows.push(row);
 
-    const filterTypesLabel = addTextObject(this.scene, paddingX + cursorOffset, 3, title, TextStyle.TOOLTIP_CONTENT);
+    const filterTypesLabel = addTextObject(paddingX + cursorOffset, 3, title, TextStyle.TOOLTIP_CONTENT);
     this.labels.push(filterTypesLabel);
     this.add(filterTypesLabel);
 
-    const filterTypesSelection = addTextObject(this.scene, paddingX + cursorOffset + extraSpaceX, 3, this.defaultText, TextStyle.TOOLTIP_CONTENT);
+    const filterTypesSelection = addTextObject(paddingX + cursorOffset + extraSpaceX, 3, this.defaultText, TextStyle.TOOLTIP_CONTENT);
     this.selections.push(filterTypesSelection);
     this.add(filterTypesSelection);
 
@@ -170,9 +168,9 @@ export class FilterText extends Phaser.GameObjects.Container {
   updateFilterLabels(): void {
     for (let i = 0; i < this.numFilters; i++) {
       if (this.selections[i].text === this.defaultText) {
-        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false, this.uiTheme));
+        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false, globalScene.uiTheme));
       } else {
-        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false, this.uiTheme));
+        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false, globalScene.uiTheme));
       }
     }
   }
