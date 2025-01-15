@@ -296,11 +296,6 @@ export class MovePhase extends BattlePhase {
       globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
     }
 
-    // Update the battle's "last move" pointer, unless we're currently mimicking a move.
-    if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
-      globalScene.currentBattle.lastMove = this.move.moveId;
-    }
-
     /**
      * Determine if the move is successful (meaning that its damage/effects can be attempted)
      * by checking that all of the following are true:
@@ -323,6 +318,14 @@ export class MovePhase extends BattlePhase {
     const failedDueToTerrain: boolean = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
 
     const success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
+
+    // Update the battle's "last move" pointer, unless we're currently mimicking a move.
+    if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
+      // The last move used is unaffected by moves that fail
+      if (success) {
+        globalScene.currentBattle.lastMove = this.move.moveId;
+      }
+    }
 
     /**
      * If the move has not failed, trigger ability-based user type changes and then execute it.
@@ -518,7 +521,7 @@ export class MovePhase extends BattlePhase {
         frenzyMissFunc(this.pokemon, this.move.getMove());
       }
 
-      this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+      this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL, targets: this.targets });
 
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
       this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);

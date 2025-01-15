@@ -87,7 +87,6 @@ export enum MoveFlags {
   NONE              = 0,
   MAKES_CONTACT     = 1 << 0,
   IGNORE_PROTECT    = 1 << 1,
-  IGNORE_VIRTUAL    = 1 << 2,
   /**
    * Sound-based moves have the following effects:
    * - Pokemon with the {@linkcode Abilities.SOUNDPROOF Soundproof Ability} are unaffected by other Pokemon's sound-based moves.
@@ -98,35 +97,35 @@ export enum MoveFlags {
    *
    * cf https://bulbapedia.bulbagarden.net/wiki/Sound-based_move
    */
-  SOUND_BASED       = 1 << 3,
-  HIDE_USER         = 1 << 4,
-  HIDE_TARGET       = 1 << 5,
-  BITING_MOVE       = 1 << 6,
-  PULSE_MOVE        = 1 << 7,
-  PUNCHING_MOVE     = 1 << 8,
-  SLICING_MOVE      = 1 << 9,
+  SOUND_BASED       = 1 << 2,
+  HIDE_USER         = 1 << 3,
+  HIDE_TARGET       = 1 << 4,
+  BITING_MOVE       = 1 << 5,
+  PULSE_MOVE        = 1 << 6,
+  PUNCHING_MOVE     = 1 << 7,
+  SLICING_MOVE      = 1 << 8,
   /**
    * Indicates a move should be affected by {@linkcode Abilities.RECKLESS}
    * @see {@linkcode Move.recklessMove()}
    */
-  RECKLESS_MOVE     = 1 << 10,
+  RECKLESS_MOVE     = 1 << 9,
   /** Indicates a move should be affected by {@linkcode Abilities.BULLETPROOF} */
-  BALLBOMB_MOVE     = 1 << 11,
+  BALLBOMB_MOVE     = 1 << 10,
   /** Grass types and pokemon with {@linkcode Abilities.OVERCOAT} are immune to powder moves */
-  POWDER_MOVE       = 1 << 12,
+  POWDER_MOVE       = 1 << 11,
   /** Indicates a move should trigger {@linkcode Abilities.DANCER} */
-  DANCE_MOVE        = 1 << 13,
+  DANCE_MOVE        = 1 << 12,
   /** Indicates a move should trigger {@linkcode Abilities.WIND_RIDER} */
-  WIND_MOVE         = 1 << 14,
+  WIND_MOVE         = 1 << 13,
   /** Indicates a move should trigger {@linkcode Abilities.TRIAGE} */
-  TRIAGE_MOVE       = 1 << 15,
-  IGNORE_ABILITIES  = 1 << 16,
+  TRIAGE_MOVE       = 1 << 14,
+  IGNORE_ABILITIES  = 1 << 15,
   /** Enables all hits of a multi-hit move to be accuracy checked individually */
-  CHECK_ALL_HITS    = 1 << 17,
+  CHECK_ALL_HITS    = 1 << 16,
   /** Indicates a move is able to bypass its target's Substitute (if the target has one) */
-  IGNORE_SUBSTITUTE = 1 << 18,
+  IGNORE_SUBSTITUTE = 1 << 17,
   /** Indicates a move is able to be redirected to allies in a double battle if the attacker faints */
-  REDIRECT_COUNTER = 1 << 19,
+  REDIRECT_COUNTER = 1 << 18,
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -438,16 +437,6 @@ export default class Move implements Localizable {
    */
   ignoresProtect(): this {
     this.setFlag(MoveFlags.IGNORE_PROTECT, true);
-    return this;
-  }
-
-  /**
-   * Sets the {@linkcode MoveFlags.IGNORE_VIRTUAL} flag for the calling Move
-   * @see {@linkcode Moves.NATURE_POWER}
-   * @returns The {@linkcode Move} that called this function
-   */
-  ignoresVirtual(): this {
-    this.setFlag(MoveFlags.IGNORE_VIRTUAL, true);
     return this;
   }
 
@@ -1552,7 +1541,7 @@ export class RecoilAttr extends MoveEffectAttr {
     }
 
     // Chloroblast and Struggle should not deal recoil damage if the move was not successful
-    if (this.useHp && [ MoveResult.FAIL, MoveResult.MISS ].includes(user.getLastXMoves(1)[0]?.result)) {
+    if (this.useHp && [ MoveResult.FAIL, MoveResult.MISS ].includes(user.getLastXMoves(1)[0]?.result ?? MoveResult.FAIL)) {
       return false;
     }
 
@@ -6483,52 +6472,46 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
   }
 }
 
-export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
-  private enemyMoveset: boolean | null;
-
-  constructor(enemyMoveset?: boolean) {
-    super();
-
-    this.enemyMoveset = enemyMoveset!; // TODO: is this bang correct?
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveset = (!this.enemyMoveset ? user : target).getMoveset();
-    const moves = moveset.filter(m => !m?.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL));
-    if (moves.length) {
-      const move = moves[user.randSeedInt(moves.length)];
-      const moveIndex = moveset.findIndex(m => m?.moveId === move?.moveId);
-      const moveTargets = getMoveTargets(user, move?.moveId!); // TODO: is this bang correct?
-      if (!moveTargets.targets.length) {
-        return false;
-      }
-      let selectTargets: BattlerIndex[];
-      switch (true) {
-        case (moveTargets.multiple || moveTargets.targets.length === 1): {
-          selectTargets = moveTargets.targets;
-          break;
-        }
-        case (moveTargets.targets.indexOf(target.getBattlerIndex()) > -1): {
-          selectTargets = [ target.getBattlerIndex() ];
-          break;
-        }
-        default: {
-          moveTargets.targets.splice(moveTargets.targets.indexOf(user.getAlly().getBattlerIndex()));
-          selectTargets =  [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-          break;
-        }
-      }
-      const targets = selectTargets;
-      user.getMoveQueue().push({ move: move?.moveId!, targets: targets, ignorePP: true }); // TODO: is this bang correct?
-      globalScene.unshiftPhase(new MovePhase(user, targets, moveset[moveIndex]!, true)); // There's a PR to re-do the move(s) that use this Attr, gonna put `!` for now
-      return true;
+/**
+ * Attribute used to call a move.
+ * Used by other move attributes: {@linkcode RandomMoveAttr}, {@linkcode RandomMovesetMoveAttr}, {@linkcode CopyMoveAttr}
+ * @see {@linkcode apply} for move call
+ * @extends OverrideMoveEffectAttr
+ */
+class CallMoveAttr extends OverrideMoveEffectAttr {
+  protected invalidMoves: Moves[];
+  protected hasTarget: boolean;
+  async apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
+    const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
+    if (moveTargets.targets.length === 0) {
+      return false;
     }
+    const targets = moveTargets.multiple || moveTargets.targets.length === 1
+      ? moveTargets.targets
+      : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
+    user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
+    globalScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
 
-    return false;
+    await Promise.resolve(initMoveAnim(move.id).then(() => {
+      loadMoveAnimAssets([ move.id ], true);
+    }));
+    return true;
   }
 }
 
-export class RandomMoveAttr extends OverrideMoveEffectAttr {
+/**
+ * Attribute used to call a random move.
+ * Used for {@linkcode Moves.METRONOME}
+ * @see {@linkcode apply} for move selection and move call
+ * @extends CallMoveAttr to call a selected move
+ */
+export class RandomMoveAttr extends CallMoveAttr {
+  constructor(invalidMoves: Moves[]) {
+    super();
+    this.invalidMoves = invalidMoves;
+  }
+
   /**
    * This function exists solely to allow tests to override the randomly selected move by mocking this function.
    */
@@ -6536,30 +6519,352 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
     return null;
   }
 
+  /**
+   * User calls a random moveId.
+   *
+   * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidMetronomeMoves}
+   * @param user Pokemon that used the move and will call a random move
+   * @param target Pokemon that will be targeted by the random move (if single target)
+   * @param move Move being used
+   * @param args Unused
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise(resolve => {
-      const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL) && !allMoves[m].name.endsWith(" (N)"));
-      const moveId = this.getMoveOverride() ?? moveIds[user.randSeedInt(moveIds.length)];
-
-      const moveTargets = getMoveTargets(user, moveId);
-      if (!moveTargets.targets.length) {
-        resolve(false);
-        return;
-      }
-      const targets = moveTargets.multiple || moveTargets.targets.length === 1
-        ? moveTargets.targets
-        : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-          ? [ target.getBattlerIndex() ]
-          : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-      user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
-      globalScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(moveId).then(() => {
-        loadMoveAnimAssets([ moveId ], true)
-          .then(() => resolve(true));
-      });
-    });
+    const moveIds = Utils.getEnumValues(Moves).map(m => !this.invalidMoves.includes(m) && !allMoves[m].name.endsWith(" (N)") ? m : Moves.NONE);
+    let moveId: Moves = Moves.NONE;
+    do {
+      moveId = this.getMoveOverride() ?? moveIds[user.randSeedInt(moveIds.length)];
+    }
+    while (moveId === Moves.NONE);
+    return super.apply(user, target, allMoves[moveId], args);
   }
 }
+
+/**
+ * Attribute used to call a random move in the user or party's moveset.
+ * Used for {@linkcode Moves.ASSIST} and {@linkcode Moves.SLEEP_TALK}
+ *
+ * Fails if the user has no callable moves.
+ *
+ * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidAssistMoves} or {@linkcode invalidSleepTalkMoves}
+ * @extends RandomMoveAttr to use the callMove function on a moveId
+ * @see {@linkcode getCondition} for move selection
+ */
+export class RandomMovesetMoveAttr extends CallMoveAttr {
+  private includeParty: boolean;
+  private moveId: number;
+  constructor(invalidMoves: Moves[], includeParty: boolean = false) {
+    super();
+    this.includeParty = includeParty;
+    this.invalidMoves = invalidMoves;
+  }
+
+  /**
+   * User calls a random moveId selected in {@linkcode getCondition}
+   * @param user Pokemon that used the move and will call a random move
+   * @param target Pokemon that will be targeted by the random move (if single target)
+   * @param move Move being used
+   * @param args Unused
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return super.apply(user, target, allMoves[this.moveId], args);
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      // includeParty will be true for Assist, false for Sleep Talk
+      let allies: Pokemon[];
+      if (this.includeParty) {
+        allies = user.isPlayer() ? globalScene.getPlayerParty().filter(p => p !== user) : globalScene.getEnemyParty().filter(p => p !== user);
+      } else {
+        allies = [ user ];
+      }
+      const partyMoveset = allies.map(p => p.moveset).flat();
+      const moves = partyMoveset.filter(m => !this.invalidMoves.includes(m!.moveId) && !m!.getMove().name.endsWith(" (N)"));
+      if (moves.length === 0) {
+        return false;
+      }
+
+      this.moveId = moves[user.randSeedInt(moves.length)]!.moveId;
+      return true;
+    };
+  }
+}
+
+const invalidMetronomeMoves: Moves[] = [
+  Moves.AFTER_YOU,
+  Moves.APPLE_ACID,
+  Moves.ARMOR_CANNON,
+  Moves.ASSIST,
+  Moves.ASTRAL_BARRAGE,
+  Moves.AURA_WHEEL,
+  Moves.BANEFUL_BUNKER,
+  Moves.BEAK_BLAST,
+  Moves.BEHEMOTH_BASH,
+  Moves.BEHEMOTH_BLADE,
+  Moves.BELCH,
+  Moves.BESTOW,
+  Moves.BLAZING_TORQUE,
+  Moves.BODY_PRESS,
+  Moves.BRANCH_POKE,
+  Moves.BREAKING_SWIPE,
+  Moves.CELEBRATE,
+  Moves.CHATTER,
+  Moves.CHILLING_WATER,
+  Moves.CHILLY_RECEPTION,
+  Moves.CLANGOROUS_SOUL,
+  Moves.COLLISION_COURSE,
+  Moves.COMBAT_TORQUE,
+  Moves.COMEUPPANCE,
+  Moves.COPYCAT,
+  Moves.COUNTER,
+  Moves.COVET,
+  Moves.CRAFTY_SHIELD,
+  Moves.DECORATE,
+  Moves.DESTINY_BOND,
+  Moves.DETECT,
+  Moves.DIAMOND_STORM,
+  Moves.DOODLE,
+  Moves.DOUBLE_IRON_BASH,
+  Moves.DOUBLE_SHOCK,
+  Moves.DRAGON_ASCENT,
+  Moves.DRAGON_ENERGY,
+  Moves.DRUM_BEATING,
+  Moves.DYNAMAX_CANNON,
+  Moves.ELECTRO_DRIFT,
+  Moves.ENDURE,
+  Moves.ETERNABEAM,
+  Moves.FALSE_SURRENDER,
+  Moves.FEINT,
+  Moves.FIERY_WRATH,
+  Moves.FILLET_AWAY,
+  Moves.FLEUR_CANNON,
+  Moves.FOCUS_PUNCH,
+  Moves.FOLLOW_ME,
+  Moves.FREEZE_SHOCK,
+  Moves.FREEZING_GLARE,
+  Moves.GLACIAL_LANCE,
+  Moves.GRAV_APPLE,
+  Moves.HELPING_HAND,
+  Moves.HOLD_HANDS,
+  Moves.HYPER_DRILL,
+  Moves.HYPERSPACE_FURY,
+  Moves.HYPERSPACE_HOLE,
+  Moves.ICE_BURN,
+  Moves.INSTRUCT,
+  Moves.JET_PUNCH,
+  Moves.JUNGLE_HEALING,
+  Moves.KINGS_SHIELD,
+  Moves.LIFE_DEW,
+  Moves.LIGHT_OF_RUIN,
+  Moves.MAKE_IT_RAIN,
+  Moves.MAGICAL_TORQUE,
+  Moves.MAT_BLOCK,
+  Moves.ME_FIRST,
+  Moves.METEOR_ASSAULT,
+  Moves.METRONOME,
+  Moves.MIMIC,
+  Moves.MIND_BLOWN,
+  Moves.MIRROR_COAT,
+  Moves.MIRROR_MOVE,
+  Moves.MOONGEIST_BEAM,
+  Moves.NATURE_POWER,
+  Moves.NATURES_MADNESS,
+  Moves.NOXIOUS_TORQUE,
+  Moves.OBSTRUCT,
+  Moves.ORDER_UP,
+  Moves.ORIGIN_PULSE,
+  Moves.OVERDRIVE,
+  Moves.PHOTON_GEYSER,
+  Moves.PLASMA_FISTS,
+  Moves.POPULATION_BOMB,
+  Moves.POUNCE,
+  Moves.POWER_SHIFT,
+  Moves.PRECIPICE_BLADES,
+  Moves.PROTECT,
+  Moves.PYRO_BALL,
+  Moves.QUASH,
+  Moves.QUICK_GUARD,
+  Moves.RAGE_FIST,
+  Moves.RAGE_POWDER,
+  Moves.RAGING_BULL,
+  Moves.RAGING_FURY,
+  Moves.RELIC_SONG,
+  Moves.REVIVAL_BLESSING,
+  Moves.RUINATION,
+  Moves.SALT_CURE,
+  Moves.SECRET_SWORD,
+  Moves.SHED_TAIL,
+  Moves.SHELL_TRAP,
+  Moves.SILK_TRAP,
+  Moves.SKETCH,
+  Moves.SLEEP_TALK,
+  Moves.SNAP_TRAP,
+  Moves.SNARL,
+  Moves.SNATCH,
+  Moves.SNORE,
+  Moves.SNOWSCAPE,
+  Moves.SPECTRAL_THIEF,
+  Moves.SPICY_EXTRACT,
+  Moves.SPIKY_SHIELD,
+  Moves.SPIRIT_BREAK,
+  Moves.SPOTLIGHT,
+  Moves.STEAM_ERUPTION,
+  Moves.STEEL_BEAM,
+  Moves.STRANGE_STEAM,
+  Moves.STRUGGLE,
+  Moves.SUNSTEEL_STRIKE,
+  Moves.SURGING_STRIKES,
+  Moves.SWITCHEROO,
+  Moves.TECHNO_BLAST,
+  Moves.TERA_STARSTORM,
+  Moves.THIEF,
+  Moves.THOUSAND_ARROWS,
+  Moves.THOUSAND_WAVES,
+  Moves.THUNDER_CAGE,
+  Moves.THUNDEROUS_KICK,
+  Moves.TIDY_UP,
+  Moves.TRAILBLAZE,
+  Moves.TRANSFORM,
+  Moves.TRICK,
+  Moves.TWIN_BEAM,
+  Moves.V_CREATE,
+  Moves.WICKED_BLOW,
+  Moves.WICKED_TORQUE,
+  Moves.WIDE_GUARD,
+];
+
+const invalidAssistMoves: Moves[] = [
+  Moves.ASSIST,
+  Moves.BANEFUL_BUNKER,
+  Moves.BEAK_BLAST,
+  Moves.BELCH,
+  Moves.BESTOW,
+  Moves.BOUNCE,
+  Moves.CELEBRATE,
+  Moves.CHATTER,
+  Moves.CIRCLE_THROW,
+  Moves.COPYCAT,
+  Moves.COUNTER,
+  Moves.COVET,
+  Moves.DESTINY_BOND,
+  Moves.DETECT,
+  Moves.DIG,
+  Moves.DIVE,
+  Moves.DRAGON_TAIL,
+  Moves.ENDURE,
+  Moves.FEINT,
+  Moves.FLY,
+  Moves.FOCUS_PUNCH,
+  Moves.FOLLOW_ME,
+  Moves.HELPING_HAND,
+  Moves.HOLD_HANDS,
+  Moves.KINGS_SHIELD,
+  Moves.MAT_BLOCK,
+  Moves.ME_FIRST,
+  Moves.METRONOME,
+  Moves.MIMIC,
+  Moves.MIRROR_COAT,
+  Moves.MIRROR_MOVE,
+  Moves.NATURE_POWER,
+  Moves.PHANTOM_FORCE,
+  Moves.PROTECT,
+  Moves.RAGE_POWDER,
+  Moves.ROAR,
+  Moves.SHADOW_FORCE,
+  Moves.SHELL_TRAP,
+  Moves.SKETCH,
+  Moves.SKY_DROP,
+  Moves.SLEEP_TALK,
+  Moves.SNATCH,
+  Moves.SPIKY_SHIELD,
+  Moves.SPOTLIGHT,
+  Moves.STRUGGLE,
+  Moves.SWITCHEROO,
+  Moves.THIEF,
+  Moves.TRANSFORM,
+  Moves.TRICK,
+  Moves.WHIRLWIND,
+];
+
+const invalidSleepTalkMoves: Moves[] = [
+  Moves.ASSIST,
+  Moves.BELCH,
+  Moves.BEAK_BLAST,
+  Moves.BIDE,
+  Moves.BOUNCE,
+  Moves.COPYCAT,
+  Moves.DIG,
+  Moves.DIVE,
+  Moves.DYNAMAX_CANNON,
+  Moves.FREEZE_SHOCK,
+  Moves.FLY,
+  Moves.FOCUS_PUNCH,
+  Moves.GEOMANCY,
+  Moves.ICE_BURN,
+  Moves.ME_FIRST,
+  Moves.METRONOME,
+  Moves.MIRROR_MOVE,
+  Moves.MIMIC,
+  Moves.PHANTOM_FORCE,
+  Moves.RAZOR_WIND,
+  Moves.SHADOW_FORCE,
+  Moves.SHELL_TRAP,
+  Moves.SKETCH,
+  Moves.SKULL_BASH,
+  Moves.SKY_ATTACK,
+  Moves.SKY_DROP,
+  Moves.SLEEP_TALK,
+  Moves.SOLAR_BLADE,
+  Moves.SOLAR_BEAM,
+  Moves.STRUGGLE,
+  Moves.UPROAR,
+];
+
+const invalidCopycatMoves = [
+  Moves.ASSIST,
+  Moves.BANEFUL_BUNKER,
+  Moves.BEAK_BLAST,
+  Moves.BEHEMOTH_BASH,
+  Moves.BEHEMOTH_BLADE,
+  Moves.BESTOW,
+  Moves.CELEBRATE,
+  Moves.CHATTER,
+  Moves.CIRCLE_THROW,
+  Moves.COPYCAT,
+  Moves.COUNTER,
+  Moves.COVET,
+  Moves.DESTINY_BOND,
+  Moves.DETECT,
+  Moves.DRAGON_TAIL,
+  Moves.ENDURE,
+  Moves.FEINT,
+  Moves.FOCUS_PUNCH,
+  Moves.FOLLOW_ME,
+  Moves.HELPING_HAND,
+  Moves.HOLD_HANDS,
+  Moves.KINGS_SHIELD,
+  Moves.MAT_BLOCK,
+  Moves.ME_FIRST,
+  Moves.METRONOME,
+  Moves.MIMIC,
+  Moves.MIRROR_COAT,
+  Moves.MIRROR_MOVE,
+  Moves.PROTECT,
+  Moves.RAGE_POWDER,
+  Moves.ROAR,
+  Moves.SHELL_TRAP,
+  Moves.SKETCH,
+  Moves.SLEEP_TALK,
+  Moves.SNATCH,
+  Moves.SPIKY_SHIELD,
+  Moves.SPOTLIGHT,
+  Moves.STRUGGLE,
+  Moves.SWITCHEROO,
+  Moves.THIEF,
+  Moves.TRANSFORM,
+  Moves.TRICK,
+  Moves.WHIRLWIND,
+];
 
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
@@ -6704,45 +7009,35 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
   }
 }
 
-const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
-  const copiableMove = globalScene.currentBattle.lastMove;
-
-  if (!copiableMove) {
-    return false;
+/**
+ * Attribute used to copy a previously-used move.
+ * Used for {@linkcode Moves.COPYCAT} and {@linkcode Moves.MIRROR_MOVE}
+ * @see {@linkcode apply} for move selection and move call
+ * @extends CallMoveAttr to call a selected move
+ */
+export class CopyMoveAttr extends CallMoveAttr {
+  private mirrorMove: boolean;
+  constructor(mirrorMove: boolean, invalidMoves: Moves[] = []) {
+    super();
+    this.mirrorMove = mirrorMove;
+    this.invalidMoves = invalidMoves;
   }
 
-  if (allMoves[copiableMove].isChargingMove()) {
-    return false;
-  }
-
-  // TODO: Add last turn of Bide
-
-  return true;
-};
-
-export class CopyMoveAttr extends OverrideMoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const lastMove = globalScene.currentBattle.lastMove;
-
-    const moveTargets = getMoveTargets(user, lastMove);
-    if (!moveTargets.targets.length) {
-      return false;
-    }
-
-    const targets = moveTargets.multiple || moveTargets.targets.length === 1
-      ? moveTargets.targets
-      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-        ? [ target.getBattlerIndex() ]
-        : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-    user.getMoveQueue().push({ move: lastMove, targets: targets, ignorePP: true });
-
-    globalScene.unshiftPhase(new MovePhase(user as PlayerPokemon, targets, new PokemonMove(lastMove, 0, 0, true), true));
-
-    return true;
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    this.hasTarget = this.mirrorMove;
+    const lastMove = this.mirrorMove ? target.getLastXMoves()[0].move : globalScene.currentBattle.lastMove;
+    return super.apply(user, target, allMoves[lastMove], args);
   }
 
   getCondition(): MoveConditionFunc {
-    return lastMoveCopiableCondition;
+    return (user, target, move) => {
+      if (this.mirrorMove) {
+        return target.getMoveHistory().length !== 0;
+      } else {
+        const lastMove = globalScene.currentBattle.lastMove;
+        return lastMove !== undefined && !this.invalidMoves.includes(lastMove);
+      }
+    };
   }
 }
 
@@ -7883,11 +8178,20 @@ export type MoveTargetSet = {
   multiple: boolean;
 };
 
-export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
+export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveTarget): MoveTargetSet {
   const variableTarget = new Utils.NumberHolder(0);
   user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
 
-  const moveTarget = allMoves[move].hasAttr(VariableTargetAttr) ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
+  let moveTarget: MoveTarget | undefined;
+  if (allMoves[move].hasAttr(VariableTargetAttr)) {
+    moveTarget = variableTarget.value;
+  } else if (replaceTarget !== undefined) {
+    moveTarget = replaceTarget;
+  } else if (move) {
+    moveTarget = allMoves[move].moveTarget;
+  } else if (move === undefined) {
+    moveTarget = MoveTarget.NEAR_ENEMY;
+  }
   const opponents = user.getOpponents();
 
   let set: Pokemon[] = [];
@@ -7979,7 +8283,6 @@ export function initMoves() {
       .chargeText(i18next.t("moveTriggers:whippedUpAWhirlwind", { pokemonName: "{USER}" }))
       .attr(HighCritAttr)
       .windMove()
-      .ignoresVirtual()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(Moves.SWORDS_DANCE, Type.NORMAL, -1, 20, -1, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.ATK ], 2, true)
@@ -7998,8 +8301,7 @@ export function initMoves() {
     new ChargingAttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:flewUpHigh", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
-      .condition(failOnGravityCondition)
-      .ignoresVirtual(),
+      .condition(failOnGravityCondition),
     new AttackMove(Moves.BIND, Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
       .attr(TrapAttr, BattlerTagType.BIND),
     new AttackMove(Moves.SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 80, 75, 20, -1, 0, 1),
@@ -8148,8 +8450,7 @@ export function initMoves() {
     new ChargingAttackMove(Moves.SOLAR_BEAM, Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:tookInSunlight", { pokemonName: "{USER}" }))
       .chargeAttr(WeatherInstantChargeAttr, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ])
-      .attr(AntiSunlightPowerDecreaseAttr)
-      .ignoresVirtual(),
+      .attr(AntiSunlightPowerDecreaseAttr),
     new StatusMove(Moves.POISON_POWDER, Type.POISON, 75, 35, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .powderMove(),
@@ -8198,8 +8499,7 @@ export function initMoves() {
       .makesContact(false),
     new ChargingAttackMove(Moves.DIG, Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:dugAHole", { pokemonName: "{USER}" }))
-      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.UNDERGROUND)
-      .ignoresVirtual(),
+      .chargeAttr(SemiInvulnerableAttr, BattlerTagType.UNDERGROUND),
     new StatusMove(Moves.TOXIC, Type.POISON, 90, 10, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
       .attr(ToxicAccuracyAttr),
@@ -8223,8 +8523,7 @@ export function initMoves() {
       .attr(LevelDamageAttr),
     new StatusMove(Moves.MIMIC, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(MovesetCopyMoveAttr)
-      .ignoresSubstitute()
-      .ignoresVirtual(),
+      .ignoresSubstitute(),
     new StatusMove(Moves.SCREECH, Type.NORMAL, 85, 40, -1, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -2)
       .soundBased(),
@@ -8260,15 +8559,12 @@ export function initMoves() {
     new SelfStatusMove(Moves.FOCUS_ENERGY, Type.NORMAL, -1, 30, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, true),
     new AttackMove(Moves.BIDE, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 10, -1, 1, 1)
-      .ignoresVirtual()
       .target(MoveTarget.USER)
       .unimplemented(),
     new SelfStatusMove(Moves.METRONOME, Type.NORMAL, -1, 10, -1, 0, 1)
-      .attr(RandomMoveAttr)
-      .ignoresVirtual(),
+      .attr(RandomMoveAttr, invalidMetronomeMoves),
     new StatusMove(Moves.MIRROR_MOVE, Type.FLYING, -1, 20, -1, 0, 1)
-      .attr(CopyMoveAttr)
-      .ignoresVirtual(),
+      .attr(CopyMoveAttr, true),
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)
@@ -8296,8 +8592,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new ChargingAttackMove(Moves.SKULL_BASH, Type.NORMAL, MoveCategory.PHYSICAL, 130, 100, 10, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:loweredItsHead", { pokemonName: "{USER}" }))
-      .chargeAttr(StatStageChangeAttr, [ Stat.DEF ], 1, true)
-      .ignoresVirtual(),
+      .chargeAttr(StatStageChangeAttr, [ Stat.DEF ], 1, true),
     new AttackMove(Moves.SPIKE_CANNON, Type.NORMAL, MoveCategory.PHYSICAL, 20, 100, 15, -1, 0, 1)
       .attr(MultiHitAttr)
       .makesContact(false),
@@ -8337,8 +8632,7 @@ export function initMoves() {
       .chargeText(i18next.t("moveTriggers:isGlowing", { pokemonName: "{USER}" }))
       .attr(HighCritAttr)
       .attr(FlinchAttr)
-      .makesContact(false)
-      .ignoresVirtual(),
+      .makesContact(false),
     new StatusMove(Moves.TRANSFORM, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
       // transforming from or into fusion pokemon causes various problems (such as crashes)
@@ -8401,12 +8695,10 @@ export function initMoves() {
     new AttackMove(Moves.STRUGGLE, Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
       .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
-      .ignoresVirtual()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SKETCH, Type.NORMAL, -1, 1, -1, 0, 2)
       .ignoresSubstitute()
-      .attr(SketchAttr)
-      .ignoresVirtual(),
+      .attr(SketchAttr),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType._3)
       .attr(MultiHitPowerIncrementAttr, 3)
@@ -8559,10 +8851,9 @@ export function initMoves() {
       .condition((user, target, move) => user.isOppositeGender(target)),
     new SelfStatusMove(Moves.SLEEP_TALK, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(BypassSleepAttr)
-      .attr(RandomMovesetMoveAttr)
+      .attr(RandomMovesetMoveAttr, invalidSleepTalkMoves, false)
       .condition(userSleptOrComatoseCondition)
-      .target(MoveTarget.ALL_ENEMIES)
-      .ignoresVirtual(),
+      .target(MoveTarget.NEAR_ENEMY),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(PartyStatusCureAttr, i18next.t("moveTriggers:bellChimed"), Abilities.SOUNDPROOF)
       .soundBased()
@@ -8687,7 +8978,6 @@ export function initMoves() {
       .attr(FlinchAttr)
       .condition(new FirstMoveCondition()),
     new AttackMove(Moves.UPROAR, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, 0, 3)
-      .ignoresVirtual()
       .soundBased()
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(), // Does not lock the user, does not stop Pokemon from sleeping
@@ -8730,7 +9020,6 @@ export function initMoves() {
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .attr(MessageHeaderAttr, (user, move) => i18next.t("moveTriggers:isTighteningFocus", { pokemonName: getPokemonNameWithAffix(user) }))
       .punchingMove()
-      .ignoresVirtual()
       .condition((user, target, move) => !user.turnData.attacksReceived.find(r => r.damage)),
     new AttackMove(Moves.SMELLING_SALTS, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
@@ -8738,8 +9027,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.FOLLOW_ME, Type.NORMAL, -1, 20, -1, 2, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(Moves.NATURE_POWER, Type.NORMAL, -1, 20, -1, 0, 3)
-      .attr(NaturePowerAttr)
-      .ignoresVirtual(),
+      .attr(NaturePowerAttr),
     new SelfStatusMove(Moves.CHARGE, Type.ELECTRIC, -1, 20, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, false),
@@ -8760,8 +9048,7 @@ export function initMoves() {
       .triageMove()
       .attr(AddArenaTagAttr, ArenaTagType.WISH, 2, true),
     new SelfStatusMove(Moves.ASSIST, Type.NORMAL, -1, 20, -1, 0, 3)
-      .attr(RandomMovesetMoveAttr, true)
-      .ignoresVirtual(),
+      .attr(RandomMovesetMoveAttr, invalidAssistMoves, true),
     new SelfStatusMove(Moves.INGRAIN, Type.GRASS, -1, 20, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.INGRAIN, true, true)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, true)
@@ -8808,8 +9095,7 @@ export function initMoves() {
     new ChargingAttackMove(Moves.DIVE, Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 3)
       .chargeText(i18next.t("moveTriggers:hidUnderwater", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.UNDERWATER)
-      .chargeAttr(GulpMissileTagAttr)
-      .ignoresVirtual(),
+      .chargeAttr(GulpMissileTagAttr),
     new AttackMove(Moves.ARM_THRUST, Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, 0, 3)
       .attr(MultiHitAttr),
     new SelfStatusMove(Moves.CAMOUFLAGE, Type.NORMAL, -1, 20, -1, 0, 3)
@@ -8946,8 +9232,7 @@ export function initMoves() {
       .chargeText(i18next.t("moveTriggers:sprangUp", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .condition(failOnGravityCondition)
-      .ignoresVirtual(),
+      .condition(failOnGravityCondition),
     new AttackMove(Moves.MUD_SHOT, Type.GROUND, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1),
     new AttackMove(Moves.POISON_TAIL, Type.POISON, MoveCategory.PHYSICAL, 50, 100, 25, 10, 0, 3)
@@ -9074,12 +9359,10 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ME_FIRST, Type.NORMAL, -1, 20, -1, 0, 4)
       .ignoresSubstitute()
-      .ignoresVirtual()
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented(),
     new SelfStatusMove(Moves.COPYCAT, Type.NORMAL, -1, 20, -1, 0, 4)
-      .attr(CopyMoveAttr)
-      .ignoresVirtual(),
+      .attr(CopyMoveAttr, false, invalidCopycatMoves),
     new StatusMove(Moves.POWER_SWAP, Type.PSYCHIC, -1, 10, 100, 0, 4)
       .attr(SwapStatStagesAttr, [ Stat.ATK, Stat.SPATK ])
       .ignoresSubstitute(),
@@ -9303,8 +9586,7 @@ export function initMoves() {
     new ChargingAttackMove(Moves.SHADOW_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
       .chargeText(i18next.t("moveTriggers:vanishedInstantly", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.HIDDEN)
-      .ignoresProtect()
-      .ignoresVirtual(),
+      .ignoresProtect(),
     new SelfStatusMove(Moves.HONE_CLAWS, Type.DARK, -1, 15, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.ACC ], 1, true),
     new StatusMove(Moves.WIDE_GUARD, Type.ROCK, -1, 10, -1, 3, 5)
@@ -9431,7 +9713,6 @@ export function initMoves() {
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       .condition(failOnGravityCondition)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .ignoresVirtual()
       .partial(), // Should immobilize the target, Flying types should take no damage. cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/
     new SelfStatusMove(Moves.SHIFT_GEAR, Type.STEEL, -1, 10, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true)
@@ -9588,8 +9869,7 @@ export function initMoves() {
       .makesContact(false),
     new ChargingAttackMove(Moves.ICE_BURN, Type.ICE, MoveCategory.SPECIAL, 140, 90, 5, 30, 0, 5)
       .chargeText(i18next.t("moveTriggers:becameCloakedInFreezingAir", { pokemonName: "{USER}" }))
-      .attr(StatusEffectAttr, StatusEffect.BURN)
-      .ignoresVirtual(),
+      .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.SNARL, Type.DARK, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1)
       .soundBased()
@@ -9632,8 +9912,7 @@ export function initMoves() {
     new ChargingAttackMove(Moves.PHANTOM_FORCE, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .chargeText(i18next.t("moveTriggers:vanishedInstantly", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.HIDDEN)
-      .ignoresProtect()
-      .ignoresVirtual(),
+      .ignoresProtect(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
       .attr(AddTypeAttr, Type.GHOST),
     new StatusMove(Moves.NOBLE_ROAR, Type.NORMAL, 100, 30, -1, 0, 6)
@@ -9742,8 +10021,7 @@ export function initMoves() {
       .powderMove(),
     new ChargingSelfStatusMove(Moves.GEOMANCY, Type.FAIRY, -1, 10, -1, 0, 6)
       .chargeText(i18next.t("moveTriggers:isChargingPower", { pokemonName: "{USER}" }))
-      .attr(StatStageChangeAttr, [ Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2, true)
-      .ignoresVirtual(),
+      .attr(StatStageChangeAttr, [ Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2, true),
     new StatusMove(Moves.MAGNETIC_FLUX, Type.ELECTRIC, -1, 20, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], 1, false, { condition: (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS ].find(a => target.hasAbility(a, false)) })
       .ignoresSubstitute()
@@ -9810,116 +10088,79 @@ export function initMoves() {
       .ignoresProtect(),
     /* Unused */
     new AttackMove(Moves.BREAKNECK_BLITZ__PHYSICAL, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.BREAKNECK_BLITZ__SPECIAL, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.ALL_OUT_PUMMELING__PHYSICAL, Type.FIGHTING, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.ALL_OUT_PUMMELING__SPECIAL, Type.FIGHTING, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SUPERSONIC_SKYSTRIKE__PHYSICAL, Type.FLYING, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SUPERSONIC_SKYSTRIKE__SPECIAL, Type.FLYING, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.ACID_DOWNPOUR__PHYSICAL, Type.POISON, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.ACID_DOWNPOUR__SPECIAL, Type.POISON, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.TECTONIC_RAGE__PHYSICAL, Type.GROUND, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.TECTONIC_RAGE__SPECIAL, Type.GROUND, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.CONTINENTAL_CRUSH__PHYSICAL, Type.ROCK, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.CONTINENTAL_CRUSH__SPECIAL, Type.ROCK, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SAVAGE_SPIN_OUT__PHYSICAL, Type.BUG, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SAVAGE_SPIN_OUT__SPECIAL, Type.BUG, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.NEVER_ENDING_NIGHTMARE__PHYSICAL, Type.GHOST, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.NEVER_ENDING_NIGHTMARE__SPECIAL, Type.GHOST, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.CORKSCREW_CRASH__PHYSICAL, Type.STEEL, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.CORKSCREW_CRASH__SPECIAL, Type.STEEL, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.INFERNO_OVERDRIVE__PHYSICAL, Type.FIRE, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.INFERNO_OVERDRIVE__SPECIAL, Type.FIRE, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.HYDRO_VORTEX__PHYSICAL, Type.WATER, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.HYDRO_VORTEX__SPECIAL, Type.WATER, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.BLOOM_DOOM__PHYSICAL, Type.GRASS, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.BLOOM_DOOM__SPECIAL, Type.GRASS, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.GIGAVOLT_HAVOC__PHYSICAL, Type.ELECTRIC, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.GIGAVOLT_HAVOC__SPECIAL, Type.ELECTRIC, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SHATTERED_PSYCHE__PHYSICAL, Type.PSYCHIC, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SHATTERED_PSYCHE__SPECIAL, Type.PSYCHIC, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SUBZERO_SLAMMER__PHYSICAL, Type.ICE, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SUBZERO_SLAMMER__SPECIAL, Type.ICE, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.DEVASTATING_DRAKE__PHYSICAL, Type.DRAGON, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.DEVASTATING_DRAKE__SPECIAL, Type.DRAGON, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.BLACK_HOLE_ECLIPSE__PHYSICAL, Type.DARK, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.BLACK_HOLE_ECLIPSE__SPECIAL, Type.DARK, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.TWINKLE_TACKLE__PHYSICAL, Type.FAIRY, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.TWINKLE_TACKLE__SPECIAL, Type.FAIRY, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.CATASTROPIKA, Type.ELECTRIC, MoveCategory.PHYSICAL, 210, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     /* End Unused */
     new SelfStatusMove(Moves.SHORE_UP, Type.GROUND, -1, 5, -1, 0, 7)
       .attr(SandHealAttr)
@@ -10036,35 +10277,33 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE),
     /* Unused */
     new AttackMove(Moves.SINISTER_ARROW_RAID, Type.GHOST, MoveCategory.PHYSICAL, 180, -1, 1, -1, 0, 7)
+      .unimplemented()
       .makesContact(false)
-      .edgeCase() // I assume it's because the user needs spirit shackle and decidueye
-      .ignoresVirtual(),
+      .edgeCase(), // I assume it's because the user needs spirit shackle and decidueye
     new AttackMove(Moves.MALICIOUS_MOONSAULT, Type.DARK, MoveCategory.PHYSICAL, 180, -1, 1, -1, 0, 7)
+      .unimplemented()
       .attr(AlwaysHitMinimizeAttr)
       .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
-      .edgeCase() // I assume it's because it needs darkest lariat and incineroar
-      .ignoresVirtual(),
+      .edgeCase(), // I assume it's because it needs darkest lariat and incineroar
     new AttackMove(Moves.OCEANIC_OPERETTA, Type.WATER, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
-      .edgeCase() // I assume it's because it needs sparkling aria and primarina
-      .ignoresVirtual(),
+      .unimplemented()
+      .edgeCase(), // I assume it's because it needs sparkling aria and primarina
     new AttackMove(Moves.GUARDIAN_OF_ALOLA, Type.FAIRY, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.SOUL_STEALING_7_STAR_STRIKE, Type.GHOST, MoveCategory.PHYSICAL, 195, -1, 1, -1, 0, 7)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.STOKED_SPARKSURFER, Type.ELECTRIC, MoveCategory.SPECIAL, 175, -1, 1, 100, 0, 7)
-      .edgeCase() // I assume it's because it needs thunderbolt and Alola Raichu
-      .ignoresVirtual(),
+      .unimplemented()
+      .edgeCase(), // I assume it's because it needs thunderbolt and Alola Raichu
     new AttackMove(Moves.PULVERIZING_PANCAKE, Type.NORMAL, MoveCategory.PHYSICAL, 210, -1, 1, -1, 0, 7)
-      .edgeCase() // I assume it's because it needs giga impact and snorlax
-      .ignoresVirtual(),
+      .unimplemented()
+      .edgeCase(), // I assume it's because it needs giga impact and snorlax
     new SelfStatusMove(Moves.EXTREME_EVOBOOST, Type.NORMAL, -1, 1, -1, 0, 7)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2, true)
-      .ignoresVirtual(),
+      .unimplemented()
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 2, true),
     new AttackMove(Moves.GENESIS_SUPERNOVA, Type.PSYCHIC, MoveCategory.SPECIAL, 185, -1, 1, 100, 0, 7)
-      .attr(TerrainChangeAttr, TerrainType.PSYCHIC)
-      .ignoresVirtual(),
+      .unimplemented()
+      .attr(TerrainChangeAttr, TerrainType.PSYCHIC),
     /* End Unused */
     new AttackMove(Moves.SHELL_TRAP, Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, -3, 7)
       .attr(AddBattlerTagHeaderAttr, BattlerTagType.SHELL_TRAP)
@@ -10103,8 +10342,8 @@ export function initMoves() {
       .attr(FormChangeItemTypeAttr),
     /* Unused */
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
-      .edgeCase() // I assume it's because it needs thunderbolt and pikachu in a cap
-      .ignoresVirtual(),
+      .unimplemented()
+      .edgeCase(), // I assume it's because it needs thunderbolt and pikachu in a cap
     /* End Unused */
     new AttackMove(Moves.MIND_BLOWN, Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, 0, 7)
       .condition(failIfDampCondition)
@@ -10118,28 +10357,28 @@ export function initMoves() {
       .ignoresAbilities(),
     /* Unused */
     new AttackMove(Moves.LIGHT_THAT_BURNS_THE_SKY, Type.PSYCHIC, MoveCategory.SPECIAL, 200, -1, 1, -1, 0, 7)
+      .unimplemented()
       .attr(PhotonGeyserCategoryAttr)
-      .ignoresAbilities()
-      .ignoresVirtual(),
+      .ignoresAbilities(),
     new AttackMove(Moves.SEARING_SUNRAZE_SMASH, Type.STEEL, MoveCategory.PHYSICAL, 200, -1, 1, -1, 0, 7)
-      .ignoresAbilities()
-      .ignoresVirtual(),
+      .unimplemented()
+      .ignoresAbilities(),
     new AttackMove(Moves.MENACING_MOONRAZE_MAELSTROM, Type.GHOST, MoveCategory.SPECIAL, 200, -1, 1, -1, 0, 7)
-      .ignoresAbilities()
-      .ignoresVirtual(),
+      .unimplemented()
+      .ignoresAbilities(),
     new AttackMove(Moves.LETS_SNUGGLE_FOREVER, Type.FAIRY, MoveCategory.PHYSICAL, 190, -1, 1, -1, 0, 7)
-      .edgeCase() // I assume it needs play rough and mimikyu
-      .ignoresVirtual(),
+      .unimplemented()
+      .edgeCase(), // I assume it needs play rough and mimikyu
     new AttackMove(Moves.SPLINTERED_STORMSHARDS, Type.ROCK, MoveCategory.PHYSICAL, 190, -1, 1, -1, 0, 7)
+      .unimplemented()
       .attr(ClearTerrainAttr)
-      .makesContact(false)
-      .ignoresVirtual(),
+      .makesContact(false),
     new AttackMove(Moves.CLANGOROUS_SOULBLAZE, Type.DRAGON, MoveCategory.SPECIAL, 185, -1, 1, 100, 0, 7)
+      .unimplemented()
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true, { firstTargetOnly: true })
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .edgeCase() // I assume it needs clanging scales and Kommo-O
-      .ignoresVirtual(),
+      .edgeCase(), // I assume it needs clanging scales and Kommo-O
     /* End Unused */
     new AttackMove(Moves.ZIPPY_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 50, 100, 15, -1, 2, 7) // LGPE Implementation
       .attr(CritOnlyAttr),
@@ -10177,9 +10416,9 @@ export function initMoves() {
       .punchingMove(),
     /* Unused */
     new SelfStatusMove(Moves.MAX_GUARD, Type.NORMAL, -1, 10, -1, 4, 8)
+      .unimplemented()
       .attr(ProtectAttr)
-      .condition(failIfLastCondition)
-      .ignoresVirtual(),
+      .condition(failIfLastCondition),
     /* End Unused */
     new AttackMove(Moves.DYNAMAX_CANNON, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => {
@@ -10192,8 +10431,7 @@ export function initMoves() {
           return 1;
         }
       })
-      .attr(DiscourageFrequentUseAttr)
-      .ignoresVirtual(),
+      .attr(DiscourageFrequentUseAttr),
 
     new AttackMove(Moves.SNIPE_SHOT, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
       .attr(HighCritAttr)
@@ -10239,76 +10477,58 @@ export function initMoves() {
     /* Unused */
     new AttackMove(Moves.MAX_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_FLUTTERBY, Type.BUG, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_LIGHTNING, Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_STRIKE, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_KNUCKLE, Type.FIGHTING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_PHANTASM, Type.GHOST, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_HAILSTORM, Type.ICE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_OOZE, Type.POISON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_GEYSER, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_AIRSTREAM, Type.FLYING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_STARFALL, Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_WYRMWIND, Type.DRAGON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_MINDSTORM, Type.PSYCHIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_ROCKFALL, Type.ROCK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_QUAKE, Type.GROUND, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_DARKNESS, Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_OVERGROWTH, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     new AttackMove(Moves.MAX_STEELSPIKE, Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY)
-      .unimplemented()
-      .ignoresVirtual(),
+      .unimplemented(),
     /* End Unused */
     new SelfStatusMove(Moves.CLANGOROUS_SOUL, Type.DRAGON, 100, 5, -1, 0, 8)
       .attr(CutHpStatStageBoostAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, 3)
@@ -10381,8 +10601,7 @@ export function initMoves() {
       .makesContact(false),
     new ChargingAttackMove(Moves.METEOR_BEAM, Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 8)
       .chargeText(i18next.t("moveTriggers:isOverflowingWithSpacePower", { pokemonName: "{USER}" }))
-      .chargeAttr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
-      .ignoresVirtual(),
+      .chargeAttr(StatStageChangeAttr, [ Stat.SPATK ], 1, true),
     new AttackMove(Moves.SHELL_SIDE_ARM, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 20, 0, 8)
       .attr(ShellSideArmCategoryAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON)
@@ -10841,8 +11060,7 @@ export function initMoves() {
     new ChargingAttackMove(Moves.ELECTRO_SHOT, Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, 100, 0, 9)
       .chargeText(i18next.t("moveTriggers:absorbedElectricity", { pokemonName: "{USER}" }))
       .chargeAttr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
-      .chargeAttr(WeatherInstantChargeAttr, [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ])
-      .ignoresVirtual(),
+      .chargeAttr(WeatherInstantChargeAttr, [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ]),
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraMoveCategoryAttr)
       .attr(TeraStarstormTypeAttr)
