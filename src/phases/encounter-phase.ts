@@ -104,6 +104,12 @@ export class EncounterPhase extends BattlePhase {
       }
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER) {
+          //resets hitRecCount during Trainer ecnounter
+          for (const pokemon of globalScene.getPlayerParty()) {
+            if (pokemon) {
+              pokemon.customPokemonData.resetHitRecivedCount();
+            }
+          }
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);

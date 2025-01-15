@@ -3993,11 +3993,33 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class HitCountPowerAttr extends VariablePowerAttr {
+/**
+ * This Attribute calculates the current power of {@linkcode Moves.RAGE_FIST}
+ * The counter for power calculation does not reset on every wave but on every new arena encounter
+ */
+export class RageFistPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value += Math.min(user.battleData.hitCount, 6) * 50;
+    const BDHitCount = user.battleData.hitCount;
+    const previousHitCount = user.battleData.prevHitCount;
+
+    this.updateHitRecivedCount(user, BDHitCount, previousHitCount);
+
+    console.log(`GHNote hitsRecCount: ${user.customPokemonData.hitsRecCount}`);
+
+    (args[0] as Utils.NumberHolder).value = 50 + (Math.min(user.customPokemonData.hitsRecCount, 6) * 50);
 
     return true;
+  }
+
+  /**
+   * Updates the hitCount of recived hits during this arena encounter
+   * @param user Pokemon calling Rage Fist
+   * @param BDHitCount The hitCount of reviced hits this battle up until the function is called
+   * @param previousHitCount The hitCount of reviced hits this battle the last time Rage Fist was called
+   */
+  updateHitRecivedCount(user: Pokemon, BDHitCount: number, previousHitCount: number): void {
+    user.customPokemonData.hitsRecCount += (BDHitCount - previousHitCount);
+    user.battleData.prevHitCount = BDHitCount;
   }
 }
 
@@ -11004,7 +11026,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.RAGE_FIST, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
       .partial() // Counter resets every wave instead of on arena reset
-      .attr(HitCountPowerAttr)
+      .attr(RageFistPowerAttr)
       .punchingMove(),
     new AttackMove(Moves.ARMOR_CANNON, Type.FIRE, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], -1, true),
