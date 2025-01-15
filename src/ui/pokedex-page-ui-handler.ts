@@ -4,7 +4,6 @@ import type { Variant } from "#app/data/variant";
 import { getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import type { AnySound } from "#app/battle-scene";
 import { starterColors } from "#app/battle-scene";
 import { allAbilities } from "#app/data/ability";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
@@ -578,9 +577,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.setSpecies(this.lastSpecies);
     this.updateInstructions();
 
-    const key = this.lastSpecies.getCryKey(this.lastFormIndex);
-    const rate = 0.85;
-    globalScene.playSound(key, { rate: rate }) as AnySound;
+    const crier = (this.lastSpecies.forms && this.lastSpecies.forms.length > 0) ? this.lastSpecies.forms[this.lastFormIndex] : this.lastSpecies;
+    crier.cry();
 
     return true;
 
