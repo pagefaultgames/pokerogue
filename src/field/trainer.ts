@@ -428,7 +428,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     // Prompts reroll of party member species if species already present in the enemy party
-    if (this.checkDuplicateSpecies(ret, baseSpecies)) {
+    if (this.checkDuplicateSpecies(baseSpecies.speciesId)) {
       console.log("Duplicate species detected, prompting reroll...");
       retry = true;
     }
@@ -443,17 +443,23 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   /**
    * Checks if the enemy trainer already has the Pokemon species in their party
-   * @param {PokemonSpecies} species {@linkcode PokemonSpecies}
-   * @param {PokemonSpecies} baseSpecies {@linkcode PokemonSpecies} - baseSpecies of the Pokemon if species is forced to evolve
+   * @param baseSpecies - The base {@linkcode Species} of the current Pokemon
    * @returns `true` if the species is already present in the party
    */
-  checkDuplicateSpecies(species: PokemonSpecies, baseSpecies: PokemonSpecies): boolean {
-    const staticPartyPokemon = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1);
-
-    const currentPartySpecies = globalScene.getEnemyParty().map(p => {
-      return p.species.speciesId;
+  checkDuplicateSpecies(baseSpecies: Species): boolean {
+    const staticSpecies = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1).map(s => {
+      let root = s;
+      while (pokemonPrevolutions.hasOwnProperty(root)) {
+        root = pokemonPrevolutions[root];
+      }
+      return root;
     });
-    return currentPartySpecies.includes(species.speciesId) || staticPartyPokemon.includes(baseSpecies.speciesId);
+
+    const currentSpecies = globalScene.getEnemyParty().map(p => {
+      return p.species.getRootSpeciesId();
+    });
+
+    return currentSpecies.includes(baseSpecies) || staticSpecies.includes(baseSpecies);
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [integer, integer][] {
