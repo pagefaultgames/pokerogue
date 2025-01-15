@@ -1,7 +1,7 @@
-import { Abilities } from "#enums/abilities";
-import { Type } from "#enums/type";
+import type { Abilities } from "#enums/abilities";
+import type { Type } from "#enums/type";
 import { isNullOrUndefined } from "#app/utils";
-import { Nature } from "#enums/nature";
+import type { Nature } from "#enums/nature";
 
 /**
  * Data that can customize a Pokemon in non-standard ways from its Species

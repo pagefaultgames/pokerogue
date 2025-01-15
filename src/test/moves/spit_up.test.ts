@@ -2,7 +2,8 @@ import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
 import { allMoves } from "#app/data/move";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { MoveResult, TurnMove } from "#app/field/pokemon";
+import type { TurnMove } from "#app/field/pokemon";
+import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -124,7 +125,7 @@ describe("Moves - Spit Up", () => {
     game.move.select(Moves.SPIT_UP);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.FAIL });
+    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.FAIL, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ]});
 
     expect(spitUp.calculateBattlePower).not.toHaveBeenCalled();
   });
@@ -147,7 +148,7 @@ describe("Moves - Spit Up", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ]});
 
       expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 
@@ -175,7 +176,7 @@ describe("Moves - Spit Up", () => {
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ]});
 
       expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 

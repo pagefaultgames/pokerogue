@@ -1,14 +1,15 @@
-import { Modifier } from "typescript";
-import BattleScene from "../battle-scene";
+import type { Modifier } from "typescript";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
 import * as Utils from "../utils";
 import { PlayerGender } from "#enums/player-gender";
-import { Challenge, FlipStatChallenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
-import { ConditionFn } from "#app/@types/common";
+import type { Challenge } from "#app/data/challenge";
+import { FlipStatChallenge, FreshStartChallenge, SingleGenerationChallenge, SingleTypeChallenge, InverseBattleChallenge } from "#app/data/challenge";
+import type { ConditionFn } from "#app/@types/common";
 import { Stat, getShortenedStatKey } from "#app/enums/stat";
 import { Challenges } from "#app/enums/challenges";
+import { globalScene } from "#app/global-scene";
 
 export enum AchvTier {
   COMMON,
@@ -66,8 +67,8 @@ export class Achv {
     return this;
   }
 
-  validate(scene: BattleScene, args?: any[]): boolean {
-    return !this.conditionFunc || this.conditionFunc(scene, args);
+  validate(args?: any[]): boolean {
+    return !this.conditionFunc || this.conditionFunc(args);
   }
 
   getTier(): AchvTier {
@@ -91,7 +92,7 @@ export class MoneyAchv extends Achv {
   moneyAmount: integer;
 
   constructor(localizationKey: string, name: string, moneyAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, _args: any[]) => scene.money >= this.moneyAmount);
+    super(localizationKey, name, "", iconImage, score, (_args: any[]) => globalScene.money >= this.moneyAmount);
     this.moneyAmount = moneyAmount;
   }
 }
@@ -100,7 +101,7 @@ export class RibbonAchv extends Achv {
   ribbonAmount: integer;
 
   constructor(localizationKey: string, name: string, ribbonAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, _args: any[]) => scene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
+    super(localizationKey, name, "", iconImage, score, (_args: any[]) => globalScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
     this.ribbonAmount = ribbonAmount;
   }
 }
@@ -109,7 +110,7 @@ export class DamageAchv extends Achv {
   damageAmount: integer;
 
   constructor(localizationKey: string, name: string, damageAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
+    super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
     this.damageAmount = damageAmount;
   }
 }
@@ -118,7 +119,7 @@ export class HealAchv extends Achv {
   healAmount: integer;
 
   constructor(localizationKey: string, name: string, healAmount: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (_scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
+    super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
     this.healAmount = healAmount;
   }
 }
@@ -127,20 +128,20 @@ export class LevelAchv extends Achv {
   level: integer;
 
   constructor(localizationKey: string, name: string, level: integer, iconImage: string, score: integer) {
-    super(localizationKey, name, "", iconImage, score, (scene: BattleScene, args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
+    super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
     this.level = level;
   }
 }
 
 export class ModifierAchv extends Achv {
   constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, modifierFunc: (modifier: Modifier) => boolean) {
-    super(localizationKey, name, description, iconImage, score, (_scene: BattleScene, args: any[]) => modifierFunc((args[0] as Modifier)));
+    super(localizationKey, name, description, iconImage, score, (args: any[]) => modifierFunc((args[0] as Modifier)));
   }
 }
 
 export class ChallengeAchv extends Achv {
-  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, challengeFunc: (challenge: Challenge, scene: BattleScene) => boolean) {
-    super(localizationKey, name, description, iconImage, score, (_scene: BattleScene, args: any[]) => challengeFunc(args[0] as Challenge, _scene));
+  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, challengeFunc: (challenge: Challenge) => boolean) {
+    super(localizationKey, name, description, iconImage, score, (args: any[]) => challengeFunc(args[0] as Challenge));
   }
 }
 
@@ -152,7 +153,7 @@ export class ChallengeAchv extends Achv {
  */
 export function getAchievementDescription(localizationKey: string): string {
   // We need to get the player gender from the game data to add the correct prefix to the achievement name
-  const genderIndex = this?.scene?.gameData?.gender ?? PlayerGender.MALE; //TODO: why is `this` being used here!? We are not inside a scope (copied from original)
+  const genderIndex = globalScene?.gameData?.gender ?? PlayerGender.MALE;
   const genderStr = PlayerGender[genderIndex].toLowerCase();
 
   switch (localizationKey) {

@@ -1,18 +1,22 @@
 import * as Utils from "#app/utils";
 import i18next from "i18next";
-import { defaultStarterSpecies, DexAttrProps, GameData } from "#app/system/game-data";
-import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import type { DexAttrProps, GameData } from "#app/system/game-data";
+import { defaultStarterSpecies } from "#app/system/game-data";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import Pokemon, { PokemonMove } from "#app/field/pokemon";
-import { BattleType, FixedBattleConfig } from "#app/battle";
+import type Pokemon from "#app/field/pokemon";
+import { PokemonMove } from "#app/field/pokemon";
+import type { FixedBattleConfig } from "#app/battle";
+import { BattleType } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
-import { GameMode } from "#app/game-mode";
+import type { GameMode } from "#app/game-mode";
 import { Type } from "#enums/type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
-import { Moves } from "#enums/moves";
+import type { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
@@ -482,7 +486,7 @@ export class SingleGenerationChallenge extends Challenge {
     if (trainerTypes.length === 0) {
       return false;
     } else {
-      battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(scene => new Trainer(scene, trainerTypes[this.value - 1], TrainerVariant.DEFAULT));
+      battleConfig.setBattleType(BattleType.TRAINER).setGetTrainerFunc(() => new Trainer(trainerTypes[this.value - 1], TrainerVariant.DEFAULT));
       return true;
     }
   }

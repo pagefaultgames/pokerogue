@@ -7,7 +7,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#app/battle";
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 
 describe("Moves - Aroma Veil", () => {
   let phaserGame: Phaser.Game;
