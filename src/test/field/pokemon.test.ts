@@ -2,7 +2,7 @@ import { Species } from "#app/enums/species";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "../utils/gameManager";
 import { PokeballType } from "#enums/pokeball";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { Moves } from "#app/enums/moves";
 
 describe("Spec - Pokemon", () => {
