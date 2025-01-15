@@ -2699,6 +2699,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   };
 
   override destroy(): void {
+    // Without this the reference gets hung up and no startercontainers get GCd
     this.starterContainers = [];
   }
 
