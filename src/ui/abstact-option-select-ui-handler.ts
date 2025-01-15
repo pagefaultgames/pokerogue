@@ -7,7 +7,6 @@ import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { UiTheme } from "#app/enums/ui-theme";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -189,6 +188,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectContainer.setVisible(true);
     this.scrollCursor = 0;
+    this.fullCursor = 0;
     this.setCursor(0);
 
     if (this.config.delay) {
@@ -196,6 +196,11 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.optionSelectText.setAlpha(0.5);
       this.cursorObj?.setAlpha(0.8);
       globalScene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
+    }
+
+    if (this.config?.supportHover) {
+      // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
+      this.config?.options[this.unskippedIndices[this.fullCursor]]?.onHover?.();
     }
 
     return true;

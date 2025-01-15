@@ -1322,6 +1322,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     });
                     this.prevolutions.map(pre => {
                       const preSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.lastSpecies.speciesId]);
+
+                      let conditionText:string = "";
+                      if (pre.condition) {
+                        conditionText = i18next.t("pokedexUiHandler:evolveGeneric");
+                      } else if (pre.level > 1) {
+                        conditionText = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${pre.level}`;
+                      } else if (pre.item) {
+                        conditionText = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[pre.item].toUpperCase()}`) +
+                          " (" + (pre.item > 50 ? "Ultra" : "Great") + ")";
+                      } else {
+                        conditionText = "";
+                      }
+
                       options.push({
                         label: pre.preFormKey ?
                           this.getFormString(pre.preFormKey, preSpecies ?? this.lastSpecies, true) :
@@ -1337,22 +1350,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.clearText();
                           ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
                           return true;
-                        }
-                      });
-
-                      let label:string = "";
-                      if (pre.level > 1) {
-                        label = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${pre.level}`;
-                      } else if (pre.item) {
-                        label = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[pre.item].toUpperCase()}`) +
-                          " (" + (pre.item > 50 ? "Ultra" : "Great") + ")";
-                      } else {
-                        label = i18next.t("pokedexUiHandler:evolveGeneric");
-                      }
-                      options.push({
-                        label: label,
-                        skip: true,
-                        handler: () => false
+                        },
+                        onHover: () => this.showText(conditionText)
                       });
                     });
                   }
@@ -1368,6 +1367,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
                       const evoSpeciesStarterDexEntry = evoSpecies ? globalScene.gameData.dexData[evoSpecies.speciesId] : null;
                       const isCaughtEvo = evoSpeciesStarterDexEntry?.caughtAttr ? true : false;
+
+                      let conditionText:string = "";
+                      if (evo.condition) {
+                        conditionText = i18next.t("pokedexUiHandler:evolveGeneric");
+                      } else if (evo.level > 1) {
+                        conditionText = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${evo.level}`;
+                      } else if (evo.item) {
+                        conditionText = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
+                          " (" + (evo.item > 50 ? "Ultra" : "Great") + ")";
+                      } else {
+                        conditionText = "";
+                      }
+
                       options.push({
                         label: evo.evoFormKey ?
                           this.getFormString(evo.evoFormKey, evoSpecies ?? this.lastSpecies, true) :
@@ -1384,23 +1396,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.clearText();
                           ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
                           return true;
-                        }
-                      });
-                      let label:string = "";
-                      if (evo.condition) {
-                        label = i18next.t("pokedexUiHandler:evolveGeneric");
-                      } else if (evo.level > 1) {
-                        label = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${evo.level}`;
-                      } else if (evo.item) {
-                        label = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
-                          " (" + (evo.item > 50 ? "Ultra" : "Great") + ")";
-                      } else {
-                        label = i18next.t("pokedexUiHandler:evolveGeneric");
-                      }
-                      options.push({
-                        label: label,
-                        skip: true,
-                        handler: () => false
+                        },
+                        onHover: () => this.showText(conditionText)
                       });
                     });
                   }

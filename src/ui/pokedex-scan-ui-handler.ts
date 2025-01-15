@@ -21,7 +21,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   abilityKeys: string[];
   row: number;
 
-  constructor(scene, mode) {
+  constructor(mode) {
     super(mode);
   }
 
