@@ -89,6 +89,13 @@ export class NavigationManager {
     }
   }
 
+  /**
+   * Removes menus from the manager in preparation for reset
+   */
+  public clearNavigationMenus() {
+    this.navigationMenus.length = 0;
+  }
+
 }
 
 export default class NavigationMenu extends Phaser.GameObjects.Container {

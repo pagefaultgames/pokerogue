@@ -1191,6 +1191,9 @@ export default class BattleScene extends SceneBase {
         onComplete: () => {
           this.clearPhaseQueue();
 
+          this.ui.freeUIData();
+          this.uiContainer.remove(this.ui, true);
+          this.uiContainer.destroy();
           this.children.removeAll(true);
           this.game.domContainer.innerHTML = "";
           this.launchBattle();
