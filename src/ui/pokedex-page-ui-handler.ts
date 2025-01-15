@@ -12,7 +12,8 @@ import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { allMoves } from "#app/data/move";
 import { getNatureName } from "#app/data/nature";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
+import type { SpeciesFormChange } from "#app/data/pokemon-forms";
+import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type { PokemonForm } from "#app/data/pokemon-species";
@@ -214,7 +215,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private baseStats: number[];
   private baseTotal: number;
   private evolutions: SpeciesFormEvolution[];
-  private battleForms: PokemonForm[];
+  private battleForms: SpeciesFormChange[];
   private prevolutions: SpeciesFormEvolution[];
 
   private speciesStarterDexEntry: DexEntry | null;
@@ -648,21 +649,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.getStarterSpeciesId(species.speciesId));
     this.biomes = this.sanitizeBiomes(allBiomes, species.speciesId);
 
-    this.battleForms = species.forms.filter(f => !f.isStarterSelectable);
+    const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId) ? pokemonFormChanges[species.speciesId] : [];
+    this.battleForms = allFormChanges.filter(f => (f.preFormKey === this.lastSpecies.forms[this.lastFormIndex].formKey));
 
     const preSpecies = pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId) ? allSpecies.find(sp => sp.speciesId === pokemonPrevolutions[this.lastSpecies.speciesId]) : null;
     if (preSpecies) {
       const preEvolutions = pokemonEvolutions.hasOwnProperty(preSpecies.speciesId) ? pokemonEvolutions[preSpecies.speciesId] : [];
       this.prevolutions = preEvolutions.filter(
         e => e.speciesId === species.speciesId && ((e.evoFormKey === "" || e.evoFormKey === null) || e.evoFormKey === species.forms[formIndex]?.formKey));
-    }
-
-    if (this.battleForms.find(bf => bf.formIndex === this.lastFormIndex)) {
-      const indexToRemove = this.battleForms.findIndex(form => form.formIndex === this.lastFormIndex);
-      if (indexToRemove !== -1) {
-        this.battleForms.splice(indexToRemove, 1);
-      }
-      this.battleForms.unshift(this.lastSpecies.forms[0]);
     }
   }
 
@@ -1410,21 +1404,32 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => false
                     });
                     this.battleForms.map(bf => {
+                      let conditionText:string = "";
+                      if (bf.trigger instanceof SpeciesFormChangeItemTrigger) {
+                        const item = bf.trigger.item;
+                        conditionText = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:FormChangeItem.${FormChangeItem[item].toUpperCase()}`) +
+                          " (" + (item > 100 ? "Ultra" : "Rogue") + ")";
+                      } else if (bf.trigger) {
+                        conditionText = i18next.t("pokedexUiHandler:evolveGeneric");
+                      } else {
+                        conditionText = "";
+                      }
                       let label: string = this.getFormString(bf.formKey, this.lastSpecies);
-                      if (!label && bf.formIndex === 0) {
+                      if (label === "") {
                         label = this.lastSpecies.name;
                       }
                       options.push({
                         label: label,
                         handler: () => {
                           const newSpecies = this.lastSpecies;
-                          const newFormIndex = bf.formIndex;
+                          const newFormIndex = this.lastSpecies.forms.find(f => f.formKey === bf.formKey)?.formIndex;
                           this.starterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
                           ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
                           return true;
-                        }
+                        },
+                        onHover: () => this.showText(conditionText)
                       });
                     });
                   }
@@ -1723,7 +1728,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
-    console.log(success, error);
     if (success) {
       ui.playSelect();
     } else if (error) {
