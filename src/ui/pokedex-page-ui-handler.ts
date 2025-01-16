@@ -651,7 +651,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     if (preSpecies) {
       const preEvolutions = pokemonEvolutions.hasOwnProperty(preSpecies.speciesId) ? pokemonEvolutions[preSpecies.speciesId] : [];
       this.prevolutions = preEvolutions.filter(
-        e => e.speciesId === species.speciesId && ((e.evoFormKey === "" || e.evoFormKey === null) || e.evoFormKey === species.forms[formIndex]?.formKey));
+        e => e.speciesId === species.speciesId && (
+          (
+            (e.evoFormKey === "" || e.evoFormKey === null) &&
+            (
+              // This takes care of Cosplay Pikachu (Pichu is not shown)
+              (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey)) ||
+              // This takes care of Gholdengo
+              (preSpecies.forms.length > 0 && species.forms.length === 0)
+            )
+          )
+          // This takes care of Burmy, Shellos etc
+          || e.evoFormKey === species.forms[formIndex]?.formKey)
+      );
     }
   }
 
@@ -1311,7 +1323,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         handler: () => {
                           const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
                           // Attempts to find the formIndex of the evolved species
-                          const newFormKey = pre.evoFormKey ? pre.evoFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
+                          const newFormKey = pre.preFormKey ? pre.preFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
                           const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
                           const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
                           this.starterAttributes.form = newFormIndex;
