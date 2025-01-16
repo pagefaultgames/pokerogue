@@ -1380,8 +1380,9 @@ export class UserHpDamageAttr extends FixedDamageAttr {
 }
 
 export class TargetHalfHpDamageAttr extends FixedDamageAttr {
-  // the initial amount of hp the target had before the first hit
-  // used for multi lens
+  /**  the initial amount of hp the target had before the first hit;
+  used for multi lens hp cutting
+  */
   private initialHp: number;
   constructor() {
     super(0);
@@ -7062,10 +7063,11 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // get the last move used (excluding status based failures) as well as the corresponding moveset slot
     const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE)!;
     const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove.move)!;
-    // If the last move used can hit more than one target,
+    // If the last move used can hit more than one target or has variable targets,
     // re-compute the targets for the attack
     // (mainly for alternating double/single battle shenanigans)
     // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct
+    // TODO: Fix this once dragon darts gets smart targeting
     const moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets!;
 
     globalScene.queueMessage(i18next.t("moveTriggers:instructingMove", {
