@@ -1,5 +1,7 @@
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { decrypt, encrypt, GameData, SessionSaveData } from "#app/system/game-data";
+import type { ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#app/data/arena-tag";
+import type { SessionSaveData } from "#app/system/game-data";
+import { decrypt, encrypt, GameData } from "#app/system/game-data";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
@@ -116,8 +118,7 @@ describe("Moves - Toxic Spikes", () => {
 
   it("should persist through reload", async () => {
     game.override.startingWave(1);
-    const scene = game.scene;
-    const gameData = new GameData(scene);
+    const gameData = new GameData();
 
     await game.classicMode.runToSummon([ Species.MIGHTYENA ]);
 
@@ -128,10 +129,10 @@ describe("Moves - Toxic Spikes", () => {
     await game.phaseInterceptor.to("BattleEndPhase");
     await game.toNextWave();
 
-    const sessionData : SessionSaveData = gameData["getSessionSaveData"](game.scene);
+    const sessionData : SessionSaveData = gameData["getSessionSaveData"]();
     localStorage.setItem("sessionTestData", encrypt(JSON.stringify(sessionData), true));
     const recoveredData : SessionSaveData = gameData.parseSessionData(decrypt(localStorage.getItem("sessionTestData")!, true));
-    gameData.loadSession(game.scene, 0, recoveredData);
+    gameData.loadSession(0, recoveredData);
 
     expect(sessionData.arena.tags).toEqual(recoveredData.arena.tags);
     localStorage.removeItem("sessionTestData");
