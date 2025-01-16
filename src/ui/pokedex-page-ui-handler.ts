@@ -548,7 +548,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   show(args: any[]): boolean {
 
-
     if (args.length >= 1 && args[0] === "refresh") {
       return false;
     } else {
@@ -727,7 +726,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   initStarterPrefs(): StarterAttributes {
     const starterAttributes = this.starterAttributes;
     const dexEntry = globalScene.gameData.dexData[this.lastSpecies.speciesId];
-    const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
 
     // no preferences or Pokemon wasn't caught, return empty attribute
     if (!starterAttributes || !dexEntry.caughtAttr) {
@@ -740,11 +738,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const hasNonShiny = caughtAttr & DexAttr.NON_SHINY;
     if (starterAttributes.shiny && !hasShiny) {
       // shiny form wasn't unlocked, purging shiny and variant setting
-      delete starterAttributes.shiny;
-      delete starterAttributes.variant;
+      starterAttributes.shiny = false;
+      starterAttributes.variant = 0;
     } else if (starterAttributes.shiny === false && !hasNonShiny) {
       // non shiny form wasn't unlocked, purging shiny setting
-      delete starterAttributes.shiny;
+      starterAttributes.shiny = false;
     }
 
     if (starterAttributes.variant !== undefined) {
@@ -755,33 +753,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       ];
       if (isNaN(starterAttributes.variant) || starterAttributes.variant < 0 || !unlockedVariants[starterAttributes.variant]) {
         // variant value is invalid or requested variant wasn't unlocked, purging setting
-        delete starterAttributes.variant;
+        starterAttributes.variant = 0;
       }
     }
 
     if (starterAttributes.female !== undefined) {
       if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
         // requested gender wasn't unlocked, purging setting
-        delete starterAttributes.female;
-      }
-    }
-
-    if (starterAttributes.ability !== undefined) {
-      const speciesHasSingleAbility = this.lastSpecies.ability2 === this.lastSpecies.ability1;
-      const abilityAttr = starterData.abilityAttr;
-      const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
-      const hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
-      const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
-      // Due to a past bug it is possible that some Pokemon with a single ability have the ability2 flag
-      // In this case, we only count ability2 as valid if ability1 was not unlocked, otherwise we ignore it
-      const unlockedAbilities = [
-        hasAbility1,
-        speciesHasSingleAbility ? hasAbility2 && !hasAbility1 : hasAbility2,
-        hasHiddenAbility
-      ];
-      if (!unlockedAbilities[starterAttributes.ability]) {
-        // requested ability wasn't unlocked, purging setting
-        delete starterAttributes.ability;
+        starterAttributes.female = true;
       }
     }
 
@@ -789,14 +768,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     if (selectedForm !== undefined && (this.lastSpecies.forms[selectedForm]?.isStarterSelectable && !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))) {
       // requested form wasn't unlocked and is selectable as a starter
       delete starterAttributes.form;
-    }
-
-    if (starterAttributes.nature !== undefined) {
-      const unlockedNatures = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr);
-      if (unlockedNatures.indexOf(starterAttributes.nature as unknown as Nature) < 0) {
-        // requested nature wasn't unlocked, purging setting
-        delete starterAttributes.nature;
-      }
     }
 
     return starterAttributes;
@@ -1716,8 +1687,34 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
+            this.blockInput = true;
+            ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
+              const index = allSpecies.findIndex(species => species.speciesId === this.lastSpecies.speciesId);
+              const newIndex = index <= 0 ? allSpecies.length - 1 : index - 1;
+              const newSpecies = allSpecies[newIndex];
+              // Attempts to find the formIndex of the evolved species
+              const matchingForm = newSpecies?.forms.find(form => form.formKey === this.lastSpecies?.forms[this.lastFormIndex]?.formKey);
+              const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+              this.starterAttributes.form = newFormIndex;
+              this.moveInfoOverlay.clear();
+              this.clearText();
+              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+            });
+            this.blockInput = false;
             break;
           case Button.RIGHT:
+            ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
+              const index = allSpecies.findIndex(species => species.speciesId === this.lastSpecies.speciesId);
+              const newIndex = index >= allSpecies.length - 1 ? 0 : index + 1;
+              const newSpecies = allSpecies[newIndex];
+              // Attempts to find the formIndex of the evolved species
+              const matchingForm = newSpecies?.forms.find(form => form.formKey === this.lastSpecies?.forms[this.lastFormIndex]?.formKey);
+              const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+              this.starterAttributes.form = newFormIndex;
+              this.moveInfoOverlay.clear();
+              this.clearText();
+              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+            });
             break;
         }
       }
