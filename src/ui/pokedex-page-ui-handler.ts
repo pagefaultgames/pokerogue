@@ -577,9 +577,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.setSpecies(this.lastSpecies);
     this.updateInstructions();
 
-    const crier = (this.lastSpecies.forms && this.lastSpecies.forms.length > 0) ? this.lastSpecies.forms[this.lastFormIndex] : this.lastSpecies;
-    crier.cry();
-
     return true;
 
   }
@@ -2168,6 +2165,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonGenderText.setText("");
       }
 
+      if (dexEntry.caughtAttr) {
+        this.lastSpecies.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
+          const crier = (this.lastSpecies.forms && this.lastSpecies.forms.length > 0) ? this.lastSpecies.forms[formIndex ?? this.lastFormIndex] : this.lastSpecies;
+          crier.cry();
+        });
+      }
 
       if (dexEntry.caughtAttr || forSeen) {
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
