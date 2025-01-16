@@ -62,4 +62,9 @@ export default abstract class UiHandler {
   clear() {
     this.active = false;
   }
+  /**
+   * To be implemented by individual handlers when necessary to free memory
+   * Called when {@linkcode BattleScene} is reset
+   */
+  destroy(): void {}
 }

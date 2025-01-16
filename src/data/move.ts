@@ -7878,31 +7878,6 @@ export class LastResortAttr extends MoveAttr {
   }
 }
 
-
-/**
- * The move only works if the target has a transferable held item
- * @extends MoveAttr
- * @see {@linkcode getCondition}
- */
-export class AttackedByItemAttr extends MoveAttr {
-  /**
-   * @returns the {@linkcode MoveConditionFunc} for this {@linkcode Move}
-   */
-  getCondition(): MoveConditionFunc {
-    return (user: Pokemon, target: Pokemon, move: Move) => {
-      const heldItems = target.getHeldItems().filter(i => i.isTransferable);
-      if (heldItems.length === 0) {
-        return false;
-      }
-
-      const itemName = heldItems[0]?.type?.name ?? "item";
-      globalScene.queueMessage(i18next.t("moveTriggers:attackedByItem", { pokemonName: getPokemonNameWithAffix(target), itemName: itemName }));
-
-      return true;
-    };
-  }
-}
-
 export class VariableTargetAttr extends MoveAttr {
   private targetChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
@@ -7975,6 +7950,18 @@ const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Po
 };
 
 const failIfGhostTypeCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => !target.isOfType(Type.GHOST);
+
+const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => target.getHeldItems().filter(i => i.isTransferable)?.length > 0;
+
+const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
+  const heldItems = target.getHeldItems().filter(i => i.isTransferable);
+  if (heldItems.length === 0) {
+    return "";
+  }
+  const itemName = heldItems[0]?.type?.name ?? "item";
+  const message: string = i18next.t("moveTriggers:attackedByItem", { pokemonName: getPokemonNameWithAffix(target), itemName: itemName });
+  return message;
+};
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
@@ -10641,7 +10628,8 @@ export function initMoves() {
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) => user.turnData.statStagesDecreased ? 2 : 1),
     new AttackMove(Moves.POLTERGEIST, Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, 0, 8)
-      .attr(AttackedByItemAttr)
+      .condition(failIfNoTargetHeldItemsCondition)
+      .attr(PreMoveMessageAttr, attackedByItemMessageFunc)
       .makesContact(false),
     new StatusMove(Moves.CORROSIVE_GAS, Type.POISON, 100, 40, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS)
