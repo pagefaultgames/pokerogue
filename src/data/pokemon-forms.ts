@@ -1,18 +1,19 @@
 import { PokemonFormChangeItemModifier, TerastallizeModifier } from "../modifier/modifier";
-import Pokemon from "../field/pokemon";
+import type Pokemon from "../field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import { MoveCategory, allMoves } from "./move";
 import { Type } from "#enums/type";
-import { Constructor, nil } from "#app/utils";
+import type { Constructor, nil } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { TimeOfDay } from "#enums/time-of-day";
+import type { TimeOfDay } from "#enums/time-of-day";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { WeatherType } from "#enums/weather-type";
 import { Challenges } from "#app/enums/challenges";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { globalScene } from "#app/global-scene";
 
 export enum FormChangeItem {
   NONE,
@@ -259,7 +260,7 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!pokemon.scene.findModifier(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id && m.formChangeItem === this.item && m.active === this.active);
+    return !!globalScene.findModifier(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id && m.formChangeItem === this.item && m.active === this.active);
   }
 }
 
@@ -272,7 +273,7 @@ export class SpeciesFormChangeTimeOfDayTrigger extends SpeciesFormChangeTrigger 
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return this.timesOfDay.indexOf(pokemon.scene.arena.getTimeOfDay()) > -1;
+    return this.timesOfDay.indexOf(globalScene.arena.getTimeOfDay()) > -1;
   }
 }
 
@@ -335,7 +336,7 @@ export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrig
 
 export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigger {
   canChange(pokemon: Pokemon): boolean {
-    const command = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
+    const command = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
     return !!command?.move && this.movePredicate(command.move.move) === this.used;
   }
 }
@@ -348,7 +349,7 @@ export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigg
 
 export class MeloettaFormChangePostMoveTrigger extends SpeciesFormChangePostMoveTrigger {
   override canChange(pokemon: Pokemon): boolean {
-    if (pokemon.scene.gameMode.hasChallenge(Challenges.SINGLE_TYPE)) {
+    if (globalScene.gameMode.hasChallenge(Challenges.SINGLE_TYPE)) {
       return false;
     } else {
       // Meloetta will not transform if it has the ability Sheer Force when using Relic Song
@@ -369,7 +370,7 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return this.formKey === pokemon.species.forms[pokemon.scene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)].formKey;
+    return this.formKey === pokemon.species.forms[globalScene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)].formKey;
   }
 }
 
@@ -393,7 +394,7 @@ export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
    * @returns `true` if the Pokémon can change forms, `false` otherwise
    */
   canChange(pokemon: Pokemon): boolean {
-    return !!pokemon.scene.findModifier(m => m instanceof TerastallizeModifier && m.pokemonId === pokemon.id && m.teraType === this.teraType);
+    return !!globalScene.findModifier(m => m instanceof TerastallizeModifier && m.pokemonId === pokemon.id && m.teraType === this.teraType);
   }
 }
 
@@ -404,7 +405,7 @@ export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
  */
 export class SpeciesFormChangeLapseTeraTrigger extends SpeciesFormChangeTrigger {
   canChange(pokemon: Pokemon): boolean {
-    return !!pokemon.scene.findModifier(m => m instanceof TerastallizeModifier && m.pokemonId === pokemon.id);
+    return !!globalScene.findModifier(m => m instanceof TerastallizeModifier && m.pokemonId === pokemon.id);
   }
 }
 
@@ -432,8 +433,8 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
    * @returns `true` if the Pokemon can change forms, `false` otherwise
    */
   canChange(pokemon: Pokemon): boolean {
-    const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
-    const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+    const currentWeather = globalScene.arena.weather?.weatherType ?? WeatherType.NONE;
+    const isWeatherSuppressed = globalScene.arena.weather?.isEffectSuppressed();
     const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
 
     return !isAbilitySuppressed && !isWeatherSuppressed && (pokemon.hasAbility(this.ability) && this.weathers.includes(currentWeather));
@@ -466,8 +467,8 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
    */
   canChange(pokemon: Pokemon): boolean {
     if (pokemon.hasAbility(this.ability, false, true)) {
-      const currentWeather = pokemon.scene.arena.weather?.weatherType ?? WeatherType.NONE;
-      const isWeatherSuppressed = pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene);
+      const currentWeather = globalScene.arena.weather?.weatherType ?? WeatherType.NONE;
+      const isWeatherSuppressed = globalScene.arena.weather?.isEffectSuppressed();
       const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
       const summonDataAbility = pokemon.summonData.ability;
       const isAbilityChanged = summonDataAbility !== this.ability && summonDataAbility !== Abilities.NONE;
@@ -510,7 +511,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
  * @returns A {@linkcode SpeciesFormChangeCondition} checking if that species is registered as caught
  */
 function getSpeciesDependentFormChangeCondition(species: Species): SpeciesFormChangeCondition {
-  return new SpeciesFormChangeCondition(p => !!p.scene.gameData.dexData[species].caughtAttr);
+  return new SpeciesFormChangeCondition(p => !!globalScene.gameData.dexData[species].caughtAttr);
 }
 
 interface PokemonFormChanges {
@@ -770,8 +771,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.KYUREM, "", "white", new SpeciesFormChangeItemTrigger(FormChangeItem.LIGHT_STONE), false, getSpeciesDependentFormChangeCondition(Species.RESHIRAM))
   ],
   [Species.KELDEO]: [
-    new SpeciesFormChange(Species.KELDEO, "ordinary", "resolute", new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD), false, new SpeciesFormChangeCondition((p) => p.scene.gameMode.isDaily !== true)),
-    new SpeciesFormChange(Species.KELDEO, "resolute", "ordinary", new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD, false), false, new SpeciesFormChangeCondition((p) => p.scene.gameMode.isDaily !== true))
+    new SpeciesFormChange(Species.KELDEO, "ordinary", "resolute", new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD), false, new SpeciesFormChangeCondition(() => globalScene.gameMode.isDaily !== true)),
+    new SpeciesFormChange(Species.KELDEO, "resolute", "ordinary", new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD, false), false, new SpeciesFormChangeCondition(() => globalScene.gameMode.isDaily !== true))
   ],
   [Species.MELOETTA]: [
     new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new MeloettaFormChangePostMoveTrigger(Moves.RELIC_SONG), true),

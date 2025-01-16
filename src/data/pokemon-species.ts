@@ -1,21 +1,25 @@
-import { Localizable } from "#app/interfaces/locales";
+import type { Localizable } from "#app/interfaces/locales";
 import { Abilities } from "#enums/abilities";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
-import BattleScene, { AnySound } from "#app/battle-scene";
-import { GameMode } from "#app/game-mode";
-import { StarterMoveset } from "#app/system/game-data";
+import type { AnySound } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
+import type { GameMode } from "#app/game-mode";
+import type { StarterMoveset } from "#app/system/game-data";
 import * as Utils from "#app/utils";
 import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate } from "#app/data/exp";
-import { EvolutionLevel, SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import type { EvolutionLevel } from "#app/data/balance/pokemon-evolutions";
+import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { Type } from "#enums/type";
-import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
-import { Stat } from "#enums/stat";
-import { Variant, VariantSet, variantData } from "#app/data/variant";
+import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
+import { pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
+import type { Stat } from "#enums/stat";
+import type { Variant, VariantSet } from "#app/data/variant";
+import { variantData } from "#app/data/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
@@ -490,34 +494,33 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
-  loadAssets(scene: BattleScene, female: boolean, formIndex?: number, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
+  loadAssets(female: boolean, formIndex?: number, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
       const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
-      scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
-      scene.load.audio(`${this.getCryKey(formIndex)}`, `audio/${this.getCryKey(formIndex)}.m4a`);
-      scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+      globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
+      globalScene.load.audio(`${this.getCryKey(formIndex)}`, `audio/${this.getCryKey(formIndex)}.m4a`);
+      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
         console.warn = () => {};
-        const frameNames = scene.anims.generateFrameNames(spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
+        const frameNames = globalScene.anims.generateFrameNames(spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
         console.warn = originalWarn;
-        if (!(scene.anims.exists(spriteKey))) {
-          scene.anims.create({
+        if (!(globalScene.anims.exists(spriteKey))) {
+          globalScene.anims.create({
             key: this.getSpriteKey(female, formIndex, shiny, variant),
             frames: frameNames,
             frameRate: 10,
             repeat: -1
           });
         } else {
-          scene.anims.get(spriteKey).frameRate = 10;
+          globalScene.anims.get(spriteKey).frameRate = 10;
         }
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
-        scene.loadPokemonVariantAssets(spriteKey, spritePath, variant);
-        resolve();
+        globalScene.loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
       });
       if (startLoad) {
-        if (!scene.load.isLoading()) {
-          scene.load.start();
+        if (!globalScene.load.isLoading()) {
+          globalScene.load.start();
         }
       } else {
         resolve();
@@ -525,21 +528,21 @@ export abstract class PokemonSpeciesForm {
     });
   }
 
-  cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
+  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
     const cryKey = this.getCryKey(this.formIndex);
-    let cry: AnySound | null = scene.sound.get(cryKey) as AnySound;
+    let cry: AnySound | null = globalScene.sound.get(cryKey) as AnySound;
     if (cry?.pendingRemove) {
       cry = null;
     }
-    cry = scene.playSound(cry ?? cryKey, soundConfig);
+    cry = globalScene.playSound(cry ?? cryKey, soundConfig);
     if (ignorePlay) {
       cry.stop();
     }
     return cry;
   }
 
-  generateCandyColors(scene: BattleScene): number[][] {
-    const sourceTexture = scene.textures.get(this.getSpriteKey(false));
+  generateCandyColors(): number[][] {
+    const sourceTexture = globalScene.textures.get(this.getSpriteKey(false));
 
     const sourceFrame = sourceTexture.frames[sourceTexture.firstFrame];
     const sourceImage = sourceTexture.getSourceImage() as HTMLImageElement;
@@ -582,7 +585,7 @@ export abstract class PokemonSpeciesForm {
     const originalRandom = Math.random;
     Math.random = () => Phaser.Math.RND.realInRange(0, 1);
 
-    scene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       paletteColors = QuantizerCelebi.quantize(pixelColors, 2);
     }, 0, "This result should not vary");
 
@@ -944,29 +947,15 @@ export class PokemonForm extends PokemonSpeciesForm {
   }
 }
 
-export const noStarterFormKeys: string[] = [
-  SpeciesFormKey.MEGA,
-  SpeciesFormKey.MEGA_X,
-  SpeciesFormKey.MEGA_Y,
-  SpeciesFormKey.PRIMAL,
-  SpeciesFormKey.ORIGIN,
-  SpeciesFormKey.THERIAN,
-  SpeciesFormKey.GIGANTAMAX,
-  SpeciesFormKey.GIGANTAMAX_RAPID,
-  SpeciesFormKey.GIGANTAMAX_SINGLE,
-  SpeciesFormKey.ETERNAMAX
-].map(k => k.toString());
-
 /**
 * Method to get the daily list of starters with Pokerus.
-* @param scene {@linkcode BattleScene} used as part of RNG
 * @returns A list of starters with Pokerus
 */
-export function getPokerusStarters(scene: BattleScene): PokemonSpecies[] {
+export function getPokerusStarters(): PokemonSpecies[] {
   const pokerusStarters: PokemonSpecies[] = [];
   const date = new Date();
   date.setUTCHours(0, 0, 0, 0);
-  scene.executeWithSeedOffset(() => {
+  globalScene.executeWithSeedOffset(() => {
     while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
       const randomSpeciesId = parseInt(Utils.randSeedItem(Object.keys(speciesStarterCosts)), 10);
       const species = getPokemonSpecies(randomSpeciesId);
@@ -1831,7 +1820,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.COFAGRIGUS, 5, false, false, false, "Coffin Pokémon", Type.GHOST, null, 1.7, 76.5, Abilities.MUMMY, Abilities.NONE, Abilities.NONE, 483, 58, 50, 145, 95, 105, 30, 90, 50, 169, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.TIRTOUGA, 5, false, false, false, "Prototurtle Pokémon", Type.WATER, Type.ROCK, 0.7, 16.5, Abilities.SOLID_ROCK, Abilities.STURDY, Abilities.SWIFT_SWIM, 355, 54, 78, 103, 53, 45, 22, 45, 50, 71, GrowthRate.MEDIUM_FAST, 87.5, false),
     new PokemonSpecies(Species.CARRACOSTA, 5, false, false, false, "Prototurtle Pokémon", Type.WATER, Type.ROCK, 1.2, 81, Abilities.SOLID_ROCK, Abilities.STURDY, Abilities.SWIFT_SWIM, 495, 74, 108, 133, 83, 65, 32, 45, 50, 173, GrowthRate.MEDIUM_FAST, 87.5, false),
-    new PokemonSpecies(Species.ARCHEN, 5, false, false, false, "First Bird Pokémon", Type.ROCK, Type.FLYING, 0.5, 9.5, Abilities.DEFEATIST, Abilities.NONE, Abilities.EMERGENCY_EXIT, 401, 55, 112, 45, 74, 45, 70, 45, 50, 71, GrowthRate.MEDIUM_FAST, 87.5, false), //Custom Hidden
+    new PokemonSpecies(Species.ARCHEN, 5, false, false, false, "First Bird Pokémon", Type.ROCK, Type.FLYING, 0.5, 9.5, Abilities.DEFEATIST, Abilities.NONE, Abilities.WIMP_OUT, 401, 55, 112, 45, 74, 45, 70, 45, 50, 71, GrowthRate.MEDIUM_FAST, 87.5, false), //Custom Hidden
     new PokemonSpecies(Species.ARCHEOPS, 5, false, false, false, "First Bird Pokémon", Type.ROCK, Type.FLYING, 1.4, 32, Abilities.DEFEATIST, Abilities.NONE, Abilities.EMERGENCY_EXIT, 567, 75, 140, 65, 112, 65, 110, 45, 50, 177, GrowthRate.MEDIUM_FAST, 87.5, false), //Custom Hidden
     new PokemonSpecies(Species.TRUBBISH, 5, false, false, false, "Trash Bag Pokémon", Type.POISON, null, 0.6, 31, Abilities.STENCH, Abilities.STICKY_HOLD, Abilities.AFTERMATH, 329, 50, 50, 62, 40, 62, 65, 190, 50, 66, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.GARBODOR, 5, false, false, false, "Trash Heap Pokémon", Type.POISON, null, 1.9, 107.3, Abilities.STENCH, Abilities.WEAK_ARMOR, Abilities.AFTERMATH, 474, 80, 95, 82, 60, 82, 75, 60, 50, 166, GrowthRate.MEDIUM_FAST, 50, false, true,

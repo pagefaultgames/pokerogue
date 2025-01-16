@@ -1,4 +1,3 @@
-import BattleScene from "../../battle-scene";
 import { Mode } from "../ui";
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
 import {
@@ -10,12 +9,13 @@ import {
 } from "#app/system/settings/settings-keyboard";
 import { reverseValueToKeySetting, truncateString } from "#app/utils";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
-import { InterfaceConfig } from "#app/inputs-controller";
+import type { InterfaceConfig } from "#app/inputs-controller";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { deleteBind } from "#app/configs/inputs/configHandler";
 import { Device } from "#enums/devices";
 import { NavigationManager } from "#app/ui/settings/navigationMenu";
 import i18next from "i18next";
+import { globalScene } from "#app/global-scene";
 
 /**
  * Class representing the settings UI handler for keyboards.
@@ -26,11 +26,10 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
   /**
      * Creates an instance of SettingsKeyboardUiHandler.
      *
-     * @param scene - The BattleScene instance.
      * @param mode - The UI mode, optional.
      */
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
     this.titleSelected = "Keyboard";
     this.setting = SettingKeyboard;
     this.settingDeviceDefaults = settingKeyboardDefaults;
@@ -42,8 +41,8 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.settingBlacklisted = settingKeyboardBlackList;
     this.device = Device.KEYBOARD;
 
-    const deleteEvent = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
-    const restoreDefaultEvent = scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
+    const deleteEvent = globalScene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DELETE);
+    const restoreDefaultEvent = globalScene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
     deleteEvent && deleteEvent.on("up", this.onDeleteDown, this);
     restoreDefaultEvent && restoreDefaultEvent.on("up", this.onHomeDown, this);
   }
@@ -57,19 +56,19 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     super.setup();
     // If no gamepads are detected, set up a default UI prompt in the settings container.
     this.layout["noKeyboard"] = new Map();
-    const optionsContainer = this.scene.add.container(0, 0);
+    const optionsContainer = globalScene.add.container(0, 0);
     optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
-    const label = addTextObject(this.scene, 8, 28, i18next.t("settings:keyboardPleasePress"), TextStyle.SETTINGS_LABEL);
+    const label = addTextObject(8, 28, i18next.t("settings:keyboardPleasePress"), TextStyle.SETTINGS_LABEL);
     label.setOrigin(0, 0);
     optionsContainer.add(label);
     this.settingsContainer.add(optionsContainer);
 
-    const iconDelete = this.scene.add.sprite(0, 0, "keyboard");
+    const iconDelete = globalScene.add.sprite(0, 0, "keyboard");
     iconDelete.setOrigin(0, -0.1);
     iconDelete.setPositionRelative(this.actionsBg, this.navigationContainer.width - 260, 4);
     this.navigationIcons["BUTTON_DELETE"] = iconDelete;
 
-    const deleteText = addTextObject(this.scene, 0, 0, i18next.t("settings:delete"), TextStyle.SETTINGS_LABEL);
+    const deleteText = addTextObject(0, 0, i18next.t("settings:delete"), TextStyle.SETTINGS_LABEL);
     deleteText.setOrigin(0, 0.15);
     deleteText.setPositionRelative(iconDelete, -deleteText.width / 6 - 2, 0);
 
@@ -86,10 +85,10 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
      * Handle the home key press event.
      */
   onHomeDown(): void {
-    if (![ Mode.SETTINGS_KEYBOARD, Mode.SETTINGS_GAMEPAD ].includes(this.scene.ui.getMode())) {
+    if (![ Mode.SETTINGS_KEYBOARD, Mode.SETTINGS_GAMEPAD ].includes(globalScene.ui.getMode())) {
       return;
     }
-    this.scene.gameData.resetMappingToFactory();
+    globalScene.gameData.resetMappingToFactory();
     NavigationManager.getInstance().updateIcons();
   }
 
@@ -97,7 +96,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
      * Handle the delete key press event.
      */
   onDeleteDown(): void {
-    if (this.scene.ui.getMode() !== Mode.SETTINGS_KEYBOARD) {
+    if (globalScene.ui.getMode() !== Mode.SETTINGS_KEYBOARD) {
       return;
     }
     const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
@@ -153,7 +152,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
           } // Skip updating the no gamepad layout.
           // Update the text of the first option label under the current setting to the name of the chosen gamepad,
           // truncating the name to 30 characters if necessary.
-          this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.selectedDevice[Device.KEYBOARD], 22));
+          this.layout[_key].optionValueLabels[index][0].setText(truncateString(globalScene.inputController.selectedDevice[Device.KEYBOARD], 22));
         }
       }
     }
@@ -166,7 +165,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
      * @param config - The configuration to save.
      */
   saveCustomKeyboardMappingToLocalStorage(config): void {
-    this.scene.gameData.saveMappingConfigs(this.scene.inputController?.selectedDevice[Device.KEYBOARD], config);
+    globalScene.gameData.saveMappingConfigs(globalScene.inputController?.selectedDevice[Device.KEYBOARD], config);
   }
 
   /**
@@ -177,7 +176,7 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
      */
   saveSettingToLocalStorage(settingName, cursor): void {
     if (this.setting[settingName] !== this.setting.Default_Layout) {
-      this.scene.gameData.saveControlSetting(this.device, this.localStoragePropertyName, settingName, this.settingDeviceDefaults, cursor);
+      globalScene.gameData.saveControlSetting(this.device, this.localStoragePropertyName, settingName, this.settingDeviceDefaults, cursor);
     }
   }
 }

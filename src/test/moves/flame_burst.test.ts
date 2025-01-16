@@ -1,6 +1,6 @@
 import { allAbilities } from "#app/data/ability";
 import { Abilities } from "#app/enums/abilities";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
