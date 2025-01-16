@@ -179,7 +179,7 @@ describe("Moves - Instruct", () => {
     const amoonguss = game.scene.getPlayerPokemon()!;
     game.move.changeMoveset(amoonguss, Moves.SEED_BOMB);
 
-    amoonguss.battleSummonData.moveHistory = [{ move: Moves.SEED_BOMB, result: MoveResult.SUCCESS }];
+    amoonguss.battleSummonData.moveHistory = [{ move: Moves.SEED_BOMB, targets: [ BattlerIndex.ENEMY ], result: MoveResult.SUCCESS }];
 
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase", false);
