@@ -196,8 +196,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private statsMode: boolean;
 
   private allSpecies: PokemonSpecies[] = [];
-  private lastSpecies: PokemonSpecies;
-  private lastFormIndex: number;
+  private species: PokemonSpecies;
+  private formIndex: number;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
   private levelMoves: LevelMoves;
   private eggMoves: Moves[] = [];
@@ -234,6 +234,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private filterInstructionRowY = 0;
 
   private starterAttributes: StarterAttributes;
+  private savedStarterAttributes: StarterAttributes;
 
   protected blockInput: boolean = false;
   protected blockInputOverlay: boolean = false;
@@ -551,9 +552,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     if (args.length >= 1 && args[0] === "refresh") {
       return false;
     } else {
-      this.lastSpecies = args[0];
-      this.lastFormIndex = args[1] ?? 0;
-      this.starterAttributes = args[2] ?? { shiny:false, female:true, variant:0, form:0 };
+      this.species = args[0];
+      this.formIndex = args[1] ?? 0;
+      this.savedStarterAttributes = args[2] ?? { shiny:false, female:true, variant:0, form:0 };
       this.starterSetup();
     }
 
@@ -573,7 +574,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.setCursor(0);
 
-    this.setSpecies(this.lastSpecies);
+    this.setSpecies(this.species);
     this.updateInstructions();
 
     return true;
@@ -586,8 +587,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.prevolutions = [];
     this.battleForms = [];
 
-    const species = this.lastSpecies;
-    const formIndex = this.lastFormIndex ?? 0;
+    const species = this.species;
+    const formIndex = this.formIndex ?? 0;
 
     const allEvolutions = pokemonEvolutions.hasOwnProperty(species.speciesId) ? pokemonEvolutions[species.speciesId] : [];
 
@@ -644,9 +645,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.biomes = this.sanitizeBiomes(allBiomes, species.speciesId);
 
     const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId) ? pokemonFormChanges[species.speciesId] : [];
-    this.battleForms = allFormChanges.filter(f => (f.preFormKey === this.lastSpecies.forms[this.lastFormIndex].formKey));
+    this.battleForms = allFormChanges.filter(f => (f.preFormKey === this.species.forms[this.formIndex].formKey));
 
-    const preSpecies = pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId) ? allSpecies.find(sp => sp.speciesId === pokemonPrevolutions[this.lastSpecies.speciesId]) : null;
+    const preSpecies = pokemonPrevolutions.hasOwnProperty(this.species.speciesId) ? allSpecies.find(sp => sp.speciesId === pokemonPrevolutions[this.species.speciesId]) : null;
     if (preSpecies) {
       const preEvolutions = pokemonEvolutions.hasOwnProperty(preSpecies.speciesId) ? pokemonEvolutions[preSpecies.speciesId] : [];
       this.prevolutions = preEvolutions.filter(
@@ -669,7 +670,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               return 0;
           }
         })();
-        return this.lastFormIndex === formIndex;
+        return this.formIndex === formIndex;
       });
 
     } else if (speciesId === Species.ROTOM) {
@@ -690,7 +691,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               return 0;
           }
         })();
-        return this.lastFormIndex === formIndex;
+        return this.formIndex === formIndex;
       });
 
     } else if (speciesId === Species.LYCANROC) {
@@ -708,7 +709,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               return 0;
           }
         })();
-        return this.lastFormIndex === formIndex;
+        return this.formIndex === formIndex;
       });
     }
 
@@ -724,8 +725,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * @returns StarterAttributes for the species
    */
   initStarterPrefs(): StarterAttributes {
-    const starterAttributes = this.starterAttributes;
-    const dexEntry = globalScene.gameData.dexData[this.lastSpecies.speciesId];
+    const starterAttributes : StarterAttributes | null = this.species ? { ...this.savedStarterAttributes } : null;
+    const dexEntry = globalScene.gameData.dexData[this.species.speciesId];
 
     // no preferences or Pokemon wasn't caught, return empty attribute
     if (!starterAttributes || !dexEntry.caughtAttr) {
@@ -751,9 +752,17 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         hasShiny && caughtAttr & DexAttr.VARIANT_2,
         hasShiny && caughtAttr & DexAttr.VARIANT_3
       ];
-      if (isNaN(starterAttributes.variant) || starterAttributes.variant < 0 || !unlockedVariants[starterAttributes.variant]) {
-        // variant value is invalid or requested variant wasn't unlocked, purging setting
+      if (isNaN(starterAttributes.variant) || starterAttributes.variant < 0) {
         starterAttributes.variant = 0;
+      } else if (!unlockedVariants[starterAttributes.variant]) {
+        let highestValidIndex = -1;
+        for (let i = 0; i <= starterAttributes.variant && i < unlockedVariants.length; i++) {
+          if (unlockedVariants[i] !== 0n) {
+            highestValidIndex = i;
+          }
+        }
+        // Set to the highest valid index found or default to 0
+        starterAttributes.variant = highestValidIndex !== -1 ? highestValidIndex : 0;
       }
     }
 
@@ -765,7 +774,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     const selectedForm = starterAttributes.form;
-    if (selectedForm !== undefined && (this.lastSpecies.forms[selectedForm]?.isStarterSelectable && !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))) {
+    if (selectedForm !== undefined && (this.species.forms[selectedForm]?.isStarterSelectable && !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))) {
       // requested form wasn't unlocked and is selectable as a starter
       delete starterAttributes.form;
     }
@@ -886,7 +895,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     } else {
 
-      const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(this.lastSpecies.speciesId)];
+      const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(this.species.speciesId)];
       // prepare persistent starter data to store changes
       const starterAttributes = this.starterAttributes;
 
@@ -1281,7 +1290,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => false
                     });
                     this.prevolutions.map(pre => {
-                      const preSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.lastSpecies.speciesId]);
+                      const preSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.species.speciesId]);
 
                       let conditionText:string = "";
                       if (pre.condition) {
@@ -1297,18 +1306,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                       options.push({
                         label: pre.preFormKey ?
-                          this.getFormString(pre.preFormKey, preSpecies ?? this.lastSpecies, true) :
-                          this.getRegionName(preSpecies ?? this.lastSpecies),
+                          this.getFormString(pre.preFormKey, preSpecies ?? this.species, true) :
+                          this.getRegionName(preSpecies ?? this.species),
                         handler: () => {
                           const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
                           // Attempts to find the formIndex of the evolved species
-                          const newFormKey = pre.evoFormKey ? pre.evoFormKey : (this.lastSpecies.forms.length > 0 ? this.lastSpecies.forms[this.lastFormIndex].formKey : "");
+                          const newFormKey = pre.evoFormKey ? pre.evoFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
                           const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
                           const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
                           this.starterAttributes.form = newFormIndex;
+                          this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText)
@@ -1342,19 +1352,20 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                       options.push({
                         label: evo.evoFormKey ?
-                          this.getFormString(evo.evoFormKey, evoSpecies ?? this.lastSpecies, true) :
-                          this.getRegionName(evoSpecies ?? this.lastSpecies),
+                          this.getFormString(evo.evoFormKey, evoSpecies ?? this.species, true) :
+                          this.getRegionName(evoSpecies ?? this.species),
                         style: isCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                         handler: () => {
                           const newSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
                           // Attempts to find the formIndex of the evolved species
-                          const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.lastSpecies.forms.length > 0 ? this.lastSpecies.forms[this.lastFormIndex].formKey : "");
+                          const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
                           const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
                           const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
                           this.starterAttributes.form = newFormIndex;
+                          this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText)
@@ -1380,19 +1391,20 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       } else {
                         conditionText = "";
                       }
-                      let label: string = this.getFormString(bf.formKey, this.lastSpecies);
+                      let label: string = this.getFormString(bf.formKey, this.species);
                       if (label === "") {
-                        label = this.lastSpecies.name;
+                        label = this.species.name;
                       }
                       options.push({
                         label: label,
                         handler: () => {
-                          const newSpecies = this.lastSpecies;
-                          const newFormIndex = this.lastSpecies.forms.find(f => f.formKey === bf.formKey)?.formIndex;
+                          const newSpecies = this.species;
+                          const newFormIndex = this.species.forms.find(f => f.formKey === bf.formKey)?.formIndex;
                           this.starterAttributes.form = newFormIndex;
+                          this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText)
@@ -1474,16 +1486,17 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         }
 
       } else {
-        const props = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
+        const props = globalScene.gameData.getSpeciesDexAttrProps(this.species, this.getCurrentDexProps(this.species.speciesId));
         switch (button) {
           case Button.CYCLE_SHINY:
             if (this.canCycleShiny) {
               starterAttributes.shiny = starterAttributes.shiny !== undefined ? !starterAttributes.shiny : false;
+              this.savedStarterAttributes.shiny = starterAttributes.shiny;
 
               if (starterAttributes.shiny) {
               // Change to shiny, we need to get the proper default variant
                 const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : 0;
-                this.setSpeciesDetails(this.lastSpecies, { shiny: true, variant: newVariant });
+                this.setSpeciesDetails(this.species, { shiny: true, variant: newVariant });
 
                 globalScene.playSound("se/sparkle");
                 // Set the variant label to the shiny tint
@@ -1492,7 +1505,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.pokemonShinyIcon.setTint(tint);
                 this.pokemonShinyIcon.setVisible(true);
               } else {
-                this.setSpeciesDetails(this.lastSpecies, { shiny: false, variant: 0 });
+                this.setSpeciesDetails(this.species, { shiny: false, variant: 0 });
                 this.pokemonShinyIcon.setVisible(false);
                 success = true;
               }
@@ -1518,7 +1531,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 }
               } while (newVariant !== props.variant);
               starterAttributes.variant = newVariant; // store the selected variant
-              this.setSpeciesDetails(this.lastSpecies, { variant: newVariant as Variant });
+              this.savedStarterAttributes.variant = starterAttributes.variant;
+              this.setSpeciesDetails(this.species, { variant: newVariant as Variant });
               // Cycle tint based on current sprite tint
               const tint = getVariantTint(newVariant as Variant);
               this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
@@ -1528,8 +1542,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
           case Button.CYCLE_FORM:
             if (this.canCycleForm) {
-              const formCount = this.lastSpecies.forms.length;
-              let newFormIndex = this.lastFormIndex;
+              const formCount = this.species.forms.length;
+              let newFormIndex = this.formIndex;
               do {
                 newFormIndex = (newFormIndex + 1) % formCount;
                 if (this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)) { // TODO: are those bangs correct?
@@ -1538,16 +1552,18 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               } while (newFormIndex !== props.formIndex);
               // TODO: Is this still needed?
               starterAttributes.form = newFormIndex; // store the selected form
-              this.lastFormIndex = newFormIndex;
+              this.savedStarterAttributes.form = starterAttributes.form;
+              this.formIndex = newFormIndex;
               this.starterSetup();
-              this.setSpeciesDetails(this.lastSpecies, { formIndex: newFormIndex });
+              this.setSpeciesDetails(this.species, { formIndex: newFormIndex });
               success = true;
             }
             break;
           case Button.CYCLE_GENDER:
             if (this.canCycleGender) {
               starterAttributes.female = !props.female;
-              this.setSpeciesDetails(this.lastSpecies, { female: !props.female });
+              this.savedStarterAttributes.female = starterAttributes.female;
+              this.setSpeciesDetails(this.species, { female: !props.female });
               success = true;
             }
             break;
@@ -1561,11 +1577,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               const passiveAttr = starterData.passiveAttr;
               const candyCount = starterData.candyCount;
 
-              if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+              if (!pokemonPrevolutions.hasOwnProperty(this.species.speciesId)) {
                 if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
-                  const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.getStarterSpeciesId(this.lastSpecies.speciesId)]);
+                  const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.getStarterSpeciesId(this.species.speciesId)]);
                   options.push({
-                    label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.getStarterSpeciesId(this.lastSpecies.speciesId)]].name})`,
+                    label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.getStarterSpeciesId(this.species.speciesId)]].name})`,
                     handler: () => {
                       if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                         starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
@@ -1579,7 +1595,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           }
                         });
                         ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                        this.setSpeciesDetails(this.lastSpecies);
+                        this.setSpeciesDetails(this.species);
                         globalScene.playSound("se/buy");
 
                         return true;
@@ -1587,14 +1603,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       return false;
                     },
                     item: "candy",
-                    itemArgs: starterColors[this.getStarterSpeciesId(this.lastSpecies.speciesId)]
+                    itemArgs: starterColors[this.getStarterSpeciesId(this.species.speciesId)]
                   });
                 }
 
                 // Reduce cost option
                 const valueReduction = starterData.valueReduction;
                 if (valueReduction < valueReductionMax) {
-                  const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(this.lastSpecies.speciesId)])[valueReduction];
+                  const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(this.species.speciesId)])[valueReduction];
                   options.push({
                     label: `x${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
                     handler: () => {
@@ -1617,12 +1633,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       return false;
                     },
                     item: "candy",
-                    itemArgs: starterColors[this.getStarterSpeciesId(this.lastSpecies.speciesId)]
+                    itemArgs: starterColors[this.getStarterSpeciesId(this.species.speciesId)]
                   });
                 }
 
                 // Same species egg menu option.
-                const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(this.lastSpecies.speciesId)]);
+                const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(this.species.speciesId)]);
                 options.push({
                   label: `x${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
                   handler: () => {
@@ -1637,7 +1653,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       }
                       this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
 
-                      const egg = new Egg({ scene: globalScene, species: this.lastSpecies.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG });
+                      const egg = new Egg({ scene: globalScene, species: this.species.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG });
                       egg.addEggToGameData();
 
                       globalScene.gameData.saveSystem().then(success => {
@@ -1653,7 +1669,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     return false;
                   },
                   item: "candy",
-                  itemArgs: starterColors[this.getStarterSpeciesId(this.lastSpecies.speciesId)]
+                  itemArgs: starterColors[this.getStarterSpeciesId(this.species.speciesId)]
                 });
                 options.push({
                   label: i18next.t("menu:cancel"),
@@ -1689,31 +1705,33 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           case Button.LEFT:
             this.blockInput = true;
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
-              const index = allSpecies.findIndex(species => species.speciesId === this.lastSpecies.speciesId);
+              const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
               const newIndex = index <= 0 ? allSpecies.length - 1 : index - 1;
               const newSpecies = allSpecies[newIndex];
               // Attempts to find the formIndex of the evolved species
-              const matchingForm = newSpecies?.forms.find(form => form.formKey === this.lastSpecies?.forms[this.lastFormIndex]?.formKey);
+              const matchingForm = newSpecies?.forms.find(form => form.formKey === this.species?.forms[this.formIndex]?.formKey);
               const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
               this.starterAttributes.form = newFormIndex;
+              this.savedStarterAttributes.form = newFormIndex;
               this.moveInfoOverlay.clear();
               this.clearText();
-              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
             });
             this.blockInput = false;
             break;
           case Button.RIGHT:
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
-              const index = allSpecies.findIndex(species => species.speciesId === this.lastSpecies.speciesId);
+              const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
               const newIndex = index >= allSpecies.length - 1 ? 0 : index + 1;
               const newSpecies = allSpecies[newIndex];
               // Attempts to find the formIndex of the evolved species
-              const matchingForm = newSpecies?.forms.find(form => form.formKey === this.lastSpecies?.forms[this.lastFormIndex]?.formKey);
+              const matchingForm = newSpecies?.forms.find(form => form.formKey === this.species?.forms[this.formIndex]?.formKey);
               const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
               this.starterAttributes.form = newFormIndex;
+              this.savedStarterAttributes.form = newFormIndex;
               this.moveInfoOverlay.clear();
               this.clearText();
-              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.starterAttributes);
+              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
             });
             break;
         }
@@ -1787,7 +1805,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (this.speciesStarterDexEntry?.caughtAttr) {
-      if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+      if (!pokemonPrevolutions.hasOwnProperty(this.species.speciesId)) {
         this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
       }
       if (this.canCycleShiny) {
@@ -1857,12 +1875,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   setSpecies(species: PokemonSpecies | null) {
     this.speciesStarterDexEntry = species ? globalScene.gameData.dexData[species.speciesId] : null;
+    const starterAttributes : StarterAttributes | null = species ? { ...this.starterAttributes } : null;
 
     if (!species && globalScene.ui.getTooltip().visible) {
       globalScene.ui.hideTooltip();
     }
-
-    const starterAttributes : StarterAttributes | null = species ? { ...this.starterAttributes } : null;
 
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
@@ -1875,7 +1892,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
-    this.lastSpecies = species!; // TODO: is this bang correct?
+    this.species = species!; // TODO: is this bang correct?
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
       this.pokemonNumberText.setText(padInt(species.speciesId, 4));
@@ -1946,7 +1963,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
 
-          const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
+          const { currentFriendship, friendshipCap } = this.getFriendship(this.species.speciesId);
           const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
           this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
 
@@ -2043,8 +2060,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
      || !isNullOrUndefined(formIndex) || !isNullOrUndefined(shiny) || !isNullOrUndefined(variant);
 
     if (this.activeTooltip === "CANDY") {
-      if (this.lastSpecies && this.pokemonCandyContainer.visible) {
-        const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
+      if (this.species && this.pokemonCandyContainer.visible) {
+        const { currentFriendship, friendshipCap } = this.getFriendship(this.species.speciesId);
         globalScene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
       } else {
         globalScene.ui.hideTooltip();
@@ -2163,8 +2180,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
 
       if (dexEntry.caughtAttr) {
-        this.lastSpecies.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
-          const crier = (this.lastSpecies.forms && this.lastSpecies.forms.length > 0) ? this.lastSpecies.forms[formIndex ?? this.lastFormIndex] : this.lastSpecies;
+        this.species.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
+          const crier = (this.species.forms && this.species.forms.length > 0) ? this.species.forms[formIndex ?? this.formIndex] : this.species;
           crier.cry();
         });
       }
