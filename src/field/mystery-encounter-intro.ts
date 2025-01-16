@@ -215,11 +215,12 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         resolve();
       }
 
+      const shinyPromises: Promise<void>[] = [];
       this.spriteConfigs.forEach((config) => {
         if (config.isPokemon) {
           globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
           if (config.isShiny) {
-            globalScene.loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant);
+            shinyPromises.push(globalScene.loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
           }
         } else if (config.isItem) {
           globalScene.loadAtlas("items", "");
@@ -254,7 +255,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           return true;
         });
 
-        resolve();
+        Promise.all(shinyPromises).then(() => resolve());
       });
 
       if (!globalScene.load.isLoading()) {
