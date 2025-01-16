@@ -89,7 +89,7 @@ export class MovePhase extends BattlePhase {
    *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze and volatile status checks, etc.
    */
 
-  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false) {
+  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false, forcedLast: boolean = false) {
     super();
 
     this.pokemon = pokemon;

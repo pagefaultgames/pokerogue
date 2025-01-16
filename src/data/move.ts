@@ -7938,21 +7938,21 @@ export class ForceLastAttr extends MoveEffectAttr {
    * @returns true
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    user.scene.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
+    globalScene.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
 
-    const targetMovePhase = target.scene.findPhase<MovePhase>((phase) => phase.pokemon === target);
-    if (targetMovePhase && !targetMovePhase.isForcedLast() && target.scene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+    const targetMovePhase = globalScene.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       // Finding the phase to insert the move in front of -
       // Either the end of the turn or in front of another, slower move which has also been forced last
-      const prependPhase = target.scene.findPhase((phase) =>
+      const prependPhase = globalScene.findPhase((phase) =>
         [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
-        || (phase instanceof MovePhase) && phaseForcedSlower(phase, target, !!target.scene.arena.getTag(ArenaTagType.TRICK_ROOM))
+        || (phase instanceof MovePhase) && phaseForcedSlower(phase, target, !!globalScene.arena.getTag(ArenaTagType.TRICK_ROOM))
       );
       if (prependPhase) {
-        target.scene.phaseQueue.splice(
-          target.scene.phaseQueue.indexOf(prependPhase),
+        globalScene.phaseQueue.splice(
+          globalScene.phaseQueue.indexOf(prependPhase),
           0,
-          new MovePhase(target.scene, target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, true)
+          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, true)
         );
       }
     }
