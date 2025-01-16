@@ -363,28 +363,30 @@ export default class BattleScene extends SceneBase {
   /**
    * Load the variant assets for the given sprite and stores them in {@linkcode variantColorCache}
    */
-  loadPokemonVariantAssets(spriteKey: string, fileRoot: string, variant?: Variant) {
+  public async loadPokemonVariantAssets(spriteKey: string, fileRoot: string, variant?: Variant): Promise<void> {
     const useExpSprite = this.experimentalSprites && this.hasExpSprite(spriteKey);
     if (useExpSprite) {
       fileRoot = `exp/${fileRoot}`;
     }
     let variantConfig = variantData;
-    fileRoot.split("/").map(p => variantConfig ? variantConfig = variantConfig[p] : null);
+    fileRoot.split("/").map((p) => (variantConfig ? (variantConfig = variantConfig[p]) : null));
     const variantSet = variantConfig as VariantSet;
-    if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
-      const populateVariantColors = (key: string): Promise<void> => {
-        return new Promise(resolve => {
-          if (variantColorCache.hasOwnProperty(key)) {
-            return resolve();
-          }
-          this.cachedFetch(`./images/pokemon/variant/${fileRoot}.json`).then(res => res.json()).then(c => {
-            variantColorCache[key] = c;
+
+    return new Promise<void>((resolve) => {
+      if (variantSet && variant !== undefined && variantSet[variant] === 1) {
+        if (variantColorCache.hasOwnProperty(spriteKey)) {
+          return resolve();
+        }
+        this.cachedFetch(`./images/pokemon/variant/${fileRoot}.json`)
+          .then((res) => res.json())
+          .then((c) => {
+            variantColorCache[spriteKey] = c;
             resolve();
           });
-        });
-      };
-      populateVariantColors(spriteKey);
-    }
+      } else {
+        resolve();
+      }
+    });
   }
 
   async preload() {
