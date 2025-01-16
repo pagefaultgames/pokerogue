@@ -53,6 +53,7 @@ import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import { Device } from "#enums/devices";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
+import { NavigationManager } from "./settings/navigationMenu";
 
 export enum Mode {
   MESSAGE,
@@ -613,5 +614,15 @@ export default class UI extends Phaser.GameObjects.Container {
     } else {
       return globalScene.inputMethod;
     }
+  }
+
+  /**
+   * Attempts to free memory held by UI handlers
+   * and clears menus from {@linkcode NavigationManager} to prepare for reset
+   */
+  public freeUIData(): void {
+    this.handlers.forEach(h => h.destroy());
+    this.handlers = [];
+    NavigationManager.getInstance().clearNavigationMenus();
   }
 }
