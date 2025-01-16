@@ -461,6 +461,7 @@ export default class GameManager {
   /**
    * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
    * Used to modify the turn order.
+   * Note: This *DOES NOT* account for priority.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
    * ```ts

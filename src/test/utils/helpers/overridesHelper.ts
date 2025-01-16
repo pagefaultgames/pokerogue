@@ -138,7 +138,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Abilities | ability}
+   * Override the player (pokemon) {@linkcode Abilities | ability}.
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
    * @returns `this`
    */

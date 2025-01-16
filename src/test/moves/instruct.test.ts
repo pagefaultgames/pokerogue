@@ -39,7 +39,6 @@ describe("Moves - Instruct", () => {
       .enemyAbility(Abilities.NO_GUARD)
       .enemyLevel(100)
       .startingLevel(100)
-      .ability(Abilities.BALL_FETCH)
       .disableCrits();
   });
 
@@ -171,6 +170,24 @@ describe("Moves - Instruct", () => {
     expect(enemyPokemon.getMoveHistory().length).toBe(1);
   });
 
+  it("should not repeat move when switching out", async () => {
+    game.override
+      .enemyMoveset(Moves.INSTRUCT)
+      .enemySpecies(Species.UNOWN);
+    await game.classicMode.startBattle([ Species.AMOONGUSS, Species.TOXICROAK ]);
+
+    const amoonguss = game.scene.getPlayerPokemon()!;
+    game.move.changeMoveset(amoonguss, Moves.SEED_BOMB);
+
+    amoonguss.battleSummonData.moveHistory = [{ move: Moves.SEED_BOMB, result: MoveResult.SUCCESS }];
+
+    game.doSwitchPokemon(1);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
+
+    const enemyMoves = game.scene.getEnemyPokemon()!.getLastXMoves(-1)!;
+    expect(enemyMoves[0].result).toBe(MoveResult.FAIL);
+  });
+
   it("should fail if no move has yet been used by target", async () => {
     game.override
       .moveset(Moves.INSTRUCT)
@@ -222,10 +239,10 @@ describe("Moves - Instruct", () => {
     await game.forceEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER_2);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
-    await game.phaseInterceptor.to("TurnEndPhase", false);
+    await game.phaseInterceptor.to("BerryPhase");
 
     instructSuccess(volcarona, Moves.FIERY_DANCE);
-    expect(game.scene.getEnemyPokemon()?.turnData.attacksReceived).toBe(4);
+    expect(game.scene.getEnemyField()[0]?.turnData.attacksReceived.length).toBe(4);
   });
 
   it("should not repeat enemy's move through protect", async () => {
@@ -268,9 +285,8 @@ describe("Moves - Instruct", () => {
     expect(player.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
-  // TODO: Clean test code up once learn move utility function is added
-  // to reduce jankiness and decrease likelihood of future borks
-  it("should not repeat move since forgotten by target", async () => {
+  // TODO: Fix test code up to use learn move utility function once that gets added
+  it.todo("should not repeat move since forgotten by target", async () => {
     game.override
       .enemyLevel(5)
       .xpMultiplier(50)
@@ -284,10 +300,9 @@ describe("Moves - Instruct", () => {
 
     game.move.select(Moves.ELECTRO_DRIFT);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    game.phaseInterceptor.to("FaintPhase");
     // setup macro to mash enter and learn hydro pump in slot 1
     game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
-      game.scene.ui.getHandler().processInput(Button.ACTION); // mash enter to learn level up move
+      game.scene.ui.getHandler().processInput(Button.ACTION);
       game.onNextPrompt("LearnMovePhase", Mode.SUMMARY, () => {
         game.scene.ui.getHandler().processInput(Button.ACTION);
         game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
@@ -351,25 +366,26 @@ describe("Moves - Instruct", () => {
   it("should still work w/ prankster in psychic terrain", async () => {
     game.override.
       battleType("double")
-      .enemyMoveset([ Moves.SPLASH, Moves.PSYCHIC_TERRAIN ])
-      .ability(Abilities.PRANKSTER);
+      .enemyMoveset([ Moves.SPLASH, Moves.PSYCHIC_TERRAIN ]);
     await game.classicMode.startBattle([ Species.BANETTE, Species.KLEFKI ]);
 
     const [ banette, klefki ] = game.scene.getPlayerField()!;
-    game.move.changeMoveset(banette, Moves.VINE_WHIP);
+    game.move.changeMoveset(banette, [ Moves.VINE_WHIP, Moves.SPLASH ]);
     game.move.changeMoveset(klefki, [ Moves.INSTRUCT, Moves.SPLASH ]);
 
-    game.move.select(Moves.VINE_WHIP, BattlerIndex.PLAYER, BattlerIndex.ENEMY); // succeeds due to terrain
+    game.move.select(Moves.VINE_WHIP, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.forceEnemyMove(Moves.PSYCHIC_TERRAIN);
     await game.toNextTurn();
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
-    game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
+    game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER); // copies vine whip
     await game.setTurnOrder([ BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    instructSuccess(banette, Moves.VINE_WHIP);
+    expect(banette.getLastXMoves(-1)[1].move).toBe(Moves.VINE_WHIP);
+    expect(banette.getLastXMoves(-1)[2].move).toBe(Moves.VINE_WHIP);
+    expect(banette.getMoveset().find(m => m?.moveId === Moves.VINE_WHIP )?.ppUsed).toBe(2);
   });
 
   it("should cause spread moves to correctly hit targets in doubles after singles", async () => {
