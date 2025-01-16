@@ -1021,11 +1021,11 @@ export function initSpecies() {
       new PokemonForm("Normal", "", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 320, 35, 55, 40, 50, 50, 90, 190, 50, 112, true, null, true),
       new PokemonForm("Partner", "partner", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true),
       new PokemonForm("Cosplay", "cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
-      new PokemonForm("Cool Cosplay", "cool-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
-      new PokemonForm("Beauty Cosplay", "beauty-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
-      new PokemonForm("Cute Cosplay", "cute-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
-      new PokemonForm("Smart Cosplay", "smart-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
-      new PokemonForm("Tough Cosplay", "tough-cosplay", Type.ELECTRIC, null, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Cool Cosplay", "cool-cosplay", Type.ELECTRIC, Type.STEEL, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.INNER_FOCUS, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Beauty Cosplay", "beauty-cosplay", Type.ELECTRIC, Type.ICE, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.QUEENLY_MAJESTY, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Cute Cosplay", "cute-cosplay", Type.ELECTRIC, Type.FAIRY, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.CUTE_CHARM, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Smart Cosplay", "smart-cosplay", Type.ELECTRIC, Type.PSYCHIC, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.TINTED_LENS, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
+      new PokemonForm("Tough Cosplay", "tough-cosplay", Type.ELECTRIC, Type.FIGHTING, 0.4, 6, Abilities.STATIC, Abilities.NONE, Abilities.DEFIANT, 430, 45, 80, 50, 75, 60, 120, 190, 50, 112, true, null, true), //Custom
       new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, Type.ELECTRIC, null, 21, 999.9, Abilities.LIGHTNING_ROD, Abilities.NONE, Abilities.LIGHTNING_ROD, 530, 125, 95, 60, 90, 70, 90, 190, 50, 112), //+100 BST from Partner Form
     ),
     new PokemonSpecies(Species.RAICHU, 1, false, false, false, "Mouse Pokémon", Type.ELECTRIC, null, 0.8, 30, Abilities.STATIC, Abilities.NONE, Abilities.LIGHTNING_ROD, 485, 60, 90, 55, 90, 80, 110, 75, 50, 243, GrowthRate.MEDIUM_FAST, 50, true),
