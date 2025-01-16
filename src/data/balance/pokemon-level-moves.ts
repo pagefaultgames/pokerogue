@@ -19033,7 +19033,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 48, Moves.PIKA_PAPOW ],
     ],
     5: [
-      [ 1, Moves.DRAINING_KISS ],
+      [ 1, Moves.DAZZLING_GLEAM ],
       [ 1, Moves.TAIL_WHIP ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.THUNDER_SHOCK ],
@@ -19057,7 +19057,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 48, Moves.PIKA_PAPOW ],
     ],
     6: [
-      [ 1, Moves.ELECTRIC_TERRAIN ],
+      [ 1, Moves.PSYCHIC_NOISE ],
       [ 1, Moves.TAIL_WHIP ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.THUNDER_SHOCK ],
