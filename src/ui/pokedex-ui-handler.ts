@@ -1418,29 +1418,26 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
+    this.pokerusCursorObjs.forEach(cursorObj => cursorObj.setVisible(false));
+
     let pokerusCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
       const pos = calcStarterPosition(i, this.scrollCursor);
       container.setPosition(pos.x, pos.y);
       if (i < onScreenFirstIndex || i > onScreenLastIndex) {
         container.setVisible(false);
-
-        if (this.pokerusSpecies.includes(container.species)) {
-          this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
-          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(false);
-          pokerusCursorIndex++;
-        }
         return;
       } else {
         container.setVisible(true);
 
-        if (this.pokerusSpecies.includes(container.species)) {
-          this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
-          this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
-          pokerusCursorIndex++;
-        }
-
         if (this.showDecorations) {
+
+          if (this.pokerusSpecies.includes(container.species)) {
+            this.pokerusCursorObjs[pokerusCursorIndex].setPosition(pos.x - 1, pos.y + 1);
+            this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
+            pokerusCursorIndex++;
+          }
+
           const speciesId = container.species.speciesId;
           this.updateStarterValueLabel(container);
 
