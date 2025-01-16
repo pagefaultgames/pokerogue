@@ -1,11 +1,14 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { CHARMING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPartyLuckValue } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { globalScene } from "#app/global-scene";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoveRequirement, PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -13,7 +16,7 @@ import { TrainerSlot } from "#app/data/trainer-config";
 import { catchPokemon, getHighestLevelPlayerPokemon, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
 import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils";
-import { Moves } from "#enums/moves";
+import type { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { SelfStatusMove } from "#app/data/move";
 import { PokeballType } from "#enums/pokeball";
@@ -23,7 +26,8 @@ import { BerryModifier } from "#app/modifier/modifier";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import PokemonSpecies, { getPokemonSpecies } from "#app/data/pokemon-species";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -46,21 +50,21 @@ export const UncommonBreedEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       },
     ])
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .withOnInit(() => {
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
       // Level equal to 2 below highest party member
-      const level = getHighestLevelPlayerPokemon(scene, false, true).level - 2;
+      const level = getHighestLevelPlayerPokemon(false, true).level - 2;
       let species: PokemonSpecies;
-      if (scene.eventManager.isEventActive() && scene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
-        const eventEncounter = randSeedItem(scene.eventManager.activeEvent()!.uncommonBreedEncounters!);
-        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, scene.gameMode);
+      if (globalScene.eventManager.isEventActive() && globalScene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
+        const eventEncounter = randSeedItem(globalScene.eventManager.activeEvent()!.uncommonBreedEncounters!);
+        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, globalScene.gameMode);
         species = getPokemonSpecies( levelSpecies );
       } else {
-        species = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);
+        species = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
       }
-      const pokemon = new EnemyPokemon(scene, species, level, TrainerSlot.NONE, true);
+      const pokemon = new EnemyPokemon(species, level, TrainerSlot.NONE, true);
 
       // Pokemon will always have one of its egg moves in its moveset
       const eggMoves = pokemon.getEggMoves();
@@ -81,7 +85,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
       }
 
       // Defense/Spd buffs below wave 50, +1 to all stats otherwise
-      const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = scene.currentBattle.waveIndex < 50 ?
+      const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] = globalScene.currentBattle.waveIndex < 50 ?
         [ Stat.DEF, Stat.SPDEF, Stat.SPD ] :
         [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
 
@@ -93,8 +97,8 @@ export const UncommonBreedEncounter: MysteryEncounter =
           isBoss: false,
           tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(pokemon.scene, `${namespace}:option.1.stat_boost`);
-            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
+            queueEncounterMessage(`${namespace}:option.1.stat_boost`);
+            globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
           }
         }],
       };
@@ -115,16 +119,16 @@ export const UncommonBreedEncounter: MysteryEncounter =
       ];
 
       encounter.setDialogueToken("enemyPokemon", pokemon.getNameToRender());
-      scene.loadSe("PRSFX- Spotlight2", "battle_anims", "PRSFX- Spotlight2.wav");
+      globalScene.loadSe("PRSFX- Spotlight2", "battle_anims", "PRSFX- Spotlight2.wav");
       return true;
     })
-    .withOnVisualsStart((scene: BattleScene) => {
+    .withOnVisualsStart(() => {
       // Animate the pokemon
-      const encounter = scene.currentBattle.mysteryEncounter!;
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       const pokemonSprite = encounter.introVisuals!.getSprites();
 
       // Bounce at the end, then shiny sparkle if the Pokemon is shiny
-      scene.tweens.add({
+      globalScene.tweens.add({
         targets: pokemonSprite,
         duration: 300,
         ease: "Cubic.easeOut",
@@ -134,7 +138,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
         onComplete: () => encounter.introVisuals?.playShinySparkles()
       });
 
-      scene.time.delayedCall(500, () => scene.playSound("battle_anims/PRSFX- Spotlight2"));
+      globalScene.time.delayedCall(500, () => globalScene.playSound("battle_anims/PRSFX- Spotlight2"));
       return true;
     })
     .setLocalizationKey(`${namespace}`)
@@ -151,9 +155,9 @@ export const UncommonBreedEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Pick battle
-        const encounter = scene.currentBattle.mysteryEncounter!;
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         const eggMove = encounter.misc.eggMove;
         if (!isNullOrUndefined(eggMove)) {
@@ -171,8 +175,8 @@ export const UncommonBreedEncounter: MysteryEncounter =
             });
         }
 
-        setEncounterRewards(scene, { fillRemaining: true });
-        await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
+        setEncounterRewards({ fillRemaining: true });
+        await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
       }
     )
     .withOption(
@@ -189,33 +193,33 @@ export const UncommonBreedEncounter: MysteryEncounter =
             }
           ]
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Give it some food
 
           // Remove 4 random berries from player's party
           // Get all player berry items, remove from party, and store reference
-          const berryItems: BerryModifier[] = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+          const berryItems: BerryModifier[] = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
           for (let i = 0; i < 4; i++) {
             const index = randSeedInt(berryItems.length);
             const randBerry = berryItems[index];
             randBerry.stackCount--;
             if (randBerry.stackCount === 0) {
-              scene.removeModifier(randBerry);
+              globalScene.removeModifier(randBerry);
               berryItems.splice(index, 1);
             }
           }
-          await scene.updateModifiers(true, true);
+          await globalScene.updateModifiers(true, true);
 
           // Pokemon joins the team, with 2 egg moves
-          const encounter = scene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const pokemon = encounter.misc.pokemon;
 
           // Give 1 additional egg move
           givePokemonExtraEggMove(pokemon, encounter.misc.eggMove);
 
-          await catchPokemon(scene, pokemon, null, PokeballType.POKEBALL, false);
-          setEncounterRewards(scene, { fillRemaining: true });
-          leaveEncounterWithoutBattle(scene);
+          await catchPokemon(pokemon, null, PokeballType.POKEBALL, false);
+          setEncounterRewards({ fillRemaining: true });
+          leaveEncounterWithoutBattle();
         })
         .build()
     )
@@ -233,10 +237,10 @@ export const UncommonBreedEncounter: MysteryEncounter =
             }
           ]
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Attract the pokemon with a move
           // Pokemon joins the team, with 2 egg moves and IVs rolled an additional time
-          const encounter = scene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const pokemon = encounter.misc.pokemon;
 
           // Give 1 additional egg move
@@ -248,12 +252,12 @@ export const UncommonBreedEncounter: MysteryEncounter =
             return newValue > iv ? newValue : iv;
           });
 
-          await catchPokemon(scene, pokemon, null, PokeballType.POKEBALL, false);
+          await catchPokemon(pokemon, null, PokeballType.POKEBALL, false);
           if (encounter.selectedOption?.primaryPokemon?.id) {
-            setEncounterExp(scene, encounter.selectedOption.primaryPokemon.id, pokemon.getExpValue(), false);
+            setEncounterExp(encounter.selectedOption.primaryPokemon.id, pokemon.getExpValue(), false);
           }
-          setEncounterRewards(scene, { fillRemaining: true });
-          leaveEncounterWithoutBattle(scene);
+          setEncounterRewards({ fillRemaining: true });
+          leaveEncounterWithoutBattle();
         })
         .build()
     )

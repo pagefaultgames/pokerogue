@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#app/battle";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import Overrides from "#app/overrides";
-import { CommandPhase } from "#app/phases/command-phase";
+import type { CommandPhase } from "#app/phases/command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";

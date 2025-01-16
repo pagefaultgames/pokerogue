@@ -10,7 +10,7 @@ import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounte
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
 import { SlumberingSnorlaxEncounter } from "./encounters/slumbering-snorlax-encounter";
 import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
-import MysteryEncounter from "./mystery-encounter";
+import type MysteryEncounter from "./mystery-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
@@ -177,7 +177,7 @@ export const allMysteryEncounters: { [encounterType: number]: MysteryEncounter }
 const extremeBiomeEncounters: MysteryEncounterType[] = [];
 
 const nonExtremeBiomeEncounters: MysteryEncounterType[] = [
-  // MysteryEncounterType.FIELD_TRIP, Disabled for holiday event
+  // MysteryEncounterType.FIELD_TRIP, Disabled
   MysteryEncounterType.DANCING_LESSONS, // Is also in BADLANDS, DESERT, VOLCANO, WASTELAND, ABYSS
 ];
 
@@ -185,14 +185,14 @@ const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
   MysteryEncounterType.SHADY_VITAMIN_DEALER,
   MysteryEncounterType.THE_POKEMON_SALESMAN,
-  // MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, Disabled for holiday event
+  // MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, Disabled
   MysteryEncounterType.THE_WINSTRATE_CHALLENGE,
   MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER
 ];
 
 const civilizationBiomeEncounters: MysteryEncounterType[] = [
-  // MysteryEncounterType.DEPARTMENT_STORE_SALE, Disabled for holiday event
-  // MysteryEncounterType.PART_TIMER, Disabled for holiday event
+  MysteryEncounterType.DEPARTMENT_STORE_SALE,
+  MysteryEncounterType.PART_TIMER,
   MysteryEncounterType.FUN_AND_GAMES,
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM
 ];

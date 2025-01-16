@@ -2,7 +2,7 @@ import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { getMoveTargets } from "#app/data/move";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
@@ -17,28 +17,28 @@ import { MovePhase } from "#app/phases/move-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import type { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import InputsHandler from "#app/test/utils/inputsHandler";
-import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
-import CommandUiHandler from "#app/ui/command-ui-handler";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
+import type InputsHandler from "#app/test/utils/inputsHandler";
+import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
+import type CommandUiHandler from "#app/ui/command-ui-handler";
+import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import type PartyUiHandler from "#app/ui/party-ui-handler";
+import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { isNullOrUndefined } from "#app/utils";
 import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
-import { Moves } from "#enums/moves";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { Moves } from "#enums/moves";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
-import { Species } from "#enums/species";
+import type { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
 import GameWrapper from "#test/utils/gameWrapper";
 import { ChallengeModeHelper } from "#test/utils/helpers/challengeModeHelper";
@@ -174,8 +174,8 @@ export default class GameManager {
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.scene.gameMode = getGameMode(mode);
       const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      this.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 
@@ -207,8 +207,8 @@ export default class GameManager {
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      this.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     }, () => this.isCurrentPhase(EncounterPhase));
 
@@ -376,7 +376,7 @@ export default class GameManager {
   exportSaveToTest(): Promise<string> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     return new Promise(async (resolve) => {
-      const sessionSaveData = this.scene.gameData.getSessionSaveData(this.scene);
+      const sessionSaveData = this.scene.gameData.getSessionSaveData();
       const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
       resolve(encryptedSaveData);
     });
@@ -409,7 +409,7 @@ export default class GameManager {
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
-      this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
+      this.scene.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
       resolve();
     });

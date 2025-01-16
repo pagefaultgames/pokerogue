@@ -1,9 +1,11 @@
-import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
-import { ModalConfig } from "./modal-ui-handler";
+import type { InputFieldConfig } from "./form-modal-ui-handler";
+import { FormModalUiHandler } from "./form-modal-ui-handler";
+import type { ModalConfig } from "./modal-ui-handler";
 import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { globalScene } from "#app/global-scene";
 
 
 interface LanguageSetting {
@@ -78,7 +80,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
     });
 
     const warningMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.warningMessageFontSize ?? "42px";
-    const label = addTextObject(this.scene, 10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: warningMessageFontSize });
+    const label = addTextObject(10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, { fontSize: warningMessageFontSize });
 
     this.modalContainer.add(label);
   }
@@ -92,10 +94,10 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalRegistrationAction;
         this.sanitizeInputs();
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
+        globalScene.ui.setMode(Mode.LOADING, { buttonActions: []});
         const onFail = error => {
-          this.scene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-          this.scene.ui.playError();
+          globalScene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+          globalScene.ui.playError();
           const errorMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.errorMessageFontSize;
           if (errorMessageFontSize) {
             this.errorMessage.setFontSize(errorMessageFontSize);

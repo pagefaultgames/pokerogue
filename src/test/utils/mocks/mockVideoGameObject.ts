@@ -1,4 +1,4 @@
-import { MockGameObject } from "./mockGameObject";
+import type { MockGameObject } from "./mockGameObject";
 
 /** Mocks video-related stuff */
 export class MockVideoGameObject implements MockGameObject {
