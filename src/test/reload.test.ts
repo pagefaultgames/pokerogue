@@ -1,13 +1,13 @@
 import { GameModes } from "#app/game-mode";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Biome } from "#enums/biome";
 import { Button } from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
-import { MockClock } from "#test/utils/mocks/mockClock";
+import type { MockClock } from "#test/utils/mocks/mockClock";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Reload", () => {

@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import { Species } from "#enums/species";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 
 describe("Mystery Encounters", () => {
   let phaserGame: Phaser.Game;
