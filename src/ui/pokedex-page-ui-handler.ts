@@ -1820,7 +1820,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return;
     }
 
-    const isFormCaught = (this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n;
+    let isFormCaught: Boolean = false;
+    if (this.speciesStarterDexEntry) {
+      isFormCaught = (this.speciesStarterDexEntry?.caughtAttr! & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n;
+    }
 
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (isFormCaught) {
