@@ -75,7 +75,7 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-  * Changes a pokemon's moveset to the given move(s).
+   * Changes a pokemon's moveset to the given move(s).
    * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
    * @param pokemon - The {@linkcode Pokemon} being modified
    * @param moveset - The {@linkcode Moves} (single or array) to change the Pokemon's moveset to

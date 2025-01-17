@@ -277,10 +277,11 @@ export default class UI extends Phaser.GameObjects.Container {
     return true;
   }
 
-  /** Process a player input of a button (delivering it to the current UI handler for processing)
-  * @param button The {@linkcode Button} being inputted
-  * @returns true if the input attempt succeeds
-  */
+  /**
+   * Process a player input of a button (delivering it to the current UI handler for processing)
+   * @param button The {@linkcode Button} being inputted
+   * @returns true if the input attempt succeeds
+   */
   processInput(button: Button): boolean {
     if (this.overlayActive) {
       return false;
