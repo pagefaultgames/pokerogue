@@ -23,7 +23,7 @@ import type { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
-import { StarterContainer } from "#app/ui/starter-container";
+import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
 import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { Abilities } from "#enums/abilities";
@@ -160,9 +160,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private starterSelectScrollBar: ScrollBar;
   private filterBarContainer: Phaser.GameObjects.Container;
   private filterBar: FilterBar;
-  private starterContainers: StarterContainer[] = [];
-  private filteredStarterContainers: StarterContainer[] = [];
-  private validStarterContainers: StarterContainer[] = [];
+  private pokemonContainers: PokedexMonContainer[] = [];
+  private filteredPokemonContainers: PokedexMonContainer[] = [];
+  private validPokemonContainers: PokedexMonContainer[] = [];
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNameText: Phaser.GameObjects.Text;
@@ -181,10 +181,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
   private pokerusSpecies: PokemonSpecies[] = [];
-  private starterAttr: bigint[] = [];
-  private starterAbilityIndexes: integer[] = [];
-  private starterNatures: Nature[] = [];
-  private starterMovesets: StarterMoveset[] = [];
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: Moves[];
 
@@ -243,11 +239,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
     bgColor.setOrigin(0, 0);
     this.starterSelectContainer.add(bgColor);
 
-    const starterContainerWindow = addWindow(speciesContainerX, filterBarHeight + 1, 175, 161);
-    const starterContainerBg = globalScene.add.image(speciesContainerX + 1, filterBarHeight + 2, "starter_container_bg");
-    starterContainerBg.setOrigin(0, 0);
-    this.starterSelectContainer.add(starterContainerBg);
-    this.starterSelectContainer.add(starterContainerWindow);
+    const pokemonContainerWindow = addWindow(speciesContainerX, filterBarHeight + 1, 175, 161);
+    const pokemonContainerBg = globalScene.add.image(speciesContainerX + 1, filterBarHeight + 2, "starter_container_bg");
+    pokemonContainerBg.setOrigin(0, 0);
+    this.starterSelectContainer.add(pokemonContainerBg);
+    this.starterSelectContainer.add(pokemonContainerWindow);
 
 
     // Create and initialise filter text fields
@@ -412,7 +408,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.filterBar.offsetHybridFilters();
 
     if (!globalScene.uiTheme) {
-      starterContainerWindow.setVisible(false);
+      pokemonContainerWindow.setVisible(false);
     }
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
@@ -428,7 +424,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
-    this.starterSelectScrollBar = new ScrollBar(161, 12, 5, starterContainerWindow.height - 6, 9);
+    this.starterSelectScrollBar = new ScrollBar(161, 12, 5, pokemonContainerWindow.height - 6, 9);
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
@@ -449,10 +445,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.speciesLoaded.set(species.speciesId, false);
       this.allSpecies.push(species);
 
-      const starterContainer = new StarterContainer(species).setVisible(false);
-      this.iconAnimHandler.addOrUpdate(starterContainer.icon, PokemonIconAnimMode.NONE);
-      this.starterContainers.push(starterContainer);
-      starterBoxContainer.add(starterContainer);
+      const pokemonContainer = new PokedexMonContainer(species).setVisible(false);
+      this.iconAnimHandler.addOrUpdate(pokemonContainer.icon, PokemonIconAnimMode.NONE);
+      this.pokemonContainers.push(pokemonContainer);
+      starterBoxContainer.add(pokemonContainer);
     }
 
     this.starterSelectContainer.add(starterBoxContainer);
@@ -539,7 +535,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     // Making caught pokemon visible icons, etc
     this.allSpecies.forEach((species, s) => {
-      const icon = this.starterContainers[s].icon;
+      const icon = this.pokemonContainers[s].icon;
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
 
       this.starterPreferences[species.speciesId] = this.initStarterPrefs(species);
@@ -800,7 +796,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   /**
    * Sets the visibility of a Candy Upgrade Icon
    */
-  setUpgradeIcon(starter: StarterContainer): void {
+  setUpgradeIcon(starter: PokedexMonContainer): void {
     const species = starter.species;
     const slotVisible = !!species?.speciesId;
 
@@ -828,15 +824,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Update the display of candy upgrade icons or animations for the given StarterContainer
-   * @param starterContainer the container for the Pokemon to update
+   * Update the display of candy upgrade icons or animations for the given PokedexMonContainer
+   * @param pokemonContainer the container for the Pokemon to update
    */
-  updateCandyUpgradeDisplay(starterContainer: StarterContainer) {
+  updateCandyUpgradeDisplay(pokemonContainer: PokedexMonContainer) {
     if (this.isUpgradeIconEnabled() ) {
-      this.setUpgradeIcon(starterContainer);
+      this.setUpgradeIcon(pokemonContainer);
     }
     if (this.isUpgradeAnimationEnabled()) {
-      this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
+      this.setUpgradeAnimation(pokemonContainer.icon, this.lastSpecies, true);
     }
   }
 
@@ -847,11 +843,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     const maxColumns = 9;
     //    const maxRows = 9;
-    const numberOfStarters = this.filteredStarterContainers.length;
+    const numberOfStarters = this.filteredPokemonContainers.length;
     const numOfRows = Math.ceil(numberOfStarters / maxColumns);
     const currentRow = Math.floor(this.cursor / maxColumns);
     const onScreenFirstIndex = this.scrollCursor * maxColumns; // this is first starter index on the screen
-    //    const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns - 1); // this is the last starter index on the screen
+    //    const onScreenLastIndex = Math.min(this.filteredPokemonContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns - 1); // this is the last starter index on the screen
     //    const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
 
     // TODO: use the above to let the cursor go to the correct position when switching back.
@@ -1027,7 +1023,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
               }
               success = this.setCursor(this.cursor - 9);
             } else {
-              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredPokemonContainers[this.cursor]);
               this.setFilterMode(true);
               success = true;
             }
@@ -1046,7 +1042,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
               success = this.setCursor(this.cursor % 9);
             } else {
             // DOWN from single row of Pokemon > Go to filters
-              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+              this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredPokemonContainers[this.cursor]);
               this.setFilterMode(true);
               success = true;
             }
@@ -1056,7 +1052,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
               success = this.setCursor(this.cursor - 1);
             } else {
             // LEFT from filtered Pokemon, on the left edge
-              this.filterTextCursor = this.filterText.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+              this.filterTextCursor = this.filterText.getNearestFilter(this.filteredPokemonContainers[this.cursor]);
               this.setFilterTextMode(true);
               success = true;
             }
@@ -1067,7 +1063,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
               success = this.setCursor(this.cursor + 1);
             } else {
             // RIGHT from filtered Pokemon, on the right edge
-              this.filterTextCursor = this.filterText.getNearestFilter(this.filteredStarterContainers[this.cursor]);
+              this.filterTextCursor = this.filterText.getNearestFilter(this.filteredPokemonContainers[this.cursor]);
               this.setFilterTextMode(true);
               success = true;
             }
@@ -1150,19 +1146,19 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   updateStarters = () => {
     this.scrollCursor = 0;
-    this.filteredStarterContainers = [];
-    this.validStarterContainers = [];
+    this.filteredPokemonContainers = [];
+    this.validPokemonContainers = [];
 
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
 
     this.filterBar.updateFilterLabels();
     this.filterText.updateFilterLabels();
 
-    this.validStarterContainers = this.starterContainers;
+    this.validPokemonContainers = this.pokemonContainers;
 
     // this updates icons for previously saved pokemon
-    for (let i = 0; i < this.validStarterContainers.length; i++) {
-      const currentFilteredContainer = this.validStarterContainers[i];
+    for (let i = 0; i < this.validPokemonContainers.length; i++) {
+      const currentFilteredContainer = this.validPokemonContainers[i];
       const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
 
       const currentDexAttr = this.getCurrentDexProps(currentFilteredContainer.species.speciesId);
@@ -1173,7 +1169,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     }
 
     // filter
-    this.validStarterContainers.forEach(container => {
+    this.validPokemonContainers.forEach(container => {
       container.setVisible(false);
 
       container.cost = globalScene.gameData.getSpeciesStarterValue(this.getStarterSpeciesId(container.species.speciesId));
@@ -1200,9 +1196,30 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       const fitsFormMove1 = container.species.forms.some(form => this.hasFormLevelMove(form, selectedMove1));
       const fitsFormMove2 = container.species.forms.some(form => this.hasFormLevelMove(form, selectedMove2));
-      const fitsMove1 = levelMoves.includes(selectedMove1) || fitsFormMove1 || eggMoves.includes(selectedMove1) || tmMoves.includes(selectedMove1) || selectedMove1 === this.filterText.defaultText;
-      const fitsMove2 = levelMoves.includes(selectedMove2) || fitsFormMove2 || eggMoves.includes(selectedMove2) || tmMoves.includes(selectedMove2) || selectedMove2 === this.filterText.defaultText;
+      const fitsLevelMove1 = levelMoves.includes(selectedMove1) || fitsFormMove1;
+      const fitsEggMove1 = eggMoves.includes(selectedMove1);
+      const fitsTmMove1 = tmMoves.includes(selectedMove1);
+      const fitsLevelMove2 = levelMoves.includes(selectedMove2) || fitsFormMove2;
+      const fitsEggMove2 = eggMoves.includes(selectedMove2);
+      const fitsTmMove2 = tmMoves.includes(selectedMove2);
+      const fitsMove1 = fitsLevelMove1 || fitsEggMove1 || fitsTmMove1 || selectedMove1 === this.filterText.defaultText;
+      const fitsMove2 = fitsLevelMove2 || fitsEggMove2 || fitsTmMove2 || selectedMove2 === this.filterText.defaultText;
       const fitsMoves = fitsMove1 && fitsMove2;
+
+      container.eggMove1Icon.setVisible(false);
+      container.tmMove1Icon.setVisible(false);
+      container.eggMove2Icon.setVisible(false);
+      container.tmMove2Icon.setVisible(false);
+      if (fitsEggMove1 && !fitsLevelMove1) {
+        container.eggMove1Icon.setVisible(true);
+      } else if (fitsTmMove1 && !fitsLevelMove1) {
+        container.tmMove1Icon.setVisible(true);
+      }
+      if (fitsEggMove2 && !fitsLevelMove2) {
+        container.eggMove2Icon.setVisible(true);
+      } else if (fitsTmMove2 && !fitsLevelMove2) {
+        container.tmMove2Icon.setVisible(true);
+      }
 
       // Ability filter
       const abilities = [ container.species.ability1, container.species.ability2, container.species.abilityHidden ].map(a => allAbilities[a].name);
@@ -1376,16 +1393,16 @@ export default class PokedexUiHandler extends MessageUiHandler {
       });
 
       if (fitsName && fitsAbilities && fitsMoves && fitsGen && fitsBiome && fitsType && fitsCaught && fitsPassive && fitsCostReduction && fitsStarter && fitsFavorite && fitsWin && fitsHA && fitsEgg && fitsPokerus) {
-        this.filteredStarterContainers.push(container);
+        this.filteredPokemonContainers.push(container);
       }
     });
 
-    this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterContainers.length / 9), 1));
+    this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredPokemonContainers.length / 9), 1));
     this.starterSelectScrollBar.setScrollCursor(0);
 
     // sort
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
-    this.filteredStarterContainers.sort((a, b) => {
+    this.filteredPokemonContainers.sort((a, b) => {
       switch (sort.val) {
         default:
           break;
@@ -1414,14 +1431,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const maxColumns = 9;
     const maxRows = 9;
     const onScreenFirstIndex = this.scrollCursor * maxColumns;
-    const onScreenLastIndex = Math.min(this.filteredStarterContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns - 1);
+    const onScreenLastIndex = Math.min(this.filteredPokemonContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns - 1);
 
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
     this.pokerusCursorObjs.forEach(cursorObj => cursorObj.setVisible(false));
 
     let pokerusCursorIndex = 0;
-    this.filteredStarterContainers.forEach((container, i) => {
+    this.filteredPokemonContainers.forEach((container, i) => {
       const pos = calcStarterPosition(i, this.scrollCursor);
       container.setPosition(pos.x, pos.y);
       if (i < onScreenFirstIndex || i > onScreenLastIndex) {
@@ -1503,13 +1520,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.filterTextCursor = cursor;
       this.filterText.setCursor(cursor);
     } else {
-      cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor), 0);
+      cursor = Math.max(Math.min(this.filteredPokemonContainers.length - 1, cursor), 0);
       changed = super.setCursor(cursor);
 
       const pos = calcStarterPosition(cursor, this.scrollCursor);
       this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
 
-      const species = this.filteredStarterContainers[cursor]?.species;
+      const species = this.filteredPokemonContainers[cursor]?.species;
 
       if (species) {
         this.setSpecies(species);
@@ -1574,12 +1591,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const dexAttr = this.getCurrentDexProps(this.lastSpecies.speciesId);
       const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr));
       const speciesIndex = this.allSpecies.indexOf(this.lastSpecies);
-      const lastSpeciesIcon = this.starterContainers[speciesIndex].icon;
+      const lastSpeciesIcon = this.pokemonContainers[speciesIndex].icon;
       this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
 
       // Resume the animation for the previously selected species
-      const icon = this.starterContainers[speciesIndex].icon;
+      const icon = this.pokemonContainers[speciesIndex].icon;
       globalScene.tweens.getTweensOf(icon).forEach(tween => tween.resume());
     }
 
@@ -1595,7 +1612,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
         // Pause the animation when the species is selected
         const speciesIndex = this.allSpecies.indexOf(species);
-        const icon = this.starterContainers[speciesIndex].icon;
+        const icon = this.pokemonContainers[speciesIndex].icon;
 
         if (this.isUpgradeAnimationEnabled()) {
           globalScene.tweens.getTweensOf(icon).forEach(tween => tween.pause());
@@ -1736,7 +1753,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     }
   }
 
-  updateStarterValueLabel(starter: StarterContainer): void {
+  updateStarterValueLabel(starter: PokedexMonContainer): void {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarterCosts[speciesId];
     const starterValue = globalScene.gameData.getSpeciesStarterValue(this.getStarterSpeciesId(speciesId));
