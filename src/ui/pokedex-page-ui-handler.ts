@@ -572,10 +572,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.menuContainer.setVisible(true);
 
-    this.setCursor(0);
-
+    this.speciesStarterDexEntry = this.species ? globalScene.gameData.dexData[this.species.speciesId] : null;
     this.setSpecies(this.species);
     this.updateInstructions();
+
+    this.setCursor(0);
 
     return true;
 
@@ -880,6 +881,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     let success = false;
     let error = false;
 
+    const isCaught = this.speciesStarterDexEntry?.caughtAttr;
+    const isFormCaught = (this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n;
+
     if (this.blockInputOverlay) {
       if (button === Button.CANCEL || button === Button.ACTION) {
         this.blockInputOverlay = false;
@@ -917,7 +921,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.BASE_STATS:
 
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else {
 
@@ -940,7 +944,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.LEVEL_MOVES:
 
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else {
 
@@ -990,7 +994,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           case MenuOptions.EGG_MOVES:
 
 
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else {
 
@@ -1061,7 +1065,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.TM_MOVES:
 
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1109,7 +1113,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.ABILITIES:
 
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else {
 
@@ -1273,7 +1277,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.EVOLUTIONS:
 
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else {
 
@@ -1451,7 +1455,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.TOGGLE_IVS:
 
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else {
               this.toggleStatsMode();
@@ -1462,7 +1466,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.NATURES:
 
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1558,7 +1562,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               let newFormIndex = this.formIndex;
               do {
                 newFormIndex = (newFormIndex + 1) % formCount;
-                if (this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)) { // TODO: are those bangs correct?
+                if (this.species.forms[newFormIndex].isStarterSelectable) { // TODO: are those bangs correct?
                   break;
                 }
               } while (newFormIndex !== props.formIndex);
@@ -1568,7 +1572,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               this.formIndex = newFormIndex;
               this.starterSetup();
               this.setSpeciesDetails(this.species, { formIndex: newFormIndex });
-              success = true;
+              success = this.setCursor(this.cursor);
             }
             break;
           case Button.CYCLE_GENDER:
@@ -1580,7 +1584,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.STATS:
-            if (!this.speciesStarterDexEntry?.caughtAttr) {
+            if (!isCaught || !isFormCaught) {
               error = true;
             } else { // checks to see if the party has 6 or fewer pokemon
               const ui = this.getUi();
@@ -1816,21 +1820,25 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return;
     }
 
+    const isFormCaught = (this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n;
+
     if (this.speciesStarterDexEntry?.caughtAttr) {
-      if (!pokemonPrevolutions.hasOwnProperty(this.species.speciesId)) {
-        this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
-      }
-      if (this.canCycleShiny) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
+      if (isFormCaught) {
+        if (!pokemonPrevolutions.hasOwnProperty(this.species.speciesId)) {
+          this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
+        }
+        if (this.canCycleShiny) {
+          this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
+        }
+        if (this.canCycleGender) {
+          this.updateButtonIcon(SettingKeyboard.Button_Cycle_Gender, gamepadType, this.genderIconElement, this.genderLabel);
+        }
+        if (this.canCycleVariant) {
+          this.updateButtonIcon(SettingKeyboard.Button_Cycle_Variant, gamepadType, this.variantIconElement, this.variantLabel);
+        }
       }
       if (this.canCycleForm) {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
-      }
-      if (this.canCycleGender) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Gender, gamepadType, this.genderIconElement, this.genderLabel);
-      }
-      if (this.canCycleVariant) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Variant, gamepadType, this.variantIconElement, this.variantLabel);
       }
     }
   }
@@ -1865,7 +1873,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
     const ui = this.getUi();
-    if (this.speciesStarterDexEntry?.caughtAttr || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
+
+    const isFormCaught = this.speciesStarterDexEntry ? (this.speciesStarterDexEntry.caughtAttr & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n : false;
+
+    if ((this.speciesStarterDexEntry?.caughtAttr && isFormCaught) || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
       ui.showText(this.menuDescriptions[cursor]);
     } else {
       ui.showText("");
@@ -1886,7 +1897,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   setSpecies(species: PokemonSpecies | null) {
-    this.speciesStarterDexEntry = species ? globalScene.gameData.dexData[species.speciesId] : null;
     const starterAttributes : StarterAttributes | null = species ? { ...this.starterAttributes } : null;
 
     if (!species && globalScene.ui.getTooltip().visible) {
@@ -2133,6 +2143,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         }
       }
 
+      const isFormCaught = (this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
+
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
       this.pokemonNumberText.setShadowColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true));
@@ -2178,9 +2190,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
       this.canCycleGender = isMaleCaught && isFemaleCaught;
 
-      this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
-        .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f)).filter(f => f).length > 1;
-
+      this.canCycleForm = species.forms.filter(f => f.isStarterSelectable).filter(f => f).length > 1;
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
         const gender = !female ? Gender.MALE : Gender.FEMALE;
@@ -2196,6 +2206,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           const crier = (this.species.forms && this.species.forms.length > 0) ? this.species.forms[formIndex ?? this.formIndex] : this.species;
           crier.cry();
         });
+
+        if (isFormCaught) {
+          this.pokemonSprite.clearTint();
+        } else {
+          this.pokemonSprite.setTint(0x000000);
+        }
       }
 
       if (dexEntry.caughtAttr || forSeen) {
