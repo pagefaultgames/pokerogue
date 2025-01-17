@@ -1380,9 +1380,10 @@ export class UserHpDamageAttr extends FixedDamageAttr {
 }
 
 export class TargetHalfHpDamageAttr extends FixedDamageAttr {
-  /**  the initial amount of hp the target had before the first hit;
-  used for multi lens hp cutting
-  */
+  /**
+   * The initial amount of hp the target had before the first hit.
+   * Used for calculating multi lens damage.
+   */
   private initialHp: number;
   constructor() {
     super(0);
