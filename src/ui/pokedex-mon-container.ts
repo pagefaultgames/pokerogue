@@ -17,6 +17,8 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public tmMove1Icon: Phaser.GameObjects.Image;
   public eggMove2Icon: Phaser.GameObjects.Image;
   public tmMove2Icon: Phaser.GameObjects.Image;
+  public passive1Icon: Phaser.GameObjects.Image;
+  public passive2Icon: Phaser.GameObjects.Image;
   public cost: number = 0;
 
   constructor(species: PokemonSpecies) {
@@ -119,7 +121,7 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.tmMove1Icon = tmMove1Icon;
 
     // move icons
-    const eggMove2Icon = globalScene.add.image(10, 12, "mystery_egg");
+    const eggMove2Icon = globalScene.add.image(7, 12, "mystery_egg");
     eggMove2Icon.setOrigin(0, 0);
     eggMove2Icon.setScale(0.25);
     eggMove2Icon.setVisible(false);
@@ -134,6 +136,22 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.add(tmMove2Icon);
     this.tmMove2Icon = tmMove2Icon;
 
+
+    // move icons
+    const passive1Icon = globalScene.add.image(3, 3, "candy");
+    passive1Icon.setOrigin(0, 0);
+    passive1Icon.setScale(0.25);
+    passive1Icon.setVisible(false);
+    this.add(passive1Icon);
+    this.passive1Icon = passive1Icon;
+
+    // move icons
+    const passive2Icon = globalScene.add.image(12, 3, "candy");
+    passive2Icon.setOrigin(0, 0);
+    passive2Icon.setScale(0.25);
+    passive2Icon.setVisible(false);
+    this.add(passive2Icon);
+    this.passive2Icon = passive2Icon;
   }
 
   checkIconId(female, formIndex, shiny, variant) {

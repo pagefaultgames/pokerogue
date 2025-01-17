@@ -1223,17 +1223,29 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Ability filter
       const abilities = [ container.species.ability1, container.species.ability2, container.species.abilityHidden ].map(a => allAbilities[a].name);
+      const passive = starterPassiveAbilities[this.getStarterSpeciesId(container.species.speciesId)] ?? 0;
+
       const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
       const fitsFormAbility = container.species.forms.some(form => allAbilities[form.ability1].name === selectedAbility1);
       const fitsAbility1 = abilities.includes(selectedAbility1) || fitsFormAbility || selectedAbility1 === this.filterText.defaultText;
+      const fitsPassive1 = allAbilities[passive].name === selectedAbility1;
 
-      const passive = starterPassiveAbilities[this.getStarterSpeciesId(container.species.speciesId)] ?? 0;
       const selectedAbility2 = this.filterText.getValue(FilterTextRow.ABILITY_2);
-      const fitsAbility2 = allAbilities[passive].name === selectedAbility2 || selectedAbility2 === this.filterText.defaultText;
+      const fitsAbility2 = abilities.includes(selectedAbility2) || fitsFormAbility || selectedAbility2 === this.filterText.defaultText;
+      const fitsPassive2 = allAbilities[passive].name === selectedAbility2;
 
       // If both fields have been set to the same ability, show both ability and passive
-      const fitsAbilities = (selectedAbility1 === selectedAbility2) ? fitsAbility1 || fitsAbility2 : fitsAbility1 && fitsAbility2;
+      const fitsAbilities = (fitsAbility1 && (fitsPassive2 || selectedAbility2 === this.filterText.defaultText)) ||
+                            (fitsAbility2 && (fitsPassive1 || selectedAbility1 === this.filterText.defaultText));
 
+      container.passive1Icon.setVisible(false);
+      container.passive2Icon.setVisible(false);
+      if (fitsPassive1) {
+        container.passive1Icon.setVisible(true);
+      }
+      if (fitsPassive2) {
+        container.passive2Icon.setVisible(true);
+      }
 
       // Gen filter
       const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
