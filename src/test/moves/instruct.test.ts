@@ -43,7 +43,9 @@ describe("Moves - Instruct", () => {
   });
 
   it("should repeat target's last used move", async () => {
-    game.override.moveset(Moves.INSTRUCT);
+    game.override
+      .moveset(Moves.INSTRUCT)
+      .enemyLevel(1000); // ensures shuckle no die
     await game.classicMode.startBattle([ Species.AMOONGUSS ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -169,6 +171,33 @@ describe("Moves - Instruct", () => {
     expect(playerMoves[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.getMoveHistory().length).toBe(1);
   });
+
+  it("should redirect attacking moves if enemy faints", async () => {
+    game.override
+      .battleType("double")
+      .enemyMoveset(Moves.SPLASH)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyLevel(1);
+    await game.classicMode.startBattle([ Species.HISUI_ELECTRODE, Species.KOMMO_O ]);
+
+    const [ electrode, kommo_o ] = game.scene.getPlayerField()!;
+    game.move.changeMoveset(electrode, Moves.CHLOROBLAST);
+    game.move.changeMoveset(kommo_o, Moves.INSTRUCT);
+
+    game.move.select(Moves.CHLOROBLAST, BattlerIndex.PLAYER);
+    game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    // Chloroblast always deals 50% max HP% recoil UNLESS you whiff
+    // due to lack of targets or similar,
+    // so all we have to do is check whether electrode fainted or not.
+    // Naturally, both karps should also be dead as well.
+    expect(electrode.isFainted()).toBe(true);
+    const [ karp1, karp2 ] = game.scene.getEnemyField()!;
+    expect(karp1.isFainted()).toBe(true);
+    expect(karp2.isFainted()).toBe(true);
+  }),
 
   it("should not repeat move when switching out", async () => {
     game.override

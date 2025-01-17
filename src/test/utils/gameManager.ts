@@ -459,9 +459,9 @@ export default class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
-   * Used to modify the turn order.
-   * Note: This *DOES NOT* account for priority.
+   * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
+   * Used to manually modify Pokemon turn order.
+   * Note: This *DOES NOT* account for priority, only speed.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
    * ```ts
@@ -475,7 +475,7 @@ export default class GameManager {
   }
 
   /**
-   * Removes all held items from enemy pokemon
+   * Removes all held items from enemy pokemon.
    */
   removeEnemyHeldItems(): void {
     this.scene.clearEnemyHeldItemModifiers();

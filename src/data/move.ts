@@ -6108,7 +6108,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return false;
       }
 
-      // Don't allow wild mons to flee with U-turn et al
+      // Don't allow wild mons to flee with U-turn et al.
       if (this.selfSwitch && !user.isPlayer() && move.category !== MoveCategory.STATUS) {
         return false;
       }
@@ -7068,7 +7068,20 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // (mainly for alternating double/single battle shenanigans)
     // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct
     // TODO: Fix this once dragon darts gets smart targeting
-    const moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets!;
+    let moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets;
+
+    /** In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible
+    Normally, all yet-unexecuted move phases would swap over when the enemy in question faints
+    (see `redirectPokemonMoves` in `battle-scene.ts`),
+    but since instruct adds a new move phase pre-emptively, we need to handle this interaction manually.
+    */
+    const firstTarget = globalScene.getField()[moveTargets[0]];
+    if (globalScene.currentBattle.double && moveTargets.length === 1 && firstTarget.isFainted() && firstTarget !== target.getAlly()) {
+      const ally = firstTarget.getAlly();
+      if (ally.isActive()) { // ally exists, is not dead and can sponge the blast
+        moveTargets = [ ally.getBattlerIndex() ];
+      }
+    }
 
     globalScene.queueMessage(i18next.t("moveTriggers:instructingMove", {
       userPokemonName: getPokemonNameWithAffix(user),
