@@ -184,7 +184,7 @@ describe("Moves - Instruct", () => {
     game.move.changeMoveset(electrode, Moves.CHLOROBLAST);
     game.move.changeMoveset(kommo_o, Moves.INSTRUCT);
 
-    game.move.select(Moves.CHLOROBLAST, BattlerIndex.PLAYER);
+    game.move.select(Moves.CHLOROBLAST, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
     await game.phaseInterceptor.to("BerryPhase");
@@ -198,6 +198,31 @@ describe("Moves - Instruct", () => {
     expect(karp1.isFainted()).toBe(true);
     expect(karp2.isFainted()).toBe(true);
   }),
+
+  it("should allow for dancer copying of instructed dance move", async () => {
+    game.override
+      .battleType("double")
+      .enemyMoveset([ Moves.INSTRUCT, Moves.SPLASH ]);
+    await game.classicMode.startBattle([ Species.ORICORIO, Species.VOLCARONA ]);
+
+    const [ oricorio, volcarona ] = game.scene.getPlayerField();
+    game.move.changeMoveset(oricorio, Moves.SPLASH);
+    game.move.changeMoveset(volcarona, Moves.FIERY_DANCE);
+
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(Moves.FIERY_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
+    await game.forceEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER_2);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    // fiery dance triggered dancer successfully for a total of 4 hits
+    // Volcarona fiery dance has a _small_ chance to 3HKO a shuckle in worst case, so we add the hit count of both
+    // foes to account for spillover
+    instructSuccess(volcarona, Moves.FIERY_DANCE);
+    expect(game.scene.getEnemyField()[0].turnData.attacksReceived.length +
+    game.scene.getEnemyField()[1].turnData.attacksReceived.length).toBe(4);
+  });
 
   it("should not repeat move when switching out", async () => {
     game.override
@@ -251,27 +276,6 @@ describe("Moves - Instruct", () => {
     const enemyMove = game.scene.getEnemyField()[0]!.getLastXMoves()[0];
     expect(enemyMove.result).toBe(MoveResult.FAIL);
     expect(game.scene.getEnemyField()[0].getMoveset().find(m => m?.moveId === Moves.SONIC_BOOM)?.ppUsed).toBe(1);
-  });
-
-  it("should allow for dancer copying of instructed dance move", async () => {
-    game.override
-      .battleType("double")
-      .enemyMoveset([ Moves.INSTRUCT, Moves.SPLASH ]);
-    await game.classicMode.startBattle([ Species.ORICORIO, Species.VOLCARONA ]);
-
-    const [ oricorio, volcarona ] = game.scene.getPlayerField();
-    game.move.changeMoveset(oricorio, Moves.SPLASH);
-    game.move.changeMoveset(volcarona, Moves.FIERY_DANCE);
-
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
-    game.move.select(Moves.FIERY_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-    await game.forceEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
-    await game.phaseInterceptor.to("BerryPhase");
-
-    instructSuccess(volcarona, Moves.FIERY_DANCE);
-    expect(game.scene.getEnemyField()[0]?.turnData.attacksReceived.length).toBe(4);
   });
 
   it("should not repeat enemy's move through protect", async () => {
