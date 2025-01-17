@@ -322,6 +322,7 @@ export class LoadingScene extends SceneBase {
     this.loadSe("pb_move");
     this.loadSe("pb_catch");
     this.loadSe("pb_lock");
+    this.loadSe("crit_throw");
 
     this.loadSe("pb_tray_enter");
     this.loadSe("pb_tray_ball");
