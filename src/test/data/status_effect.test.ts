@@ -432,11 +432,9 @@ describe("Status Effects", () => {
       await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
 
       const player = game.scene.getPlayerPokemon()!;
+      player.hp = 0;
 
-      game.move.select(Moves.SPLASH);
-      await game.phaseInterceptor.to("FaintPhase", false);
-
-      expect(player.status?.effect).not.toBe(StatusEffect.PARALYSIS);
+      expect(player.canSetStatus(StatusEffect.BURN)).toBe(false);
     });
   });
 });
