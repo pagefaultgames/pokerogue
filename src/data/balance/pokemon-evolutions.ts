@@ -76,20 +76,20 @@ export enum EvolutionTag {
   TRIGGER_LEVEL_UP = 1 << 1, //Leveling up triggers the evolution
   TRIGGER_USE_ITEM = 1 << 2, //Using an item triggers the evolution
   FRIENDSHIP = 1 << 3,
-  DAY = 1 << 4, //During the daytime (incl. Dawn)
-  NIGHT = 1 << 5, //During the nighttime (incl. Dusk)
+  DAY = 1 << 4,         //During the daytime (incl. Dawn)
+  NIGHT = 1 << 5,       //During the nighttime (incl. Dusk)
   KNOW_MOVE = 1 << 6,   //Know a certain move
   MALE = 1 << 7,
   FEMALE = 1 << 8,
-  KNOW_MOVE_TYPE = 1 << 9,  //Know a move of a certain type (Sylveon, custom Steelix/Scizor)
-  DEX_DATA = 1 << 10,       //Have a certain pokemon registered as caught in dex or in your party (Mantyke, Karrablast, Shelmet)
+  KNOW_MOVE_TYPE = 1 << 9,      //Know a move of a certain type (Sylveon, custom Steelix/Scizor)
+  DEX_DATA = 1 << 10,           //Have a certain pokemon registered as caught in dex or in your party (Mantyke, Karrablast, Shelmet)
   MON_TYPE_IN_PARTY = 1 << 11,  //Have a pokemon of a certain type in your party (Pancham)
   HOLD_ITEM = 1 << 12,  //Pokemon is holding a certain item (will be used for Clamperl)
   TREASURE = 1 << 13,   //Collect 10 treasure items (Gimmighoul)
   GREAT_ITEM = 1 << 14, //Item involved is Great tier
   ULTRA_ITEM = 1 << 15, //Item involved is Ultra tier
   ROGUE_ITEM = 1 << 16, //Item involved is Rogue tier
-  WEATHER = 1 << 17,  //While a certain weather is active
+  WEATHER = 1 << 17,    //While a certain weather is active
   FORM = 1 << 18  //Only a certain form undergoes this evolution (Dusk Lycanroc, Basculegion)
 }
 
@@ -128,12 +128,22 @@ export class SpeciesFormEvolution {
         : EvolutionTag.TRIGGER_USE_ITEM | EvolutionTag.ULTRA_ITEM;
   }
 
-  setTags(tags: EvolutionTag): SpeciesFormEvolution {
+  /**
+   * Setter for the {@linkcode EvolutionTag} bitfield for this evolution
+   * @param tags the tags to set, can be combined with bitwise OR |
+   * @returns this {@linkcode SpeciesFormEvolution}
+   */
+  public setTags(tags: EvolutionTag): this {
     this.tags |= tags;
     return this;
   }
 
-  hasTag(tag: EvolutionTag): boolean {
+  /**
+   * Checks for a certain {@linkcode EvolutionTag} for a {@linkcode SpeciesFormEvolution}.
+   * @param tag the {@linkcode EvolutionTag} to check for. Multiple can be checked at once with the bitwise OR operator |
+   * @returns whether this evolution has the requested tags set
+   */
+  public hasTag(tag: EvolutionTag): boolean {
     return (tag & this.tags) > 0;
   }
 }
