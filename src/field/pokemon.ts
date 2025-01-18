@@ -1434,7 +1434,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Sets the {@linkcode Pokemon}'s ability and activates it if it normally activates on summon
    * @param ability New Ability
    */
-  public setAbility(ability: Ability): void {
+  public setTempAbility(ability: Ability): void {
     this.summonData.ability = ability.id;
 
     applyPostSummonAbAttrs(PostSummonAbAttr, this)

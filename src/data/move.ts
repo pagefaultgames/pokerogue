@@ -7474,7 +7474,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
 
     globalScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix(target), abilityName: allAbilities[user.getAbility().id].name }));
 
-    target.setAbility(user.getAbility());
+    target.setTempAbility(user.getAbility());
 
     return true;
   }
@@ -7494,8 +7494,8 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
 
     globalScene.queueMessage(i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }));
 
-    user.setAbility(target.getAbility());
-    target.setAbility(tempAbility);
+    user.setTempAbility(target.getAbility());
+    target.setTempAbility(tempAbility);
     // Swaps Forecast/Flower Gift from Castform/Cherrim
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
     // Swaps Forecast/Flower Gift to Castform/Cherrim (edge case)
