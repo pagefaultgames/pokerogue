@@ -2474,7 +2474,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     }
 
     pokemon.summonData.speciesForm = target.getSpeciesForm();
-    pokemon.summonData.ability = target.getAbility().id;
+    pokemon.setTempAbility(target.getAbility());
     pokemon.summonData.gender = target.getGender();
 
     // Copy all stats (except HP)
