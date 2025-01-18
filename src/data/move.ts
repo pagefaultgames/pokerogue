@@ -5983,7 +5983,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
           // Handle cases where revived pokemon needs to get switched in on same turn
           if (allyPokemon.isFainted() || allyPokemon === pokemon) {
             // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-            globalScene.tryRemovePhase((phase: SwitchSummonPhase) => phase instanceof SwitchSummonPhase && !phase.getPlayer());
+            globalScene.tryRemovePhase((phase: SwitchSummonPhase) => phase instanceof SwitchSummonPhase && phase.getPokemon() === pokemon);
             // If the pokemon being revived was alive earlier in the turn, cancel its move
             // (revived pokemon can't move in the turn they're brought back)
             globalScene.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
