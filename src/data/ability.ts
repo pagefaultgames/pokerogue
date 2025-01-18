@@ -2474,7 +2474,6 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     }
 
     pokemon.summonData.speciesForm = target.getSpeciesForm();
-    pokemon.setTempAbility(target.getAbility());
     pokemon.summonData.gender = target.getGender();
 
     // Copy all stats (except HP)
@@ -2504,6 +2503,8 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     promises.push(pokemon.loadAssets(false).then(() => {
       pokemon.playAnim();
       pokemon.updateInfo();
+      // If the new ability activates immediately, it needs to happen after all the transform animations
+      pokemon.setTempAbility(target.getAbility());
     }));
 
     await Promise.all(promises);
