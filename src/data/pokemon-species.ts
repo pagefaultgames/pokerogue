@@ -516,8 +516,7 @@ export abstract class PokemonSpeciesForm {
           globalScene.anims.get(spriteKey).frameRate = 10;
         }
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
-        globalScene.loadPokemonVariantAssets(spriteKey, spritePath, variant);
-        resolve();
+        globalScene.loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
       });
       if (startLoad) {
         if (!globalScene.load.isLoading()) {
@@ -947,19 +946,6 @@ export class PokemonForm extends PokemonSpeciesForm {
     return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
   }
 }
-
-export const noStarterFormKeys: string[] = [
-  SpeciesFormKey.MEGA,
-  SpeciesFormKey.MEGA_X,
-  SpeciesFormKey.MEGA_Y,
-  SpeciesFormKey.PRIMAL,
-  SpeciesFormKey.ORIGIN,
-  SpeciesFormKey.THERIAN,
-  SpeciesFormKey.GIGANTAMAX,
-  SpeciesFormKey.GIGANTAMAX_RAPID,
-  SpeciesFormKey.GIGANTAMAX_SINGLE,
-  SpeciesFormKey.ETERNAMAX
-].map(k => k.toString());
 
 /**
 * Method to get the daily list of starters with Pokerus.

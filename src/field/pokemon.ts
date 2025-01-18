@@ -1057,6 +1057,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   calculateBaseStats(): number[] {
     const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
+    applyChallenges(globalScene.gameMode, ChallengeType.FLIP_STAT, this, baseStats);
     // Shuckle Juice
     globalScene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
     // Old Gateau

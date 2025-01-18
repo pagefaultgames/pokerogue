@@ -157,6 +157,12 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
             success = (this.cursor === 0) ? this.setCursor(this.cursor) : this.setCursor(this.cursor - 1, cursorPosition);
           } else if (this.scrollCursor) {
             success = this.setScrollCursor(this.scrollCursor - 1, cursorPosition);
+          } else if ((this.cursor === 0) && (this.scrollCursor === 0)) {
+            this.setScrollCursor(SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN);
+            // Revert to avoid an extra session slot sticking out
+            this.revertSessionSlot(SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN);
+            this.setCursor(SLOTS_ON_SCREEN - 1);
+            success = true;
           }
           break;
         case Button.DOWN:
@@ -164,6 +170,11 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
             success = this.setCursor(this.cursor + 1, cursorPosition);
           } else if (this.scrollCursor < SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN) {
             success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
+          } else if ((this.cursor === SLOTS_ON_SCREEN - 1) && (this.scrollCursor === SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN)) {
+            this.setScrollCursor(0);
+            this.revertSessionSlot(SLOTS_ON_SCREEN - 1);
+            this.setCursor(0);
+            success = true;
           }
           break;
         case Button.RIGHT:
