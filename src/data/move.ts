@@ -3994,32 +3994,30 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
 }
 
 /**
- * This Attribute calculates the current power of {@linkcode Moves.RAGE_FIST}
+ * This Attribute calculates the current power of {@linkcode Moves.RAGE_FIST}.
  * The counter for power calculation does not reset on every wave but on every new arena encounter
  */
 export class RageFistPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const BDHitCount = user.battleData.hitCount;
-    const previousHitCount = user.battleData.prevHitCount;
+    const { hitCount, prevHitCount } = user.battleData;
+    const basePower: Utils.NumberHolder = args[0];
 
-    this.updateHitRecivedCount(user, BDHitCount, previousHitCount);
+    this.updateHitReceivedCount(user, hitCount, prevHitCount);
 
-    console.log(`GHNote hitsRecCount: ${user.customPokemonData.hitsRecCount}`);
-
-    (args[0] as Utils.NumberHolder).value = 50 + (Math.min(user.customPokemonData.hitsRecCount, 6) * 50);
+    basePower.value = 50 + (Math.min(user.customPokemonData.hitsRecCount, 6) * 50);
 
     return true;
   }
 
   /**
-   * Updates the hitCount of recived hits during this arena encounter
+   * Updates the number of hits the Pokemon has taken in battle
    * @param user Pokemon calling Rage Fist
-   * @param BDHitCount The hitCount of reviced hits this battle up until the function is called
-   * @param previousHitCount The hitCount of reviced hits this battle the last time Rage Fist was called
+   * @param hitCount The number of received hits this battle
+   * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
    */
-  updateHitRecivedCount(user: Pokemon, BDHitCount: number, previousHitCount: number): void {
-    user.customPokemonData.hitsRecCount += (BDHitCount - previousHitCount);
-    user.battleData.prevHitCount = BDHitCount;
+  updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
+    user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
+    user.battleData.prevHitCount = hitCount;
   }
 }
 
@@ -11013,7 +11011,7 @@ export function initMoves() {
     new AttackMove(Moves.TWIN_BEAM, Type.PSYCHIC, MoveCategory.SPECIAL, 40, 100, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.RAGE_FIST, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
-      .partial() // Counter resets every wave instead of on arena reset
+      .edgeCase() // Counter incorrectly increases on confusion self-hits
       .attr(RageFistPowerAttr)
       .punchingMove(),
     new AttackMove(Moves.ARMOR_CANNON, Type.FIRE, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)

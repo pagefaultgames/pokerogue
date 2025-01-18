@@ -14,7 +14,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
-        pokemon.customPokemonData.resetHitRecivedCount();
+        pokemon.customPokemonData.resetHitReceivedCount();
       }
     }
 

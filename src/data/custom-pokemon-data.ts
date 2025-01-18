@@ -30,7 +30,7 @@ export class CustomPokemonData {
     this.hitsRecCount = this.hitsRecCount ?? 0;
   }
 
-  resetHitRecivedCount(): void {
+  resetHitReceivedCount(): void {
     this.hitsRecCount = 0;
   }
 }

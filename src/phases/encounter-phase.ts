@@ -107,7 +107,7 @@ export class EncounterPhase extends BattlePhase {
           //resets hitRecCount during Trainer ecnounter
           for (const pokemon of globalScene.getPlayerParty()) {
             if (pokemon) {
-              pokemon.customPokemonData.resetHitRecivedCount();
+              pokemon.customPokemonData.resetHitReceivedCount();
             }
           }
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
