@@ -7578,7 +7578,6 @@ export class TransformAttr extends MoveEffectAttr {
 
     const promises: Promise<void>[] = [];
     user.summonData.speciesForm = target.getSpeciesForm();
-    user.setTempAbility(target.getAbility());
     user.summonData.gender = target.getGender();
 
     // Power Trick's effect will not preserved after using Transform
@@ -7611,6 +7610,8 @@ export class TransformAttr extends MoveEffectAttr {
     promises.push(user.loadAssets(false).then(() => {
       user.playAnim();
       user.updateInfo();
+      // If the new ability activates immediately, it needs to happen after all the transform animations
+      user.setTempAbility(target.getAbility());
     }));
 
     await Promise.all(promises);
