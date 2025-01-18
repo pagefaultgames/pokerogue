@@ -3,7 +3,7 @@ import { CommandedTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerab
 import { getPokemonNameWithAffix } from "../messages";
 import type { AttackMoveResult, TurnMove } from "../field/pokemon";
 import type Pokemon from "../field/pokemon";
-import { EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
+import { EnemyPokemon, FieldPosition, HitResult, MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "./status-effect";
 import { getTypeDamageMultiplier } from "./type";
 import { Type } from "#enums/type";
@@ -5945,12 +5945,18 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         pokemon.resetStatus();
         pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
         globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
-
         if (globalScene.currentBattle.double && globalScene.getEnemyParty().length > 1) {
           const allyPokemon = user.getAlly();
-          if (slotIndex <= 1) {
-            globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, false));
-          } else if (allyPokemon.isFainted()) {
+          // Handle cases where revived pokemon needs to get switched in on same turn
+          if (allyPokemon.isFainted() || allyPokemon === pokemon) {
+            // Enemy switch phase should be removed and replaced with the revived pkmn switching in
+            globalScene.tryRemovePhase((phase: SwitchSummonPhase) => phase instanceof SwitchSummonPhase && !phase.getPlayer());
+            // If the pokemon being revived was alive earlier in the turn, cancel its move
+            // (revived pokemon can't move in the turn they're brought back)
+            globalScene.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
+            if (user.fieldPosition === FieldPosition.CENTER) {
+              user.setFieldPosition(FieldPosition.LEFT);
+            }
             globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false));
           }
         }

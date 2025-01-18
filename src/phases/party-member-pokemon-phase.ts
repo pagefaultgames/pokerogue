@@ -24,4 +24,8 @@ export abstract class PartyMemberPokemonPhase extends FieldPhase {
   getPokemon(): Pokemon {
     return this.getParty()[this.partyMemberIndex];
   }
+
+  getPlayer(): boolean {
+    return this.player;
+  }
 }
