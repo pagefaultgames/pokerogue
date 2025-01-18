@@ -72,7 +72,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
@@ -83,7 +82,6 @@ import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY
 import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
-import type { MovePhase } from "#app/phases/move-phase";
 
 export enum LearnMoveSituation {
   MISC,
@@ -4345,39 +4343,6 @@ export class PlayerPokemon extends Pokemon {
       // Lose friendship upon fainting
       this.friendship = Math.max(this.friendship + friendship, 0);
     }
-  }
-  /**
-   * Handles Revival Blessing when used by player.
-   * @returns Promise to revive a pokemon.
-   * @see {@linkcode RevivalBlessingAttr}
-   */
-  revivalBlessing(): Promise<void> {
-    return new Promise(resolve => {
-      globalScene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, this.getFieldIndex(), (slotIndex:integer, option: PartyOption) => {
-        if (slotIndex >= 0 && slotIndex < 6) {
-          const pokemon = globalScene.getPlayerParty()[slotIndex];
-          if (!pokemon || !pokemon.isFainted()) {
-            resolve();
-          }
-
-          pokemon.resetTurnData();
-          pokemon.resetStatus();
-          pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-          globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: pokemon.name }), 0, true);
-
-          if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1) {
-            const allyPokemon = this.getAlly();
-            if (allyPokemon.isFainted() || allyPokemon === pokemon) {
-              globalScene.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
-              globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, true));
-              globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
-            }
-          }
-
-        }
-        globalScene.ui.setMode(Mode.MESSAGE).then(() => resolve());
-      }, PartyUiHandler.FilterFainted);
-    });
   }
 
   getPossibleEvolution(evolution: SpeciesFormEvolution | null): Promise<Pokemon> {
