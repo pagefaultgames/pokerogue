@@ -98,8 +98,7 @@ describe("Moves - Rage Fist", () => {
     expect(game.scene.getPlayerPokemon()?.customPokemonData.hitsRecCount).toBe(0);
   });
 
-  //For some unknown reason the second Rage fist is not called. This might be due to entering a new biome
-  it.todo("should reset the hitRecCounter if we enter new biome", async () => {
+  it("should reset the hitRecCounter if we enter new biome", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .startingWave(10);
@@ -117,25 +116,28 @@ describe("Moves - Rage Fist", () => {
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
   });
 
-  //Test does not work correctly. Feel free to add changes if you can make it work
-  it.todo("should not reset the hitRecCounter if switched out", async () => {
+  it("should not reset the hitRecCounter if switched out", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
-      .startingWave(1);
+      .startingWave(1)
+      .enemyMoveset(Moves.TACKLE);
 
     await game.classicMode.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
 
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(Moves.SPLASH);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
-    game.doSelectPartyPokemon(1);
-    await game.toNextWave();
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
 
     game.move.select(Moves.RAGE_FIST);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
-    game.doSelectPartyPokemon(0);
-    await game.phaseInterceptor.to("CommandPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
     expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.CHARIZARD);
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
   });
 });
