@@ -10,6 +10,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Rage Fist", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  const move = allMoves[Moves.RAGE_FIST];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -30,6 +31,8 @@ describe("Moves - Rage Fist", () => {
       .enemyLevel(1)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.DOUBLE_KICK);
+
+    vi.spyOn(move, "calculateBattlePower");
   });
 
   it("should have 100 more power if hit twice before calling Rage Fist", async () => {
@@ -37,9 +40,6 @@ describe("Moves - Rage Fist", () => {
       .enemySpecies(Species.MAGIKARP);
 
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
-
-    const move = allMoves[Moves.RAGE_FIST];
-    vi.spyOn(move, "calculateBattlePower");
 
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
@@ -54,9 +54,6 @@ describe("Moves - Rage Fist", () => {
       .startingWave(1);
 
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
-
-    const move = allMoves[Moves.RAGE_FIST];
-    vi.spyOn(move, "calculateBattlePower");
 
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
@@ -76,9 +73,6 @@ describe("Moves - Rage Fist", () => {
 
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
-    const move = allMoves[Moves.RAGE_FIST];
-    vi.spyOn(move, "calculateBattlePower");
-
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.toNextWave();
@@ -97,9 +91,6 @@ describe("Moves - Rage Fist", () => {
 
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
-    const move = allMoves[Moves.RAGE_FIST];
-    vi.spyOn(move, "calculateBattlePower");
-
     game.move.select(Moves.SUBSTITUTE);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to("MoveEffectPhase");
@@ -114,9 +105,6 @@ describe("Moves - Rage Fist", () => {
       .startingWave(10);
 
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
-
-    const move = allMoves[Moves.RAGE_FIST];
-    vi.spyOn(move, "calculateBattlePower");
 
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
@@ -136,9 +124,6 @@ describe("Moves - Rage Fist", () => {
       .startingWave(1);
 
     await game.classicMode.startBattle([ Species.CHARIZARD, Species.BLASTOISE ]);
-
-    const move = allMoves[Moves.RAGE_FIST];
-    vi.spyOn(move, "calculateBattlePower");
 
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);

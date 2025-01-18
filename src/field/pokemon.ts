@@ -5281,11 +5281,9 @@ export class PokemonSummonData {
 }
 
 export class PokemonBattleData {
-  //counts the hits the pokemon recived
+  /** counts the hits the pokemon received */
   public hitCount: number = 0;
-  /**
-   * used for {@linkcode Moves.RAGE_FIST} in order to save hit Counts recived before Rage Fist is applied
-  */
+  /** used for {@linkcode Moves.RAGE_FIST} in order to save hit Counts received before Rage Fist is applied */
   public prevHitCount: number = 0;
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
