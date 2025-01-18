@@ -39,13 +39,15 @@ interface TimedEvent extends EventBanner {
   eventType: EventType;
   shinyMultiplier?: number;
   classicFriendshipMultiplier?: number;
+  luckBoost?: number;
   upgradeUnlockedVouchers?: boolean;
   startDate: Date;
   endDate: Date;
-  uncommonBreedEncounters?: EventEncounter[];
+  eventEncounters?: EventEncounter[];
   delibirdyBuff?: string[];
   weather?: WeatherPoolEntry[];
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
+  luckBoostedSpecies?: Species[];
 }
 
 const timedEvents: TimedEvent[] = [
@@ -55,11 +57,11 @@ const timedEvents: TimedEvent[] = [
     shinyMultiplier: 2,
     upgradeUnlockedVouchers: true,
     startDate: new Date(Date.UTC(2024, 11, 21, 0)),
-    endDate: new Date(Date.UTC(2025, 0, 30, 0)),
+    endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "winter_holidays2024-event-",
     scale: 0.21,
     availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
-    uncommonBreedEncounters: [
+    eventEncounters: [
       { species: Species.GIMMIGHOUL, blockEvolution: true },
       { species: Species.DELIBIRD },
       { species: Species.STANTLER },
@@ -89,6 +91,52 @@ const timedEvents: TimedEvent[] = [
       { mysteryEncounter: MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, disable: true },
       { mysteryEncounter: MysteryEncounterType.FIELD_TRIP, disable: true },
       { mysteryEncounter: MysteryEncounterType.DEPARTMENT_STORE_SALE, disable: true }
+    ]
+  },
+  {
+    name: "Year of the Snake",
+    eventType: EventType.SHINY,
+    luckBoost: 1,
+    startDate: new Date(Date.UTC(2025, 0, 29, 0)),
+    endDate: new Date(Date.UTC(2025, 1, 3, 0)),
+    bannerKey: "yearofthesnakeevent-",
+    scale: 0.21,
+    availableLangs: [],
+    eventEncounters: [
+      { species: Species.EKANS },
+      { species: Species.ONIX },
+      { species: Species.DRATINI },
+      { species: Species.CLEFFA },
+      { species: Species.DUNSPARCE },
+      { species: Species.TEDDIURSA },
+      { species: Species.SEVIPER },
+      { species: Species.LUNATONE },
+      { species: Species.SNIVY },
+      { species: Species.DARUMAKA },
+      { species: Species.DRAMPA },
+      { species: Species.SILICOBRA },
+      { species: Species.BLOODMOON_URSALUNA }
+    ],
+    luckBoostedSpecies: [
+      Species.EKANS, Species.ARBOK,
+      Species.ONIX,
+      Species.DRATINI, Species.DRAGONAIR, Species.DRAGONITE,
+      Species.DUNSPARCE,
+      Species.STEELIX,
+      Species.TEDDIURSA, Species.URSARING,
+      Species.SEVIPER,
+      Species.LUNATONE,
+      Species.RAYQUAZA,
+      Species.SNIVY, Species.SERVINE, Species.SERPERIOR,
+      Species.DARUMAKA, Species.DARMANITAN,
+      Species.ZYGARDE,
+      Species.DRAMPA,
+      Species.LUNALA,
+      Species.SILICOBRA, Species.SANDACONDA,
+      Species.URSALUNA,
+      Species.DUDUNSPARCE,
+      Species.ROARING_MOON,
+      Species.BLOODMOON_URSALUNA
     ]
   }
 ];
@@ -133,8 +181,8 @@ export class TimedEventManager {
   getEventEncounters(): EventEncounter[] {
     const ret: EventEncounter[] = [];
     timedEvents.filter((te) => this.isActive(te)).map((te) => {
-      if (!isNullOrUndefined(te.uncommonBreedEncounters)) {
-        ret.push(...te.uncommonBreedEncounters);
+      if (!isNullOrUndefined(te.eventEncounters)) {
+        ret.push(...te.eventEncounters);
       }
     });
     return ret;
@@ -225,6 +273,24 @@ export class TimedEventManager {
     return ret;
   }
 
+  getEventLuckBoost(): number {
+    let ret = 0;
+    const luckEvents = timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.luckBoost));
+    luckEvents.forEach((le) => {
+      ret += le.luckBoost!;
+    });
+    return ret;
+  }
+
+  getEventLuckBoostedSpecies(): Species[] {
+    const ret: Species[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.luckBoostedSpecies)) {
+        ret.push(...te.luckBoostedSpecies.filter(s => !ret.includes(s)));
+      }
+    });
+    return ret;
+  }
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
