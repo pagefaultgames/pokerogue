@@ -3525,9 +3525,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   canSetStatus(effect: StatusEffect | undefined, quiet: boolean = false, overrideStatus: boolean = false, sourcePokemon: Pokemon | null = null, ignoreField: boolean = false): boolean {
     if (effect !== StatusEffect.FAINT) {
-      if (this.isFainted()) {
-        return false;
-      }
       if (overrideStatus ? this.status?.effect === effect : this.status) {
         return false;
       }
@@ -3607,6 +3604,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   trySetStatus(effect?: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, turnsRemaining: number = 0, sourceText: string | null = null): boolean {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
+      return false;
+    }
+    if (this.isFainted() && effect !== StatusEffect.FAINT) {
       return false;
     }
 

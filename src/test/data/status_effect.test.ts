@@ -434,7 +434,8 @@ describe("Status Effects", () => {
       const player = game.scene.getPlayerPokemon()!;
       player.hp = 0;
 
-      expect(player.canSetStatus(StatusEffect.BURN)).toBe(false);
+      expect(player.trySetStatus(StatusEffect.BURN)).toBe(false);
+      expect(player.status?.effect).not.toBe(StatusEffect.BURN);
     });
   });
 });
