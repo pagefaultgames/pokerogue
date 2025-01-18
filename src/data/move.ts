@@ -7472,9 +7472,9 @@ export class AbilityGiveAttr extends MoveEffectAttr {
       return false;
     }
 
-    target.summonData.ability = user.getAbility().id;
-
     globalScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix(target), abilityName: allAbilities[user.getAbility().id].name }));
+
+    target.setAbility(user.getAbility());
 
     return true;
   }
