@@ -4015,7 +4015,7 @@ export class RageFistPowerAttr extends VariablePowerAttr {
    * @param hitCount The number of received hits this battle
    * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
    */
-  updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
+  protected updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
     user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
     user.battleData.prevHitCount = hitCount;
   }
