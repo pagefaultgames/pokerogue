@@ -7578,7 +7578,7 @@ export class TransformAttr extends MoveEffectAttr {
 
     const promises: Promise<void>[] = [];
     user.summonData.speciesForm = target.getSpeciesForm();
-    user.summonData.ability = target.getAbility().id;
+    user.setTempAbility(target.getAbility());
     user.summonData.gender = target.getGender();
 
     // Power Trick's effect will not preserved after using Transform
