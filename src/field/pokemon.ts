@@ -83,6 +83,7 @@ import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY
 import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
+import type { MovePhase } from "#app/phases/move-phase";
 
 export enum LearnMoveSituation {
   MISC,
@@ -4366,12 +4367,8 @@ export class PlayerPokemon extends Pokemon {
 
           if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1) {
             const allyPokemon = this.getAlly();
-            if (slotIndex <= 1) {
-              // Revived ally pokemon
-              globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, true));
-              globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
-            } else if (allyPokemon.isFainted()) {
-              // Revived party pokemon, and ally pokemon is fainted
+            if (allyPokemon.isFainted() || allyPokemon === pokemon) {
+              globalScene.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
               globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, true));
               globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
             }
