@@ -108,7 +108,7 @@ describe("Moves - Rage Fist", () => {
 
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
-    await game.toNextWave();
+    await game.toNextTurn();
 
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
