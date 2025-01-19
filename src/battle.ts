@@ -7,7 +7,7 @@ import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/mod
 import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import type { EnemyPokemon, PlayerPokemon, QueuedMove } from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon, TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -62,12 +62,12 @@ export enum BattlerIndex {
 }
 
 export interface TurnCommand {
-  command: Command;
-  cursor?: number;
-  move?: QueuedMove;
-  targets?: BattlerIndex[];
-  skip?: boolean;
-  args?: any[];
+    command: Command;
+    cursor?: number;
+    move?: TurnMove;
+    targets?: BattlerIndex[];
+    skip?: boolean;
+    args?: any[];
 }
 
 export interface FaintLogEntry {

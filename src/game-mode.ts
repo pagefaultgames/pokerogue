@@ -12,6 +12,7 @@ import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
 import { globalScene } from "#app/global-scene";
+import { getDailyStartingBiome } from "./data/daily-run";
 
 export enum GameModes {
   CLASSIC,
@@ -120,7 +121,7 @@ export class GameMode implements GameModeConfig {
   getStartingBiome(): Biome {
     switch (this.modeId) {
       case GameModes.DAILY:
-        return globalScene.generateRandomBiome(this.getWaveForDifficulty(1));
+        return getDailyStartingBiome();
       default:
         return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
