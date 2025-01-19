@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/move";
 import { Type } from "#enums/type";
 import { Weather } from "#app/data/weather";
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -54,6 +54,7 @@ describe("Abilities - Protean", () => {
     },
   );
 
+  // Test for Gen9+ functionality, we are using previous funcionality
   test.skip(
     "ability applies only once per switch in",
     async () => {
