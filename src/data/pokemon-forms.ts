@@ -1034,11 +1034,10 @@ export function initPokemonForms() {
   });
 }
 
-// Iterate through the `pokemonFormChanges` object
-for (const speciesChanges of Object.values(pokemonFormChanges)) {
-  for (const formChange of speciesChanges) {
-    // Access the trigger description
-    console.log(formChange.trigger.description);
-  }
-}
+// Checking that descripions are correct; to be removed
+// for (const speciesChanges of Object.values(pokemonFormChanges)) {
+//  for (const formChange of speciesChanges) {
+//    console.log(formChange.trigger.description);
+//  }
+//}
 
