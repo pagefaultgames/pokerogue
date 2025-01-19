@@ -212,7 +212,7 @@ export class SpeciesFormChangeCondition {
 }
 
 export abstract class SpeciesFormChangeTrigger {
-  public description: String = "";
+  public description: string = "";
 
   canChange(pokemon: Pokemon): boolean {
     return true;
@@ -224,26 +224,18 @@ export abstract class SpeciesFormChangeTrigger {
 }
 
 export class SpeciesFormChangeManualTrigger extends SpeciesFormChangeTrigger {
-  canChange(pokemon: Pokemon): boolean {
-    return true;
-  }
 }
 
 export class SpeciesFormChangeAbilityTrigger extends SpeciesFormChangeTrigger {
-  public description: String = i18next.t("pokemonEvolutions:Forms.ability");
-
-  canChange(pokemon: Pokemon): boolean {
-    return true;
-  }
+  public description: string = i18next.t("pokemonEvolutions:Forms.ability");
 }
 
 export class SpeciesFormChangeCompoundTrigger {
-  public description: String = "";
+  public description: string = "";
   public triggers: SpeciesFormChangeTrigger[];
 
   constructor(...triggers: SpeciesFormChangeTrigger[]) {
     this.triggers = triggers;
-    //
     this.description = this.triggers.filter(trigger => trigger?.description?.length > 0).map(trigger => trigger.description).join(", ");
   }
 
@@ -1033,11 +1025,4 @@ export function initPokemonForms() {
     formChanges.push(...newFormChanges);
   });
 }
-
-// Checking that descripions are correct; to be removed
-// for (const speciesChanges of Object.values(pokemonFormChanges)) {
-//  for (const formChange of speciesChanges) {
-//    console.log(formChange.trigger.description);
-//  }
-//}
 

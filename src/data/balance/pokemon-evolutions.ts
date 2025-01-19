@@ -122,8 +122,8 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
 
 export class SpeciesEvolutionCondition {
   public predicate: EvolutionConditionPredicate;
-  public enforceFunc: EvolutionConditionEnforceFunc | undefined;
-  public description: String;
+  public enforceFunc?: EvolutionConditionEnforceFunc;
+  public description: string;
 
   constructor(predicate: EvolutionConditionPredicate, enforceFunc?: EvolutionConditionEnforceFunc) {
     this.predicate = predicate;
@@ -138,13 +138,12 @@ export class GenderEvolutionCondition extends SpeciesEvolutionCondition {
     super(p => p.gender === gender, p => p.gender = gender);
     this.gender = gender;
     this.description = i18next.t("pokemonEvolutions:gender", { gender: i18next.t(`pokemonEvolutions:${Gender[gender]}`) });
-    // console.log("Description:", this.description);
   }
 }
 
 export class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public timesOfDay: TimeOfDay[];
-  constructor(tod: string) {
+  constructor(tod: "day" | "night") {
     if (tod === "day") {
       super(p => globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY);
       this.timesOfDay = [ TimeOfDay.DAWN, TimeOfDay.DAY ];
@@ -156,7 +155,6 @@ export class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
       this.timesOfDay = [];
     }
     this.description = i18next.t("pokemonEvolutions:timeOfDay", { tod: i18next.t(`pokemonEvolutions:${tod}`) });
-    // console.log("Description:", this.description);
   }
 }
 
@@ -165,26 +163,24 @@ export class MoveEvolutionCondition extends SpeciesEvolutionCondition {
   constructor(move: Moves) {
     super(p => p.moveset.filter(m => m?.moveId === move).length > 0);
     this.move = move;
-    const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
+    const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
     this.description = i18next.t("pokemonEvolutions:move", { move: i18next.t(`move:${moveKey}.name`) });
-    // console.log("Description:", this.description);
   }
 }
 
 export class FriendshipEvolutionCondition extends SpeciesEvolutionCondition {
   public amount: integer;
-  constructor(amount: integer) {
+  constructor(amount: number) {
     super(p => p.friendship >= amount);
     this.amount = amount;
     this.description = i18next.t("pokemonEvolutions:friendship");
-    // console.log("Description:", this.description);
   }
 }
 
 export class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public amount: integer;
   public timesOfDay: TimeOfDay[];
-  constructor(amount:integer, tod: string) {
+  constructor(amount: number, tod: "day" | "night") {
     if (tod === "day") {
       super(p => p.friendship >= amount && (globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY));
       this.timesOfDay = [ TimeOfDay.DAWN, TimeOfDay.DAY ];
@@ -197,19 +193,17 @@ export class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondi
     }
     this.amount = amount;
     this.description = i18next.t("pokemonEvolutions:friendshipTimeOfDay", { tod: i18next.t(`pokemonEvolutions:${tod}`) });
-    // console.log("Description:", this.description);
   }
 }
 
 export class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public amount: integer;
   public type: Type;
-  constructor(amount: integer, type: Type) {
+  constructor(amount: number, type: Type) {
     super(p => p.friendship >= amount && !!p.getMoveset().find(m => m?.getMove().type === type));
     this.amount = amount;
     this.type = type;
     this.description = i18next.t("pokemonEvolutions:friendshipMoveType", { type: i18next.t(`pokemonInfo:Type.${Type[this.type]}`) });
-    // console.log("Description:", this.description);
   }
 }
 
@@ -217,7 +211,6 @@ export class ShedinjaEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
     super(p => globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0);
     this.description = i18next.t("pokemonEvolutions:shedinja");
-    // console.log("Description:", this.description);
   }
 }
 
@@ -227,7 +220,6 @@ export class PartyTypeEvolutionCondition extends SpeciesEvolutionCondition {
     super(p => !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(type) > -1));
     this.type = type;
     this.description = i18next.t("pokemonEvolutions:partyType", { type: i18next.t(`pokemonInfo:Type.${Type[this.type]}`) });
-    // console.log("Description:", this.description);
   }
 }
 
@@ -237,7 +229,6 @@ export class CaughtEvolutionCondition extends SpeciesEvolutionCondition {
     super(p => !!globalScene.gameData.dexData[species].caughtAttr);
     this.species = species;
     this.description = i18next.t("pokemonEvolutions:caught", { species: i18next.t(`pokemon:${Species[this.species].toLowerCase()}`) });
-    // console.log("Description:", this.description);
   }
 }
 
@@ -255,7 +246,6 @@ export class MoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
     super(p => p.moveset.filter(m => m?.getMove().type === type).length > 0);
     this.type = type;
     this.description = i18next.t("pokemonEvolutions:moveType", { type: i18next.t(`pokemonInfo:Type.${Type[this.type]}`) });
-    // console.log("Description:", this.description);
   }
 }
 
@@ -266,7 +256,6 @@ export class TreasureEvolutionCondition extends SpeciesEvolutionCondition {
       + globalScene.findModifiers(m => m instanceof MoneyMultiplierModifier
         || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length > 9);
     this.description = i18next.t("pokemonEvolutions:treasure");
-    // console.log("Description:", this.description);
   }
 }
 
@@ -276,9 +265,8 @@ export class TyrogueEvolutionCondition extends SpeciesEvolutionCondition {
     super(p =>
       p.getMoveset(true).find(m => m && [ Moves.LOW_SWEEP, Moves.MACH_PUNCH, Moves.RAPID_SPIN ].includes(m?.moveId))?.moveId === move);
     this.move = move;
-    const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
+    const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
     this.description = i18next.t("pokemonEvolutions:move", { move: i18next.t(`move:${moveKey}.name`) });
-    // console.log("Description:", this.description);
   }
 }
 
@@ -288,14 +276,13 @@ export class NatureEvolutionCondition extends SpeciesEvolutionCondition {
     super(p => natures.indexOf(p.getNature()) > -1);
     this.natures = natures;
     this.description = i18next.t("pokemonEvolutions:nature");
-    // console.log("Description:", this.description);
   }
 }
 
 export class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   public timesOfDay: TimeOfDay[];
-  constructor(move: Moves, tod: string) {
+  constructor(move: Moves, tod: "day" | "night") {
     if (tod === "day") {
       super(p => p.moveset.filter(m => m?.moveId === move).length > 0 && (globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY));
       this.move = move;
@@ -308,9 +295,8 @@ export class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
       super(p => false);
       this.timesOfDay = [];
     }
-    const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
+    const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
     this.description = i18next.t("pokemonEvolutions:moveTimeOfDay", { move: i18next.t(`move:${moveKey}.name`), tod: i18next.t(`pokemonEvolutions:${tod}`) });
-    // console.log("Description:", this.description);
   }
 }
 
@@ -320,7 +306,6 @@ export class BiomeEvolutionCondition extends SpeciesEvolutionCondition {
     super(p => biomes.filter(b => b === globalScene.arena.biomeType).length > 0);
     this.biomes = biomes;
     this.description = i18next.t("pokemonEvolutions:biome");
-    // console.log("Description:", this.description);
   }
 }
 
@@ -333,9 +318,8 @@ export class DunsparceEvolutionCondition extends SpeciesEvolutionCondition {
       }
       return ret;
     });
-    const moveKey = Moves[Moves.HYPER_DRILL].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
+    const moveKey = Moves[Moves.HYPER_DRILL].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
     this.description = i18next.t("pokemonEvolutions:move", { move: i18next.t(`move:${moveKey}.name`) });
-    // console.log("Description:", this.description);
   }
 }
 
@@ -348,7 +332,6 @@ export class TandemausEvolutionCondition extends SpeciesEvolutionCondition {
     });
   }
 }
-
 
 interface PokemonEvolutions {
   [key: string]: SpeciesFormEvolution[]
