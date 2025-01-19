@@ -4867,9 +4867,10 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   showAbilityInstant: boolean = false,
   simulated: boolean = false,
   messages: string[] = [],
+  considerPassive: boolean = true
 ) {
   for (const passive of [ false, true ]) {
-    if (!pokemon?.canApplyAbility(passive) || (passive && pokemon.getPassiveAbility().id === pokemon.getAbility().id)) {
+    if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id || !considerPassive))) {
       continue;
     }
 
@@ -5295,6 +5296,21 @@ export function applyPostItemLostAbAttrs(attrType: Constructor<PostItemLostAbAtt
   return applyAbAttrsInternal<PostItemLostAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostItemLost(pokemon, simulated, args), args);
 }
 
+/**
+ * Applies abilities when they become active mid-turn (ability switch)
+ *
+ * Ignores passives as they don't change and shouldn't be reapplied when main abilities change
+ */
+export function applyMidTurnAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostSummonAbAttr>(PostSummonAbAttr, pokemon, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args), args, false, simulated, [], false);
+}
+
+/**
+ * Clears primal weather during the turn if {@linkcode pokemon}'s ability corresponds to one
+ */
+export function applyMidTurnClearWeatherAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PreSwitchOutAbAttr>(PreSwitchOutClearWeatherAbAttr, pokemon, (attr, passive) => attr.applyPreSwitchOut(pokemon, passive, simulated, args), args, true, simulated, [], false);
+}
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
   globalScene.clearPhaseQueueSplice();

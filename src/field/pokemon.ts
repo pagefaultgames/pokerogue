@@ -32,7 +32,7 @@ import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoo
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
 import type { Ability, AbAttr } from "#app/data/ability";
-import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr, applyPostSummonAbAttrs, PostSummonAbAttr, PreSwitchOutAbAttr, applyPreSwitchOutAbAttrs } from "#app/data/ability";
+import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr, applyMidTurnAbAttrs, applyMidTurnClearWeatherAbAttrs } from "#app/data/ability";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -1432,23 +1432,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Sets the {@linkcode Pokemon}'s ability and activates it if it normally activates on summon
-   * Clears
+   *
+   * Also clears primal weather if it is from the ability being changed
    * @param ability New Ability
    */
   public setTempAbility(ability: Ability): void {
-    const legendaryWeather = [ Abilities.DESOLATE_LAND, Abilities.PRIMORDIAL_SEA, Abilities.DELTA_STREAM ];
-    // If the ability to set is also a legendary weather, no need to clear old weather
-    if (legendaryWeather.includes(this.getAbility().id) && !legendaryWeather.includes(ability.id)) {
-      applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this);
-    }
+    applyMidTurnClearWeatherAbAttrs(this);
     this.summonData.ability = ability.id;
-
-    applyPostSummonAbAttrs(PostSummonAbAttr, this)
-      .then(() => {
-        const field = this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-        field.forEach((p) => applyAbAttrs(CommanderAbAttr, p, null, false));
-      });
-
+    applyMidTurnAbAttrs(this);
   }
 
   /**
