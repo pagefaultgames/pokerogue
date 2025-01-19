@@ -244,7 +244,7 @@ export class SpeciesFormChangeCompoundTrigger {
   constructor(...triggers: SpeciesFormChangeTrigger[]) {
     this.triggers = triggers;
     //
-    this.description = this.triggers.filter(trigger => trigger.description.length > 0).map(trigger => trigger.description).join(", ");
+    this.description = this.triggers.filter(trigger => trigger?.description?.length > 0).map(trigger => trigger.description).join(", ");
   }
 
   canChange(pokemon: Pokemon): boolean {
