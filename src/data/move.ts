@@ -3993,11 +3993,31 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class HitCountPowerAttr extends VariablePowerAttr {
+/**
+ * This Attribute calculates the current power of {@linkcode Moves.RAGE_FIST}.
+ * The counter for power calculation does not reset on every wave but on every new arena encounter
+ */
+export class RageFistPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value += Math.min(user.battleData.hitCount, 6) * 50;
+    const { hitCount, prevHitCount } = user.battleData;
+    const basePower: Utils.NumberHolder = args[0];
+
+    this.updateHitReceivedCount(user, hitCount, prevHitCount);
+
+    basePower.value = 50 + (Math.min(user.customPokemonData.hitsRecCount, 6) * 50);
 
     return true;
+  }
+
+  /**
+   * Updates the number of hits the Pokemon has taken in battle
+   * @param user Pokemon calling Rage Fist
+   * @param hitCount The number of received hits this battle
+   * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
+   */
+  protected updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
+    user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
+    user.battleData.prevHitCount = hitCount;
   }
 }
 
@@ -10991,8 +11011,8 @@ export function initMoves() {
     new AttackMove(Moves.TWIN_BEAM, Type.PSYCHIC, MoveCategory.SPECIAL, 40, 100, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.RAGE_FIST, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
-      .partial() // Counter resets every wave instead of on arena reset
-      .attr(HitCountPowerAttr)
+      .edgeCase() // Counter incorrectly increases on confusion self-hits
+      .attr(RageFistPowerAttr)
       .punchingMove(),
     new AttackMove(Moves.ARMOR_CANNON, Type.FIRE, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], -1, true),
