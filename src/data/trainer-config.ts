@@ -1353,7 +1353,7 @@ export const signatureSpecies: SignatureSpecies = {
   HAU: [[ Species.SOLGALEO, Species.LUNALA ], Species.NOIVERN, [ Species.TAPU_BULU, Species.TAPU_FINI, Species.TAPU_KOKO, Species.TAPU_LELE ]], // Alola Raichu lead, Boss Decidueye/Incineroar/Primarina
   LEON: [ Species.DRAGAPULT, Species.ZACIAN ], // Aegislash lead, GMax Charizard, Boss Rillaboom/Cinderace/Inteleon
   GEETA: [ Species.MIRAIDON, [ Species.ESPATHRA, Species.VELUZA ], [ Species.CHI_YU, Species.WO_CHIEN ], Species.KINGAMBIT ], // Boss Glimmora lead
-  NEMONA: [ Species.KORAIDON, Species.PAWMOT, [ Species.CHIEN_PAO, Species.TING_LU ]], // Lycanroc lead, Boss Meowscarada/Skeledirge/Quaquavel
+  NEMONA: [ Species.KORAIDON, Species.PAWMOT, [ Species.CHIEN_PAO, Species.TING_LU ]], // Lycanroc lead, Boss Meowscarada/Skeledirge/Quaquaval
   KIERAN: [[ Species.GRIMMSNARL, Species.INCINEROAR, Species.PORYGON_Z ], Species.TERAPAGOS ], // Poliwrath/Politoed lead, Random Mask Ogerpon, Boss Hydrapple
 };
 
@@ -1897,7 +1897,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = 0; // Midday form
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVEL ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
