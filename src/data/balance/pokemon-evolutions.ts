@@ -145,13 +145,13 @@ export class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public timesOfDay: TimeOfDay[];
   constructor(tod: "day" | "night") {
     if (tod === "day") {
-      super(p => globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY);
+      super(() => globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY);
       this.timesOfDay = [ TimeOfDay.DAWN, TimeOfDay.DAY ];
     } else if (tod === "night") {
-      super(p => globalScene.arena.getTimeOfDay() === TimeOfDay.DUSK || globalScene.arena.getTimeOfDay() === TimeOfDay.NIGHT);
+      super(() => globalScene.arena.getTimeOfDay() === TimeOfDay.DUSK || globalScene.arena.getTimeOfDay() === TimeOfDay.NIGHT);
       this.timesOfDay = [ TimeOfDay.DUSK, TimeOfDay.NIGHT ];
     } else {
-      super(p => false);
+      super(() => false);
       this.timesOfDay = [];
     }
     this.description = i18next.t("pokemonEvolutions:timeOfDay", { tod: i18next.t(`pokemonEvolutions:${tod}`) });
@@ -209,7 +209,7 @@ export class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondit
 
 export class ShedinjaEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
-    super(p => globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0);
+    super(() => globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0);
     this.description = i18next.t("pokemonEvolutions:shedinja");
   }
 }
@@ -217,7 +217,7 @@ export class ShedinjaEvolutionCondition extends SpeciesEvolutionCondition {
 export class PartyTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public type: Type;
   constructor(type: Type) {
-    super(p => !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(type) > -1));
+    super(() => !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(type) > -1));
     this.type = type;
     this.description = i18next.t("pokemonEvolutions:partyType", { type: i18next.t(`pokemonInfo:Type.${Type[this.type]}`) });
   }
@@ -226,7 +226,7 @@ export class PartyTypeEvolutionCondition extends SpeciesEvolutionCondition {
 export class CaughtEvolutionCondition extends SpeciesEvolutionCondition {
   public species: Species;
   constructor(species: Species) {
-    super(p => !!globalScene.gameData.dexData[species].caughtAttr);
+    super(() => !!globalScene.gameData.dexData[species].caughtAttr);
     this.species = species;
     this.description = i18next.t("pokemonEvolutions:caught", { species: i18next.t(`pokemon:${Species[this.species].toLowerCase()}`) });
   }
@@ -235,7 +235,7 @@ export class CaughtEvolutionCondition extends SpeciesEvolutionCondition {
 export class WeatherEvolutionCondition extends SpeciesEvolutionCondition {
   public weatherTypes: WeatherType[];
   constructor(weatherTypes: WeatherType[]) {
-    super(p => weatherTypes.indexOf(globalScene.arena.weather?.weatherType || WeatherType.NONE) > -1);
+    super(() => weatherTypes.indexOf(globalScene.arena.weather?.weatherType || WeatherType.NONE) > -1);
     this.weatherTypes = weatherTypes;
   }
 }
@@ -292,7 +292,7 @@ export class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
       this.move = move;
       this.timesOfDay = [ TimeOfDay.DUSK, TimeOfDay.NIGHT ];
     } else {
-      super(p => false);
+      super(() => false);
       this.timesOfDay = [];
     }
     const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
@@ -303,7 +303,7 @@ export class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
 export class BiomeEvolutionCondition extends SpeciesEvolutionCondition {
   public biomes: Biome[];
   constructor(biomes: Biome[]) {
-    super(p => biomes.filter(b => b === globalScene.arena.biomeType).length > 0);
+    super(() => biomes.filter(b => b === globalScene.arena.biomeType).length > 0);
     this.biomes = biomes;
     this.description = i18next.t("pokemonEvolutions:biome");
   }
