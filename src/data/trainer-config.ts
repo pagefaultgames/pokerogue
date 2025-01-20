@@ -1344,7 +1344,7 @@ export const signatureSpecies: SignatureSpecies = {
   BLUE: [[ Species.GYARADOS, Species.EXEGGUTOR, Species.ARCANINE ], Species.HO_OH, [ Species.RHYPERIOR, Species.MAGNEZONE ]], // Alakazam lead, Mega Pidgeot
   RED: [ Species.LUGIA, Species.SNORLAX, [ Species.ESPEON, Species.UMBREON, Species.SYLVEON ]], // GMax Pikachu lead, Mega Venusaur/Charizard/Blastoise, Boss Snorlax
   LANCE_CHAMPION: [ Species.KINGDRA, Species.CHARIZARD ], // Aerodactyl lead, Mega Salamence, Boss Dragonite
-  STEVEN: [ [ Species.ARMALDO, Species.CRADILY ], Species.IRON_CROWN ], // Skarmory lead, Mega Metagross, Boss Aggron
+  STEVEN: [[ Species.ARMALDO, Species.CRADILY ], Species.IRON_CROWN ], // Skarmory lead, Mega Metagross, Boss Aggron
   WALLACE: [ Species.WALKING_WAKE, Species.LUDICOLO ], // Pelipper lead, Mega Latios/Latias, Boss Milotic
   CYNTHIA: [ Species.GIRATINA, Species.LUCARIO ], // Spiritomb lead, Mega Garchomp, Boss Togekiss
   ALDER: [ Species.ZEKROM, [ Species.KROOKODILE, Species.REUNICLUS ], Species.KELDEO ], // Bouffalant/Braviary lead, Boss Volcarona
