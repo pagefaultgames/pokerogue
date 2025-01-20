@@ -709,9 +709,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                 }
                 break;
               case 5:
-                if (!globalScene.gameData.voucherCounts[VoucherType.REGULAR] && !globalScene.gameData.voucherCounts[VoucherType.PLUS]
-                && !globalScene.gameData.voucherCounts[VoucherType.PREMIUM] && !globalScene.gameData.voucherCounts[VoucherType.GOLDEN] &&
-                !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
+                if (
+                  !globalScene.gameData.voucherCounts[VoucherType.REGULAR]
+                  && !globalScene.gameData.voucherCounts[VoucherType.PLUS]
+                  && !globalScene.gameData.voucherCounts[VoucherType.PREMIUM]
+                  && !globalScene.gameData.voucherCounts[VoucherType.GOLDEN]
+                  && !Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE
+                ) {
                   error = true;
                   this.showError(i18next.t("egg:noVouchers"));
                 } else if (globalScene.gameData.eggs.length < 99 || Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
@@ -721,7 +725,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                   if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE) {
                     const voucherTypes = [[ VoucherType.GOLDEN, 25 ], [ VoucherType.PREMIUM, 10 ], [ VoucherType.PLUS, 5 ], [ VoucherType.REGULAR, 1 ]];
                     voucherTypes.forEach(voucherType => {
-                      const vouchersUsed = Math.min(globalScene.gameData.voucherCounts[voucherType[0]], ~~(eggSpace / voucherType[1]));
+                      const vouchersUsed = Math.min(globalScene.gameData.voucherCounts[voucherType[0]], Math.floor(eggSpace / voucherType[1]));
                       this.consumeVouchers(voucherType[0], vouchersUsed);
                       const pullsUsed = vouchersUsed * voucherType[1];
                       pulls += pullsUsed;
