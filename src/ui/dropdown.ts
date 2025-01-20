@@ -7,7 +7,9 @@ export enum DropDownState {
     ON = 0,
     OFF = 1,
     EXCLUDE = 2,
-    UNLOCKABLE = 3
+    UNLOCKABLE = 3,
+    ONE = 4,
+    TWO = 5
 }
 
 export enum DropDownType {
@@ -55,6 +57,8 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   private offColor = 0x272727;
   private excludeColor = 0xff5555;
   private unlockableColor = 0xffff00;
+  private oneColor = 0x33bbff;
+  private twoColor = 0x33bbff;
 
   constructor(val: any, labels: DropDownLabel | DropDownLabel[]) {
     super(globalScene);
@@ -125,6 +129,12 @@ export class DropDownOption extends Phaser.GameObjects.Container {
         break;
       case DropDownState.UNLOCKABLE:
         this.toggle.setTint(this.unlockableColor);
+        break;
+      case DropDownState.ONE:
+        this.toggle.setTint(this.oneColor);
+        break;
+      case DropDownState.TWO:
+        this.toggle.setTint(this.twoColor);
         break;
     }
   }
