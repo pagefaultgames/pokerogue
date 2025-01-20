@@ -8,7 +8,7 @@ import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "#app/modifier/modifier";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
-import { getGenderColor, getGenderSymbol } from "#app/data/gender";
+import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
@@ -109,6 +109,7 @@ export enum PartyOption {
   TEACH,
   TRANSFER,
   SUMMARY,
+  POKEDEX,
   UNPAUSE_EVOLUTION,
   SPLICE,
   UNSPLICE,
@@ -218,7 +219,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
 
-  private localizedOptions = [ PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME, PartyOption.SELECT ];
+  private localizedOptions = [ PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.POKEDEX, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME, PartyOption.SELECT ];
 
   constructor() {
     super(Mode.PARTY);
@@ -397,7 +398,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL && option !== PartyOption.RENAME)
+        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.POKEDEX && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL && option !== PartyOption.RENAME)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string | null;
           const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
@@ -465,6 +466,16 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.SUMMARY) {
           ui.playSelect();
           ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
+          return true;
+        } else if (option === PartyOption.POKEDEX) {
+          ui.playSelect();
+          const attributes = {
+            shiny: pokemon.shiny,
+            variant: pokemon.variant,
+            form: pokemon.formIndex,
+            female: pokemon.gender === Gender.FEMALE ? true : false
+          };
+          ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, pokemon.formIndex, attributes).then(() =>  this.clearOptions());
           return true;
         } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
           this.clearOptions();
@@ -892,6 +903,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       this.options.push(PartyOption.SUMMARY);
+      this.options.push(PartyOption.POKEDEX);
       this.options.push(PartyOption.RENAME);
 
       if ((pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) || (pokemon.isFusion() && pokemon.fusionSpecies && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId)))) {
