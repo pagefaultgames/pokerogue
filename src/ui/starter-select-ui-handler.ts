@@ -502,7 +502,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(SortCriteria.COST, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
       new DropDownOption(SortCriteria.CANDY, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
       new DropDownOption(SortCriteria.IV, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
-      new DropDownOption(SortCriteria.NAME, new DropDownLabel(i18next.t("filterBar:sortByName")))
+      new DropDownOption(SortCriteria.NAME, new DropDownLabel(i18next.t("filterBar:sortByName"))),
+      new DropDownOption(SortCriteria.CAUGHT, new DropDownLabel(i18next.t("filterBar:sortByNumCaught"))),
+      new DropDownOption(SortCriteria.HATCHED, new DropDownLabel(i18next.t("filterBar:sortByNumHatched")))
     ];
     this.filterBar.addFilter(DropDownColumn.SORT, i18next.t("filterBar:sortFilter"), new DropDown(0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
@@ -2698,6 +2700,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           return (avgIVsA - avgIVsB) * -sort.dir;
         case SortCriteria.NAME:
           return a.species.name.localeCompare(b.species.name) * -sort.dir;
+        case SortCriteria.CAUGHT:
+          return (globalScene.gameData.dexData[a.species.speciesId].caughtCount - globalScene.gameData.dexData[b.species.speciesId].caughtCount) * -sort.dir;
+        case SortCriteria.HATCHED:
+          return (globalScene.gameData.dexData[a.species.speciesId].hatchedCount - globalScene.gameData.dexData[b.species.speciesId].hatchedCount) * -sort.dir;
       }
       return 0;
     });
