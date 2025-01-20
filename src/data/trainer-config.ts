@@ -1886,6 +1886,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
+      p.abilityIndex = 2; // Grassy Surge Rillaboom, Libero Cinderace, Sniper Inteleon
     })),
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion(signatureSpecies["GEETA"], false).setMixedBattleBgm("battle_champion_geeta")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GLIMMORA ], TrainerSlot.TRAINER, true, p => {
