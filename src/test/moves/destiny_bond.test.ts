@@ -1,4 +1,5 @@
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import type { ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/move";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
