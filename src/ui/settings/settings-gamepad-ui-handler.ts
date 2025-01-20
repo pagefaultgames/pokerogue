@@ -1,6 +1,5 @@
-import BattleScene from "../../battle-scene";
 import { addTextObject, TextStyle } from "../text";
-import { Mode } from "../ui";
+import type { Mode } from "../ui";
 import {
   setSettingGamepad,
   SettingGamepad,
@@ -11,11 +10,12 @@ import {
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
 import pad_dualshock from "#app/configs/inputs/pad_dualshock";
 import pad_unlicensedSNES from "#app/configs/inputs/pad_unlicensedSNES";
-import { InterfaceConfig } from "#app/inputs-controller";
+import type { InterfaceConfig } from "#app/inputs-controller";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
 import { Device } from "#enums/devices";
 import { truncateString } from "#app/utils";
 import i18next from "i18next";
+import { globalScene } from "#app/global-scene";
 
 /**
  * Class representing the settings UI handler for gamepads.
@@ -28,11 +28,10 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
   /**
      * Creates an instance of SettingsGamepadUiHandler.
      *
-     * @param scene - The BattleScene instance.
      * @param mode - The UI mode, optional.
      */
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
     this.titleSelected = "Gamepad";
     this.setting = SettingGamepad;
     this.settingDeviceDefaults = settingGamepadDefaults;
@@ -53,9 +52,9 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
     super.setup();
     // If no gamepads are detected, set up a default UI prompt in the settings container.
     this.layout["noGamepads"] = new Map();
-    const optionsContainer = this.scene.add.container(0, 0);
+    const optionsContainer = globalScene.add.container(0, 0);
     optionsContainer.setVisible(false); // Initially hide the container as no gamepads are connected.
-    const label = addTextObject(this.scene, 8, 28, i18next.t("settings:gamepadPleasePlug"), TextStyle.SETTINGS_LABEL);
+    const label = addTextObject(8, 28, i18next.t("settings:gamepadPleasePlug"), TextStyle.SETTINGS_LABEL);
     label.setOrigin(0, 0);
     optionsContainer.add(label);
     this.settingsContainer.add(optionsContainer);
@@ -107,7 +106,7 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
 
           // Update the text of the first option label under the current setting to the name of the chosen gamepad,
           // truncating the name to 30 characters if necessary.
-          this.layout[_key].optionValueLabels[index][0].setText(truncateString(this.scene.inputController.selectedDevice[Device.GAMEPAD], 20));
+          this.layout[_key].optionValueLabels[index][0].setText(truncateString(globalScene.inputController.selectedDevice[Device.GAMEPAD], 20));
         }
       }
     }
@@ -121,7 +120,7 @@ export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiH
      */
   saveSettingToLocalStorage(settingName, cursor): void {
     if (this.setting[settingName] !== this.setting.Controller) {
-      this.scene.gameData.saveControlSetting(this.device, this.localStoragePropertyName, settingName, this.settingDeviceDefaults, cursor);
+      globalScene.gameData.saveControlSetting(this.device, this.localStoragePropertyName, settingName, this.settingDeviceDefaults, cursor);
     }
   }
 }

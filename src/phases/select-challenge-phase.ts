@@ -1,17 +1,17 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { Mode } from "#app/ui/ui";
 
 export class SelectChallengePhase extends Phase {
-  constructor(scene: BattleScene) {
-    super(scene);
+  constructor() {
+    super();
   }
 
   start() {
     super.start();
 
-    this.scene.playBgm("menu");
+    globalScene.playBgm("menu");
 
-    this.scene.ui.setMode(Mode.CHALLENGE_SELECT);
+    globalScene.ui.setMode(Mode.CHALLENGE_SELECT);
   }
 }

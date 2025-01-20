@@ -1,4 +1,4 @@
-import { TextStyle } from "#app/ui/text";
+import type { TextStyle } from "#app/ui/text";
 
 export class TextDisplay {
   speaker?: string;

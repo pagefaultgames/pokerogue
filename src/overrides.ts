@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 import { type PokeballCounts } from "#app/battle-scene";
 import { Gender } from "#app/data/gender";
 import { Variant } from "#app/data/variant";

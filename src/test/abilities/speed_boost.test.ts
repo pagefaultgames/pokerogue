@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { CommandPhase } from "#app/phases/command-phase";
+import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 
