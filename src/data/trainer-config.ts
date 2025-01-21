@@ -1353,7 +1353,7 @@ export const signatureSpecies: SignatureSpecies = {
   HAU: [ Species.SOLGALEO, Species.NOIVERN, [ Species.TAPU_BULU, Species.TAPU_FINI, Species.TAPU_KOKO, Species.TAPU_LELE ]], // Alola Raichu lead, Boss Decidueye/Incineroar/Primarina
   LEON: [ Species.DRAGAPULT, Species.ZACIAN, Species.MR_RIME ], // Aegislash lead, GMax Charizard, Boss Rillaboom/Cinderace/Inteleon
   GEETA: [ Species.MIRAIDON, [ Species.ESPATHRA, Species.VELUZA ], [ Species.TING_LU, Species.WO_CHIEN ], Species.KINGAMBIT, [ Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA ]], // Boss Glimmora lead
-  NEMONA: [ Species.KORAIDON, Species.PAWMOT, [ Species.CHIEN_PAO, Species.CHI_YU ], [ Species.ARMAROGUE, Species.CERULEDGE ]], // Lycanroc lead, Boss Meowscarada/Skeledirge/Quaquaval
+  NEMONA: [ Species.KORAIDON, Species.PAWMOT, [ Species.CHIEN_PAO, Species.CHI_YU ], [ Species.ARMAROUGE, Species.CERULEDGE ]], // Lycanroc lead, Boss Meowscarada/Skeledirge/Quaquaval
   KIERAN: [ Species.TERAPAGOS, [ Species.URSALUNA, Species.BLOODMOON_URSALUNA ]], // Poliwrath/Politoed lead, Random Mask Ogerpon, Boss Hydrapple
 };
 
