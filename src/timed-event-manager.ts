@@ -12,7 +12,8 @@ import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
 
 export enum EventType {
   SHINY,
-  NO_TIMER_DISPLAY
+  NO_TIMER_DISPLAY,
+  LUCK
 }
 
 interface EventBanner {
@@ -95,7 +96,7 @@ const timedEvents: TimedEvent[] = [
   },
   {
     name: "Year of the Snake",
-    eventType: EventType.SHINY,
+    eventType: EventType.LUCK,
     luckBoost: 1,
     startDate: new Date(Date.UTC(2025, 0, 29, 0)),
     endDate: new Date(Date.UTC(2025, 1, 3, 0)),
@@ -111,6 +112,7 @@ const timedEvents: TimedEvent[] = [
       { species: Species.TEDDIURSA },
       { species: Species.SEVIPER },
       { species: Species.LUNATONE },
+      { species: Species.CHIMCHAR },
       { species: Species.SNIVY },
       { species: Species.DARUMAKA },
       { species: Species.DRAMPA },
@@ -127,6 +129,7 @@ const timedEvents: TimedEvent[] = [
       Species.SEVIPER,
       Species.LUNATONE,
       Species.RAYQUAZA,
+      Species.CHIMCHAR, Species.MONFERNO, Species.INFERNAPE,
       Species.SNIVY, Species.SERVINE, Species.SERPERIOR,
       Species.DARUMAKA, Species.DARMANITAN,
       Species.ZYGARDE,
