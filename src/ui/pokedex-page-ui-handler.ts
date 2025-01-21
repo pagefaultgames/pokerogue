@@ -659,7 +659,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               // This takes care of Cosplay Pikachu (Pichu is not shown)
               (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey)) ||
               // This takes care of Gholdengo
-              (preSpecies.forms.length > 0 && species.forms.length === 0)
+              (preSpecies.forms.length > 0 && species.forms.length === 0) ||
+              // This takes care of everything else
+              (preSpecies.forms.length === 0 && (species.forms.length === 0 || species.forms[formIndex]?.formKey === ""))
             )
           )
           // This takes care of Burmy, Shellos etc
@@ -727,6 +729,16 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     return biomes;
+  }
+
+  isFormCaught(): boolean {
+    const allFormChanges = pokemonFormChanges.hasOwnProperty(this.species.speciesId) ? pokemonFormChanges[this.species.speciesId] : [];
+    // This shows battle forms such as megas and gmax as unlocked.
+    const formChangeAccess = allFormChanges.filter(f => (f.formKey === this.species.forms[this.formIndex].formKey)).length > 0;
+    const isFormCaught = this.speciesStarterDexEntry ?
+      (this.speciesStarterDexEntry.caughtAttr & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n || formChangeAccess
+      : false;
+    return isFormCaught;
   }
 
   /**
@@ -882,7 +894,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     let error = false;
 
     const isCaught = this.speciesStarterDexEntry?.caughtAttr;
-    const isFormCaught = (this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n;
+    const isFormCaught = this.isFormCaught();
 
     if (this.blockInputOverlay) {
       if (button === Button.CANCEL || button === Button.ACTION) {
@@ -1820,10 +1832,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return;
     }
 
-    let isFormCaught: Boolean = false;
-    if (this.speciesStarterDexEntry) {
-      isFormCaught = (this.speciesStarterDexEntry?.caughtAttr! & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n;
-    }
+    const isFormCaught = this.isFormCaught();
 
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (isFormCaught) {
@@ -1877,7 +1886,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    const isFormCaught = this.speciesStarterDexEntry ? (this.speciesStarterDexEntry.caughtAttr & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n : false;
+    const isFormCaught = this.isFormCaught();
 
     if ((this.speciesStarterDexEntry?.caughtAttr && isFormCaught) || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
       ui.showText(this.menuDescriptions[cursor]);
@@ -2146,7 +2155,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         }
       }
 
-      const isFormCaught = (this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
+      const isFormCaught = this.isFormCaught();
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
