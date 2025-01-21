@@ -88,21 +88,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected setupOptions() {
     const configOptions = this.config?.options ?? [];
 
-    let options: OptionSelectItem[];
+    const options: OptionSelectItem[] = configOptions;
 
-    // for performance reasons, this limits how many options we can see at once. Without this, it would try to make text options for every single options
-    // which makes the performance take a hit. If there's not enough options to do this (set to 10 at the moment) and the ui mode !== Mode.AUTO_COMPLETE,
-    // this is ignored and the original code is untouched, with the options array being all the options from the config
-    if (configOptions.length >= 10 && globalScene.ui.getMode() === Mode.AUTO_COMPLETE) {
-      const optionsScrollTotal = configOptions.length;
-      const optionStartIndex = this.scrollCursor;
-      const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config?.maxOptions! - 1) >= optionsScrollTotal ? this.config?.maxOptions! - 1 : this.config?.maxOptions! - 2));
-      options = configOptions.slice(optionStartIndex, optionEndIndex + 2);
-    } else {
-      options = configOptions;
-    }
-
-    this.unskippedIndices = this.getUnskippedIndices(options);
+    this.unskippedIndices = this.getUnskippedIndices(configOptions);
 
     if (this.optionSelectText) {
       if (this.optionSelectText instanceof BBCodeText) {
@@ -121,10 +109,15 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
     }
 
+    const optionsWithScroll = (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) ? this.getOptionsWithScroll() : options;
+
+    // Setting the initial text to establish the width of the select object. We consider all options, even ones that are not displayed,
+    // Except in the case of autocomplete, where we don't want to set up a text element with potentially hundreds of lines.
+    const optionsForWidth = globalScene.ui.getMode() === Mode.AUTO_COMPLETE ? optionsWithScroll : options;
     this.optionSelectText = addBBCodeTextObject(
-      0, 0, options.map(o => o.item
-        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color]`
-        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color]`
+      0, 0, optionsForWidth.map(o => o.item
+        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
+        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`
       ).join("\n"),
       TextStyle.WINDOW, { maxLines: options.length, lineSpacing: 12 }
     );
@@ -132,19 +125,17 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectText.setName("text-option-select");
     this.optionSelectContainer.add(this.optionSelectText);
     this.optionSelectContainer.setPosition((globalScene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
-
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
-
-    if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
-      this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.item
-        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color]`
-        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color]`
-      ).join("\n"));
-    }
-
     this.optionSelectBg.height = this.getWindowHeight();
-
     this.optionSelectText.setPosition(this.optionSelectBg.x - this.optionSelectBg.width + 12 + 24 * this.scale, this.optionSelectBg.y - this.optionSelectBg.height + 2 + 42 * this.scale);
+
+    // Now that the container and background widths are established, we can set up the proper text restricted to visible options
+    this.optionSelectText.setText(optionsWithScroll.map(o => o.item
+      ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
+      : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`
+    ).join("\n")
+
+    );
 
     options.forEach((option: OptionSelectItem, i: integer) => {
       if (option.item) {
@@ -304,7 +295,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     const optionsScrollTotal = options.length;
     const optionStartIndex = this.scrollCursor;
-    const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal ? this.config.maxOptions - 1 : this.config.maxOptions - 2));
+    const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex +
+      (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal ? this.config.maxOptions - 1 : this.config.maxOptions - 2)
+    );
 
     if (this.config?.maxOptions && options.length > this.config.maxOptions) {
       options.splice(optionEndIndex, optionsScrollTotal);
