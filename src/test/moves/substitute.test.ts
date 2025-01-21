@@ -3,7 +3,7 @@ import { ArenaTagSide } from "#app/data/arena-tag";
 import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/move";
 import { MoveResult } from "#app/field/pokemon";
-import { CommandPhase } from "#app/phases/command-phase";
+import type { CommandPhase } from "#app/phases/command-phase";
 import GameManager from "#app/test/utils/gameManager";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
