@@ -132,7 +132,7 @@ export class SpeciesEvolutionCondition {
   }
 }
 
-export class GenderEvolutionCondition extends SpeciesEvolutionCondition {
+class GenderEvolutionCondition extends SpeciesEvolutionCondition {
   public gender: Gender;
   constructor(gender: Gender) {
     super(p => p.gender === gender, p => p.gender = gender);
@@ -141,7 +141,7 @@ export class GenderEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
+class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public timesOfDay: TimeOfDay[];
   constructor(tod: "day" | "night") {
     if (tod === "day") {
@@ -158,7 +158,7 @@ export class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class MoveEvolutionCondition extends SpeciesEvolutionCondition {
+class MoveEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   constructor(move: Moves) {
     super(p => p.moveset.filter(m => m?.moveId === move).length > 0);
@@ -168,7 +168,7 @@ export class MoveEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class FriendshipEvolutionCondition extends SpeciesEvolutionCondition {
+class FriendshipEvolutionCondition extends SpeciesEvolutionCondition {
   public amount: integer;
   constructor(amount: number) {
     super(p => p.friendship >= amount);
@@ -177,7 +177,7 @@ export class FriendshipEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
+class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public amount: integer;
   public timesOfDay: TimeOfDay[];
   constructor(amount: number, tod: "day" | "night") {
@@ -196,7 +196,7 @@ export class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondi
   }
 }
 
-export class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
+class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public amount: integer;
   public type: Type;
   constructor(amount: number, type: Type) {
@@ -207,14 +207,14 @@ export class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondit
   }
 }
 
-export class ShedinjaEvolutionCondition extends SpeciesEvolutionCondition {
+class ShedinjaEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
     super(p => globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0);
     this.description = i18next.t("pokemonEvolutions:shedinja");
   }
 }
 
-export class PartyTypeEvolutionCondition extends SpeciesEvolutionCondition {
+class PartyTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public type: Type;
   constructor(type: Type) {
     super(p => !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(type) > -1));
@@ -223,7 +223,7 @@ export class PartyTypeEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class CaughtEvolutionCondition extends SpeciesEvolutionCondition {
+class CaughtEvolutionCondition extends SpeciesEvolutionCondition {
   public species: Species;
   constructor(species: Species) {
     super(p => !!globalScene.gameData.dexData[species].caughtAttr);
@@ -232,7 +232,7 @@ export class CaughtEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class WeatherEvolutionCondition extends SpeciesEvolutionCondition {
+class WeatherEvolutionCondition extends SpeciesEvolutionCondition {
   public weatherTypes: WeatherType[];
   constructor(weatherTypes: WeatherType[]) {
     super(p => weatherTypes.indexOf(globalScene.arena.weather?.weatherType || WeatherType.NONE) > -1);
@@ -240,7 +240,7 @@ export class WeatherEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class MoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
+class MoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public type: Type;
   constructor(type: Type) {
     super(p => p.moveset.filter(m => m?.getMove().type === type).length > 0);
@@ -249,7 +249,7 @@ export class MoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class TreasureEvolutionCondition extends SpeciesEvolutionCondition {
+class TreasureEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
     super(p => p.evoCounter
       + p.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
@@ -259,7 +259,7 @@ export class TreasureEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class TyrogueEvolutionCondition extends SpeciesEvolutionCondition {
+class TyrogueEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   constructor(move: Moves) {
     super(p =>
@@ -270,7 +270,7 @@ export class TyrogueEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class NatureEvolutionCondition extends SpeciesEvolutionCondition {
+class NatureEvolutionCondition extends SpeciesEvolutionCondition {
   public natures: Nature[];
   constructor(natures: Nature[]) {
     super(p => natures.indexOf(p.getNature()) > -1);
@@ -279,7 +279,7 @@ export class NatureEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
+class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   public timesOfDay: TimeOfDay[];
   constructor(move: Moves, tod: "day" | "night") {
@@ -300,7 +300,7 @@ export class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class BiomeEvolutionCondition extends SpeciesEvolutionCondition {
+class BiomeEvolutionCondition extends SpeciesEvolutionCondition {
   public biomes: Biome[];
   constructor(biomes: Biome[]) {
     super(p => biomes.filter(b => b === globalScene.arena.biomeType).length > 0);
@@ -309,7 +309,7 @@ export class BiomeEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class DunsparceEvolutionCondition extends SpeciesEvolutionCondition {
+class DunsparceEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
     super(p => {
       let ret = false;
@@ -323,7 +323,7 @@ export class DunsparceEvolutionCondition extends SpeciesEvolutionCondition {
   }
 }
 
-export class TandemausEvolutionCondition extends SpeciesEvolutionCondition {
+class TandemausEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
     super(p => {
       let ret = false;
