@@ -1918,7 +1918,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     }))
-	.setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GRIMMSNARL, Species.INCINEROAR ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GRIMMSNARL, Species.INCINEROAR ], TrainerSlot.TRAINER, true, p => {
       // Intimidate Incineroar, Prankster Grimmsnarl
       p.generateAndPopulateMoveset();
       if (p.species.speciesId === Species.INCINEROAR) {
