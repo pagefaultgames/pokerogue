@@ -3,7 +3,7 @@ import { Button } from "#app/enums/buttons";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import Overrides from "#app/overrides";
-import { CommandPhase } from "#app/phases/command-phase";
+import type { CommandPhase } from "#app/phases/command-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
@@ -104,7 +104,7 @@ export class MoveHelper extends GameManagerHelper {
  */
   public async learnMove(move: Moves | integer, partyIndex: integer = 0, moveSlotIndex: integer = 0) {
     return new Promise<void>(async (resolve, reject) => {
-      this.game.scene.pushPhase(new LearnMovePhase(this.game.scene, partyIndex, move));
+      this.game.scene.pushPhase(new LearnMovePhase(partyIndex, move));
 
       // if slots are full, queue up inputs to replace existing moves
       if (this.game.scene.getPlayerParty()[partyIndex].moveset.filter(m => m).length === 4) {
