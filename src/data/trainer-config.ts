@@ -1341,20 +1341,20 @@ export const signatureSpecies: SignatureSpecies = {
   AMARYS: [ Species.SKARMORY, Species.EMPOLEON, Species.SCIZOR, Species.METAGROSS ],
   LACEY: [ Species.EXCADRILL, Species.PRIMARINA, [ Species.ALCREMIE, Species.GRANBULL ], Species.WHIMSICOTT ],
   DRAYTON: [ Species.DRAGONITE, Species.ARCHALUDON, Species.HAXORUS, Species.SCEPTILE ],
-  BLUE: [[ Species.GYARADOS, Species.EXEGGUTOR, Species.ARCANINE ], Species.HO_OH, [ Species.RHYPERIOR, Species.MAGNEZONE ]], // Alakazam lead, Mega Pidgeot
-  RED: [ Species.LUGIA, Species.SNORLAX, [ Species.ESPEON, Species.UMBREON, Species.SYLVEON ]], // GMax Pikachu lead, Mega Venusaur/Charizard/Blastoise, Boss Snorlax
-  LANCE_CHAMPION: [ Species.KINGDRA, Species.CHARIZARD ], // Aerodactyl lead, Mega Salamence, Boss Dragonite
-  STEVEN: [[ Species.ARMALDO, Species.CRADILY ], Species.IRON_CROWN ], // Skarmory lead, Mega Metagross, Boss Aggron
-  WALLACE: [ Species.WALKING_WAKE, Species.LUDICOLO ], // Pelipper lead, Mega Latios/Latias, Boss Milotic
-  CYNTHIA: [ Species.GIRATINA, Species.LUCARIO ], // Spiritomb lead, Mega Garchomp, Boss Togekiss
-  ALDER: [ Species.ZEKROM, [ Species.KROOKODILE, Species.REUNICLUS ], Species.KELDEO ], // Bouffalant/Braviary lead, Boss Volcarona
-  IRIS: [ Species.RESHIRAM, Species.ARCHEOPS ], // Druddigon lead, Gmax Lapras, Boss Haxorus
-  DIANTHA: [ Species.HAWLUCHA, Species.XERNEAS ], // Gourgeist/Trevenant lead, Mega Gardevoir, Boss Goodra/Hisui Goodra
-  HAU: [[ Species.SOLGALEO, Species.LUNALA ], Species.NOIVERN, [ Species.TAPU_BULU, Species.TAPU_FINI, Species.TAPU_KOKO, Species.TAPU_LELE ]], // Alola Raichu lead, Boss Decidueye/Incineroar/Primarina
-  LEON: [ Species.DRAGAPULT, Species.ZACIAN ], // Aegislash lead, GMax Charizard, Boss Rillaboom/Cinderace/Inteleon
-  GEETA: [ Species.MIRAIDON, [ Species.ESPATHRA, Species.VELUZA ], [ Species.CHI_YU, Species.WO_CHIEN ], Species.KINGAMBIT ], // Boss Glimmora lead
-  NEMONA: [ Species.KORAIDON, Species.PAWMOT, [ Species.CHIEN_PAO, Species.TING_LU ]], // Lycanroc lead, Boss Meowscarada/Skeledirge/Quaquaval
-  KIERAN: [[ Species.GRIMMSNARL, Species.INCINEROAR, Species.PORYGON_Z ], Species.TERAPAGOS ], // Poliwrath/Politoed lead, Random Mask Ogerpon, Boss Hydrapple
+  BLUE: [[ Species.GYARADOS, Species.EXEGGUTOR, Species.ARCANINE ], Species.HO_OH, Species.MACHAMP, [ Species.MAGMORTAR, Species.ELECTIVIRE, Species.RHYPERIOR ]], // Alakazam lead, Mega Pidgeot
+  RED: [ Species.LUGIA, Species.SNORLAX, [ Species.ESPEON, Species.UMBREON, Species.SYLVEON ], [ Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR ]], // GMax Pikachu lead, Mega Venusaur/Charizard/Blastoise, Boss Snorlax
+  LANCE_CHAMPION: [ Species.KINGDRA, Species.CHARIZARD, [ Species.TYRANITAR, Species.GARCHOMP, Species.BAXCALIBUR ]], // Aerodactyl lead, Mega Salamence, Boss Dragonite
+  STEVEN: [[ Species.ARMALDO, Species.CRADILY ], Species.IRON_CROWN, Species.AGGRON ], // Skarmory lead, Mega Metagross, Boss Fossil Pokemon
+  WALLACE: [ Species.WALKING_WAKE, Species.LUDICOLO, [ Species.SWAMPERT, Species.EMPOLEON, Species.SAMUROTT ]], // Pelipper lead, Mega Latios/Latias, Boss Milotic
+  CYNTHIA: [ Species.GIRATINA, Species.LUCARIO, [ Species.ROSERADE, Species.HISUI_ARCANINE, Species.MILOTIC ]], // Spiritomb lead, Mega Garchomp, Boss Togekiss
+  ALDER: [ Species.ZEKROM, [ Species.KROOKODILE, Species.REUNICLUS, Species.CHANDELURE, Species.CONKELDURR ], Species.KELDEO, [ Species.HISUI_LILLIGANT, Species.BASCULEGION, Species.HISUI_ZOROARK ]], // Bouffalant/Braviary lead, Boss Volcarona
+  IRIS: [ Species.RESHIRAM, Species.ARCHEOPS, [ Species.HYDREIGON, Species.ARCHALUDON, Species.SALAMENCE ]], // Druddigon lead, Gmax Lapras, Boss Haxorus
+  DIANTHA: [ Species.HAWLUCHA, Species.XERNEAS, [ Species.TYRANTRUM, Species.AURORUS ]], // Gourgeist/Trevenant lead, Mega Gardevoir, Boss Goodra/Hisui Goodra
+  HAU: [ Species.SOLGALEO, Species.NOIVERN, [ Species.TAPU_BULU, Species.TAPU_FINI, Species.TAPU_KOKO, Species.TAPU_LELE ]], // Alola Raichu lead, Boss Decidueye/Incineroar/Primarina
+  LEON: [ Species.DRAGAPULT, Species.ZACIAN, Species.MR_RIME ], // Aegislash lead, GMax Charizard, Boss Rillaboom/Cinderace/Inteleon
+  GEETA: [ Species.MIRAIDON, [ Species.ESPATHRA, Species.VELUZA ], [ Species.TING_LU, Species.WO_CHIEN ], Species.KINGAMBIT, [ Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA ]], // Boss Glimmora lead
+  NEMONA: [ Species.KORAIDON, Species.PAWMOT, [ Species.CHIEN_PAO, Species.CHI_YU ], [ Species.ARMAROGUE, Species.CERULEDGE ]], // Lycanroc lead, Boss Meowscarada/Skeledirge/Quaquaval
+  KIERAN: [ Species.TERAPAGOS, [ Species.URSALUNA, Species.BLOODMOON_URSALUNA ]], // Poliwrath/Politoed lead, Random Mask Ogerpon, Boss Hydrapple
 };
 
 export const trainerConfigs: TrainerConfigs = {
@@ -1801,7 +1801,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.generateName();
     }))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.AGGRON ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.OMASTAR, Species.KABUTOPS, Species.AERODACTYL, Species.RAMPARDOS, Species.BASTIODON, Species.CARRACOSTA, Species.ARCHEOPS, Species.TYRANTRUM, Species.AURORUS, Species.DRACOZOLT, Species.DRACOVISH, Species.ARCTOZOLT, Species.ARCTOVISH ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
@@ -1873,6 +1873,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
+    }))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.ZYGARDE ], TrainerSlot.TRAINER, true, p => {
+      p.formIndex = 1; // Zygarde 10% forme, Aura Break
+      p.generateAndPopulateMoveset();
     })),
   [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(signatureSpecies["LEON"], true).setMixedBattleBgm("battle_galar_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.AEGISLASH ], TrainerSlot.TRAINER, true, p => {
@@ -1913,6 +1917,15 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HYDRAPPLE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
+    }))
+	.setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GRIMMSNARL, Species.INCINEROAR ], TrainerSlot.TRAINER, true, p => {
+      // Intimidate Incineroar, Prankster Grimmsnarl
+      p.generateAndPopulateMoveset();
+      if (p.species.speciesId === Species.INCINEROAR) {
+        p.abilityIndex = 2;
+      } else if (p.species.speciesId === Species.GRIMMSNARL) {
+        p.abilityIndex = 0;
+      }
     })),
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setMixedBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL)
