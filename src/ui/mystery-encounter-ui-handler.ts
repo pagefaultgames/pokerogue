@@ -1,21 +1,21 @@
-import BattleScene from "../battle-scene";
 import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
-import { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
+import type { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
-import MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
+import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import * as Utils from "../utils";
 import { isNullOrUndefined } from "../utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
-import { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import type { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import i18next from "i18next";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import { globalScene } from "#app/global-scene";
 
 export default class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -47,45 +47,45 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   protected blockInput: boolean = true;
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.MYSTERY_ENCOUNTER);
+  constructor() {
+    super(Mode.MYSTERY_ENCOUNTER);
   }
 
   override setup() {
     const ui = this.getUi();
 
-    this.cursorContainer = this.scene.add.container(18, -38.7);
+    this.cursorContainer = globalScene.add.container(18, -38.7);
     this.cursorContainer.setVisible(false);
     ui.add(this.cursorContainer);
-    this.optionsContainer = this.scene.add.container(12, -38.7);
+    this.optionsContainer = globalScene.add.container(12, -38.7);
     this.optionsContainer.setVisible(false);
     ui.add(this.optionsContainer);
-    this.dexProgressContainer = this.scene.add.container(214, -43);
+    this.dexProgressContainer = globalScene.add.container(214, -43);
     this.dexProgressContainer.setVisible(false);
     ui.add(this.dexProgressContainer);
-    this.descriptionContainer = this.scene.add.container(0, -152);
+    this.descriptionContainer = globalScene.add.container(0, -152);
     this.descriptionContainer.setVisible(false);
     ui.add(this.descriptionContainer);
-    this.tooltipContainer = this.scene.add.container(210, -48);
+    this.tooltipContainer = globalScene.add.container(210, -48);
     this.tooltipContainer.setVisible(false);
     ui.add(this.tooltipContainer);
 
     this.setCursor(this.getCursor());
 
-    this.descriptionWindow = addWindow(this.scene, 0, 0, 150, 105, false, false, 0, 0, WindowVariant.THIN);
+    this.descriptionWindow = addWindow(0, 0, 150, 105, false, false, 0, 0, WindowVariant.THIN);
     this.descriptionContainer.add(this.descriptionWindow);
 
-    this.tooltipWindow = addWindow(this.scene, 0, 0, 110, 48, false, false, 0, 0, WindowVariant.THIN);
+    this.tooltipWindow = addWindow(0, 0, 110, 48, false, false, 0, 0, WindowVariant.THIN);
     this.tooltipContainer.add(this.tooltipWindow);
 
-    this.dexProgressWindow = addWindow(this.scene, 0, 0, 24, 28, false, false, 0, 0, WindowVariant.THIN);
+    this.dexProgressWindow = addWindow(0, 0, 24, 28, false, false, 0, 0, WindowVariant.THIN);
     this.dexProgressContainer.add(this.dexProgressWindow);
 
-    this.rarityBall = this.scene.add.sprite(141, 9, "pb");
+    this.rarityBall = globalScene.add.sprite(141, 9, "pb");
     this.rarityBall.setScale(0.75);
     this.descriptionContainer.add(this.rarityBall);
 
-    const dexProgressIndicator = this.scene.add.sprite(12, 10, "encounter_radar");
+    const dexProgressIndicator = globalScene.add.sprite(12, 10, "encounter_radar");
     dexProgressIndicator.setScale(0.80);
     this.dexProgressContainer.add(dexProgressIndicator);
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
@@ -138,8 +138,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
             ...this.overrideSettings,
             slideInDescription: false
           };
-          this.scene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
-            this.scene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
+          globalScene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
+            globalScene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
             setTimeout(() => {
               this.setCursor(this.viewPartyIndex);
               this.unblockInput();
@@ -148,7 +148,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         } else if (this.blockInput || (!this.optionsMeetsReqs[cursor] && (selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL))) {
           success = false;
         } else {
-          if ((this.scene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
+          if ((globalScene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
             success = true;
           } else {
             ui.playError();
@@ -315,7 +315,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.viewPartyIndex = this.optionsContainer.getAll()?.length - 1;
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.image(0, 0, "cursor");
+      this.cursorObj = globalScene.add.image(0, 0, "cursor");
       this.cursorContainer.add(this.cursorObj);
     }
 
@@ -334,13 +334,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   displayEncounterOptions(slideInDescription: boolean = true): void {
     this.getUi().clearText();
-    const mysteryEncounter = this.scene.currentBattle.mysteryEncounter!;
+    const mysteryEncounter = globalScene.currentBattle.mysteryEncounter!;
     this.encounterOptions = this.overrideSettings?.overrideOptions ?? mysteryEncounter.options;
     this.optionsMeetsReqs = [];
 
-    const titleText: string | null = getEncounterText(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue?.title, TextStyle.TOOLTIP_TITLE);
-    const descriptionText: string | null = getEncounterText(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue?.description, TextStyle.TOOLTIP_CONTENT);
-    const queryText: string | null = getEncounterText(this.scene, mysteryEncounter.dialogue.encounterOptionsDialogue?.query, TextStyle.TOOLTIP_CONTENT);
+    const titleText: string | null = getEncounterText(mysteryEncounter.dialogue.encounterOptionsDialogue?.title, TextStyle.TOOLTIP_TITLE);
+    const descriptionText: string | null = getEncounterText(mysteryEncounter.dialogue.encounterOptionsDialogue?.description, TextStyle.TOOLTIP_CONTENT);
+    const queryText: string | null = getEncounterText(mysteryEncounter.dialogue.encounterOptionsDialogue?.query, TextStyle.TOOLTIP_CONTENT);
 
     // Clear options container (except cursor)
     this.optionsContainer.removeAll(true);
@@ -353,25 +353,25 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       switch (this.encounterOptions.length) {
         default:
         case 2:
-          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
           break;
         case 3:
-          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
           break;
         case 4:
-          optionText = addBBCodeTextObject(this.scene, i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
           break;
       }
 
-      this.optionsMeetsReqs.push(option.meetsRequirements(this.scene));
+      this.optionsMeetsReqs.push(option.meetsRequirements());
       const optionDialogue = option.dialogue!;
       const label = !this.optionsMeetsReqs[i] && optionDialogue.disabledButtonLabel ? optionDialogue.disabledButtonLabel : optionDialogue.buttonLabel;
       let text: string | null;
       if (option.hasRequirements() && this.optionsMeetsReqs[i] && (option.optionMode === MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
         // Options with special requirements that are met are automatically colored green
-        text = getEncounterText(this.scene, label, TextStyle.ME_OPTION_SPECIAL);
+        text = getEncounterText(label, TextStyle.ME_OPTION_SPECIAL);
       } else {
-        text = getEncounterText(this.scene, label, optionDialogue.style ? optionDialogue.style : TextStyle.ME_OPTION_DEFAULT);
+        text = getEncounterText(label, optionDialogue.style ? optionDialogue.style : TextStyle.ME_OPTION_DEFAULT);
       }
 
       if (text) {
@@ -387,7 +387,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       // Sets up the mask that hides the option text to give an illusion of scrolling
       const nonScrollWidth = 90;
-      const optionTextMaskRect = this.scene.make.graphics({});
+      const optionTextMaskRect = globalScene.make.graphics({});
       optionTextMaskRect.setScale(6);
       optionTextMaskRect.fillStyle(0xFFFFFF);
       optionTextMaskRect.beginPath();
@@ -406,7 +406,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       // Animates the option text scrolling sideways
       if (optionTextWidth > nonScrollWidth) {
-        this.optionScrollTweens[i] = this.scene.tweens.add({
+        this.optionScrollTweens[i] = globalScene.tweens.add({
           targets: optionText,
           delay: Utils.fixedInt(2000),
           loop: -1,
@@ -420,13 +420,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // View Party Button
-    const viewPartyText = addBBCodeTextObject(this.scene, (this.scene.game.canvas.width) / 6, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
+    const viewPartyText = addBBCodeTextObject((globalScene.game.canvas.width) / 6, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
     this.optionsContainer.add(viewPartyText);
     viewPartyText.x -= (viewPartyText.displayWidth + 16);
     this.viewPartyXPosition = viewPartyText.x - 10;
 
     // Description Window
-    const titleTextObject = addBBCodeTextObject(this.scene, 0, 0, titleText ?? "", TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 750 }, align: "center", lineSpacing: -8 });
+    const titleTextObject = addBBCodeTextObject(0, 0, titleText ?? "", TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 750 }, align: "center", lineSpacing: -8 });
     this.descriptionContainer.add(titleTextObject);
     titleTextObject.setPosition(72 - titleTextObject.displayWidth / 2, 5.5);
 
@@ -438,10 +438,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const ballType = getPokeballAtlasKey(index);
     this.rarityBall.setTexture("pb", ballType);
 
-    const descriptionTextObject = addBBCodeTextObject(this.scene, 6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
+    const descriptionTextObject = addBBCodeTextObject(6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
-    const descriptionTextMaskRect = this.scene.make.graphics({});
+    const descriptionTextMaskRect = globalScene.make.graphics({});
     descriptionTextMaskRect.setScale(6);
     descriptionTextMaskRect.fillStyle(0xFFFFFF);
     descriptionTextMaskRect.beginPath();
@@ -460,7 +460,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Animates the description text moving upwards
     if (descriptionLineCount > 6) {
-      this.descriptionScrollTween = this.scene.tweens.add({
+      this.descriptionScrollTween = globalScene.tweens.add({
         targets: descriptionTextObject,
         delay: Utils.fixedInt(2000),
         loop: -1,
@@ -472,14 +472,14 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     this.descriptionContainer.add(descriptionTextObject);
 
-    const queryTextObject = addBBCodeTextObject(this.scene, 0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
+    const queryTextObject = addBBCodeTextObject(0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
     this.descriptionContainer.add(queryTextObject);
     queryTextObject.setPosition(75 - queryTextObject.displayWidth / 2, 90);
 
     // Slide in description container
     if (slideInDescription) {
       this.descriptionContainer.x -= 150;
-      this.scene.tweens.add({
+      globalScene.tweens.add({
         targets: this.descriptionContainer,
         x: "+=150",
         ease: "Sine.easeInOut",
@@ -511,9 +511,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     const cursorOption = this.encounterOptions[cursor];
     const optionDialogue = cursorOption.dialogue!;
     if (!this.optionsMeetsReqs[cursor] && (cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL) && optionDialogue.disabledButtonTooltip) {
-      text = getEncounterText(this.scene, optionDialogue.disabledButtonTooltip, TextStyle.TOOLTIP_CONTENT);
+      text = getEncounterText(optionDialogue.disabledButtonTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
-      text = getEncounterText(this.scene, optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
+      text = getEncounterText(optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
     }
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)
@@ -524,11 +524,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     if (text) {
-      const tooltipTextObject = addBBCodeTextObject(this.scene, 6, 7, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 600 }, fontSize: "72px" });
+      const tooltipTextObject = addBBCodeTextObject(6, 7, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 600 }, fontSize: "72px" });
       this.tooltipContainer.add(tooltipTextObject);
 
       // Sets up the mask that hides the description text to give an illusion of scrolling
-      const tooltipTextMaskRect = this.scene.make.graphics({});
+      const tooltipTextMaskRect = globalScene.make.graphics({});
       tooltipTextMaskRect.setScale(6);
       tooltipTextMaskRect.fillStyle(0xFFFFFF);
       tooltipTextMaskRect.beginPath();
@@ -546,7 +546,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       // Animates the tooltip text moving upwards
       if (tooltipLineCount > 3) {
-        this.tooltipScrollTween = this.scene.tweens.add({
+        this.tooltipScrollTween = globalScene.tweens.add({
           targets: tooltipTextObject,
           delay: Utils.fixedInt(1200),
           loop: -1,
@@ -593,25 +593,25 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   private showHideDexProgress(show: boolean) {
     if (show && !this.showDexProgress) {
       this.showDexProgress = true;
-      this.scene.tweens.killTweensOf(this.dexProgressContainer);
-      this.scene.tweens.add({
+      globalScene.tweens.killTweensOf(this.dexProgressContainer);
+      globalScene.tweens.add({
         targets: this.dexProgressContainer,
         y: -63,
         ease: "Sine.easeInOut",
         duration: 750,
         onComplete: () => {
           this.dexProgressContainer.on("pointerover", () => {
-            (this.scene as BattleScene).ui.showTooltip("", i18next.t("mysteryEncounterMessages:affects_pokedex"), true);
+            globalScene.ui.showTooltip("", i18next.t("mysteryEncounterMessages:affects_pokedex"), true);
           });
           this.dexProgressContainer.on("pointerout", () => {
-            (this.scene as BattleScene).ui.hideTooltip();
+            globalScene.ui.hideTooltip();
           });
         }
       });
     } else if (!show && this.showDexProgress) {
       this.showDexProgress = false;
-      this.scene.tweens.killTweensOf(this.dexProgressContainer);
-      this.scene.tweens.add({
+      globalScene.tweens.killTweensOf(this.dexProgressContainer);
+      globalScene.tweens.add({
         targets: this.dexProgressContainer,
         y: -43,
         ease: "Sine.easeInOut",

@@ -75,7 +75,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot should fail if target is -6/-6 de-buffed",
     async () => {
       game.override.moveset([ Moves.PARTING_SHOT, Moves.MEMENTO, Moves.SPLASH ]);
@@ -117,7 +117,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out when mist is active",
     async () => {
       game.override
@@ -138,7 +138,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out against clear body ability",
     async () => {
       game.override
@@ -158,7 +158,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot should de-buff and not fail if no party available to switch - party size 1",
     async () => {
       await game.startBattle([ Species.MURKROW ]);
@@ -175,7 +175,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot regularly not fail if no party available to switch - party fainted",
     async () => {
       await game.startBattle([ Species.MURKROW, Species.MEOWTH ]);

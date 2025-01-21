@@ -349,14 +349,14 @@ export class IntegerHolder extends NumberHolder {
   }
 }
 
-/** @deprecated Use {@linkcode NumberHolder}*/
-export class FixedInt extends IntegerHolder {
-  constructor(value: integer) {
-    super(value);
+export class FixedInt {
+  public readonly value: number;
+
+  constructor(value: number) {
+    this.value = value;
   }
 }
 
-/** @deprecated */
 export function fixedInt(value: integer): integer {
   return new FixedInt(value) as unknown as integer;
 }
