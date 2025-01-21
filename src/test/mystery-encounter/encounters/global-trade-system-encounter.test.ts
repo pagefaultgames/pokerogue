@@ -5,7 +5,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
@@ -221,7 +221,7 @@ describe("Global Trade System - Mystery Encounter", () => {
 
       // Set 2 Soul Dew on party lead
       scene.modifiers = [];
-      const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
+      const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
       const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 2;
       await scene.addModifier(modifier, true, false, false, true);
@@ -246,7 +246,7 @@ describe("Global Trade System - Mystery Encounter", () => {
 
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
-      const soulDew = generateModifierType(scene, modifierTypes.SOUL_DEW)!;
+      const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
       const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       await scene.addModifier(modifier, true, false, false, true);
