@@ -5289,6 +5289,8 @@ export class PokemonBattleData {
   public hitCount: number = 0;
   /** used for {@linkcode Moves.RAGE_FIST} in order to save hit Counts received before Rage Fist is applied */
   public prevHitCount: number = 0;
+  /** used to count the hitCount of self-hits due to confusion */
+  public confHitCount: number = 0;
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];

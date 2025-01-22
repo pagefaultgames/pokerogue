@@ -4010,13 +4010,13 @@ export class RageFistPowerAttr extends VariablePowerAttr {
   }
 
   /**
-   * Updates the number of hits the Pokemon has taken in battle
+   * Updates the number of hits the Pokemon has taken in battle not including self inflicted hits due to confusion
    * @param user Pokemon calling Rage Fist
    * @param hitCount The number of received hits this battle
    * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
    */
   protected updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
-    user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
+    user.customPokemonData.hitsRecCount += ((hitCount - user.battleData.confHitCount) - previousHitCount);
     user.battleData.prevHitCount = hitCount;
   }
 }
