@@ -4644,14 +4644,17 @@ export class VariableMoveTypeAttr extends MoveAttr {
 }
 
 /**
- * Attribute used to control the Power and Type of Natural Gift
+ * Attribute used to control the Power and Type of Natural Gift.
+ * Takes over the Power calculation of Natural Gift while {@linkcode NaturalGiftTypeAttr}
+ * takes care of the Move Type.
  * @extends VariablePowerAttr
  */
 export class NaturalGiftPowerAttr extends VariablePowerAttr {
   private randomBerry;
 
   /**
-   * Overrides the power of Natural Gift depending on the consumed berry
+   * Overrides the power of Natural Gift depending on the consumed berry.
+   * This also removes the berry.
    * @param user - The Pokémon using the move.
    * @param target - The target Pokémon.
    * @param move - The move being used.
@@ -4659,20 +4662,56 @@ export class NaturalGiftPowerAttr extends VariablePowerAttr {
    * @returns A boolean indicating whether the move was successfully applied.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log("GHNote Natural Gift POWER Attr called");
+    const power = args[0];
+    if (!(power instanceof Utils.NumberHolder)) {
+      return false;
+    }
+
+    this.randomBerry = NaturalGiftBerrySelector.getRandomBerry(user);
+
+    if (this.randomBerry) {
+      power.value = this.randomBerry.getNaturalGiftPower();
+
+      /** Berries do not get eaten during specific weather conditions */
+      const weather = globalScene.arena.weather;
+      if (!weather?.isEffectSuppressed()) {
+        if (weather?.weatherType === WeatherType.HEAVY_RAIN && this.randomBerry.getNaturalGiftType === Type.FIRE) {
+          NaturalGiftBerrySelector.resetBerry();
+          return true;
+        } else if (weather?.weatherType === WeatherType.HARSH_SUN && this.randomBerry.getNaturalGiftType === Type.WATER) {
+          NaturalGiftBerrySelector.resetBerry();
+          return true;
+        }
+      }
+      /** If user used {@linkcode Moves.POWDER} and Natural Gift turns fire type the berry is not confused*/
+      if (user.getTag(BattlerTagType.POWDER) && this.randomBerry.getNaturalGiftType === Type.FIRE) {
+        NaturalGiftBerrySelector.resetBerry();
+        return true;
+      }
+
+      user.loseHeldItem(this.randomBerry, user.isPlayer());
+      globalScene.updateModifiers(user.isPlayer());
+      NaturalGiftBerrySelector.resetBerry();
+
+      return true;
+    }
     return false;
   }
 }
 
 /**
  * Attribute used to control the type of Natural Gift
+ * Takes over the Type calculation of Natural Gift while {@linkcode NaturalGiftPowerAttr}
+ * takes care of the Move power.
  * @extends VariableMoveTypeAttr
  */
 export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
   private randomBerry;
 
   /**
-   * Overrides the type of Natural Gift depending on the consumed berry
+   * Overrides the type of Natural Gift depending on the consumed berry.
+   * The item used for the move is not removed here but in {@linkcode NaturalGiftPowerAttr}
+   * since it is called last.
    * @param user - The Pokémon using the move.
    * @param target - The target Pokémon.
    * @param move - The move being used.
@@ -4680,8 +4719,46 @@ export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
    * @returns A boolean indicating whether the move was successfully applied.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log("GHNote Natural Gift TYPE Attr called");
+    const moveType = args[0];
+    if (!(moveType instanceof Utils.NumberHolder)) {
+      return false;
+    }
+
+    this.randomBerry = NaturalGiftBerrySelector.getRandomBerry(user);
+
+    if (this.randomBerry) {
+      moveType.value = this.randomBerry.getNaturalGiftType();
+      return true;
+    }
     return false;
+  }
+}
+
+
+class NaturalGiftBerrySelector {
+  private static selectedBerry;
+
+  /**
+   * select random berry from user
+   * @param user Pokemon using Natural Gift
+   * @returns A random berry to use in {@linkcode NaturalGiftPowerAttr} and {@linkcode NaturalGiftTypeAttr}
+   */
+  public static getRandomBerry(user: Pokemon): BerryModifier {
+    if (!this.selectedBerry) {
+      const berries =  globalScene.findModifiers(
+        m => m instanceof BerryModifier && m.pokemonId === user.id,
+        user.isPlayer()
+      ) as BerryModifier[];
+      this.selectedBerry = berries.at(user.randSeedInt(berries.length)) ?? null;
+    }
+    return this.selectedBerry;
+  }
+
+  /**
+   * Reset the selected berry
+   */
+  public static resetBerry() {
+    this.selectedBerry = undefined;
   }
 }
 
@@ -9362,6 +9439,10 @@ export function initMoves() {
     new AttackMove(Moves.NATURAL_GIFT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
       .attr(NaturalGiftPowerAttr)
       .attr(NaturalGiftTypeAttr)
+      .condition((user) => {
+        const userBerries = globalScene.findModifiers(m => m instanceof BerryModifier, user.isPlayer());
+        return userBerries.length > 0;
+      })
       .makesContact(false),
     //.unimplemented(),
     new AttackMove(Moves.FEINT, Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
