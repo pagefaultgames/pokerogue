@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { allMoves, RandomMoveAttr } from "#app/data/move";
 import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#app/battle";
