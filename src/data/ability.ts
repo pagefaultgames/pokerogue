@@ -16,7 +16,7 @@ import type { ArenaTrapTag } from "./arena-tag";
 import { ArenaTagSide } from "./arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
-import { SpeciesFormChangeManualTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
+import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
 import i18next from "i18next";
 import type { Localizable } from "#app/interfaces/locales";
 import { Command } from "../ui/command-ui-handler";
@@ -232,7 +232,7 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
   applyPostBattleInit(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const formIndex = this.formFunc(pokemon);
     if (formIndex !== pokemon.formIndex && !simulated) {
-      return globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      return globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
     }
 
     return false;
@@ -1875,7 +1875,7 @@ export class PostVictoryFormChangeAbAttr extends PostVictoryAbAttr {
     const formIndex = this.formFunc(pokemon);
     if (formIndex !== pokemon.formIndex) {
       if (!simulated) {
-        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
       }
       return true;
     }
@@ -2317,7 +2317,7 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const formIndex = this.formFunc(pokemon);
     if (formIndex !== pokemon.formIndex) {
-      return simulated || globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      return simulated || globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
     }
 
     return false;
@@ -2749,7 +2749,7 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
     const formIndex = this.formFunc(pokemon);
     if (formIndex !== pokemon.formIndex) {
       if (!simulated) {
-        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
       }
       return true;
     }
@@ -3719,7 +3719,7 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
     const formIndex = this.formFunc(pokemon);
     if (formIndex !== pokemon.formIndex) {
       if (!simulated) {
-        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
       }
 
       return true;
