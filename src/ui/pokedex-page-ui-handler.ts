@@ -1,5 +1,5 @@
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
-import { EvolutionItem, pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
+import { pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import type { Variant } from "#app/data/variant";
 import { getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -883,28 +883,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return name + suffix;
   }
 
-  getConditionString(evo: SpeciesFormEvolution): string {
-
-    const strings: string[] = [];
-    if (evo.level > 1) {
-      strings.push(i18next.t("pokedexUiHandler:evolveAtLv") + ` ${evo.level}`);
-    }
-    if (evo.item) {
-      const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`);
-      const rarity = evo.item > 50 ? i18next.t("pokedexUiHandler:ULTRA") : i18next.t("pokedexUiHandler:GREAT");
-      strings.push(i18next.t("pokedexUiHandler:evolveUsing") + itemDescription + ` (${rarity})`);
-    }
-    if (evo.condition) {
-      strings.push(evo.condition.description);
-    }
-    const conditionText = strings
-      .filter(str => str !== "")
-      .map((str, index) => index > 0 ? str[0].toLowerCase() + str.slice(1) : str)
-      .join(", ");
-
-    return conditionText;
-  }
-
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
@@ -1342,7 +1320,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     this.prevolutions.map(pre => {
                       const preSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.species.speciesId]);
 
-                      const conditionText:string = this.getConditionString(pre);
+                      const conditionText: string = pre.description;
 
                       options.push({
                         label: pre.preFormKey ?
@@ -1378,7 +1356,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       const evoSpeciesStarterDexEntry = evoSpecies ? globalScene.gameData.dexData[evoSpecies.speciesId] : null;
                       const isCaughtEvo = evoSpeciesStarterDexEntry?.caughtAttr ? true : false;
 
-                      const conditionText:string = this.getConditionString(evo);
+                      const conditionText: string = evo.description;
 
                       options.push({
                         label: evo.evoFormKey ?
