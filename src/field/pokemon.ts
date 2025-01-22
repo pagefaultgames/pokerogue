@@ -681,8 +681,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getSpeciesForm(ignoreOverride, false).getSpriteKey(
       this.getGender(ignoreOverride) === Gender.FEMALE,
       this.formIndex,
-      this.battleData?.illusion.basePokemon!.shiny ?? this.shiny,
-      this.battleData?.illusion.basePokemon!.variant ?? this.variant
+      this.battleData?.illusion.basePokemon?.shiny ?? this.shiny,
+      this.battleData?.illusion.basePokemon?.variant ?? this.variant
     );
   }
 
@@ -1281,7 +1281,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   isShiny(useIllusion: boolean = false): boolean {
     if (!useIllusion && this.battleData?.illusion.active) {
-      return this.battleData?.illusion.basePokemon!.shiny || (!!this.battleData?.illusion.fusionSpecies && this.battleData?.illusion.basePokemon!.fusionShiny) || false;
+      return this.battleData?.illusion.basePokemon?.shiny || (!!this.battleData?.illusion.fusionSpecies && this.battleData?.illusion.basePokemon?.fusionShiny) || false;
     } else {
       return this.shiny || (this.isFusion(useIllusion) && this.fusionShiny);
     }
