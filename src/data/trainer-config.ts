@@ -1977,7 +1977,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = Utils.randSeedInt(4); // Random Ogerpon Mask
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
-      if (!p.moveset.some(move => move.moveId === Moves.IVY_CUDGEL)) { // Check if Ivy Cudgel is in the moveset, if not, replace the first move with Ivy Cudgel.
+      if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.IVY_CUDGEL)) { // Check if Ivy Cudgel is in the moveset, if not, replace the first move with Ivy Cudgel.
         p.moveset[0] = new PokemonMove(Moves.IVY_CUDGEL);
       }
     }))
@@ -2349,7 +2349,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = Utils.randSeedInt(18); // Random Silvally Form
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ROGUE_BALL;
-      if (!p.moveset.some(move => move.moveId === Moves.MULTI_ATTACK)) { // // Check if Multi Attack is in the moveset, if not, replace the first move with Multi Attack.
+      if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.MULTI_ATTACK)) { // Check if Multi Attack is in the moveset, if not, replace the first move with Multi Attack.
         p.moveset[0] = new PokemonMove(Moves.MULTI_ATTACK);
       }
     }))
