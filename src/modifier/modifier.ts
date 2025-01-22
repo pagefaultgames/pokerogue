@@ -1809,6 +1809,20 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
   }
 }
 
+const berryNaturalGiftMap: { [key in BerryType]: { power: number; type: Type } } = {
+  [BerryType.SITRUS]: { power: 80, type: Type.PSYCHIC },
+  [BerryType.LUM]: { power: 80, type: Type.FLYING },
+  [BerryType.ENIGMA]: { power: 100, type: Type.BUG },
+  [BerryType.LIECHI]: { power: 100, type: Type.GRASS },
+  [BerryType.GANLON]: { power: 100, type: Type.ICE },
+  [BerryType.PETAYA]: { power: 100, type: Type.POISON },
+  [BerryType.APICOT]: { power: 100, type: Type.GROUND },
+  [BerryType.SALAC]: { power: 100, type: Type.FIGHTING },
+  [BerryType.LANSAT]: { power: 100, type: Type.FLYING },
+  [BerryType.STARF]: { power: 100, type: Type.PSYCHIC },
+  [BerryType.LEPPA]: { power: 80, type: Type.FIGHTING },
+};
+
 export class BerryModifier extends PokemonHeldItemModifier {
   public berryType: BerryType;
   public consumed: boolean;
@@ -1863,6 +1877,14 @@ export class BerryModifier extends PokemonHeldItemModifier {
       return 2;
     }
     return 3;
+  }
+
+  getNaturalGiftPower(): number {
+    return berryNaturalGiftMap[this.berryType].power ?? 0;
+  }
+
+  getNaturalGiftType(): Type {
+    return berryNaturalGiftMap[this.berryType].type ?? null;
   }
 }
 

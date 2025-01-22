@@ -4644,6 +4644,49 @@ export class VariableMoveTypeAttr extends MoveAttr {
 }
 
 /**
+ * Attribute used to control the Power and Type of Natural Gift
+ * @extends VariablePowerAttr
+ */
+export class NaturalGiftPowerAttr extends VariablePowerAttr {
+  private randomBerry;
+
+  /**
+   * Overrides the power of Natural Gift depending on the consumed berry
+   * @param user - The Pokémon using the move.
+   * @param target - The target Pokémon.
+   * @param move - The move being used.
+   * @param args - {@linkcode Utils.NumberHolder} the power of user's move
+   * @returns A boolean indicating whether the move was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log("GHNote Natural Gift POWER Attr called");
+    return false;
+  }
+}
+
+/**
+ * Attribute used to control the type of Natural Gift
+ * @extends VariableMoveTypeAttr
+ */
+export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
+  private randomBerry;
+
+  /**
+   * Overrides the type of Natural Gift depending on the consumed berry
+   * @param user - The Pokémon using the move.
+   * @param target - The target Pokémon.
+   * @param move - The move being used.
+   * @param args - {@linkcode Utils.NumberHolder} the move type
+   * @returns A boolean indicating whether the move was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log("GHNote Natural Gift TYPE Attr called");
+    return false;
+  }
+}
+
+
+/**
  * Attribute used for Tera Starstorm that changes the move type to Stellar
  * @extends VariableMoveTypeAttr
  */
@@ -9317,8 +9360,10 @@ export function initMoves() {
     new AttackMove(Moves.BRINE, Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
     new AttackMove(Moves.NATURAL_GIFT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
-      .makesContact(false)
-      .unimplemented(),
+      .attr(NaturalGiftPowerAttr)
+      .attr(NaturalGiftTypeAttr)
+      .makesContact(false),
+    //.unimplemented(),
     new AttackMove(Moves.FEINT, Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])
       .attr(RemoveArenaTagsAttr, [ ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD ], false)
