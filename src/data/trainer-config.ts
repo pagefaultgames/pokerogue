@@ -2228,7 +2228,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = 1; // Mega Houndoom
       p.generateName();
     }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.WEAVILE, Species.SNEASLER ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.WEAVILE ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
@@ -2301,12 +2301,9 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.gender = Gender.MALE;
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MIENSHAO ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.IRON_MOTH, Species.VOLCANION ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ROGUE_BALL;
-    }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.IRON_VALIANT ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CLAWITZER, Species.DRAGALGE ]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.MIENSHAO ]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.IRON_MOTH ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ROGUE_BALL;
     }))
