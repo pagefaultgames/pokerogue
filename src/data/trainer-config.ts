@@ -1974,8 +1974,12 @@ export const trainerConfigs: TrainerConfigs = {
       }
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.OGERPON ], TrainerSlot.TRAINER, true, p => {
-      p.formIndex = Utils.randSeedInt(4, 0); // Random Ogerpon Mask
+      p.formIndex = Utils.randSeedInt(4); // Random Ogerpon Mask
       p.generateAndPopulateMoveset();
+      if (!p.moveset.some(move => move.moveId === Moves.IVY_CUDGEL)) { // Check if Ivy Cudgel is in the moveset, if not, replace the first move with Ivy Cudgel.
+        p.moveset[0] = new PokemonMove(Moves.IVY_CUDGEL);
+      }
+    }))
       p.pokeball = PokeballType.ULTRA_BALL;
     }))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.URSALUNA, Species.BLOODMOON_URSALUNA ], TrainerSlot.TRAINER, true, p => {
@@ -2343,7 +2347,12 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MILOTIC, Species.PRIMARINA ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SILVALLY ], TrainerSlot.TRAINER, true, p => {
+      p.formIndex = Utils.randSeedInt(18); // Random Silvally Form
       p.generateAndPopulateMoveset();
+      if (!p.moveset.some(move => move.moveId === Moves.MULTI_ATTACK)) { // // Check if Multi Attack is in the moveset, if not, replace the first move with Multi Attack.
+        p.moveset[0] = new PokemonMove(Moves.MULTI_ATTACK);
+      }
+    }))
       p.pokeball = PokeballType.ROGUE_BALL;
     }))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.PHEROMOSA ], TrainerSlot.TRAINER, true, p => {
