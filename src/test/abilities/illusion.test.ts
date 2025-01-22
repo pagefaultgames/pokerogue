@@ -57,6 +57,7 @@ describe("Abilities - Illusion", () => {
     const zorua = game.scene.getEnemyPokemon()!;
 
     expect(zorua.battleData.illusion.active).equals(false);
+    expect(zorua.name).equals("Zorua")
   });
 
   it("break after getting ability changed", async () => {
@@ -126,7 +127,6 @@ describe("Abilities - Illusion", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const zoroark = game.scene.getPlayerPokemon()!;
-    //console.log(zoroark.battleData.illusion);
     expect(zoroark.name).equals("Axew");
     expect(zoroark.getNameToRender()).equals("axew nickname");
     expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);

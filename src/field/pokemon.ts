@@ -442,7 +442,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.battleData.illusion = {
         active: true,
         available: true,
-        basePokemon: this,
+        basePokemon: { ...this },
         species: getPokemonSpecies(speciesId),
         formIndex: lastPokemon.formIndex,
         gender: lastPokemon.gender,
@@ -473,7 +473,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.battleData.illusion = {
         active: true,
         available: true,
-        basePokemon: this,
+        basePokemon: { ...this },
         species: randomIllusion,
         formIndex: randomIllusion.formIndex,
         gender: this.gender
