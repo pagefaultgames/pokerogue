@@ -1777,7 +1777,7 @@ export const trainerConfigs: TrainerConfigs = {
     })),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SKARMORY ]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CRADILY, Species.LILEEP ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CRADILY, Species.ARMALDO ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.METAGROSS ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // Mega Metagross
       p.generateAndPopulateMoveset();
