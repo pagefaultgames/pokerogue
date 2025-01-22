@@ -57,7 +57,7 @@ describe("Abilities - Illusion", () => {
     const zorua = game.scene.getEnemyPokemon()!;
 
     expect(zorua.battleData.illusion.active).equals(false);
-    expect(zorua.name).equals("Zorua")
+    expect(zorua.name).equals("Zorua");
   });
 
   it("break after getting ability changed", async () => {
