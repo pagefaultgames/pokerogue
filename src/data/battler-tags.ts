@@ -18,7 +18,7 @@ import {
   MoveFlags,
   StatusCategoryOnAllyAttr
 } from "#app/data/move";
-import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
 import { Type } from "#enums/type";
@@ -2149,7 +2149,7 @@ export class FormBlockDamageTag extends BattlerTag {
     super.onAdd(pokemon);
 
     if (pokemon.formIndex !== 0) {
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
     }
   }
 
@@ -2161,7 +2161,7 @@ export class FormBlockDamageTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 }
 /** Provides the additional weather-based effects of the Ice Face ability */
@@ -2361,12 +2361,12 @@ export class GulpMissileTag extends BattlerTag {
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 }
 
