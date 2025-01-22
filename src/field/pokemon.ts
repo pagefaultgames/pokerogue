@@ -1057,6 +1057,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   calculateBaseStats(): number[] {
     const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
+    applyChallenges(globalScene.gameMode, ChallengeType.FLIP_STAT, this, baseStats);
     // Shuckle Juice
     globalScene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
     // Old Gateau
@@ -3605,6 +3606,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
       return false;
     }
+    if (this.isFainted() && effect !== StatusEffect.FAINT) {
+      return false;
+    }
 
     /**
      * If this Pokemon falls asleep or freezes in the middle of a multi-hit attack,
@@ -5281,7 +5285,10 @@ export class PokemonSummonData {
 }
 
 export class PokemonBattleData {
+  /** counts the hits the pokemon received */
   public hitCount: number = 0;
+  /** used for {@linkcode Moves.RAGE_FIST} in order to save hit Counts received before Rage Fist is applied */
+  public prevHitCount: number = 0;
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];

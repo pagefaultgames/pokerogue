@@ -450,6 +450,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const costReductionLabels = [
       new DropDownLabel(i18next.t("filterBar:costReduction"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:costReductionUnlocked"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedOne"), undefined, DropDownState.ONE),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedTwo"), undefined, DropDownState.TWO),
       new DropDownLabel(i18next.t("filterBar:costReductionUnlockable"), undefined, DropDownState.UNLOCKABLE),
       new DropDownLabel(i18next.t("filterBar:costReductionLocked"), undefined, DropDownState.EXCLUDE),
     ];
@@ -500,7 +502,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownOption(SortCriteria.COST, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
       new DropDownOption(SortCriteria.CANDY, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
       new DropDownOption(SortCriteria.IV, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
-      new DropDownOption(SortCriteria.NAME, new DropDownLabel(i18next.t("filterBar:sortByName")))
+      new DropDownOption(SortCriteria.NAME, new DropDownLabel(i18next.t("filterBar:sortByName"))),
+      new DropDownOption(SortCriteria.CAUGHT, new DropDownLabel(i18next.t("filterBar:sortByNumCaught"))),
+      new DropDownOption(SortCriteria.HATCHED, new DropDownLabel(i18next.t("filterBar:sortByNumHatched")))
     ];
     this.filterBar.addFilter(DropDownColumn.SORT, i18next.t("filterBar:sortFilter"), new DropDown(0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE));
     this.filterBarContainer.add(this.filterBar);
@@ -2585,13 +2589,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       // Cost Reduction Filter
-      const isCostReduced = starterData.valueReduction > 0;
+      const isCostReducedByOne = starterData.valueReduction === 1;
+      const isCostReducedByTwo = starterData.valueReduction === 2;
       const isCostReductionUnlockable = this.isValueReductionAvailable(container.species.speciesId);
       const fitsCostReduction = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
         if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.ON) {
-          return isCostReduced;
+          return isCostReducedByOne || isCostReducedByTwo;
+        } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.ONE) {
+          return isCostReducedByOne;
+        } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.TWO) {
+          return isCostReducedByTwo;
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.EXCLUDE) {
-          return isStarterProgressable && !isCostReduced;
+          return isStarterProgressable && !(isCostReducedByOne || isCostReducedByTwo);
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.UNLOCKABLE) {
           return isCostReductionUnlockable;
         } else if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.OFF) {
@@ -2691,12 +2700,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           return (avgIVsA - avgIVsB) * -sort.dir;
         case SortCriteria.NAME:
           return a.species.name.localeCompare(b.species.name) * -sort.dir;
+        case SortCriteria.CAUGHT:
+          return (globalScene.gameData.dexData[a.species.speciesId].caughtCount - globalScene.gameData.dexData[b.species.speciesId].caughtCount) * -sort.dir;
+        case SortCriteria.HATCHED:
+          return (globalScene.gameData.dexData[a.species.speciesId].hatchedCount - globalScene.gameData.dexData[b.species.speciesId].hatchedCount) * -sort.dir;
       }
       return 0;
     });
 
     this.updateScroll();
   };
+
+  override destroy(): void {
+    // Without this the reference gets hung up and no startercontainers get GCd
+    this.starterContainers = [];
+  }
 
   updateScroll = () => {
     const maxColumns = 9;

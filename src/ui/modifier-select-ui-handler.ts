@@ -364,6 +364,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             success = this.setCursor(0);
           } else if (this.rowCursor < this.shopOptionsRows.length + 1) {
             success = this.setRowCursor(this.rowCursor + 1);
+          } else {
+            success = this.setRowCursor(0);
           }
           break;
         case Button.DOWN:
@@ -371,13 +373,15 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             success = this.setRowCursor(this.rowCursor - 1);
           } else if (this.lockRarityButtonContainer.visible && this.cursor === 0) {
             success = this.setCursor(3);
+          } else {
+            success = this.setRowCursor(this.shopOptionsRows.length + 1);
           }
           break;
         case Button.LEFT:
           if (!this.rowCursor) {
             switch (this.cursor) {
               case 0:
-                success = false;
+                success = this.setCursor(2);
                 break;
               case 1:
                 if (this.lockRarityButtonContainer.visible) {
@@ -395,11 +399,21 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
                   success = false;
                 }
                 break;
+              case 3:
+                if (this.lockRarityButtonContainer.visible) {
+                  success = this.setCursor(2);
+                } else {
+                  success = false;
+                }
             }
           } else if (this.cursor) {
             success = this.setCursor(this.cursor - 1);
-          } else if (this.rowCursor === 1 && this.rerollButtonContainer.visible) {
-            success = this.setRowCursor(0);
+          } else {
+            if (this.rowCursor === 1 && this.options.length === 0) {
+              success = false;
+            } else {
+              success = this.setCursor(this.getRowItems(this.rowCursor) - 1);
+            }
           }
           break;
         case Button.RIGHT:
@@ -416,7 +430,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
                 success = this.setCursor(2);
                 break;
               case 2:
-                success = false;
+                success = this.setCursor(0);
                 break;
               case 3:
                 if (this.transferButtonContainer.visible) {
@@ -428,8 +442,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
             }
           } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
             success = this.setCursor(this.cursor + 1);
-          } else if (this.rowCursor === 1 && this.transferButtonContainer.visible) {
-            success = this.setRowCursor(0);
+          } else {
+            if (this.rowCursor === 1 && this.options.length === 0) {
+              success = this.setRowCursor(0);
+            } else {
+              success = this.setCursor(0);
+            }
           }
           break;
       }
@@ -518,6 +536,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         if (newCursor === 1 && !this.transferButtonContainer.visible) {
           newCursor = 2;
         }
+      }
+      // Allows to find lock rarity button when looping from the top
+      if (rowCursor === 0 && lastRowCursor > 1 && newCursor === 0 && this.lockRarityButtonContainer.visible) {
+        newCursor = 3;
+      }
+      // Allows to loop to top when lock rarity button is shown
+      if (rowCursor === this.shopOptionsRows.length + 1 && lastRowCursor === 0 && this.cursor === 3) {
+        newCursor = 0;
       }
       this.cursor = -1;
       this.setCursor(newCursor);

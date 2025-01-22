@@ -112,7 +112,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 import { StatusEffect } from "#enums/status-effect";
-import { globalScene, initGlobalScene } from "#app/global-scene";
+import { initGlobalScene } from "#app/global-scene";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -363,28 +363,30 @@ export default class BattleScene extends SceneBase {
   /**
    * Load the variant assets for the given sprite and stores them in {@linkcode variantColorCache}
    */
-  loadPokemonVariantAssets(spriteKey: string, fileRoot: string, variant?: Variant) {
+  public async loadPokemonVariantAssets(spriteKey: string, fileRoot: string, variant?: Variant): Promise<void> {
     const useExpSprite = this.experimentalSprites && this.hasExpSprite(spriteKey);
     if (useExpSprite) {
       fileRoot = `exp/${fileRoot}`;
     }
     let variantConfig = variantData;
-    fileRoot.split("/").map(p => variantConfig ? variantConfig = variantConfig[p] : null);
+    fileRoot.split("/").map((p) => (variantConfig ? (variantConfig = variantConfig[p]) : null));
     const variantSet = variantConfig as VariantSet;
-    if (variantSet && (variant !== undefined && variantSet[variant] === 1)) {
-      const populateVariantColors = (key: string): Promise<void> => {
-        return new Promise(resolve => {
-          if (variantColorCache.hasOwnProperty(key)) {
-            return resolve();
-          }
-          this.cachedFetch(`./images/pokemon/variant/${fileRoot}.json`).then(res => res.json()).then(c => {
-            variantColorCache[key] = c;
+
+    return new Promise<void>((resolve) => {
+      if (variantSet && variant !== undefined && variantSet[variant] === 1) {
+        if (variantColorCache.hasOwnProperty(spriteKey)) {
+          return resolve();
+        }
+        this.cachedFetch(`./images/pokemon/variant/${fileRoot}.json`)
+          .then((res) => res.json())
+          .then((c) => {
+            variantColorCache[spriteKey] = c;
             resolve();
           });
-        });
-      };
-      populateVariantColors(spriteKey);
-    }
+      } else {
+        resolve();
+      }
+    });
   }
 
   async preload() {
@@ -392,10 +394,10 @@ export default class BattleScene extends SceneBase {
       const originalRealInRange = Phaser.Math.RND.realInRange;
       Phaser.Math.RND.realInRange = function (min: number, max: number): number {
         const ret = originalRealInRange.apply(this, [ min, max ]);
-        const args = [ "RNG", ++globalScene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
-        args.push(`seed: ${globalScene.rngSeedOverride || globalScene.waveSeed || globalScene.seed}`);
-        if (globalScene.rngOffset) {
-          args.push(`offset: ${globalScene.rngOffset}`);
+        const args = [ "RNG", ++this.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
+        args.push(`seed: ${this.rngSeedOverride || this.waveSeed || this.seed}`);
+        if (this.rngOffset) {
+          args.push(`offset: ${this.rngOffset}`);
         }
         console.log(...args);
         return ret;
@@ -408,7 +410,7 @@ export default class BattleScene extends SceneBase {
   }
 
   create() {
-    globalScene.scene.remove(LoadingScene.KEY);
+    this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController();
     this.uiInputs = new UiInputs(this.inputController);
@@ -1191,6 +1193,9 @@ export default class BattleScene extends SceneBase {
         onComplete: () => {
           this.clearPhaseQueue();
 
+          this.ui.freeUIData();
+          this.uiContainer.remove(this.ui, true);
+          this.uiContainer.destroy();
           this.children.removeAll(true);
           this.game.domContainer.innerHTML = "";
           this.launchBattle();
@@ -2949,7 +2954,7 @@ export default class BattleScene extends SceneBase {
    */
   applyShuffledModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T[] {
     let modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
-    globalScene.executeWithSeedOffset(() => {
+    this.executeWithSeedOffset(() => {
       const shuffleModifiers = mods => {
         if (mods.length < 1) {
           return mods;
@@ -2958,7 +2963,7 @@ export default class BattleScene extends SceneBase {
         return [ mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand)) ];
       };
       modifiers = shuffleModifiers(modifiers);
-    }, globalScene.currentBattle.turn << 4, globalScene.waveSeed);
+    }, this.currentBattle.turn << 4, this.waveSeed);
     return this.applyModifiersInternal(modifiers, player, args);
   }
 
