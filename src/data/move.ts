@@ -9444,7 +9444,6 @@ export function initMoves() {
         return userBerries.length > 0;
       })
       .makesContact(false),
-    //.unimplemented(),
     new AttackMove(Moves.FEINT, Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])
       .attr(RemoveArenaTagsAttr, [ ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD ], false)

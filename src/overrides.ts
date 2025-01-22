@@ -16,6 +16,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
+import { BerryType } from "#enums/berry-type";
 
 /**
  * Overrides that are using when testing different in game situations
@@ -32,7 +33,14 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {
+  OPP_LEVEL_OVERRIDE: 100,
+  OPP_SPECIES_OVERRIDE: Species.MAGIKARP,
+  OPP_MOVESET_OVERRIDE: [ Moves.ELECTRIFY, Moves.SPLASH ],
+  STARTING_LEVEL_OVERRIDE: 1,
+  MOVESET_OVERRIDE: [ Moves.NATURAL_GIFT, Moves.ELECTRIFY ],
+  STARTING_HELD_ITEMS_OVERRIDE: [{ name: "BERRY", type: BerryType.SITRUS, count: 1 }]
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
