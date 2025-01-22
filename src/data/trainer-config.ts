@@ -1723,7 +1723,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LACEY]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["LACEY"], false, Type.FAIRY).setMixedBattleBgm("battle_bb_elite"),
   [TrainerType.DRAYTON]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["DRAYTON"], true, Type.DRAGON).setMixedBattleBgm("battle_bb_elite"),
 
-  [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion(["BLUE"], true).setBattleBgm("battle_kanto_champion").setMixedBattleBgm("battle_kanto_champion").setHasDouble("blue_red_double").setDoubleTrainerType(TrainerType.RED).setDoubleTitle("champion_double")
+  [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion([ "BLUE" ], true).setBattleBgm("battle_kanto_champion").setMixedBattleBgm("battle_kanto_champion").setHasDouble("blue_red_double").setDoubleTrainerType(TrainerType.RED).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ALAKAZAM ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MAGMORTAR, Species.ELECTIVIRE, Species.RHYPERIOR ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HO_OH ], TrainerSlot.TRAINER, true, p => {
@@ -1740,7 +1740,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.RED]: new TrainerConfig(++t).initForChampion(["RED"], true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion").setHasDouble("red_blue_double").setDoubleTrainerType(TrainerType.BLUE).setDoubleTitle("champion_double")
+  [TrainerType.RED]: new TrainerConfig(++t).initForChampion([ "RED" ], true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion").setHasDouble("red_blue_double").setDoubleTrainerType(TrainerType.BLUE).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PIKACHU ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 8; // G-Max Pikachu
       p.generateAndPopulateMoveset();
@@ -1761,7 +1761,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName("Lance").initForChampion(["LANCE_CHAMPION"], true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion")
+  [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName( "Lance" ).initForChampion(["LANCE_CHAMPION"], true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GYARADOS, Species.KINGDRA ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.AERODACTYL ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SALAMENCE ], TrainerSlot.TRAINER, true, p => {
@@ -1775,7 +1775,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(["STEVEN"], true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double")
+  [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion([ "STEVEN" ], true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SKARMORY ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CRADILY, Species.LILEEP ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.METAGROSS ], TrainerSlot.TRAINER, true, p => {
@@ -1792,7 +1792,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion(["WALLACE"], true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("wallace_steven_double").setDoubleTrainerType(TrainerType.STEVEN).setDoubleTitle("champion_double")
+  [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion([ "WALLACE" ], true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("wallace_steven_double").setDoubleTrainerType(TrainerType.STEVEN).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PELIPPER ], TrainerSlot.TRAINER, true, p => {
       p.abilityIndex = 1; // Drizzle
       p.generateAndPopulateMoveset();
@@ -1832,7 +1832,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(["ALDER"], true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder").setMixedBattleBgm("battle_champion_alder")
+  [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion([ "ALDER" ], true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder").setMixedBattleBgm("battle_champion_alder")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BOUFFALANT, Species.BRAVIARY ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CHANDELURE, Species.KROOKODILE, Species.REUNICLUS, Species.CONKELDURR ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.ZEKROM ], TrainerSlot.TRAINER, true, p => {
@@ -1852,7 +1852,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = 1; // Resolute Form
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
-  [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(["IRIS"], false).setBattleBgm("battle_champion_iris").setMixedBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double")
+  [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion([ "IRIS" ], false).setBattleBgm("battle_champion_iris").setMixedBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.DRUDDIGON ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ARCHEOPS ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.RESHIRAM ], TrainerSlot.TRAINER, true, p => {
@@ -1869,7 +1869,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion(["DIANTHA"], false).setMixedBattleBgm("battle_kalos_champion")
+  [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion([ "DIANTHA" ], false).setMixedBattleBgm("battle_kalos_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.HAWLUCHA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
@@ -1888,7 +1888,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(["HAU"], true).setMixedBattleBgm("battle_alola_champion")
+  [TrainerType.HAU]: new TrainerConfig(++t).initForChampion([ "HAU" ], true).setMixedBattleBgm("battle_alola_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ALOLA_RAICHU ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
@@ -1904,13 +1904,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.ZYGARDE ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // Zygarde 10% forme, Aura Break
       p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ROGUE_BALL
+      p.pokeball = PokeballType.ROGUE_BALL;
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(["LEON"], true).setMixedBattleBgm("battle_galar_champion")
+  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion([ "LEON" ], true).setMixedBattleBgm("battle_galar_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.AEGISLASH ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
@@ -1929,7 +1929,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion(["GEETA"], false).setMixedBattleBgm("battle_champion_geeta")
+  [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion([ "GEETA" ], false).setMixedBattleBgm("battle_champion_geeta")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GLIMMORA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
@@ -1945,7 +1945,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
     })),
-  [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(["NEMONA"], false).setMixedBattleBgm("battle_champion_nemona")
+  [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion([ "NEMONA" ], false).setMixedBattleBgm("battle_champion_nemona")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LYCANROC ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 0; // Midday form
       p.generateAndPopulateMoveset();
