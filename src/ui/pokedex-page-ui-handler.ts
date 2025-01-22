@@ -12,7 +12,7 @@ import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { allMoves } from "#app/data/move";
 import { getNatureName } from "#app/data/nature";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
+import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type { PokemonForm } from "#app/data/pokemon-species";
@@ -883,6 +883,28 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return name + suffix;
   }
 
+  getConditionString(evo: SpeciesFormEvolution): string {
+
+    const strings: string[] = [];
+    if (evo.level > 1) {
+      strings.push(i18next.t("pokedexUiHandler:evolveAtLv") + ` ${evo.level}`);
+    }
+    if (evo.item) {
+      const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`);
+      const rarity = evo.item > 50 ? i18next.t("pokedexUiHandler:ULTRA") : i18next.t("pokedexUiHandler:GREAT");
+      strings.push(i18next.t("pokedexUiHandler:evolveUsing") + itemDescription + ` (${rarity})`);
+    }
+    if (evo.condition) {
+      strings.push(evo.condition.description);
+    }
+    const conditionText = strings
+      .filter(str => str !== "")
+      .map((str, index) => index > 0 ? str[0].toLowerCase() + str.slice(1) : str)
+      .join(", ");
+
+    return conditionText;
+  }
+
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
@@ -1320,17 +1342,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     this.prevolutions.map(pre => {
                       const preSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.species.speciesId]);
 
-                      let conditionText:string = "";
-                      if (pre.condition) {
-                        conditionText = i18next.t("pokedexUiHandler:evolveGeneric");
-                      } else if (pre.level > 1) {
-                        conditionText = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${pre.level}`;
-                      } else if (pre.item) {
-                        conditionText = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[pre.item].toUpperCase()}`) +
-                          " (" + (pre.item > 50 ? "Ultra" : "Great") + ")";
-                      } else {
-                        conditionText = "";
-                      }
+                      const conditionText:string = this.getConditionString(pre);
 
                       options.push({
                         label: pre.preFormKey ?
@@ -1366,17 +1378,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       const evoSpeciesStarterDexEntry = evoSpecies ? globalScene.gameData.dexData[evoSpecies.speciesId] : null;
                       const isCaughtEvo = evoSpeciesStarterDexEntry?.caughtAttr ? true : false;
 
-                      let conditionText:string = "";
-                      if (evo.condition) {
-                        conditionText = i18next.t("pokedexUiHandler:evolveGeneric");
-                      } else if (evo.level > 1) {
-                        conditionText = i18next.t("pokedexUiHandler:evolveAtLv") + ` ${evo.level}`;
-                      } else if (evo.item) {
-                        conditionText = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`) +
-                          " (" + (evo.item > 50 ? "Ultra" : "Great") + ")";
-                      } else {
-                        conditionText = "";
-                      }
+                      const conditionText:string = this.getConditionString(evo);
 
                       options.push({
                         label: evo.evoFormKey ?
@@ -1409,34 +1411,35 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => false
                     });
                     this.battleForms.map(bf => {
+
                       let conditionText:string = "";
-                      if (bf.trigger instanceof SpeciesFormChangeItemTrigger) {
-                        const item = bf.trigger.item;
-                        conditionText = i18next.t("pokedexUiHandler:evolveUsing") + i18next.t(`modifierType:FormChangeItem.${FormChangeItem[item].toUpperCase()}`) +
-                          " (" + (item > 100 ? "Ultra" : "Rogue") + ")";
-                      } else if (bf.trigger) {
-                        conditionText = i18next.t("pokedexUiHandler:evolveGeneric");
+                      if (bf.trigger) {
+                        conditionText = bf.trigger.description;
                       } else {
                         conditionText = "";
                       }
+
                       let label: string = this.getFormString(bf.formKey, this.species);
                       if (label === "") {
                         label = this.species.name;
                       }
-                      options.push({
-                        label: label,
-                        handler: () => {
-                          const newSpecies = this.species;
-                          const newFormIndex = this.species.forms.find(f => f.formKey === bf.formKey)?.formIndex;
-                          this.starterAttributes.form = newFormIndex;
-                          this.savedStarterAttributes.form = newFormIndex;
-                          this.moveInfoOverlay.clear();
-                          this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
-                          return true;
-                        },
-                        onHover: () => this.showText(conditionText)
-                      });
+
+                      if (conditionText) {
+                        options.push({
+                          label: label,
+                          handler: () => {
+                            const newSpecies = this.species;
+                            const newFormIndex = this.species.forms.find(f => f.formKey === bf.formKey)?.formIndex;
+                            this.starterAttributes.form = newFormIndex;
+                            this.savedStarterAttributes.form = newFormIndex;
+                            this.moveInfoOverlay.clear();
+                            this.clearText();
+                            ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
+                            return true;
+                          },
+                          onHover: () => this.showText(conditionText)
+                        });
+                      }
                     });
                   }
 
