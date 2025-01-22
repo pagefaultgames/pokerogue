@@ -1761,7 +1761,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName( "Lance" ).initForChampion(["LANCE_CHAMPION"], true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion")
+  [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName( "Lance" ).initForChampion([ "LANCE_CHAMPION" ], true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GYARADOS, Species.KINGDRA ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.AERODACTYL ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SALAMENCE ], TrainerSlot.TRAINER, true, p => {
@@ -1813,7 +1813,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(["CYNTHIA"], false).setBattleBgm("battle_sinnoh_champion").setMixedBattleBgm("battle_sinnoh_champion")
+  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion([ "CYNTHIA" ], false).setBattleBgm("battle_sinnoh_champion").setMixedBattleBgm("battle_sinnoh_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SPIRITOMB ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
@@ -1961,7 +1961,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
-  [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(["KIERAN"], true).setMixedBattleBgm("battle_champion_kieran")
+  [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion([ "KIERAN" ], true).setMixedBattleBgm("battle_champion_kieran")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.POLIWRATH, Species.POLITOED ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
