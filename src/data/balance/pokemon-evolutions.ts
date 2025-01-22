@@ -237,6 +237,7 @@ class WeatherEvolutionCondition extends SpeciesEvolutionCondition {
   constructor(weatherTypes: WeatherType[]) {
     super(() => weatherTypes.indexOf(globalScene.arena.weather?.weatherType || WeatherType.NONE) > -1);
     this.weatherTypes = weatherTypes;
+    this.description = i18next.t("pokemonEvolutions:weather");
   }
 }
 
