@@ -2419,7 +2419,7 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.BUZZWOLE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p,pokeball = PokeballType.ROGUE_BALL;
+      p.pokeball = PokeballType.ROGUE_BALL;
     }))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.XURKITREE ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
