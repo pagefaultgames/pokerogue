@@ -40,25 +40,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
 
   setup(): void {
     super.setup();
+
     this.buildExternalPartyContainer();
-
-    this.infoContainer = globalScene.add.container(0, 0);
-
-    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
-      x: 20,
-      scale: 0.5
-    });
-
-    this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", {
-      x: 0,
-      scale: 0.75
-    });
-
-    this.infoContainer.add(this.usernameInfoImage);
-    this.infoContainer.add(this.saveDownloadImage);
-    this.getUi().add(this.infoContainer);
-    this.infoContainer.setVisible(false);
-    this.infoContainer.disableInteractive();
+    this.buildInfoContainer();
   }
 
   private buildExternalPartyContainer() {
@@ -79,6 +63,26 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.externalPartyContainer.add(this.googleImage);
     this.externalPartyContainer.add(this.discordImage);
     this.externalPartyContainer.setVisible(false);
+  }
+
+  private buildInfoContainer() {
+    this.infoContainer = globalScene.add.container(0, 0);
+
+    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
+      x: 20,
+      scale: 0.5
+    });
+
+    this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", {
+      x: 0,
+      scale: 0.75
+    });
+
+    this.infoContainer.add(this.usernameInfoImage);
+    this.infoContainer.add(this.saveDownloadImage);
+    this.getUi().add(this.infoContainer);
+    this.infoContainer.setVisible(false);
+    this.infoContainer.disableInteractive();
   }
 
   override getModalTitle(_config?: ModalConfig): string {
@@ -177,6 +181,10 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   private processExternalProvider(config: ModalConfig): void {
+    this.externalPartyContainer.destroy();
+    this.infoContainer.destroy();
+    this.buildExternalPartyContainer();
+    this.buildInfoContainer();
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
     this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
