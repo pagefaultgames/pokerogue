@@ -181,10 +181,6 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   private processExternalProvider(config: ModalConfig): void {
-    this.externalPartyContainer.destroy();
-    this.infoContainer.destroy();
-    this.buildExternalPartyContainer();
-    this.buildInfoContainer();
     this.externalPartyTitle.setText(i18next.t("menu:orUse") ?? "");
     this.externalPartyTitle.setX(20 + this.externalPartyTitle.text.length);
     this.externalPartyTitle.setVisible(true);
@@ -222,31 +218,33 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     };
 
     this.usernameInfoImage.on("pointerdown", () => {
-      const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
-      const keyToFind = "data_";
-      const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
-      if (dataKeys.length > 0 && dataKeys.length <= 2) {
-        const options: OptionSelectItem[] = [];
-        for (let i = 0; i < dataKeys.length; i++) {
-          options.push({
-            label: dataKeys[i].replace(keyToFind, ""),
-            handler: () => {
-              globalScene.ui.revertMode();
-              this.infoContainer.disableInteractive();
-              return true;
-            }
+      if (globalScene.tweens.getTweensOf(this.infoContainer).length === 0) {
+        const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
+        const keyToFind = "data_";
+        const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
+        if (dataKeys.length > 0 && dataKeys.length <= 2) {
+          const options: OptionSelectItem[] = [];
+          for (let i = 0; i < dataKeys.length; i++) {
+            options.push({
+              label: dataKeys[i].replace(keyToFind, ""),
+              handler: () => {
+                globalScene.ui.revertMode();
+                this.infoContainer.disableInteractive();
+                return true;
+              }
+            });
+          }
+          globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+            options: options,
+            delay: 1000
           });
-        }
-        globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
-          options: options,
-          delay: 1000
-        });
-        this.infoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height), Phaser.Geom.Rectangle.Contains);
-      } else {
-        if (dataKeys.length > 2) {
-          return onFail(this.ERR_TOO_MANY_SAVES);
+          this.infoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height), Phaser.Geom.Rectangle.Contains);
         } else {
-          return onFail(this.ERR_NO_SAVES);
+          if (dataKeys.length > 2) {
+            return onFail(this.ERR_TOO_MANY_SAVES);
+          } else {
+            return onFail(this.ERR_NO_SAVES);
+          }
         }
       }
     });
