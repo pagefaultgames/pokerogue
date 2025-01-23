@@ -2412,6 +2412,7 @@ export const trainerConfigs: TrainerConfigs = {
       } else if (p.species.speciesId === Species.KLEAVOR) {
         p.abilityIndex = 2;
       }
+    }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HISUI_SAMUROTT, Species.CRAWDAUNT ], TrainerSlot.TRAINER, true, p => {
       p.abilityIndex = 2; // Sharpness Hisui Samurott, Adaptability Crawdaunt
       p.generateAndPopulateMoveset();
