@@ -2391,8 +2391,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleInfo.toggleFlyout(visible);
   }
 
-  addExp(exp: integer) {
-    const maxExpLevel = globalScene.getMaxExpLevel();
+  /**
+   * Adds experience to this PlayerPokemon, subject to wave based level caps.
+   * @param exp The amount of experience to add
+   * @param ignoreLevelCap Whether to ignore level caps when adding experience (defaults to false)
+   */
+  addExp(exp: integer, ignoreLevelCap: boolean = false) {
+    const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
     const initialExp = this.exp;
     this.exp += exp;
     while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {
