@@ -2413,7 +2413,6 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HISUI_SAMUROTT, Species.CRAWDAUNT ], TrainerSlot.TRAINER, true, p => {
       p.abilityIndex = 2; //Sharpness Hisui Samurott, Adaptability Crawdaunt
-      p.generateAndPopulateMoveset();
     }))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.BUZZWOLE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
