@@ -96,6 +96,9 @@ export default class SummaryUiHandler extends UiHandler {
   private friendshipText: Phaser.GameObjects.Text;
   private friendshipIcon: Phaser.GameObjects.Sprite;
   private friendshipOverlay: Phaser.GameObjects.Sprite;
+  private permStatsContainer: Phaser.GameObjects.Container;
+  private ivContainer: Phaser.GameObjects.Container;
+  private statsContainer: Phaser.GameObjects.Container;
 
   private descriptionScrollTween: Phaser.Tweens.Tween | null;
   private moveCursorBlinkTimer: Phaser.Time.TimerEvent | null;
@@ -534,6 +537,10 @@ export default class SummaryUiHandler extends UiHandler {
           this.passiveContainer.nameText?.setVisible(!this.passiveContainer.descriptionText?.visible);
           this.passiveContainer.descriptionText?.setVisible(!this.passiveContainer.descriptionText.visible);
           this.passiveContainer.labelImage.setVisible(!this.passiveContainer.labelImage.visible);
+        } else if (this.cursor === Page.STATS) {
+          //Show IVs
+          this.permStatsContainer.setVisible(!this.permStatsContainer.visible);
+          this.ivContainer.setVisible(!this.ivContainer.visible);
         }
       } else if (button === Button.CANCEL) {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
@@ -877,8 +884,13 @@ export default class SummaryUiHandler extends UiHandler {
         profileContainer.add(memoText);
         break;
       case Page.STATS:
-        const statsContainer = globalScene.add.container(0, -pageBg.height);
-        pageContainer.add(statsContainer);
+        this.statsContainer = globalScene.add.container(0, -pageBg.height);
+        pageContainer.add(this.statsContainer);
+        this.permStatsContainer = globalScene.add.container(27, 56);
+        this.statsContainer.add(this.permStatsContainer);
+        this.ivContainer = globalScene.add.container(27, 56);
+        this.statsContainer.add(this.ivContainer);
+        this.statsContainer.setVisible(true);
 
         PERMANENT_STATS.forEach((stat, s) => {
           const statName = i18next.t(getStatKey(stat));
@@ -887,18 +899,37 @@ export default class SummaryUiHandler extends UiHandler {
 
           const natureStatMultiplier = getNatureStatMultiplier(this.pokemon?.getNature()!, s); // TODO: is this bang correct?
 
-          const statLabel = addTextObject(27 + 115 * colIndex + (colIndex === 1 ?  5 : 0), 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
+          const statLabel = addTextObject(115 * colIndex + (colIndex === 1 ?  5 : 0), 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
           statLabel.setOrigin(0.5, 0);
-          statsContainer.add(statLabel);
+          this.permStatsContainer.add(statLabel);
 
           const statValueText = stat !== Stat.HP
             ? Utils.formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
             : `${Utils.formatStat(this.pokemon?.hp!, true)}/${Utils.formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
 
-          const statValue = addTextObject(120 + 88 * colIndex, 56 + 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
+          const statValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
           statValue.setOrigin(1, 0);
-          statsContainer.add(statValue);
+          this.permStatsContainer.add(statValue);
         });
+
+        PERMANENT_STATS.forEach((stat, s) => {
+          const statName = i18next.t(getStatKey(stat));
+          const rowIndex = s % 3;
+          const colIndex = Math.floor(s / 3);
+
+          const natureStatMultiplier = getNatureStatMultiplier(this.pokemon?.getNature()!, s); // TODO: is this bang correct?
+
+          const statLabel = addTextObject(115 * colIndex + (colIndex === 1 ?  5 : 0), 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
+          statLabel.setOrigin(0.5, 0);
+          this.ivContainer.add(statLabel);
+
+          const statValueText = Utils.formatStat(this.pokemon?.ivs[stat]!);
+
+          const statValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
+          statValue.setOrigin(1, 0);
+          this.ivContainer.add(statValue);
+        });
+        this.ivContainer.setVisible(false);
 
         const itemModifiers = (globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && m.pokemonId === this.pokemon?.id, this.playerParty) as PokemonHeldItemModifier[])
@@ -908,7 +939,7 @@ export default class SummaryUiHandler extends UiHandler {
           const icon = item.getIcon(true);
 
           icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
-          statsContainer.add(icon);
+          this.statsContainer.add(icon);
 
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
           icon.on("pointerover", () => globalScene.ui.showTooltip(item.type.name, item.type.getDescription(), true));
@@ -924,26 +955,26 @@ export default class SummaryUiHandler extends UiHandler {
 
         const expLabel = addTextObject(6, 112, i18next.t("pokemonSummary:expPoints"), TextStyle.SUMMARY);
         expLabel.setOrigin(0, 0);
-        statsContainer.add(expLabel);
+        this.statsContainer.add(expLabel);
 
         const nextLvExpLabel = addTextObject(6, 128, i18next.t("pokemonSummary:nextLv"), TextStyle.SUMMARY);
         nextLvExpLabel.setOrigin(0, 0);
-        statsContainer.add(nextLvExpLabel);
+        this.statsContainer.add(nextLvExpLabel);
 
         const expText = addTextObject(208, 112, pkmExp.toString(), TextStyle.WINDOW_ALT);
         expText.setOrigin(1, 0);
-        statsContainer.add(expText);
+        this.statsContainer.add(expText);
 
         const nextLvExp = pkmLvl < globalScene.getMaxExpLevel()
           ? getLevelTotalExp(pkmLvl + 1, pkmSpeciesGrowthRate) - pkmExp
           : 0;
         const nextLvExpText = addTextObject(208, 128, nextLvExp.toString(), TextStyle.WINDOW_ALT);
         nextLvExpText.setOrigin(1, 0);
-        statsContainer.add(nextLvExpText);
+        this.statsContainer.add(nextLvExpText);
 
         const expOverlay = globalScene.add.image(140, 145, "summary_stats_overlay_exp");
         expOverlay.setOrigin(0, 0);
-        statsContainer.add(expOverlay);
+        this.statsContainer.add(expOverlay);
 
         const expMaskRect = globalScene.make.graphics({});
         expMaskRect.setScale(6);
@@ -954,6 +985,11 @@ export default class SummaryUiHandler extends UiHandler {
         const expMask = expMaskRect.createGeometryMask();
 
         expOverlay.setMask(expMask);
+        this.abilityPrompt = globalScene.add.image(0, 0, !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
+        this.abilityPrompt.setPosition(8, 47);
+        this.abilityPrompt.setVisible(true);
+        this.abilityPrompt.setOrigin(0, 0);
+        this.statsContainer.add(this.abilityPrompt);
         break;
       case Page.MOVES:
         this.movesContainer = globalScene.add.container(5, -pageBg.height + 26);
