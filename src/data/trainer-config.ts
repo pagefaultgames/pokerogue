@@ -2309,7 +2309,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PYROAR ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.gender = Gender.MALE;
-      p.pokeball = PokeballType.ROGUE_BALL;
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.IRON_MOTH ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GOODRA, Species.HISUI_GOODRA ]))
@@ -2327,7 +2326,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.MASTER_BALL;
     })),
   [TrainerType.LUSAMINE]: new TrainerConfig(++t).setName("Lusamine").initForEvilTeamLeader("Aether Boss", []).setMixedBattleBgm("battle_aether_boss").setVictoryBgm("victory_team_plasma")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.NIHILEGO ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.CLEFABLE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.gender = Gender.FEMALE;
     }))
@@ -2377,7 +2376,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HERACROSS ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SCIZOR, Species.KLEAVOR ], TrainerSlot.TRAINER, true, p => {
       //Technician Scizor, Sharpness Kleavor
-      p.generateAndPopulateMoveset();
       if (p.species.speciesId === Species.SCIZOR) {
         p.abilityIndex = 1;
       } else if (p.species.speciesId === Species.KLEAVOR) {
@@ -2401,7 +2399,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GOLISOPOD ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
-      p.abilityIndex = 2; // Anticipation
+      p.abilityIndex = 2; //Anticipation
       p.gender = Gender.MALE;
       p.pokeball = PokeballType.ULTRA_BALL;
     }))
@@ -2414,7 +2412,7 @@ export const trainerConfigs: TrainerConfigs = {
       }
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HISUI_SAMUROTT, Species.CRAWDAUNT ], TrainerSlot.TRAINER, true, p => {
-      p.abilityIndex = 2; // Sharpness Hisui Samurott, Adaptability Crawdaunt
+      p.abilityIndex = 2; //Sharpness Hisui Samurott, Adaptability Crawdaunt
       p.generateAndPopulateMoveset();
     }))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.BUZZWOLE ], TrainerSlot.TRAINER, true, p => {
@@ -2428,7 +2426,7 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.PINSIR ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
-      p.formIndex = 1; // Mega Pinsir
+      p.formIndex = 1;
       p.generateAndPopulateMoveset();
       p.generateName();
       p.pokeball = PokeballType.ULTRA_BALL;
@@ -2455,7 +2453,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.AEGISLASH, Species.GHOLDENGO ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.DRACOVISH, Species.DRACOZOLT ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.abilityIndex = 1; // Strong Jaw Dracovish, Hustle Dracozolt
+      p.abilityIndex = 1; //Strong Jaw Dracovish, Hustle Dracozolt
     }))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.MELMETAL ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.GALAR_ARTICUNO, Species.GALAR_ZAPDOS, Species.GALAR_MOLTRES ], TrainerSlot.TRAINER, true, p => {
