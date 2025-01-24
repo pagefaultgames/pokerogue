@@ -9,7 +9,7 @@ import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
 import { Nature } from "#enums/nature";
 import { BerryType } from "#enums/berry-type";
@@ -97,8 +97,8 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
     expect(TheStrongStuffEncounter.onInit).toBeDefined();
 
-    TheStrongStuffEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    TheStrongStuffEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(TheStrongStuffEncounter.enemyPartyConfigs).toEqual([
       {
@@ -109,6 +109,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
             species: getPokemonSpecies(Species.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
+            shiny: false,
             customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
             nature: Nature.BOLD,
             moveSet: [ Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER ],

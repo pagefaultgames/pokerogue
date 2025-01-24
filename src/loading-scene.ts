@@ -246,9 +246,9 @@ export class LoadingScene extends SceneBase {
     }
     const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("halloween2024-event-" + lang, "events");
+      this.loadImage("winter_holidays2024-event-" + lang, "events");
     } else {
-      this.loadImage("halloween2024-event-en", "events");
+      this.loadImage("winter_holidays2024-event-en", "events");
     }
 
     this.loadAtlas("statuses", "");
@@ -319,6 +319,7 @@ export class LoadingScene extends SceneBase {
     this.loadSe("pb_move");
     this.loadSe("pb_catch");
     this.loadSe("pb_lock");
+    this.loadSe("crit_throw");
 
     this.loadSe("pb_tray_enter");
     this.loadSe("pb_tray_ball");

@@ -1,5 +1,5 @@
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
-import { CommandPhase } from "#app/phases/command-phase";
+import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import * as Utils from "#app/utils";
 import { Abilities } from "#enums/abilities";

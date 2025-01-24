@@ -1,23 +1,28 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import type {
+  EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
-  EnemyPartyConfig,
   initBattleWithEnemyConfig,
-  leaveEncounterWithoutBattle, setEncounterExp,
+  leaveEncounterWithoutBattle,
+  setEncounterExp,
   setEncounterRewards
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import Pokemon, { EnemyPokemon } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import type {
+  ModifierTypeOption } from "#app/modifier/modifier-type";
 import {
   getPartyLuckValue,
   getPlayerModifierTypeOptions,
   ModifierPoolType,
-  ModifierTypeOption,
   regenerateModifierPoolThresholds,
 } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { globalScene } from "#app/global-scene";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -26,9 +31,11 @@ import { getEncounterPokemonLevelForWave, getSpriteKeysFromPokemon, STANDARD_ENC
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt, randSeedItem } from "#app/utils";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fightOrFlight";
@@ -51,13 +58,20 @@ export const FightOrFlightEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       },
     ])
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .withOnInit(() => {
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Calculate boss mon
-      const level = getEncounterPokemonLevelForWave(scene, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      const bossSpecies = scene.arena.randomSpecies(scene.currentBattle.waveIndex, level, 0, getPartyLuckValue(scene.getPlayerParty()), true);
-      const bossPokemon = new EnemyPokemon(scene, bossSpecies, level, TrainerSlot.NONE, true);
+      const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
+      let bossSpecies: PokemonSpecies;
+      if (globalScene.eventManager.isEventActive() && globalScene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
+        const eventEncounter = randSeedItem(globalScene.eventManager.activeEvent()!.uncommonBreedEncounters!);
+        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, globalScene.gameMode);
+        bossSpecies = getPokemonSpecies( levelSpecies );
+      } else {
+        bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
+      }
+      const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
       encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
       const config: EnemyPartyConfig = {
         pokemonConfigs: [{
@@ -67,10 +81,10 @@ export const FightOrFlightEncounter: MysteryEncounter =
           isBoss: true,
           tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(pokemon.scene, `${namespace}:option.1.stat_boost`);
+            queueEncounterMessage(`${namespace}:option.1.stat_boost`);
             // Randomly boost 1 stat 2 stages
             // Cannot boost Spd, Acc, or Evasion
-            pokemon.scene.unshiftPhase(new StatStageChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ randSeedInt(4, 1) ], 2));
+            globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ randSeedInt(4, 1) ], 2));
           }
         }],
       };
@@ -79,18 +93,18 @@ export const FightOrFlightEncounter: MysteryEncounter =
       // Calculate item
       // Waves 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
       const tier =
-        scene.currentBattle.waveIndex > 160
+        globalScene.currentBattle.waveIndex > 160
           ? ModifierTier.MASTER
-          : scene.currentBattle.waveIndex > 120
+          : globalScene.currentBattle.waveIndex > 120
             ? ModifierTier.ROGUE
-            : scene.currentBattle.waveIndex > 40
+            : globalScene.currentBattle.waveIndex > 40
               ? ModifierTier.ULTRA
               : ModifierTier.GREAT;
-      regenerateModifierPoolThresholds(scene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
+      regenerateModifierPoolThresholds(globalScene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
       let item: ModifierTypeOption | null = null;
       // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
       while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
-        item = getPlayerModifierTypeOptions(1, scene.getPlayerParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
+        item = getPlayerModifierTypeOptions(1, globalScene.getPlayerParty(), [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
       }
       encounter.setDialogueToken("itemName", item.type.name);
       encounter.misc = item;
@@ -114,7 +128,9 @@ export const FightOrFlightEncounter: MysteryEncounter =
           tint: 0.25,
           x: -5,
           repeat: true,
-          isPokemon: true
+          isPokemon: true,
+          isShiny: bossPokemon.shiny,
+          variant: bossPokemon.variant
         },
       ];
 
@@ -134,12 +150,12 @@ export const FightOrFlightEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Pick battle
         // Pokemon will randomly boost 1 stat by 2 stages
-        const item = scene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
-        setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
-        await initBattleWithEnemyConfig(scene, scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
+        const item = globalScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
+        setEncounterRewards({ guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
+        await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
       }
     )
     .withOption(
@@ -156,16 +172,16 @@ export const FightOrFlightEncounter: MysteryEncounter =
             }
           ]
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Pick steal
-          const encounter = scene.currentBattle.mysteryEncounter!;
-          const item = scene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
-          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
+          const item = globalScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
+          setEncounterRewards({ guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
 
           // Use primaryPokemon to execute the thievery
           const primaryPokemon = encounter.options[1].primaryPokemon!;
-          setEncounterExp(scene, primaryPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs![0].species.baseExp);
-          leaveEncounterWithoutBattle(scene);
+          setEncounterExp(primaryPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs![0].species.baseExp);
+          leaveEncounterWithoutBattle();
         })
         .build()
     )
@@ -179,9 +195,9 @@ export const FightOrFlightEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Leave encounter with no rewards or exp
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
         return true;
       }
     )

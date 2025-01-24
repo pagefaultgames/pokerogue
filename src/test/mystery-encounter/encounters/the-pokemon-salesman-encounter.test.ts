@@ -6,14 +6,15 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/mystery-encounter/encounter-test-utils";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
-import { ThePokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/the-pokemon-salesman-encounter";
+import { getSalesmanSpeciesOffer, ThePokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/the-pokemon-salesman-encounter";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 const namespace = "mysteryEncounters/thePokemonSalesman";
 const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
@@ -87,8 +88,8 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
     expect(ThePokemonSalesmanEncounter.onInit).toBeDefined();
 
-    ThePokemonSalesmanEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    ThePokemonSalesmanEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.purchasePokemon).toBeDefined();
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.price).toBeDefined();
@@ -122,7 +123,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       });
     });
 
-    it("Should update the player's money properly", async () => {
+    it("should update the player's money properly", async () => {
       const initialMoney = 20000;
       scene.money = initialMoney;
       const updateMoneySpy = vi.spyOn(EncounterPhaseUtils, "updatePlayerMoney");
@@ -132,11 +133,11 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, -price, true, false);
+      expect(updateMoneySpy).toHaveBeenCalledWith(-price, true, false);
       expect(scene.money).toBe(initialMoney - price);
     });
 
-    it("Should add the Pokemon to the party", async () => {
+    it("should add the Pokemon to the party", async () => {
       scene.money = 20000;
       await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
 
@@ -150,6 +151,18 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       const newlyPurchasedPokemon = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(newlyPurchasedPokemon.name).toBe(pokemonName);
       expect(newlyPurchasedPokemon!.moveset.length > 0).toBeTruthy();
+    });
+
+    it("should give the purchased Pokemon its HA or make it shiny", async () => {
+      scene.money = 20000;
+      await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
+      await runMysteryEncounterToEnd(game, 1);
+
+      const newlyPurchasedPokemon = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
+      const isshiny = newlyPurchasedPokemon.shiny;
+      const hasHA = newlyPurchasedPokemon.abilityIndex === 2;
+      expect(isshiny || hasHA).toBeTruthy();
+      expect(isshiny && hasHA).toBeFalsy();
     });
 
     it("should be disabled if player does not have enough money", async () => {
@@ -170,6 +183,22 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
+    });
+
+    it("should not offer any Paradox Pokemon", async () => {
+      const NUM_ROLLS = 2000; // As long as this is greater than total number of species, this should cover all possible RNG rolls
+      let rngSweepProgress = 0; // Will simulate full range of RNG rolls by steadily increasing from 0 to 1
+
+      vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
+        return rngSweepProgress * (max - min) + min;
+      });
+      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation((arr: any[]) => arr);
+
+      for (let i = 0; i < NUM_ROLLS; i++) {
+        rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);
+        const simSpecies = getSalesmanSpeciesOffer().speciesId;
+        expect(NON_LEGEND_PARADOX_POKEMON).not.toContain(simSpecies);
+      }
     });
 
     it("should leave encounter without battle", async () => {

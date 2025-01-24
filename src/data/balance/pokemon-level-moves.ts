@@ -16,9 +16,9 @@ interface PokemonSpeciesFormLevelMoves {
 }
 
 /** Moves that can only be learned with a memory-mushroom */
-const RELEARN_MOVE = -1;
+export const RELEARN_MOVE = -1;
 /** Moves that can only be learned with an evolve */
-const EVOLVE_MOVE = 0;
+export const EVOLVE_MOVE = 0;
 
 export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.BULBASAUR]: [
@@ -19465,7 +19465,6 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   [Species.GRENINJA]: {
     1: [
       [ EVOLVE_MOVE, Moves.WATER_SHURIKEN ],
-      [ EVOLVE_MOVE, Moves.WATER_SHURIKEN ],
       [ 1, Moves.POUND ],
       [ 1, Moves.GROWL ],
       [ 1, Moves.WATER_GUN ],
@@ -19475,6 +19474,7 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 1, Moves.SMACK_DOWN ], // Previous Stage Move
       [ 1, Moves.BOUNCE ], // Previous Stage Move
       [ 1, Moves.HAZE ],
+      [ 1, Moves.MAT_BLOCK ],
       [ 1, Moves.ROLE_PLAY ],
       [ 1, Moves.NIGHT_SLASH ],
       [ 10, Moves.LICK ],
@@ -19700,6 +19700,44 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   },
   [Species.URSHIFU]: {
     1: [
+      [ EVOLVE_MOVE, Moves.SURGING_STRIKES ],
+      [ 1, Moves.LEER ],
+      [ 1, Moves.FOCUS_ENERGY ],
+      [ 1, Moves.ENDURE ],
+      [ 1, Moves.ROCK_SMASH ],
+      [ 1, Moves.AQUA_JET ],
+      [ 12, Moves.AERIAL_ACE ],
+      [ 16, Moves.SCARY_FACE ],
+      [ 20, Moves.HEADBUTT ],
+      [ 24, Moves.BRICK_BREAK ],
+      [ 28, Moves.DETECT ],
+      [ 32, Moves.BULK_UP ],
+      [ 36, Moves.IRON_HEAD ],
+      [ 40, Moves.DYNAMIC_PUNCH ],
+      [ 44, Moves.COUNTER ],
+      [ 48, Moves.CLOSE_COMBAT ],
+      [ 52, Moves.FOCUS_PUNCH ],
+    ],
+    2: [
+      [ EVOLVE_MOVE, Moves.WICKED_BLOW ],
+      [ 1, Moves.LEER ],
+      [ 1, Moves.FOCUS_ENERGY ],
+      [ 1, Moves.ENDURE ],
+      [ 1, Moves.ROCK_SMASH ],
+      [ 1, Moves.SUCKER_PUNCH ],
+      [ 12, Moves.AERIAL_ACE ],
+      [ 16, Moves.SCARY_FACE ],
+      [ 20, Moves.HEADBUTT ],
+      [ 24, Moves.BRICK_BREAK ],
+      [ 28, Moves.DETECT ],
+      [ 32, Moves.BULK_UP ],
+      [ 36, Moves.IRON_HEAD ],
+      [ 40, Moves.DYNAMIC_PUNCH ],
+      [ 44, Moves.COUNTER ],
+      [ 48, Moves.CLOSE_COMBAT ],
+      [ 52, Moves.FOCUS_PUNCH ],
+    ],
+    3: [
       [ EVOLVE_MOVE, Moves.SURGING_STRIKES ],
       [ 1, Moves.LEER ],
       [ 1, Moves.FOCUS_ENERGY ],
