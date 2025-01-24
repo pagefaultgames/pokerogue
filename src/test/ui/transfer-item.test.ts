@@ -9,7 +9,7 @@ import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
