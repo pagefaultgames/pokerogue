@@ -4412,14 +4412,15 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
         // Only value of up to 6 can be stolen (stat stages don't exceed 6)
         const availableToSteal = Math.min(statStageValueTarget, 6 - statStageValueUser);
 
-        user.scene.unshiftPhase(new StatStageChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [ s ], availableToSteal));
+        globalScene.unshiftPhase(new StatStageChangePhase(user.getBattlerIndex(), this.selfTarget, [ s ], availableToSteal));
         target.setStatStage(s, statStageValueTarget - availableToSteal);
       }
     }
 
     target.updateInfo();
     user.updateInfo();
-    target.scene.queueMessage(i18next.t("moveTriggers:stealPositiveStats", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+    //TODO this needs to be uncommented when locales are updated
+    //target.scene.queueMessage(i18next.t("moveTriggers:stealPositiveStats", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
