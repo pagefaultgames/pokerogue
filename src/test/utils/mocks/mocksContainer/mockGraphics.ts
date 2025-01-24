@@ -1,4 +1,4 @@
-import { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "../mockGameObject";
 
 export default class MockGraphics implements MockGameObject {
   private scene;

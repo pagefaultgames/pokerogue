@@ -6,7 +6,7 @@ import MockRectangle from "#test/utils/mocks/mocksContainer/mockRectangle";
 import MockSprite from "#test/utils/mocks/mocksContainer/mockSprite";
 import MockText from "#test/utils/mocks/mocksContainer/mockText";
 import MockTexture from "#test/utils/mocks/mocksContainer/mockTexture";
-import { MockGameObject } from "./mockGameObject";
+import type { MockGameObject } from "./mockGameObject";
 import { MockVideoGameObject } from "./mockVideoGameObject";
 
 /**
