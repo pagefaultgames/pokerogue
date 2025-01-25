@@ -811,12 +811,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
-    const selectedForm = starterAttributes.form;
-    if (selectedForm !== undefined && (this.species.forms[selectedForm]?.isStarterSelectable && !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))) {
-      // requested form wasn't unlocked and is selectable as a starter
-      delete starterAttributes.form;
-    }
-
     return starterAttributes;
   }
 
