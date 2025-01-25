@@ -1724,12 +1724,12 @@ export const trainerConfigs: TrainerConfigs = {
 
   [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion(true).setBattleBgm("battle_kanto_champion").setMixedBattleBgm("battle_kanto_champion").setHasDouble("blue_red_double").setDoubleTrainerType(TrainerType.RED).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ALAKAZAM ]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MAGMORTAR, Species.ELECTIVIRE, Species.RHYPERIOR ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MACHAMP ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.HO_OH ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.MACHAMP ]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.MAGMORTAR, Species.ELECTIVIRE, Species.RHYPERIOR ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.PIDGEOT ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // Mega Pidgeot
       p.generateAndPopulateMoveset();
@@ -1740,7 +1740,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.setBoss(true, 2);
     }))
     .setGenModifiersFunc(party => {
-      const teraPokemon = party[1];
+      const teraPokemon = party[3];
       return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
     }),
   [TrainerType.RED]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion").setHasDouble("red_blue_double").setDoubleTrainerType(TrainerType.BLUE).setDoubleTitle("champion_double")
