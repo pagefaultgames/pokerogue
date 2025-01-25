@@ -903,7 +903,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 2, specialtyTypes.length ? specialtyTypes : undefined));
+    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 1, specialtyTypes.length ? specialtyTypes : undefined));
 
     return this;
   }
@@ -941,7 +941,6 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_champion_alder");
     this.setVictoryBgm("victory_champion");
-    this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 3));
 
     return this;
   }
@@ -1739,19 +1738,23 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.EXEGGUTOR, Species.ARCANINE, Species.GYARADOS ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[1];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.RED]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion").setHasDouble("red_blue_double").setDoubleTrainerType(TrainerType.BLUE).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PIKACHU ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 8; // G-Max Pikachu
       p.generateAndPopulateMoveset();
       p.generateName();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ESPEON, Species.UMBREON, Species.SYLVEON ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.LUGIA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.ESPEON, Species.UMBREON, Species.SYLVEON ]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // Mega Venusaur, Mega Charizard X, or Mega Blastoise
       p.generateAndPopulateMoveset();
@@ -1760,7 +1763,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.SNORLAX ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[3];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName("Lance").initForChampion(true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GYARADOS, Species.KINGDRA ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.AERODACTYL ]))
@@ -1774,7 +1781,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.DRAGONITE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[4];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SKARMORY ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CRADILY, Species.ARMALDO ]))
@@ -1783,15 +1794,19 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.generateName();
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.IRON_CROWN ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GOLURK, Species.RUNERIGUS ]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.REGIROCK, Species.REGICE, Species.REGISTEEL ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ROGUE_BALL;
+      p.pokeball = PokeballType.ULTRA_BALL;
     }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.RUNERIGUS, Species.GOLURK ]))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.AGGRON ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[4];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("wallace_steven_double").setDoubleTrainerType(TrainerType.STEVEN).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PELIPPER ], TrainerSlot.TRAINER, true, p => {
       p.abilityIndex = 1; // Drizzle
@@ -1804,45 +1819,53 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.WALKING_WAKE ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.SWAMPERT, Species.GASTRODON, Species.SEISMITOAD ]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.REGIELEKI, Species.REGIDRAGO ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ROGUE_BALL;
+      p.pokeball = PokeballType.ULTRA_BALL;
     }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.SWAMPERT, Species.GASTRODON, Species.SEISMITOAD ]))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.MILOTIC ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[4];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(false).setBattleBgm("battle_sinnoh_champion").setMixedBattleBgm("battle_sinnoh_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SPIRITOMB ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ROSERADE, Species.HISUI_ARCANINE, Species.MILOTIC ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.LUCARIO ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.GIRATINA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
 	  p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.LUCARIO ]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.GARCHOMP ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.ROSERADE, Species.HISUI_ARCANINE, Species.MILOTIC ]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.TOGEKISS ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.setBoss(true, 2);
+    }))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.GARCHOMP ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // Mega Garchomp
       p.generateAndPopulateMoveset();
       p.generateName();
     }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.TOGEKISS ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.setBoss(true, 2);
-    })),
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[3];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder").setMixedBattleBgm("battle_champion_alder")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BOUFFALANT, Species.BRAVIARY ]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CHANDELURE, Species.KROOKODILE, Species.REUNICLUS, Species.CONKELDURR ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HISUI_LILLIGANT, Species.HISUI_ZOROARK, Species.BASCULEGION ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.ROGUE_BALL;
+    }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.ZEKROM ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.HISUI_LILLIGANT, Species.HISUI_ZOROARK, Species.BASCULEGION ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ROGUE_BALL;
-    }))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.CHANDELURE, Species.KROOKODILE, Species.REUNICLUS, Species.CONKELDURR ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.VOLCARONA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
@@ -1850,7 +1873,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.KELDEO ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[3];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(false).setBattleBgm("battle_champion_iris").setMixedBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.DRUDDIGON ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ARCHEOPS ]))
@@ -1867,26 +1894,37 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.HAXORUS ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[3];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ Type.DRAGON ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion(false).setMixedBattleBgm("battle_kalos_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.HAWLUCHA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.TYRANTRUM, Species.AURORUS ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.GOURGEIST, Species.TREVENANT ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.XERNEAS ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GOURGEIST, Species.TREVENANT ]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.GARDEVOIR ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.TYRANTRUM, Species.AURORUS ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.abilityIndex = 2; // Rock Head Tyrantrum, Snow Warning Aurorus
+    }))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.GOODRA, Species.HISUI_GOODRA ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.setBoss(true, 2);
+    }))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.GARDEVOIR ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // Mega Gardevoir
       p.generateAndPopulateMoveset();
       p.generateName();
     }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.GOODRA, Species.HISUI_GOODRA ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.setBoss(true, 2);
-    })),
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[3];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type2 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_alola_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ALOLA_RAICHU ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -1908,26 +1946,34 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[3];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_galar_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.AEGISLASH ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.DRAGAPULT ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MR_RIME, Species.RHYPERIOR, Species.SEISMITOAD ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.ZACIAN ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.MR_RIME, Species.RHYPERIOR, Species.SEISMITOAD ]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.CHARIZARD ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.DRAGAPULT ]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.setBoss(true, 2);
+    }))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.CHARIZARD ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 3; // G-Max Charizard
       p.generateAndPopulateMoveset();
       p.generateName();
     }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.setBoss(true, 2);
-    })),
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[3];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion(false).setMixedBattleBgm("battle_champion_geeta")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GLIMMORA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -1938,12 +1984,16 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA ]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.KINGAMBIT ]))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.BAXCALIBUR ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.BAXCALIBUR ]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA ]))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.KINGAMBIT ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ULTRA_BALL;
-    })),
+      p.abilityIndex = 1; // Supreme Overlord
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[5];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ Type.FLYING ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion(false).setMixedBattleBgm("battle_champion_nemona")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LYCANROC ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 0; // Midday form
@@ -1959,7 +2009,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[4];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type2 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_champion_kieran")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.POLIWRATH, Species.POLITOED ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -1973,26 +2027,37 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 0;
       }
     }))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.OGERPON ], TrainerSlot.TRAINER, true, p => {
-      p.formIndex = Utils.randSeedInt(4); // Random Ogerpon Mask
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.TERAPAGOS ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.MASTER_BALL;
+    }))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.URSALUNA, Species.BLOODMOON_URSALUNA ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.ULTRA_BALL;
+    }))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.OGERPON ], TrainerSlot.TRAINER, true, p => {
+      p.formIndex = Utils.randSeedInt(4, 4); // Random Ogerpon Tera Mask
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
       if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.IVY_CUDGEL)) { // Check if Ivy Cudgel is in the moveset, if not, replace the first move with Ivy Cudgel.
         p.moveset[0] = new PokemonMove(Moves.IVY_CUDGEL);
       }
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.URSALUNA, Species.BLOODMOON_URSALUNA ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ULTRA_BALL;
-    }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.TERAPAGOS ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.MASTER_BALL;
-    }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.HYDRAPPLE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-    })),
+    }))
+    .setGenModifiersFunc(party => {
+      const starter = party[4];
+      let teraShardType: Type;
+      const pokemonType2 = starter.species.forms[starter.formIndex].type2;
+      if (starter.formIndex === 4 || Utils.isNullOrUndefined(pokemonType2)) {
+        teraShardType = starter.species.type1;
+      } else {
+        teraShardType = pokemonType2;
+      }
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraShardType ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(starter) as PersistentModifier ];
+    }),
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival").setMixedBattleBgm("battle_rival").setPartyTemplates(trainerPartyTemplates.RIVAL)
     .setModifierRewardFuncs(() => modifierTypes.SUPER_EXP_CHARM, () => modifierTypes.EXP_SHARE)
