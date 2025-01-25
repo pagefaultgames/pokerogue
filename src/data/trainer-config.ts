@@ -1787,8 +1787,8 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ROGUE_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.RUNERIGUS, Species.GOLURK ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.AGGRON ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.RUNERIGUS, Species.GOLURK ]))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.AGGRON ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     })),
@@ -1804,7 +1804,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.WALKING_WAKE ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.WALKING_WAKE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ROGUE_BALL;
     }))
