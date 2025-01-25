@@ -1,14 +1,19 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import type { nil } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils";
 import i18next from "i18next";
 import { Species } from "#enums/species";
 import type { WeatherPoolEntry } from "#app/data/weather";
 import { WeatherType } from "#enums/weather-type";
+import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
+import { MysteryEncounterType } from "./enums/mystery-encounter-type";
+import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
 
 export enum EventType {
   SHINY,
-  NO_TIMER_DISPLAY
+  NO_TIMER_DISPLAY,
+  LUCK
 }
 
 interface EventBanner {
@@ -21,19 +26,29 @@ interface EventBanner {
 
 interface EventEncounter {
   species: Species;
-  allowEvolution?: boolean;
+  blockEvolution?: boolean;
+}
+
+interface EventMysteryEncounterTier {
+  mysteryEncounter: MysteryEncounterType;
+  tier?: MysteryEncounterTier;
+  disable?: boolean;
 }
 
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
   shinyMultiplier?: number;
-  friendshipMultiplier?: number;
+  classicFriendshipMultiplier?: number;
+  luckBoost?: number;
+  upgradeUnlockedVouchers?: boolean;
   startDate: Date;
   endDate: Date;
-  uncommonBreedEncounters?: EventEncounter[];
+  eventEncounters?: EventEncounter[];
   delibirdyBuff?: string[];
   weather?: WeatherPoolEntry[];
+  mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
+  luckBoostedSpecies?: Species[];
 }
 
 const timedEvents: TimedEvent[] = [
@@ -41,36 +56,94 @@ const timedEvents: TimedEvent[] = [
     name: "Winter Holiday Update",
     eventType: EventType.SHINY,
     shinyMultiplier: 2,
-    friendshipMultiplier: 1,
+    upgradeUnlockedVouchers: true,
     startDate: new Date(Date.UTC(2024, 11, 21, 0)),
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "winter_holidays2024-event-",
     scale: 0.21,
     availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
-    uncommonBreedEncounters: [
-      { species: Species.GIMMIGHOUL },
+    eventEncounters: [
+      { species: Species.GIMMIGHOUL, blockEvolution: true },
       { species: Species.DELIBIRD },
-      { species: Species.STANTLER, allowEvolution: true },
-      { species: Species.CYNDAQUIL, allowEvolution: true },
-      { species: Species.PIPLUP, allowEvolution: true },
-      { species: Species.CHESPIN, allowEvolution: true },
-      { species: Species.BALTOY, allowEvolution: true },
-      { species: Species.SNOVER, allowEvolution: true },
-      { species: Species.CHINGLING, allowEvolution: true },
-      { species: Species.LITWICK, allowEvolution: true },
-      { species: Species.CUBCHOO, allowEvolution: true },
-      { species: Species.SWIRLIX, allowEvolution: true },
-      { species: Species.AMAURA, allowEvolution: true },
-      { species: Species.MUDBRAY, allowEvolution: true },
-      { species: Species.ROLYCOLY, allowEvolution: true },
-      { species: Species.MILCERY, allowEvolution: true },
-      { species: Species.SMOLIV, allowEvolution: true },
-      { species: Species.ALOLA_VULPIX, allowEvolution: true },
-      { species: Species.GALAR_DARUMAKA, allowEvolution: true },
+      { species: Species.STANTLER },
+      { species: Species.CYNDAQUIL },
+      { species: Species.PIPLUP },
+      { species: Species.CHESPIN },
+      { species: Species.BALTOY },
+      { species: Species.SNOVER },
+      { species: Species.CHINGLING },
+      { species: Species.LITWICK },
+      { species: Species.CUBCHOO },
+      { species: Species.SWIRLIX },
+      { species: Species.AMAURA },
+      { species: Species.MUDBRAY },
+      { species: Species.ROLYCOLY },
+      { species: Species.MILCERY },
+      { species: Species.SMOLIV },
+      { species: Species.ALOLA_VULPIX },
+      { species: Species.GALAR_DARUMAKA },
       { species: Species.IRON_BUNDLE }
     ],
     delibirdyBuff: [ "CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM" ],
-    weather: [{ weatherType: WeatherType.SNOW, weight: 1 }]
+    weather: [{ weatherType: WeatherType.SNOW, weight: 1 }],
+    mysteryEncounterTierChanges: [
+      { mysteryEncounter: MysteryEncounterType.DELIBIRDY, tier: MysteryEncounterTier.COMMON },
+      { mysteryEncounter: MysteryEncounterType.PART_TIMER, disable: true },
+      { mysteryEncounter: MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, disable: true },
+      { mysteryEncounter: MysteryEncounterType.FIELD_TRIP, disable: true },
+      { mysteryEncounter: MysteryEncounterType.DEPARTMENT_STORE_SALE, disable: true }
+    ]
+  },
+  {
+    name: "Year of the Snake",
+    eventType: EventType.LUCK,
+    luckBoost: 1,
+    startDate: new Date(Date.UTC(2025, 0, 29, 0)),
+    endDate: new Date(Date.UTC(2025, 1, 3, 0)),
+    bannerKey: "yearofthesnakeevent-",
+    scale: 0.21,
+    availableLangs: [],
+    eventEncounters: [
+      { species: Species.EKANS },
+      { species: Species.ONIX },
+      { species: Species.DRATINI },
+      { species: Species.CLEFFA },
+      { species: Species.UMBREON },
+      { species: Species.DUNSPARCE },
+      { species: Species.TEDDIURSA },
+      { species: Species.SEVIPER },
+      { species: Species.LUNATONE },
+      { species: Species.CHINGLING },
+      { species: Species.SNIVY },
+      { species: Species.DARUMAKA },
+      { species: Species.DRAMPA },
+      { species: Species.SILICOBRA },
+      { species: Species.BLOODMOON_URSALUNA }
+    ],
+    luckBoostedSpecies: [
+      Species.EKANS, Species.ARBOK,
+      Species.ONIX, Species.STEELIX,
+      Species.DRATINI, Species.DRAGONAIR, Species.DRAGONITE,
+      Species.CLEFFA, Species.CLEFAIRY, Species.CLEFABLE,
+      Species.UMBREON,
+      Species.DUNSPARCE, Species.DUDUNSPARCE,
+      Species.TEDDIURSA, Species.URSARING, Species.URSALUNA,
+      Species.SEVIPER,
+      Species.LUNATONE,
+      Species.RAYQUAZA,
+      Species.CHINGLING, Species.CHIMECHO,
+      Species.CRESSELIA,
+      Species.DARKRAI,
+      Species.SNIVY, Species.SERVINE, Species.SERPERIOR,
+      Species.DARUMAKA, Species.DARMANITAN,
+      Species.ZYGARDE,
+      Species.DRAMPA,
+      Species.LUNALA,
+      Species.BLACEPHALON,
+      Species.SILICOBRA, Species.SANDACONDA,
+      Species.ROARING_MOON,
+      Species.BLOODMOON_URSALUNA
+    ]
   }
 ];
 
@@ -97,16 +170,6 @@ export class TimedEventManager {
     return activeEvents.length > 0;
   }
 
-  getFriendshipMultiplier(): number {
-    let multiplier = 1;
-    const friendshipEvents = timedEvents.filter((te) => this.isActive(te));
-    friendshipEvents.forEach((fe) => {
-      multiplier *= fe.friendshipMultiplier ?? 1;
-    });
-
-    return multiplier;
-  }
-
   getShinyMultiplier(): number {
     let multiplier = 1;
     const shinyEvents = timedEvents.filter((te) => te.eventType === EventType.SHINY && this.isActive(te));
@@ -119,6 +182,120 @@ export class TimedEventManager {
 
   getEventBannerFilename(): string {
     return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey ?? "";
+  }
+
+  getEventEncounters(): EventEncounter[] {
+    const ret: EventEncounter[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.eventEncounters)) {
+        ret.push(...te.eventEncounters);
+      }
+    });
+    return ret;
+  }
+
+  /**
+   * For events that change the classic candy friendship multiplier
+   * @returns The highest classic friendship multiplier among the active events, or the default CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER
+   */
+  getClassicFriendshipMultiplier(): number {
+    let multiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
+    const classicFriendshipEvents = timedEvents.filter((te) => this.isActive(te));
+    classicFriendshipEvents.forEach((fe) => {
+      if (!isNullOrUndefined(fe.classicFriendshipMultiplier) && fe.classicFriendshipMultiplier > multiplier) {
+        multiplier = fe.classicFriendshipMultiplier;
+      }
+    });
+    return multiplier;
+  }
+
+  /**
+   * For events where defeated bosses (Gym Leaders, E4 etc) give out Voucher Plus even if they were defeated before
+   * @returns Whether vouchers should be upgraded
+   */
+  getUpgradeUnlockedVouchers(): boolean {
+    return timedEvents.some((te) => this.isActive(te) && (te.upgradeUnlockedVouchers ?? false));
+  }
+
+  /**
+   * For events where Delibirdy gives extra items
+   * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
+   */
+  getDelibirdyBuff(): string[] {
+    const ret: string[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.delibirdyBuff)) {
+        ret.push(...te.delibirdyBuff);
+      }
+    });
+    return ret;
+  }
+
+  /**
+   * For events where there's a set weather for town biome (other biomes are hard)
+   * @returns Event weathers for town
+   */
+  getWeather(): WeatherPoolEntry[] {
+    const ret: WeatherPoolEntry[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.weather)) {
+        ret.push(...te.weather);
+      }
+    });
+    return ret;
+  }
+
+  getAllMysteryEncounterChanges(): EventMysteryEncounterTier[] {
+    const ret: EventMysteryEncounterTier[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.mysteryEncounterTierChanges)) {
+        ret.push(...te.mysteryEncounterTierChanges);
+      }
+    });
+    return ret;
+  }
+
+  getEventMysteryEncountersDisabled(): MysteryEncounterType[] {
+    const ret: MysteryEncounterType[] = [];
+    timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges)).map((te) => {
+      te.mysteryEncounterTierChanges?.map((metc) => {
+        if (metc.disable) {
+          ret.push(metc.mysteryEncounter);
+        }
+      });
+    });
+    return ret;
+  }
+
+  getMysteryEncounterTierForEvent(encounterType: MysteryEncounterType, normal: MysteryEncounterTier): MysteryEncounterTier {
+    let ret = normal;
+    timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges)).map((te) => {
+      te.mysteryEncounterTierChanges?.map((metc) => {
+        if (metc.mysteryEncounter === encounterType) {
+          ret = metc.tier ?? normal;
+        }
+      });
+    });
+    return ret;
+  }
+
+  getEventLuckBoost(): number {
+    let ret = 0;
+    const luckEvents = timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.luckBoost));
+    luckEvents.forEach((le) => {
+      ret += le.luckBoost!;
+    });
+    return ret;
+  }
+
+  getEventLuckBoostedSpecies(): Species[] {
+    const ret: Species[] = [];
+    timedEvents.filter((te) => this.isActive(te)).map((te) => {
+      if (!isNullOrUndefined(te.luckBoostedSpecies)) {
+        ret.push(...te.luckBoostedSpecies.filter(s => !ret.includes(s)));
+      }
+    });
+    return ret;
   }
 }
 
