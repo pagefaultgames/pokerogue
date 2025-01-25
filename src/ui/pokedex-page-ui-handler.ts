@@ -665,7 +665,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             )
           )
           // This takes care of Burmy, Shellos etc
-          || e.evoFormKey === species.forms[formIndex]?.formKey)
+          || e.evoFormKey === species.forms[formIndex]?.formKey
+        )
       );
     }
   }
@@ -731,12 +732,24 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return biomes;
   }
 
-  isFormCaught(): boolean {
-    const allFormChanges = pokemonFormChanges.hasOwnProperty(this.species.speciesId) ? pokemonFormChanges[this.species.speciesId] : [];
-    // This shows battle forms such as megas and gmax as unlocked.
-    const formChangeAccess = allFormChanges.filter(f => (f.formKey === this.species.forms[this.formIndex].formKey)).length > 0;
-    const isFormCaught = this.speciesStarterDexEntry ?
-      (this.speciesStarterDexEntry.caughtAttr & globalScene.gameData.getFormAttr(this.formIndex ?? 0)) > 0n || formChangeAccess
+  /**
+   * Check whether a given form is caught for a given species.
+   * All forms that can be reached through a form change during battle
+   * are considered caught and show up in the dex as such.
+   *
+   * @param otherSpecies The species to check; defaults to current species
+   * @param otherFormIndex The form index of the form to check; defaults to current form
+   * @returns StarterAttributes for the species
+   */
+  isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: integer | undefined): boolean {
+    const species = otherSpecies ? otherSpecies : this.species;
+    const formIndex = otherFormIndex !== undefined ? otherFormIndex : this.formIndex;
+    const dexEntry = globalScene.gameData.dexData[species.speciesId];
+
+    const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId) ? pokemonFormChanges[species.speciesId] : [];
+    const formChangeAccess = allFormChanges.filter(f => (f.formKey === species.forms[formIndex].formKey)).length > 0;
+    const isFormCaught = dexEntry ?
+      (dexEntry.caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n || formChangeAccess
       : false;
     return isFormCaught;
   }
@@ -1355,6 +1368,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
                       const evoSpeciesStarterDexEntry = evoSpecies ? globalScene.gameData.dexData[evoSpecies.speciesId] : null;
                       const isCaughtEvo = evoSpeciesStarterDexEntry?.caughtAttr ? true : false;
+                      // Attempts to find the formIndex of the evolved species
+                      const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
+                      const matchingForm = evoSpecies?.forms.find(form => form.formKey === newFormKey);
+                      const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+                      const isFormCaughtEvo = this.isFormCaught(evoSpecies, newFormIndex);
 
                       const conditionText: string = evo.description;
 
@@ -1362,18 +1380,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         label: evo.evoFormKey ?
                           this.getFormString(evo.evoFormKey, evoSpecies ?? this.species, true) :
                           this.getRegionName(evoSpecies ?? this.species),
-                        style: isCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+                        style: isCaughtEvo && isFormCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                         handler: () => {
-                          const newSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
-                          // Attempts to find the formIndex of the evolved species
-                          const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
-                          const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
-                          const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
                           this.starterAttributes.form = newFormIndex;
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
+                          ui.setMode(Mode.POKEDEX_PAGE, evoSpecies, newFormIndex, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText)

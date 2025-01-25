@@ -1396,7 +1396,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.TANDEMAUS]: [
     new SpeciesFormEvolution(Species.MAUSHOLD, "", "three", 25, null, new TandemausEvolutionCondition()),
-    new SpeciesEvolution(Species.MAUSHOLD, 25, null, null)
+    new SpeciesFormEvolution(Species.MAUSHOLD, "", "four", 25, null, null)
   ],
   [Species.FIDOUGH]: [
     new SpeciesEvolution(Species.DACHSBUN, 26, null, null)
@@ -1559,7 +1559,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.DUNSPARCE]: [
     new SpeciesFormEvolution(Species.DUDUNSPARCE, "", "three-segment", 32, null, new DunsparceEvolutionCondition(), SpeciesWildEvolutionDelay.LONG),
-    new SpeciesEvolution(Species.DUDUNSPARCE, 32, null,  new MoveEvolutionCondition(Moves.HYPER_DRILL), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesFormEvolution(Species.DUDUNSPARCE, "", "two-segment", 32, null,  new MoveEvolutionCondition(Moves.HYPER_DRILL), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.GLIGAR]: [
     new SpeciesEvolution(Species.GLISCOR, 1, EvolutionItem.RAZOR_FANG, new TimeOfDayEvolutionCondition("night") /* Razor fang at night*/, SpeciesWildEvolutionDelay.VERY_LONG)
