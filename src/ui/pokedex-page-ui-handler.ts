@@ -734,8 +734,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   /**
    * Check whether a given form is caught for a given species.
-   * All forms that can be reached through a form change during battle
-   * are considered caught and show up in the dex as such.
+   * All forms that can be reached through a form change during battle are considered caught and show up in the dex as such.
    *
    * @param otherSpecies The species to check; defaults to current species
    * @param otherFormIndex The form index of the form to check; defaults to current form
@@ -849,6 +848,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 1;
   }
 
+  /**
+   * If the pokemon is an evolution, find speciesId of its starter.
+   * @param speciesId the id of the species to check
+   * @returns the id of the corresponding starter
+   */
   getStarterSpeciesId(speciesId): number {
     if (globalScene.gameData.starterData.hasOwnProperty(speciesId)) {
       return speciesId;
@@ -865,6 +869,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
   }
 
+  /**
+   * Assign a form string to a given species and form
+   * @param formKey the form to format
+   * @param species the species to format
+   * @param speciesId whether the name of the species should be shown at the end
+   * @returns the formatted string
+   */
   getFormString(formKey: string, species: PokemonSpecies, append: boolean = false): string {
     let label: string;
     const formText = capitalizeString(formKey, "-", false, false) ?? "";
@@ -883,6 +894,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return label;
   }
 
+  /**
+   * Find the name of the region for regional species
+   * @param species the species to check
+   * @returns a string with the region name
+   */
   getRegionName(species: PokemonSpecies): string {
     const name = species.name;
     const label = Species[species.speciesId];
@@ -2251,8 +2267,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
 
   /**
-   * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
-   * and to display the correct shiny, variant, and form based on this.starterAttributes
+   * Creates a temporary dex attr props that will be used to display the correct shiny, variant, and form based on this.starterAttributes
    *
    * @param speciesId the id of the species to get props for
    * @returns the dex props
