@@ -29,7 +29,7 @@ export class TrainerVictoryPhase extends BattlePhase {
       globalScene.unshiftPhase(new ModifierRewardPhase(modifierRewardFunc));
     }
 
-    if (globalScene.eventManager.isEventActive()) {
+    if (globalScene.eventManager.getShinyMultiplier() > 1) { //If a shiny boosting event is active
       for (const rewardFunc of globalScene.currentBattle.trainer?.config.eventRewardFuncs!) {
         globalScene.unshiftPhase(new ModifierRewardPhase(rewardFunc));
       }
@@ -39,7 +39,11 @@ export class TrainerVictoryPhase extends BattlePhase {
     // Validate Voucher for boss trainers
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
       if (!globalScene.validateVoucher(vouchers[TrainerType[trainerType]]) && globalScene.currentBattle.trainer?.config.isBoss) {
-        globalScene.unshiftPhase(new ModifierRewardPhase([ modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
+        if (globalScene.eventManager.getUpgradeUnlockedVouchers()) {
+          globalScene.unshiftPhase(new ModifierRewardPhase([ modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
+        } else {
+          globalScene.unshiftPhase(new ModifierRewardPhase([ modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
+        }
       }
     }
     // Breeders in Space achievement
