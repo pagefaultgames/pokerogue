@@ -6,9 +6,9 @@ import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } fro
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { AiType, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { FieldPosition, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
+import { EnemyPokemon, FieldPosition, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
-import { ModifierPoolType, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { getPartyLuckValue, ModifierPoolType, ModifierTypeGenerator, ModifierTypeOption, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { MysteryEncounterBattlePhase, MysteryEncounterBattleStartCleanupPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import type PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -16,7 +16,7 @@ import type { PartyOption, PokemonSelectFilter } from "#app/ui/party-ui-handler"
 import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import type { TrainerType } from "#enums/trainer-type";
@@ -45,6 +45,7 @@ import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import type { Variant } from "#app/data/variant";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -872,6 +873,41 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
   }
 
   return false;
+}
+
+/**
+ * Helper function for encounters such as {@linkcode UncommonBreedEncounter} which call for a random species including event encounters.
+ * If the mon is from the event encounter list, it will do an extra shiny roll.
+ * @param level the level of the mon, which differs between MEs
+ * @param isBoss whether the mon should be a Boss
+ * @param rerollHidden whether the mon should get an extra roll for Hidden Ability
+ * @returns {@linkcode EnemyPokemon} for the requested encounter
+ */
+export function getRandomEncounterSpecies(level: number, isBoss: boolean = false, rerollHidden: boolean = false): EnemyPokemon {
+  let bossSpecies: PokemonSpecies;
+  let isEventEncounter = false;
+  const eventEncounters = globalScene.eventManager.getEventEncounters();
+
+  if (eventEncounters.length > 0 && randSeedInt(2) === 1) {
+    const eventEncounter = randSeedItem(eventEncounters);
+    const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, !isNullOrUndefined(eventEncounter.blockEvolution), isBoss, globalScene.gameMode);
+    isEventEncounter = true;
+    bossSpecies = getPokemonSpecies(levelSpecies);
+  } else {
+    bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), isBoss);
+  }
+  const ret = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, isBoss);
+
+  //Reroll shiny for event encounters
+  if (isEventEncounter && !ret.shiny) {
+    ret.trySetShinySeed();
+  }
+  //Reroll hidden ability
+  if (rerollHidden && ret.abilityIndex !== 2 && ret.species.abilityHidden) {
+    ret.tryRerollHiddenAbilitySeed();
+  }
+
+  return ret;
 }
 
 /**
