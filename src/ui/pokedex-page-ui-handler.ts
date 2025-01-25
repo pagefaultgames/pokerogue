@@ -573,7 +573,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.menuContainer.setVisible(true);
 
     this.speciesStarterDexEntry = this.species ? globalScene.gameData.dexData[this.species.speciesId] : null;
-    this.setSpecies(this.species);
+    this.setSpecies();
     this.updateInstructions();
 
     this.setCursor(0);
@@ -1902,7 +1902,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return { currentFriendship, friendshipCap };
   }
 
-  setSpecies(species: PokemonSpecies | null) {
+  setSpecies() {
+    const species = this.species;
     const starterAttributes : StarterAttributes | null = species ? { ...this.starterAttributes } : null;
 
     if (!species && globalScene.ui.getTooltip().visible) {
@@ -1919,8 +1920,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. what. how? huh?
       }
     }
-
-    this.species = species!; // TODO: is this bang correct?
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
       this.pokemonNumberText.setText(padInt(species.speciesId, 4));
@@ -2006,7 +2005,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
         }
 
-        // load default nature from stater save data, if set
+        // Set default attributes if for some reason starterAttributes does not exist or attributes missing
         const props: StarterAttributes = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
         if (starterAttributes?.variant && !isNaN(starterAttributes.variant)) {
           if (props.shiny) {
@@ -2023,10 +2022,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           variant: props.variant ?? 0,
         });
 
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, props.form ?? 0);
-        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-
-        this.pokemonSprite.clearTint();
+        if (this.isFormCaught(this.species, props.form)) {
+          const speciesForm = getPokemonSpeciesForm(species.speciesId, props.form ?? 0);
+          this.setTypeIcons(speciesForm.type1, speciesForm.type2);
+          this.pokemonSprite.clearTint();
+        }
       } else {
         this.pokemonGrowthRateText.setText("");
         this.pokemonGrowthRateLabelText.setVisible(false);
