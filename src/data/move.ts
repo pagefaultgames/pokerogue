@@ -10294,9 +10294,10 @@ export function initMoves() {
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
       .ignoresSubstitute()
       .attr(RepeatMoveAttr)
-      .edgeCase(), // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
-    // Also has incorrect interactions with move-calling moves (Mirror Move, Copycat/Mimic, Metronome)
-    // and Dancer that will need to be cleaned up separately
+      // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
+      // Also has incorrect interactions with move-calling moves (Mirror Move, Copycat/Mimic, Metronome)
+      // and Dancer that will need to be cleaned up separately
+      .edgeCase(),
     new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()
