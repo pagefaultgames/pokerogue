@@ -1,9 +1,7 @@
 import { BattlerIndex } from "#app/battle";
-import { Button } from "#app/enums/buttons";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
-import { Mode } from "#app/ui/ui";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -119,13 +117,34 @@ describe("Moves - Instruct", () => {
     await game.classicMode.startBattle([ Species.AMOONGUSS ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
-    game.move.changeMoveset(enemy, Moves.GIGATON_HAMMER);
+    game.move.changeMoveset(enemy, [ Moves.GIGATON_HAMMER, Moves.BLOOD_MOON ]);
 
     game.move.select(Moves.INSTRUCT);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
-    await game.phaseInterceptor.to("TurnEndPhase", false);
+    await game.phaseInterceptor.to("BerryPhase");
 
     instructSuccess(enemy, Moves.GIGATON_HAMMER);
+    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(2);
+  });
+
+  it("should add moves to move queue for copycat", async () => {
+    game.override
+      .battleType("double")
+      .moveset(Moves.INSTRUCT)
+      .enemyLevel(5);
+    await game.classicMode.startBattle([ Species.AMOONGUSS ]);
+
+    const [ enemy1, enemy2 ] = game.scene.getEnemyField()!;
+    game.move.changeMoveset(enemy1, Moves.WATER_GUN);
+    game.move.changeMoveset(enemy2, Moves.COPYCAT);
+
+    game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2 ]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    instructSuccess(enemy1, Moves.WATER_GUN);
+    // amoonguss gets hit by water gun thrice; once by original attack, once by instructed use and once by copycat
+    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(3);
   });
 
   it("should respect enemy's status condition", async () => {
@@ -318,11 +337,10 @@ describe("Moves - Instruct", () => {
     expect(player.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
-  // TODO: Fix test code up to use learn move utility function once that gets added
-  it.todo("should not repeat move since forgotten by target", async () => {
+  it("should not repeat move since forgotten by target", async () => {
     game.override
       .enemyLevel(5)
-      .xpMultiplier(50)
+      .xpMultiplier(0)
       .enemySpecies(Species.WURMPLE)
       .enemyMoveset(Moves.INSTRUCT);
     await game.classicMode.startBattle([ Species.REGIELEKI ]);
@@ -333,17 +351,8 @@ describe("Moves - Instruct", () => {
 
     game.move.select(Moves.ELECTRO_DRIFT);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    // setup macro to mash enter and learn hydro pump in slot 1
-    game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
-      game.scene.ui.getHandler().processInput(Button.ACTION);
-      game.onNextPrompt("LearnMovePhase", Mode.SUMMARY, () => {
-        game.scene.ui.getHandler().processInput(Button.ACTION);
-        game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
-          game.scene.ui.getHandler().processInput(Button.ACTION);
-        });
-      });
-    });
-
+    await game.phaseInterceptor.to("FaintPhase");
+    await game.move.learnMove(Moves.ELECTROWEB);
     await game.toNextWave();
 
     game.move.select(Moves.SPLASH);
