@@ -163,7 +163,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   }
 
   globalScene.getEnemyParty().forEach(enemyPokemon => {
-    globalScene.field.remove(enemyPokemon, true);
+    enemyPokemon.leaveField(true, true, true);
   });
   battle.enemyParty = [];
   battle.double = doubleBattle;
@@ -809,7 +809,7 @@ export function transitionMysteryEncounterIntroVisuals(hide: boolean = true, des
             globalScene.field.remove(introVisuals, true);
 
             enemyPokemon.forEach(pokemon => {
-              globalScene.field.remove(pokemon, true);
+              pokemon.leaveField(true, true, true);
             });
 
             globalScene.currentBattle.mysteryEncounter!.introVisuals = undefined;
