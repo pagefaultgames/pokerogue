@@ -592,7 +592,7 @@ export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameO
       };
       const removePokemon = () => {
         if (pokemon) {
-          pokemon.leaveField(true, true, true);
+          pokemon.leaveField(false, true, true);
         }
       };
       const addToParty = (slotIndex?: number) => {
