@@ -665,7 +665,7 @@ export class ConfusedTag extends BattlerTag {
         const def = pokemon.getEffectiveStat(Stat.DEF);
         const damage = toDmgValue(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedIntRange(85, 100) / 100));
         globalScene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
-        pokemon.damageAndUpdate(damage);
+        pokemon.damageAndUpdate(damage, HitResult.SELF);
         pokemon.battleData.hitCount++;
         (globalScene.getCurrentPhase() as MovePhase).cancel();
       }
