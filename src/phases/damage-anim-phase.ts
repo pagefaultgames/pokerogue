@@ -42,6 +42,7 @@ export class DamageAnimPhase extends PokemonPhase {
   applyDamage() {
     switch (this.damageResult) {
       case HitResult.EFFECTIVE:
+      case HitResult.SELF:
         globalScene.playSound("se/hit");
         break;
       case HitResult.SUPER_EFFECTIVE:
