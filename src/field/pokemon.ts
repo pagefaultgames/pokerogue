@@ -3063,6 +3063,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // When damage is done from any source (Move or Indirect damage, e.g. weather), store latest occurrence in damageSources[0]
     if (result !== undefined) {
       this.turnData?.damageSources?.unshift(result);
+    } else {
+      this.turnData?.damageSources?.unshift(HitResult.OTHER);
     }
     const damagePhase = new DamageAnimPhase(this.getBattlerIndex(), damage, result as DamageResult, critical);
     globalScene.unshiftPhase(damagePhase);
