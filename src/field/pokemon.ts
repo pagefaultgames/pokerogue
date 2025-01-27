@@ -2945,7 +2945,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true, source);
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, false, true, source);
 
         if (damage > 0) {
           if (source.isPlayer()) {
@@ -2989,7 +2989,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.isFainted()) {
         // set splice index here, so future scene queues happen before FaintedPhase
         globalScene.setPhaseQueueSplice();
-        globalScene.unshiftPhase(new FaintPhase(this.getBattlerIndex(), isOneHitKo, destinyTag, grudgeTag, source));
+        globalScene.unshiftPhase(new FaintPhase(this.getBattlerIndex(), false, destinyTag, grudgeTag, source));
 
         this.destroySubstitute();
         this.lapseTag(BattlerTagType.COMMANDED);
