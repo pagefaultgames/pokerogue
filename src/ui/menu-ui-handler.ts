@@ -111,7 +111,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   render() {
     const ui = this.getUi();
     this.excludedMenus = () => [
-      { condition: globalScene.getCurrentPhase() instanceof SelectModifierPhase, options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
+      { condition: globalScene.getCurrentPhase() instanceof SelectModifierPhase, options: [ MenuOptions.EGG_GACHA ]},
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
