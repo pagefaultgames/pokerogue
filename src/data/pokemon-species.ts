@@ -22,6 +22,7 @@ import type { Variant, VariantSet } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { starterPassiveAbilities } from "#app/data/balance/passives";
 
 export enum Region {
   NORMAL,
@@ -228,6 +229,31 @@ export abstract class PokemonSpeciesForm {
       ret = this.abilityHidden;
     }
     return ret;
+  }
+
+  /**
+   * Method to get the passive ability of a Pokemon species
+   * @param formIndex The form index to use, defaults to form for this species instance
+   * @returns The id of the ability
+   */
+  getPassiveAbility(formIndex?: number): Abilities {
+    if (formIndex === undefined) {
+      formIndex = this.formIndex;
+    }
+    let starterSpeciesId = this.speciesId;
+    while (!(starterSpeciesId in starterPassiveAbilities) || !(formIndex in starterPassiveAbilities[starterSpeciesId])) {
+      if (pokemonPrevolutions.hasOwnProperty(starterSpeciesId)) {
+        starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
+      } else { // If we've reached the base species and still haven't found a matching ability, use form 0 if possible
+        if (0 in starterPassiveAbilities[starterSpeciesId]) {
+          return starterPassiveAbilities[starterSpeciesId][0];
+        } else {
+          console.log("No passive ability found for %s, using run away", this.speciesId);
+          return Abilities.RUN_AWAY;
+        }
+      }
+    }
+    return starterPassiveAbilities[starterSpeciesId][formIndex];
   }
 
   getLevelMoves(): LevelMoves {
