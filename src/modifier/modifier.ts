@@ -3205,12 +3205,12 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
           break;
         }
       }
-      const randItemIndex = pokemon.randSeedInt(tierItemModifiers.length);
-      const randItem = tierItemModifiers[randItemIndex];
+      const randItemIndex = pokemon.randSeedInt(itemModifiers.length);
+      const randItem = itemModifiers[randItemIndex];
       heldItemTransferPromises.push(globalScene.tryTransferHeldItemModifier(randItem, pokemon, false).then(success => {
         if (success) {
           transferredModifierTypes.push(randItem.type);
-          tierItemModifiers.splice(randItemIndex, 1);
+          itemModifiers.splice(randItemIndex, 1);
         }
       }));
     }
