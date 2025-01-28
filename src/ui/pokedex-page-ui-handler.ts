@@ -1050,7 +1050,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: [
                       {
-                        label: "Common:",
+                        label: i18next.t("pokedexUiHandler:common"),
                         skip: true,
                         style: TextStyle.MONEY_WINDOW,
                         handler: () => false, // Non-selectable, but handler is required
@@ -1063,7 +1063,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         onHover: () => this.moveInfoOverlay.show(allMoves[m])
                       })),
                       {
-                        label: "Rare:",
+                        label: i18next.t("pokedexUiHandler:rare"),
                         skip: true,
                         style: TextStyle.MONEY_WINDOW,
                         handler: () => false,
@@ -1182,7 +1182,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                   if (this.abilityHidden) {
                     options.push({
-                      label: "Hidden:",
+                      label: i18next.t("pokedexUiHandler:hidden"),
                       skip: true,
                       style: TextStyle.MONEY_WINDOW,
                       handler: () => false,
@@ -1199,7 +1199,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                   if (this.passive) {
                     options.push({
-                      label: "Passive:",
+                      label: i18next.t("pokedexUiHandler:passive"),
                       skip: true,
                       style: TextStyle.MONEY_WINDOW,
                       handler: () => false,
