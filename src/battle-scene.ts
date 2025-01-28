@@ -1407,7 +1407,7 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * resets plaer/enemyFaints count on {@linkcode currentBattle}
+   * resets player/enemyFaints count on {@linkcode currentBattle}
    */
   resetFaintsCount(): void {
     this.currentBattle.playerFaints = 0;
