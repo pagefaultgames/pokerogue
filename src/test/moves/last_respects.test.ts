@@ -113,13 +113,15 @@ describe("Moves - Last Respects", () => {
 
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
-     * Enemy Pokemon also faints
     */
     game.move.select(Moves.LUNAR_DANCE);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
+    /**
+     * Enemy Pokemon faints and new wave is entered.
+     */
     game.move.select(Moves.LAST_RESPECTS);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.toNextWave();
