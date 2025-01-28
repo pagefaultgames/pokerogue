@@ -131,6 +131,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public pokerus: boolean;
   public switchOutStatus: boolean;
   public evoCounter: integer;
+  public teraType: Type;
+  public isTerastallized: boolean;
 
   public fusionSpecies: PokemonSpecies | null;
   public fusionFormIndex: integer;
@@ -239,6 +241,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionCustomPokemonData = dataSource.fusionCustomPokemonData;
       this.usedTMs = dataSource.usedTMs ?? [];
       this.customPokemonData = new CustomPokemonData(dataSource.customPokemonData);
+      this.teraType = dataSource.teraType;
+      this.isTerastallized = dataSource.isTerastallized;
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -287,6 +291,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.fusionLuck = this.luck;
+
+      this.teraType = Utils.randSeedItem(this.getTypes(false, false, true));
+      this.isTerastallized = false;
     }
 
     this.generateName();
@@ -1246,9 +1253,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public getTypes(includeTeraType = false, forDefend: boolean = false, ignoreOverride: boolean = false): Type[] {
     const types: Type[] = [];
 
-    if (includeTeraType) {
+    if (includeTeraType && this.isTerastallized) {
       const teraType = this.getTeraType();
-      if (teraType !== Type.UNKNOWN) {
+      if (teraType !== Type.UNKNOWN && !(forDefend && teraType === Type.STELLAR)) { // Stellar tera uses its original types defensively
         types.push(teraType);
         if (forDefend) {
           return types;
@@ -1557,21 +1564,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * @returns the pokemon's current tera {@linkcode Type}, or `Type.UNKNOWN` if the pokemon is not terastallized
    */
-  public getTeraType(): Type {
-    // I don't think this should be possible anymore, please report if you encounter this. --NightKev
-    if (globalScene === undefined) {
-      console.warn("Pokemon.getTeraType(): Global scene is not defined!");
-      return Type.UNKNOWN;
+  getTeraType(): Type {
+    return this.teraType;
+    // this.scene can be undefined for a fainted mon in doubles
+    if (this.scene !== undefined) {
+      const teraModifier = globalScene.findModifier(m => m instanceof TerastallizeModifier
+        && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
+      // return teraType
+      if (teraModifier) {
+        return teraModifier.teraType;
+      }
     }
-    const teraModifier = globalScene.findModifier(m =>
-      m instanceof TerastallizeModifier
-      && m.pokemonId === this.id
-      && m.getBattlesLeft() > 0, this.isPlayer()) as TerastallizeModifier;
-    return teraModifier?.teraType ?? Type.UNKNOWN;
-  }
-
-  public isTerastallized(): boolean {
-    return this.getTeraType() !== Type.UNKNOWN;
+    // if scene is undefined, or if teraModifier is considered false, then return unknown type
+    return Type.UNKNOWN;
   }
 
   public isGrounded(): boolean {
@@ -1713,7 +1718,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getAttackTypeEffectiveness(moveType: Type, source?: Pokemon, ignoreStrongWinds: boolean = false, simulated: boolean = true, move?: Move): TypeDamageMultiplier {
     if (moveType === Type.STELLAR) {
-      return this.isTerastallized() ? 2 : 1;
+      return this.isTerastallized ? 2 : 1;
     }
     const types = this.getTypes(true, true);
     const arena = globalScene.arena;
@@ -3780,6 +3785,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   resetBattleData(): void {
     this.battleData = new PokemonBattleData();
+    this.isTerastallized = true;
   }
 
   resetBattleSummonData(): void {

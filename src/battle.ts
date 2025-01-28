@@ -68,6 +68,7 @@ export interface TurnCommand {
     targets?: BattlerIndex[];
     skip?: boolean;
     args?: any[];
+    preturnCommands?: Command[];
 }
 
 export interface FaintLogEntry {

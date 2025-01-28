@@ -119,6 +119,8 @@ export class CommandPhase extends FieldPhase {
 
     switch (command) {
       case Command.FIGHT:
+      case Command.TERA:
+        console.log("Fight From Command", command);
         let useStruggle = false;
         const turnMove: TurnMove | undefined = (args.length === 2 ? (args[1] as TurnMove) : undefined);
         if (cursor === -1 ||

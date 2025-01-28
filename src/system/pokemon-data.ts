@@ -13,6 +13,7 @@ import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import type { Type } from "#app/enums/type";
 
 export default class PokemonData {
   public id: integer;
@@ -45,6 +46,8 @@ export default class PokemonData {
   public pokerus: boolean;
   public usedTMs: Moves[];
   public evoCounter: integer;
+  public teraType: Type;
+  public isTerastallized: boolean;
 
   public fusionSpecies: Species;
   public fusionFormIndex: integer;
@@ -103,6 +106,8 @@ export default class PokemonData {
       this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
+    this.teraType = (source.teraType || 0) as Type;
+    this.isTerastallized = source.isTerastallized || false;
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;

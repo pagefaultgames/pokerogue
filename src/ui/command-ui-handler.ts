@@ -7,17 +7,21 @@ import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
+import { TerastallizeAccessModifier } from "#app/modifier/modifier";
 
 export enum Command {
   FIGHT = 0,
   BALL,
   POKEMON,
-  RUN
+  RUN,
+  TERA
 }
 
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
   private cursorObj: Phaser.GameObjects.Image | null;
+
+  private teraButton: Phaser.GameObjects.Sprite;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -40,6 +44,12 @@ export default class CommandUiHandler extends UiHandler {
     this.commandsContainer.setVisible(false);
     ui.add(this.commandsContainer);
 
+    this.teraButton = globalScene.add.sprite(-35, 15, "button_tera");
+    this.teraButton.setName("terrastallize-button");
+    this.teraButton.setScale(1.8);
+    this.teraButton.setFrame("fire");
+    this.commandsContainer.add(this.teraButton);
+
     for (let c = 0; c < commands.length; c++) {
       const commandText = addTextObject(c % 2 === 0 ? 0 : 55.8, c < 2 ? 0 : 16, commands[c], TextStyle.WINDOW);
       commandText.setName(commands[c]);
@@ -60,6 +70,18 @@ export default class CommandUiHandler extends UiHandler {
       commandPhase = currentPhase;
     } else {
       commandPhase = globalScene.getStandbyPhase() as CommandPhase;
+    }
+
+    if (this.canTera()) {
+      this.teraButton.setFrame(globalScene.getField()[this.fieldIndex].getTeraType().toString().toLowerCase());
+    } else {
+      this.teraButton.setVisible(false);
+    }
+
+    if (this.canTera()) {
+      this.teraButton.setFrame(globalScene.getField()[this.fieldIndex].getTeraType().toString().toLowerCase());
+    } else {
+      this.teraButton.setVisible(false);
     }
 
     const messageHandler = this.getUi().getMessageHandler();
@@ -108,6 +130,13 @@ export default class CommandUiHandler extends UiHandler {
             (globalScene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
             success = true;
             break;
+          case Command.TERA:
+            if ((globalScene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
+              return true;
+            }
+            ui.setMode(Mode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex(), Command.TERA);
+            success = true;
+            break;
         }
       } else {
         (globalScene.getCurrentPhase() as CommandPhase).cancel();
@@ -115,23 +144,27 @@ export default class CommandUiHandler extends UiHandler {
     } else {
       switch (button) {
         case Button.UP:
-          if (cursor >= 2) {
+          if (cursor === Command.POKEMON || cursor === Command.RUN) {
             success = this.setCursor(cursor - 2);
           }
           break;
         case Button.DOWN:
-          if (cursor < 2) {
+          if (cursor === Command.FIGHT || cursor === Command.BALL) {
             success = this.setCursor(cursor + 2);
           }
           break;
         case Button.LEFT:
-          if (cursor % 2 === 1) {
+          if (cursor === Command.BALL || cursor === Command.RUN) {
             success = this.setCursor(cursor - 1);
+          } else if ((cursor === Command.FIGHT || cursor === Command.POKEMON) && this.canTera()) {
+            success = this.setCursor(Command.TERA);
           }
           break;
         case Button.RIGHT:
-          if (cursor % 2 === 0) {
+          if (cursor === Command.FIGHT || cursor === Command.POKEMON) {
             success = this.setCursor(cursor + 1);
+          } else if (cursor === Command.TERA) {
+            success = this.setCursor(Command.FIGHT);
           }
           break;
       }
@@ -142,6 +175,10 @@ export default class CommandUiHandler extends UiHandler {
     }
 
     return success;
+  }
+
+  canTera(): boolean {
+    return !!globalScene.getModifiers(TerastallizeAccessModifier).length;
   }
 
   getCursor(): integer {
