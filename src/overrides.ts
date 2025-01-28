@@ -118,7 +118,7 @@ class DefaultOverrides {
    * default is 0 to not override
    * @example SPECIES_OVERRIDE = Species.Bulbasaur;
    */
-  readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
+  readonly STARTER_SPECIES_OVERRIDE: Species | number = 674;
   /**
    * This will force your starter to be a random fusion
    */
@@ -130,33 +130,33 @@ class DefaultOverrides {
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-  readonly GENDER_OVERRIDE: Gender | null = null;
+  readonly GENDER_OVERRIDE: Gender | null = Gender.MALE;
   readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly SHINY_OVERRIDE: boolean | null = null;
-  readonly VARIANT_OVERRIDE: Variant | null = null;
+  readonly SHINY_OVERRIDE: boolean | null = true;
+  readonly VARIANT_OVERRIDE: Variant | null = 0;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
+  readonly OPP_SPECIES_OVERRIDE: Species | number = this.STARTER_SPECIES_OVERRIDE;
   /**
    * This will make all opponents fused Pokemon
    */
-  readonly OPP_FUSION_OVERRIDE: boolean = false;
+  readonly OPP_FUSION_OVERRIDE: boolean = this.STARTER_FUSION_OVERRIDE;
   /**
    * This will override the species of the fusion only when the opponent is already a fusion
    */
-  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
+  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | number = this.STARTER_FUSION_SPECIES_OVERRIDE;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-  readonly OPP_GENDER_OVERRIDE: Gender | null = null;
+  readonly OPP_GENDER_OVERRIDE: Gender | null = this.GENDER_OVERRIDE;
   readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
-  readonly OPP_SHINY_OVERRIDE: boolean | null = null;
-  readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
+  readonly OPP_SHINY_OVERRIDE: boolean | null = this.SHINY_OVERRIDE;
+  readonly OPP_VARIANT_OVERRIDE: Variant | null = this.VARIANT_OVERRIDE;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
-  readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+  readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = this.STARTER_FORM_OVERRIDES;
   /**
    * Override to give the enemy Pokemon a given amount of health segments
    *
