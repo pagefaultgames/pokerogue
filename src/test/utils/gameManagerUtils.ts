@@ -1,13 +1,14 @@
-import BattleScene from "#app/battle-scene";
+import Battle, { BattleType } from "#app/battle";
+import type BattleScene from "#app/battle-scene";
 import { getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { Moves } from "#app/enums/moves";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { Starter } from "#app/ui/starter-select-ui-handler";
-import { Species } from "#enums/species";
-import Battle, { BattleType } from "#app/battle";
+import type { StarterMoveset } from "#app/system/game-data";
+import type { Starter } from "#app/ui/starter-select-ui-handler";
+import { Moves } from "#enums/moves";
+import type { Species } from "#enums/species";
 
 /** Function to convert Blob to string */
 export function blobToString(blob) {
@@ -31,9 +32,9 @@ export function holdOn(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function generateStarter(scene, species?: Species[]) {
+export function generateStarter(scene: BattleScene, species?: Species[]): Starter[] {
   const seed = "test";
-  const starters = getTestRunStarters(scene, seed, species);
+  const starters = getTestRunStarters(seed, species);
   const startingLevel = scene.gameMode.getStartingLevel();
   for (const starter of starters) {
     const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
@@ -42,14 +43,18 @@ export function generateStarter(scene, species?: Species[]) {
       ? !starterProps.female ? Gender.MALE : Gender.FEMALE
       : Gender.GENDERLESS;
     const starterPokemon = scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
-    starter.moveset = starterPokemon.moveset;
+    const moveset: Moves[] = [];
+    starterPokemon.moveset.forEach((move) => {
+      moveset.push(move!.getMove().id);
+    });
+    starter.moveset = moveset as StarterMoveset;
   }
   return starters;
 }
 
-function getTestRunStarters(scene, seed, species) {
+function getTestRunStarters(seed: string, species?: Species[]): Starter[] {
   if (!species) {
-    return getDailyRunStarters(scene, seed);
+    return getDailyRunStarters(seed);
   }
   const starters: Starter[] = [];
   const startingLevel = getGameMode(GameModes.CLASSIC).getStartingLevel();
@@ -57,7 +62,7 @@ function getTestRunStarters(scene, seed, species) {
   for (const specie of species) {
     const starterSpeciesForm = getPokemonSpeciesForm(specie, 0);
     const starterSpecies = getPokemonSpecies(starterSpeciesForm.speciesId);
-    const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, 0, undefined, undefined, undefined, undefined, undefined, undefined);
+    const pokemon = new PlayerPokemon(starterSpecies, startingLevel, undefined, 0);
     const starter: Starter = {
       species: starterSpecies,
       dexAttr: pokemon.getDexAttr(),
@@ -71,7 +76,7 @@ function getTestRunStarters(scene, seed, species) {
   return starters;
 }
 
-export function waitUntil(truth) {
+export function waitUntil(truth): Promise<unknown> {
   return new Promise(resolve => {
     const interval = setInterval(() => {
       if (truth()) {
@@ -83,7 +88,7 @@ export function waitUntil(truth) {
 }
 
 /** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex` */
-export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: Moves) {
+export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: Moves): number {
   const playerPokemon = scene.getPlayerField()[pokemonIndex];
   const moveSet = playerPokemon.getMoveset();
   const index = moveSet.findIndex((m) => m?.moveId === move && m?.ppUsed < m?.getMovePp());
@@ -93,10 +98,8 @@ export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: M
 
 /**
  * Useful for populating party, wave index, etc. without having to spin up and run through an entire EncounterPhase
- * @param scene
- * @param species
  */
-export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: Species[]) {
+export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: Species[]): void {
   const starters = generateStarter(scene, species);
   starters.forEach((starter) => {
     const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);

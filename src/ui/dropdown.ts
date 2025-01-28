@@ -1,5 +1,4 @@
-import BattleScene from "#app/battle-scene";
-import { SceneBase } from "#app/scene-base";
+import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
@@ -8,7 +7,9 @@ export enum DropDownState {
     ON = 0,
     OFF = 1,
     EXCLUDE = 2,
-    UNLOCKABLE = 3
+    UNLOCKABLE = 3,
+    ONE = 4,
+    TWO = 5
 }
 
 export enum DropDownType {
@@ -28,7 +29,9 @@ export enum SortCriteria {
   COST = 1,
   CANDY = 2,
   IV = 3,
-  NAME = 4
+  NAME = 4,
+  CAUGHT = 5,
+  HATCHED = 6
 }
 
 export class DropDownLabel {
@@ -56,9 +59,11 @@ export class DropDownOption extends Phaser.GameObjects.Container {
   private offColor = 0x272727;
   private excludeColor = 0xff5555;
   private unlockableColor = 0xffff00;
+  private oneColor = 0x33bbff;
+  private twoColor = 0x33bbff;
 
-  constructor(scene: SceneBase, val: any, labels: DropDownLabel | DropDownLabel[]) {
-    super(scene);
+  constructor(val: any, labels: DropDownLabel | DropDownLabel[]) {
+    super(globalScene);
     this.val = val;
 
     if (Array.isArray(labels)) {
@@ -70,7 +75,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
     const currentLabel = this.labels[this.currentLabelIndex];
 
     this.state = currentLabel.state;
-    this.text = addTextObject(scene, 0, 0, currentLabel.text || "", TextStyle.TOOLTIP_CONTENT);
+    this.text = addTextObject(0, 0, currentLabel.text || "", TextStyle.TOOLTIP_CONTENT);
     this.text.setOrigin(0, 0.5);
     this.add(this.text);
 
@@ -96,12 +101,12 @@ export class DropDownOption extends Phaser.GameObjects.Container {
    */
   setupToggleIcon(type: DropDownType, visible: boolean): void {
     if (type === DropDownType.SINGLE) {
-      this.toggle = this.scene.add.sprite(0, 0, "cursor");
+      this.toggle = globalScene.add.sprite(0, 0, "cursor");
       this.toggle.setScale(0.5);
       this.toggle.setOrigin(0, 0.5);
       this.toggle.setRotation(Math.PI / 180 * -90);
     } else {
-      this.toggle = this.scene.add.sprite(0, 0, "candy");
+      this.toggle = globalScene.add.sprite(0, 0, "candy");
       this.toggle.setScale(0.3);
       this.toggle.setOrigin(0, 0.5);
     }
@@ -126,6 +131,12 @@ export class DropDownOption extends Phaser.GameObjects.Container {
         break;
       case DropDownState.UNLOCKABLE:
         this.toggle.setTint(this.unlockableColor);
+        break;
+      case DropDownState.ONE:
+        this.toggle.setTint(this.oneColor);
+        break;
+      case DropDownState.TWO:
+        this.toggle.setTint(this.twoColor);
         break;
     }
   }
@@ -283,7 +294,7 @@ export class DropDown extends Phaser.GameObjects.Container {
   private lastDir: SortDirection = SortDirection.ASC;
   private defaultSettings: any[];
 
-  constructor(scene: BattleScene, x: number, y: number, options: DropDownOption[], onChange: () => void, type: DropDownType = DropDownType.MULTI, optionSpacing: number = 2) {
+  constructor(x: number, y: number, options: DropDownOption[], onChange: () => void, type: DropDownType = DropDownType.MULTI, optionSpacing: number = 2) {
     const windowPadding = 5;
     const optionHeight = 7;
     const optionPaddingX = 4;
@@ -291,19 +302,19 @@ export class DropDown extends Phaser.GameObjects.Container {
     const cursorOffset = 7;
     const optionWidth = 100;
 
-    super(scene, x - cursorOffset - windowPadding, y);
+    super(globalScene, x - cursorOffset - windowPadding, y);
     this.options = options;
     this.dropDownType = type;
     this.onChange = onChange;
 
-    this.cursorObj = scene.add.image(optionPaddingX + 3, 0, "cursor");
+    this.cursorObj = globalScene.add.image(optionPaddingX + 3, 0, "cursor");
     this.cursorObj.setScale(0.5);
     this.cursorObj.setOrigin(0, 0.5);
     this.cursorObj.setVisible(false);
 
     // For MULTI and HYBRID filter, add an ALL option at the top
     if (this.dropDownType === DropDownType.MULTI || this.dropDownType === DropDownType.HYBRID) {
-      this.options.unshift(new DropDownOption(scene, "ALL", new DropDownLabel(i18next.t("filterBar:all"), undefined, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF)));
+      this.options.unshift(new DropDownOption("ALL", new DropDownLabel(i18next.t("filterBar:all"), undefined, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF)));
     }
 
     this.defaultSettings = this.getSettings();
@@ -326,7 +337,7 @@ export class DropDown extends Phaser.GameObjects.Container {
       }
     });
 
-    this.window = addWindow(scene, 0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, undefined, undefined, WindowVariant.XTHIN);
+    this.window = addWindow(0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, undefined, undefined, WindowVariant.XTHIN);
     this.add(this.window);
     this.add(options);
     this.add(this.cursorObj);
