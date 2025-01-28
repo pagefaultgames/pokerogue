@@ -108,7 +108,7 @@ describe("Moves - Last Respects", () => {
    * The following 3 tests do not switch out Pokemon 0 after it uses Explosion.
    * The tests get stuck after the SelectModifierPhase.
    */
-  it("should maintain its power during next battle if it is within the same arena encounter", async () => {
+  it.todo("should maintain its power during next battle if it is within the same arena encounter", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .startingWave(1)
