@@ -106,10 +106,9 @@ describe("Moves - Last Respects", () => {
 
   /**
    * The following 3 tests do not switch out Pokemon 0 after it uses Explosion.
-   * It should die after using Explosion and switch out to Pokemon 1.
-   * After switching in Pokemon 1 it uses Last Respects and the battle power is calculated.
+   * The tests get stuck after the SelectModifierPhase.
    */
-  it.todo("should maintain its power during next battle if it is within the same arena encounter", async () => {
+  it("should maintain its power during next battle if it is within the same arena encounter", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .startingWave(1)
@@ -118,10 +117,14 @@ describe("Moves - Last Respects", () => {
 
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
+    /**
+     * The first Pokemon faints and another Pokemon in the party is selected.
+     * Enemy Pokemon also faints
+    */
     game.move.select(Moves.EXPLOSION);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     game.doSelectPartyPokemon(1);
-    await game.toNextWave();
+    await game.toNextTurn();
 
     game.move.select(Moves.LAST_RESPECTS);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
@@ -140,7 +143,7 @@ describe("Moves - Last Respects", () => {
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
     game.move.select(Moves.EXPLOSION);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
@@ -161,7 +164,7 @@ describe("Moves - Last Respects", () => {
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
     game.move.select(Moves.EXPLOSION);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
