@@ -30,19 +30,19 @@ describe("Moves - Last Respects", () => {
     game.override
       .battleType("single")
       .disableCrits()
-      .moveset([ Moves.LAST_RESPECTS, Moves.EXPLOSION ])
+      .moveset([ Moves.LAST_RESPECTS, Moves.EXPLOSION, Moves.LUNAR_DANCE ])
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(1)
       .enemyLevel(100);
+
+    vi.spyOn(move, "calculateBattlePower");
   });
 
   it("should have 150 power if 2 allies faint before using move", async () => {
     await game.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
-
-    vi.spyOn(move, "calculateBattlePower");
 
     /**
      * Bulbasur faints once
@@ -69,8 +69,6 @@ describe("Moves - Last Respects", () => {
 
   it("should have 200 power if an ally fainted twice and antoher one once", async () => {
     await game.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
-
-    vi.spyOn(move, "calculateBattlePower");
 
     /**
      * Bulbasur faints once
@@ -104,11 +102,7 @@ describe("Moves - Last Respects", () => {
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + (3 * 50));
   });
 
-  /**
-   * The following 3 tests do not switch out Pokemon 0 after it uses Explosion.
-   * The tests get stuck after the SelectModifierPhase.
-   */
-  it.todo("should maintain its power during next battle if it is within the same arena encounter", async () => {
+  it("should maintain its power during next battle if it is within the same arena encounter", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .startingWave(1)
@@ -121,19 +115,23 @@ describe("Moves - Last Respects", () => {
      * The first Pokemon faints and another Pokemon in the party is selected.
      * Enemy Pokemon also faints
     */
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(Moves.LUNAR_DANCE);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
     game.move.select(Moves.LAST_RESPECTS);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextWave();
+
+    game.move.select(Moves.LAST_RESPECTS);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower + (1 * 50));
   });
 
-  it.todo("should reset playerFaints count if we enter new trainer battle", async () => {
+  it("should reset playerFaints count if we enter new trainer battle", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .startingWave(4)
@@ -142,10 +140,14 @@ describe("Moves - Last Respects", () => {
 
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(Moves.LUNAR_DANCE);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
+
+    game.move.select(Moves.LAST_RESPECTS);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextWave();
 
     game.move.select(Moves.LAST_RESPECTS);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
@@ -154,7 +156,7 @@ describe("Moves - Last Respects", () => {
     expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower);
   });
 
-  it.todo("should reset playerFaints count if we enter new biome", async () => {
+  it("should reset playerFaints count if we enter new biome", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .startingWave(10)
@@ -163,10 +165,14 @@ describe("Moves - Last Respects", () => {
 
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(Moves.LUNAR_DANCE);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
+
+    game.move.select(Moves.LAST_RESPECTS);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextWave();
 
     game.move.select(Moves.LAST_RESPECTS);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
