@@ -452,6 +452,25 @@ export default class GameManager {
     });
   }
 
+  doThrowPokeball(ballIndex: number) {
+    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
+      (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
+    });
+
+    this.doSelectPokeball(ballIndex, "CommandPhase");
+  }
+  // ???
+  doSelectPokeball(slot: number, inPhase = "SwitchPhase") {
+    this.onNextPrompt(inPhase, Mode.PARTY, () => {
+      const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
+
+      partyHandler.setCursor(slot);
+      partyHandler.processInput(Button.ACTION); // select party slot
+      partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
+    });
+  }
+
   /**
    * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
    * Used to modify the turn order.

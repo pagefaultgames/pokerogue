@@ -161,6 +161,11 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  public hasPassiveAbility(hasPassiveAbility: boolean): this {
+    vi.spyOn(Overrides, "HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
+    this.log("Player Pokemon PASSIVE ability is active!");
+    return this;
+  }
   /**
    * Override the player (pokemon) {@linkcode Moves | moves}set
    * @param moveset the {@linkcode Moves | moves}set to set
@@ -302,6 +307,12 @@ export class OverridesHelper extends GameManagerHelper {
   public enemyPassiveAbility(passiveAbility: Abilities): this {
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
     this.log(`Enemy Pokemon PASSIVE ability set to ${Abilities[passiveAbility]} (=${passiveAbility})!`);
+    return this;
+  }
+
+  public enemyHasPassiveAbility(hasPassiveAbility: boolean): this {
+    vi.spyOn(Overrides, "OPP_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
+    this.log("Enemy Pokemon PASSIVE ability is active!");
     return this;
   }
 
