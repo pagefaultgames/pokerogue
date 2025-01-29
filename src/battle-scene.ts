@@ -1843,8 +1843,10 @@ export default class BattleScene extends SceneBase {
     this.currentBattle.battleScore += Math.ceil(scoreIncrease);
   }
 
-  getMaxExpLevel(ignoreLevelCap?: boolean): integer {
-    if (ignoreLevelCap) {
+  getMaxExpLevel(ignoreLevelCap: boolean = false): integer {
+    if (Overrides.LEVEL_CAP_OVERRIDE > 0) {
+      return Overrides.LEVEL_CAP_OVERRIDE;
+    } else if (ignoreLevelCap || Overrides.LEVEL_CAP_OVERRIDE < 0) {
       return Number.MAX_SAFE_INTEGER;
     }
     const waveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
@@ -3388,7 +3390,8 @@ export default class BattleScene extends SceneBase {
     const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.length > 0 ?
       this.mysteryEncounterSaveData.encounteredEvents[this.mysteryEncounterSaveData.encounteredEvents.length - 1].type
       : null;
-    const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType) ?? [];
+    const disabledEncounters = this.eventManager.getEventMysteryEncountersDisabled();
+    const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier !== null) {
       availableEncounters = biomeMysteryEncounters
@@ -3397,7 +3400,7 @@ export default class BattleScene extends SceneBase {
           if (!encounterCandidate) {
             return false;
           }
-          if (encounterCandidate.encounterTier !== tier) {
+          if (this.eventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier) {
             return false;
           }
           const disallowedGameModes = encounterCandidate.disallowedGameModes;
