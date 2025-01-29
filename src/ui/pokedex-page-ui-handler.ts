@@ -185,6 +185,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private variantLabel: Phaser.GameObjects.Text;
   private candyUpgradeIconElement: Phaser.GameObjects.Sprite;
   private candyUpgradeLabel: Phaser.GameObjects.Text;
+  private showBackSpriteIconElement: Phaser.GameObjects.Sprite;
+  private showBackSpriteLabel: Phaser.GameObjects.Text;
 
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
@@ -238,6 +240,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   protected blockInput: boolean = false;
   protected blockInputOverlay: boolean = false;
+
+  private showBackSprite: boolean = false;
 
   // Menu
   private menuContainer: Phaser.GameObjects.Container;
@@ -440,6 +444,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.variantIconElement.setOrigin(0.0, 0.0);
     this.variantLabel = addTextObject(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("pokedexUiHandler:cycleVariant"), TextStyle.PARTY, { fontSize: instructionTextSize });
     this.variantLabel.setName("text-variant-label");
+
+    this.showBackSpriteIconElement = new Phaser.GameObjects.Sprite(globalScene, 50, 7, "keyboard", "E.png");
+    this.showBackSpriteIconElement.setName("show-backSprite-icon-element");
+    this.showBackSpriteIconElement.setScale(0.675);
+    this.showBackSpriteIconElement.setOrigin(0.0, 0.0);
+    this.showBackSpriteLabel = addTextObject(60, 7, i18next.t("pokedexUiHandler:showBackSprite"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.showBackSpriteLabel.setName("show-backSprite-label");
+    this.starterSelectContainer.add(this.showBackSpriteIconElement);
+    this.starterSelectContainer.add(this.showBackSpriteLabel);
 
     this.hideInstructions();
 
@@ -1720,6 +1733,16 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               }
             }
             break;
+          case Button.CYCLE_ABILITY:
+            this.showBackSprite = !this.showBackSprite;
+            if (this.showBackSprite) {
+              this.showBackSpriteLabel.setText(i18next.t("pokedexUiHandler:showFrontSprite"));
+            } else {
+              this.showBackSpriteLabel.setText(i18next.t("pokedexUiHandler:showBackSprite"));
+            }
+            this.setSpeciesDetails(this.species, {}, true);
+            success = true;
+            break;
           case Button.UP:
             if (this.cursor) {
               success = this.setCursor(this.cursor - 1);
@@ -1797,6 +1820,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           break;
         case SettingKeyboard.Button_Cycle_Variant:
           iconPath = "V.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Ability:
+          iconPath = "E.png";
           break;
         default:
           break;
@@ -2087,7 +2113,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
   }
 
-  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
+  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}, forceUpdate?: boolean): void {
     let { shiny, formIndex, female, variant } = options;
     const forSeen: boolean = options.forSeen ?? false;
     const oldProps = species ? this.starterAttributes : null;
@@ -2095,7 +2121,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite = (species?.genderDiffs && !isNullOrUndefined(female))
-     || !isNullOrUndefined(formIndex) || !isNullOrUndefined(shiny) || !isNullOrUndefined(variant);
+     || !isNullOrUndefined(formIndex) || !isNullOrUndefined(shiny) || !isNullOrUndefined(variant) || forceUpdate;
 
     if (this.activeTooltip === "CANDY") {
       if (this.species && this.pokemonCandyContainer.visible) {
@@ -2170,16 +2196,17 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.assetLoadCancelled = assetLoadCancelled;
 
       if (shouldUpdateSprite) {
-        species.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => { // TODO: is this bang correct?
+        const back = this.showBackSprite ? true : false;
+        species.loadAssets(female!, formIndex, shiny, variant as Variant, true, back).then(() => { // TODO: is this bang correct?
           if (assetLoadCancelled.value) {
             return;
           }
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
-          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant, back)); // TODO: is this bang correct?
           this.pokemonSprite.setPipelineData("shiny", shiny);
           this.pokemonSprite.setPipelineData("variant", variant);
-          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant, back)); // TODO: is this bang correct?
           this.pokemonSprite.setVisible(!this.statsMode);
         });
       } else {
@@ -2373,6 +2400,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
+
+    this.showBackSprite = false;
+    this.showBackSpriteLabel.setText(i18next.t("pokedexUiHandler:showBackSprite"));
 
     if (this.statsMode) {
       this.toggleStatsMode(false);
