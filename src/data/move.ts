@@ -10295,8 +10295,8 @@ export function initMoves() {
       .ignoresSubstitute()
       .attr(RepeatMoveAttr)
       // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
-      // Also has incorrect interactions with move-calling moves (Mirror Move, Copycat/Mimic, Metronome)
-      // and Dancer that will need to be cleaned up separately
+      // Also has incorrect interactions with Dancer due to the latter
+      // erroneously adding copied moves to move history.
       .edgeCase(),
     new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
