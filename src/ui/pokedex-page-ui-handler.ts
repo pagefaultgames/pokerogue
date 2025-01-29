@@ -1441,15 +1441,18 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       } else {
                         conditionText = "";
                       }
-
                       let label: string = this.getFormString(bf.formKey, this.species);
                       if (label === "") {
                         label = this.species.name;
                       }
+                      const matchingForm = this.species?.forms.find(form => form.formKey === bf.formKey);
+                      const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+                      const isFormCaught = this.isFormCaught(this.species, newFormIndex);
 
                       if (conditionText) {
                         options.push({
                           label: label,
+                          style: isFormCaught ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                           handler: () => {
                             const newSpecies = this.species;
                             const newFormIndex = this.species.forms.find(f => f.formKey === bf.formKey)?.formIndex;
