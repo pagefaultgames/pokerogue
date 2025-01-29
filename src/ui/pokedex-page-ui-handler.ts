@@ -745,6 +745,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return biomes;
   }
 
+  isCaught(otherSpeciesDexEntry?: DexEntry): bigint {
+    if (globalScene.dexForDevs) {
+      return 255n;
+    }
+
+    const dexEntry = otherSpeciesDexEntry ? otherSpeciesDexEntry : this.speciesStarterDexEntry;
+
+    return dexEntry?.caughtAttr ?? 0n;
+  }
   /**
    * Check whether a given form is caught for a given species.
    * All forms that can be reached through a form change during battle are considered caught and show up in the dex as such.
@@ -754,14 +763,16 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * @returns StarterAttributes for the species
    */
   isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: integer | undefined): boolean {
+
+    if (globalScene.dexForDevs) {
+      return true;
+    }
     const species = otherSpecies ? otherSpecies : this.species;
     const formIndex = otherFormIndex !== undefined ? otherFormIndex : this.formIndex;
     const dexEntry = globalScene.gameData.dexData[species.speciesId];
 
-    const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId) ? pokemonFormChanges[species.speciesId] : [];
-    const formChangeAccess = allFormChanges.filter(f => (f.formKey === species.forms[formIndex].formKey)).length > 0;
     const isFormCaught = dexEntry ?
-      (dexEntry.caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n || formChangeAccess
+      (dexEntry.caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n
       : false;
     return isFormCaught;
   }
@@ -777,13 +788,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   initStarterPrefs(): StarterAttributes {
     const starterAttributes : StarterAttributes | null = this.species ? { ...this.savedStarterAttributes } : null;
     const dexEntry = globalScene.gameData.dexData[this.species.speciesId];
+    const caughtAttr = this.isCaught(dexEntry);
 
     // no preferences or Pokemon wasn't caught, return empty attribute
-    if (!starterAttributes || !dexEntry.caughtAttr) {
+    if (!starterAttributes || !caughtAttr) {
       return {};
     }
-
-    const caughtAttr = dexEntry.caughtAttr;
 
     const hasShiny = caughtAttr & DexAttr.SHINY;
     const hasNonShiny = caughtAttr & DexAttr.NON_SHINY;
@@ -929,7 +939,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     let success = false;
     let error = false;
 
-    const isCaught = this.speciesStarterDexEntry?.caughtAttr;
+    const isCaught = this.isCaught();
     const isFormCaught = this.isFormCaught();
 
     if (this.blockInputOverlay) {
@@ -1253,7 +1263,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.BIOMES:
 
-            if (!(this.speciesStarterDexEntry?.caughtAttr || this.speciesStarterDexEntry?.seenAttr)) {
+            if (!(this.isCaught() || this.speciesStarterDexEntry?.seenAttr)) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1389,8 +1399,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     });
                     this.evolutions.map(evo => {
                       const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
-                      const evoSpeciesStarterDexEntry = evoSpecies ? globalScene.gameData.dexData[evoSpecies.speciesId] : null;
-                      const isCaughtEvo = evoSpeciesStarterDexEntry?.caughtAttr ? true : false;
+                      const evoSpeciesStarterDexEntry = evoSpecies ? globalScene.gameData.dexData[evoSpecies.speciesId] : undefined;
+                      const isCaughtEvo = this.isCaught(evoSpeciesStarterDexEntry) ? true : false;
                       // Attempts to find the formIndex of the evolved species
                       const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
                       const matchingForm = evoSpecies?.forms.find(form => form.formKey === newFormKey);
@@ -1562,15 +1572,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               do {
                 newVariant = (newVariant + 1) % 3;
                 if (newVariant === 0) {
-                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
+                  if (this.isCaught() & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
                     break;
                   }
                 } else if (newVariant === 1) {
-                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_2) { // TODO: is this bang correct?
+                  if (this.isCaught() & DexAttr.VARIANT_2) { // TODO: is this bang correct?
                     break;
                   }
                 } else {
-                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) { // TODO: is this bang correct?
+                  if (this.isCaught() & DexAttr.VARIANT_3) { // TODO: is this bang correct?
                     break;
                   }
                 }
@@ -1591,7 +1601,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               let newFormIndex = this.formIndex;
               do {
                 newFormIndex = (newFormIndex + 1) % formCount;
-                if (this.species.forms[newFormIndex].isStarterSelectable) { // TODO: are those bangs correct?
+                if (this.species.forms[newFormIndex].isStarterSelectable || globalScene.dexForDevs) { // TODO: are those bangs correct?
                   break;
                 }
               } while (newFormIndex !== props.formIndex);
@@ -1864,7 +1874,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const isFormCaught = this.isFormCaught();
 
-    if (this.speciesStarterDexEntry?.caughtAttr) {
+    if (this.isCaught()) {
       if (isFormCaught) {
         if (!pokemonPrevolutions.hasOwnProperty(this.species.speciesId)) {
           this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
@@ -1918,7 +1928,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const isFormCaught = this.isFormCaught();
 
-    if ((this.speciesStarterDexEntry?.caughtAttr && isFormCaught) || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
+    if ((this.isCaught() && isFormCaught) || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
       ui.showText(this.menuDescriptions[cursor]);
     } else {
       ui.showText("");
@@ -1947,7 +1957,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (this.statsMode) {
-      if (this.speciesStarterDexEntry?.caughtAttr) {
+      if (this.isCaught()) {
         this.statsContainer.setVisible(true);
         this.showStats();
       } else {
@@ -1957,7 +1967,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
-    if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
+    if (species && (this.speciesStarterDexEntry?.seenAttr || this.isCaught())) {
       this.pokemonNumberText.setText(padInt(species.speciesId, 4));
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
@@ -1966,10 +1976,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonNameText.setText(species.name);
       }
 
-      if (this.speciesStarterDexEntry?.caughtAttr) {
+      if (this.isCaught()) {
         const colorScheme = starterColors[species.speciesId];
 
-        const luck = globalScene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
+        const luck = globalScene.gameData.getDexAttrLuck(this.isCaught());
         this.pokemonLuckText.setVisible(!!luck);
         this.pokemonLuckText.setText(luck.toString());
         this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
@@ -1987,13 +1997,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
         this.pokemonGrowthRateLabelText.setVisible(true);
         this.pokemonUncaughtText.setVisible(false);
-        this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
+        this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);
         if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
           this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
         }
-        this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
+        this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry?.hatchedCount}`);
 
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
@@ -2166,9 +2176,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     if (species) {
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
 
-      const caughtAttr = globalScene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
+      const caughtAttr = this.isCaught(dexEntry);
 
-      if (!dexEntry.caughtAttr) {
+      if (!caughtAttr) {
         const props = this.starterAttributes;
 
         if (shiny === undefined || shiny !== props.shiny) {
@@ -2233,9 +2243,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
       this.canCycleGender = isMaleCaught && isFemaleCaught;
 
-      this.canCycleForm = species.forms.filter(f => f.isStarterSelectable).filter(f => f).length > 1;
+      // If the dev option for the dex is selected, all forms can be cycled through
+      this.canCycleForm = globalScene.dexForDevs ? species.forms.length > 1 :
+        species.forms.filter(f => f.isStarterSelectable).filter(f => f).length > 1;
 
-      if (dexEntry.caughtAttr && species.malePercent !== null) {
+      if (caughtAttr && species.malePercent !== null) {
         const gender = !female ? Gender.MALE : Gender.FEMALE;
         this.pokemonGenderText.setText(getGenderSymbol(gender));
         this.pokemonGenderText.setColor(getGenderColor(gender));
@@ -2244,20 +2256,20 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonGenderText.setText("");
       }
 
-      if (dexEntry.caughtAttr) {
-        this.species.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
-          const crier = (this.species.forms && this.species.forms.length > 0) ? this.species.forms[formIndex ?? this.formIndex] : this.species;
-          crier.cry();
-        });
-
+      if (caughtAttr) {
         if (isFormCaught) {
+          this.species.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
+            const crier = (this.species.forms && this.species.forms.length > 0) ? this.species.forms[formIndex ?? this.formIndex] : this.species;
+            crier.cry();
+          });
+
           this.pokemonSprite.clearTint();
         } else {
           this.pokemonSprite.setTint(0x000000);
         }
       }
 
-      if (dexEntry.caughtAttr || forSeen) {
+      if (caughtAttr || forSeen) {
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
         this.pokemonFormText.setText(this.getFormString((speciesForm as PokemonForm).formKey, species));
