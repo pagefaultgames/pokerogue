@@ -97,7 +97,7 @@ export class FaintPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
 
 
-    // Track total times pokemon have been KO'd for last respects
+    // Track total times pokemon have been KO'd for last respects/supreme overlord
     if (pokemon.isPlayer()) {
       globalScene.currentBattle.playerFaints += 1;
       globalScene.currentBattle.playerFaintsHistory.push({ pokemon: pokemon, turn: globalScene.currentBattle.turn });
