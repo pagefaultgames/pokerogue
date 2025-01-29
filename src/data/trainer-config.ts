@@ -1761,7 +1761,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // Mega Venusaur, Mega Charizard X, or Mega Blastoise
       p.generateAndPopulateMoveset();
       p.generateName();
