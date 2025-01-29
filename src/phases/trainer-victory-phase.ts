@@ -29,7 +29,7 @@ export class TrainerVictoryPhase extends BattlePhase {
       globalScene.unshiftPhase(new ModifierRewardPhase(modifierRewardFunc));
     }
 
-    if (globalScene.eventManager.getShinyMultiplier() > 1) { //If a shiny boosting event is active
+    if (globalScene.eventManager.isEventActive()) {
       for (const rewardFunc of globalScene.currentBattle.trainer?.config.eventRewardFuncs!) {
         globalScene.unshiftPhase(new ModifierRewardPhase(rewardFunc));
       }
