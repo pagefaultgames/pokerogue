@@ -223,7 +223,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private canCycleShiny: boolean;
   private canCycleForm: boolean;
   private canCycleGender: boolean;
-  private canCycleVariant: boolean;
 
   private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
@@ -1545,11 +1544,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         switch (button) {
           case Button.CYCLE_SHINY:
             if (this.canCycleShiny) {
-              starterAttributes.shiny = starterAttributes.shiny !== undefined ? !starterAttributes.shiny : false;
-              this.savedStarterAttributes.shiny = starterAttributes.shiny;
 
-              if (starterAttributes.shiny) {
-              // Change to shiny, we need to get the proper default variant
+              if (!starterAttributes.shiny) {
+                // Change to shiny, we need to get the proper default variant
                 const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : 0;
                 this.setSpeciesDetails(this.species, { shiny: true, variant: newVariant });
 
@@ -1559,40 +1556,45 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
                 this.pokemonShinyIcon.setTint(tint);
                 this.pokemonShinyIcon.setVisible(true);
+
+                starterAttributes.shiny = true;
               } else {
-                this.setSpeciesDetails(this.species, { shiny: false, variant: 0 });
-                this.pokemonShinyIcon.setVisible(false);
-                success = true;
-              }
-            }
-            break;
-          case Button.V:
-            if (this.canCycleVariant) {
-              let newVariant = props.variant;
-              do {
-                newVariant = (newVariant + 1) % 3;
-                if (newVariant === 0) {
-                  if (this.isCaught() & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
-                    break;
+                let newVariant = props.variant;
+                do {
+                  newVariant = (newVariant + 1) % 3;
+                  if (newVariant === 0) {
+                    if (this.isCaught() & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
+                      break;
+                    }
+                  } else if (newVariant === 1) {
+                    if (this.isCaught() & DexAttr.VARIANT_2) { // TODO: is this bang correct?
+                      break;
+                    }
+                  } else {
+                    if (this.isCaught() & DexAttr.VARIANT_3) { // TODO: is this bang correct?
+                      break;
+                    }
                   }
-                } else if (newVariant === 1) {
-                  if (this.isCaught() & DexAttr.VARIANT_2) { // TODO: is this bang correct?
-                    break;
-                  }
+                } while (newVariant !== props.variant);
+
+                starterAttributes.variant = newVariant; // store the selected variant
+                this.savedStarterAttributes.variant = starterAttributes.variant;
+                if (newVariant > props.variant) {
+                  this.setSpeciesDetails(this.species, { variant: newVariant as Variant });
+                  // Cycle tint based on current sprite tint
+                  const tint = getVariantTint(newVariant as Variant);
+                  this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
+                  this.pokemonShinyIcon.setTint(tint);
+                  success = true;
                 } else {
-                  if (this.isCaught() & DexAttr.VARIANT_3) { // TODO: is this bang correct?
-                    break;
-                  }
+                  this.setSpeciesDetails(this.species, { shiny: false, variant: 0 });
+                  this.pokemonShinyIcon.setVisible(false);
+                  success = true;
+
+                  starterAttributes.shiny = false;
+                  this.savedStarterAttributes.shiny = starterAttributes.shiny;
                 }
-              } while (newVariant !== props.variant);
-              starterAttributes.variant = newVariant; // store the selected variant
-              this.savedStarterAttributes.variant = starterAttributes.variant;
-              this.setSpeciesDetails(this.species, { variant: newVariant as Variant });
-              // Cycle tint based on current sprite tint
-              const tint = getVariantTint(newVariant as Variant);
-              this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
-              this.pokemonShinyIcon.setTint(tint);
-              success = true;
+              }
             }
             break;
           case Button.CYCLE_FORM:
@@ -1828,9 +1830,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         case SettingKeyboard.Button_Cycle_Gender:
           iconPath = "G.png";
           break;
-        case SettingKeyboard.Button_Cycle_Variant:
-          iconPath = "V.png";
-          break;
         case SettingKeyboard.Button_Cycle_Ability:
           iconPath = "E.png";
           break;
@@ -1884,9 +1883,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         }
         if (this.canCycleGender) {
           this.updateButtonIcon(SettingKeyboard.Button_Cycle_Gender, gamepadType, this.genderIconElement, this.genderLabel);
-        }
-        if (this.canCycleVariant) {
-          this.updateButtonIcon(SettingKeyboard.Button_Cycle_Variant, gamepadType, this.variantIconElement, this.variantLabel);
         }
       }
       if (this.canCycleForm) {
@@ -2232,12 +2228,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
       const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
-      const isVariant1Caught = isShinyCaught && !!(caughtAttr & DexAttr.DEFAULT_VARIANT);
-      const isVariant2Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_2);
-      const isVariant3Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_3);
 
       this.canCycleShiny = isNonShinyCaught && isShinyCaught;
-      this.canCycleVariant = !!shiny && [ isVariant1Caught, isVariant2Caught, isVariant3Caught ].filter(v => v).length > 1;
 
       const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
       const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
