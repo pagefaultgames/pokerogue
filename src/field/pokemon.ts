@@ -3014,7 +3014,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     const surviveDamage = new Utils.BooleanHolder(false);
 
-    if (!preventEndure && this.hp - damage <= 0) {
+    if (!preventEndure && this.hp - damage <= 0 && this.turnData?.damageSources?.at(0) !== HitResult.OTHER) {
       if (this.hp >= 1 && this.getTag(BattlerTagType.ENDURING)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURING);
       } else if (this.hp > 1 && this.getTag(BattlerTagType.STURDY)) {
@@ -3041,7 +3041,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
        * Once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
        */
       globalScene.setPhaseQueueSplice();
-      globalScene.unshiftPhase(new FaintPhase(this.getBattlerIndex(), preventEndure));
+      globalScene.unshiftPhase(new FaintPhase(this.getBattlerIndex()));
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
       this.resetSummonData();

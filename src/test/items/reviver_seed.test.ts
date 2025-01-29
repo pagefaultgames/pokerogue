@@ -87,21 +87,20 @@ describe("Items - Reviver Seed", () => {
     expect(player.isFainted()).toBeFalsy();
   });
 
-
-  //Need to fix some of tests, something wrong with the enemy fainting, wrong phase being chosen.. not sure
+  // Damaging opponents tests
   it.each([
-    //{ moveType: "Damaging Move Chip Damage", move: Moves.SALT_CURE },
-    //{ moveType: "Chip Damage", move: Moves.LEECH_SEED },
-    //{ moveType: "Trapping Chip Damage", move: Moves.WHIRLPOOL },
+    { moveType: "Damaging Move Chip Damage", move: Moves.SALT_CURE },
+    { moveType: "Chip Damage", move: Moves.LEECH_SEED },
+    { moveType: "Trapping Chip Damage", move: Moves.WHIRLPOOL },
     { moveType: "Status Effect Damage", move: Moves.WILL_O_WISP },
-    { moveType: "Weather", move: Moves.SANDSTORM }
+    { moveType: "Weather", move: Moves.SANDSTORM },
   ])("should not activate the holder's reviver seed from $moveType", async ({ move }) => {
     game.override
       .enemyLevel(1)
       .startingLevel(100)
       .enemySpecies(Species.MAGIKARP)
       .moveset(move)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(Moves.ENDURE);
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.damageAndUpdate(enemy.hp - 1);
@@ -110,8 +109,36 @@ describe("Items - Reviver Seed", () => {
     vi.spyOn(enemySeed, "apply");
 
     game.move.select(move);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.isFainted()).toBeTruthy();
+  });
+
+  // Self-damage tests
+  it.each([
+    { moveType: "Recoil", move: Moves.DOUBLE_EDGE },
+    { moveType: "Self-KO", move: Moves.EXPLOSION },
+    { moveType: "Self-Deduction", move: Moves.CURSE },
+    { moveType: "Liquid Ooze", move: Moves.GIGA_DRAIN },
+  ])("should not activate the holder's reviver seed from $moveType", async ({ move }) => {
+    game.override
+      .enemyLevel(100)
+      .startingLevel(1)
+      .enemySpecies(Species.MAGIKARP)
+      .moveset(move)
+      .enemyAbility(Abilities.LIQUID_OOZE)
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([ Species.GASTLY, Species.FEEBAS ]);
+    const player = game.scene.getPlayerPokemon()!;
+    player.damageAndUpdate(player.hp - 1);
+
+    const playerSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
+    vi.spyOn(playerSeed, "apply");
+
+    game.move.select(move);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(playerSeed.apply).toHaveReturnedWith(false); // Reviver Seed triggers
+    expect(player.isFainted()).toBeTruthy();
   });
 });

@@ -49,7 +49,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
           const damage = Utils.toDmgValue(pokemon.getMaxHp() / 16);
 
           globalScene.queueMessage(getWeatherDamageMessage(this.weather?.weatherType!, pokemon)!); // TODO: are those bangs correct?
-          pokemon.damageAndUpdate(damage, HitResult.EFFECTIVE, false, false, true);
+          pokemon.damageAndUpdate(damage, HitResult.OTHER, false, false, true);
         };
 
         this.executeForAll((pokemon: Pokemon) => {
