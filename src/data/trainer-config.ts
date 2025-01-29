@@ -1956,11 +1956,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
-      if (p.species.speciesId === Species.PRIMARINA) {
-        p.gender = Gender.FEMALE
-      } else {
-        p.gender = Gender.MALE;
-      }
+      p.gender = p.species.speciesId === Species.PRIMARINA ? Gender.FEMALE : Gender.MALE;
     }))
     .setGenModifiersFunc(party => {
       const teraPokemon = party[3];
