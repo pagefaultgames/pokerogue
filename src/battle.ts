@@ -102,9 +102,9 @@ export default class Battle {
   private battleSeedState: string | null = null;
   public moneyScattered: number = 0;
   public lastUsedPokeball: PokeballType | null = null;
-  /** The number of times a Pokemon on the player's side has fainted this battle */
+  /** The number of times a Pokemon on the player's side has fainted this arena encounter */
   public playerFaints: number = 0;
-  /** The number of times a Pokemon on the enemy's side has fainted this battle */
+  /** The number of times a Pokemon on the enemy's side has fainted this arena encounter */
   public enemyFaints: number = 0;
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
@@ -115,7 +115,7 @@ export default class Battle {
 
   private rngCounter: number = 0;
 
-  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double?: boolean) {
+  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double?: boolean, playerFaints?: number, enemyFaints?: number) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
@@ -125,6 +125,8 @@ export default class Battle {
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
       : trainer?.getPartyLevels(this.waveIndex);
     this.double = double ?? false;
+    this.playerFaints = playerFaints ?? 0;
+    this.enemyFaints = enemyFaints ?? 0;
   }
 
   private initBattleSpec(): void {

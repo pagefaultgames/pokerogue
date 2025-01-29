@@ -12,6 +12,9 @@ describe("Abilities - Supreme Overlord", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
+  const move = allMoves[Moves.TACKLE];
+  const basePower = move.power;
+
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -32,16 +35,13 @@ describe("Abilities - Supreme Overlord", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.SUPREME_OVERLORD)
       .enemyMoveset([ Moves.SPLASH ])
-      .moveset([ Moves.TACKLE, Moves.EXPLOSION ]);
+      .moveset([ Moves.TACKLE, Moves.EXPLOSION, Moves.LUNAR_DANCE ]);
+
+    vi.spyOn(move, "calculateBattlePower");
   });
 
   it("should increase Power by 20% if 2 Pokemon are fainted in the party", async() => {
     await game.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
-
-    const moveToCheck = allMoves[Moves.TACKLE];
-    const basePower = moveToCheck.power;
-
-    vi.spyOn(moveToCheck, "calculateBattlePower");
 
     game.move.select(Moves.EXPLOSION);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
@@ -57,6 +57,87 @@ describe("Abilities - Supreme Overlord", () => {
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
-    expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * 1.2);
+    expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.2);
+  });
+
+  it("should maintain its power during next battle if it is within the same arena encounter", async () => {
+    game.override
+      .enemySpecies(Species.MAGIKARP)
+      .startingWave(1)
+      .enemyLevel(1)
+      .startingLevel(100);
+
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    /**
+     * The first Pokemon faints and another Pokemon in the party is selected.
+    */
+    game.move.select(Moves.LUNAR_DANCE);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    /**
+     * Enemy Pokemon faints and new wave is entered.
+     */
+    game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextWave();
+
+    game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower * 1.1);
+  });
+
+  it("should reset playerFaints count if we enter new trainer battle", async () => {
+    game.override
+      .enemySpecies(Species.MAGIKARP)
+      .startingWave(4)
+      .enemyLevel(1)
+      .startingLevel(100);
+
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    game.move.select(Moves.LUNAR_DANCE);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextWave();
+
+    game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("BerryPhase", false);
+
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower);
+  });
+
+  it("should reset playerFaints count if we enter new biome", async () => {
+    game.override
+      .enemySpecies(Species.MAGIKARP)
+      .startingWave(10)
+      .enemyLevel(1)
+      .startingLevel(100);
+
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    game.move.select(Moves.LUNAR_DANCE);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextWave();
+
+    game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("BerryPhase", false);
+
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower);
   });
 });
