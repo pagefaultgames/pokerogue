@@ -890,7 +890,7 @@ export function getRandomEncounterSpecies(level: number, isBoss: boolean = false
 
   if (eventEncounters.length > 0 && randSeedInt(2) === 1) {
     const eventEncounter = randSeedItem(eventEncounters);
-    const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, !isNullOrUndefined(eventEncounter.blockEvolution), isBoss, globalScene.gameMode);
+    const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, !eventEncounter.blockEvolution, isBoss, globalScene.gameMode);
     isEventEncounter = true;
     bossSpecies = getPokemonSpecies(levelSpecies);
   } else {
