@@ -237,7 +237,7 @@ export abstract class PokemonSpeciesForm {
    * @returns The id of the ability
    */
   getPassiveAbility(formIndex?: number): Abilities {
-    if (formIndex === undefined) {
+    if (Utils.isNullOrUndefined(formIndex)) {
       formIndex = this.formIndex;
     }
     let starterSpeciesId = this.speciesId;
