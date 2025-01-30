@@ -41,7 +41,7 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
 const doEventReward = () => {
-  const event_buff = globalScene.eventManager.activeEvent()?.delibirdyBuff ?? [];
+  const event_buff = globalScene.eventManager.getDelibirdyBuff();
   if (event_buff.length > 0) {
     const candidates = event_buff.filter((c => {
       const mtype = generateModifierType(modifierTypes[c]);
