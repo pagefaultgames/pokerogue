@@ -1,10 +1,10 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { getRandomEncounterSpecies, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { CHARMING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
-import { getPartyLuckValue } from "#app/modifier/modifier-type";
+import type { EnemyPokemon } from "#app/field/pokemon";
+import { PokemonMove } from "#app/field/pokemon";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -12,10 +12,9 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import { MoveRequirement, PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { TrainerSlot } from "#app/data/trainer-config";
 import { catchPokemon, getHighestLevelPlayerPokemon, getSpriteKeysFromPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
-import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils";
+import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import type { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { SelfStatusMove } from "#app/data/move";
@@ -26,8 +25,6 @@ import { BerryModifier } from "#app/modifier/modifier";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -56,15 +53,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
       // Calculate boss mon
       // Level equal to 2 below highest party member
       const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-      let species: PokemonSpecies;
-      if (globalScene.eventManager.isEventActive() && globalScene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
-        const eventEncounter = randSeedItem(globalScene.eventManager.activeEvent()!.uncommonBreedEncounters!);
-        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, globalScene.gameMode);
-        species = getPokemonSpecies( levelSpecies );
-      } else {
-        species = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
-      }
-      const pokemon = new EnemyPokemon(species, level, TrainerSlot.NONE, true);
+      const pokemon = getRandomEncounterSpecies(level, true, true);
 
       // Pokemon will always have one of its egg moves in its moveset
       const eggMoves = pokemon.getEggMoves();
@@ -92,7 +81,7 @@ export const UncommonBreedEncounter: MysteryEncounter =
       const config: EnemyPartyConfig = {
         pokemonConfigs: [{
           level: level,
-          species: species,
+          species: pokemon.species,
           dataSource: new PokemonData(pokemon),
           isBoss: false,
           tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],

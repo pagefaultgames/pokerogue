@@ -1,8 +1,10 @@
 import type { BattlerIndex } from "#app/battle";
+import { Button } from "#app/enums/buttons";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import type { CommandPhase } from "#app/phases/command-phase";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
@@ -75,9 +77,10 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Used when the normal moveset override can't be used (such as when it's necessary to check updated properties of the moveset).
-   * @param pokemon - The pokemon being modified
-   * @param moveset - The moveset to use
+   * Changes a pokemon's moveset to the given move(s).
+   * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
+   * @param pokemon - The {@linkcode Pokemon} being modified
+   * @param moveset - The {@linkcode Moves} (single or array) to change the Pokemon's moveset to
    */
   public changeMoveset(pokemon: Pokemon, moveset: Moves | Moves[]): void {
     if (!Array.isArray(moveset)) {
@@ -90,4 +93,40 @@ export class MoveHelper extends GameManagerHelper {
     const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
     console.log(`Pokemon ${pokemon.species.name}'s moveset manually set to ${movesetStr} (=[${moveset.join(", ")}])!`);
   }
+
+  /**
+  * Simulates learning a move for a player pokemon.
+  * @param move The {@linkcode Moves} being learnt
+  * @param partyIndex The party position of the {@linkcode PlayerPokemon} learning the move (defaults to 0)
+  * @param moveSlotIndex The INDEX (0-4) of the move slot to replace if existent move slots are full;
+  * defaults to 0 (first slot) and 4 aborts the procedure
+  * @returns a promise that resolves once the move has been successfully learnt
+ */
+  public async learnMove(move: Moves | integer, partyIndex: integer = 0, moveSlotIndex: integer = 0) {
+    return new Promise<void>(async (resolve, reject) => {
+      this.game.scene.pushPhase(new LearnMovePhase(partyIndex, move));
+
+      // if slots are full, queue up inputs to replace existing moves
+      if (this.game.scene.getPlayerParty()[partyIndex].moveset.filter(m => m).length === 4) {
+        this.game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
+          this.game.scene.ui.processInput(Button.ACTION); // "Should a move be forgotten and replaced with XXX?"
+        });
+        this.game.onNextPrompt("LearnMovePhase", Mode.SUMMARY, () => {
+          for (let x = 0; x < (moveSlotIndex ?? 0); x++) {
+            this.game.scene.ui.processInput(Button.DOWN); // Scrolling in summary pane to move position
+          }
+          this.game.scene.ui.processInput(Button.ACTION);
+          if (moveSlotIndex === 4) {
+            this.game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
+              this.game.scene.ui.processInput(Button.ACTION); // "Give up on learning XXX?"
+            });
+          }
+        });
+      }
+
+      await this.game.phaseInterceptor.to(LearnMovePhase).catch(e => reject(e));
+      resolve();
+    });
+  }
+
 }
