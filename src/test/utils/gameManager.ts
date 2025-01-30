@@ -24,6 +24,7 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import type InputsHandler from "#app/test/utils/inputsHandler";
+import type BallUiHandler from "#app/ui/ball-ui-handler";
 import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import type CommandUiHandler from "#app/ui/command-ui-handler";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -458,16 +459,15 @@ export default class GameManager {
       (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
     });
 
-    this.doSelectPokeball(ballIndex, "CommandPhase");
+    this.doSelectPokeball(ballIndex);
   }
   // ???
-  doSelectPokeball(slot: number, inPhase = "SwitchPhase") {
-    this.onNextPrompt(inPhase, Mode.PARTY, () => {
-      const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
+  doSelectPokeball(ballIndex: number) {
+    this.onNextPrompt("CommandPhase", Mode.BALL, () => {
+      const ballHandler = this.scene.ui.getHandler() as BallUiHandler;
 
-      partyHandler.setCursor(slot);
-      partyHandler.processInput(Button.ACTION); // select party slot
-      partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
+      ballHandler.setCursor(ballIndex);
+      ballHandler.processInput(Button.ACTION); // select ball and throw
     });
   }
 

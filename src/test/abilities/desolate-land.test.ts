@@ -1,3 +1,4 @@
+import { PokeballType } from "#app/enums/pokeball";
 import { WeatherType } from "#app/enums/weather-type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -34,7 +35,7 @@ describe("Abilities - Desolate Land", () => {
    * This checks that the weather has changed after the Enemy Pokemon with {@linkcode Abilities.DESOLATE_LAND}
    * is forcefully moved out of the field from moves such as Roar {@linkcode Moves.ROAR}
    */
-  it("should lift when all pokemon with this ability leave the field", async () => {
+  it("should lift only when all pokemon with this ability leave the field", async () => {
     game.override
       .battleType("double")
       .enemyMoveset([ Moves.SPLASH, Moves.ROAR ]);
@@ -92,6 +93,29 @@ describe("Abilities - Desolate Land", () => {
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
   });
 
+  it("should lift when pokemon returns upon switching from double to single battle", async () => {
+    game.override
+      .battleType("even-doubles")
+      .enemyMoveset([ Moves.SPLASH, Moves.MEMENTO ])
+      .startingWave(12);
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.MAGCARGO ]);
+
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+
+    game.move.select(Moves.SPLASH, 0, 2);
+    game.move.select(Moves.SPLASH, 1, 2);
+    await game.forceEnemyMove(Moves.MEMENTO, 0);
+    await game.forceEnemyMove(Moves.MEMENTO, 1);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+
+    await game.toNextWave();
+
+    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
+  });
+
   it("should lift when enemy is captured", async () => {
     game.override
       .battleType("single")
@@ -102,6 +126,9 @@ describe("Abilities - Desolate Land", () => {
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
+    game.scene.pokeballCounts[PokeballType.MASTER_BALL] = 1;
+
+    game.doThrowPokeball(PokeballType.MASTER_BALL);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
