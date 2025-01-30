@@ -1921,7 +1921,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.abilityIndex = 2; // Rock Head Tyrantrum, Snow Warning Aurorus
     }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.GOODRA, Species.HISUI_GOODRA ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.GOODRA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     }))
