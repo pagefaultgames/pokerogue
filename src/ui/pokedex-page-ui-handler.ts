@@ -55,7 +55,7 @@ import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
 import { Biome } from "#app/enums/biome";
 import { TimeOfDay } from "#app/enums/time-of-day";
 import type { Abilities } from "#app/enums/abilities";
-import BaseStatsOverlay from "./base-stats-overlay";
+import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";
 import { globalScene } from "#app/global-scene";
 
 
