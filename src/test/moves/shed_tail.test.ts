@@ -46,11 +46,8 @@ describe("Moves - Shed Tail", () => {
 
     expect(feebas).not.toBe(magikarp);
     expect(feebas.hp).toBe(feebas.getMaxHp());
-    // Note: Shed Tail's HP cost is currently not accurate to mainline, as it
-    // should cost ceil(maxHP / 2) instead of max(floor(maxHp / 2), 1). The current
-    // implementation is consistent with Substitute's HP cost logic, but that's not
-    // the case in mainline for some reason :regiDespair:.
-    expect(magikarp.hp).toBe(Math.ceil(magikarp.getMaxHp() / 2));
+    // Note: Altered the test to be consistent with the correct HP cost :yipeevee_static:
+    expect(magikarp.hp).toBe(Math.floor(magikarp.getMaxHp() / 2));
     expect(substituteTag).toBeDefined();
     expect(substituteTag?.hp).toBe(Math.floor(magikarp.getMaxHp() / 4));
   });
