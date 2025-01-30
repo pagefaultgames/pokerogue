@@ -695,6 +695,7 @@ export class Arena {
     globalScene.loadBgm(this.bgm);
   }
 
+  /** The loop point of any given biome track, read as seconds and milliseconds. */
   getBgmLoopPoint(): number {
     switch (this.biomeType) {
       case Biome.TOWN:

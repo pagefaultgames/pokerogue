@@ -130,9 +130,10 @@ export default class GameManager {
 
   /**
    * Adds an action to be executed on the next prompt.
+   * This can be used to (among other things) simulate inputs or run functions mid-phase.
    * @param phaseTarget - The target phase.
    * @param mode - The mode to wait for.
-   * @param callback - The callback to execute.
+   * @param callback - The callback function to execute on next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
    */
   onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
@@ -401,6 +402,11 @@ export default class GameManager {
     return updateUserInfo();
   }
 
+  /**
+   * Faints a player or enemy pokemon instantly by setting their HP to 0.
+   * @param pokemon The player/enemy pokemon being fainted
+   * @returns A promise that resolves once the fainted pokemon's FaintPhase finishes running.
+   */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
@@ -472,8 +478,9 @@ export default class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
-   * Used to modify the turn order.
+   * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
+   * Used to manually modify Pokemon turn order.
+   * Note: This *DOES NOT* account for priority, only speed.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
    * ```ts
@@ -487,7 +494,7 @@ export default class GameManager {
   }
 
   /**
-   * Removes all held items from enemy pokemon
+   * Removes all held items from enemy pokemon.
    */
   removeEnemyHeldItems(): void {
     this.scene.clearEnemyHeldItemModifiers();

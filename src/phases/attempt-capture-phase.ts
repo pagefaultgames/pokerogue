@@ -64,7 +64,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeball.setOrigin(0.5, 0.625);
     globalScene.field.add(this.pokeball);
 
-    globalScene.playSound("se/pb_throw", isCritical ? { rate: 0.2 } : undefined); // Crit catch throws are higher pitched
+    globalScene.playSound(isCritical ? "se/crit_throw" : "se/pb_throw");
     globalScene.time.delayedCall(300, () => {
       globalScene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
