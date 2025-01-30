@@ -1958,11 +1958,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HIPPOWDON ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.GARCHOMP, Species.EXCADRILL ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GASTRODON, Species.SEISMITOAD ], TrainerSlot.TRAINER, true, p => {
-      //Storm Drain Gastrodon, Water Absorb Seismitoad
       if (p.species.speciesId === Species.GASTRODON) {
-        p.abilityIndex = 0;
+        p.abilityIndex = 0; // Storm Drain
       } else if (p.species.speciesId === Species.SEISMITOAD) {
-        p.abilityIndex = 2;
+        p.abilityIndex = 2; // Water Absorb
       }
     }))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.KANGASKHAN ], TrainerSlot.TRAINER, true, p => {
