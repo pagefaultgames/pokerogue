@@ -2084,8 +2084,11 @@ export default class BattleScene extends SceneBase {
     return sound;
   }
 
+  /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */
   getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
+      case "title": //Firel PokéRogue Title
+        return 46.500;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.950;
       case "battle_johto_champion": //B2W2 Johto Champion Battle
