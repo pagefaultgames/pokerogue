@@ -272,14 +272,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private abilityIconElement: Phaser.GameObjects.Sprite;
   private genderIconElement: Phaser.GameObjects.Sprite;
   private natureIconElement: Phaser.GameObjects.Sprite;
-  private variantIconElement: Phaser.GameObjects.Sprite;
   private goFilterIconElement: Phaser.GameObjects.Sprite;
   private shinyLabel: Phaser.GameObjects.Text;
   private formLabel: Phaser.GameObjects.Text;
   private genderLabel: Phaser.GameObjects.Text;
   private abilityLabel: Phaser.GameObjects.Text;
   private natureLabel: Phaser.GameObjects.Text;
-  private variantLabel: Phaser.GameObjects.Text;
   private goFilterLabel: Phaser.GameObjects.Text;
 
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
@@ -315,7 +313,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private canCycleGender: boolean;
   private canCycleAbility: boolean;
   private canCycleNature: boolean;
-  private canCycleVariant: boolean;
 
   private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
@@ -870,13 +867,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.natureIconElement.setOrigin(0.0, 0.0);
     this.natureLabel = addTextObject(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleNature"), TextStyle.PARTY, { fontSize: instructionTextSize });
     this.natureLabel.setName("text-nature-label");
-
-    this.variantIconElement = new Phaser.GameObjects.Sprite(globalScene, this.instructionRowX, this.instructionRowY, "keyboard", "V.png");
-    this.variantIconElement.setName("sprite-variant-icon-element");
-    this.variantIconElement.setScale(0.675);
-    this.variantIconElement.setOrigin(0.0, 0.0);
-    this.variantLabel = addTextObject(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleVariant"), TextStyle.PARTY, { fontSize: instructionTextSize });
-    this.variantLabel.setName("text-variant-label");
 
     this.goFilterIconElement = new Phaser.GameObjects.Sprite(globalScene, this.filterInstructionRowX, this.filterInstructionRowY, "keyboard", "C.png");
     this.goFilterIconElement.setName("sprite-goFilter-icon-element");
@@ -1999,53 +1989,56 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         switch (button) {
           case Button.CYCLE_SHINY:
             if (this.canCycleShiny) {
-              starterAttributes.shiny = starterAttributes.shiny !== undefined ? !starterAttributes.shiny : false;
-
-              if (starterAttributes.shiny) {
-              // Change to shiny, we need to get the proper default variant
+              if (starterAttributes.shiny === false) {
+                // If not shiny, we change to shiny and get the proper default variant
                 const newProps = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
                 const newVariant = starterAttributes.variant ? starterAttributes.variant as Variant : newProps.variant;
                 this.setSpeciesDetails(this.lastSpecies, { shiny: true, variant: newVariant });
 
                 globalScene.playSound("se/sparkle");
-                // Set the variant label to the shiny tint
+                // Cycle tint based on current sprite tint
                 const tint = getVariantTint(newVariant);
                 this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
                 this.pokemonShinyIcon.setTint(tint);
                 this.pokemonShinyIcon.setVisible(true);
+
+                starterAttributes.shiny = true;
               } else {
-                this.setSpeciesDetails(this.lastSpecies, { shiny: false, variant: 0 });
-                this.pokemonShinyIcon.setVisible(false);
-                success = true;
-              }
-            }
-            break;
-          case Button.V:
-            if (this.canCycleVariant) {
-              let newVariant = props.variant;
-              do {
-                newVariant = (newVariant + 1) % 3;
-                if (newVariant === 0) {
-                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
-                    break;
+                // If shiny, we update the variant
+                let newVariant = props.variant;
+                do {
+                  newVariant = (newVariant + 1) % 3;
+                  if (newVariant === 0) {
+                    if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
+                      break;
+                    }
+                  } else if (newVariant === 1) {
+                    if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_2) { // TODO: is this bang correct?
+                      break;
+                    }
+                  } else {
+                    if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) { // TODO: is this bang correct?
+                      break;
+                    }
                   }
-                } else if (newVariant === 1) {
-                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_2) { // TODO: is this bang correct?
-                    break;
-                  }
+                } while (newVariant !== props.variant);
+                starterAttributes.variant = newVariant; // store the selected variant
+                // If going to a higher variant, display that
+                if (newVariant > props.variant) {
+                  this.setSpeciesDetails(this.lastSpecies, { variant: newVariant as Variant });
+                  // Cycle tint based on current sprite tint
+                  const tint = getVariantTint(newVariant as Variant);
+                  this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
+                  this.pokemonShinyIcon.setTint(tint);
+                  success = true;
+                // If we have run out of variants, go back to non shiny
                 } else {
-                  if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) { // TODO: is this bang correct?
-                    break;
-                  }
+                  this.setSpeciesDetails(this.lastSpecies, { shiny: false, variant: 0 });
+                  this.pokemonShinyIcon.setVisible(false);
+                  success = true;
+                  starterAttributes.shiny = false;
                 }
-              } while (newVariant !== props.variant);
-              starterAttributes.variant = newVariant; // store the selected variant
-              this.setSpeciesDetails(this.lastSpecies, { variant: newVariant as Variant });
-              // Cycle tint based on current sprite tint
-              const tint = getVariantTint(newVariant as Variant);
-              this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
-              this.pokemonShinyIcon.setTint(tint);
-              success = true;
+              }
             }
             break;
           case Button.CYCLE_FORM:
@@ -2372,9 +2365,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         case SettingKeyboard.Button_Cycle_Nature:
           iconPath = "N.png";
           break;
-        case SettingKeyboard.Button_Cycle_Variant:
-          iconPath = "V.png";
-          break;
         case SettingKeyboard.Button_Stats:
           iconPath = "C.png";
           break;
@@ -2454,9 +2444,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
       if (this.canCycleNature) {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Nature, gamepadType, this.natureIconElement, this.natureLabel);
-      }
-      if (this.canCycleVariant) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Variant, gamepadType, this.variantIconElement, this.variantLabel);
       }
     }
 
@@ -3262,12 +3249,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
         const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
-        const isVariant1Caught = isShinyCaught && !!(caughtAttr & DexAttr.DEFAULT_VARIANT);
-        const isVariant2Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_2);
-        const isVariant3Caught = isShinyCaught && !!(caughtAttr & DexAttr.VARIANT_3);
 
         this.canCycleShiny = isNonShinyCaught && isShinyCaught;
-        this.canCycleVariant = !!shiny && [ isVariant1Caught, isVariant2Caught, isVariant3Caught ].filter(v => v).length > 1;
 
         const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
         const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
@@ -3826,8 +3809,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityLabel.setVisible(false);
     this.natureIconElement.setVisible(false);
     this.natureLabel.setVisible(false);
-    this.variantIconElement.setVisible(false);
-    this.variantLabel.setVisible(false);
     this.goFilterIconElement.setVisible(false);
     this.goFilterLabel.setVisible(false);
   }
