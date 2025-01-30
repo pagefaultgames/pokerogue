@@ -29,8 +29,6 @@ export default class BaseStatsOverlay extends Phaser.GameObjects.Container imple
 
   private statsBg: Phaser.GameObjects.NineSlice;
 
-  private options: BaseStatsOverlaySettings;
-
   public scale: number;
   public width: number;
 
@@ -38,7 +36,6 @@ export default class BaseStatsOverlay extends Phaser.GameObjects.Container imple
     super(globalScene, options?.x, options?.y);
     this.scale = options?.scale || 1; // set up the scale
     this.setScale(this.scale);
-    this.options = options || {};
 
     // prepare the description box
     this.width = (options?.width || BaseStatsOverlay.getWidth(this.scale)) / this.scale; // divide by scale as we always want this to be half a window wide
