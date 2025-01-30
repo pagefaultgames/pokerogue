@@ -1979,7 +1979,7 @@ export const trainerConfigs: TrainerConfigs = {
     })),
   [TrainerType.MAXIE]: new TrainerConfig(++t).setName("Maxie").initForEvilTeamLeader("Magma Boss", []).setMixedBattleBgm("battle_aqua_magma_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SOLROCK ]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.TALONFLAME ]
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.TALONFLAME ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.WEEZING, Species.GALAR_WEEZING ]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.TORKOAL ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
