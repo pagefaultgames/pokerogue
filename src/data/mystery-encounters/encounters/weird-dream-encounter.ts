@@ -360,7 +360,7 @@ function getTeamTransformations(): PokemonTransformation[] {
     const index = pokemonTransformations.findIndex(p => p.previousPokemon.id === removed.id);
     pokemonTransformations[index].heldItems = removed.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
 
-    const bst = removed.calculateBaseStats().reduce((a, b) => a + b, 0);
+    const bst = removed.getSpeciesForm().getBaseStatTotal();
     let newBstRange: [number, number];
     if (i < 2) {
       newBstRange = HIGH_BST_TRANSFORM_BASE_VALUES;
