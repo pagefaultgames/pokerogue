@@ -22,7 +22,7 @@ import { WeatherType } from "#enums/weather-type";
  *
  * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}
  *
- * If an override name starts with "STARTING", it will apply when a new run begins
+ * If an override name starts with "STARTING", it will only apply when a new run begins.
  *
  * @example
  * ```
@@ -39,7 +39,7 @@ const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
  * ---
  * Defaults for Overrides that are used when testing different in game situations
  *
- * If an override name starts with "STARTING", it will apply when a new run begins
+ * If an override name starts with "STARTING", it will only apply when a new run begins.
  */
 class DefaultOverrides {
   // -----------------
