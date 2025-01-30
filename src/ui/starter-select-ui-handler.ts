@@ -272,14 +272,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private abilityIconElement: Phaser.GameObjects.Sprite;
   private genderIconElement: Phaser.GameObjects.Sprite;
   private natureIconElement: Phaser.GameObjects.Sprite;
-  private variantIconElement: Phaser.GameObjects.Sprite;
   private goFilterIconElement: Phaser.GameObjects.Sprite;
   private shinyLabel: Phaser.GameObjects.Text;
   private formLabel: Phaser.GameObjects.Text;
   private genderLabel: Phaser.GameObjects.Text;
   private abilityLabel: Phaser.GameObjects.Text;
   private natureLabel: Phaser.GameObjects.Text;
-  private variantLabel: Phaser.GameObjects.Text;
   private goFilterLabel: Phaser.GameObjects.Text;
 
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
@@ -865,13 +863,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.natureIconElement.setOrigin(0.0, 0.0);
     this.natureLabel = addTextObject(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleNature"), TextStyle.PARTY, { fontSize: instructionTextSize });
     this.natureLabel.setName("text-nature-label");
-
-    this.variantIconElement = new Phaser.GameObjects.Sprite(globalScene, this.instructionRowX, this.instructionRowY, "keyboard", "V.png");
-    this.variantIconElement.setName("sprite-variant-icon-element");
-    this.variantIconElement.setScale(0.675);
-    this.variantIconElement.setOrigin(0.0, 0.0);
-    this.variantLabel = addTextObject(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleVariant"), TextStyle.PARTY, { fontSize: instructionTextSize });
-    this.variantLabel.setName("text-variant-label");
 
     this.goFilterIconElement = new Phaser.GameObjects.Sprite(globalScene, this.filterInstructionRowX, this.filterInstructionRowY, "keyboard", "C.png");
     this.goFilterIconElement.setName("sprite-goFilter-icon-element");
@@ -3805,8 +3796,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityLabel.setVisible(false);
     this.natureIconElement.setVisible(false);
     this.natureLabel.setVisible(false);
-    this.variantIconElement.setVisible(false);
-    this.variantLabel.setVisible(false);
     this.goFilterIconElement.setVisible(false);
     this.goFilterLabel.setVisible(false);
   }
