@@ -269,7 +269,7 @@ export default class UI extends Phaser.GameObjects.Container {
       return false;
     }
 
-    if ([ Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE ].includes(this.mode)) {
+    if ([ Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE, Mode.TARGET_SELECT ].includes(this.mode)) {
       globalScene?.processInfoButton(pressed);
       return true;
     }
@@ -277,6 +277,11 @@ export default class UI extends Phaser.GameObjects.Container {
     return true;
   }
 
+  /**
+   * Process a player input of a button (delivering it to the current UI handler for processing)
+   * @param button The {@linkcode Button} being inputted
+   * @returns true if the input attempt succeeds
+   */
   processInput(button: Button): boolean {
     if (this.overlayActive) {
       return false;
