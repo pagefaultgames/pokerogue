@@ -11,7 +11,6 @@ import { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtk
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import { default as PokemonSpecies, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
-import { starterPassiveAbilities } from "#app/data/balance/passives";
 import type { Constructor } from "#app/utils";
 import { isNullOrUndefined, randSeedInt, type nil } from "#app/utils";
 import * as Utils from "#app/utils";
@@ -1115,6 +1114,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getStat(Stat.HP);
   }
 
+  /** Returns the amount of hp currently missing from this {@linkcode Pokemon} (max - current) */
   getInverseHp(): integer {
     return this.getMaxHp() - this.hp;
   }
@@ -1407,11 +1407,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[this.customPokemonData.passive];
     }
 
-    let starterSpeciesId = this.species.speciesId;
-    while (pokemonPrevolutions.hasOwnProperty(starterSpeciesId)) {
-      starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
-    }
-    return allAbilities[starterPassiveAbilities[starterSpeciesId]];
+    return allAbilities[this.species.getPassiveAbility(this.formIndex)];
   }
 
   /**
