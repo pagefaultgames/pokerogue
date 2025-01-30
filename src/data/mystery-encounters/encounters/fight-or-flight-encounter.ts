@@ -2,6 +2,7 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import type {
   EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
+  getRandomEncounterSpecies,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterExp,
@@ -9,12 +10,10 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon } from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type {
   ModifierTypeOption } from "#app/modifier/modifier-type";
 import {
-  getPartyLuckValue,
   getPlayerModifierTypeOptions,
   ModifierPoolType,
   regenerateModifierPoolThresholds,
@@ -26,16 +25,13 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { TrainerSlot } from "#app/data/trainer-config";
 import { getEncounterPokemonLevelForWave, getSpriteKeysFromPokemon, STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { randSeedInt, randSeedItem } from "#app/utils";
+import { randSeedInt } from "#app/utils";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fightOrFlight";
@@ -63,20 +59,12 @@ export const FightOrFlightEncounter: MysteryEncounter =
 
       // Calculate boss mon
       const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-      let bossSpecies: PokemonSpecies;
-      if (globalScene.eventManager.isEventActive() && globalScene.eventManager.activeEvent()?.uncommonBreedEncounters && randSeedInt(2) === 1) {
-        const eventEncounter = randSeedItem(globalScene.eventManager.activeEvent()!.uncommonBreedEncounters!);
-        const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, eventEncounter.allowEvolution ?? false, true, globalScene.gameMode);
-        bossSpecies = getPokemonSpecies( levelSpecies );
-      } else {
-        bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), true);
-      }
-      const bossPokemon = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, true);
+      const bossPokemon = getRandomEncounterSpecies(level, true);
       encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
       const config: EnemyPartyConfig = {
         pokemonConfigs: [{
           level: level,
-          species: bossSpecies,
+          species: bossPokemon.species,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true,
           tags: [ BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON ],

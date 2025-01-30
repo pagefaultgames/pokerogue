@@ -449,7 +449,7 @@ function getPokemonTradeOptions(): Map<number, EnemyPokemon[]> {
       });
       tradeOptionsMap.set(pokemon.id, tradeOptions);
     } else {
-      const originalBst = pokemon.calculateBaseStats().reduce((a, b) => a + b, 0);
+      const originalBst = pokemon.getSpeciesForm().getBaseStatTotal();
 
       const tradeOptions: PokemonSpecies[] = [];
       for (let i = 0; i < 3; i++) {
