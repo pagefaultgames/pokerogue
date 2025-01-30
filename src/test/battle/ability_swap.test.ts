@@ -7,7 +7,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Aaa", () => {
+describe("Test Ability Swapping", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
