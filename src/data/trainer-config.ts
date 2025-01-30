@@ -1729,8 +1729,8 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.MAGMORTAR, Species.ELECTIVIRE, Species.RHYPERIOR ]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.EXEGGUTOR, Species.ARCANINE, Species.GYARADOS ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.RHYPERIOR, Species.ELECTIVIRE, Species.MAGMORTAR ]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.ARCANINE, Species.EXEGGUTOR, Species.GYARADOS ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
     }))
@@ -1817,7 +1817,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.LUDICOLO ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.LATIOS, Species.LATIAS ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.LATIAS, Species.LATIOS ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // Mega Latios or Mega Latias
       p.generateAndPopulateMoveset();
       p.generateName();
@@ -1846,7 +1846,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
 	  p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.ROSERADE, Species.HISUI_ARCANINE, Species.MILOTIC ]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.MILOTIC, Species.ROSERADE, Species.HISUI_ARCANINE ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.TOGEKISS ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.setBoss(true, 2);
@@ -1892,7 +1892,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.HYDREIGON, Species.ARCHALUDON, Species.SALAMENCE ]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.SALAMENCE, Species.HYDREIGON, Species.ARCHALUDON ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.LAPRAS ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 1; // G-Max Lapras
       p.generateAndPopulateMoveset();
@@ -1912,7 +1912,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.HAWLUCHA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.GOURGEIST, Species.TREVENANT ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.TREVENANT, Species.GOURGEIST ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.XERNEAS ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
@@ -1966,7 +1966,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.AEGISLASH ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MR_RIME, Species.RHYPERIOR, Species.SEISMITOAD ]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.RHYPERIOR, Species.SEISMITOAD, Species.MR_RIME ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.ZACIAN ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
@@ -2032,7 +2032,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.POLIWRATH, Species.POLITOED ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.GRIMMSNARL, Species.INCINEROAR ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.INCINEROAR, Species.GRIMMSNARL ], TrainerSlot.TRAINER, true, p => {
       // Intimidate Incineroar, Prankster Grimmsnarl
       p.generateAndPopulateMoveset();
       if (p.species.speciesId === Species.INCINEROAR) {
