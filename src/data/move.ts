@@ -1869,7 +1869,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   /** Whether the damage taken should be rounded up (Shed Tail rounds up) */
   private roundUp: boolean;
 
-  constructor(hpCost: number = 0.25, roundUp: boolean) {
+  constructor(hpCost: number, roundUp: boolean) {
     super(true);
 
     this.hpCost = hpCost;
