@@ -1107,6 +1107,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getStat(Stat.HP);
   }
 
+  /** Returns the amount of hp currently missing from this {@linkcode Pokemon} (max - current) */
   getInverseHp(): integer {
     return this.getMaxHp() - this.hp;
   }
