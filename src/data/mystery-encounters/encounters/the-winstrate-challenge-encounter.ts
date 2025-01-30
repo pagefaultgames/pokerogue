@@ -16,7 +16,7 @@ import { Nature } from "#enums/nature";
 import { Type } from "#enums/type";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
-import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
 import { applyPostBattleInitAbAttrs, PostBattleInitAbAttr } from "#app/data/ability";
 import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -198,7 +198,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (pokemon.species.speciesId === Species.EISCUE && pokemon.hasAbility(Abilities.ICE_FACE) && pokemon.formIndex === 1) {
-          globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+          globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
         }
 
         pokemon.resetBattleData();

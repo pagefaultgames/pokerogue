@@ -22,7 +22,7 @@ import { WeatherType } from "#enums/weather-type";
  *
  * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}
  *
- * If an override name starts with "STARTING", it will apply when a new run begins
+ * If an override name starts with "STARTING", it will only apply when a new run begins.
  *
  * @example
  * ```
@@ -39,7 +39,7 @@ const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
  * ---
  * Defaults for Overrides that are used when testing different in game situations
  *
- * If an override name starts with "STARTING", it will apply when a new run begins
+ * If an override name starts with "STARTING", it will only apply when a new run begins.
  */
 class DefaultOverrides {
   // -----------------
@@ -63,8 +63,11 @@ class DefaultOverrides {
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
-  /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
+  /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  /** Sets the level cap to this number during experience gain calculations. Set to `0` to disable override & use normal wave-based level caps,
+  or any negative number to set it to 9 quadrillion (effectively disabling it). */
+  readonly LEVEL_CAP_OVERRIDE: number = 0;
   readonly NEVER_CRIT_OVERRIDE: boolean = false;
   /** default 1000 */
   readonly STARTING_MONEY_OVERRIDE: number = 0;
