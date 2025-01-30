@@ -68433,6 +68433,31 @@ export const tmSpecies: TmSpecies = {
   ],
 };
 
+interface SpeciesTmMoves {
+  [key: integer]: Moves[]
+}
+
+function flipTmSpecies(tmSpecies: TmSpecies): SpeciesTmMoves {
+  const flipped: SpeciesTmMoves = {};
+
+  for (const move in tmSpecies) {
+    const moveKey = Number(move);
+    const speciesList = tmSpecies[move];
+
+    for (const species of speciesList) {
+      const speciesKey = Number(species);
+      if (!flipped[speciesKey]) {
+        flipped[speciesKey] = [];
+      }
+      flipped[speciesKey].push(moveKey);
+    }
+  }
+  return flipped;
+}
+
+export const speciesTmMoves: SpeciesTmMoves = flipTmSpecies(tmSpecies);
+
+
 interface TmPoolTiers {
     [key: integer]: ModifierTier
 }
