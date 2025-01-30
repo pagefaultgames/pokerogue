@@ -2008,7 +2008,6 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 2; // Drought
       }
     }))
-    }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.SCOVILLAIN ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.abilityIndex = 0; // Chlorophyll
