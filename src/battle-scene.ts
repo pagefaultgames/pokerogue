@@ -869,6 +869,12 @@ export default class BattleScene extends SceneBase {
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
 
+  /**
+   * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
+   * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
+   * @param activeOnly Whether to consider only active pokemon
+   * @returns array of {@linkcode Pokemon}
+   */
   public getField(activeOnly: boolean = false): Pokemon[] {
     const ret = new Array(4).fill(null);
     const playerField = this.getPlayerField();
@@ -1484,6 +1490,8 @@ export default class BattleScene extends SceneBase {
           return 0; // Don't give trainers Battle Bond Greninja
         }
         return Utils.randSeedInt(2);
+      case Species.URSHIFU:
+        return Utils.randSeedInt(2);
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
       case Species.MINIOR:
@@ -1843,8 +1851,10 @@ export default class BattleScene extends SceneBase {
     this.currentBattle.battleScore += Math.ceil(scoreIncrease);
   }
 
-  getMaxExpLevel(ignoreLevelCap?: boolean): integer {
-    if (ignoreLevelCap) {
+  getMaxExpLevel(ignoreLevelCap: boolean = false): integer {
+    if (Overrides.LEVEL_CAP_OVERRIDE > 0) {
+      return Overrides.LEVEL_CAP_OVERRIDE;
+    } else if (ignoreLevelCap || Overrides.LEVEL_CAP_OVERRIDE < 0) {
       return Number.MAX_SAFE_INTEGER;
     }
     const waveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
@@ -2082,8 +2092,11 @@ export default class BattleScene extends SceneBase {
     return sound;
   }
 
+  /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */
   getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
+      case "title": //Firel PokéRogue Title
+        return 46.500;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.950;
       case "battle_johto_champion": //B2W2 Johto Champion Battle
@@ -3388,7 +3401,8 @@ export default class BattleScene extends SceneBase {
     const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.length > 0 ?
       this.mysteryEncounterSaveData.encounteredEvents[this.mysteryEncounterSaveData.encounteredEvents.length - 1].type
       : null;
-    const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType) ?? [];
+    const disabledEncounters = this.eventManager.getEventMysteryEncountersDisabled();
+    const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier !== null) {
       availableEncounters = biomeMysteryEncounters
@@ -3397,7 +3411,7 @@ export default class BattleScene extends SceneBase {
           if (!encounterCandidate) {
             return false;
           }
-          if (encounterCandidate.encounterTier !== tier) {
+          if (this.eventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier) {
             return false;
           }
           const disallowedGameModes = encounterCandidate.disallowedGameModes;
