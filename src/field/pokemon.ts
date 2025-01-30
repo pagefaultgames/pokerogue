@@ -5057,7 +5057,7 @@ export class EnemyPokemon extends Pokemon {
             return move.category !== MoveCategory.STATUS
             && moveTargets.some(p => {
               const doesNotFail = move.applyConditions(this, p, move) || [ Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP ].includes(move.id);
-              return doesNotFail && p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, !p.getAlly()?.battleData.abilityRevealed, isCritical).damage >= p.hp;
+              return doesNotFail && p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, !p.getAlly()?.battleData.abilityRevealed, false, isCritical).damage >= p.hp;
             });
           }, this);
 

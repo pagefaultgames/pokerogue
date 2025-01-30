@@ -5616,7 +5616,6 @@ export function applyStatMultiplierAbAttrs(
  * @param statValue {@linkcode Utils.NumberHolder} the value of the checked stat
  * @param checkedPokemon {@linkcode Pokemon} the Pokemon with the checked stat
  * @param ignore {@linkcode boolean} Whether or not the ability should be ignored by the pokemon or its move.
- *
  * @param args unused
  */
 export function applyAllyStatMultiplierAbAttrs(attrType: Constructor<AllyStatMultiplierAbAttr>,
