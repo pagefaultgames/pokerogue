@@ -5,7 +5,7 @@ import * as Utils from "../utils";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
-export interface BaseStatsOverlaySettings {
+interface BaseStatsOverlaySettings {
     scale?:number; // scale the box? A scale of 0.5 is recommended
     x?: number;
     y?: number;
@@ -18,7 +18,7 @@ const BORDER = 8;
 const GLOBAL_SCALE = 6;
 const shortStats = [ "HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD" ];
 
-export default class BaseStatsOverlay extends Phaser.GameObjects.Container implements InfoToggle {
+export class BaseStatsOverlay extends Phaser.GameObjects.Container implements InfoToggle {
 
   public active: boolean = false;
 

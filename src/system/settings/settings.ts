@@ -9,7 +9,7 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import * as Utils from "../../utils";
+import { isLocal } from "#app/utils";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
@@ -693,7 +693,7 @@ export const Setting: Array<Setting> = [
   }
 ];
 
-if (Utils.isLocal) {
+if (isLocal) {
   Setting.push({
     key: SettingKeys.Dex_For_Devs,
     label: i18next.t("settings:dexForDevs"),
