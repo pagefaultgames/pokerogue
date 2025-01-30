@@ -826,9 +826,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (starterAttributes.female !== undefined) {
-      if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
-        // requested gender wasn't unlocked, purging setting
-        starterAttributes.female = true;
+      if ((starterAttributes.female && !(caughtAttr & DexAttr.FEMALE)) || (!starterAttributes.female && !(caughtAttr & DexAttr.MALE))) {
+        starterAttributes.female = !starterAttributes.female;
       }
     }
 
