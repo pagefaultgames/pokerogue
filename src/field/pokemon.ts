@@ -10,7 +10,7 @@ import type Move from "#app/data/move";
 import { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, VariableMoveTypeChartAttr } from "#app/data/move";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import { default as PokemonSpecies, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import type { Constructor } from "#app/utils";
 import { isNullOrUndefined, randSeedInt, type nil } from "#app/utils";
@@ -1955,7 +1955,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
-  trySetShiny(thresholdOverride?: integer): boolean {
+  trySetShiny(thresholdOverride?: number): boolean {
     // Shiny Pokemon should not spawn in the end biome in endless
     if (globalScene.gameMode.isEndless && globalScene.arena.biomeType === Biome.END) {
       return false;
@@ -1967,7 +1967,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const E = globalScene.gameData.trainerId ^ globalScene.gameData.secretId;
     const F = rand1 ^ rand2;
 
-    const shinyThreshold = new Utils.IntegerHolder(BASE_SHINY_CHANCE);
+    const shinyThreshold = new Utils.NumberHolder(BASE_SHINY_CHANCE);
     if (thresholdOverride === undefined) {
       if (globalScene.eventManager.isEventActive()) {
         shinyThreshold.value *= globalScene.eventManager.getShinyMultiplier();
@@ -2056,6 +2056,38 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     } else {
       return 2;             // 1/10
     }
+  }
+
+  /**
+   * Function that tries to set a Pokemon to have its hidden ability based on seed, if it exists.
+   * For manual use only, usually to roll a Pokemon's hidden ability chance a second time.
+   *
+   * The base hidden ability odds are {@linkcode BASE_HIDDEN_ABILITY_CHANCE} / `65536`
+   * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the HA chance, overrides {@linkcode haThreshold} if set (bypassing HA rate modifiers such as Ability Charm)
+   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
+   * @returns `true` if the Pokemon has been set to have its hidden ability, `false` otherwise
+   */
+  public tryRerollHiddenAbilitySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+    if (!this.species.abilityHidden) {
+      return false;
+    }
+    const haThreshold = new Utils.NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    if (thresholdOverride === undefined || applyModifiersToOverride) {
+      if (thresholdOverride !== undefined && applyModifiersToOverride) {
+        haThreshold.value = thresholdOverride;
+      }
+      if (!this.hasTrainer()) {
+        globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, haThreshold);
+      }
+    } else {
+      haThreshold.value = thresholdOverride;
+    }
+
+    if (randSeedInt(65536) < haThreshold.value) {
+      this.abilityIndex = 2;
+    }
+
+    return this.abilityIndex === 2;
   }
 
   public generateFusionSpecies(forStarter?: boolean): void {
@@ -2391,8 +2423,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleInfo.toggleFlyout(visible);
   }
 
-  addExp(exp: integer) {
-    const maxExpLevel = globalScene.getMaxExpLevel();
+  /**
+   * Adds experience to this PlayerPokemon, subject to wave based level caps.
+   * @param exp The amount of experience to add
+   * @param ignoreLevelCap Whether to ignore level caps when adding experience (defaults to false)
+   */
+  addExp(exp: integer, ignoreLevelCap: boolean = false) {
+    const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
     const initialExp = this.exp;
     this.exp += exp;
     while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {
@@ -4323,10 +4360,7 @@ export class PlayerPokemon extends Pokemon {
       ].filter(d => !!d);
       const amount = new Utils.NumberHolder(friendship);
       globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
-      let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
-      if (globalScene.eventManager.isEventActive()) {
-        candyFriendshipMultiplier *= globalScene.eventManager.getFriendshipMultiplier();
-      }
+      const candyFriendshipMultiplier = globalScene.eventManager.getClassicFriendshipMultiplier();
       const starterAmount = new Utils.NumberHolder(Math.floor(amount.value * (globalScene.gameMode.isClassic ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
 
       // Add friendship to this PlayerPokemon
