@@ -1,4 +1,4 @@
-import { WeatherType } from "#app/enums/weather-type";
+import { TerrainType } from "#app/data/terrain";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -7,7 +7,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 
-describe("Abilities - Sand Spit", () => {
+describe("Abilities - Seed Sower", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -29,9 +29,9 @@ describe("Abilities - Sand Spit", () => {
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
 
-    game.override.starterSpecies(Species.SILICOBRA);
-    game.override.ability(Abilities.SAND_SPIT);
-    game.override.moveset([ Moves.SPLASH, Moves.COIL ]);
+    game.override.starterSpecies(Species.ARBOLIVA);
+    game.override.ability(Abilities.SEED_SOWER);
+    game.override.moveset([ Moves.SPLASH ]);
   });
 
   it("should trigger when hit with damaging move", async () => {
@@ -41,29 +41,29 @@ describe("Abilities - Sand Spit", () => {
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
+    expect(game.scene.arena.terrain?.terrainType).toBe(TerrainType.GRASSY);
   }, 20000);
 
   it("should trigger even when fainting", async () => {
     game.override.enemyMoveset([ Moves.TACKLE ])
       .enemyLevel(100)
       .startingLevel(1);
-    await game.classicMode.startBattle([ Species.SILICOBRA, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([ Species.ARBOLIVA, Species.MAGIKARP ]);
 
     game.move.select(Moves.SPLASH);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
+    expect(game.scene.arena.terrain?.terrainType).toBe(TerrainType.GRASSY);
   }, 20000);
 
   it("should not trigger when targetted with status moves", async () => {
     game.override.enemyMoveset([ Moves.GROWL ]);
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.COIL);
+    game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SANDSTORM);
+    expect(game.scene.arena.terrain?.terrainType).not.toBe(TerrainType.GRASSY);
   }, 20000);
 });
