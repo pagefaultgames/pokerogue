@@ -1697,16 +1697,16 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
   }
 
   /**
-   * applyAllyStat: Multiply a Pokemon's Stat due to an Ally's ability.
-   * @param pokemon {@linkcode Pokemon} the ally Pokemon with the ability (unused)
-   * @param passive {@linkcode boolean} unused
-   * @param simulated {@linkcode boolean} whether the ability is being simulated (unused)
-   * @param stat {@linkcode Stat} the type of the checked stat
-   * @param statValue {@linkcode Utils.NumberHolder} the value of the checked stat
-   * @param checkedPokemon {@linkcode Pokemon} the Pokemon this ability is targeting (unused)
-   * @param ignore {@linkcode boolean} Whether the ability should be ignored if possible
-   * @param args {any[]} unused
-   * @returns true if this changed the checked stat, false otherwise.
+   * Multiply a Pokemon's Stat due to an Ally's ability.
+   * @param pokemon - The ally {@linkcode Pokemon} with the ability (unused)
+   * @param passive - unused
+   * @param simulated - Whether the ability is being simulated (unused)
+   * @param stat - The type of the checked {@linkcode Stat}
+   * @param statValue - {@linkcode Utils.NumberHolder} containing the value of the checked stat
+   * @param checkedPokemon - The {@linkcode Pokemon} this ability is targeting (unused)
+   * @param ignoreAbility - Whether the ability should be ignored if possible
+   * @param args - unused
+   * @returns `true` if this changed the checked stat, `false` otherwise.
    */
   applyAllyStat(pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, ignore: boolean, args: any[]): boolean | Promise<boolean> {
     if (stat === this.stat && !(ignore && this.ignorable)) {
