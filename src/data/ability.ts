@@ -5610,13 +5610,13 @@ export function applyStatMultiplierAbAttrs(
 
 /**
  * Applies an ally's Stat multiplier attribute
- * @param attrType {@linkcode AllyStatMultiplierAbAttr} should always be AllyStatMultiplierAbAttr for the time being
- * @param pokemon {@linkcode Pokemon} the pokemon with the ability
- * @param stat {@linkcode Stat} the type of the checked stat
- * @param statValue {@linkcode Utils.NumberHolder} the value of the checked stat
- * @param checkedPokemon {@linkcode Pokemon} the Pokemon with the checked stat
- * @param ignore {@linkcode boolean} Whether or not the ability should be ignored by the pokemon or its move.
- * @param args unused
+ * @param attrType - {@linkcode AllyStatMultiplierAbAttr} should always be AllyStatMultiplierAbAttr for the time being
+ * @param pokemon - The {@linkcode Pokemon} with the ability
+ * @param stat - The type of the checked {@linkcode Stat}
+ * @param statValue - {@linkcode Utils.NumberHolder} containing the value of the checked stat
+ * @param checkedPokemon - The {@linkcode Pokemon} with the checked stat
+ * @param ignoreAbility - Whether or not the ability should be ignored by the pokemon or its move.
+ * @param args - unused
  */
 export function applyAllyStatMultiplierAbAttrs(attrType: Constructor<AllyStatMultiplierAbAttr>,
   pokemon: Pokemon, stat: BattleStat, statValue: Utils.NumberHolder, simulated: boolean = false, checkedPokemon, ignore, ...args: any[]): void {
