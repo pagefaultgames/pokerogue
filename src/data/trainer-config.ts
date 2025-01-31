@@ -1942,6 +1942,33 @@ export const trainerConfigs: TrainerConfigs = {
       const teraPokemon = party[3];
       return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type2 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
     }),
+  [TrainerType.KUKUI]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_alola_champion")
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LYCANROC ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.formIndex = 2 // Dusk Lycanroc
+    }))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MAGNEZONE, Species.ALOLA_NINETALES ]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.TAPU_KOKO, Species.TAPU_BULU ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.pokeball = PokeballType.ULTRA_BALL;
+    }))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.SNORLAX ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.formIndex = 1; // G-Max Snorlax
+    }))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.NAGANADEL ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.setBoss(true, 2);
+      p.pokeball = PokeballType.ROGUE_BALL;
+    }))
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.INCINEROAR ], TrainerSlot.TRAINER, true, p => {
+      p.generateAndPopulateMoveset();
+      p.setBoss(true, 2);
+    }))
+    .setGenModifiersFunc(party => {
+      const teraPokemon = party[5];
+      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type2 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
+    }),
   [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_alola_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ALOLA_RAICHU ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -1968,32 +1995,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setGenModifiersFunc(party => {
       const teraPokemon = party[3];
       return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type1 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
-    }),
-  [TrainerType.KUKUI]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_alola_champion")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LYCANROC ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.formIndex = 2 // Dusk Lycanroc
-    }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MAGNEZONE, Species.ALOLA_NINETALES ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.TAPU_KOKO, Species.TAPU_BULU ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ULTRA_BALL;
-    }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.SNORLAX ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.formIndex = 1; // G-Max Snorlax
-    }))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.NAGANADEL ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.setBoss(true, 2);
-    }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.INCINEROAR ], TrainerSlot.TRAINER, true, p => {
-      p.generateAndPopulateMoveset();
-      p.setBoss(true, 2);
-    }))
-    .setGenModifiersFunc(party => {
-      const teraPokemon = party[5];
-      return [ modifierTypes.TERA_SHARD().generateType([], [ teraPokemon.species.type2 ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(teraPokemon) as PersistentModifier ];
     }),
   [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_galar_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.AEGISLASH ], TrainerSlot.TRAINER, true, p => {
