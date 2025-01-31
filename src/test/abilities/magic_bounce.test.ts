@@ -237,4 +237,28 @@ describe("Abilities - Magic Bounce", () => {
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerPokemon()!.status).toBeNull();
   });
+
+  it("should follow speed order, respecting trick room, when reflecting field effect moves", async () => {
+    game.override.battleType("double");
+    game.override.moveset([ Moves.STICKY_WEB, Moves.SPLASH, Moves.TRICK_ROOM ]);
+
+    game.classicMode.startBattle([ Species.MAGIKARP, Species.MAGIKARP ]);
+    const [ enemy_1, enemy_2 ] = game.scene.getEnemyField();
+    enemy_1.stats[Stat.SPD] += enemy_2.stats[Stat.SPD] + 1;
+
+    // turn 1
+    game.move.select(Moves.STICKY_WEB, 0);
+    game.move.select(Moves.TRICK_ROOM, 1);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()).toBe(enemy_1);
+    game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER, true);
+
+    // turn 2
+    game.move.select(Moves.STICKY_WEB, 0);
+    game.move.select(Moves.TRICK_ROOM, 1);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()).toBe(enemy_2);
+  });
 });
+
