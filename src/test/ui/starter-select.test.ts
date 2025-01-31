@@ -362,8 +362,9 @@ describe("UI - Starter select", () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
-      handler.processInput(Button.V);
-      handler.processInput(Button.V);
+      handler.processInput(Button.CYCLE_SHINY);
+      handler.processInput(Button.CYCLE_SHINY);
+      handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
@@ -423,7 +424,8 @@ describe("UI - Starter select", () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
-      handler.processInput(Button.V);
+      handler.processInput(Button.CYCLE_SHINY);
+      handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.ACTION);
       game.phaseInterceptor.unlock();
     });
