@@ -5234,8 +5234,9 @@ export function applyStatMultiplierAbAttrs(attrType: Constructor<StatMultiplierA
  * @param args - unused
  */
 export function applyAllyStatMultiplierAbAttrs(attrType: Constructor<AllyStatMultiplierAbAttr>,
-  pokemon: Pokemon, stat: BattleStat, statValue: Utils.NumberHolder, simulated: boolean = false, checkedPokemon, ignore, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<AllyStatMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyAllyStat(pokemon, passive, simulated, stat, statValue, checkedPokemon, ignore, args), args);
+  pokemon: Pokemon, stat: BattleStat, statValue: Utils.NumberHolder, simulated: boolean = false, checkedPokemon: Pokemon, ignoreAbility: boolean, ...args: any[]
+): Promise<void> {
+  return applyAbAttrsInternal<AllyStatMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyAllyStat(pokemon, passive, simulated, stat, statValue, checkedPokemon, ignoreAbility, args), args);
 }
 
 export function applyPostSetStatusAbAttrs(attrType: Constructor<PostSetStatusAbAttr>,
