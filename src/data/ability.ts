@@ -1708,8 +1708,8 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
    * @param args - unused
    * @returns `true` if this changed the checked stat, `false` otherwise.
    */
-  applyAllyStat(pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, ignore: boolean, args: any[]): boolean | Promise<boolean> {
-    if (stat === this.stat && !(ignore && this.ignorable)) {
+  applyAllyStat(pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, ignoreAbility: boolean, args: any[]): boolean | Promise<boolean> {
+    if (stat === this.stat && !(ignoreAbility && this.ignorable)) {
       statValue.value *= this.multiplier;
       return true;
     }
