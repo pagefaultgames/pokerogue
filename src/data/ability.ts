@@ -1669,7 +1669,6 @@ export class StatMultiplierAbAttr extends AbAttr {
 
     return false;
   }
-
 }
 
 /**
