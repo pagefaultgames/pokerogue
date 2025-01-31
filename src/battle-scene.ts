@@ -2113,7 +2113,7 @@ export default class BattleScene extends SceneBase {
         return 10.145;
       case "battle_kalos_champion": //XY Kalos Champion Battle
         return 10.380;
-      case "battle_kukui": //SM Kukui Battle
+      case "battle_champion_kukui": //SM Kukui Battle
         return 15.784;
       case "battle_alola_champion": //USUM Alola Champion Battle
         return 13.025;
