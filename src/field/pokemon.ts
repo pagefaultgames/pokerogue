@@ -2734,7 +2734,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const ally = this.getAlly();
     if (ally) {
-      const ignore = this.hasAbilityWithAttr(MoveAbilityBypassAbAttr) || sourceMove.ignoresAbilities;
+      const ignore = this.hasAbilityWithAttr(MoveAbilityBypassAbAttr) || sourceMove.hasFlag(MoveFlags.IGNORE_ABILITIES);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.ACC, accuracyMultiplier, false, this, ignore);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.EVA, evasionMultiplier, false, this, ignore);
     }
