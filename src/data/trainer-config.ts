@@ -1945,7 +1945,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.KUKUI]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_alola_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LYCANROC ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.formIndex = 2 // Dusk Lycanroc
+      p.formIndex = 2; // Dusk Lycanroc
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MAGNEZONE, Species.ALOLA_NINETALES ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.TAPU_KOKO, Species.TAPU_BULU ], TrainerSlot.TRAINER, true, p => {
