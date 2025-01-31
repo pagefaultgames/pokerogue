@@ -1717,7 +1717,6 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
   }
 }
 
-
 export class PostAttackAbAttr extends AbAttr {
   private attackCondition: PokemonAttackCondition;
 
