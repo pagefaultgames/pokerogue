@@ -1693,7 +1693,6 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
     this.stat = stat;
     this.multiplier = multiplier;
     this.ignorable = ignorable;
-
   }
 
   /**
