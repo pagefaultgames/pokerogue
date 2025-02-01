@@ -290,20 +290,25 @@ export class PostBattleInitStatStageChangeAbAttr extends PostBattleInitAbAttr {
 type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: Move) => boolean;
 
 export class PreDefendAbAttr extends AbAttr {
+
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return true;
+  }
+
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
-  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (pokemon.isFullHp()
-        && pokemon.getMaxHp() > 1 //Checks if pokemon has wonder_guard (which forces 1hp)
-        && (args[0] as Utils.NumberHolder).value >= pokemon.hp) { //Damage >= hp
-      return simulated || pokemon.addTag(BattlerTagType.STURDY, 1);
-    }
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return pokemon.isFullHp()
+    && pokemon.getMaxHp() > 1 //Checks if pokemon has wonder_guard (which forces 1hp)
+    && (args[0] as Utils.NumberHolder).value >= pokemon.hp; //Damage >= hp
+  }
 
-    return false;
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return simulated || pokemon.addTag(BattlerTagType.STURDY, 1);
   }
 }
 
@@ -345,14 +350,13 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
     this.damageMultiplier = damageMultiplier;
   }
 
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return this.condition(pokemon, attacker, move);
+  }
+
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.condition(pokemon, attacker, move)) {
-      (args[0] as Utils.NumberHolder).value = Utils.toDmgValue((args[0] as Utils.NumberHolder).value * this.damageMultiplier);
-
-      return true;
-    }
-
-    return false;
+    (args[0] as Utils.NumberHolder).value = Utils.toDmgValue((args[0] as Utils.NumberHolder).value * this.damageMultiplier);
+    return true;
   }
 }
 
@@ -403,6 +407,10 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
     this.condition = condition ?? null;
   }
 
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return ![ MoveTarget.BOTH_SIDES, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE ].includes(move.moveTarget) && attacker !== pokemon && attacker.getMoveType(move) === this.immuneType;
+  }
+
   /**
    * Applies immunity if this ability grants immunity to the type of the given move.
    * @param pokemon {@linkcode Pokemon} The defending Pokemon.
@@ -414,15 +422,8 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
    * @param args [1] - Whether the move is simulated.
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    // Field moves should ignore immunity
-    if ([ MoveTarget.BOTH_SIDES, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE ].includes(move.moveTarget)) {
-      return false;
-    }
-    if (attacker !== pokemon && attacker.getMoveType(move) === this.immuneType) {
-      (args[0] as Utils.NumberHolder).value = 0;
-      return true;
-    }
-    return false;
+    (args[0] as Utils.NumberHolder).value = 0;
+    return true;
   }
 
   getImmuneType(): Type | null {
@@ -439,6 +440,11 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
     super(immuneType, condition);
   }
 
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return move.category !== MoveCategory.STATUS && !move.hasAttr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
+            && super.willSucceedPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+  }
+
   /**
    * Applies immunity if the move used is not a status move.
    * Type immunity abilities that do not give additional benefits (HP recovery, stat boosts, etc) are not immune to status moves of the type
@@ -446,10 +452,7 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     // this is a hacky way to fix the Levitate/Thousand Arrows interaction, but it works for now...
-    if (move.category !== MoveCategory.STATUS && !move.hasAttr(NeutralDamageAgainstFlyingTypeMultiplierAttr)) {
-      return super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
-    }
-    return false;
+    super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
   }
 }
 
@@ -458,20 +461,19 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
     super(immuneType);
   }
 
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return super.willSucceedPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+  }
+
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const ret = super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
-
-    if (ret) {
-      if (!pokemon.isFullHp() && !simulated) {
-        const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
-        globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
-          Utils.toDmgValue(pokemon.getMaxHp() / 4), i18next.t("abilityTriggers:typeImmunityHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
-        cancelled.value = true; // Suppresses "No Effect" message
-      }
-      return true;
+    super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+    if (!pokemon.isFullHp() && !simulated) {
+      const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+      globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
+        Utils.toDmgValue(pokemon.getMaxHp() / 4), i18next.t("abilityTriggers:typeImmunityHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
+      cancelled.value = true; // Suppresses "No Effect" message
     }
-
-    return false;
+    return true;
   }
 }
 
@@ -486,17 +488,17 @@ class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
     this.stages = stages;
   }
 
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return super.willSucceedPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+  }
+
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const ret = super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
-
-    if (ret) {
-      cancelled.value = true; // Suppresses "No Effect" message
-      if (!simulated) {
-        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ this.stat ], this.stages));
-      }
+    super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+    cancelled.value = true; // Suppresses "No Effect" message
+    if (!simulated) {
+      globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ this.stat ], this.stages));
     }
-
-    return ret;
+    return true;
   }
 }
 
@@ -511,17 +513,18 @@ class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
     this.turnCount = turnCount;
   }
 
-  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const ret = super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return super.willSucceedPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+  }
 
-    if (ret) {
-      cancelled.value = true; // Suppresses "No Effect" message
-      if (!simulated) {
-        pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
-      }
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+    cancelled.value = true; // Suppresses "No Effect" message
+    if (!simulated) {
+      pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
     }
 
-    return ret;
+    return true;
   }
 }
 
@@ -530,18 +533,17 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
     super(null, condition);
   }
 
-  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
     const modifierValue = args.length > 0
       ? (args[0] as Utils.NumberHolder).value
       : pokemon.getAttackTypeEffectiveness(attacker.getMoveType(move), attacker, undefined, undefined, move);
+    return move instanceof AttackMove && modifierValue < 2;
+  }
 
-    if (move instanceof AttackMove && modifierValue < 2) {
-      cancelled.value = true; // Suppresses "No Effect" message
-      (args[0] as Utils.NumberHolder).value = 0;
-      return true;
-    }
-
-    return false;
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true; // Suppresses "No Effect" message
+    (args[0] as Utils.NumberHolder).value = 0;
+    return true;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
@@ -558,6 +560,12 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
  * @extends PreDefendAbAttr
  */
 export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
+
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    const typeMultiplier = args[0];
+    return (typeMultiplier && typeMultiplier instanceof Utils.NumberHolder) && !(move && move.hasAttr(FixedDamageAttr)) && pokemon.isFullHp() && typeMultiplier.value > 0.5;
+  }
+
   /**
    * Reduces a type multiplier to 0.5 if the source is at full HP.
    * @param pokemon {@linkcode Pokemon} the Pokemon with this ability
@@ -571,20 +579,9 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
     const typeMultiplier = args[0];
-    if (!(typeMultiplier && typeMultiplier instanceof Utils.NumberHolder)) {
-      return false;
-    }
-
-    if (move && move.hasAttr(FixedDamageAttr)) {
-      return false;
-    }
-
-    if (pokemon.isFullHp() && typeMultiplier.value > 0.5) {
-      typeMultiplier.value = 0.5;
-      pokemon.turnData.moveEffectiveness = 0.5;
-      return true;
-    }
-    return false;
+    typeMultiplier.value = 0.5;
+    pokemon.turnData.moveEffectiveness = 0.5;
+    return true;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
@@ -601,17 +598,14 @@ export class PostDefendAbAttr extends AbAttr {
 }
 
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
+
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return !(move.moveTarget === MoveTarget.USER || move.moveTarget === MoveTarget.NEAR_ALLY) && move.getPriority(attacker) > 0 && !move.isMultiTarget();
+  }
+
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move.moveTarget === MoveTarget.USER || move.moveTarget === MoveTarget.NEAR_ALLY) {
-      return false;
-    }
-
-    if (move.getPriority(attacker) > 0 && !move.isMultiTarget()) {
-      cancelled.value = true;
-      return true;
-    }
-
-    return false;
+    cancelled.value = true;
+    return true;
   }
 }
 
@@ -630,13 +624,13 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
     this.immuneCondition = immuneCondition;
   }
 
-  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.immuneCondition(pokemon, attacker, move)) {
-      cancelled.value = true;
-      return true;
-    }
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return this.immuneCondition(pokemon, attacker, move);
+  }
 
-    return false;
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
@@ -651,14 +645,16 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
  * @extends PreDefendAbAttr
  */
 export class WonderSkinAbAttr extends PreDefendAbAttr {
+
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    const moveAccuracy = args[0] as Utils.NumberHolder;
+    return move.category === MoveCategory.STATUS && moveAccuracy.value >= 50;
+  }
+
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const moveAccuracy = args[0] as Utils.NumberHolder;
-    if (move.category === MoveCategory.STATUS && moveAccuracy.value >= 50) {
-      moveAccuracy.value = 50;
-      return true;
-    }
-
-    return false;
+    moveAccuracy.value = 50;
+    return true;
   }
 }
 
@@ -672,13 +668,15 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
     this.stages = stages;
   }
 
-  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const ret = super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
-    if (ret && !simulated) {
-      globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ this.stat ], this.stages));
-    }
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return !simulated && super.willSucceedPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+  }
 
-    return ret;
+  applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+    globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ this.stat ], this.stages));
+
+    return true;
   }
 }
 /**
@@ -1209,18 +1207,17 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
  * @see {@linkcode applyPreDefend}
  */
 export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
+
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return (args[0] as Utils.NumberHolder).value > 0;
+  }
+
   /**
    * @param args [0]: {@linkcode Utils.NumberHolder} Move additional effect chance.
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-
-    if ((args[0] as Utils.NumberHolder).value <= 0) {
-      return false;
-    }
-
     (args[0] as Utils.NumberHolder).value = 0;
     return true;
-
   }
 }
 
@@ -4697,6 +4694,10 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
     this.triggerMessageFunc = triggerMessageFunc;
   }
 
+  willSucceedPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
+    return this.condition(pokemon, attacker, move) && !move.hitsSubstitute(attacker, pokemon);
+  }
+
   /**
    * Applies the pre-defense ability to the Pokémon.
    * Removes the appropriate `BattlerTagType` when hit by an attack and is in its defense form.
@@ -4710,18 +4711,14 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
    * @returns `true` if the immunity was applied.
    */
   override applyPreDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.condition(pokemon, attacker, move) && !move.hitsSubstitute(attacker, pokemon)) {
-      if (!simulated) {
-        (args[0] as Utils.NumberHolder).value = this.multiplier;
-        pokemon.removeTag(this.tagType);
-        if (this.recoilDamageFunc) {
-          pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.OTHER, false, false, true, true);
-        }
+    if (!simulated) {
+      (args[0] as Utils.NumberHolder).value = this.multiplier;
+      pokemon.removeTag(this.tagType);
+      if (this.recoilDamageFunc) {
+        pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.OTHER, false, false, true, true);
       }
-      return true;
     }
-
-    return false;
+    return true;
   }
 
   /**
@@ -5193,7 +5190,7 @@ export function applyPostBattleInitAbAttrs(attrType: Constructor<PostBattleInitA
 
 export function applyPreDefendAbAttrs(attrType: Constructor<PreDefendAbAttr>,
   pokemon: Pokemon, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args), args, false, simulated);
+  return applyAbAttrsInternal<PreDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args), (attr, passive) => attr.willSucceedPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args), args, false, simulated);
 }
 
 export function applyPostDefendAbAttrs(attrType: Constructor<PostDefendAbAttr>,
