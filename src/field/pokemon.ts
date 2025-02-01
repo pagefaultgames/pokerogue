@@ -4728,7 +4728,7 @@ export class EnemyPokemon extends Pokemon {
       this.status = new Status(Overrides.OPP_STATUS_OVERRIDE, 0, 4);
     }
 
-    if (Overrides.OPP_GENDER_OVERRIDE) {
+    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
       this.gender = Overrides.OPP_GENDER_OVERRIDE;
     }
 
