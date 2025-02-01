@@ -6,7 +6,7 @@ import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import * as Messages from "#app/messages";
-import { TerastallizeModifier, overrideHeldItems } from "#app/modifier/modifier";
+import { overrideHeldItems } from "#app/modifier/modifier";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -40,7 +40,6 @@ describe("Moves - Type Effectiveness", () => {
       type: Phaser.HEADLESS,
     });
     game = new GameManager(phaserGame);
-    TerastallizeModifier.prototype.apply = (args) => true;
 
     game.override.ability(Abilities.BALL_FETCH);
   });

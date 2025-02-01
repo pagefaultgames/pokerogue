@@ -68,7 +68,6 @@ export interface TurnCommand {
     targets?: BattlerIndex[];
     skip?: boolean;
     args?: any[];
-    preturnCommands?: Command[];
 }
 
 export interface FaintLogEntry {
@@ -93,6 +92,7 @@ export default class Battle {
   public started: boolean = false;
   public enemySwitchCounter: number = 0;
   public turn: number = 0;
+  public preTurnCommands: TurnCommands;
   public turnCommands: TurnCommands;
   public playerParticipantIds: Set<number> = new Set<number>();
   public battleScore: number = 0;
@@ -176,6 +176,7 @@ export default class Battle {
   incrementTurn(): void {
     this.turn++;
     this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
+    this.preTurnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
     this.battleSeedState = null;
   }
 

@@ -8,6 +8,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
+import { Type } from "#app/enums/type";
 
 export enum Command {
   FIGHT = 0,
@@ -46,7 +47,7 @@ export default class CommandUiHandler extends UiHandler {
 
     this.teraButton = globalScene.add.sprite(-35, 15, "button_tera");
     this.teraButton.setName("terrastallize-button");
-    this.teraButton.setScale(1.8);
+    this.teraButton.setScale(1.5);
     this.teraButton.setFrame("fire");
     this.commandsContainer.add(this.teraButton);
 
@@ -73,15 +74,13 @@ export default class CommandUiHandler extends UiHandler {
     }
 
     if (this.canTera()) {
-      this.teraButton.setFrame(globalScene.getField()[this.fieldIndex].getTeraType().toString().toLowerCase());
+      this.teraButton.setVisible(true);
+      this.teraButton.setFrame(Type[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
     } else {
       this.teraButton.setVisible(false);
-    }
-
-    if (this.canTera()) {
-      this.teraButton.setFrame(globalScene.getField()[this.fieldIndex].getTeraType().toString().toLowerCase());
-    } else {
-      this.teraButton.setVisible(false);
+      if (this.cursor === Command.TERA) {
+        this.setCursor(Command.FIGHT);
+      }
     }
 
     const messageHandler = this.getUi().getMessageHandler();
@@ -131,9 +130,6 @@ export default class CommandUiHandler extends UiHandler {
             success = true;
             break;
           case Command.TERA:
-            if ((globalScene.getCurrentPhase() as CommandPhase).checkFightOverride()) {
-              return true;
-            }
             ui.setMode(Mode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex(), Command.TERA);
             success = true;
             break;
@@ -178,7 +174,10 @@ export default class CommandUiHandler extends UiHandler {
   }
 
   canTera(): boolean {
-    return !!globalScene.getModifiers(TerastallizeAccessModifier).length;
+    const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
+    const currentTeras = globalScene.getPlayerParty().filter(p => p.isTerastallized).length;
+    const plannedTera = globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA;
+    return hasTeraMod && currentTeras < 1 && !plannedTera;
   }
 
   getCursor(): integer {
@@ -200,7 +199,12 @@ export default class CommandUiHandler extends UiHandler {
       this.commandsContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 56 : 0), 8 + (cursor >= 2 ? 16 : 0));
+    if (cursor === Command.TERA) {
+      this.cursorObj.setVisible(false);
+    } else {
+      this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 56 : 0), 8 + (cursor >= 2 ? 16 : 0));
+      this.cursorObj.setVisible(true);
+    }
 
     return changed;
   }

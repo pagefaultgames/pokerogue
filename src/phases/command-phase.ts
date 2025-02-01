@@ -118,9 +118,8 @@ export class CommandPhase extends FieldPhase {
     let success: boolean = false;
 
     switch (command) {
-      case Command.FIGHT:
       case Command.TERA:
-        console.log("Fight From Command", command);
+      case Command.FIGHT:
         let useStruggle = false;
         const turnMove: TurnMove | undefined = (args.length === 2 ? (args[1] as TurnMove) : undefined);
         if (cursor === -1 ||
@@ -139,6 +138,7 @@ export class CommandPhase extends FieldPhase {
           }
 
           const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
+          const preTurnCommand: TurnCommand = { command: command, targets: [ this.fieldIndex ], skip: command === Command.FIGHT };
           const moveTargets: MoveTargetSet = turnMove === undefined ? getMoveTargets(playerPokemon, moveId) : { targets: turnMove.targets, multiple: turnMove.targets.length > 1 };
           if (!moveId) {
             turnCommand.targets = [ this.fieldIndex ];
@@ -154,6 +154,7 @@ export class CommandPhase extends FieldPhase {
           } else {
             globalScene.unshiftPhase(new SelectTargetPhase(this.fieldIndex));
           }
+          globalScene.currentBattle.preTurnCommands[this.fieldIndex] = preTurnCommand;
           globalScene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
           success = true;
         } else if (cursor < playerPokemon.getMoveset().length) {

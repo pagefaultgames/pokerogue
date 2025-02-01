@@ -324,9 +324,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.lastTeraType = pokemon.getTeraType();
 
     this.teraIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 2);
-    this.teraIcon.setVisible(this.lastTeraType !== Type.UNKNOWN);
+    this.teraIcon.setVisible(pokemon.isTerastallized);
     this.teraIcon.on("pointerover", () => {
-      if (this.lastTeraType !== Type.UNKNOWN) {
+      if (pokemon.isTerastallized) {
         globalScene.ui.showTooltip("", i18next.t("fightUiHandler:teraHover", { type: i18next.t(`pokemonInfo:Type.${Type[this.lastTeraType]}`) }));
       }
     });
@@ -542,7 +542,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
       }
 
-      const teraType = pokemon.getTeraType();
+      const teraType = pokemon.isTerastallized ? pokemon.getTeraType() : Type.UNKNOWN;
       const teraTypeUpdated = this.lastTeraType !== teraType;
 
       if (teraTypeUpdated) {

@@ -19,7 +19,7 @@ import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { Type } from "#enums/type";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
+import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
@@ -46,7 +46,7 @@ import { DexAttr } from "#app/system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { getNatureStatMultiplier } from "#app/data/nature";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms";
 import { TerrainType } from "#app/data/terrain";
 import type { TrainerSlot } from "#app/data/trainer-config";
 import Overrides from "#app/overrides";
@@ -141,6 +141,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionGender: Gender;
   public fusionLuck: integer;
   public fusionCustomPokemonData: CustomPokemonData | null;
+  public fusionTeraType: Type;
 
   private summonDataPrimer: PokemonSummonData | null;
 
@@ -238,6 +239,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
       this.fusionCustomPokemonData = dataSource.fusionCustomPokemonData;
+      this.fusionTeraType = dataSource.teraType;
       this.usedTMs = dataSource.usedTMs ?? [];
       this.customPokemonData = new CustomPokemonData(dataSource.customPokemonData);
       this.teraType = dataSource.teraType;
@@ -329,7 +331,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const getSprite = (hasShadow?: boolean) => {
       const ret = globalScene.addPokemonSprite(this, 0, 0, `pkmn__${this.isPlayer() ? "back__" : ""}sub`, undefined, true);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, teraColor: getTypeRgb(this.getTeraType()) });
+      ret.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, teraColor: getTypeRgb(this.getTeraType()), isTerastallized: this.isTerastallized });
       return ret;
     };
 
@@ -697,7 +699,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   updateSpritePipelineData(): void {
-    [ this.getSprite(), this.getTintSprite() ].filter(s => !!s).map(s => s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType()));
+    [ this.getSprite(), this.getTintSprite() ].filter(s => !!s).map(s => {
+      s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
+      s.pipelineData["isTerastallized"] = this.isTerastallized;
+    });
     this.updateInfo(true);
   }
 
@@ -1255,7 +1260,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (includeTeraType && this.isTerastallized) {
       const teraType = this.getTeraType();
-      if (teraType !== Type.UNKNOWN && !(forDefend && teraType === Type.STELLAR)) { // Stellar tera uses its original types defensively
+      if (this.isTerastallized && !(forDefend && teraType === Type.STELLAR)) { // Stellar tera uses its original types defensively
         types.push(teraType);
         if (forDefend) {
           return types;
@@ -1561,18 +1566,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the pokemon's current tera {@linkcode Type}, or `Type.UNKNOWN` if the pokemon is not terastallized
    */
   getTeraType(): Type {
-    return this.teraType;
-    // this.scene can be undefined for a fainted mon in doubles
-    if (this.scene !== undefined) {
-      const teraModifier = globalScene.findModifier(m => m instanceof TerastallizeModifier
-        && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
-      // return teraType
-      if (teraModifier) {
-        return teraModifier.teraType;
+    if (this.species.speciesId === Species.TERAPAGOS || this.fusionSpecies?.speciesId === Species.TERAPAGOS) {
+      return Type.STELLAR;
+    } else if (this.species.speciesId === Species.OGERPON || this.fusionSpecies?.speciesId === Species.OGERPON) {
+      const ogerponForm = this.species.speciesId === Species.OGERPON ? this.formIndex : this.fusionFormIndex;
+      switch (ogerponForm) {
+        case 0:
+        case 4:
+          return Type.GRASS;
+        case 1:
+        case 5:
+          return Type.WATER;
+        case 2:
+        case 6:
+          return Type.FIRE;
+        case 3:
+        case 7:
+          return Type.ROCK;
       }
+    } else if (this.species.speciesId === Species.SHEDINJA || this.fusionSpecies?.speciesId === Species.SHEDINJA) {
+      return Type.BUG;
     }
-    // if scene is undefined, or if teraModifier is considered false, then return unknown type
-    return Type.UNKNOWN;
+    return this.teraType;
   }
 
   public isGrounded(): boolean {
@@ -2751,7 +2766,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       stabMultiplier.value += 0.5;
     }
     applyMoveAttrs(CombinedPledgeStabBoostAttr, source, this, move, stabMultiplier);
-    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === moveType) {
+    if (source.isTerastallized && sourceTeraType === moveType) {
       stabMultiplier.value += 0.5;
     }
 
@@ -3781,7 +3796,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   resetBattleData(): void {
     this.battleData = new PokemonBattleData();
-    this.isTerastallized = true;
+    const wasTerastallized = this.isTerastallized;
+    this.isTerastallized = false;
+    if (wasTerastallized) {
+      this.updateSpritePipelineData();
+      globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
+    }
   }
 
   resetBattleSummonData(): void {
@@ -4544,6 +4564,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
         newPokemon.fusionLuck = this.fusionLuck;
+        newPokemon.fusionTeraType = this.teraType;
         newPokemon.usedTMs = this.usedTMs;
 
         globalScene.getPlayerParty().push(newPokemon);
@@ -4715,6 +4736,7 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
+  public initialTeamIndex: integer;
   /** To indicate if the instance was populated with a dataSource -> e.g. loaded & populated from session data */
   public readonly isPopulatedFromDataSource: boolean;
 
@@ -4724,6 +4746,7 @@ export class EnemyPokemon extends Pokemon {
       undefined, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
+    this.initialTeamIndex = globalScene.currentBattle.enemyParty.length;
     this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
     if (boss) {
       this.setBoss(boss, dataSource?.bossSegments);

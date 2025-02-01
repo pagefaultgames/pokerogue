@@ -351,7 +351,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
 
     const data = sprite.pipelineData;
     const tone = data["tone"] as number[];
-    const teraColor = data["teraColor"] as integer[] ?? [ 0, 0, 0 ];
+    const teraColor = (data["isTerastallized"] as boolean) ? (data["teraColor"] as integer[] ?? [ 0, 0, 0 ]) : [ 0, 0, 0 ];
     const hasShadow = data["hasShadow"] as boolean;
     const yShadowOffset = data["yShadowOffset"] as number;
     const ignoreFieldPos = data["ignoreFieldPos"] as boolean;
