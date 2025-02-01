@@ -4,8 +4,8 @@
 			"image": "bruno.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 65,
-				"h": 65
+				"w": 68,
+				"h": 68
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 55,
-						"h": 65
+						"w": 65,
+						"h": 68
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 55,
-						"h": 65
+						"w": 65,
+						"h": 68
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 55,
-						"h": 65
+						"w": 65,
+						"h": 68
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:313bf18298ad7a01c1488448527d52fc:88d7d99e2c66f14f357f1942909a5183:aeb55e30992938f494b6cd2420158dda$"
+		"smartupdate": "$TexturePacker:SmartUpdate:f692676a166fc1915532cd94d5799af4:fb833f76fb6797474657726bb59a7eee:aeb55e30992938f494b6cd2420158dda$"
 	}
 }
