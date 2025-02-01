@@ -1259,29 +1259,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!types.length || !includeTeraType) {
       if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
         this.summonData.types.forEach(t => types.push(t));
-      } else if (this.customPokemonData.types && this.customPokemonData.types.length > 0) {
-        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
-        types.push(this.customPokemonData.types[0]);
-
-        // Fusing a Pokemon onto something with "permanently changed" types will still apply the fusion's types as normal
-        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
-        if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also had "permanently changed" types
-          const fusionMETypes = this.fusionCustomPokemonData?.types;
-          if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
-            types.push(fusionMETypes[1]);
-          } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
-            types.push(fusionMETypes[0]);
-          } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== types[0]) {
-            types.push(fusionSpeciesForm.type2);
-          } else if (fusionSpeciesForm.type1 !== types[0]) {
-            types.push(fusionSpeciesForm.type1);
-          }
-        }
-
-        if (types.length === 1 && this.customPokemonData.types.length >= 2) {
-          types.push(this.customPokemonData.types[1]);
-        }
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
 
@@ -1305,6 +1282,38 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (types.length === 1 && speciesForm.type2 !== null) {
           types.push(speciesForm.type2);
+        }
+
+        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
+        if (this.customPokemonData.types && this.customPokemonData.types.length > 0) {
+
+          if (this.customPokemonData.types[0] !== Type.UNKNOWN) {
+            types[0] = this.customPokemonData.types[0];
+          }
+
+          // Fusing a Pokemon onto something with "permanently changed" types will still apply the fusion's types as normal
+          const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
+          if (fusionSpeciesForm) {
+            // Check if the fusion Pokemon also had "permanently changed" types
+            const fusionMETypes = this.fusionCustomPokemonData?.types;
+            if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0] && fusionMETypes[1] !== Type.UNKNOWN) {
+              types.push(fusionMETypes[1]);
+            } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0] && fusionMETypes[0] !== Type.UNKNOWN) {
+              types.push(fusionMETypes[0]);
+            } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== types[0]) {
+              types.push(fusionSpeciesForm.type2);
+            } else if (fusionSpeciesForm.type1 !== types[0]) {
+              types.push(fusionSpeciesForm.type1);
+            }
+          }
+
+          if (this.customPokemonData.types.length >= 2 && this.customPokemonData.types[1] !== Type.UNKNOWN) {
+            if (types.length === 1) {
+              types.push(this.customPokemonData.types[1]);
+            } else {
+              types[1] = this.customPokemonData.types[1];
+            }
+          }
         }
       }
     }
@@ -4564,31 +4573,11 @@ export class PlayerPokemon extends Pokemon {
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
-      const previousFormIndex = this.formIndex;
       this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
       this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) { // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
-      }
-
-      // In cases where a form change updates the type of a Pokemon from its previous form (Arceus, Silvally, Castform, etc.),
-      // persist that type change in customPokemonData if necessary
-      const baseForm = this.species.forms[previousFormIndex];
-      const baseFormTypes = [ baseForm.type1, baseForm.type2 ];
-      if (this.customPokemonData.types.length > 0) {
-        if (this.getSpeciesForm().type1 !== baseFormTypes[0]) {
-          this.customPokemonData.types[0] = this.getSpeciesForm().type1;
-        }
-
-        const type2 = this.getSpeciesForm().type2;
-        if (!isNullOrUndefined(type2) && type2 !== baseFormTypes[1]) {
-          if (this.customPokemonData.types.length > 1) {
-            this.customPokemonData.types[1] = type2;
-          } else {
-            this.customPokemonData.types.push(type2);
-          }
-        }
       }
 
       this.compatibleTms.splice(0, this.compatibleTms.length);
