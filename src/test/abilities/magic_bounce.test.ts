@@ -47,8 +47,8 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should not bounce moves while the target is in the semi-invulnerable state", async () => {
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
-    await game.override.moveset([ Moves.GROWL ]);
-    await game.override.enemyMoveset( [ Moves.FLY ]);
+    game.override.moveset([ Moves.GROWL ]);
+    game.override.enemyMoveset( [ Moves.FLY ]);
 
     game.move.select(Moves.GROWL);
     await game.forceEnemyMove(Moves.FLY);
