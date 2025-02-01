@@ -149,16 +149,21 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should cause stomping tantrum to double in power if the bounced move fails", async () => {
-    game.override.moveset([ Moves.SPLASH ]);
+    game.override.battleType("single");
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("BerryPhase");
+    const stomping_tantrum = allMoves[Moves.STOMPING_TANTRUM];
+    vi.spyOn(stomping_tantrum, "calculateBattlePower");
 
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+    game.move.select(Moves.CHARM);
+    await game.toNextTurn();
+
+    game.move.select(Moves.STOMPING_TANTRUM);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(150);
   });
 
-  it("should properly cause the enemy's stomping tantrum to be doubled in power after bouncing", async () => {
+  it("should properly cause the enemy's stomping tantrum to be doubled in power after bouncing and failing", async () => {
     game.override.battleType("double");
     game.override.enemyMoveset([ Moves.GROWL, Moves.STOMPING_TANTRUM, Moves.CHARM, Moves.SPLASH ]);
     game.override.enemyLevel(50);
@@ -191,7 +196,7 @@ describe("Abilities - Magic Bounce", () => {
     // Turn 1 - thunder wave immunity test
     game.move.select(Moves.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.status).toBeNull();
+    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
 
     // Turn 2 - soundproof immunity test
     game.move.select(Moves.GROWL);
@@ -213,36 +218,36 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should take the accuracy of the magic bounce user into account", async () => {
     game.override.moveset([ Moves.SPORE ]);
-    const opponent = game.scene.getEnemyPokemon()!;
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    const opponent = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(opponent, "getAccuracyMultiplier").mockReturnValue(0);
     game.move.select(Moves.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.status).toBeNull();
+    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
   });
 
   it("should follow speed order, respecting trick room, when reflecting field effect moves", async () => {
     game.override.battleType("double");
     game.override.moveset([ Moves.STICKY_WEB, Moves.SPLASH, Moves.TRICK_ROOM ]);
 
-    game.classicMode.startBattle([ Species.MAGIKARP, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.MAGIKARP ]);
     const [ enemy_1, enemy_2 ] = game.scene.getEnemyField();
-    enemy_1.stats[Stat.SPD] += enemy_2.stats[Stat.SPD] + 1;
+    enemy_1.setStat(Stat.SPD, enemy_2.getStat(Stat.SPD) + 1);
 
     // turn 1
     game.move.select(Moves.STICKY_WEB, 0);
     game.move.select(Moves.TRICK_ROOM, 1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()).toBe(enemy_1);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getFieldIndex()).toBe(enemy_1.getFieldIndex());
     game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER, true);
 
     // turn 2
     game.move.select(Moves.STICKY_WEB, 0);
     game.move.select(Moves.TRICK_ROOM, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()).toBe(enemy_2);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getFieldIndex()).toBe(enemy_2.getFieldIndex());
   });
 });
 
