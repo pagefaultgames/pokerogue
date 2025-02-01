@@ -68437,7 +68437,7 @@ interface SpeciesTmMoves {
   [key: integer]: (Moves | [string | Species, Moves])[];
 }
 
-function transposeTmSpecies(tmSpecies: TmSpecies): SpeciesTmMoves {
+function transposeTmSpecies(): SpeciesTmMoves {
   const flipped: SpeciesTmMoves = {};
 
   for (const move in tmSpecies) {
