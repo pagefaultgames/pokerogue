@@ -68471,7 +68471,7 @@ function transposeTmSpecies(): SpeciesTmMoves {
   return flipped;
 }
 
-export const speciesTmMoves: SpeciesTmMoves = transposeTmSpecies(tmSpecies);
+export const speciesTmMoves: SpeciesTmMoves = transposeTmSpecies();
 
 interface TmPoolTiers {
     [key: integer]: ModifierTier
