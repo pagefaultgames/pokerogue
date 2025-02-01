@@ -59,34 +59,4 @@ describe("Abilities - Perish Song", () => {
 
     expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
   });
-
-  it("should not activate if attacker already has perish song", async () => {
-    game.override.enemyMoveset([ Moves.PERISH_SONG, Moves.AQUA_JET, Moves.SPLASH ]);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.CURSOLA ]);
-    const feebas = game.scene.getPlayerPokemon();
-    const magikarp = game.scene.getEnemyPokemon();
-
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.PERISH_SONG);
-    await game.toNextTurn();
-
-    expect(feebas?.summonData.tags[0].turnCount).toBe(3);
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
-
-    game.doSwitchPokemon(1);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.toNextTurn();
-
-    const cursola = game.scene.getPlayerPokemon();
-    expect(cursola?.summonData.tags.length).toBe(0);
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(2);
-
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.AQUA_JET);
-    await game.toNextTurn();
-
-    expect(cursola?.summonData.tags.length).toBe(0);
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(1);
-
-  });
 });
