@@ -1272,7 +1272,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         let secondType: Type | null = null;
 
         if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also had permanently changes when determining the fusion types
+          // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
           const fusionType1 = (this.fusionCustomPokemonData?.types && this.fusionCustomPokemonData.types.length > 0 && this.fusionCustomPokemonData.types[0] !== Type.UNKNOWN)
             ? this.fusionCustomPokemonData.types[0] : fusionSpeciesForm.type1;
           const fusionType2 = (this.fusionCustomPokemonData?.types && this.fusionCustomPokemonData.types.length > 1 && this.fusionCustomPokemonData.types[1] !== Type.UNKNOWN)
