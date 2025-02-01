@@ -148,22 +148,6 @@ describe("Abilities - Magic Bounce", () => {
     expect(game.scene.getEnemyPokemon()!.getTag(BattlerTagType.CURSED)).toBeDefined();
   });
 
-  // todo: a move reflected by magic bounce counts as though it failed.
-
-  it("should not count the bounced move as the last move used", async () => {
-    game.override.enemyMoveset([ Moves.INSTRUCT, Moves.GROWL, Moves.SPLASH ]);
-    game.override.battleType("double");
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.MAGIKARP ]);
-
-    game.move.select(Moves.GROWL, 0);
-    game.move.select(Moves.SPLASH, 1);
-    game.forceEnemyMove(Moves.SPLASH);
-    game.forceEnemyMove(Moves.INSTRUCT);
-    game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2 ]);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getEnemyPokemon()!.getLastXMoves(1)[0].move).toEqual([ Moves.SPLASH ]);
-  });
-
   it("should cause stomping tantrum to double in power if the bounced move fails", async () => {
     game.override.moveset([ Moves.SPLASH ]);
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
