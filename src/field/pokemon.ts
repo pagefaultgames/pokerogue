@@ -2237,7 +2237,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    // Bosses never get self ko moves
+    // Bosses never get self ko moves or Pain Split
     if (this.isBoss()) {
       movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr));
       movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(HpSplitAttr));
