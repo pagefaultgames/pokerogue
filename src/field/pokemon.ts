@@ -1261,59 +1261,37 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.summonData.types.forEach(t => types.push(t));
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
-
-        types.push(speciesForm.type1);
-
         const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
+        const overrideTypes = this.customPokemonData.types && this.customPokemonData.types.length > 0;
+
+        // First type, checking for "permanently changed" types from ME
+        const firstType = (overrideTypes && this.customPokemonData.types[0] !== Type.UNKNOWN) ? this.customPokemonData.types[0] : speciesForm.type1;
+        types.push(firstType);
+
+        // Second type
+        let secondType: Type | null = null;
+
         if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also had "permanently changed" types
-          // Otherwise, use standard fusion type logic
-          const fusionMETypes = this.fusionCustomPokemonData?.types;
-          if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
-            types.push(fusionMETypes[1]);
-          } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
-            types.push(fusionMETypes[0]);
-          } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1) {
-            types.push(fusionSpeciesForm.type2);
-          } else if (fusionSpeciesForm.type1 !== speciesForm.type1) {
-            types.push(fusionSpeciesForm.type1);
+          // Check if the fusion Pokemon also had "permanently changed" types when determining the fusion types
+          const fusionType1 = (this.fusionCustomPokemonData?.types && this.fusionCustomPokemonData.types.length > 0 && this.fusionCustomPokemonData.types[0] !== Type.UNKNOWN)
+            ? this.fusionCustomPokemonData.types[0] : fusionSpeciesForm.type1;
+          const fusionType2 = (this.fusionCustomPokemonData?.types && this.fusionCustomPokemonData.types.length > 1 && this.fusionCustomPokemonData.types[1] !== Type.UNKNOWN)
+            ? this.fusionCustomPokemonData.types[1] : fusionSpeciesForm.type2;
+
+          // Assign second type if the fusion can provide one
+          if (fusionType2 !== null && fusionType2 !== types[0]) {
+            secondType = fusionType2;
+          } else if (fusionType1 !== types[0]) {
+            secondType = fusionType1;
           }
+        } else {
+          // If not a fusion, just get the second type from the species, checking for overrides
+          secondType = (overrideTypes && this.customPokemonData.types.length > 1 && this.customPokemonData.types[1] !== Type.UNKNOWN)
+            ? this.customPokemonData.types[0] : speciesForm.type1;
         }
 
-        if (types.length === 1 && speciesForm.type2 !== null) {
-          types.push(speciesForm.type2);
-        }
-
-        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
-        if (this.customPokemonData.types && this.customPokemonData.types.length > 0) {
-
-          if (this.customPokemonData.types[0] !== Type.UNKNOWN) {
-            types[0] = this.customPokemonData.types[0];
-          }
-
-          // Fusing a Pokemon onto something with "permanently changed" types will still apply the fusion's types as normal
-          const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
-          if (fusionSpeciesForm) {
-            // Check if the fusion Pokemon also had "permanently changed" types
-            const fusionMETypes = this.fusionCustomPokemonData?.types;
-            if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0] && fusionMETypes[1] !== Type.UNKNOWN) {
-              types.push(fusionMETypes[1]);
-            } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0] && fusionMETypes[0] !== Type.UNKNOWN) {
-              types.push(fusionMETypes[0]);
-            } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== types[0]) {
-              types.push(fusionSpeciesForm.type2);
-            } else if (fusionSpeciesForm.type1 !== types[0]) {
-              types.push(fusionSpeciesForm.type1);
-            }
-          }
-
-          if (this.customPokemonData.types.length >= 2 && this.customPokemonData.types[1] !== Type.UNKNOWN) {
-            if (types.length === 1) {
-              types.push(this.customPokemonData.types[1]);
-            } else {
-              types[1] = this.customPokemonData.types[1];
-            }
-          }
+        if (secondType) {
+          types.push(secondType);
         }
       }
     }
