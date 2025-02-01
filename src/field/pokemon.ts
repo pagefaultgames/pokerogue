@@ -1262,17 +1262,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
         const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
-        const overrideTypes = this.customPokemonData.types && this.customPokemonData.types.length > 0;
+        const customTypes = this.customPokemonData.types?.length > 0;
 
         // First type, checking for "permanently changed" types from ME
-        const firstType = (overrideTypes && this.customPokemonData.types[0] !== Type.UNKNOWN) ? this.customPokemonData.types[0] : speciesForm.type1;
+        const firstType = (customTypes && this.customPokemonData.types[0] !== Type.UNKNOWN) ? this.customPokemonData.types[0] : speciesForm.type1;
         types.push(firstType);
 
         // Second type
         let secondType: Type | null = null;
 
         if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also had "permanently changed" types when determining the fusion types
+          // Check if the fusion Pokemon also had permanently changes when determining the fusion types
           const fusionType1 = (this.fusionCustomPokemonData?.types && this.fusionCustomPokemonData.types.length > 0 && this.fusionCustomPokemonData.types[0] !== Type.UNKNOWN)
             ? this.fusionCustomPokemonData.types[0] : fusionSpeciesForm.type1;
           const fusionType2 = (this.fusionCustomPokemonData?.types && this.fusionCustomPokemonData.types.length > 1 && this.fusionCustomPokemonData.types[1] !== Type.UNKNOWN)
@@ -1285,8 +1285,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             secondType = fusionType1;
           }
         } else {
-          // If not a fusion, just get the second type from the species, checking for overrides
-          secondType = (overrideTypes && this.customPokemonData.types.length > 1 && this.customPokemonData.types[1] !== Type.UNKNOWN)
+          // If not a fusion, just get the second type from the species, checking for permanent changes from ME
+          secondType = (customTypes && this.customPokemonData.types.length > 1 && this.customPokemonData.types[1] !== Type.UNKNOWN)
             ? this.customPokemonData.types[1] : speciesForm.type2;
         }
 
