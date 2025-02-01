@@ -1226,7 +1226,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Ability filter
       const abilities = [ container.species.ability1, container.species.ability2, container.species.abilityHidden ].map(a => allAbilities[a].name);
-      console.log(container.species.name, this.getStarterSpeciesId(container.species.speciesId));
       const passives = starterPassiveAbilities[this.getStarterSpeciesId(container.species.speciesId)] ?? {} as PassiveAbilities;
 
       const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
