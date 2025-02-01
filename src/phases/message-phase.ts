@@ -33,12 +33,4 @@ export class MessagePhase extends Phase {
       globalScene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt, this.promptDelay);
     }
   }
-
-  end() {
-    if (globalScene.abilityBar.shown) {
-      globalScene.abilityBar.hide();
-    }
-
-    super.end();
-  }
 }
