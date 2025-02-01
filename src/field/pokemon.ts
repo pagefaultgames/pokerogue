@@ -1287,7 +1287,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         } else {
           // If not a fusion, just get the second type from the species, checking for overrides
           secondType = (overrideTypes && this.customPokemonData.types.length > 1 && this.customPokemonData.types[1] !== Type.UNKNOWN)
-            ? this.customPokemonData.types[0] : speciesForm.type2;
+            ? this.customPokemonData.types[1] : speciesForm.type2;
         }
 
         if (secondType) {
