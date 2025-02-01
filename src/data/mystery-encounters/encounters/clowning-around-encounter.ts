@@ -127,6 +127,13 @@ export const ClowningAroundEncounter: MysteryEncounter =
       encounter.setDialogueToken("ability", new Ability(ability, 3).name);
       encounter.misc = { ability };
 
+      // Decide the random types for Blacephalon. They should not be the same.
+      const firstType: number = randSeedInt(18);
+      let secondType: number = randSeedInt(17);
+      if ( secondType >= firstType ) {
+        secondType++;
+      }
+
       encounter.enemyPartyConfigs.push({
         trainerConfig: clownConfig,
         pokemonConfigs: [ // Overrides first 2 pokemon to be Mr. Mime and Blacephalon
@@ -137,7 +144,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           },
           { // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
             species: getPokemonSpecies(Species.BLACEPHALON),
-            customPokemonData: new CustomPokemonData({ ability: ability, types: [ randSeedInt(18), randSeedInt(18) ]}),
+            customPokemonData: new CustomPokemonData({ ability: ability, types: [ firstType, secondType ]}),
             isBoss: true,
             moveSet: [ Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN ]
           },
