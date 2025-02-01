@@ -1490,6 +1490,8 @@ export default class BattleScene extends SceneBase {
           return 0; // Don't give trainers Battle Bond Greninja
         }
         return Utils.randSeedInt(2);
+      case Species.URSHIFU:
+        return Utils.randSeedInt(2);
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
       case Species.MINIOR:
