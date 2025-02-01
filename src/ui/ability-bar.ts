@@ -41,7 +41,6 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
   startTween(config: any, text?: string): Promise<void> {
     this.setVisible(true);
-    this.shown = true;
     if (text) {
       this.abilityBarText.setText(text);
     }
@@ -73,11 +72,11 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     }, text);
   }
 
-  hide(): void {
-    this.startTween({
+  hide(): Promise<void> {
+    return this.startTween({
       targets: this,
       x: -91,
-      duration: 500,
+      duration: 200,
       ease: "Sine.easeIn",
       onComplete: () => {
         this.setVisible(false);

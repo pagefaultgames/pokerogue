@@ -44,6 +44,7 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
+import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -4881,32 +4882,32 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
 
       globalScene.setPhaseQueueSplice();
 
+      if (attr.showAbility && !simulated) {
+        queueShowAbility(pokemon, passive);
+      }
+      const message = attr.getTriggerMessage(pokemon, ability.name, args);
+      if (message) {
+        if (!simulated) {
+          globalScene.queueMessage(message);
+        }
+      }
+      messages.push(message!);
+
       let result = applyFunc(attr, passive);
       // TODO Remove this when promises get reworked
       if (result instanceof Promise) {
         result = await result;
       }
       if (result) {
+        globalScene.phaseQueue;
+        queueHideAbility(pokemon, passive);
+
         if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
           pokemon.summonData.abilitiesApplied.push(ability.id);
         }
         if (pokemon.battleData && !simulated && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
           pokemon.battleData.abilitiesApplied.push(ability.id);
         }
-        if (attr.showAbility && !simulated) {
-          if (showAbilityInstant) {
-            globalScene.abilityBar.showAbility(pokemon, passive);
-          } else {
-            queueShowAbility(pokemon, passive);
-          }
-        }
-        const message = attr.getTriggerMessage(pokemon, ability.name, args);
-        if (message) {
-          if (!simulated) {
-            globalScene.queueMessage(message);
-          }
-        }
-        messages.push(message!);
       }
     }
     globalScene.clearPhaseQueueSplice();
@@ -5296,6 +5297,11 @@ export function applyPostItemLostAbAttrs(attrType: Constructor<PostItemLostAbAtt
 
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
+  globalScene.clearPhaseQueueSplice();
+}
+
+function queueHideAbility(pokemon: Pokemon, passive: boolean): void {
+  globalScene.unshiftPhase(new HideAbilityPhase(pokemon.id, passive));
   globalScene.clearPhaseQueueSplice();
 }
 
