@@ -4746,7 +4746,7 @@ export class EnemyPokemon extends Pokemon {
       undefined, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainerSlot = trainerSlot;
-    this.initialTeamIndex = globalScene.currentBattle.enemyParty.length;
+    this.initialTeamIndex = globalScene.currentBattle?.enemyParty.length ?? 0;
     this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
     if (boss) {
       this.setBoss(boss, dataSource?.bossSegments);
