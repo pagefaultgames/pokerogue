@@ -205,15 +205,15 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should bounce back a move before the accuracy check", async () => {
-    game.override.moveset([ Moves.SPLASH ]);
+    game.override.moveset([ Moves.SPORE ]);
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const attacker = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(attacker, "getAccuracyMultiplier").mockReturnValue(0.0);
-    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
   });
 
   it("should take the accuracy of the magic bounce user into account", async () => {
