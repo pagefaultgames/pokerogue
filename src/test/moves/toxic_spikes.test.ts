@@ -132,7 +132,7 @@ describe("Moves - Toxic Spikes", () => {
     const sessionData : SessionSaveData = gameData["getSessionSaveData"]();
     localStorage.setItem("sessionTestData", encrypt(JSON.stringify(sessionData), true));
     const recoveredData : SessionSaveData = gameData.parseSessionData(decrypt(localStorage.getItem("sessionTestData")!, true));
-    gameData.loadSession(0, recoveredData);
+    await gameData.loadSession(0, recoveredData);
 
     expect(sessionData.arena.tags).toEqual(recoveredData.arena.tags);
     localStorage.removeItem("sessionTestData");
