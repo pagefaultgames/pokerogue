@@ -1962,7 +1962,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.formIndex = 1; // G-Max Snorlax
     }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.INCINEROAR, Species.DECIDUEYE_HISUI ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.INCINEROAR, Species.HISUI_DECIDUEYE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.gender = Gender.MALE;
     }))
