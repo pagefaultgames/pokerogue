@@ -176,6 +176,10 @@ export abstract class AbAttr {
     this.extraCondition = condition;
     return this;
   }
+
+  willSucceed(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return true;
+  }
 }
 
 export class BlockRecoilDamageAttr extends AbAttr {
