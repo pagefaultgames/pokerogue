@@ -1372,6 +1372,7 @@ export default class BattleScene extends SceneBase {
 
         for (const pokemon of this.getPlayerParty()) {
           pokemon.resetBattleData();
+          pokemon.resetTera();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
         }
 

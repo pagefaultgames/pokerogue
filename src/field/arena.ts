@@ -44,6 +44,7 @@ export class Arena {
   public bgm: string;
   public ignoreAbilities: boolean;
   public ignoringEffectSource: BattlerIndex | null;
+  public playerTerasUsed: number;
 
   private lastTimeOfDay: TimeOfDay;
 
@@ -58,6 +59,7 @@ export class Arena {
     this.bgm = bgm;
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
+    this.playerTerasUsed = 0;
   }
 
   init() {

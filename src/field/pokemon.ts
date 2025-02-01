@@ -3796,12 +3796,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   resetBattleData(): void {
     this.battleData = new PokemonBattleData();
-    const wasTerastallized = this.isTerastallized;
-    this.isTerastallized = false;
-    if (wasTerastallized) {
-      this.updateSpritePipelineData();
-      globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
-    }
   }
 
   resetBattleSummonData(): void {
@@ -3811,6 +3805,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (globalScene) {
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangePostMoveTrigger, true);
+    }
+  }
+
+  resetTera(): void {
+    const wasTerastallized = this.isTerastallized;
+    this.isTerastallized = false;
+    if (wasTerastallized) {
+      this.updateSpritePipelineData();
+      globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
     }
   }
 

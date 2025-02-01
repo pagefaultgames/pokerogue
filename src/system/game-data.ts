@@ -1082,6 +1082,8 @@ export class GameData {
           globalScene.arena.terrain = sessionData.arena.terrain;
           globalScene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, globalScene.arena.terrain?.terrainType!, globalScene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
 
+          globalScene.arena.playerTerasUsed = sessionData.arena.playerTerasUsed;
+
           globalScene.arena.tags = sessionData.arena.tags;
           if (globalScene.arena.tags) {
             for (const tag of globalScene.arena.tags) {

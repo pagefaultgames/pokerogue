@@ -6,7 +6,8 @@ import { globalScene } from "#app/global-scene";
 import { Type } from "#app/enums/type";
 import { achvs } from "#app/system/achv";
 import { SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
-import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#app/data/battle-anims";
+import { CommonAnimPhase } from "./common-anim-phase";
 
 export class TeraPhase extends BattlePhase {
   public pokemon: Pokemon;
@@ -32,9 +33,8 @@ export class TeraPhase extends BattlePhase {
     // parent.add(teraburst);
     // this.pokemon.scene.time.delayedCall(Utils.fixedInt(Math.floor((1000 / 12) * 13)), () => teraburst.destroy());
 
-    new CommonBattleAnim(CommonAnim.TERASTALLIZE, this.pokemon).play();
     globalScene.queueMessage(getPokemonNameWithAffix(this.pokemon) + " terrastallized into a " + i18next.t(`pokemonInfo:Type.${Type[this.pokemon.teraType]}`) + " type!"); // TODO: Localize this
-    // this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.???));
+    globalScene.unshiftPhase(new CommonAnimPhase(this.pokemon.getBattlerIndex(), this.pokemon.getBattlerIndex(), CommonAnim.TERASTALLIZE, false));
 
     this.end();
   }
@@ -43,6 +43,10 @@ export class TeraPhase extends BattlePhase {
   end() {
     this.pokemon.isTerastallized = true;
     this.pokemon.updateSpritePipelineData();
+
+    if (this.pokemon.isPlayer()) {
+      globalScene.arena.playerTerasUsed += 1;
+    }
 
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangeTeraTrigger);
 
