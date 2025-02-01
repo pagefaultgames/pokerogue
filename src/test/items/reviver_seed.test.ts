@@ -1,3 +1,4 @@
+import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/move";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { PokemonInstantReviveModifier } from "#app/modifier/modifier";
@@ -105,9 +106,6 @@ describe("Items - Reviver Seed", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.damageAndUpdate(enemy.hp - 1);
 
-    const enemySeed = enemy.getHeldItems()[0] as PokemonInstantReviveModifier;
-    vi.spyOn(enemySeed, "apply");
-
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -140,5 +138,25 @@ describe("Items - Reviver Seed", () => {
 
     expect(playerSeed.apply).toHaveReturnedWith(false); // Reviver Seed triggers
     expect(player.isFainted()).toBeTruthy();
+  });
+
+  it("should not activate the holder's reviver seed from Destiny Bond fainting", async () => {
+    game.override
+      .enemyLevel(100)
+      .startingLevel(1)
+      .enemySpecies(Species.MAGIKARP)
+      .moveset(Moves.DESTINY_BOND)
+      .startingHeldItems([]) // reset held items to nothing so user doesn't revive and not trigger Destiny Bond
+      .enemyMoveset(Moves.TACKLE);
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+    const player = game.scene.getPlayerPokemon()!;
+    player.damageAndUpdate(player.hp - 1);
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.DESTINY_BOND);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(enemy.isFainted()).toBeTruthy();
   });
 });
