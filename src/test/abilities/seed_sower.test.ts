@@ -42,7 +42,7 @@ describe("Abilities - Seed Sower", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.terrain?.terrainType).toBe(TerrainType.GRASSY);
-  }, 20000);
+  });
 
   it("should trigger even when fainting", async () => {
     game.override.enemyMoveset([ Moves.TACKLE ])
@@ -55,7 +55,7 @@ describe("Abilities - Seed Sower", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.terrain?.terrainType).toBe(TerrainType.GRASSY);
-  }, 20000);
+  });
 
   it("should not trigger when targetted with status moves", async () => {
     game.override.enemyMoveset([ Moves.GROWL ]);
@@ -65,5 +65,5 @@ describe("Abilities - Seed Sower", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.terrain?.terrainType).not.toBe(TerrainType.GRASSY);
-  }, 20000);
+  });
 });

@@ -44,7 +44,7 @@ describe("Abilities - Perish Song", () => {
 
     expect(cursola?.summonData.tags[0].turnCount).toBe(3);
     expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
-  }, 20000);
+  });
 
   it("should trigger even when fainting", async () => {
     game.override.enemyMoveset([ Moves.AQUA_JET ])
@@ -58,7 +58,7 @@ describe("Abilities - Perish Song", () => {
     await game.toNextTurn();
 
     expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
-  }, 20000);
+  });
 
   it("should not activate if attacker already has perish song", async () => {
     game.override.enemyMoveset([ Moves.PERISH_SONG, Moves.AQUA_JET, Moves.SPLASH ]);
@@ -88,5 +88,5 @@ describe("Abilities - Perish Song", () => {
     expect(cursola?.summonData.tags.length).toBe(0);
     expect(magikarp?.summonData.tags[0].turnCount).toBe(1);
 
-  }, 20000);
+  });
 });

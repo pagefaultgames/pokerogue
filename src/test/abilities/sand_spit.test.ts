@@ -55,7 +55,7 @@ describe("Abilities - Sand Spit", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
-  }, 20000);
+  });
 
   it("should not trigger when targetted with status moves", async () => {
     game.override.enemyMoveset([ Moves.GROWL ]);
