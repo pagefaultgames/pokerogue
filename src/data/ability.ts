@@ -1003,8 +1003,12 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
     if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !move.hitsSubstitute(attacker, pokemon)) {
-      if (pokemon.getTag(BattlerTagType.PERISH_SONG) || attacker.getTag(BattlerTagType.PERISH_SONG)) {
+      if (attacker.getTag(BattlerTagType.PERISH_SONG)) {
         return false;
+      } else if (pokemon.getTag(BattlerTagType.PERISH_SONG)) {
+        if (!simulated) {
+          attacker.addTag(BattlerTagType.PERISH_SONG, this.turns);
+        }
       } else {
         if (!simulated) {
           attacker.addTag(BattlerTagType.PERISH_SONG, this.turns);
