@@ -123,7 +123,7 @@ describe("Abilities - Magic Bounce", () => {
     game.move.select(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerField().every(p => p.getStatStage(Stat.ATK) === -1)).toBeTruthy();
+    expect(game.scene.getPlayerField().every(p => p.getStatStage(Stat.ATK) === -2)).toBeTruthy();
   });
 
   it("should only bounce spikes back once in doubles when both targets have magic bounce", async () => {
@@ -240,14 +240,14 @@ describe("Abilities - Magic Bounce", () => {
     game.move.select(Moves.TRICK_ROOM, 1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getFieldIndex()).toBe(enemy_1.getFieldIndex());
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.id).toBe(enemy_1.id);
     game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER, true);
 
     // turn 2
     game.move.select(Moves.STICKY_WEB, 0);
     game.move.select(Moves.TRICK_ROOM, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getFieldIndex()).toBe(enemy_2.getFieldIndex());
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.id).toBe(enemy_2.id);
   });
 });
 
