@@ -27,7 +27,7 @@ export default class PokemonSpriteSparkleHandler {
       if (!s.visible || (s.parentContainer instanceof Pokemon && !s.parentContainer.parentContainer)) {
         continue;
       }
-      if (s.parentContainer instanceof Pokemon && !(s.parentContainer as Pokemon).isTerastallized) {
+      if (!(s.parentContainer instanceof Pokemon) || !(s.parentContainer as Pokemon).isTerastallized) {
         continue;
       }
       const pokemon = s.parentContainer instanceof Pokemon ? s.parentContainer as Pokemon : null;
