@@ -616,9 +616,9 @@ export class TrainerConfig {
       }
       case "plasma_2": {
         return {
-          [TrainerPoolTier.COMMON]: [ Species.MAGNEMITE, Species.ELGYEM, Species.JOLTIK, Species.VOLTORB, Species.GRIMER, Species.FERROSEED, Species.PORYGON, Species.BRONZOR, Species.SOLOSIS, Species.TYNAMO, Species.MUNNA ],
-          [TrainerPoolTier.UNCOMMON]: [ Species.BELDUM, Species.ROTOM, Species.ALOLA_GRIMER, Species.VAROOM, Species.ARCHEN, Species.TIRTOUGA, Species.HISUI_VOLTORB, Species.BLIPBUG, Species.GOLETT, Species.CASTFORM, Species.DURANT, Species.GRUBBIN ],
-          [TrainerPoolTier.RARE]: [ Species.MAGBY, Species.ELEKID, Species.DURALUDON, Species.PAWNIARD, Species.IRON_JUGULIS ]
+          [TrainerPoolTier.COMMON]: [ Species.MAGNEMITE, Species.GRIMER, Species.VOLTORB, Species.PORYGON, Species.BRONZOR, Species.MUNNA, Species.SOLOSIS, Species.JOLTIK, Species.FERROSEED, Species.TYNAMO, Species.ELGYEM ],
+          [TrainerPoolTier.UNCOMMON]: [ Species.BELDUM, Species.ROTOM, Species.TIRTOUGA, Species.ARCHEN, Species.GOLETT, Species.DURANT, Species.GRUBBIN, Species.BLIPBUG, Species.VAROOM, Species.ALOLA_GRIMER, Species.HISUI_VOLTORB ],
+          [TrainerPoolTier.RARE]: [ Species.ELEKID, Species.MAGBY, Species.PAWNIARD, Species.DURALUDON ]
         };
       }
       case "flare": {
@@ -1962,7 +1962,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.formIndex = 1; // G-Max Snorlax
     }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.HISUI_DECIDUEYE, Species.INCINEROAR ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.INCINEROAR, Species.DECIDUEYE_HISUI ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.gender = Gender.MALE;
     }))
@@ -2101,12 +2101,11 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.INCINEROAR, Species.GRIMMSNARL ], TrainerSlot.TRAINER, true, p => {
-      // Intimidate Incineroar, Prankster Grimmsnarl
       p.generateAndPopulateMoveset();
       if (p.species.speciesId === Species.INCINEROAR) {
-        p.abilityIndex = 2;
+        p.abilityIndex = 2; // Intimidate
       } else if (p.species.speciesId === Species.GRIMMSNARL) {
-        p.abilityIndex = 0;
+        p.abilityIndex = 0; // Prankster
       }
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.TERAPAGOS ], TrainerSlot.TRAINER, true, p => {
