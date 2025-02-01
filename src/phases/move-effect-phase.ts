@@ -197,7 +197,7 @@ export class MoveEffectPhase extends PokemonPhase {
        * (and not random target) and failed the hit check against its target (MISS), log the move
        * as FAILed or MISSed (depending on the conditions above) and end this phase.
        */
-      if (!hasActiveTargets || (mayBounce && !move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag) && !isImmune)) {
+      if (!hasActiveTargets || (!mayBounce && !move.hasAttr(VariableTargetAttr) && !move.isMultiTarget() && !targetHitChecks[this.targets[0]] && !targets[0].getTag(ProtectedTag) && !isImmune)) {
         this.stopMultiHit();
         if (hasActiveTargets) {
           globalScene.queueMessage(i18next.t("battle:attackMissed", { pokemonNameWithAffix: this.getFirstTarget() ? getPokemonNameWithAffix(this.getFirstTarget()!) : "" }));
