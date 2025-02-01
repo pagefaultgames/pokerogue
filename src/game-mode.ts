@@ -1,14 +1,18 @@
 import i18next from "i18next";
-import { classicFixedBattles, FixedBattleConfig, FixedBattleConfigs } from "./battle";
-import BattleScene from "./battle-scene";
-import { allChallenges, applyChallenges, Challenge, ChallengeType, copyChallenge } from "./data/challenge";
-import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
-import { Arena } from "./field/arena";
+import type { FixedBattleConfigs } from "./battle";
+import { classicFixedBattles, FixedBattleConfig } from "./battle";
+import type { Challenge } from "./data/challenge";
+import { allChallenges, applyChallenges, ChallengeType, copyChallenge } from "./data/challenge";
+import type PokemonSpecies from "./data/pokemon-species";
+import { allSpecies } from "./data/pokemon-species";
+import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
 import * as Utils from "./utils";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
+import { globalScene } from "#app/global-scene";
+import { getDailyStartingBiome } from "./data/daily-run";
 
 export enum GameModes {
   CLASSIC,
@@ -109,16 +113,15 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * @param scene current BattleScene
    * @returns either:
    * - random biome for Daily mode
    * - override from overrides.ts
    * - Town
    */
-  getStartingBiome(scene: BattleScene): Biome {
+  getStartingBiome(): Biome {
     switch (this.modeId) {
       case GameModes.DAILY:
-        return scene.generateRandomBiome(this.getWaveForDifficulty(1));
+        return getDailyStartingBiome();
       default:
         return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
@@ -136,8 +139,8 @@ export class GameMode implements GameModeConfig {
   /**
    * Determines whether or not to generate a trainer
    * @param waveIndex the current floor the player is on (trainer sprites fail to generate on X1 floors)
-   * @param arena the arena that contains the scene and functions
-   * @returns true if a trainer should be generated, false otherwise
+   * @param arena the current {@linkcode Arena}
+   * @returns `true` if a trainer should be generated, `false` otherwise
    */
   isWaveTrainer(waveIndex: integer, arena: Arena): boolean {
     /**
@@ -146,14 +149,13 @@ export class GameMode implements GameModeConfig {
     if (this.isDaily) {
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
-    if ((waveIndex % 30) === (arena.scene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
+    if ((waveIndex % 30) === (globalScene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
       return true;
     } else if (waveIndex % 10 !== 1 && waveIndex % 10) {
       /**
        * Do not check X1 floors since there's a bug that stops trainer sprites from appearing
        * after a X0 full party heal
        */
-
       const trainerChance = arena.getTrainerChance();
       let allowTrainerBattle = true;
       if (trainerChance) {
@@ -163,11 +165,11 @@ export class GameMode implements GameModeConfig {
           if (w === waveIndex) {
             continue;
           }
-          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
+          if ((w % 30) === (globalScene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
             allowTrainerBattle = false;
             break;
           } else if (w < waveIndex) {
-            arena.scene.executeWithSeedOffset(() => {
+            globalScene.executeWithSeedOffset(() => {
               const waveTrainerChance = arena.getTrainerChance();
               if (!Utils.randSeedInt(waveTrainerChance)) {
                 allowTrainerBattle = false;
@@ -231,12 +233,19 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * @returns `true` if the current battle is against classic mode's final boss
+   */
+  isBattleClassicFinalBoss(waveIndex: number): boolean {
+    return (this.modeId === GameModes.CLASSIC || this.modeId === GameModes.CHALLENGE) && this.isWaveFinal(waveIndex);
+  }
+
+  /**
      * Every 50 waves of an Endless mode is a boss
      * At this time it is paradox pokemon
      * @returns true if waveIndex is a multiple of 50 in Endless
      */
   isEndlessBoss(waveIndex: integer): boolean {
-    return !!(waveIndex % 50) &&
+    return waveIndex % 50 === 0 &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 

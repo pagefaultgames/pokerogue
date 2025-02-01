@@ -1,4 +1,5 @@
-import { EffectiveStat, Stat } from "#enums/stat";
+import type { EffectiveStat } from "#enums/stat";
+import { Stat } from "#enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";

@@ -1,15 +1,17 @@
-import { Variant } from "#app/data/variant";
+import type { Variant } from "#app/data/variant";
 import { Weather } from "#app/data/weather";
 import { Abilities } from "#app/enums/abilities";
 import * as GameMode from "#app/game-mode";
-import { GameModes, getGameMode } from "#app/game-mode";
-import { ModifierOverride } from "#app/modifier/modifier-type";
+import type { GameModes } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode";
+import type { ModifierOverride } from "#app/modifier/modifier-type";
+import type { BattleStyle } from "#app/overrides";
 import Overrides from "#app/overrides";
-import { Unlockables } from "#app/system/unlockables";
+import type { Unlockables } from "#app/system/unlockables";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
@@ -66,6 +68,26 @@ export class OverridesHelper extends GameManagerHelper {
   public xpMultiplier(value: number): this {
     vi.spyOn(Overrides, "XP_MULTIPLIER_OVERRIDE", "get").mockReturnValue(value);
     this.log(`XP Multiplier set to ${value}!`);
+    return this;
+  }
+
+  /**
+   * Override the wave level cap
+   * @param cap the level cap value to set; 0 uses normal level caps and negative values
+   * disable it completely
+   * @returns `this`
+   */
+  public levelCap(cap: number): this {
+    vi.spyOn(Overrides, "LEVEL_CAP_OVERRIDE", "get").mockReturnValue(cap);
+    let capStr: string;
+    if (cap > 0) {
+      capStr = `Level cap set to ${cap}!`;
+    } else if (cap < 0) {
+      capStr = "Level cap disabled!";
+    } else {
+      capStr = "Level cap reset to default value for wave.";
+    }
+    this.log(capStr);
     return this;
   }
 
@@ -138,7 +160,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Abilities | ability}
+   * Override the player (pokemon) {@linkcode Abilities | ability}.
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
    * @returns `this`
    */
@@ -238,13 +260,14 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the battle type (single or double)
+   * Override the battle type (e.g., single or double).
+   * @see {@linkcode Overrides.BATTLE_TYPE_OVERRIDE}
    * @param battleType battle type to set
    * @returns `this`
    */
-  public battleType(battleType: "single" | "double" | null): this {
+  public battleType(battleType: BattleStyle | null): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
-    this.log(`Battle type set to ${battleType} only!`);
+    this.log(battleType === null ? "Battle type override disabled!" : `Battle type set to ${battleType}!`);
     return this;
   }
 

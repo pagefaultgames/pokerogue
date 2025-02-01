@@ -3,7 +3,7 @@ import { Stat } from "#enums/stat";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { CommandPhase } from "#app/phases/command-phase";
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { LoginPhase } from "#app/phases/login-phase";
@@ -188,8 +188,8 @@ describe("Test Battle Phase", () => {
     game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(game.scene);
-      const selectStarterPhase = new SelectStarterPhase(game.scene);
-      game.scene.pushPhase(new EncounterPhase(game.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      game.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
     await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);
@@ -267,7 +267,7 @@ describe("Test Battle Phase", () => {
     ]);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     await game.killPokemon(game.scene.currentBattle.enemyParty[0]);
     expect(game.scene.currentBattle.enemyParty[0].isFainted()).toBe(true);
     await game.phaseInterceptor.to(VictoryPhase, false);

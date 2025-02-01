@@ -787,7 +787,49 @@
 					}
 				},
 				{
+					"filename": "154-f",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 1,
+						"w": 23,
+						"h": 27
+					},
+					"frame": {
+						"x": 29,
+						"y": 147,
+						"w": 23,
+						"h": 27
+					}
+				},
+				{
 					"filename": "154s",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 1,
+						"w": 23,
+						"h": 27
+					},
+					"frame": {
+						"x": 29,
+						"y": 174,
+						"w": 23,
+						"h": 27
+					}
+				},
+				{
+					"filename": "154s-f",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
