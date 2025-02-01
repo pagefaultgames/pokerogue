@@ -34,6 +34,7 @@ import { addWindow } from "./ui-theme";
 import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/ability";
+import type { PassiveAbilities } from "#app/data/balance/passives";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { allMoves } from "#app/data/move";
 import { speciesTmMoves } from "#app/data/balance/tms";
@@ -1192,7 +1193,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const levelMoves = pokemonSpeciesLevelMoves[container.species.speciesId].map(m => allMoves[m[1]].name);
       // This always gets egg moves from the starter
       const eggMoves = speciesEggMoves[this.getStarterSpeciesId(container.species.speciesId)]?.map(m => allMoves[m].name) ?? [];
-      const tmMoves = speciesTmMoves[container.species.speciesId]?.map(m => allMoves[m].name) ?? [];
+      const tmMoves = speciesTmMoves[this.getStarterSpeciesId(container.species.speciesId)]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
       const selectedMove1 = this.filterText.getValue(FilterTextRow.MOVE_1);
       const selectedMove2 = this.filterText.getValue(FilterTextRow.MOVE_2);
 
@@ -1225,16 +1226,17 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Ability filter
       const abilities = [ container.species.ability1, container.species.ability2, container.species.abilityHidden ].map(a => allAbilities[a].name);
-      const passive = starterPassiveAbilities[this.getStarterSpeciesId(container.species.speciesId)] ?? 0;
+      console.log(container.species.name, this.getStarterSpeciesId(container.species.speciesId));
+      const passives = starterPassiveAbilities[this.getStarterSpeciesId(container.species.speciesId)] ?? {} as PassiveAbilities;
 
       const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
       const fitsFormAbility = container.species.forms.some(form => allAbilities[form.ability1].name === selectedAbility1);
       const fitsAbility1 = abilities.includes(selectedAbility1) || fitsFormAbility || selectedAbility1 === this.filterText.defaultText;
-      const fitsPassive1 = allAbilities[passive].name === selectedAbility1;
+      const fitsPassive1 = Object.values(passives).some(p => p.name === selectedAbility1);
 
       const selectedAbility2 = this.filterText.getValue(FilterTextRow.ABILITY_2);
       const fitsAbility2 = abilities.includes(selectedAbility2) || fitsFormAbility || selectedAbility2 === this.filterText.defaultText;
-      const fitsPassive2 = allAbilities[passive].name === selectedAbility2;
+      const fitsPassive2 = Object.values(passives).some(p => p.name === selectedAbility2);
 
       // If both fields have been set to the same ability, show both ability and passive
       const fitsAbilities = (fitsAbility1 && (fitsPassive2 || selectedAbility2 === this.filterText.defaultText)) ||

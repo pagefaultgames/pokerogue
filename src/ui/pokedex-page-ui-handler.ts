@@ -632,9 +632,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.eggMoves = speciesEggMoves[this.getStarterSpeciesId(species.speciesId)] ?? [];
     this.hasEggMoves = Array.from({ length: 4 }, (_, em) => (globalScene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].eggMoves & (1 << em)) !== 0);
 
-    this.tmMoves = (speciesTmMoves[species.speciesId] ?? []).sort((a, b) => allMoves[a].name > allMoves[b].name ? 1 : -1);
+    const formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
+    this.tmMoves = speciesTmMoves[species.speciesId]?.filter(m => Array.isArray(m) ? (m[0] === formKey ? true : false ) : true)
+      .map(m => Array.isArray(m) ? m[1] : m).sort((a, b) => allMoves[a].name > allMoves[b].name ? 1 : -1) ?? [];
 
-    this.passive = starterPassiveAbilities[this.getStarterSpeciesId(species.speciesId)];
+    const passives = starterPassiveAbilities[this.getStarterSpeciesId(species.speciesId)];
+    this.passive = (this.formIndex in passives) ? passives[formIndex] : passives[0];
 
     const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)];
     const abilityAttr = starterData.abilityAttr;
@@ -1640,7 +1643,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
                   const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.getStarterSpeciesId(this.species.speciesId)]);
                   options.push({
-                    label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[starterPassiveAbilities[this.getStarterSpeciesId(this.species.speciesId)]].name})`,
+                    label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[this.passive].name})`,
                     handler: () => {
                       if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                         starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
