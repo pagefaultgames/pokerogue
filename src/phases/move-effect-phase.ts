@@ -284,7 +284,7 @@ export class MoveEffectPhase extends PokemonPhase {
             }
             queuedPhases.push(new MessagePhase(i18next.t("battle:magicCoatBounce", { pokemonNameWithAffix: getPokemonNameWithAffix(target) })));
             queuedPhases.push(new MovePhase(target, newTargets, new PokemonMove(move.id, 0, 0, true), true, true, true));
-
+            continue;
           }
 
           /** Is the pokemon immune due to an ablility, and also not in a semi invulnerable state?  */
