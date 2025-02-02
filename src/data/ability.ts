@@ -2148,7 +2148,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private intimidate: boolean;
 
   constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
-    super(false);
+    super(true);
 
     this.stats = stats;
     this.stages = stages;
@@ -5002,6 +5002,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   messages: string[] = [],
 ) {
   for (const passive of [ false, true ]) {
+    let abShown = false;
     if (!pokemon?.canApplyAbility(passive) || (passive && pokemon.getPassiveAbility().id === pokemon.getAbility().id)) {
       continue;
     }
@@ -5017,6 +5018,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
 
       if (attr.showAbility && !simulated) {
         queueShowAbility(pokemon, passive);
+        abShown = true;
       }
       const message = attr.getTriggerMessage(pokemon, ability.name, args);
       if (message) {
@@ -5032,7 +5034,9 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
         result = await result;
       }
       if (result) {
-        queueHideAbility(pokemon, passive);
+        if (abShown) {
+          queueHideAbility(pokemon, passive);
+        }
 
         if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
           pokemon.summonData.abilitiesApplied.push(ability.id);
