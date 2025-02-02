@@ -98,15 +98,15 @@ describe("Spec - Pokemon", () => {
       expect(types[1]).toBe(Type.FIRE);
 
       // Abra Psychic/Grass
-      pokemon.customPokemonData.types = [ Type.UNKNOWN, Type.GRASS ];
+      pokemon.customPokemonData.types = [ Type.UNKNOWN, Type.NORMAL ];
       types = pokemon.getTypes();
       expect(types[0]).toBe(Type.PSYCHIC);
       expect(types[1]).toBe(Type.FIRE);
 
       // Abra Grass
-      pokemon.customPokemonData.types = [ Type.GRASS, Type.UNKNOWN ];
+      pokemon.customPokemonData.types = [ Type.NORMAL, Type.UNKNOWN ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.GRASS);
+      expect(types[0]).toBe(Type.NORMAL);
       expect(types[1]).toBe(Type.FIRE);
 
       if (!pokemon.fusionCustomPokemonData) {
@@ -115,23 +115,23 @@ describe("Spec - Pokemon", () => {
       pokemon.customPokemonData.types = [];
 
       // Charmander Fire/Grass
-      pokemon.fusionCustomPokemonData.types = [ Type.UNKNOWN, Type.GRASS ];
+      pokemon.fusionCustomPokemonData.types = [ Type.UNKNOWN, Type.NORMAL ];
       types = pokemon.getTypes();
       expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.GRASS);
+      expect(types[1]).toBe(Type.NORMAL);
 
       // Charmander Grass
-      pokemon.fusionCustomPokemonData.types = [ Type.GRASS, Type.UNKNOWN ];
+      pokemon.fusionCustomPokemonData.types = [ Type.NORMAL, Type.UNKNOWN ];
       types = pokemon.getTypes();
       expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.GRASS);
+      expect(types[1]).toBe(Type.NORMAL);
 
       // Abra Grass
       // Charmander Fire/Grass
-      pokemon.customPokemonData.types = [ Type.GRASS, Type.UNKNOWN ];
-      pokemon.fusionCustomPokemonData.types = [ Type.UNKNOWN, Type.GRASS ];
+      pokemon.customPokemonData.types = [ Type.NORMAL, Type.UNKNOWN ];
+      pokemon.fusionCustomPokemonData.types = [ Type.UNKNOWN, Type.NORMAL ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.GRASS);
+      expect(types[0]).toBe(Type.NORMAL);
       expect(types[1]).toBe(Type.FIRE);
     });
 

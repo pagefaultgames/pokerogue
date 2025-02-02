@@ -1269,7 +1269,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         types.push(firstType);
 
         // Second type
-        let secondType: Type | null = null;
+        let secondType: Type = Type.UNKNOWN;
 
         if (fusionSpeciesForm) {
           // Check if the fusion Pokemon also had permanently changes when determining the fusion types
@@ -1287,10 +1287,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         } else {
           // If not a fusion, just get the second type from the species, checking for permanent changes from ME
           secondType = (customTypes && this.customPokemonData.types.length > 1 && this.customPokemonData.types[1] !== Type.UNKNOWN)
-            ? this.customPokemonData.types[1] : speciesForm.type2;
+            ? this.customPokemonData.types[1] : (speciesForm.type2 ?? Type.UNKNOWN);
         }
 
-        if (secondType) {
+        if (secondType !== Type.UNKNOWN) {
           types.push(secondType);
         }
       }
