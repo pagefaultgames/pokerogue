@@ -452,7 +452,7 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
    */
   applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     // this is a hacky way to fix the Levitate/Thousand Arrows interaction, but it works for now...
-    super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
+    return super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
   }
 }
 
@@ -801,7 +801,8 @@ export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
 
   override willSucceedPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
     const tag = globalScene.arena.getTag(this.tagType) as ArenaTrapTag;
-    return this.condition(pokemon, attacker, move) && !move.hitsSubstitute(attacker, pokemon) && !globalScene.arena.getTag(this.tagType) || tag.layers < tag.maxLayers;
+    return (this.condition(pokemon, attacker, move) && !move.hitsSubstitute(attacker, pokemon))
+    && (!globalScene.arena.getTag(this.tagType) || tag.layers < tag.maxLayers);
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
@@ -1046,7 +1047,7 @@ export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
   }
 
   override willSucceedPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return !((this.condition && !this.condition(pokemon, attacker, move) || move.hitsSubstitute(attacker, pokemon)) || !globalScene.arena.weather?.isImmutable());
+    return (!(this.condition && !this.condition(pokemon, attacker, move) || move.hitsSubstitute(attacker, pokemon)) && !globalScene.arena.weather?.isImmutable());
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
@@ -1520,6 +1521,10 @@ export class FieldMovePowerBoostAbAttr extends AbAttr {
     super(false);
     this.condition = condition;
     this.powerMultiplier = powerMultiplier;
+  }
+
+  willSucceedPreAttack(pokemon: Pokemon | null, passive: boolean | null, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
+    return true; // logic for this attr is handled in move.ts instead of normally
   }
 
   applyPreAttack(pokemon: Pokemon | null, passive: boolean | null, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
@@ -2353,7 +2358,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   private target: Pokemon;
   private targetAbilityName: string;
 
-  willSucceed(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
     if (!targets.length) {
       return false;
@@ -2489,6 +2494,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 
   willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     // SUCCESS CHECK
+    return true;
   }
 
   async applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): Promise<boolean> {
@@ -2981,14 +2987,15 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   }
 
   willSucceedPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!simulated) {
+      this.battlerTag = tag;
+    }
+
     return this.immuneTagTypes.includes(tag.tagType);
   }
 
   applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
-    if (!simulated) {
-      this.battlerTag = tag;
-    }
     return true;
   }
 
@@ -3432,7 +3439,7 @@ export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr 
   }
 
   willSucceedPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
-    return !this.weatherTypes.find(w => weather === w) && pokemon.canAddTag(this.tagType);
+    return !!this.weatherTypes.find(w => weather === w) && pokemon.canAddTag(this.tagType);
   }
 
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
@@ -5002,7 +5009,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
     const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
     for (const attr of ability.getAttrs(attrType)) {
       const condition = attr.getCondition();
-      if ((condition && !condition(pokemon)) || successFunc(attr, passive)) {
+      if ((condition && !condition(pokemon)) || successFunc && !successFunc(attr, passive)) {
         continue;
       }
 
@@ -5218,6 +5225,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
       }
     }
 
+    // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
     const fordbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
     if (source) {
       const enemyMoveHistory = source.getMoveHistory();
@@ -5233,19 +5241,25 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
         } else if (source.turnData.hitsLeft > 1) {
           return false;
         }
+        if (source.turnData.hitCount > 1) {
+          damage = pokemon.turnData.damageTaken;
+        }
       }
-    }
-    // Activates if it falls below half and recovers back above half from a Shell Bell
-    const shellBellHeal = calculateShellBellRecovery(pokemon);
-    if (!(pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) || !(pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio)) {
-      return false;
     }
 
-    for (const opponent of pokemon.getOpponents()) {
-      if (!this.helper.getSwitchOutCondition(pokemon, opponent)) {
-        return false;
+    if (pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) {
+      const shellBellHeal = calculateShellBellRecovery(pokemon);
+      if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {
+        for (const opponent of pokemon.getOpponents()) {
+          if (!this.helper.getSwitchOutCondition(pokemon, opponent)) {
+            return false;
+          }
+        }
+        return true;
       }
     }
+
+    return false;
   }
 
   /**
@@ -5262,15 +5276,18 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
    * @returns `true` if the switch-out logic was successfully applied
    */
   public override applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[], source?: Pokemon): boolean | Promise<boolean> {
-    // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
-    if (source && source.turnData.hitCount > 1) {
-      damage = pokemon.turnData.damageTaken;
+    // Activates if it falls below half and recovers back above half from a Shell Bell
+    const shellBellHeal = calculateShellBellRecovery(pokemon);
+    if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {
+      for (const opponent of pokemon.getOpponents()) {
+        if (!this.helper.getSwitchOutCondition(pokemon, opponent)) {
+          return false;
+        }
+      }
+      return this.helper.switchOutLogic(pokemon);
+    } else {
+      return false;
     }
-    return this.helper.switchOutLogic(pokemon);
-  }
-
-  public getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
-    return this.helper.getFailedText(target);
   }
 }
 
