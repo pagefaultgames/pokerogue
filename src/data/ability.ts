@@ -2358,6 +2358,10 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   private target: Pokemon;
   private targetAbilityName: string;
 
+  constructor() {
+    super(false); // Displaying ability changes should be handled by ab swap function
+  }
+
   willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
     if (!targets.length) {
