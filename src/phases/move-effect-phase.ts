@@ -66,8 +66,6 @@ import { type nil } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Moves } from "#enums/moves";
 import i18next from "i18next";
-import { Stat } from "#app/enums/stat";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type { Phase } from "#app/phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
 import { MovePhase } from "./move-phase";
@@ -222,23 +220,15 @@ export class MoveEffectPhase extends PokemonPhase {
         let hasHit: boolean = false;
 
         // Prevent ENEMY_SIDE targeted moves from occurring twice in double battles
-        // and determine which enemy will magic bounce based on speed order, respecting trick room
+        // and check which target will magic bounce.
         const trueTargets: Pokemon[] = move.moveTarget !== MoveTarget.ENEMY_SIDE ? targets : (() => {
           const magicCoatTargets = targets.filter(t => t.getTag(BattlerTagType.MAGIC_COAT) || t.hasAbilityWithAttr(ReflectStatusMoveAbAttr));
 
           // only magic coat effect cares about order
           if (!mayBounce || magicCoatTargets.length === 0) {
             return [ targets[0] ];
-          } else if (magicCoatTargets.length === 1) {
-            return magicCoatTargets;
           }
-
-          // Filter the list of magic coat targets to those with the highest speed, or lowest if trick room is active.
-          const speeds = magicCoatTargets.map(p => p.getEffectiveStat(Stat.SPD) ?? 0);
-          const targetSpeed = globalScene.arena.hasTag(ArenaTagType.TRICK_ROOM) ? Math.min(...speeds) : Math.max(...speeds);
-          const filteredTargets = magicCoatTargets.filter((_, idx) => speeds[idx] === targetSpeed);
-          // In the event of a speed tie, choose a pokemon at random that will bounce the move.
-          return filteredTargets.length === 1 ? filteredTargets : [ filteredTargets[globalScene.randBattleSeedInt(filteredTargets.length)] ];
+          return [ magicCoatTargets[0] ];
         })();
 
         const queuedPhases: Phase[] = [];

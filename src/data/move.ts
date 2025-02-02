@@ -9148,7 +9148,8 @@ export function initMoves() {
     new AttackMove(Moves.SUPERPOWER, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], -1, true),
     new SelfStatusMove(Moves.MAGIC_COAT, Type.PSYCHIC, -1, 15, -1, 4, 3)
-      .attr(AddBattlerTagAttr, BattlerTagType.MAGIC_COAT, true, false)
+      .attr(AddBattlerTagAttr, BattlerTagType.MAGIC_COAT, true, true, 0)
+      .condition(failIfLastCondition)
       // Interactions with stomping tantrum, instruct, and other moves that
       // rely on move history
       // Also will not reflect roar / whirlwind if the target has ForceSwitchOutImmunityAbAttr

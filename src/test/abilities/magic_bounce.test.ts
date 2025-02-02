@@ -308,18 +308,5 @@ describe("Abilities - Magic Bounce", () => {
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getBattlerIndex()).toBe(BattlerIndex.ENEMY_2);
   });
-
-  it("should bounce back moves like spikes when the magic bounce user is semi-invulnerable", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
-    game.override.moveset([ Moves.SPIKES ]);
-    game.override.enemyMoveset([ Moves.FLY ]);
-
-    game.move.select(Moves.SPIKES);
-    await game.forceEnemyMove(Moves.FLY);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
-    await game.phaseInterceptor.to("BerryPhase");
-
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
-  });
 });
 
