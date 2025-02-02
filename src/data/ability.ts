@@ -3361,6 +3361,10 @@ export class FriskAbAttr extends PostSummonAbAttr {
 }
 
 export class PostWeatherChangeAbAttr extends AbAttr {
+  willSucceedPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
+    return true;
+  }
+
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
     return false;
   }
@@ -3382,6 +3386,13 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
     this.formRevertingWeathers = formRevertingWeathers;
   }
 
+  willSucceedPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
+    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
+    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
+
+    return isCastformWithForecast || isCherrimWithFlowerGift;
+  }
+
   /**
    * Calls {@linkcode Arena.triggerWeatherBasedFormChangesToNormal | triggerWeatherBasedFormChangesToNormal} when the
    * weather changed to form-reverting weather, otherwise calls {@linkcode Arena.triggerWeatherBasedFormChanges | triggerWeatherBasedFormChanges}
@@ -3392,24 +3403,18 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
-    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
-    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
-
-    if (isCastformWithForecast || isCherrimWithFlowerGift) {
-      if (simulated) {
-        return simulated;
-      }
-
-      const weatherType = globalScene.arena.weather?.weatherType;
-
-      if (weatherType && this.formRevertingWeathers.includes(weatherType)) {
-        globalScene.arena.triggerWeatherBasedFormChangesToNormal();
-      } else {
-        globalScene.arena.triggerWeatherBasedFormChanges();
-      }
-      return true;
+    if (simulated) {
+      return simulated;
     }
-    return false;
+
+    const weatherType = globalScene.arena.weather?.weatherType;
+
+    if (weatherType && this.formRevertingWeathers.includes(weatherType)) {
+      globalScene.arena.triggerWeatherBasedFormChangesToNormal();
+    } else {
+      globalScene.arena.triggerWeatherBasedFormChanges();
+    }
+    return true;
   }
 }
 
@@ -3426,12 +3431,11 @@ export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr 
     this.weatherTypes = weatherTypes;
   }
 
-  applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
-    console.log(this.weatherTypes.find(w => weather === w), WeatherType[weather]);
-    if (!this.weatherTypes.find(w => weather === w)) {
-      return false;
-    }
+  willSucceedPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
+    return !this.weatherTypes.find(w => weather === w) && pokemon.canAddTag(this.tagType);
+  }
 
+  applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
     if (simulated) {
       return pokemon.canAddTag(this.tagType);
     } else {
@@ -5374,7 +5378,8 @@ export function applyPostTurnAbAttrs(attrType: Constructor<PostTurnAbAttr>,
 
 export function applyPostWeatherChangeAbAttrs(attrType: Constructor<PostWeatherChangeAbAttr>,
   pokemon: Pokemon, weather: WeatherType, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostWeatherChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostWeatherChange(pokemon, passive, simulated, weather, args), args, false, simulated);
+  return applyAbAttrsInternal<PostWeatherChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostWeatherChange(pokemon, passive, simulated, weather, args),
+    (attr, passive) => attr.willSucceedPostWeatherChange(pokemon, passive, simulated, weather, args), args, false, simulated);
 }
 
 export function applyPostWeatherLapseAbAttrs(attrType: Constructor<PostWeatherLapseAbAttr>,
