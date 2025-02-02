@@ -185,9 +185,8 @@ export class OverridesHelper extends GameManagerHelper {
     vi.spyOn(Overrides, "HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
     if (hasPassiveAbility === null) {
       this.log("Player Pokemon PASSIVE ability no longer force enabled or disabled!");
-    }
-    else {
-      this.log("Player Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!");
+    } else {
+      this.log(`Player Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!`);
     }
     return this;
   }
@@ -339,9 +338,8 @@ export class OverridesHelper extends GameManagerHelper {
     vi.spyOn(Overrides, "OPP_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
     if (hasPassiveAbility === null) {
       this.log("Enemy Pokemon PASSIVE ability no longer force enabled or disabled!");
-    }
-    else {
-      this.log("Enemy Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!");
+    } else {
+      this.log(`Enemy Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!`);
     }
     return this;
   }
