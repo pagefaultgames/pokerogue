@@ -2255,8 +2255,8 @@ export default class BattleScene extends SceneBase {
         return 12.062;
       case "battle_galactic_grunt": //BDSP Team Galactic Battle
         return 13.043;
-      case "battle_plasma_grunt": //BW Team Plasma Battle
-        return 12.974;
+      case "battle_plasma_grunt": //B2W2 Team Plasma Battle
+        return 14.758;
       case "battle_flare_grunt": //XY Team Flare Battle
         return 4.228;
       case "battle_aether_grunt": // SM Aether Foundation Battle
