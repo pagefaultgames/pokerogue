@@ -1384,8 +1384,10 @@ export class UserHpDamageAttr extends FixedDamageAttr {
 }
 
 export class TargetHalfHpDamageAttr extends FixedDamageAttr {
-  // the initial amount of hp the target had before the first hit
-  // used for multi lens
+  /**
+   * The initial amount of hp the target had before the first hit.
+   * Used for calculating multi lens damage.
+   */
   private initialHp: number;
   constructor() {
     super(0);
@@ -1409,12 +1411,10 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
         // multi lens added hit; use initialHp tracker to ensure correct damage
         (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(this.initialHp / 2);
         return true;
-        break;
       case lensCount + 1:
         // parental bond added hit; calc damage as normal
         (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(target.hp / 2);
         return true;
-        break;
     }
   }
 
@@ -1896,7 +1896,8 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     }
 
     // We don't know which party member will be chosen, so pick the highest max HP in the party
-    const maxPartyMemberHp = globalScene.getPlayerParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
+    const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
+    const maxPartyMemberHp = party.map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
 
     globalScene.pushPhase(
       new PokemonHealPhase(
@@ -3997,11 +3998,31 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class HitCountPowerAttr extends VariablePowerAttr {
+/**
+ * This Attribute calculates the current power of {@linkcode Moves.RAGE_FIST}.
+ * The counter for power calculation does not reset on every wave but on every new arena encounter
+ */
+export class RageFistPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value += Math.min(user.battleData.hitCount, 6) * 50;
+    const { hitCount, prevHitCount } = user.battleData;
+    const basePower: Utils.NumberHolder = args[0];
+
+    this.updateHitReceivedCount(user, hitCount, prevHitCount);
+
+    basePower.value = 50 + (Math.min(user.customPokemonData.hitsRecCount, 6) * 50);
 
     return true;
+  }
+
+  /**
+   * Updates the number of hits the Pokemon has taken in battle
+   * @param user Pokemon calling Rage Fist
+   * @param hitCount The number of received hits this battle
+   * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
+   */
+  protected updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
+    user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
+    user.battleData.prevHitCount = hitCount;
   }
 }
 
@@ -6148,7 +6169,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return false;
       }
 
-      // Don't allow wild mons to flee with U-turn et al
+      // Don't allow wild mons to flee with U-turn et al.
       if (this.selfSwitch && !user.isPlayer() && move.category !== MoveCategory.STATUS) {
         return false;
       }
@@ -7103,7 +7124,25 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // get the last move used (excluding status based failures) as well as the corresponding moveset slot
     const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE)!;
     const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove.move)!;
-    const moveTargets = lastMove.targets ?? [];
+    // If the last move used can hit more than one target or has variable targets,
+    // re-compute the targets for the attack
+    // (mainly for alternating double/single battle shenanigans)
+    // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct
+    // TODO: Fix this once dragon darts gets smart targeting
+    let moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets;
+
+    /** In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible
+    Normally, all yet-unexecuted move phases would swap over when the enemy in question faints
+    (see `redirectPokemonMoves` in `battle-scene.ts`),
+    but since instruct adds a new move phase pre-emptively, we need to handle this interaction manually.
+    */
+    const firstTarget = globalScene.getField()[moveTargets[0]];
+    if (globalScene.currentBattle.double && moveTargets.length === 1 && firstTarget.isFainted() && firstTarget !== target.getAlly()) {
+      const ally = firstTarget.getAlly();
+      if (ally.isActive()) { // ally exists, is not dead and can sponge the blast
+        moveTargets = [ ally.getBattlerIndex() ];
+      }
+    }
 
     globalScene.queueMessage(i18next.t("moveTriggers:instructingMove", {
       userPokemonName: getPokemonNameWithAffix(user),
@@ -7117,12 +7156,9 @@ export class RepeatMoveAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      // TODO: Confirm behavior of instructing move known by target but called by another move
       const lastMove = target.getLastXMoves(-1).find(m => m.move !== Moves.NONE);
       const movesetMove = target.getMoveset().find(m => m?.moveId === lastMove?.move);
-      const moveTargets = lastMove?.targets ?? [];
-      // TODO: Add a way of adding moves to list procedurally rather than a pre-defined blacklist
-      const unrepeatablemoves = [
+      const uninstructableMoves = [
         // Locking/Continually Executed moves
         Moves.OUTRAGE,
         Moves.RAGING_FURY,
@@ -7177,11 +7213,11 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         // TODO: Add Max/G-Move blockage if or when they are implemented
       ];
 
-      if (!movesetMove // called move not in target's moveset (dancer, forgetting the move, etc.)
+      if (!lastMove?.move // no move to instruct
+        || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
         || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
-        || allMoves[lastMove?.move ?? Moves.NONE].isChargingMove() // called move is a charging/recharging move
-        || !moveTargets.length // called move has no targets
-        || unrepeatablemoves.includes(lastMove?.move ?? Moves.NONE)) { // called move is explicitly in the banlist
+        || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
+        || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist
         return false;
       }
       return true;
@@ -7189,7 +7225,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    // TODO: Make the AI acutally use instruct
+    // TODO: Make the AI actually use instruct
     /* Ideally, the AI would score instruct based on the scorings of the on-field pokemons'
     * last used moves at the time of using Instruct (by the time the instructor gets to act)
     * with respect to the user's side.
@@ -10298,7 +10334,10 @@ export function initMoves() {
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
       .ignoresSubstitute()
       .attr(RepeatMoveAttr)
-      .edgeCase(), // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
+      // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
+      // Also has incorrect interactions with Dancer due to the latter
+      // erroneously adding copied moves to move history.
+      .edgeCase(),
     new AttackMove(Moves.BEAK_BLAST, Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()
@@ -11030,8 +11069,8 @@ export function initMoves() {
     new AttackMove(Moves.TWIN_BEAM, Type.PSYCHIC, MoveCategory.SPECIAL, 40, 100, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.RAGE_FIST, Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
-      .partial() // Counter resets every wave instead of on arena reset
-      .attr(HitCountPowerAttr)
+      .edgeCase() // Counter incorrectly increases on confusion self-hits
+      .attr(RageFistPowerAttr)
       .punchingMove(),
     new AttackMove(Moves.ARMOR_CANNON, Type.FIRE, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], -1, true),

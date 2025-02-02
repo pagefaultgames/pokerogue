@@ -112,7 +112,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 import { StatusEffect } from "#enums/status-effect";
-import { globalScene, initGlobalScene } from "#app/global-scene";
+import { initGlobalScene } from "#app/global-scene";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -394,10 +394,10 @@ export default class BattleScene extends SceneBase {
       const originalRealInRange = Phaser.Math.RND.realInRange;
       Phaser.Math.RND.realInRange = function (min: number, max: number): number {
         const ret = originalRealInRange.apply(this, [ min, max ]);
-        const args = [ "RNG", ++globalScene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
-        args.push(`seed: ${globalScene.rngSeedOverride || globalScene.waveSeed || globalScene.seed}`);
-        if (globalScene.rngOffset) {
-          args.push(`offset: ${globalScene.rngOffset}`);
+        const args = [ "RNG", ++this.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
+        args.push(`seed: ${this.rngSeedOverride || this.waveSeed || this.seed}`);
+        if (this.rngOffset) {
+          args.push(`offset: ${this.rngOffset}`);
         }
         console.log(...args);
         return ret;
@@ -410,7 +410,7 @@ export default class BattleScene extends SceneBase {
   }
 
   create() {
-    globalScene.scene.remove(LoadingScene.KEY);
+    this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController();
     this.uiInputs = new UiInputs(this.inputController);
@@ -869,6 +869,12 @@ export default class BattleScene extends SceneBase {
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
 
+  /**
+   * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
+   * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
+   * @param activeOnly Whether to consider only active pokemon
+   * @returns array of {@linkcode Pokemon}
+   */
   public getField(activeOnly: boolean = false): Pokemon[] {
     const ret = new Array(4).fill(null);
     const playerField = this.getPlayerField();
@@ -1484,6 +1490,8 @@ export default class BattleScene extends SceneBase {
           return 0; // Don't give trainers Battle Bond Greninja
         }
         return Utils.randSeedInt(2);
+      case Species.URSHIFU:
+        return Utils.randSeedInt(2);
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
       case Species.MINIOR:
@@ -1843,8 +1851,10 @@ export default class BattleScene extends SceneBase {
     this.currentBattle.battleScore += Math.ceil(scoreIncrease);
   }
 
-  getMaxExpLevel(ignoreLevelCap?: boolean): integer {
-    if (ignoreLevelCap) {
+  getMaxExpLevel(ignoreLevelCap: boolean = false): integer {
+    if (Overrides.LEVEL_CAP_OVERRIDE > 0) {
+      return Overrides.LEVEL_CAP_OVERRIDE;
+    } else if (ignoreLevelCap || Overrides.LEVEL_CAP_OVERRIDE < 0) {
       return Number.MAX_SAFE_INTEGER;
     }
     const waveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
@@ -2082,8 +2092,11 @@ export default class BattleScene extends SceneBase {
     return sound;
   }
 
+  /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */
   getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
+      case "title": //Firel PokéRogue Title
+        return 46.500;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.950;
       case "battle_johto_champion": //B2W2 Johto Champion Battle
@@ -2100,10 +2113,14 @@ export default class BattleScene extends SceneBase {
         return 10.145;
       case "battle_kalos_champion": //XY Kalos Champion Battle
         return 10.380;
+      case "battle_champion_kukui": //SM Kukui Battle
+        return 15.784;
       case "battle_alola_champion": //USUM Alola Champion Battle
         return 13.025;
       case "battle_galar_champion": //SWSH Galar Champion Battle
         return 61.635;
+      case "battle_mustard": //SWSH Mustard Battle
+        return 22.442;
       case "battle_champion_geeta": //SV Champion Geeta Battle
         return 37.447;
       case "battle_champion_nemona": //SV Champion Nemona Battle
@@ -2252,6 +2269,8 @@ export default class BattleScene extends SceneBase {
         return 133.362;
       case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
         return 11.997;
+      case "battle_colress": //B2W2 Colress Battle
+        return 12.234;
       case "battle_skull_admin": //SM Team Skull Admin Battle
         return 15.463;
       case "battle_oleana": //SWSH Oleana Battle
@@ -2954,7 +2973,7 @@ export default class BattleScene extends SceneBase {
    */
   applyShuffledModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player: boolean = true, ...args: Parameters<T["apply"]>): T[] {
     let modifiers = (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType && m.shouldApply(...args));
-    globalScene.executeWithSeedOffset(() => {
+    this.executeWithSeedOffset(() => {
       const shuffleModifiers = mods => {
         if (mods.length < 1) {
           return mods;
@@ -2963,7 +2982,7 @@ export default class BattleScene extends SceneBase {
         return [ mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand)) ];
       };
       modifiers = shuffleModifiers(modifiers);
-    }, globalScene.currentBattle.turn << 4, globalScene.waveSeed);
+    }, this.currentBattle.turn << 4, this.waveSeed);
     return this.applyModifiersInternal(modifiers, player, args);
   }
 
@@ -3388,7 +3407,8 @@ export default class BattleScene extends SceneBase {
     const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.length > 0 ?
       this.mysteryEncounterSaveData.encounteredEvents[this.mysteryEncounterSaveData.encounteredEvents.length - 1].type
       : null;
-    const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType) ?? [];
+    const disabledEncounters = this.eventManager.getEventMysteryEncountersDisabled();
+    const biomeMysteryEncounters = mysteryEncountersByBiome.get(this.arena.biomeType)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier !== null) {
       availableEncounters = biomeMysteryEncounters
@@ -3397,7 +3417,7 @@ export default class BattleScene extends SceneBase {
           if (!encounterCandidate) {
             return false;
           }
-          if (encounterCandidate.encounterTier !== tier) {
+          if (this.eventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier) {
             return false;
           }
           const disallowedGameModes = encounterCandidate.disallowedGameModes;

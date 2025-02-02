@@ -21,7 +21,6 @@ enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
-  RUN_HISTORY,
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
@@ -111,7 +110,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   render() {
     const ui = this.getUi();
     this.excludedMenus = () => [
-      { condition: globalScene.getCurrentPhase() instanceof SelectModifierPhase, options: [ MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST ]},
+      { condition: globalScene.getCurrentPhase() instanceof SelectModifierPhase, options: [ MenuOptions.EGG_GACHA ]},
       { condition: bypassLogin, options: [ MenuOptions.LOG_OUT ]}
     ];
 
@@ -506,10 +505,6 @@ export default class MenuUiHandler extends MessageUiHandler {
           break;
         case MenuOptions.STATS:
           ui.setOverlayMode(Mode.GAME_STATS);
-          success = true;
-          break;
-        case MenuOptions.RUN_HISTORY:
-          ui.setOverlayMode(Mode.RUN_HISTORY);
           success = true;
           break;
         case MenuOptions.EGG_LIST:

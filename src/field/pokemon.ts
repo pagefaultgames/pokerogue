@@ -7,11 +7,10 @@ import { variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
 import type Move from "#app/data/move";
-import { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, VariableMoveTypeChartAttr } from "#app/data/move";
+import { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, VariableMoveTypeChartAttr, HpSplitAttr } from "#app/data/move";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import { default as PokemonSpecies, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER, getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
-import { starterPassiveAbilities } from "#app/data/balance/passives";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import type { Constructor } from "#app/utils";
 import { isNullOrUndefined, randSeedInt, type nil } from "#app/utils";
 import * as Utils from "#app/utils";
@@ -1107,6 +1106,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getStat(Stat.HP);
   }
 
+  /** Returns the amount of hp currently missing from this {@linkcode Pokemon} (max - current) */
   getInverseHp(): integer {
     return this.getMaxHp() - this.hp;
   }
@@ -1258,52 +1258,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!types.length || !includeTeraType) {
       if (!ignoreOverride && this.summonData?.types && this.summonData.types.length > 0) {
         this.summonData.types.forEach(t => types.push(t));
-      } else if (this.customPokemonData.types && this.customPokemonData.types.length > 0) {
-        // "Permanent" override for a Pokemon's normal types, currently only used by Mystery Encounters
-        types.push(this.customPokemonData.types[0]);
-
-        // Fusing a Pokemon onto something with "permanently changed" types will still apply the fusion's types as normal
-        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
-        if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also had "permanently changed" types
-          const fusionMETypes = this.fusionCustomPokemonData?.types;
-          if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
-            types.push(fusionMETypes[1]);
-          } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
-            types.push(fusionMETypes[0]);
-          } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== types[0]) {
-            types.push(fusionSpeciesForm.type2);
-          } else if (fusionSpeciesForm.type1 !== types[0]) {
-            types.push(fusionSpeciesForm.type1);
-          }
-        }
-
-        if (types.length === 1 && this.customPokemonData.types.length >= 2) {
-          types.push(this.customPokemonData.types[1]);
-        }
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride);
-
-        types.push(speciesForm.type1);
-
         const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
+        const customTypes = this.customPokemonData.types?.length > 0;
+
+        // First type, checking for "permanently changed" types from ME
+        const firstType = (customTypes && this.customPokemonData.types[0] !== Type.UNKNOWN) ? this.customPokemonData.types[0] : speciesForm.type1;
+        types.push(firstType);
+
+        // Second type
+        let secondType: Type | null = null;
+
         if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also had "permanently changed" types
-          // Otherwise, use standard fusion type logic
-          const fusionMETypes = this.fusionCustomPokemonData?.types;
-          if (fusionMETypes && fusionMETypes.length >= 2 && fusionMETypes[1] !== types[0]) {
-            types.push(fusionMETypes[1]);
-          } else if (fusionMETypes && fusionMETypes.length === 1 && fusionMETypes[0] !== types[0]) {
-            types.push(fusionMETypes[0]);
-          } else if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1) {
-            types.push(fusionSpeciesForm.type2);
-          } else if (fusionSpeciesForm.type1 !== speciesForm.type1) {
-            types.push(fusionSpeciesForm.type1);
+          // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
+          const fusionType1 = (this.fusionCustomPokemonData?.types && this.fusionCustomPokemonData.types.length > 0 && this.fusionCustomPokemonData.types[0] !== Type.UNKNOWN)
+            ? this.fusionCustomPokemonData.types[0] : fusionSpeciesForm.type1;
+          const fusionType2 = (this.fusionCustomPokemonData?.types && this.fusionCustomPokemonData.types.length > 1 && this.fusionCustomPokemonData.types[1] !== Type.UNKNOWN)
+            ? this.fusionCustomPokemonData.types[1] : fusionSpeciesForm.type2;
+
+          // Assign second type if the fusion can provide one
+          if (fusionType2 !== null && fusionType2 !== types[0]) {
+            secondType = fusionType2;
+          } else if (fusionType1 !== types[0]) {
+            secondType = fusionType1;
           }
+        } else {
+          // If not a fusion, just get the second type from the species, checking for permanent changes from ME
+          secondType = (customTypes && this.customPokemonData.types.length > 1 && this.customPokemonData.types[1] !== Type.UNKNOWN)
+            ? this.customPokemonData.types[1] : speciesForm.type2;
         }
 
-        if (types.length === 1 && speciesForm.type2 !== null) {
-          types.push(speciesForm.type2);
+        if (secondType) {
+          types.push(secondType);
         }
       }
     }
@@ -1399,11 +1386,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[this.customPokemonData.passive];
     }
 
-    let starterSpeciesId = this.species.speciesId;
-    while (pokemonPrevolutions.hasOwnProperty(starterSpeciesId)) {
-      starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
-    }
-    return allAbilities[starterPassiveAbilities[starterSpeciesId]];
+    return allAbilities[this.species.getPassiveAbility(this.formIndex)];
   }
 
   /**
@@ -1954,7 +1937,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
-  trySetShiny(thresholdOverride?: integer): boolean {
+  trySetShiny(thresholdOverride?: number): boolean {
     // Shiny Pokemon should not spawn in the end biome in endless
     if (globalScene.gameMode.isEndless && globalScene.arena.biomeType === Biome.END) {
       return false;
@@ -1966,7 +1949,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const E = globalScene.gameData.trainerId ^ globalScene.gameData.secretId;
     const F = rand1 ^ rand2;
 
-    const shinyThreshold = new Utils.IntegerHolder(BASE_SHINY_CHANCE);
+    const shinyThreshold = new Utils.NumberHolder(BASE_SHINY_CHANCE);
     if (thresholdOverride === undefined) {
       if (globalScene.eventManager.isEventActive()) {
         shinyThreshold.value *= globalScene.eventManager.getShinyMultiplier();
@@ -2055,6 +2038,38 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     } else {
       return 2;             // 1/10
     }
+  }
+
+  /**
+   * Function that tries to set a Pokemon to have its hidden ability based on seed, if it exists.
+   * For manual use only, usually to roll a Pokemon's hidden ability chance a second time.
+   *
+   * The base hidden ability odds are {@linkcode BASE_HIDDEN_ABILITY_CHANCE} / `65536`
+   * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the HA chance, overrides {@linkcode haThreshold} if set (bypassing HA rate modifiers such as Ability Charm)
+   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
+   * @returns `true` if the Pokemon has been set to have its hidden ability, `false` otherwise
+   */
+  public tryRerollHiddenAbilitySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+    if (!this.species.abilityHidden) {
+      return false;
+    }
+    const haThreshold = new Utils.NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    if (thresholdOverride === undefined || applyModifiersToOverride) {
+      if (thresholdOverride !== undefined && applyModifiersToOverride) {
+        haThreshold.value = thresholdOverride;
+      }
+      if (!this.hasTrainer()) {
+        globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, haThreshold);
+      }
+    } else {
+      haThreshold.value = thresholdOverride;
+    }
+
+    if (randSeedInt(65536) < haThreshold.value) {
+      this.abilityIndex = 2;
+    }
+
+    return this.abilityIndex === 2;
   }
 
   public generateFusionSpecies(forStarter?: boolean): void {
@@ -2208,9 +2223,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    // Bosses never get self ko moves
+    // Bosses never get self ko moves or Pain Split
     if (this.isBoss()) {
       movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr));
+      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(HpSplitAttr));
     }
     movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttrOnHit));
     if (this.hasTrainer()) {
@@ -2390,8 +2406,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleInfo.toggleFlyout(visible);
   }
 
-  addExp(exp: integer) {
-    const maxExpLevel = globalScene.getMaxExpLevel();
+  /**
+   * Adds experience to this PlayerPokemon, subject to wave based level caps.
+   * @param exp The amount of experience to add
+   * @param ignoreLevelCap Whether to ignore level caps when adding experience (defaults to false)
+   */
+  addExp(exp: integer, ignoreLevelCap: boolean = false) {
+    const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
     const initialExp = this.exp;
     this.exp += exp;
     while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {
@@ -3605,6 +3626,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
       return false;
     }
+    if (this.isFainted() && effect !== StatusEffect.FAINT) {
+      return false;
+    }
 
     /**
      * If this Pokemon falls asleep or freezes in the middle of a multi-hit attack,
@@ -4319,10 +4343,7 @@ export class PlayerPokemon extends Pokemon {
       ].filter(d => !!d);
       const amount = new Utils.NumberHolder(friendship);
       globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
-      let candyFriendshipMultiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
-      if (globalScene.eventManager.isEventActive()) {
-        candyFriendshipMultiplier *= globalScene.eventManager.getFriendshipMultiplier();
-      }
+      const candyFriendshipMultiplier = globalScene.eventManager.getClassicFriendshipMultiplier();
       const starterAmount = new Utils.NumberHolder(Math.floor(amount.value * (globalScene.gameMode.isClassic ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
 
       // Add friendship to this PlayerPokemon
@@ -4493,31 +4514,11 @@ export class PlayerPokemon extends Pokemon {
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
-      const previousFormIndex = this.formIndex;
       this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
       this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) { // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
-      }
-
-      // In cases where a form change updates the type of a Pokemon from its previous form (Arceus, Silvally, Castform, etc.),
-      // persist that type change in customPokemonData if necessary
-      const baseForm = this.species.forms[previousFormIndex];
-      const baseFormTypes = [ baseForm.type1, baseForm.type2 ];
-      if (this.customPokemonData.types.length > 0) {
-        if (this.getSpeciesForm().type1 !== baseFormTypes[0]) {
-          this.customPokemonData.types[0] = this.getSpeciesForm().type1;
-        }
-
-        const type2 = this.getSpeciesForm().type2;
-        if (!isNullOrUndefined(type2) && type2 !== baseFormTypes[1]) {
-          if (this.customPokemonData.types.length > 1) {
-            this.customPokemonData.types[1] = type2;
-          } else {
-            this.customPokemonData.types.push(type2);
-          }
-        }
       }
 
       this.compatibleTms.splice(0, this.compatibleTms.length);
@@ -4656,7 +4657,7 @@ export class EnemyPokemon extends Pokemon {
       this.status = new Status(Overrides.OPP_STATUS_OVERRIDE, 0, 4);
     }
 
-    if (Overrides.OPP_GENDER_OVERRIDE) {
+    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
       this.gender = Overrides.OPP_GENDER_OVERRIDE;
     }
 
@@ -5244,7 +5245,10 @@ export class PokemonSummonData {
 }
 
 export class PokemonBattleData {
+  /** counts the hits the pokemon received */
   public hitCount: number = 0;
+  /** used for {@linkcode Moves.RAGE_FIST} in order to save hit Counts received before Rage Fist is applied */
+  public prevHitCount: number = 0;
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
   public abilitiesApplied: Abilities[] = [];
