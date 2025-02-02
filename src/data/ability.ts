@@ -4146,6 +4146,10 @@ export class CheckTrappedAbAttr extends AbAttr {
     this.arenaTrapCondition = condition;
   }
 
+  willSucceedCheckTrapped(pokemon: Pokemon, passive: boolean, simulated: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
+    return true;
+  }
+
   applyCheckTrapped(pokemon: Pokemon, passive: boolean, simulated: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -4158,6 +4162,12 @@ export class CheckTrappedAbAttr extends AbAttr {
  * @see {@linkcode applyCheckTrapped}
  */
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
+  willSucceedCheckTrapped(pokemon: Pokemon, passive: boolean, simulated: boolean, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, args: any[]): boolean {
+    return this.arenaTrapCondition(pokemon, otherPokemon)
+    && !(otherPokemon.getTypes(true).includes(Type.GHOST) || (otherPokemon.getTypes(true).includes(Type.STELLAR) && otherPokemon.getTypes().includes(Type.GHOST)))
+    && !otherPokemon.hasAbility(Abilities.RUN_AWAY);
+  }
+
   /**
    * Checks if enemy Pokemon is trapped by an Arena Trap-esque ability
    * If the enemy is a Ghost type, it is not trapped
@@ -4205,26 +4215,33 @@ export class PostBattleAbAttr extends AbAttr {
     super(true);
   }
 
+  willSucceedPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return true;
+  }
+
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return false;
   }
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
+  willSucceedPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
+    return !simulated && postBattleLoot.length && args[0];
+  }
+
   /**
    * @param args - `[0]`: boolean for if the battle ended in a victory
    * @returns `true` if successful
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    if (!simulated && postBattleLoot.length && args[0]) {
-      const randItem = Utils.randSeedItem(postBattleLoot);
-      //@ts-ignore - TODO see below
-      if (globalScene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) { // TODO: fix. This is a promise!?
-        postBattleLoot.splice(postBattleLoot.indexOf(randItem), 1);
-        globalScene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: randItem.type.name }));
-        return true;
-      }
+    const randItem = Utils.randSeedItem(postBattleLoot);
+    //@ts-ignore - TODO see below
+    if (globalScene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) { // TODO: fix. This is a promise!?
+      postBattleLoot.splice(postBattleLoot.indexOf(randItem), 1);
+      globalScene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: randItem.type.name }));
+      return true;
     }
 
     return false;
@@ -4681,6 +4698,10 @@ export class MoneyAbAttr extends PostBattleAbAttr {
     super();
   }
 
+  willSucceedPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return !simulated && args[0];
+  }
+
   /**
    * @param pokemon {@linkcode Pokemon} that is the user of this ability.
    * @param passive N/A
@@ -4688,11 +4709,8 @@ export class MoneyAbAttr extends PostBattleAbAttr {
    * @returns `true` if successful
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!simulated && args[0]) {
-      globalScene.currentBattle.moneyScattered += globalScene.getWaveMoneyAmount(0.2);
-      return true;
-    }
-    return false;
+    globalScene.currentBattle.moneyScattered += globalScene.getWaveMoneyAmount(0.2);
+    return true;
   }
 }
 
@@ -5404,12 +5422,14 @@ export function applyPostTerrainChangeAbAttrs(attrType: Constructor<PostTerrainC
 
 export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAttr>,
   pokemon: Pokemon, trapped: Utils.BooleanHolder, otherPokemon: Pokemon, messages: string[], simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, simulated, trapped, otherPokemon, args), args, false, simulated, messages);
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, simulated, trapped, otherPokemon, args),
+    (attr, passive) => attr.willSucceedCheckTrapped(pokemon, passive, simulated, trapped, otherPokemon, args), args, false, simulated, messages);
 }
 
 export function applyPostBattleAbAttrs(attrType: Constructor<PostBattleAbAttr>,
   pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostBattle(pokemon, passive, simulated, args), args, false, simulated);
+  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostBattle(pokemon, passive, simulated, args),
+    (attr, passive) => attr.willSucceedPostBattle(pokemon, passive, simulated, args), args, false, simulated);
 }
 
 export function applyPostFaintAbAttrs(attrType: Constructor<PostFaintAbAttr>,
