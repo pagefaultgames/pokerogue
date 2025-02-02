@@ -139,6 +139,16 @@ describe("Abilities - Magic Bounce", () => {
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
   });
 
+  it("should bounce spikes even when the target is protected", async () => {
+    game.override.moveset([ Moves.SPIKES ]);
+    game.override.enemyMoveset([ Moves.PROTECT ]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    game.move.select(Moves.SPIKES);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
+  });
+
   it("should not bounce back curse", async() => {
     game.override.starterSpecies(Species.GASTLY);
     await game.classicMode.startBattle([ Species.GASTLY ]);
@@ -286,12 +296,13 @@ describe("Abilities - Magic Bounce", () => {
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
   });
 
-  it("should follow speed order, respecting trick room, when reflecting field effect moves", async () => {
+  it("should always apply the leftmost available target's magic bounce when bouncing moves like sticky webs in doubles", async () => {
     game.override.battleType("double");
     game.override.moveset([ Moves.STICKY_WEB, Moves.SPLASH, Moves.TRICK_ROOM ]);
 
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.MAGIKARP ]);
     const [ enemy_1, enemy_2 ] = game.scene.getEnemyField();
+    // set speed just incase logic erroneously checks for speed order
     enemy_1.setStat(Stat.SPD, enemy_2.getStat(Stat.SPD) + 1);
 
     // turn 1
@@ -306,7 +317,7 @@ describe("Abilities - Magic Bounce", () => {
     game.move.select(Moves.STICKY_WEB, 0);
     game.move.select(Moves.TRICK_ROOM, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getBattlerIndex()).toBe(BattlerIndex.ENEMY_2);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getBattlerIndex()).toBe(BattlerIndex.ENEMY);
   });
 });
 
