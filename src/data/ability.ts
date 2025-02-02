@@ -1852,6 +1852,10 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
 }
 
 export class PostVictoryAbAttr extends AbAttr {
+  willSucceedPostVictory(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]) {
+    return true;
+  }
+
   applyPostVictory(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -1888,20 +1892,24 @@ export class PostVictoryFormChangeAbAttr extends PostVictoryAbAttr {
     this.formFunc = formFunc;
   }
 
-  applyPostVictory(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  willSucceedPostVictory(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const formIndex = this.formFunc(pokemon);
-    if (formIndex !== pokemon.formIndex) {
-      if (!simulated) {
-        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
-      }
-      return true;
-    }
+    return formIndex !== pokemon.formIndex;
+  }
 
-    return false;
+  applyPostVictory(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    if (!simulated) {
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
+    }
+    return true;
   }
 }
 
 export class PostKnockOutAbAttr extends AbAttr {
+  willSucceedPostKnockOut(pokemon: Pokemon, passive: boolean, simulated: boolean, knockedOut: Pokemon, args: any[]): boolean {
+    return true;
+  }
+
   applyPostKnockOut(pokemon: Pokemon, passive: boolean, simulated: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -1934,16 +1942,16 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
     super();
   }
 
-  applyPostKnockOut(pokemon: Pokemon, passive: boolean, simulated: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
-    if (pokemon.isPlayer() === knockedOut.isPlayer() && !knockedOut.getAbility().hasAttr(UncopiableAbilityAbAttr)) {
-      if (!simulated) {
-        pokemon.summonData.ability = knockedOut.getAbility().id;
-        globalScene.queueMessage(i18next.t("abilityTriggers:copyFaintedAllyAbility", { pokemonNameWithAffix: getPokemonNameWithAffix(knockedOut), abilityName: allAbilities[knockedOut.getAbility().id].name }));
-      }
-      return true;
-    }
+  willSucceedPostKnockOut(pokemon: Pokemon, passive: boolean, simulated: boolean, knockedOut: Pokemon, args: any[]): boolean {
+    return pokemon.isPlayer() === knockedOut.isPlayer() && !knockedOut.getAbility().hasAttr(UncopiableAbilityAbAttr);
+  }
 
-    return false;
+  applyPostKnockOut(pokemon: Pokemon, passive: boolean, simulated: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
+    if (!simulated) {
+      pokemon.summonData.ability = knockedOut.getAbility().id;
+      globalScene.queueMessage(i18next.t("abilityTriggers:copyFaintedAllyAbility", { pokemonNameWithAffix: getPokemonNameWithAffix(knockedOut), abilityName: allAbilities[knockedOut.getAbility().id].name }));
+    }
+    return true;
   }
 }
 
@@ -2023,6 +2031,10 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
  * @see {@linkcode applyPostSummon()}
  */
 export class PostSummonAbAttr extends AbAttr {
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]) {
+    return true;
+  }
+
   /**
    * Applies ability post summon (after switching in)
    * @param pokemon {@linkcode Pokemon} with this ability
@@ -2108,12 +2120,15 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
     this.turnCount = turnCount;
   }
 
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return pokemon.canAddTag(this.tagType);
+  }
+
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (simulated) {
-      return pokemon.canAddTag(this.tagType);
-    } else {
+    if (!simulated) {
       return pokemon.addTag(this.tagType, this.turnCount);
     }
+    return true;
   }
 }
 
@@ -2137,7 +2152,6 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
       return true;
     }
 
-    queueShowAbility(pokemon, passive);  // TODO: Better solution than manually showing the ability here
     if (this.selfTarget) {
       // we unshift the StatStageChangePhase to put it right after the showAbility and not at the end of the
       // phase list (which could be after CommandPhase for example)
@@ -2173,18 +2187,18 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
     this.showAnim = showAnim;
   }
 
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return pokemon.getAlly()?.isActive(true);
+  }
+
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const target = pokemon.getAlly();
-    if (target?.isActive(true)) {
-      if (!simulated) {
-        globalScene.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
-          Utils.toDmgValue(pokemon.getMaxHp() / this.healRatio), i18next.t("abilityTriggers:postSummonAllyHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(target), pokemonName: pokemon.name }), true, !this.showAnim));
-      }
-
-      return true;
+    if (!simulated) {
+      globalScene.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
+        Utils.toDmgValue(pokemon.getMaxHp() / this.healRatio), i18next.t("abilityTriggers:postSummonAllyHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(target), pokemonName: pokemon.name }), true, !this.showAnim));
     }
 
-    return false;
+    return true;
   }
 }
 
@@ -2201,21 +2215,21 @@ export class PostSummonClearAllyStatStagesAbAttr extends PostSummonAbAttr {
     super();
   }
 
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return pokemon.getAlly()?.isActive(true);
+  }
+
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const target = pokemon.getAlly();
-    if (target?.isActive(true)) {
-      if (!simulated) {
-        for (const s of BATTLE_STATS) {
-          target.setStatStage(s, 0);
-        }
-
-        globalScene.queueMessage(i18next.t("abilityTriggers:postSummonClearAllyStats", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+    if (!simulated) {
+      for (const s of BATTLE_STATS) {
+        target.setStatStage(s, 0);
       }
 
-      return true;
+      globalScene.queueMessage(i18next.t("abilityTriggers:postSummonClearAllyStats", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
     }
 
-    return false;
+    return true;
   }
 }
 
@@ -2232,15 +2246,7 @@ export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyCountTally: integer;
   private stats: BattleStat[];
 
-  /**
-   * Checks to see if it is the opening turn (starting a new game), if so, Download won't work. This is because Download takes into account
-   * vitamins and items, so it needs to use the Stat and the stat alone.
-   * @param {Pokemon} pokemon Pokemon that is using the move, as well as seeing the opposing pokemon.
-   * @param {boolean} passive N/A
-   * @param {any[]} args N/A
-   * @returns Returns true if ability is used successful, false if not.
-   */
-  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     this.enemyDef = 0;
     this.enemySpDef = 0;
     this.enemyCountTally = 0;
@@ -2252,21 +2258,28 @@ export class DownloadAbAttr extends PostSummonAbAttr {
     }
     this.enemyDef = Math.round(this.enemyDef / this.enemyCountTally);
     this.enemySpDef = Math.round(this.enemySpDef / this.enemyCountTally);
+    return this.enemyDef > 0 && this.enemySpDef > 0;
+  }
 
+  /**
+   * Checks to see if it is the opening turn (starting a new game), if so, Download won't work. This is because Download takes into account
+   * vitamins and items, so it needs to use the Stat and the stat alone.
+   * @param {Pokemon} pokemon Pokemon that is using the move, as well as seeing the opposing pokemon.
+   * @param {boolean} passive N/A
+   * @param {any[]} args N/A
+   * @returns Returns true if ability is used successful, false if not.
+   */
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     if (this.enemyDef < this.enemySpDef) {
       this.stats = [ Stat.ATK ];
     } else {
       this.stats = [ Stat.SPATK ];
     }
 
-    if (this.enemyDef > 0 && this.enemySpDef > 0) { // only activate if there's actually an enemy to download from
-      if (!simulated) {
-        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, 1));
-      }
-      return true;
+    if (!simulated) {
+      globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, 1));
     }
-
-    return false;
+    return true;
   }
 }
 
@@ -2279,18 +2292,19 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
     this.weatherType = weatherType;
   }
 
-  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if ((this.weatherType === WeatherType.HEAVY_RAIN ||
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const weatherReplaceable = (this.weatherType === WeatherType.HEAVY_RAIN ||
       this.weatherType === WeatherType.HARSH_SUN ||
-      this.weatherType === WeatherType.STRONG_WINDS) || !globalScene.arena.weather?.isImmutable()) {
-      if (simulated) {
-        return globalScene.arena.weather?.weatherType !== this.weatherType;
-      } else {
-        return globalScene.arena.trySetWeather(this.weatherType, true);
-      }
-    }
+      this.weatherType === WeatherType.STRONG_WINDS) || !globalScene.arena.weather?.isImmutable();
+    return weatherReplaceable;
+  }
 
-    return false;
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    if (simulated) {
+      return globalScene.arena.weather?.weatherType !== this.weatherType;
+    } else {
+      return globalScene.arena.trySetWeather(this.weatherType, true);
+    }
   }
 }
 
@@ -2321,13 +2335,12 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
     this.formFunc = formFunc;
   }
 
-  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const formIndex = this.formFunc(pokemon);
-    if (formIndex !== pokemon.formIndex) {
-      return simulated || globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
-    }
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return this.formFunc(pokemon) !== pokemon.formIndex;
+  }
 
-    return false;
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return simulated || globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
   }
 }
 
@@ -2396,6 +2409,11 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
     this.statusEffect = statusEffect;
   }
 
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const party = pokemon instanceof PlayerPokemon ? globalScene.getPlayerField() : globalScene.getEnemyField();
+    return party.filter(p => p.isAllowedInBattle()).length > 0;
+  }
+
   /**
    * Removes supplied status effect from the user's field when user of the ability is summoned.
    *
@@ -2407,10 +2425,6 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const party = pokemon instanceof PlayerPokemon ? globalScene.getPlayerField() : globalScene.getEnemyField();
     const allowedParty = party.filter(p => p.isAllowedInBattle());
-
-    if (allowedParty.length < 1) {
-      return false;
-    }
 
     if (!simulated) {
       for (const pokemon of allowedParty) {
@@ -2428,7 +2442,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
 
 /** Attempt to copy the stat changes on an ally pokemon */
 export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
-  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     if (!globalScene.currentBattle.double) {
       return false;
     }
@@ -2438,6 +2452,11 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
       return false;
     }
 
+    return true;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const ally = pokemon.getAlly();
     if (!simulated) {
       for (const s of BATTLE_STATS) {
         pokemon.setStatStage(s, ally.getStatStage(s));
@@ -2462,6 +2481,10 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   constructor() {
     super(true);
+  }
+
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    // SUCCESS CHECK
   }
 
   async applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): Promise<boolean> {
@@ -2547,13 +2570,12 @@ export class PostSummonWeatherSuppressedFormChangeAbAttr extends PostSummonAbAtt
    * @param args n/a
    * @returns whether a Pokemon was reverted to its normal form
    */
+
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return getPokemonWithWeatherBasedForms().length > 0;
+  }
+
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]) {
-    const pokemonToTransform = getPokemonWithWeatherBasedForms();
-
-    if (pokemonToTransform.length < 1) {
-      return false;
-    }
-
     if (!simulated) {
       globalScene.arena.triggerWeatherBasedFormChangesToNormal();
     }
@@ -2576,6 +2598,12 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
     this.ability = ability;
   }
 
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
+    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
+    return isCastformWithForecast || isCherrimWithFlowerGift;
+  }
+
   /**
    * Calls the {@linkcode BattleScene.triggerPokemonFormChange | triggerPokemonFormChange} for both
    * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeWeatherTrigger} and
@@ -2587,20 +2615,14 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * @returns whether the form change was triggered
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
-    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
-
-    if (isCastformWithForecast || isCherrimWithFlowerGift) {
-      if (simulated) {
-        return simulated;
-      }
-
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
-      queueShowAbility(pokemon, passive);
-      return true;
+    if (simulated) {
+      return simulated;
     }
-    return false;
+
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
+    queueShowAbility(pokemon, passive);
+    return true;
   }
 }
 
@@ -4667,6 +4689,12 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
     this.tagType = tagType;
   }
 
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const side = pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    return (globalScene.arena.getTagOnSide(this.tagType, side) ?? false)
+      && super.willSucceedPostSummon(pokemon, passive, simulated, args);
+  }
+
   /**
    * Applies the post-summon stat change if the specified arena tag is present on pokemon's side.
    * This is used in Wind Rider ability.
@@ -4677,12 +4705,7 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
    * @returns {boolean} - Returns true if the stat change was applied, otherwise false.
    */
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const side = pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-
-    if (globalScene.arena.getTagOnSide(this.tagType, side)) {
-      return super.applyPostSummon(pokemon, passive, simulated, args);
-    }
-    return false;
+    return super.applyPostSummon(pokemon, passive, simulated, args);
   }
 }
 
@@ -4880,15 +4903,17 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
     return typeChange;
   }
 
+  willSucceedPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return globalScene.arena.getTerrainType() !== TerrainType.NONE &&
+      this.willSucceed(pokemon, passive, simulated, args);
+  }
+
   /**
    * Checks if the Pokemon should change types if summoned into an active terrain
    * @returns `true` if there is an active terrain requiring a type change | `false` if not
    */
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
-    if (globalScene.arena.getTerrainType() !== TerrainType.NONE) {
-      return this.apply(pokemon, passive, simulated, new Utils.BooleanHolder(false), []);
-    }
-    return false;
+    return this.apply(pokemon, passive, simulated, new Utils.BooleanHolder(false), []);
   }
 
   override getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
@@ -5270,17 +5295,20 @@ export function applyPostAttackAbAttrs(attrType: Constructor<PostAttackAbAttr>,
 
 export function applyPostKnockOutAbAttrs(attrType: Constructor<PostKnockOutAbAttr>,
   pokemon: Pokemon, knockedOut: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostKnockOutAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostKnockOut(pokemon, passive, simulated, knockedOut, args), args, false, simulated);
+  return applyAbAttrsInternal<PostKnockOutAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostKnockOut(pokemon, passive, simulated, knockedOut, args),
+    (attr, passive) => attr.willSucceedPostKnockOut(pokemon, passive, simulated, knockedOut, args), args, false, simulated);
 }
 
 export function applyPostVictoryAbAttrs(attrType: Constructor<PostVictoryAbAttr>,
   pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostVictoryAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostVictory(pokemon, passive, simulated, args), args, false, simulated);
+  return applyAbAttrsInternal<PostVictoryAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostVictory(pokemon, passive, simulated, args),
+    (attr, passive) => attr.willSucceedPostVictory(pokemon, passive, simulated, args), args, false, simulated);
 }
 
 export function applyPostSummonAbAttrs(attrType: Constructor<PostSummonAbAttr>,
   pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args), args, false, simulated);
+  return applyAbAttrsInternal<PostSummonAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args),
+    (attr, passive) => attr.willSucceedPostSummon(pokemon, passive, simulated, args), args, false, simulated);
 }
 
 export function applyPreSwitchOutAbAttrs(attrType: Constructor<PreSwitchOutAbAttr>,
