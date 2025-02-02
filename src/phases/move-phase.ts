@@ -547,7 +547,7 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    globalScene.queueMessage(i18next.t("battle:useMove", {
+    globalScene.queueMessage(i18next.t(this.reflected ? "battle:magicCoatExe" : "battle:useMove", {
       pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
       moveName: this.move.getName()
     }), 500);

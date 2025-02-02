@@ -62,15 +62,16 @@ import {
 } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, executeIf, isNullOrUndefined, NumberHolder } from "#app/utils";
+import { type nil } from "#app/utils";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Moves } from "#enums/moves";
 import i18next from "i18next";
 import { Stat } from "#app/enums/stat";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { MessagePhase } from "./message-phase";
 import type { Phase } from "#app/phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
 import { MovePhase } from "./move-phase";
+import { MoveEndPhase } from "./move-end-phase";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
@@ -190,7 +191,7 @@ export class MoveEffectPhase extends PokemonPhase {
         && (targets[0]?.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
         && !targets[0]?.getTag(SemiInvulnerableTag);
 
-      const mayBounce = move.hasFlag(MoveFlags.REFLECTABLE) && !this.reflected;
+      const mayBounce = move.hasFlag(MoveFlags.REFLECTABLE) && !this.reflected && targets.some(t => t.hasAbilityWithAttr(ReflectStatusMoveAbAttr) || !!t.getTag(BattlerTagType.MAGIC_COAT));
 
       /**
        * If no targets are left for the move to hit (FAIL), or the invoked move is non-reflectable, single-target
@@ -223,22 +224,21 @@ export class MoveEffectPhase extends PokemonPhase {
         // Prevent ENEMY_SIDE targeted moves from occurring twice in double battles
         // and determine which enemy will magic bounce based on speed order, respecting trick room
         const trueTargets: Pokemon[] = move.moveTarget !== MoveTarget.ENEMY_SIDE ? targets : (() => {
-          const magicCoatTargets = targets.filter(t => t.getTag(BattlerTagType.MAGIC_COAT) !== null);
+          const magicCoatTargets = targets.filter(t => t.getTag(BattlerTagType.MAGIC_COAT) || t.hasAbilityWithAttr(ReflectStatusMoveAbAttr));
 
           // only magic coat effect cares about order
           if (!mayBounce || magicCoatTargets.length === 0) {
             return [ targets[0] ];
+          } else if (magicCoatTargets.length === 1) {
+            return magicCoatTargets;
           }
 
-          const reversed = globalScene.arena.hasTag(ArenaTagType.TRICK_ROOM);
-          const sortedTargets = targets
-            .sort((a: Pokemon, b: Pokemon) => {
-              const aSpeed = a?.getEffectiveStat(Stat.SPD) ?? 0;
-              const bSpeed = b?.getEffectiveStat(Stat.SPD) ?? 0;
-              return reversed ? aSpeed - bSpeed : bSpeed - aSpeed;
-            })
-            .filter(t => t.getTag(BattlerTagType.MAGIC_COAT) !== null);
-          return sortedTargets.length === 1 ? sortedTargets : [ sortedTargets[globalScene.randBattleSeedInt(sortedTargets.length)] ];
+          // Filter the list of magic coat targets to those with the highest speed, or lowest if trick room is active.
+          const speeds = magicCoatTargets.map(p => p.getEffectiveStat(Stat.SPD) ?? 0);
+          const targetSpeed = globalScene.arena.hasTag(ArenaTagType.TRICK_ROOM) ? Math.min(...speeds) : Math.max(...speeds);
+          const filteredTargets = magicCoatTargets.filter((_, idx) => speeds[idx] === targetSpeed);
+          // In the event of a speed tie, choose a pokemon at random that will bounce the move.
+          return filteredTargets.length === 1 ? filteredTargets : [ filteredTargets[globalScene.randBattleSeedInt(filteredTargets.length)] ];
         })();
 
         const queuedPhases: Phase[] = [];
@@ -255,7 +255,7 @@ export class MoveEffectPhase extends PokemonPhase {
           }
 
           /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
-          const isProtected = (
+          const isProtected = !([ MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES ].includes(this.move.getMove().moveTarget)) && (
             bypassIgnoreProtect.value
             || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
             && (hasConditionalProtectApplied.value
@@ -268,21 +268,30 @@ export class MoveEffectPhase extends PokemonPhase {
           const isCommanding = globalScene.currentBattle.double && target.getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === target;
 
           /** Is the target reflecting status moves from the magic coat move? */
-          const isReflecting = target.getTag(BattlerTagType.MAGIC_COAT) !== null;
+          const isReflecting = !!target.getTag(BattlerTagType.MAGIC_COAT);
 
           /** Is the target's magic bounce ability not ignored and able to reflect this move? */
-          const canMagicBounce = !(isReflecting || move.checkFlag(MoveFlags.IGNORE_ABILITIES, user, target) && target.hasAbilityWithAttr(ReflectStatusMoveAbAttr));
+          const canMagicBounce = !isReflecting && !move.checkFlag(MoveFlags.IGNORE_ABILITIES, user, target) && target.hasAbilityWithAttr(ReflectStatusMoveAbAttr);
 
-          /** Is the target protected and reflecting the effect */
-          const willBounce = !isProtected && !this.reflected && !isCommanding && (isReflecting || canMagicBounce);
+          const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
+          /** Is the target in a semi-invulnerable state that isn't being bypassed by this move? */
+          const activeSemiInvulnerability = !!semiInvulnerableTag &&
+            !(this.checkBypassSemiInvuln(semiInvulnerableTag)
+            || this.checkBypassAccAndInvuln(target));
 
-          /** If the move will bounce, then queue the bounce and move on to the next target*/
+          /** Is the target reflecting the effect, not protected, and not in an semi-invulnerable state?*/
+          const willBounce = (!isProtected && !this.reflected && !isCommanding
+            && move.hasFlag(MoveFlags.REFLECTABLE)
+            && (isReflecting || canMagicBounce)
+            && !activeSemiInvulnerability);
+
+          // If the move will bounce, then queue the bounce and move on to the next target
           if (!target.switchOutStatus && willBounce) {
             const newTargets = move.isMultiTarget() ? getMoveTargets(target, move.id).targets : [ user.getBattlerIndex() ];
-            if (!isReflecting && canMagicBounce) {
+            if (!isReflecting) {
               queuedPhases.push(new ShowAbilityPhase(target.getBattlerIndex(), target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr)));
             }
-            queuedPhases.push(new MessagePhase(i18next.t("battle:magicCoatBounce", { pokemonNameWithAffix: getPokemonNameWithAffix(target) })));
+
             queuedPhases.push(new MovePhase(target, newTargets, new PokemonMove(move.id, 0, 0, true), true, true, true));
             continue;
           }
@@ -290,7 +299,7 @@ export class MoveEffectPhase extends PokemonPhase {
           /** Is the pokemon immune due to an ablility, and also not in a semi invulnerable state?  */
           const isImmune = target.hasAbilityWithAttr(TypeImmunityAbAttr)
             && (target.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
-            && !target.getTag(SemiInvulnerableTag);
+            && !semiInvulnerableTag;
 
 
           /**
@@ -419,7 +428,9 @@ export class MoveEffectPhase extends PokemonPhase {
         }
 
         // Apply queued phases
-        queuedPhases.forEach(p => globalScene.unshiftPhase(p));
+        if (queuedPhases.length) {
+          globalScene.appendToPhase(queuedPhases, MoveEndPhase);
+        }
         // Apply the move's POST_TARGET effects on the move's last hit, after all targeted effects have resolved
         const postTarget = (user.turnData.hitsLeft === 1 || !this.getFirstTarget()?.isActive()) ?
           applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && attr.trigger === MoveEffectTrigger.POST_TARGET, user, null, move) :
@@ -635,12 +646,7 @@ export class MoveEffectPhase extends PokemonPhase {
       }
     }
 
-    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
-      return true;
-    }
-
-    // If the user should ignore accuracy on a target, check who the user targeted last turn and see if they match
-    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+    if (this.checkBypassAccAndInvuln(target)) {
       return true;
     }
 
@@ -648,15 +654,12 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    if (target.getTag(BattlerTagType.TELEKINESIS) && !target.getTag(SemiInvulnerableTag) && !this.move.getMove().hasAttr(OneHitKOAttr)) {
+    const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
+    if (target.getTag(BattlerTagType.TELEKINESIS) && !semiInvulnerableTag && !this.move.getMove().hasAttr(OneHitKOAttr)) {
       return true;
     }
 
-    const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
-    if (semiInvulnerableTag
-        && !this.move.getMove().getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType)
-        && !(this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(Type.POISON))
-    ) {
+    if (this.checkBypassSemiInvuln(semiInvulnerableTag)) {
       return false;
     }
 
@@ -670,6 +673,58 @@ export class MoveEffectPhase extends PokemonPhase {
     const rand = user.randSeedInt(100);
 
     return rand < (moveAccuracy * accuracyMultiplier);
+  }
+
+  /**
+   * Check whether the move should bypass *both* the accuracy *and* semi-invulnerable states.
+   * @param target - The {@linkcode Pokemon} targeted by the invoked move
+   * @returns `true` if the move should bypass accuracy and semi-invulnerability
+   *
+   * Accuracy and semi-invulnerability can be bypassed by:
+   * - An ability like {@linkcode Abilities.NO_GUARD | No Guard}
+   * - A poison type using {@linkcode Moves.TOXIC | Toxic}
+   * - A move like {@linkcode Moves.LOCK_ON | Lock-On} or {@linkcode Moves.MIND_READER | Mind Reader}.
+   * - A move like {@linkcode Moves.SPIEKS | Spikes} or {@linkcode Moves.SANDSTORM | Sandstorm} that targets the field
+   *
+   * Does *not* check against effects {@linkcode Moves.GLAIVE_RUSH | Glaive Rush} status (which
+   * should not bypass semi-invulnerability), or interactions like Earthquake hitting against Dig,
+   * (which should not bypass the accuracy check).
+   *
+   * @see {@linkcode hitCheck}
+   */
+  public checkBypassAccAndInvuln(target: Pokemon) {
+    const user = this.getUserPokemon();
+    if (!user) {
+      return false;
+    }
+    if ([ MoveTarget.USER, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE, MoveTarget.BOTH_SIDES ].includes(this.move.getMove().moveTarget)) {
+      return true;
+    }
+    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
+      return true;
+    }
+    if ((this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(Type.POISON))) {
+      return true;
+    }
+    // TODO: Fix lock on / mind reader check.
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1) {
+      return true;
+    }
+  }
+
+  /**
+   * Check whether the move is able to ignore the given `semiInvulnerableTag`
+   * @param semiInvulnerableTag - The semiInvulnerbale tag to check against
+   * @returns `true` if the move can ignore the semi-invulnerable state
+   */
+  public checkBypassSemiInvuln(semiInvulnerableTag: SemiInvulnerableTag | nil): boolean {
+    if (!semiInvulnerableTag) {
+      return false;
+    }
+    const move = this.move.getMove();
+    /** Does the move target the field instead of the target itself? */
+    const isIndirectTarget = move.moveTarget in [ MoveTarget.USER, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE, MoveTarget.BOTH_SIDES ];
+    return isIndirectTarget || move.getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType);
   }
 
   /** @returns The {@linkcode Pokemon} using this phase's invoked move */

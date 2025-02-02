@@ -5818,10 +5818,9 @@ export function initAbilities() {
     new Ability(Abilities.MAGIC_BOUNCE, 5)
       .attr(ReflectStatusMoveAbAttr)
       .ignorable()
-      // Interactions with stomping tantrum, instruct, and other moves that
+      // Interactions with stomping tantrum, instruct, encore, and probably other moves that
       // rely on move history
-      .edgeCase()
-      .unimplemented(),
+      .edgeCase(),
     new Ability(Abilities.SAP_SIPPER, 5)
       .attr(TypeImmunityStatStageChangeAbAttr, Type.GRASS, Stat.ATK, 1)
       .ignorable(),
