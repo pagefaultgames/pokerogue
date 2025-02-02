@@ -2,7 +2,7 @@ import { Abilities } from "#app/enums/abilities";
 import { Species } from "#app/enums/species";
 
 export interface PassiveAbilities {
-  [key: integer]: Abilities
+  [key: number]: Abilities
 }
 
 interface StarterPassiveAbilities {
