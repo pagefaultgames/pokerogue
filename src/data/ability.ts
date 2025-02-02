@@ -1160,6 +1160,10 @@ export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChang
 }
 
 export class PreAttackAbAttr extends AbAttr {
+  willSucceedPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
+    return true;
+  }
+
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -1252,10 +1256,9 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
     this.canStack = canStack;
   }
 
-  willSucceed(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!this.canStack && hasApplied.value) {
-      return false;
-    }
+  willSucceedFieldStat(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: Stat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, hasApplied: Utils.BooleanHolder, args: any[]): boolean {
+    return this.canStack || !hasApplied.value
+      && this.stat === stat && checkedPokemon.getAbilityAttrs(FieldMultiplyStatAbAttr).every(attr => (attr as FieldMultiplyStatAbAttr).stat !== stat);
   }
 
   /**
@@ -1270,14 +1273,9 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
    * @returns true if this changed the checked stat, false otherwise.
    */
   applyFieldStat(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: Stat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, hasApplied: Utils.BooleanHolder, args: any[]): boolean {
-
-
-    if (this.stat === stat && checkedPokemon.getAbilityAttrs(FieldMultiplyStatAbAttr).every(attr => (attr as FieldMultiplyStatAbAttr).stat !== stat)) {
-      statValue.value *= this.multiplier;
-      hasApplied.value = true;
-      return true;
-    }
-    return false;
+    statValue.value *= this.multiplier;
+    hasApplied.value = true;
+    return true;
   }
 
 }
@@ -1291,19 +1289,19 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
     super(true);
   }
 
+  willSucceedPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
+    return (this.condition && this.condition(pokemon, defender, move)) ?? false;
+  }
+
   // TODO: Decouple this into two attributes (type change / power boost)
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    if (this.condition && this.condition(pokemon, defender, move)) {
-      if (args[0] && args[0] instanceof Utils.NumberHolder) {
-        args[0].value = this.newType;
-      }
-      if (args[1] && args[1] instanceof Utils.NumberHolder) {
-        args[1].value *= this.powerMultiplier;
-      }
-      return true;
+    if (args[0] && args[0] instanceof Utils.NumberHolder) {
+      args[0].value = this.newType;
     }
-
-    return false;
+    if (args[1] && args[1] instanceof Utils.NumberHolder) {
+      args[1].value *= this.powerMultiplier;
+    }
+    return true;
   }
 }
 
@@ -1315,35 +1313,36 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
     super(true);
   }
 
-  applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    if (
-      !pokemon.isTerastallized() &&
-      move.id !== Moves.STRUGGLE &&
-      /**
-       * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
-       * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
-       */
-      !move.findAttr((attr) =>
-        attr instanceof RandomMovesetMoveAttr ||
-        attr instanceof RandomMoveAttr ||
-        attr instanceof NaturePowerAttr ||
-        attr instanceof CopyMoveAttr
-      )
-    ) {
+  willSucceedPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
+    if (!pokemon.isTerastallized() &&
+    move.id !== Moves.STRUGGLE &&
+    /**
+     * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
+     * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
+     */
+    !move.findAttr((attr) =>
+      attr instanceof RandomMovesetMoveAttr ||
+      attr instanceof RandomMoveAttr ||
+      attr instanceof NaturePowerAttr ||
+      attr instanceof CopyMoveAttr)) {
       const moveType = pokemon.getMoveType(move);
-
       if (pokemon.getTypes().some((t) => t !== moveType)) {
-        if (!simulated) {
-          this.moveType = moveType;
-          pokemon.summonData.types = [ moveType ];
-          pokemon.updateInfo();
-        }
-
         return true;
       }
     }
-
     return false;
+  }
+
+  applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
+    const moveType = pokemon.getMoveType(move);
+
+    if (!simulated) {
+      this.moveType = moveType;
+      pokemon.summonData.types = [ moveType ];
+      pokemon.updateInfo();
+    }
+
+    return true;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
@@ -1367,6 +1366,10 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
     this.damageMultiplier = damageMultiplier;
   }
 
+  willSucceedPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
+    return move.canBeMultiStrikeEnhanced(pokemon, true);
+  }
+
   /**
    * If conditions are met, this doubles the move's hit count (via args[1])
    * or multiplies the damage of secondary strikes (via args[2])
@@ -1382,19 +1385,15 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
     const hitCount = args[0] as Utils.NumberHolder;
     const multiplier = args[1] as Utils.NumberHolder;
-
-    if (move.canBeMultiStrikeEnhanced(pokemon, true)) {
-      this.showAbility = !!hitCount?.value;
-      if (hitCount?.value) {
-        hitCount.value += 1;
-      }
-
-      if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
-        multiplier.value = this.damageMultiplier;
-      }
-      return true;
+    this.showAbility = !!hitCount?.value;
+    if (hitCount?.value) {
+      hitCount.value += 1;
     }
-    return false;
+
+    if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
+      multiplier.value = this.damageMultiplier;
+    }
+    return true;
   }
 }
 
@@ -1414,6 +1413,10 @@ export class DamageBoostAbAttr extends PreAttackAbAttr {
     this.condition = condition;
   }
 
+  willSucceedPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
+    return this.condition(pokemon, defender, move);
+  }
+
   /**
    *
    * @param pokemon the attacker pokemon
@@ -1424,13 +1427,9 @@ export class DamageBoostAbAttr extends PreAttackAbAttr {
    * @returns true if the function succeeds
    */
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    if (this.condition(pokemon, defender, move)) {
-      const power = args[0] as Utils.NumberHolder;
-      power.value = Math.floor(power.value * this.damageMultiplier);
-      return true;
-    }
-
-    return false;
+    const power = args[0] as Utils.NumberHolder;
+    power.value = Math.floor(power.value * this.damageMultiplier);
+    return true;
   }
 }
 
@@ -1444,14 +1443,13 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
     this.powerMultiplier = powerMultiplier;
   }
 
+  willSucceedPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
+    return this.condition(pokemon, defender, move);
+  }
+
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    if (this.condition(pokemon, defender, move)) {
-      (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
-
-      return true;
-    }
-
-    return false;
+    (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
+    return true;
   }
 }
 
@@ -1488,17 +1486,17 @@ export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
     this.mult = mult;
   }
 
+  willSucceedPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
+    return this.mult(pokemon, defender, move) !== 1;
+  }
+
   /**
    * @override
    */
   applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move, args: any[]): boolean {
     const multiplier = this.mult(pokemon, defender, move);
-    if (multiplier !== 1) {
-      (args[0] as Utils.NumberHolder).value *= multiplier;
-      return true;
-    }
-
-    return false;
+    (args[0] as Utils.NumberHolder).value *= multiplier;
+    return true;
   }
 }
 
@@ -5191,7 +5189,8 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
 
 
 export function applyAbAttrs(attrType: Constructor<AbAttr>, pokemon: Pokemon, cancelled: Utils.BooleanHolder | null, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<AbAttr>(attrType, pokemon, (attr, passive) => attr.apply(pokemon, passive, simulated, cancelled, args), (attr, passive) => attr.willSucceed(pokemon, passive, simulated, args), args, false, simulated);
+  return applyAbAttrsInternal<AbAttr>(attrType, pokemon, (attr, passive) => attr.apply(pokemon, passive, simulated, cancelled, args),
+    (attr, passive) => attr.willSucceed(pokemon, passive, simulated, args), args, false, simulated);
 }
 
 export function applyPostBattleInitAbAttrs(attrType: Constructor<PostBattleInitAbAttr>,
@@ -5247,12 +5246,14 @@ export function applyPostDamageAbAttrs(attrType: Constructor<PostDamageAbAttr>,
  */
 export function applyFieldStatMultiplierAbAttrs(attrType: Constructor<FieldMultiplyStatAbAttr>,
   pokemon: Pokemon, stat: Stat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, hasApplied: Utils.BooleanHolder, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<FieldMultiplyStatAbAttr>(attrType, pokemon, (attr, passive) => attr.applyFieldStat(pokemon, passive, simulated, stat, statValue, checkedPokemon, hasApplied, args), args);
+  return applyAbAttrsInternal<FieldMultiplyStatAbAttr>(attrType, pokemon, (attr, passive) => attr.applyFieldStat(pokemon, passive, simulated, stat, statValue, checkedPokemon, hasApplied, args),
+    (attr, passive) => attr.willSucceedFieldStat(pokemon, passive, simulated, stat, statValue, checkedPokemon, hasApplied, args), args);
 }
 
 export function applyPreAttackAbAttrs(attrType: Constructor<PreAttackAbAttr>,
   pokemon: Pokemon, defender: Pokemon | null, move: Move, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreAttackAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreAttack(pokemon, passive, simulated, defender, move, args), args, false, simulated);
+  return applyAbAttrsInternal<PreAttackAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreAttack(pokemon, passive, simulated, defender, move, args),
+    (attr, passive) => attr.willSucceedPreAttack(pokemon, passive, simulated, defender, move, args), args, false, simulated);
 }
 
 export function applyPostAttackAbAttrs(attrType: Constructor<PostAttackAbAttr>,
