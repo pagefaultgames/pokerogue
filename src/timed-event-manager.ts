@@ -151,7 +151,7 @@ const timedEvents: TimedEvent[] = [
     name: "Valentine",
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2025, 1, 14)),
-    endDate: new Date(Date.UTC(2025, 2, 21)),
+    endDate: new Date(Date.UTC(2025, 1, 21)),
     boostFusions: true,
     shinyMultiplier: 2,
     bannerKey: "valentines2025event-",
