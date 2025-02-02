@@ -1629,7 +1629,8 @@ export class GorillaTacticsAbAttr extends PostAttackAbAttr {
   }
 
   willSucceedPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return simulated || !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
+    return super.willSucceedPostAttack(pokemon, passive, simulated, defender, move, hitResult, args)
+      && simulated || !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
   }
 
   /**
@@ -2829,6 +2830,11 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
     this.effects = effects;
   }
 
+  willSucceedPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
+    return super.willSucceedPostAttack(pokemon, passive, simulated, defender, move, hitResult, args)
+        && this.effects.indexOf(args[0]) > -1 && !defender.isFainted() && defender.canAddTag(BattlerTagType.CONFUSED);
+  }
+
 
   /**
    * Applies confusion to the target pokemon.
@@ -2840,15 +2846,11 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
    * @param args [0] {@linkcode StatusEffect} applied by move
    * @returns true if defender is confused
    */
-  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    if (this.effects.indexOf(args[0]) > -1 && !defender.isFainted()) {
-      if (simulated) {
-        return defender.canAddTag(BattlerTagType.CONFUSED);
-      } else {
-        return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 5), move.id, defender.id);
-      }
+  applyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    if (simulated) {
+      return true;
     }
-    return false;
+    return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 5), move.id, defender.id);
   }
 }
 
