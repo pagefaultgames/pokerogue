@@ -2113,10 +2113,14 @@ export default class BattleScene extends SceneBase {
         return 10.145;
       case "battle_kalos_champion": //XY Kalos Champion Battle
         return 10.380;
+      case "battle_champion_kukui": //SM Kukui Battle
+        return 15.784;
       case "battle_alola_champion": //USUM Alola Champion Battle
         return 13.025;
       case "battle_galar_champion": //SWSH Galar Champion Battle
         return 61.635;
+      case "battle_mustard": //SWSH Mustard Battle
+        return 22.442;
       case "battle_champion_geeta": //SV Champion Geeta Battle
         return 37.447;
       case "battle_champion_nemona": //SV Champion Nemona Battle
@@ -2265,6 +2269,8 @@ export default class BattleScene extends SceneBase {
         return 133.362;
       case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
         return 11.997;
+      case "battle_colress": //B2W2 Colress Battle
+        return 12.234;
       case "battle_skull_admin": //SM Team Skull Admin Battle
         return 15.463;
       case "battle_oleana": //SWSH Oleana Battle
