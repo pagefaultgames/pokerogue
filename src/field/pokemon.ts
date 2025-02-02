@@ -5367,10 +5367,10 @@ export enum HitResult {
   MISS,
   OTHER,
   IMMUNE,
-  SELF
+  CONFUSION
 }
 
-export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.SELF | HitResult.OTHER;
+export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.CONFUSION | HitResult.OTHER;
 
 /** Interface containing the results of a damage calculation for a given move */
 export interface DamageCalculationResult {
