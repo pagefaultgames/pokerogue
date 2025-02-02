@@ -674,7 +674,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * - An ability like {@linkcode Abilities.NO_GUARD | No Guard}
    * - A poison type using {@linkcode Moves.TOXIC | Toxic}
    * - A move like {@linkcode Moves.LOCK_ON | Lock-On} or {@linkcode Moves.MIND_READER | Mind Reader}.
-   * - A move like {@linkcode Moves.SPIEKS | Spikes} or {@linkcode Moves.SANDSTORM | Sandstorm} that targets the field
    *
    * Does *not* check against effects {@linkcode Moves.GLAIVE_RUSH | Glaive Rush} status (which
    * should not bypass semi-invulnerability), or interactions like Earthquake hitting against Dig,
@@ -686,9 +685,6 @@ export class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
     if (!user) {
       return false;
-    }
-    if ([ MoveTarget.USER, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE, MoveTarget.BOTH_SIDES ].includes(this.move.getMove().moveTarget)) {
-      return true;
     }
     if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
       return true;
@@ -712,9 +708,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return false;
     }
     const move = this.move.getMove();
-    /** Does the move target the field instead of the target itself? */
-    const isIndirectTarget = move.moveTarget in [ MoveTarget.USER, MoveTarget.ENEMY_SIDE, MoveTarget.USER_SIDE, MoveTarget.BOTH_SIDES ];
-    return isIndirectTarget || move.getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType);
+    return move.getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType);
   }
 
   /** @returns The {@linkcode Pokemon} using this phase's invoked move */

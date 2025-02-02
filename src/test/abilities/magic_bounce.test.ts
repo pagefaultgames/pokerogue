@@ -149,6 +149,17 @@ describe("Abilities - Magic Bounce", () => {
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
   });
 
+  it("should not bounce spikes when the target is in the semi-invulnerable state", async () => {
+    game.override.moveset([ Moves.SPIKES ]);
+    game.override.enemyMoveset([ Moves.FLY ]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    game.move.select(Moves.SPIKES);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)!["layers"]).toBe(1);
+  });
+
   it("should not bounce back curse", async() => {
     game.override.starterSpecies(Species.GASTLY);
     await game.classicMode.startBattle([ Species.GASTLY ]);
