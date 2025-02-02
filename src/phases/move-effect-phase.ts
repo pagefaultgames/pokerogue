@@ -649,7 +649,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
 
-    if (this.checkBypassSemiInvuln(semiInvulnerableTag)) {
+    if (semiInvulnerableTag && !this.checkBypassSemiInvuln(semiInvulnerableTag)) {
       return false;
     }
 
