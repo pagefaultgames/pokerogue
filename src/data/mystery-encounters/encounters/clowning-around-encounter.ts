@@ -15,7 +15,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#enums/abilities";
 import { applyAbilityOverrideToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import type { Type } from "#enums/type";
+import { Type } from "#enums/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { randSeedInt, randSeedShuffle } from "#app/utils";
@@ -347,7 +347,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
               priorityTypes = randSeedShuffle(priorityTypes);
             }
 
-            const newTypes = [ originalTypes[0] ];
+            const newTypes = [ Type.UNKNOWN ];
             let secondType: Type | null = null;
             while (secondType === null || secondType === newTypes[0] || originalTypes.includes(secondType)) {
               if (priorityTypes.length > 0) {
