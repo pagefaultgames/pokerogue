@@ -2701,7 +2701,6 @@ export class PreLeaveFieldAbAttr extends AbAttr {
   }
 }
 
-
 /**
  * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
  */
