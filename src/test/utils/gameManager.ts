@@ -467,7 +467,7 @@ export default class GameManager {
 
     this.doSelectPokeball(ballIndex);
   }
-  // ???
+
   doSelectPokeball(ballIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.BALL, () => {
       const ballHandler = this.scene.ui.getHandler() as BallUiHandler;

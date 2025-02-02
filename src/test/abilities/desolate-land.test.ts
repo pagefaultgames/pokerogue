@@ -51,6 +51,7 @@ describe("Abilities - Desolate Land", () => {
     game.move.select(Moves.SPLASH, 1, 2);
 
     await game.forceEnemyMove(Moves.ROAR, 0);
+    await game.forceEnemyMove(Moves.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -66,6 +67,7 @@ describe("Abilities - Desolate Land", () => {
     game.move.select(Moves.SPLASH, 1, 2);
 
     await game.forceEnemyMove(Moves.ROAR, 1);
+    await game.forceEnemyMove(Moves.SPLASH, 0);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
