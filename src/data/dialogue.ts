@@ -726,17 +726,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.ROOD]: [
+  [TrainerType.COLRESS]: [
     {
       encounter: [
-        "dialogue:rood.encounter.1",
-        "dialogue:rood.encounter.2",
-        "dialogue:rood.encounter.3",
+        "dialogue:colress.encounter.1",
+        "dialogue:colress.encounter.2",
+        "dialogue:colress.encounter.3",
       ],
       victory: [
-        "dialogue:rood.victory.1",
-        "dialogue:rood.victory.2",
-        "dialogue:rood.victory.3",
+        "dialogue:colress.victory.1",
+        "dialogue:colress.victory.2",
+        "dialogue:colress.victory.3",
       ]
     }
   ],
@@ -2505,6 +2505,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       "dialogue:iris.defeat.1"
     ]
   },
+  [TrainerType.KUKUI]: {
+    encounter: [
+      "dialogue:kukui.encounter.1"
+    ],
+    victory: [
+      "dialogue:kukui.victory.1"
+    ],
+    defeat: [
+      "dialogue:kukui.defeat.1"
+    ]
+  },
   [TrainerType.HAU]: {
     encounter: [
       "dialogue:hau.encounter.1"
@@ -2547,6 +2558,17 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     ],
     defeat: [
       "dialogue:leon.defeat.1"
+    ]
+  },
+  [TrainerType.MUSTARD]: {
+    encounter: [
+      "dialogue:mustard.encounter.1"
+    ],
+    victory: [
+      "dialogue:mustard.victory.1"
+    ],
+    defeat: [
+      "dialogue:mustard.defeat.1"
     ]
   },
   [TrainerType.WHITNEY]: {

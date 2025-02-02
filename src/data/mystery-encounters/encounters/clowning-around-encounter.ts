@@ -15,7 +15,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#enums/abilities";
 import { applyAbilityOverrideToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import type { Type } from "#enums/type";
+import { Type } from "#enums/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { randSeedInt, randSeedShuffle } from "#app/utils";
@@ -127,6 +127,13 @@ export const ClowningAroundEncounter: MysteryEncounter =
       encounter.setDialogueToken("ability", new Ability(ability, 3).name);
       encounter.misc = { ability };
 
+      // Decide the random types for Blacephalon. They should not be the same.
+      const firstType: number = randSeedInt(18);
+      let secondType: number = randSeedInt(17);
+      if ( secondType >= firstType ) {
+        secondType++;
+      }
+
       encounter.enemyPartyConfigs.push({
         trainerConfig: clownConfig,
         pokemonConfigs: [ // Overrides first 2 pokemon to be Mr. Mime and Blacephalon
@@ -137,7 +144,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
           },
           { // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
             species: getPokemonSpecies(Species.BLACEPHALON),
-            customPokemonData: new CustomPokemonData({ ability: ability, types: [ randSeedInt(18), randSeedInt(18) ]}),
+            customPokemonData: new CustomPokemonData({ ability: ability, types: [ firstType, secondType ]}),
             isBoss: true,
             moveSet: [ Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN ]
           },
@@ -347,7 +354,7 @@ export const ClowningAroundEncounter: MysteryEncounter =
               priorityTypes = randSeedShuffle(priorityTypes);
             }
 
-            const newTypes = [ originalTypes[0] ];
+            const newTypes = [ Type.UNKNOWN ];
             let secondType: Type | null = null;
             while (secondType === null || secondType === newTypes[0] || originalTypes.includes(secondType)) {
               if (priorityTypes.length > 0) {
