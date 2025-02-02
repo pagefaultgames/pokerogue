@@ -3514,6 +3514,10 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
 }
 
 export class PostTerrainChangeAbAttr extends AbAttr {
+  willSucceedPostTerrainChange(pokemon: Pokemon, passive: boolean, simulated: boolean, terrain: TerrainType, args: any[]): boolean {
+    return true;
+  }
+
   applyPostTerrainChange(pokemon: Pokemon, passive: boolean, simulated: boolean, terrain: TerrainType, args: any[]): boolean {
     return false;
   }
@@ -3532,11 +3536,11 @@ export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr 
     this.terrainTypes = terrainTypes;
   }
 
-  applyPostTerrainChange(pokemon: Pokemon, passive: boolean, simulated: boolean, terrain: TerrainType, args: any[]): boolean {
-    if (!this.terrainTypes.find(t => t === terrain)) {
-      return false;
-    }
+  willSucceedPostTerrainChange(pokemon: Pokemon, passive: boolean, simulated: boolean, terrain: TerrainType, args: any[]): boolean {
+    return !!this.terrainTypes.find(t => t === terrain) && pokemon.canAddTag(this.tagType);
+  }
 
+  applyPostTerrainChange(pokemon: Pokemon, passive: boolean, simulated: boolean, terrain: TerrainType, args: any[]): boolean {
     if (simulated) {
       return pokemon.canAddTag(this.tagType);
     } else {
@@ -5394,7 +5398,8 @@ export function applyPostWeatherLapseAbAttrs(attrType: Constructor<PostWeatherLa
 
 export function applyPostTerrainChangeAbAttrs(attrType: Constructor<PostTerrainChangeAbAttr>,
   pokemon: Pokemon, terrain: TerrainType, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostTerrainChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostTerrainChange(pokemon, passive, simulated, terrain, args), args, false, simulated);
+  return applyAbAttrsInternal<PostTerrainChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostTerrainChange(pokemon, passive, simulated, terrain, args),
+    (attr, passive) => attr.willSucceedPostTerrainChange(pokemon, passive, simulated, terrain, args), args, false, simulated);
 }
 
 export function applyCheckTrappedAbAttrs(attrType: Constructor<CheckTrappedAbAttr>,
