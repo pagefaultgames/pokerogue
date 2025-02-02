@@ -38,7 +38,8 @@ import {
   RespectAttackTypeImmunityAttr,
   MoveTarget,
   CombinedPledgeStabBoostAttr,
-  VariableMoveTypeChartAttr, MoveFlags,
+  VariableMoveTypeChartAttr,
+  MoveFlags,
   HpSplitAttr
 } from "#app/data/move";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
