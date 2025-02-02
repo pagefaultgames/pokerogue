@@ -7,7 +7,7 @@ import { variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
 import type Move from "#app/data/move";
-import { 
+import {
   HighCritAttr,
   HitsTagAttr,
   applyMoveAttrs,
@@ -38,7 +38,8 @@ import {
   CombinedPledgeStabBoostAttr,
   VariableMoveTypeChartAttr,
   MoveFlags,
-  HpSplitAttr } from "#app/data/move";
+  HpSplitAttr
+} from "#app/data/move";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import { default as PokemonSpecies, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
