@@ -3164,6 +3164,10 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
 export class IgnoreContactAbAttr extends AbAttr { }
 
 export class PreWeatherEffectAbAttr extends AbAttr {
+  willSucceedPreWeatherEffect(pokemon: Pokemon, passive: Boolean, simulated: boolean, weather: Weather | null, cancelled: Utils.BooleanHolder, args: any[]) {
+    return true;
+  }
+
   applyPreWeatherEffect(pokemon: Pokemon, passive: Boolean, simulated: boolean, weather: Weather | null, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -3198,13 +3202,13 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
     this.affectsImmutable = !!affectsImmutable;
   }
 
-  applyPreWeatherEffect(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.affectsImmutable || weather.isImmutable()) {
-      cancelled.value = true;
-      return true;
-    }
+  willSucceedPreWeatherEffect(pokemon: Pokemon, passive: Boolean, simulated: boolean, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return this.affectsImmutable || weather.isImmutable();
+  }
 
-    return false;
+  applyPreWeatherEffect(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
   }
 }
 
@@ -3541,6 +3545,10 @@ function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
 }
 
 export class PostTurnAbAttr extends AbAttr {
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return true;
+  }
+
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -3561,6 +3569,10 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
     this.effects = effects;
   }
 
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return (pokemon.status !== null) && this.effects.includes(pokemon.status.effect) && !pokemon.isFullHp();
+  }
+
   /**
    * @param {Pokemon} pokemon The pokemon with the ability that will receive the healing
    * @param {Boolean} passive N/A
@@ -3568,17 +3580,12 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
    * @returns Returns true if healed from status, false if not
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
-    if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
-      if (!pokemon.isFullHp()) {
-        if (!simulated) {
-          const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
-          globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
-            Utils.toDmgValue(pokemon.getMaxHp() / 8), i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName }), true));
-        }
-        return true;
-      }
+    if (!simulated) {
+      const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+      globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
+        Utils.toDmgValue(pokemon.getMaxHp() / 8), i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName }), true));
     }
-    return false;
+    return true;
   }
 }
 
@@ -3595,23 +3602,23 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
     this.allyTarget = allyTarget;
   }
 
-  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     if (this.allyTarget) {
       this.target = pokemon.getAlly();
     } else {
       this.target = pokemon;
     }
-    if (this.target?.status) {
-      if (!simulated) {
-        globalScene.queueMessage(getStatusEffectHealText(this.target.status?.effect, getPokemonNameWithAffix(this.target)));
-        this.target.resetStatus(false);
-        this.target.updateInfo();
-      }
+    return !Utils.isNullOrUndefined(this.target.status);
+  }
 
-      return true;
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    if (!simulated && this.target.status) {
+      globalScene.queueMessage(getStatusEffectHealText(this.target.status?.effect, getPokemonNameWithAffix(this.target)));
+      this.target.resetStatus(false);
+      this.target.updateInfo();
     }
 
-    return false;
+    return true;
   }
 }
 
@@ -3632,18 +3639,14 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
     super();
   }
 
-  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const pass = Phaser.Math.RND.realInRange(0, 1);
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
-    if (Math.max(Math.min(this.procChance(pokemon), 1), 0) < pass) {
-      return false;
-    }
+    const pass = Phaser.Math.RND.realInRange(0, 1);
+    return !(Math.max(Math.min(this.procChance(pokemon), 1), 0) < pass) && this.itemType === "EATEN_BERRIES";
+  }
 
-    if (this.itemType === "EATEN_BERRIES") {
-      return this.createEatenBerry(pokemon, simulated);
-    } else {
-      return false;
-    }
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return this.createEatenBerry(pokemon, simulated);
   }
 
   /**
@@ -3736,31 +3739,29 @@ export class SpeedBoostAbAttr extends PostTurnAbAttr {
     super(true);
   }
 
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return simulated || (!pokemon.turnData.switchedInThisTurn && !pokemon.turnData.failedRunAway);
+  }
+
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!simulated) {
-      if (!pokemon.turnData.switchedInThisTurn && !pokemon.turnData.failedRunAway) {
-        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.SPD ], 1));
-      } else {
-        return false;
-      }
-    }
+    globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [ Stat.SPD ], 1));
     return true;
   }
 }
 
 export class PostTurnHealAbAttr extends PostTurnAbAttr {
-  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!pokemon.isFullHp()) {
-      if (!simulated) {
-        const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
-        globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
-          Utils.toDmgValue(pokemon.getMaxHp() / 16), i18next.t("abilityTriggers:postTurnHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
-      }
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return !pokemon.isFullHp();
+  }
 
-      return true;
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    if (!simulated) {
+      const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+      globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
+        Utils.toDmgValue(pokemon.getMaxHp() / 16), i18next.t("abilityTriggers:postTurnHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }), true));
     }
 
-    return false;
+    return true;
   }
 }
 
@@ -3773,17 +3774,16 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
     this.formFunc = formFunc;
   }
 
-  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const formIndex = this.formFunc(pokemon);
-    if (formIndex !== pokemon.formIndex) {
-      if (!simulated) {
-        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
-      }
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return this.formFunc(pokemon) !== pokemon.formIndex;
+  }
 
-      return true;
+  applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    if (!simulated) {
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
     }
 
-    return false;
+    return true;
   }
 }
 
@@ -3792,7 +3792,9 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
  * Attribute used for abilities (Bad Dreams) that damages the opponents for being asleep
  */
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
-
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return pokemon.getOpponents().some(opp => (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus);
+  }
   /**
    * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
    * @param pokemon Pokemon that has this ability
@@ -3802,18 +3804,17 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
    * @returns `true` if any opponents are sleeping
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
-    let hadEffect: boolean = false;
     for (const opp of pokemon.getOpponents()) {
       if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus) {
         if (!simulated) {
           opp.damageAndUpdate(Utils.toDmgValue(opp.getMaxHp() / 8), HitResult.OTHER);
           globalScene.queueMessage(i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }));
         }
-        hadEffect = true;
+        return true;
       }
 
     }
-    return hadEffect;
+    return false;
   }
 }
 
@@ -3826,6 +3827,11 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
   constructor() {
     super();
   }
+
+  willSucceedPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return !simulated && globalScene.currentBattle.lastUsedPokeball !== null && !!pokemon.isPlayer;
+  }
+
   /**
    * Adds the last used Pokeball back into the player's inventory
    * @param pokemon {@linkcode Pokemon} with this ability
@@ -3834,17 +3840,11 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
    * @returns true if player has used a pokeball and this pokemon is owned by the player
    */
   applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (simulated) {
-      return false;
-    }
     const lastUsed = globalScene.currentBattle.lastUsedPokeball;
-    if (lastUsed !== null && !!pokemon.isPlayer) {
-      globalScene.pokeballCounts[lastUsed]++;
-      globalScene.currentBattle.lastUsedPokeball = null;
-      globalScene.queueMessage(i18next.t("abilityTriggers:fetchBall", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), pokeballName: getPokeballName(lastUsed) }));
-      return true;
-    }
-    return false;
+    globalScene.pokeballCounts[lastUsed!]++;
+    globalScene.currentBattle.lastUsedPokeball = null;
+    globalScene.queueMessage(i18next.t("abilityTriggers:fetchBall", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), pokeballName: getPokeballName(lastUsed!) }));
+    return true;
   }
 }
 
@@ -5362,12 +5362,14 @@ export function applyPreApplyBattlerTagAbAttrs(attrType: Constructor<PreApplyBat
 
 export function applyPreWeatherEffectAbAttrs(attrType: Constructor<PreWeatherEffectAbAttr>,
   pokemon: Pokemon, weather: Weather | null, cancelled: Utils.BooleanHolder, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreWeatherDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args), args, true, simulated);
+  return applyAbAttrsInternal<PreWeatherDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args),
+    (attr, passive) => attr.willSucceedPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args), args, true, simulated);
 }
 
 export function applyPostTurnAbAttrs(attrType: Constructor<PostTurnAbAttr>,
   pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostTurnAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostTurn(pokemon, passive, simulated, args), args, false, simulated);
+  return applyAbAttrsInternal<PostTurnAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostTurn(pokemon, passive, simulated, args),
+    (attr, passive) => attr.willSucceedPostTurn(pokemon, passive, simulated, args), args, false, simulated);
 }
 
 export function applyPostWeatherChangeAbAttrs(attrType: Constructor<PostWeatherChangeAbAttr>,
