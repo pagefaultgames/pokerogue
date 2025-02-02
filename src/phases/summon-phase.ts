@@ -13,6 +13,7 @@ import { PostSummonPhase } from "./post-summon-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/ability";
 import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
@@ -27,6 +28,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   start() {
     super.start();
 
+    applyPreSummonAbAttrs(PreSummonAbAttr, this.getPokemon());
     this.preSummon();
   }
 
@@ -100,7 +102,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   summon(): void {
     const pokemon = this.getPokemon();
 
-    const pokeball = globalScene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.pokeball));
+    const pokeball = globalScene.addFieldSprite(
+      this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.battleData.illusion.pokeball ?? pokemon.pokeball)
+    );
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
     globalScene.field.add(pokeball);
@@ -146,7 +150,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               }
               globalScene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
-            addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.pokeball);
+            addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.battleData.illusion.pokeball ?? pokemon.pokeball);
             globalScene.updateModifiers(this.player);
             globalScene.updateFieldScale();
             pokemon.showInfo();
@@ -154,7 +158,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             pokemon.setVisible(true);
             pokemon.getSprite().setVisible(true);
             pokemon.setScale(0.5);
-            pokemon.tint(getPokeballTintColor(pokemon.pokeball));
+            pokemon.tint(getPokeballTintColor(pokemon.battleData.illusion.pokeball ?? pokemon.pokeball));
             pokemon.untint(250, "Sine.easeIn");
             globalScene.updateFieldScale();
             globalScene.tweens.add({
@@ -235,7 +239,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   onEnd(): void {
     const pokemon = this.getPokemon();
 
-    if (pokemon.isShiny()) {
+    if (pokemon.isShiny(true)) {
       globalScene.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
     }
 
