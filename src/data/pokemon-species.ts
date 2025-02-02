@@ -2308,7 +2308,7 @@ export function initSpecies() {
       new PokemonForm("Normal", "", Type.PSYCHIC, null, 2.4, 230, Abilities.PRISM_ARMOR, Abilities.NONE, Abilities.NONE, 600, 97, 107, 101, 127, 89, 79, 255, 0, 300, false, null, true),
       new PokemonForm("Dusk Mane", "dusk-mane", Type.PSYCHIC, Type.STEEL, 3.8, 460, Abilities.PRISM_ARMOR, Abilities.NONE, Abilities.NONE, 680, 97, 157, 127, 113, 109, 77, 255, 0, 340),
       new PokemonForm("Dawn Wings", "dawn-wings", Type.PSYCHIC, Type.GHOST, 4.2, 350, Abilities.PRISM_ARMOR, Abilities.NONE, Abilities.NONE, 680, 97, 113, 109, 157, 127, 77, 255, 0, 340),
-      new PokemonForm("Ultra", "ultra", Type.PSYCHIC, Type.DRAGON, 7.5, 230, Abilities.NEUROFORCE, Abilities.NONE, Abilities.NONE, 754, 97, 167, 97, 167, 97, 129, 255, 0, 377), // Base exp 377 is gen 8 value, assumed it is the same for gen 9
+      new PokemonForm("Ultra", "ultra", Type.PSYCHIC, Type.DRAGON, 7.5, 230, Abilities.NEUROFORCE, Abilities.NONE, Abilities.NONE, 754, 97, 167, 97, 167, 97, 129, 255, 0, 377),
     ),
     new PokemonSpecies(Species.MAGEARNA, 7, false, false, true, "Artificial Pokémon", Type.STEEL, Type.FAIRY, 1, 80.5, Abilities.SOUL_HEART, Abilities.NONE, Abilities.NONE, 600, 80, 95, 115, 130, 115, 65, 3, 0, 300, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Normal", "", Type.STEEL, Type.FAIRY, 1, 80.5, Abilities.SOUL_HEART, Abilities.NONE, Abilities.NONE, 600, 80, 95, 115, 130, 115, 65, 3, 0, 300, false, null, true),
@@ -2767,7 +2767,7 @@ export function initSpecies() {
       new PokemonForm("Aqua Breed", "aqua", Type.FIGHTING, Type.WATER, 1.4, 110, Abilities.INTIMIDATE, Abilities.ANGER_POINT, Abilities.CUD_CHEW, 490, 75, 110, 105, 30, 70, 100, 45, 50, 172, false, null, true),
     ),
     new PokemonSpecies(Species.PALDEA_WOOPER, 9, false, false, false, "Water Fish Pokémon", Type.POISON, Type.GROUND, 0.4, 11, Abilities.POISON_POINT, Abilities.WATER_ABSORB, Abilities.UNAWARE, 210, 55, 45, 45, 25, 25, 15, 255, 50, 42, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.BLOODMOON_URSALUNA, 9, true, false, false, "Peat Pokémon", Type.GROUND, Type.NORMAL, 2.7, 333, Abilities.MINDS_EYE, Abilities.NONE, Abilities.NONE, 555, 113, 70, 120, 135, 65, 52, 75, 50, 275, GrowthRate.MEDIUM_FAST, 50, false), //Marked as Sub-Legend, for casing purposes
+    new PokemonSpecies(Species.BLOODMOON_URSALUNA, 9, true, false, false, "Peat Pokémon", Type.GROUND, Type.NORMAL, 2.7, 333, Abilities.MINDS_EYE, Abilities.NONE, Abilities.NONE, 555, 113, 70, 120, 135, 65, 52, 75, 50, 278, GrowthRate.MEDIUM_FAST, 50, false), //Marked as Sub-Legend, for casing purposes
   );
 }
 
