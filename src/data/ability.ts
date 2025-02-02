@@ -3983,6 +3983,10 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
  * @extends AbAttr
  */
 export class PostItemLostAbAttr extends AbAttr {
+  willSucceedPostItemLost(pokemon: Pokemon, simulated: boolean, args: any[]): boolean {
+    return true;
+  }
+
   applyPostItemLost(pokemon: Pokemon, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -3998,6 +4002,11 @@ export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
     super(true);
     this.tagType = tagType;
   }
+
+  willSucceedPostItemLost(pokemon: Pokemon, simulated: boolean, args: any[]): boolean {
+    return !pokemon.getTag(this.tagType) && !simulated;
+  }
+
   /**
    * Adds the last used Pokeball back into the player's inventory
    * @param pokemon {@linkcode Pokemon} with this ability
@@ -4005,11 +4014,8 @@ export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
    * @returns true if BattlerTag was applied
    */
   applyPostItemLost(pokemon: Pokemon, simulated: boolean, args: any[]): boolean | Promise<boolean> {
-    if (!pokemon.getTag(this.tagType) && !simulated) {
-      pokemon.addTag(this.tagType);
-      return true;
-    }
-    return false;
+    pokemon.addTag(this.tagType);
+    return true;
   }
 }
 
@@ -5441,7 +5447,8 @@ export function applyPostFaintAbAttrs(attrType: Constructor<PostFaintAbAttr>,
 
 export function applyPostItemLostAbAttrs(attrType: Constructor<PostItemLostAbAttr>,
   pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostItemLostAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostItemLost(pokemon, simulated, args), args);
+  return applyAbAttrsInternal<PostItemLostAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostItemLost(pokemon, simulated, args),
+    (attr, passive) => attr.willSucceedPostItemLost(pokemon, simulated, args), args);
 }
 
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
