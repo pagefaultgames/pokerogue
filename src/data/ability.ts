@@ -2696,10 +2696,6 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
 }
 
 export class PreLeaveFieldAbAttr extends AbAttr {
-  constructor() {
-    super(true);
-  }
-
   applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -2710,12 +2706,11 @@ export class PreLeaveFieldAbAttr extends AbAttr {
  * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
  */
 export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
-
   /**
    * @param pokemon The {@linkcode Pokemon} with the ability
    * @param passive N/A
    * @param args N/A
-   * @returns {boolean} Returns true if the weather clears, otherwise false.
+   * @returns Returns `true` if the weather clears, otherwise `false`.
    */
   applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const weatherType = globalScene.arena.weather?.weatherType;
