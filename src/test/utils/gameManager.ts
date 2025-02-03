@@ -459,19 +459,19 @@ export default class GameManager {
     });
   }
 
-  doThrowPokeball(ballIndex: number) {
+  /**
+   * Select the BALL option from the command menu, then press Action; in the BALL
+   * menu, select a pokéball type and press Action again to throw it.
+   * @param ballIndex the index of the pokeball to throw
+   */
+  public doThrowPokeball(ballIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
       (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
     });
 
-    this.doSelectPokeball(ballIndex);
-  }
-
-  doSelectPokeball(ballIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.BALL, () => {
       const ballHandler = this.scene.ui.getHandler() as BallUiHandler;
-
       ballHandler.setCursor(ballIndex);
       ballHandler.processInput(Button.ACTION); // select ball and throw
     });
