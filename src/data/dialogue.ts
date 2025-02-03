@@ -9,7 +9,7 @@ export interface TrainerTypeMessages {
 }
 
 export interface TrainerTypeDialogue {
-    [key: integer]: TrainerTypeMessages | Array<TrainerTypeMessages>
+    [key: number]: TrainerTypeMessages | Array<TrainerTypeMessages>
 }
 
 export function getTrainerTypeDialogue(): TrainerTypeDialogue {

@@ -26,11 +26,11 @@ export function getBiomeName(biome: Biome | -1) {
 }
 
 interface BiomeLinks {
-  [key: integer]: Biome | (Biome | [Biome, integer])[]
+  [key: number]: Biome | (Biome | [Biome, number])[]
 }
 
 interface BiomeDepths {
-  [key: integer]: [integer, integer]
+  [key: number]: [number, number]
 }
 
 export const biomeLinks: BiomeLinks = {
@@ -87,27 +87,27 @@ export enum BiomePoolTier {
 export const uncatchableSpecies: Species[] = [];
 
 export interface SpeciesTree {
-  [key: integer]: Species[]
+  [key: number]: Species[]
 }
 
 export interface PokemonPools {
-  [key: integer]: (Species | SpeciesTree)[]
+  [key: number]: (Species | SpeciesTree)[]
 }
 
 export interface BiomeTierPokemonPools {
-  [key: integer]: PokemonPools
+  [key: number]: PokemonPools
 }
 
 export interface BiomePokemonPools {
-  [key: integer]: BiomeTierPokemonPools
+  [key: number]: BiomeTierPokemonPools
 }
 
 export interface BiomeTierTrainerPools {
-  [key: integer]: TrainerType[]
+  [key: number]: TrainerType[]
 }
 
 export interface BiomeTrainerPools {
-  [key: integer]: BiomeTierTrainerPools
+  [key: number]: BiomeTierTrainerPools
 }
 
 export const biomePokemonPools: BiomePokemonPools = {
@@ -7663,15 +7663,15 @@ export function initBiomes() {
 
   biomeDepths[Biome.TOWN] = [ 0, 1 ];
 
-  const traverseBiome = (biome: Biome, depth: integer) => {
+  const traverseBiome = (biome: Biome, depth: number) => {
     if (biome === Biome.END) {
       const biomeList = Object.keys(Biome).filter(key => !isNaN(Number(key)));
       biomeList.pop(); // Removes Biome.END from the list
       const randIndex = Utils.randSeedInt(biomeList.length, 1); // Will never be Biome.TOWN
       biome = Biome[biomeList[randIndex]];
     }
-    const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])
-      ? biomeLinks[biome] as (Biome | [ Biome, integer ])[]
+    const linkedBiomes: (Biome | [ Biome, number ])[] = Array.isArray(biomeLinks[biome])
+      ? biomeLinks[biome] as (Biome | [ Biome, number ])[]
       : [ biomeLinks[biome] as Biome ];
     for (const linkedBiomeEntry of linkedBiomes) {
       const linkedBiome = !Array.isArray(linkedBiomeEntry)
@@ -7688,7 +7688,7 @@ export function initBiomes() {
   };
 
   traverseBiome(Biome.TOWN, 0);
-  biomeDepths[Biome.END] = [ Object.values(biomeDepths).map(d => d[0]).reduce((max: integer, value: integer) => Math.max(max, value), 0) + 1, 1 ];
+  biomeDepths[Biome.END] = [ Object.values(biomeDepths).map(d => d[0]).reduce((max: number, value: number) => Math.max(max, value), 0) + 1, 1 ];
 
   for (const biome of Utils.getEnumValues(Biome)) {
     biomePokemonPools[biome] = {};
