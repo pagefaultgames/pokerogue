@@ -4,8 +4,8 @@
 			"image": "guzma.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 58,
-				"h": 58
+				"w": 64,
+				"h": 64
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 34,
+						"h": 64
 					},
 					"spriteSourceSize": {
-						"x": 21,
-						"y": 20,
-						"w": 37,
-						"h": 58
+						"x": 0,
+						"y": 0,
+						"w": 34,
+						"h": 64
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 37,
-						"h": 58
+						"w": 34,
+						"h": 64
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:c3b08a562a2882d1ca8b5e031e245da9:72a8305e547f091d15abccd2b142e401:3b302c7f9eb6ea81b65bcaeead4a95a9$"
+		"smartupdate": "$TexturePacker:SmartUpdate:90cfe8ae514c30ddf48840678b251141:87a93d268c61327ad913bba3b052686b:3b302c7f9eb6ea81b65bcaeead4a95a9$"
 	}
 }
