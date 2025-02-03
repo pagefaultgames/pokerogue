@@ -50,10 +50,16 @@ describe("Abilities - Good As Gold", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(player.battleData.abilitiesApplied[0]).toBe(Abilities.GOOD_AS_GOLD);
+    expect(player.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should block memento and prevent the user from fainting", async () => {
     game.override.enemyMoveset( [ Moves.MEMENTO ] );
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    game.move.select(Moves.MEMENTO);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(game.scene.getPlayerPokemon()!.isFainted()).toBe(false);
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not block any status moves that target the field, one side, or all pokemon", async () => {
