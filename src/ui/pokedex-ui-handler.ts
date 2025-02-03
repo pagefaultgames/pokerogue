@@ -1882,6 +1882,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
     return props;
   }
 
+  override destroy(): void {
+    this.pokemonContainers = [];
+  }
+
   clearText() {
     this.starterSelectMessageBoxContainer.setVisible(false);
     super.clearText();
