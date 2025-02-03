@@ -181,6 +181,11 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  /**
+   * Forces the status of the player (pokemon) **passive** {@linkcode Abilities | ability}
+   * @param hasPassiveAbility forces the passive to be active if `true`, inactive if `false`
+   * @returns `this`
+   */
   public hasPassiveAbility(hasPassiveAbility: boolean | null): this {
     vi.spyOn(Overrides, "HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
     if (hasPassiveAbility === null) {
@@ -334,6 +339,11 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  /**
+   * Forces the status of the enemy (pokemon) **passive** {@linkcode Abilities | ability}
+   * @param hasPassiveAbility forces the passive to be active if `true`, inactive if `false`
+   * @returns `this`
+   */
   public enemyHasPassiveAbility(hasPassiveAbility: boolean | null): this {
     vi.spyOn(Overrides, "OPP_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
     if (hasPassiveAbility === null) {
