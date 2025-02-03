@@ -290,7 +290,6 @@ export class PostBattleInitStatStageChangeAbAttr extends PostBattleInitAbAttr {
 type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: Move) => boolean;
 
 export class PreDefendAbAttr extends AbAttr {
-
   canApplyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
     return true;
   }
@@ -837,10 +836,12 @@ export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
+  private type: Type;
+
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    const type = attacker.getMoveType(move);
+    this.type = attacker.getMoveType(move);
     const pokemonTypes = pokemon.getTypes(true);
-    return hitResult < HitResult.NO_EFFECT && !move.hitsSubstitute(attacker, pokemon) && (simulated || pokemonTypes.length !== 1 || pokemonTypes[0] !== type);
+    return hitResult < HitResult.NO_EFFECT && !move.hitsSubstitute(attacker, pokemon) && (simulated || pokemonTypes.length !== 1 || pokemonTypes[0] !== this.type);
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, _args: any[]): boolean {
@@ -853,7 +854,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      typeName: i18next.t(`pokemonInfo:Type.${Type[pokemon.getTypes(true)[0]]}`)
+      typeName: i18next.t(`pokemonInfo:Type.${Type[this.type]}`)
     });
   }
 }
@@ -1332,6 +1333,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
       attr instanceof CopyMoveAttr)) {
       const moveType = pokemon.getMoveType(move);
       if (pokemon.getTypes().some((t) => t !== moveType)) {
+        this.moveType = moveType;
         return true;
       }
     }
@@ -2991,9 +2993,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   }
 
   canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!simulated) {
-      this.battlerTag = tag;
-    }
+    this.battlerTag = tag;
 
     return this.immuneTagTypes.includes(tag.tagType);
   }
