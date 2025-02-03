@@ -900,34 +900,24 @@ export default class SummaryUiHandler extends UiHandler {
           const natureStatMultiplier = getNatureStatMultiplier(this.pokemon?.getNature()!, s); // TODO: is this bang correct?
 
           const statLabel = addTextObject(115 * colIndex + (colIndex === 1 ?  5 : 0), 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
+          const ivLabel = addTextObject(115 * colIndex + (colIndex === 1 ?  5 : 0), 16 * rowIndex, statName, this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY);
+
           statLabel.setOrigin(0.5, 0);
+          ivLabel.setOrigin(0.5, 0);
           this.permStatsContainer.add(statLabel);
+          this.ivContainer.add(ivLabel);
 
           const statValueText = stat !== Stat.HP
             ? Utils.formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
             : `${Utils.formatStat(this.pokemon?.hp!, true)}/${Utils.formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
+          const ivText = `${this.pokemon?.ivs[stat]}/31`;
 
           const statValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
           statValue.setOrigin(1, 0);
           this.permStatsContainer.add(statValue);
-        });
-
-        PERMANENT_STATS.forEach((stat, s) => {
-          const statName = i18next.t(getStatKey(stat));
-          const rowIndex = s % 3;
-          const colIndex = Math.floor(s / 3);
-
-          const natureStatMultiplier = getNatureStatMultiplier(this.pokemon?.getNature()!, s); // TODO: is this bang correct?
-
-          const statLabel = addTextObject(115 * colIndex + (colIndex === 1 ?  5 : 0), 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
-          statLabel.setOrigin(0.5, 0);
-          this.ivContainer.add(statLabel);
-
-          const statValueText = Utils.formatStat(this.pokemon?.ivs[stat]!);
-
-          const statValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
-          statValue.setOrigin(1, 0);
-          this.ivContainer.add(statValue);
+          const ivValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, ivText, TextStyle.WINDOW_ALT);
+          ivValue.setOrigin(1, 0);
+          this.ivContainer.add(ivValue);
         });
         this.ivContainer.setVisible(false);
 
