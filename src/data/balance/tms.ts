@@ -68434,7 +68434,7 @@ export const tmSpecies: TmSpecies = {
 };
 
 interface SpeciesTmMoves {
-  [key: integer]: (Moves | [string | Species, Moves])[];
+  [key: number]: (Moves | [string | Species, Moves])[];
 }
 
 function transposeTmSpecies(): SpeciesTmMoves {

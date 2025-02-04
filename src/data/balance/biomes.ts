@@ -109,7 +109,7 @@ export interface BiomeTierTod {
 }
 
 export interface CatchableSpecies{
-  [key: integer]: BiomeTierTod[]
+  [key: number]: BiomeTierTod[]
 }
 
 export const catchableSpecies: CatchableSpecies = {};
