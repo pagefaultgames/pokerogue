@@ -869,6 +869,12 @@ export default class BattleScene extends SceneBase {
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
 
+  /**
+   * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
+   * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
+   * @param activeOnly Whether to consider only active pokemon
+   * @returns array of {@linkcode Pokemon}
+   */
   public getField(activeOnly: boolean = false): Pokemon[] {
     const ret = new Array(4).fill(null);
     const playerField = this.getPlayerField();
@@ -1484,6 +1490,8 @@ export default class BattleScene extends SceneBase {
           return 0; // Don't give trainers Battle Bond Greninja
         }
         return Utils.randSeedInt(2);
+      case Species.URSHIFU:
+        return Utils.randSeedInt(2);
       case Species.ZYGARDE:
         return Utils.randSeedInt(4);
       case Species.MINIOR:
@@ -2084,8 +2092,11 @@ export default class BattleScene extends SceneBase {
     return sound;
   }
 
+  /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */
   getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
+      case "title": //Firel PokéRogue Title
+        return 46.500;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.950;
       case "battle_johto_champion": //B2W2 Johto Champion Battle
@@ -2102,10 +2113,14 @@ export default class BattleScene extends SceneBase {
         return 10.145;
       case "battle_kalos_champion": //XY Kalos Champion Battle
         return 10.380;
+      case "battle_champion_kukui": //SM Kukui Battle
+        return 15.784;
       case "battle_alola_champion": //USUM Alola Champion Battle
         return 13.025;
       case "battle_galar_champion": //SWSH Galar Champion Battle
         return 61.635;
+      case "battle_mustard": //SWSH Mustard Battle
+        return 22.442;
       case "battle_champion_geeta": //SV Champion Geeta Battle
         return 37.447;
       case "battle_champion_nemona": //SV Champion Nemona Battle
@@ -2240,8 +2255,8 @@ export default class BattleScene extends SceneBase {
         return 12.062;
       case "battle_galactic_grunt": //BDSP Team Galactic Battle
         return 13.043;
-      case "battle_plasma_grunt": //BW Team Plasma Battle
-        return 12.974;
+      case "battle_plasma_grunt": //B2W2 Team Plasma Battle
+        return 14.758;
       case "battle_flare_grunt": //XY Team Flare Battle
         return 4.228;
       case "battle_aether_grunt": // SM Aether Foundation Battle
@@ -2254,6 +2269,8 @@ export default class BattleScene extends SceneBase {
         return 133.362;
       case "battle_galactic_admin": //BDSP Team Galactic Admin Battle
         return 11.997;
+      case "battle_colress": //B2W2 Colress Battle
+        return 12.234;
       case "battle_skull_admin": //SM Team Skull Admin Battle
         return 15.463;
       case "battle_oleana": //SWSH Oleana Battle

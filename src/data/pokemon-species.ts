@@ -22,6 +22,7 @@ import type { Variant, VariantSet } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { starterPassiveAbilities } from "#app/data/balance/passives";
 
 export enum Region {
   NORMAL,
@@ -228,6 +229,31 @@ export abstract class PokemonSpeciesForm {
       ret = this.abilityHidden;
     }
     return ret;
+  }
+
+  /**
+   * Method to get the passive ability of a Pokemon species
+   * @param formIndex The form index to use, defaults to form for this species instance
+   * @returns The id of the ability
+   */
+  getPassiveAbility(formIndex?: number): Abilities {
+    if (Utils.isNullOrUndefined(formIndex)) {
+      formIndex = this.formIndex;
+    }
+    let starterSpeciesId = this.speciesId;
+    while (!(starterSpeciesId in starterPassiveAbilities) || !(formIndex in starterPassiveAbilities[starterSpeciesId])) {
+      if (pokemonPrevolutions.hasOwnProperty(starterSpeciesId)) {
+        starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
+      } else { // If we've reached the base species and still haven't found a matching ability, use form 0 if possible
+        if (0 in starterPassiveAbilities[starterSpeciesId]) {
+          return starterPassiveAbilities[starterSpeciesId][0];
+        } else {
+          console.log("No passive ability found for %s, using run away", this.speciesId);
+          return Abilities.RUN_AWAY;
+        }
+      }
+    }
+    return starterPassiveAbilities[starterSpeciesId][formIndex];
   }
 
   getLevelMoves(): LevelMoves {
@@ -2638,17 +2664,9 @@ export function initSpecies() {
     new PokemonSpecies(Species.IRON_VALIANT, 9, false, false, false, "Paradox Pokémon", Type.FAIRY, Type.FIGHTING, 1.4, 35, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.NONE, 590, 74, 130, 90, 120, 60, 116, 10, 0, 295, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.KORAIDON, 9, false, true, false, "Paradox Pokémon", Type.FIGHTING, Type.DRAGON, 2.5, 303, Abilities.ORICHALCUM_PULSE, Abilities.NONE, Abilities.NONE, 670, 100, 135, 115, 85, 100, 135, 3, 0, 335, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Apex Build", "apex-build", Type.FIGHTING, Type.DRAGON, 2.5, 303, Abilities.ORICHALCUM_PULSE, Abilities.NONE, Abilities.NONE, 670, 100, 135, 115, 85, 100, 135, 3, 0, 335, false, null, true),
-      new PokemonForm("Limited Build", "limited-build", Type.FIGHTING, Type.DRAGON, 3.5, 303, Abilities.ORICHALCUM_PULSE, Abilities.NONE, Abilities.NONE, 670, 100, 135, 115, 85, 100, 135, 3, 0, 335, false, null, true),
-      new PokemonForm("Sprinting Build", "sprinting-build", Type.FIGHTING, Type.DRAGON, 3.5, 303, Abilities.ORICHALCUM_PULSE, Abilities.NONE, Abilities.NONE, 670, 100, 135, 115, 85, 100, 135, 3, 0, 335, false, null, true),
-      new PokemonForm("Swimming Build", "swimming-build", Type.FIGHTING, Type.DRAGON, 3.5, 303, Abilities.ORICHALCUM_PULSE, Abilities.NONE, Abilities.NONE, 670, 100, 135, 115, 85, 100, 135, 3, 0, 335, false, null, true),
-      new PokemonForm("Gliding Build", "gliding-build", Type.FIGHTING, Type.DRAGON, 3.5, 303, Abilities.ORICHALCUM_PULSE, Abilities.NONE, Abilities.NONE, 670, 100, 135, 115, 85, 100, 135, 3, 0, 335, false, null, true),
     ),
     new PokemonSpecies(Species.MIRAIDON, 9, false, true, false, "Paradox Pokémon", Type.ELECTRIC, Type.DRAGON, 3.5, 240, Abilities.HADRON_ENGINE, Abilities.NONE, Abilities.NONE, 670, 100, 85, 100, 135, 115, 135, 3, 0, 335, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Ultimate Mode", "ultimate-mode", Type.ELECTRIC, Type.DRAGON, 3.5, 240, Abilities.HADRON_ENGINE, Abilities.NONE, Abilities.NONE, 670, 100, 85, 100, 135, 115, 135, 3, 0, 335, false, null, true),
-      new PokemonForm("Low-Power Mode", "low-power-mode", Type.ELECTRIC, Type.DRAGON, 2.8, 240, Abilities.HADRON_ENGINE, Abilities.NONE, Abilities.NONE, 670, 100, 85, 100, 135, 115, 135, 3, 0, 335, false, null, true),
-      new PokemonForm("Drive Mode", "drive-mode", Type.ELECTRIC, Type.DRAGON, 2.8, 240, Abilities.HADRON_ENGINE, Abilities.NONE, Abilities.NONE, 670, 100, 85, 100, 135, 115, 135, 3, 0, 335, false, null, true),
-      new PokemonForm("Aquatic Mode", "aquatic-mode", Type.ELECTRIC, Type.DRAGON, 2.8, 240, Abilities.HADRON_ENGINE, Abilities.NONE, Abilities.NONE, 670, 100, 85, 100, 135, 115, 135, 3, 0, 335, false, null, true),
-      new PokemonForm("Glide Mode", "glide-mode", Type.ELECTRIC, Type.DRAGON, 2.8, 240, Abilities.HADRON_ENGINE, Abilities.NONE, Abilities.NONE, 670, 100, 85, 100, 135, 115, 135, 3, 0, 335, false, null, true),
     ),
     new PokemonSpecies(Species.WALKING_WAKE, 9, false, false, false, "Paradox Pokémon", Type.WATER, Type.DRAGON, 3.5, 280, Abilities.PROTOSYNTHESIS, Abilities.NONE, Abilities.NONE, 590, 99, 83, 91, 125, 83, 109, 10, 0, 295, GrowthRate.SLOW, null, false), //Custom Catchrate, matching Gouging Fire and Raging Bolt
     new PokemonSpecies(Species.IRON_LEAVES, 9, false, false, false, "Paradox Pokémon", Type.GRASS, Type.PSYCHIC, 1.5, 125, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.NONE, 590, 90, 130, 88, 70, 108, 104, 10, 0, 295, GrowthRate.SLOW, null, false), //Custom Catchrate, matching Iron Boulder and Iron Crown
