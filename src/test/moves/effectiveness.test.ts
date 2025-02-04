@@ -70,6 +70,10 @@ describe("Moves - Type Effectiveness", () => {
     () => testMoveEffectiveness(game, Moves.THUNDERBOLT, Species.BLASTOISE, 2)
   );
 
+  it("Ghost-type attacks have no effect on Normal-type Pokemon",
+    () => testMoveEffectiveness(game, Moves.SHADOW_BALL, Species.URSALUNA, 0)
+  );
+
   it("Electric-type attacks are doubly super-effective against Water/Flying-type Pokemon",
     () => testMoveEffectiveness(game, Moves.THUNDERBOLT, Species.GYARADOS, 4)
   );

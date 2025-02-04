@@ -1,7 +1,15 @@
 import { Abilities } from "#app/enums/abilities";
 import { Species } from "#app/enums/species";
 
-export const starterPassiveAbilities = {
+export interface PassiveAbilities {
+  [key: number]: Abilities
+}
+
+interface StarterPassiveAbilities {
+  [key: integer]: PassiveAbilities
+}
+
+export const starterPassiveAbilities: StarterPassiveAbilities = {
   [Species.BULBASAUR]: { 0: Abilities.GRASSY_SURGE },
   [Species.CHARMANDER]: { 0: Abilities.BEAST_BOOST },
   [Species.SQUIRTLE]: { 0: Abilities.STURDY },
