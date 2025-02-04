@@ -4,8 +4,8 @@
 			"image": "courtney.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 52,
-				"h": 80
+				"w": 72,
+				"h": 72
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 52,
-						"h": 80
+						"w": 44,
+						"h": 72
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 80
+						"w": 44,
+						"h": 72
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 80
+						"w": 44,
+						"h": 72
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:831f5748dad92911b10a1cb358ee2dae:a3bf81bbaa3b49cad5e0e549cf94563b:bb6befc9383c9c08837183ae2a7a80c1$"
+		"smartupdate": "$TexturePacker:SmartUpdate:c39b0f300dc09114fba490e6ab68b2b5:a24a6dbdd0e3f4d4b7a567673b73316a:b0c7d3a5747d1c7edafa00c8e6d1257e$"
 	}
 }

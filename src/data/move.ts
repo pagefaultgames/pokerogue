@@ -1892,7 +1892,8 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     }
 
     // We don't know which party member will be chosen, so pick the highest max HP in the party
-    const maxPartyMemberHp = globalScene.getPlayerParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
+    const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
+    const maxPartyMemberHp = party.map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
 
     globalScene.pushPhase(
       new PokemonHealPhase(
