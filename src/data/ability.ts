@@ -5037,11 +5037,12 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
       if (result instanceof Promise) {
         result = await result;
       }
-      if (result) {
-        if (abShown) {
-          queueHideAbility(pokemon, passive);
-        }
 
+      if (abShown) {
+        queueHideAbility(pokemon, passive);
+      }
+
+      if (result) {
         if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
           pokemon.summonData.abilitiesApplied.push(ability.id);
         }
