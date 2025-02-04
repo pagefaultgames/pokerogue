@@ -68433,6 +68433,46 @@ export const tmSpecies: TmSpecies = {
   ],
 };
 
+interface SpeciesTmMoves {
+  [key: integer]: (Moves | [string | Species, Moves])[];
+}
+
+function transposeTmSpecies(): SpeciesTmMoves {
+  const flipped: SpeciesTmMoves = {};
+
+  for (const move in tmSpecies) {
+    const moveKey = Number(move);
+    const speciesList = tmSpecies[move];
+
+    for (const species of speciesList) {
+
+      if (Array.isArray(species)) {
+        // Extract base species and all associated forms
+        const [ baseSpecies, ...forms ] = species;
+        const speciesKey = Number(baseSpecies);
+
+        if (!flipped[speciesKey]) {
+          flipped[speciesKey] = [];
+        }
+
+        for (const form of forms) {
+          flipped[speciesKey].push([ form, moveKey ]);
+        }
+
+      } else {
+        const speciesKey = Number(species);
+        if (!flipped[speciesKey]) {
+          flipped[speciesKey] = [];
+        }
+        flipped[speciesKey].push(moveKey);
+      }
+    }
+  }
+  return flipped;
+}
+
+export const speciesTmMoves: SpeciesTmMoves = transposeTmSpecies();
+
 interface TmPoolTiers {
     [key: number]: ModifierTier
 }
