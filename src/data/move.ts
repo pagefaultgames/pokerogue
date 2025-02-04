@@ -4641,7 +4641,7 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
 
   /**
    * MoveFlags are not reset every turn so if this flag is set it needs to be reset if the move is a special attack
-   * This fucntion resets the {@linkcode MoveFlags.MAKES_CONTACT}
+   * This function resets the {@linkcode MoveFlags.MAKES_CONTACT}
    * @param move this move should be Shell Side Arm
    */
   private resetContactFlag(move: Move): void {
