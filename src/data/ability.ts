@@ -4778,7 +4778,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   }
 
   override apply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: Utils.BooleanHolder, _args: any[]): boolean {
-    if (pokemon.isTerastallized()) {
+    if (pokemon.isTerastallized) {
       return false;
     }
     const currentTerrain = globalScene.arena.getTerrainType();

@@ -34,7 +34,6 @@ describe("Moves - Tera Blast", () => {
       .starterSpecies(Species.FEEBAS)
       .moveset([ Moves.TERA_BLAST ])
       .ability(Abilities.BALL_FETCH)
-      .startingHeldItems([{ name: "TERA_SHARD", type: Type.FIRE }])
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -44,12 +43,14 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("changes type to match user's tera type", async () => {
-    game.override
-      .enemySpecies(Species.FURRET)
-      .startingHeldItems([{ name: "TERA_SHARD", type: Type.FIGHTING }]);
+    game.override.enemySpecies(Species.FURRET);
     await game.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "apply");
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    playerPokemon.teraType = Type.FIGHTING;
+    playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
@@ -59,9 +60,11 @@ describe("Moves - Tera Blast", () => {
   }, 20000);
 
   it("increases power if user is Stellar tera type", async () => {
-    game.override.startingHeldItems([{ name: "TERA_SHARD", type: Type.STELLAR }]);
-
     await game.startBattle();
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    playerPokemon.teraType = Type.STELLAR;
+    playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
@@ -71,13 +74,15 @@ describe("Moves - Tera Blast", () => {
   }, 20000);
 
   it("is super effective against terastallized targets if user is Stellar tera type", async () => {
-    game.override.startingHeldItems([{ name: "TERA_SHARD", type: Type.STELLAR }]);
-
     await game.startBattle();
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    playerPokemon.teraType = Type.STELLAR;
+    playerPokemon.isTerastallized = true;
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "apply");
-    vi.spyOn(enemyPokemon, "isTerastallized").mockReturnValue(true);
+    enemyPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
@@ -94,6 +99,7 @@ describe("Moves - Tera Blast", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.stats[Stat.ATK] = 100;
     playerPokemon.stats[Stat.SPATK] = 1;
+    playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -101,10 +107,11 @@ describe("Moves - Tera Blast", () => {
   }, 20000);
 
   it("causes stat drops if user is Stellar tera type", async () => {
-    game.override.startingHeldItems([{ name: "TERA_SHARD", type: Type.STELLAR }]);
     await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
+    playerPokemon.teraType = Type.STELLAR;
+    playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
