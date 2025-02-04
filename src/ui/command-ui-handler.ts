@@ -176,7 +176,7 @@ export default class CommandUiHandler extends UiHandler {
   canTera(): boolean {
     const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
     const currentTeras = globalScene.arena.playerTerasUsed;
-    const plannedTera = globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex === 1 ? 1 : 0;
+    const plannedTera = globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;
     return hasTeraMod && (currentTeras + plannedTera) < 1;
   }
 
