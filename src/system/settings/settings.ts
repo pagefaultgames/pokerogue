@@ -166,7 +166,7 @@ export const SettingKeys = {
   Field_Volume: "FIELD_VOLUME",
   SE_Volume: "SE_VOLUME",
   UI_Volume: "UI_SOUND_EFFECTS",
-  Music_Preference: "MUSIC_PREFERENCE",
+  Battle_Music: "BATTLE_MUSIC",
   Show_BGM_Bar: "SHOW_BGM_BAR",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY"
@@ -577,8 +577,8 @@ export const Setting: Array<Setting> = [
         label: i18next.t("settings:consistent")
       },
       {
-        value: "Mixed Animated",
-        label: i18next.t("settings:mixedAnimated")
+        value: "Experimental",
+        label: i18next.t("settings:experimental")
       }
     ],
     default: 0,
@@ -658,11 +658,11 @@ export const Setting: Array<Setting> = [
     type: SettingType.AUDIO
   },
   {
-    key: SettingKeys.Music_Preference,
-    label: i18next.t("settings:musicPreference"),
+    key: SettingKeys.Battle_Music,
+    label: i18next.t("settings:battleMusic"),
     options: [
       {
-        value: "Gen V + PMD",
+        value: "Gen V",
         label: i18next.t("settings:musicGenFive")
       },
       {
@@ -713,7 +713,7 @@ export function resetSettings() {
  * @param value value to update setting with
  * @returns true if successful, false if not
  */
-export function setSetting(setting: string, value: integer): boolean {
+export function setSetting(setting: string, value: number): boolean {
   const index: number = settingIndex(setting);
   if (index === -1) {
     return false;
@@ -741,7 +741,7 @@ export function setSetting(setting: string, value: integer): boolean {
     case SettingKeys.UI_Volume:
       globalScene.uiVolume = value ? parseInt(Setting[index].options[value].value) * 0.01 : 0;
       break;
-    case SettingKeys.Music_Preference:
+    case SettingKeys.Battle_Music:
       globalScene.musicPreference = value;
       break;
     case SettingKeys.Damage_Numbers:

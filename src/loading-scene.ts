@@ -246,9 +246,9 @@ export class LoadingScene extends SceneBase {
     }
     const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("winter_holidays2024-event-" + lang, "events");
+      this.loadImage("yearofthesnakeevent-" + lang, "events");
     } else {
-      this.loadImage("winter_holidays2024-event-en", "events");
+      this.loadImage("yearofthesnakeevent-en", "events");
     }
 
     this.loadAtlas("statuses", "");
