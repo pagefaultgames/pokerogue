@@ -2498,18 +2498,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     super(true);
   }
 
-  canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    // SUCCESS CHECK
-    return true;
-  }
-
-  async applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): Promise<boolean> {
-    const targets = pokemon.getOpponents();
-    if (simulated || !targets.length) {
-      return simulated;
-    }
-    const promises: Promise<void>[] = [];
-
+  getTarget(targets: Pokemon[]): Pokemon {
     let target: Pokemon;
     if (targets.length > 1) {
       globalScene.executeWithSeedOffset(() => {
@@ -2529,10 +2518,28 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     }
     target = target!;
 
+    return target;
+  }
+
+  canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const targets = pokemon.getOpponents();
+    if (simulated || !targets.length) {
+      return simulated;
+    }
+
     // transforming from or into fusion pokemon causes various problems (including crashes and save corruption)
-    if (target.fusionSpecies || pokemon.fusionSpecies) {
+    if (this.getTarget(targets).fusionSpecies || pokemon.fusionSpecies) {
       return false;
     }
+
+    return true;
+  }
+
+  async applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): Promise<boolean> {
+    const targets = pokemon.getOpponents();
+    const promises: Promise<void>[] = [];
+
+    const target = this.getTarget(targets);
 
     pokemon.summonData.speciesForm = target.getSpeciesForm();
     pokemon.summonData.ability = target.getAbility().id;
@@ -2559,7 +2566,6 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     });
     pokemon.summonData.types = target.getTypes();
     promises.push(pokemon.updateInfo());
-
     globalScene.queueMessage(i18next.t("abilityTriggers:postSummonTransform", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), targetName: target.name, }));
     globalScene.playSound("battle_anims/PRSFX- Transform");
     promises.push(pokemon.loadAssets(false).then(() => {
