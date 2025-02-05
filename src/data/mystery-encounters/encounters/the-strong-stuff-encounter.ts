@@ -147,8 +147,8 @@ export const TheStrongStuffEncounter: MysteryEncounter =
         // Sort party by bst
         const sortedParty = globalScene.getPlayerParty().slice(0)
           .sort((pokemon1, pokemon2) => {
-            const pokemon1Bst = pokemon1.calculateBaseStats().reduce((a, b) => a + b, 0);
-            const pokemon2Bst = pokemon2.calculateBaseStats().reduce((a, b) => a + b, 0);
+            const pokemon1Bst = pokemon1.getSpeciesForm().getBaseStatTotal();
+            const pokemon2Bst = pokemon2.getSpeciesForm().getBaseStatTotal();
             return pokemon2Bst - pokemon1Bst;
           });
 

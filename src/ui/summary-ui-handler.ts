@@ -113,8 +113,8 @@ export default class SummaryUiHandler extends UiHandler {
   private moveEffectsVisible: boolean;
 
   private moveSelect: boolean;
-  private moveCursor: integer;
-  private selectedMoveIndex: integer;
+  private moveCursor: number;
+  private selectedMoveIndex: number;
   private selectCallback: Function | null;
 
   constructor() {
@@ -292,7 +292,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryPageTransitionContainer.setVisible(false);
   }
 
-  getPageKey(page?: integer) {
+  getPageKey(page?: number) {
     if (page === undefined) {
       page = this.cursor;
     }
@@ -604,7 +604,7 @@ export default class SummaryUiHandler extends UiHandler {
     return success || error;
   }
 
-  setCursor(cursor: integer, overrideChanged: boolean = false): boolean {
+  setCursor(cursor: number, overrideChanged: boolean = false): boolean {
     let changed: boolean = overrideChanged || this.moveCursor !== cursor;
 
     if (this.moveSelect) {
@@ -763,7 +763,7 @@ export default class SummaryUiHandler extends UiHandler {
         typeLabel.setOrigin(0, 0);
         profileContainer.add(typeLabel);
 
-        const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
+        const getTypeIcon = (index: number, type: Type, tera: boolean = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
           const typeIcon = !tera
             ? globalScene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), Type[type].toLowerCase())

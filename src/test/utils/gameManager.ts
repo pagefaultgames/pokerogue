@@ -129,9 +129,10 @@ export default class GameManager {
 
   /**
    * Adds an action to be executed on the next prompt.
+   * This can be used to (among other things) simulate inputs or run functions mid-phase.
    * @param phaseTarget - The target phase.
    * @param mode - The mode to wait for.
-   * @param callback - The callback to execute.
+   * @param callback - The callback function to execute on next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
    */
   onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
@@ -254,7 +255,7 @@ export default class GameManager {
    * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
    * @param movePosition The index of the move in the pokemon's moveset array
    */
-  selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
+  selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
@@ -386,7 +387,7 @@ export default class GameManager {
    * @param path - The path to the data file.
    * @returns A promise that resolves with a tuple containing a boolean indicating success and an integer status code.
    */
-  async importData(path): Promise<[boolean, integer]> {
+  async importData(path): Promise<[boolean, number]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
@@ -400,6 +401,11 @@ export default class GameManager {
     return updateUserInfo();
   }
 
+  /**
+   * Faints a player or enemy pokemon instantly by setting their HP to 0.
+   * @param pokemon The player/enemy pokemon being fainted
+   * @returns A promise that resolves once the fainted pokemon's FaintPhase finishes running.
+   */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
@@ -453,8 +459,9 @@ export default class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
-   * Used to modify the turn order.
+   * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
+   * Used to manually modify Pokemon turn order.
+   * Note: This *DOES NOT* account for priority, only speed.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
    * ```ts
@@ -468,7 +475,7 @@ export default class GameManager {
   }
 
   /**
-   * Removes all held items from enemy pokemon
+   * Removes all held items from enemy pokemon.
    */
   removeEnemyHeldItems(): void {
     this.scene.clearEnemyHeldItemModifiers();
