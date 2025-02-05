@@ -1435,7 +1435,7 @@ export class MatchHpAttr extends FixedDamageAttr {
   }
 
   // TODO
-  /*getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+  /*getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     return 0;
   }*/
 }

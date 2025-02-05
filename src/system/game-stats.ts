@@ -1,4 +1,4 @@
-//  public (.*?): integer;
+//  public (.*?): number;
 //    this.$1 = source?.$1 || 0;
 
 export class GameStats {

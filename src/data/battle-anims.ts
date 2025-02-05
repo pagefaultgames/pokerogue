@@ -347,17 +347,17 @@ abstract class AnimTimedBgEvent extends AnimTimedEvent {
   public bgX: number = 0;
   public bgY: number = 0;
   public opacity: number = 0;
-  /*public colorRed: integer = 0;
-    public colorGreen: integer = 0;
-    public colorBlue: integer = 0;
-    public colorAlpha: integer = 0;*/
+  /*public colorRed: number = 0;
+    public colorGreen: number = 0;
+    public colorBlue: number = 0;
+    public colorAlpha: number = 0;*/
   public duration: number = 0;
-  /*public flashScope: integer = 0;
-    public flashRed: integer = 0;
-    public flashGreen: integer = 0;
-    public flashBlue: integer = 0;
-    public flashAlpha: integer = 0;
-    public flashDuration: integer = 0;*/
+  /*public flashScope: number = 0;
+    public flashRed: number = 0;
+    public flashGreen: number = 0;
+    public flashBlue: number = 0;
+    public flashAlpha: number = 0;
+    public flashDuration: number = 0;*/
 
   constructor(frameIndex: number, resourceName: string, source: any) {
     super(frameIndex, resourceName);

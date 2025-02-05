@@ -5,7 +5,7 @@ export interface PassiveAbilities {
   [key: number]: Abilities
 }
 
-export interface StarterPassiveAbilities {
+interface StarterPassiveAbilities {
   [key: number]: PassiveAbilities
 }
 

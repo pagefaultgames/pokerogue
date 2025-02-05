@@ -7728,8 +7728,7 @@ export function initBiomes() {
       uncatchableSpecies.push(speciesId);
     }
 
-    // prepares new array in catchableSpecies to host available biomes
-    //TODO: this must be improved to only make arrays for starters
+    // array of biome options for the current species
     catchableSpecies[speciesId] = [];
 
     for (const b of biomeEntries) {

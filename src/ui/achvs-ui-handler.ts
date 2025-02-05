@@ -340,9 +340,9 @@ export default class AchvsUiHandler extends MessageUiHandler {
   }
 
   /**
-   * setScrollCursor(scrollCursor: integer) : boolean
+   * setScrollCursor(scrollCursor: number) : boolean
    * scrollCursor refers to the page's position within the entire sum of the data, unlike cursor, which refers to a user's position within displayed data
-   * @param takes a scrollCursor that has been updated based on user behavior
+   * @param scrollCursor takes a value that has been updated based on user behavior
    * @returns returns a boolean that indicates whether the updated scrollCursor led to an update in the data displayed.
    */
   setScrollCursor(scrollCursor: number): boolean {
