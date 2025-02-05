@@ -370,7 +370,7 @@ export class DropDown extends Phaser.GameObjects.Container {
     return this.setCursor(this.defaultCursor);
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     this.cursor = cursor;
     if (cursor < 0) {
       cursor = 0;

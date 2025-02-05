@@ -24,8 +24,8 @@ export default class CommandUiHandler extends UiHandler {
 
   private teraButton: Phaser.GameObjects.Sprite;
 
-  protected fieldIndex: integer = 0;
-  protected cursor2: integer = 0;
+  protected fieldIndex: number = 0;
+  protected cursor2: number = 0;
 
   constructor() {
     super(Mode.COMMAND);
@@ -61,7 +61,7 @@ export default class CommandUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    this.fieldIndex = args.length ? args[0] as integer : 0;
+    this.fieldIndex = args.length ? args[0] as number : 0;
 
     this.commandsContainer.setVisible(true);
 
@@ -180,11 +180,11 @@ export default class CommandUiHandler extends UiHandler {
     return hasTeraMod && (currentTeras + plannedTera) < 1;
   }
 
-  getCursor(): integer {
+  getCursor(): number {
     return !this.fieldIndex ? this.cursor : this.cursor2;
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const changed = this.getCursor() !== cursor;
     if (changed) {
       if (!this.fieldIndex) {

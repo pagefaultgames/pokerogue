@@ -18,7 +18,7 @@ export class VictoryPhase extends PokemonPhase {
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
   isExpOnly: boolean;
 
-  constructor(battlerIndex: BattlerIndex | integer, isExpOnly: boolean = false) {
+  constructor(battlerIndex: BattlerIndex | number, isExpOnly: boolean = false) {
     super(battlerIndex);
 
     this.isExpOnly = isExpOnly;
