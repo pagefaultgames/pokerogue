@@ -302,7 +302,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     return success;
   }
 
-  setCursor(cursor: integer, pageChange?: boolean): boolean {
+  setCursor(cursor: number, pageChange?: boolean): boolean {
     const ret = super.setCursor(cursor);
 
     let update = ret;
@@ -345,7 +345,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
    * @param takes a scrollCursor that has been updated based on user behavior
    * @returns returns a boolean that indicates whether the updated scrollCursor led to an update in the data displayed.
    */
-  setScrollCursor(scrollCursor: integer): boolean {
+  setScrollCursor(scrollCursor: number): boolean {
     if (scrollCursor === this.scrollCursor) {
       return false;
     }
@@ -391,7 +391,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     const achvRange = Object.values(achvs).slice(itemOffset, itemLimit + itemOffset);
 
-    achvRange.forEach((achv: Achv, i: integer) => {
+    achvRange.forEach((achv: Achv, i: number) => {
       const icon = this.icons[i];
       const unlocked = achvUnlocks.hasOwnProperty(achv.id);
       const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
@@ -431,7 +431,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
 
     const voucherRange = Object.values(vouchers).slice(itemOffset, itemLimit + itemOffset);
 
-    voucherRange.forEach((voucher: Voucher, i: integer) => {
+    voucherRange.forEach((voucher: Voucher, i: number) => {
       const icon = this.icons[i];
       const unlocked = voucherUnlocks.hasOwnProperty(voucher.id);
 

@@ -407,7 +407,7 @@ export class DropDown extends Phaser.GameObjects.Container {
     return this.setCursor(this.defaultCursor);
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
 
     if (this.tooManyOptions) {
       this.setLabels(cursor);
@@ -435,7 +435,7 @@ export class DropDown extends Phaser.GameObjects.Container {
     return true;
   }
 
-  setLabels(cursor: integer) {
+  setLabels(cursor: number) {
 
     if ((cursor === 0) && (this.lastCursor === this.totalOptions - 1)) {
       this.firstShown = 0;

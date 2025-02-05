@@ -308,13 +308,13 @@ export default class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
-  showTextPromise(text: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay?: integer | null): Promise<void> {
+  showTextPromise(text: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay?: number | null): Promise<void> {
     return new Promise<void>(resolve => {
       this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
     });
   }
 
-  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
+  showText(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null): void {
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
       let showMessageAndCallback = () => callback && callback();
@@ -334,7 +334,7 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+  showDialogue(keyOrText: string, name: string | undefined, delay: number | null = 0, callback: Function, callbackDelay?: number, promptDelay?: number): void {
     // Get localized dialogue (if available)
     let hasi18n = false;
     let text = keyOrText;
@@ -455,7 +455,7 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const changed = this.getHandler().setCursor(cursor);
     if (changed) {
       this.playSelect();
@@ -472,7 +472,7 @@ export default class UI extends Phaser.GameObjects.Container {
     globalScene.playSound("ui/error");
   }
 
-  fadeOut(duration: integer): Promise<void> {
+  fadeOut(duration: number): Promise<void> {
     return new Promise(resolve => {
       if (this.overlayActive) {
         return resolve();
@@ -490,7 +490,7 @@ export default class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  fadeIn(duration: integer): Promise<void> {
+  fadeIn(duration: number): Promise<void> {
     return new Promise(resolve => {
       if (!this.overlayActive) {
         return resolve();

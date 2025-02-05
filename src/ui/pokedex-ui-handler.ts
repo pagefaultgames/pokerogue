@@ -48,7 +48,7 @@ export interface Starter {
   species: PokemonSpecies;
   starter: PokemonSpecies;
   dexAttr: bigint;
-  abilityIndex: integer,
+  abilityIndex: number,
   passive: boolean;
   nature: Nature;
   moveset?: StarterMoveset;
@@ -60,8 +60,8 @@ export interface Starter {
 interface LanguageSetting {
   starterInfoTextSize: string,
   instructionTextSize: string,
-  starterInfoXPos?: integer,
-  starterInfoYOffset?: integer
+  starterInfoXPos?: number,
+  starterInfoYOffset?: number
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
@@ -148,11 +148,11 @@ function calcStarterPosition(index: number, scrollCursor:number = 0): {x: number
 
 interface SpeciesDetails {
   shiny?: boolean,
-  formIndex?: integer
+  formIndex?: number
   female?: boolean,
   variant?: Variant,
-  abilityIndex?: integer,
-  natureIndex?: integer,
+  abilityIndex?: number,
+  natureIndex?: number,
   forSeen?: boolean, // default = false
 }
 
@@ -174,7 +174,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
 
   private filterMode: boolean;
-  private filterBarCursor: integer = 0;
+  private filterBarCursor: number = 0;
   private starterMoveset: StarterMoveset | null;
   private scrollCursor: number;
 
@@ -213,7 +213,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private filterTextContainer: Phaser.GameObjects.Container;
   private filterText: FilterText;
   private filterTextMode: boolean;
-  private filterTextCursor: integer = 0;
+  private filterTextCursor: number = 0;
 
   private showDecorations: boolean = false;
   private goFilterIconElement1: Phaser.GameObjects.Sprite;
@@ -660,7 +660,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.filterText.setValsToDefault();
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, moveToTop?: boolean) {
+  showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number, moveToTop?: boolean) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
     const singleLine = text?.indexOf("\n") === -1;
@@ -1532,7 +1532,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     });
   };
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     let changed = false;
 
     if (this.filterMode) {

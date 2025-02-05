@@ -2,11 +2,11 @@ import { Abilities } from "#app/enums/abilities";
 import { Species } from "#app/enums/species";
 
 export interface PassiveAbilities {
-  [key: integer]: Abilities
+  [key: number]: Abilities
 }
 
 export interface StarterPassiveAbilities {
-  [key: integer]: PassiveAbilities
+  [key: number]: PassiveAbilities
 }
 
 export const starterPassiveAbilities: StarterPassiveAbilities = {

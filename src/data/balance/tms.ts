@@ -3,7 +3,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 
 interface TmSpecies {
-    [key: integer]: Array<Species | Array<Species | string>>
+    [key: number]: Array<Species | Array<Species | string>>
 }
 
 export const reverseCompatibleTms: Moves[] = [];/*[
@@ -68434,7 +68434,7 @@ export const tmSpecies: TmSpecies = {
 };
 
 interface SpeciesTmMoves {
-  [key: integer]: (Moves | [string | Species, Moves])[];
+  [key: number]: (Moves | [string | Species, Moves])[];
 }
 
 function flipTmSpecies(tmSpecies: TmSpecies): SpeciesTmMoves {
@@ -68474,7 +68474,7 @@ function flipTmSpecies(tmSpecies: TmSpecies): SpeciesTmMoves {
 export const speciesTmMoves: SpeciesTmMoves = flipTmSpecies(tmSpecies);
 
 interface TmPoolTiers {
-    [key: integer]: ModifierTier
+    [key: number]: ModifierTier
 }
 
 export const tmPoolTiers: TmPoolTiers = {

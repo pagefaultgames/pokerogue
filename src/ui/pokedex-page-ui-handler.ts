@@ -62,8 +62,8 @@ import { globalScene } from "#app/global-scene";
 interface LanguageSetting {
   starterInfoTextSize: string,
   instructionTextSize: string,
-  starterInfoXPos?: integer,
-  starterInfoYOffset?: integer
+  starterInfoXPos?: number,
+  starterInfoYOffset?: number
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
@@ -125,9 +125,9 @@ const speciesContainerX = 109; // if team on the RIGHT: 109 / if on the LEFT: 14
 
 interface SpeciesDetails {
   shiny?: boolean,
-  formIndex?: integer
+  formIndex?: number
   female?: boolean,
-  variant?: integer,
+  variant?: number,
   forSeen?: boolean, // default = false
 }
 
@@ -764,7 +764,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * @param otherFormIndex The form index of the form to check; defaults to current form
    * @returns StarterAttributes for the species
    */
-  isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: integer | undefined): boolean {
+  isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: number | undefined): boolean {
 
     if (globalScene.dexForDevs) {
       return true;
@@ -837,7 +837,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return starterAttributes;
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, moveToTop?: boolean) {
+  showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number, moveToTop?: boolean) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
     const singleLine = text?.indexOf("\n") === -1;
@@ -1913,7 +1913,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
