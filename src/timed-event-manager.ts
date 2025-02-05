@@ -102,7 +102,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 1, 3, 0)),
     bannerKey: "yearofthesnakeevent-",
     scale: 0.21,
-    availableLangs: [],
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
     eventEncounters: [
       { species: Species.EKANS },
       { species: Species.ONIX },
