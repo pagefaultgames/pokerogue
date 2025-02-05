@@ -1182,6 +1182,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.fusionSpecies?.speciesId === species;
   }
 
+  /**
+   * Checks if the {@linkcode Pokemon} has is the specified {@linkcode Species} or is fused with it.
+   * @param species the pokemon {@linkcode Species} to check
+   * @returns `true` if the pokemon is the species or is fused with it, `false` otherwise
+   */
+  hasSpecies(species: Species): boolean {
+    return this.species.speciesId === species || this.fusionSpecies?.speciesId === species;
+  }
+
   abstract isBoss(): boolean;
 
   getMoveset(ignoreOverride?: boolean): (PokemonMove | null)[] {
@@ -1553,9 +1562,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the pokemon's current tera {@linkcode Type}, or `Type.UNKNOWN` if the pokemon is not terastallized
    */
   getTeraType(): Type {
-    if (this.species.speciesId === Species.TERAPAGOS || this.fusionSpecies?.speciesId === Species.TERAPAGOS) {
+    if (this.hasSpecies(Species.TERAPAGOS)) {
       return Type.STELLAR;
-    } else if (this.species.speciesId === Species.OGERPON || this.fusionSpecies?.speciesId === Species.OGERPON) {
+    } else if (this.hasSpecies(Species.OGERPON)) {
       const ogerponForm = this.species.speciesId === Species.OGERPON ? this.formIndex : this.fusionFormIndex;
       switch (ogerponForm) {
         case 0:
@@ -1571,7 +1580,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         case 7:
           return Type.ROCK;
       }
-    } else if (this.species.speciesId === Species.SHEDINJA || this.fusionSpecies?.speciesId === Species.SHEDINJA) {
+    } else if (this.hasSpecies(Species.SHEDINJA)) {
       return Type.BUG;
     }
     return this.teraType;
