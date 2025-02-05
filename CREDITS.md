@@ -362,6 +362,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - NightKev
 - Opaquer
 - OrangeRed
+- sirzento
 - SN34KZ
 - Swain aka torranx
 - Temp aka Tempo-anon
@@ -421,7 +422,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Sam aka Flashfyre (initial developer, started PokéRogue)
 - schmidtc1
 - shayebeadling
-- sirzento
 - snoozbuster
 - sodaMelon
 - td76099
