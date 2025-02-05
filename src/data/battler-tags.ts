@@ -137,7 +137,7 @@ export interface TerrainBattlerTag {
  * to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove?: Moves, sourceId?: number) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
   }
 
@@ -2558,7 +2558,7 @@ export class SubstituteTag extends BattlerTag {
   /** Is the source Pokemon "in focus," i.e. is it fully visible on the field? */
   public sourceInFocus: boolean;
 
-  constructor(sourceMove: Moves, sourceId: integer) {
+  constructor(sourceMove: Moves, sourceId: number) {
     super(BattlerTagType.SUBSTITUTE, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT ], 0, sourceMove, sourceId, true);
   }
 

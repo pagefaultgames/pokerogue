@@ -30,7 +30,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   private voucherCountLabels: Phaser.GameObjects.Text[];
 
-  private gachaCursor: integer;
+  private gachaCursor: number;
 
   private cursorObj: Phaser.GameObjects.Image;
   private transitioning: boolean;
@@ -331,14 +331,14 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return true;
   }
 
-  getDelayValue(delay: integer) {
+  getDelayValue(delay: number) {
     if (this.transitioning && this.transitionCancelled) {
       delay = Math.ceil(delay / 5);
     }
     return Utils.fixedInt(delay);
   }
 
-  pull(pullCount: integer = 0, count: integer = 0, eggs?: Egg[]): void {
+  pull(pullCount: number = 0, count: number = 0, eggs?: Egg[]): void {
     if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE && !count) {
       pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
     }
@@ -575,7 +575,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     }
   }
 
-  consumeVouchers(voucherType: VoucherType, count: integer): void {
+  consumeVouchers(voucherType: VoucherType, count: number): void {
     globalScene.gameData.voucherCounts[voucherType] = Math.max(globalScene.gameData.voucherCounts[voucherType] - count, 0);
     this.updateVoucherCounts();
   }
@@ -751,7 +751,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
@@ -765,7 +765,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return ret;
   }
 
-  setGachaCursor(cursor: integer): boolean {
+  setGachaCursor(cursor: number): boolean {
     const oldCursor = this.gachaCursor;
 
     const changed = oldCursor !== cursor;
