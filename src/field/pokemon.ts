@@ -1559,7 +1559,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @returns the pokemon's current tera {@linkcode Type}, or `Type.UNKNOWN` if the pokemon is not terastallized
+   * @returns the pokemon's current tera {@linkcode Type}
    */
   getTeraType(): Type {
     if (this.hasSpecies(Species.TERAPAGOS)) {
