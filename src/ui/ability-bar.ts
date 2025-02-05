@@ -1,6 +1,4 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
 
@@ -57,8 +55,8 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     });
   }
 
-  showAbility(pokemon: Pokemon, passive: boolean = false): Promise<void> {
-    const text = (`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: getPokemonNameWithAffix(pokemon), passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ?  pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`);
+  showAbility(pokemonName: string, abilityName: string, passive: boolean = false): Promise<void> {
+    const text = (`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: abilityName })}`);
 
     globalScene.fieldUI.bringToTop(this);
 
