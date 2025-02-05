@@ -3,7 +3,7 @@ import { CommandedTag, EncoreTag, GulpMissileTag, HelpingHandTag, SemiInvulnerab
 import { getPokemonNameWithAffix } from "../messages";
 import type { AttackMoveResult, TurnMove } from "../field/pokemon";
 import type Pokemon from "../field/pokemon";
-import { EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
+import { EnemyPokemon, FieldPosition, HitResult, MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "./status-effect";
 import { getTypeDamageMultiplier } from "./type";
 import { Type } from "#enums/type";
@@ -46,6 +46,10 @@ import { applyChallenges, ChallengeType } from "./challenge";
 import { SwitchType } from "#enums/switch-type";
 import { StatusEffect } from "enums/status-effect";
 import { globalScene } from "#app/global-scene";
+import { Mode } from "#app/ui/ui";
+import type { PartyOption } from "#app/ui/party-ui-handler";
+import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -5948,11 +5952,40 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
    * @returns Promise, true if function succeeds.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    const revivePlayer = (): Promise<void> => {
+      return new Promise(resolve => {
+        globalScene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, user.getFieldIndex(), (slotIndex:integer, option: PartyOption) => {
+          if (slotIndex >= 0 && slotIndex < 6) {
+            const pokemon = globalScene.getPlayerParty()[slotIndex];
+            if (!pokemon || !pokemon.isFainted()) {
+              resolve();
+            }
+
+            pokemon.resetTurnData();
+            pokemon.resetStatus();
+            pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
+            globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: pokemon.name }), 0, true);
+
+            if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1) {
+              const allyPokemon = user.getAlly();
+              if (allyPokemon.isFainted() || allyPokemon === pokemon) {
+                globalScene.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
+                globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, true));
+                globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
+              }
+            }
+
+          }
+          globalScene.ui.setMode(Mode.MESSAGE).then(() => resolve());
+        }, PartyUiHandler.FilterFainted);
+      });
+    };
+
     return new Promise(resolve => {
       // If user is player, checks if the user has fainted pokemon
       if (user instanceof PlayerPokemon
         && globalScene.getPlayerParty().findIndex(p => p.isFainted()) > -1) {
-        (user as PlayerPokemon).revivalBlessing().then(() => {
+        revivePlayer().then(() => {
           resolve(true);
         });
       // If user is enemy, checks that it is a trainer, and it has fainted non-boss pokemon in party
@@ -5966,12 +5999,18 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         pokemon.resetStatus();
         pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
         globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
-
         if (globalScene.currentBattle.double && globalScene.getEnemyParty().length > 1) {
           const allyPokemon = user.getAlly();
-          if (slotIndex <= 1) {
-            globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, false));
-          } else if (allyPokemon.isFainted()) {
+          // Handle cases where revived pokemon needs to get switched in on same turn
+          if (allyPokemon.isFainted() || allyPokemon === pokemon) {
+            // Enemy switch phase should be removed and replaced with the revived pkmn switching in
+            globalScene.tryRemovePhase((phase: SwitchSummonPhase) => phase instanceof SwitchSummonPhase && phase.getPokemon() === pokemon);
+            // If the pokemon being revived was alive earlier in the turn, cancel its move
+            // (revived pokemon can't move in the turn they're brought back)
+            globalScene.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
+            if (user.fieldPosition === FieldPosition.CENTER) {
+              user.setFieldPosition(FieldPosition.LEFT);
+            }
             globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false));
           }
         }
