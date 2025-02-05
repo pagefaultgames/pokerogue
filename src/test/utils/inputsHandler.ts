@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
-import { InputsController } from "#app/inputs-controller";
+import type { InputsController } from "#app/inputs-controller";
 import TouchControl from "#app/touch-controls";
 import { holdOn } from "#test/utils/gameManagerUtils";
 import fs from "fs";
@@ -30,7 +30,7 @@ export default class InputsHandler {
     this.init();
   }
 
-  pressTouch(button: string, duration: integer): Promise<void> {
+  pressTouch(button: string, duration: number): Promise<void> {
     return new Promise(async (resolve) => {
       this.fakeMobile.touchDown(button);
       await holdOn(duration);
@@ -39,7 +39,7 @@ export default class InputsHandler {
     });
   }
 
-  pressGamepadButton(button: integer, duration: integer): Promise<void> {
+  pressGamepadButton(button: number, duration: number): Promise<void> {
     return new Promise(async (resolve) => {
       this.scene.input.gamepad?.emit("down", this.fakePad, { index: button });
       await holdOn(duration);
@@ -48,7 +48,7 @@ export default class InputsHandler {
     });
   }
 
-  pressKeyboardKey(key: integer, duration: integer): Promise<void> {
+  pressKeyboardKey(key: number, duration: number): Promise<void> {
     return new Promise(async (resolve) => {
       this.scene.input.keyboard?.emit("keydown", { keyCode: key });
       await holdOn(duration);
@@ -58,7 +58,7 @@ export default class InputsHandler {
   }
 
   init(): void {
-    const touchControl = new TouchControl(this.scene);
+    const touchControl = new TouchControl();
     touchControl.deactivatePressedKey(); //test purpose
     this.events = this.inputController.events;
     this.scene.input.gamepad?.emit("connected", this.fakePad);
