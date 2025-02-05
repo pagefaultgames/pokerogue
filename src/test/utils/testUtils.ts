@@ -18,7 +18,7 @@ export function mockI18next() {
  * @param end end number e.g. 10
  * @returns an array of numbers
  */
-export function arrayOfRange(start: integer, end: integer) {
+export function arrayOfRange(start: number, end: number) {
   return Array.from({ length: end - start }, (_v, k) => k + start);
 }
 
