@@ -256,7 +256,7 @@ export default class GameManager {
    * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
    * @param movePosition The index of the move in the pokemon's moveset array
    */
-  selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
+  selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
@@ -388,7 +388,7 @@ export default class GameManager {
    * @param path - The path to the data file.
    * @returns A promise that resolves with a tuple containing a boolean indicating success and an integer status code.
    */
-  async importData(path): Promise<[boolean, integer]> {
+  async importData(path): Promise<[boolean, number]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);

@@ -126,7 +126,7 @@ class DefaultOverrides {
   /**
    * This will override the species of the fusion
    */
-  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | number = 0;
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
@@ -147,7 +147,7 @@ class DefaultOverrides {
   /**
    * This will override the species of the fusion only when the opponent is already a fusion
    */
-  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
+  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | number = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
