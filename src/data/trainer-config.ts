@@ -608,7 +608,7 @@ export class TrainerConfig {
     return this;
   }
 
-  setInstantTera(index: integer): TrainerConfig {
+  setInstantTera(index: number): TrainerConfig {
     this.trainerAI.setInstantTera(index);
     return this;
   }
