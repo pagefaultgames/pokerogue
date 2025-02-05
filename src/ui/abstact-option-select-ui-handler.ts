@@ -11,8 +11,8 @@ export interface OptionSelectConfig {
   xOffset?: number;
   yOffset?: number;
   options: OptionSelectItem[];
-  maxOptions?: integer;
-  delay?: integer;
+  maxOptions?: number;
+  delay?: number;
   noCancel?: boolean;
   supportHover?: boolean;
 }
@@ -40,7 +40,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   protected blockInput: boolean;
 
-  protected scrollCursor: integer = 0;
+  protected scrollCursor: number = 0;
 
   protected scale: number = 0.1666666667;
 
@@ -50,9 +50,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     super(mode);
   }
 
-  abstract getWindowWidth(): integer;
+  abstract getWindowWidth(): number;
 
-  getWindowHeight(): integer {
+  getWindowHeight(): number {
     return (Math.min((this.config?.options || []).length, this.config?.maxOptions || 99) + 1) * 96 * this.scale;
   }
 
@@ -118,7 +118,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectText.setPositionRelative(this.optionSelectBg, 12 + 24 * this.scale, 2 + 42 * this.scale);
 
-    options.forEach((option: OptionSelectItem, i: integer) => {
+    options.forEach((option: OptionSelectItem, i: number) => {
       if (option.item) {
         const itemIcon = globalScene.add.sprite(0, 0, "items", option.item);
         itemIcon.setScale(3 * this.scale);
@@ -295,7 +295,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     return options;
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const changed = this.cursor !== cursor;
 
     let isScroll = false;
