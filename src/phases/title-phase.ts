@@ -151,6 +151,14 @@ export class TitlePhase extends Phase {
       keepOpen: true
     },
     {
+      label: i18next.t("menu:runHistory"),
+      handler: () => {
+        globalScene.ui.setOverlayMode(Mode.RUN_HISTORY);
+        return true;
+      },
+      keepOpen: true
+    },
+    {
       label: i18next.t("menu:settings"),
       handler: () => {
         globalScene.ui.setOverlayMode(Mode.SETTINGS);

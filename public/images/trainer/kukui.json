@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "ortega.png",
+			"image": "kukui.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 70,
-				"h": 70
+				"w": 74,
+				"h": 74
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 47,
-						"h": 70
+						"w": 37,
+						"h": 74
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 47,
-						"h": 70
+						"w": 37,
+						"h": 74
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 47,
-						"h": 70
+						"w": 37,
+						"h": 74
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f69a1067315885ed736a07362122f371:717e3f134eb10424f0f0fa724500ba63:c3f9fcec121c8bc93f2b230b20b79c57$"
+		"smartupdate": "$TexturePacker:SmartUpdate:bccd7af37a8608585716e34d0acb49af:8e1ebc6f022707fbb1e6b4f7d1dbb00c:70bdbf4bca082082ae121aa8ef03c2be$"
 	}
 }

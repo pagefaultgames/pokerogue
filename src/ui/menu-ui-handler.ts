@@ -21,7 +21,6 @@ enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
-  RUN_HISTORY,
   EGG_LIST,
   EGG_GACHA,
   POKEDEX,
@@ -507,10 +506,6 @@ export default class MenuUiHandler extends MessageUiHandler {
           break;
         case MenuOptions.STATS:
           ui.setOverlayMode(Mode.GAME_STATS);
-          success = true;
-          break;
-        case MenuOptions.RUN_HISTORY:
-          ui.setOverlayMode(Mode.RUN_HISTORY);
           success = true;
           break;
         case MenuOptions.EGG_LIST:
