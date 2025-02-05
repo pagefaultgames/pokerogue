@@ -350,6 +350,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - bennybroseph
 - Brain Frog
 - CodeTappert
+- Dakurei
 - flx-sta
 - frutescens
 - Greenlamp
@@ -360,6 +361,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Moka
 - NightKev
 - Opaquer
+- OrangeRed
 - SN34KZ
 - Swain aka torranx
 - Temp aka Tempo-anon
@@ -379,7 +381,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Arxalc
 - AsdarDevelops
 - Corrade
-- Dakurei
 - DustinLin
 - ElizaAlex
 - EmberCM
@@ -408,7 +409,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Neverblade
 - NxKarim
 - okimin
-- OrangeRed
 - PigeonBar
 - PrabbyDD
 - prateau
