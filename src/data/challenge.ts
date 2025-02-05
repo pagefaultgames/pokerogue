@@ -115,17 +115,17 @@ export enum MoveSourceType {
 export abstract class Challenge {
   public id: Challenges; // The id of the challenge
 
-  public value: integer; // The "strength" of the challenge, all challenges have a numerical value.
-  public maxValue: integer; // The maximum strength of the challenge.
-  public severity: integer; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
-  public maxSeverity: integer; // The maximum severity of the challenge.
+  public value: number; // The "strength" of the challenge, all challenges have a numerical value.
+  public maxValue: number; // The maximum strength of the challenge.
+  public severity: number; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
+  public maxSeverity: number; // The maximum severity of the challenge.
 
   public conditions: ChallengeCondition[];
 
   /**
    * @param id {@link Challenges} The enum value for the challenge
    */
-  constructor(id: Challenges, maxValue: integer = Number.MAX_SAFE_INTEGER) {
+  constructor(id: Challenges, maxValue: number = Number.MAX_SAFE_INTEGER) {
     this.id = id;
 
     this.value = 0;
@@ -180,7 +180,7 @@ export abstract class Challenge {
 
   /**
    * Returns the textual representation of a challenge's current value.
-   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised name for the current value.
    */
   getValue(overrideValue?: number): string {
@@ -190,7 +190,7 @@ export abstract class Challenge {
 
   /**
    * Returns the description of a challenge's current value.
-   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised description for the current value.
    */
   getDescription(overrideValue?: number): string {
@@ -257,7 +257,7 @@ export abstract class Challenge {
    * Gets the "difficulty" value of this challenge.
    * @returns {@link integer} The difficulty value.
    */
-  getDifficulty(): integer {
+  getDifficulty(): number {
     return this.value;
   }
 
@@ -265,7 +265,7 @@ export abstract class Challenge {
    * Gets the minimum difficulty added by this challenge.
    * @returns {@link integer} The difficulty value.
    */
-  getMinDifficulty(): integer {
+  getMinDifficulty(): number {
     return 0;
   }
 
@@ -469,7 +469,7 @@ export class SingleGenerationChallenge extends Challenge {
     let trainerTypes: (TrainerType | TrainerType[])[] = [];
     const evilTeamWaves: number[] = [ ClassicFixedBossWaves.EVIL_GRUNT_1, ClassicFixedBossWaves.EVIL_GRUNT_2, ClassicFixedBossWaves.EVIL_GRUNT_3, ClassicFixedBossWaves.EVIL_ADMIN_1, ClassicFixedBossWaves.EVIL_GRUNT_4, ClassicFixedBossWaves.EVIL_ADMIN_2, ClassicFixedBossWaves.EVIL_BOSS_1, ClassicFixedBossWaves.EVIL_BOSS_2 ];
     const evilTeamGrunts = [[ TrainerType.ROCKET_GRUNT ], [ TrainerType.ROCKET_GRUNT ], [ TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT ], [ TrainerType.GALACTIC_GRUNT ], [ TrainerType.PLASMA_GRUNT ], [ TrainerType.FLARE_GRUNT ], [ TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT ], [ TrainerType.MACRO_GRUNT ], [ TrainerType.STAR_GRUNT ]];
-    const evilTeamAdmins = [[ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [[ TrainerType.TABITHA, TrainerType.COURTNEY ], [ TrainerType.MATT, TrainerType.SHELLY ]], [ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ], [ TrainerType.ZINZOLIN, TrainerType.ROOD ], [ TrainerType.XEROSIC, TrainerType.BRYONY ], [ TrainerType.FABA, TrainerType.PLUMERIA ], [ TrainerType.OLEANA ], [ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]];
+    const evilTeamAdmins = [[ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [[ TrainerType.TABITHA, TrainerType.COURTNEY ], [ TrainerType.MATT, TrainerType.SHELLY ]], [ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ], [ TrainerType.ZINZOLIN, TrainerType.COLRESS ], [ TrainerType.XEROSIC, TrainerType.BRYONY ], [ TrainerType.FABA, TrainerType.PLUMERIA ], [ TrainerType.OLEANA ], [ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]];
     const evilTeamBosses = [[ TrainerType.ROCKET_BOSS_GIOVANNI_1 ], [ TrainerType.ROCKET_BOSS_GIOVANNI_1 ], [ TrainerType.MAXIE, TrainerType.ARCHIE ], [ TrainerType.CYRUS ], [ TrainerType.GHETSIS ], [ TrainerType.LYSANDRE ], [ TrainerType.LUSAMINE, TrainerType.GUZMA ], [ TrainerType.ROSE ], [ TrainerType.PENNY ]];
     const evilTeamBossRematches = [[ TrainerType.ROCKET_BOSS_GIOVANNI_2 ], [ TrainerType.ROCKET_BOSS_GIOVANNI_2 ], [ TrainerType.MAXIE_2, TrainerType.ARCHIE_2 ], [ TrainerType.CYRUS_2 ], [ TrainerType.GHETSIS_2 ], [ TrainerType.LYSANDRE_2 ], [ TrainerType.LUSAMINE_2, TrainerType.GUZMA_2 ], [ TrainerType.ROSE_2 ], [ TrainerType.PENNY_2 ]];
     switch (waveIndex) {
@@ -509,7 +509,7 @@ export class SingleGenerationChallenge extends Challenge {
         trainerTypes = [ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL ];
         break;
       case ClassicFixedBossWaves.CHAMPION:
-        trainerTypes = [ TrainerType.BLUE, Utils.randSeedItem([ TrainerType.RED, TrainerType.LANCE_CHAMPION ]), Utils.randSeedItem([ TrainerType.STEVEN, TrainerType.WALLACE ]), TrainerType.CYNTHIA, Utils.randSeedItem([ TrainerType.ALDER, TrainerType.IRIS ]), TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, Utils.randSeedItem([ TrainerType.GEETA, TrainerType.NEMONA ]) ];
+        trainerTypes = [ TrainerType.BLUE, Utils.randSeedItem([ TrainerType.RED, TrainerType.LANCE_CHAMPION ]), Utils.randSeedItem([ TrainerType.STEVEN, TrainerType.WALLACE ]), TrainerType.CYNTHIA, Utils.randSeedItem([ TrainerType.ALDER, TrainerType.IRIS ]), TrainerType.DIANTHA, Utils.randSeedItem([ TrainerType.KUKUI, TrainerType.HAU ]), Utils.randSeedItem([ TrainerType.LEON, TrainerType.MUSTARD ]), Utils.randSeedItem([ TrainerType.GEETA, TrainerType.NEMONA ]) ];
         break;
     }
     if (trainerTypes.length === 0) {
@@ -643,7 +643,7 @@ export class SingleTypeChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -655,7 +655,7 @@ export class SingleTypeChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
+  getDescription(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -793,7 +793,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
   /**
    * @override
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -827,7 +827,7 @@ export class LowerStarterPointsChallenge extends Challenge {
   /**
    * @override
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
