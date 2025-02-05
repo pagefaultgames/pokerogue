@@ -17,8 +17,8 @@ import { Species } from "#enums/species";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
-  infoContainerLabelXPos?: integer;
-  infoContainerTextXPos?: integer;
+  infoContainerLabelXPos?: number;
+  infoContainerTextXPos?: number;
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
@@ -330,7 +330,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       }
 
       const starterSpeciesId = pokemon.species.getRootSpeciesId();
-      const originalIvs: integer[] | null = eggInfo ? (dexEntry.caughtAttr ? dexEntry.ivs : null) : (globalScene.gameData.dexData[starterSpeciesId].caughtAttr
+      const originalIvs: number[] | null = eggInfo ? (dexEntry.caughtAttr ? dexEntry.ivs : null) : (globalScene.gameData.dexData[starterSpeciesId].caughtAttr
         ? globalScene.gameData.dexData[starterSpeciesId].ivs : null);
 
       this.statsContainer.updateIvs(pokemon.ivs, originalIvs!); // TODO: is this bang correct?
