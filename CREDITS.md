@@ -359,9 +359,11 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - KimJeongSun
 - Madmadness65
 - Moka
+- Navori
 - NightKev
 - Opaquer
 - OrangeRed
+- Sam aka Flashfyre (initial developer, started PokéRogue)
 - sirzento
 - SN34KZ
 - Swain aka torranx
@@ -419,7 +421,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - RedstonewolfX
 - ReneGV
 - rnicar245
-- Sam aka Flashfyre (initial developer, started PokéRogue)
 - schmidtc1
 - shayebeadling
 - snoozbuster
