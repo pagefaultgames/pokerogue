@@ -264,16 +264,12 @@ export class MoveEffectPhase extends PokemonPhase {
           const canMagicBounce = !isReflecting && !move.checkFlag(MoveFlags.IGNORE_ABILITIES, user, target) && target.hasAbilityWithAttr(ReflectStatusMoveAbAttr);
 
           const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
-          /** Is the target in a semi-invulnerable state that isn't being bypassed by this move? */
-          const activeSemiInvulnerability = !!semiInvulnerableTag &&
-            !(this.checkBypassSemiInvuln(semiInvulnerableTag)
-            || this.checkBypassAccAndInvuln(target));
 
           /** Is the target reflecting the effect, not protected, and not in an semi-invulnerable state?*/
           const willBounce = (!isProtected && !this.reflected && !isCommanding
             && move.hasFlag(MoveFlags.REFLECTABLE)
             && (isReflecting || canMagicBounce)
-            && !activeSemiInvulnerability);
+            && !semiInvulnerableTag);
 
           // If the move will bounce, then queue the bounce and move on to the next target
           if (!target.switchOutStatus && willBounce) {
