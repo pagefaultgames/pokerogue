@@ -330,5 +330,23 @@ describe("Abilities - Magic Bounce", () => {
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getBattlerIndex()).toBe(BattlerIndex.ENEMY);
   });
+
+  it("should not bounce back status moves that hit through semi-invulnerable states", async () => {
+    game.override.moveset([ Moves.TOXIC, Moves.CHARM ]);
+    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    game.move.select(Moves.TOXIC);
+    await game.forceEnemyMove(Moves.FLY);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.TOXIC);
+    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
+
+    game.override.ability(Abilities.NO_GUARD);
+    game.move.select(Moves.CHARM);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(-2);
+    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(0);
+  });
 });
 
