@@ -713,7 +713,7 @@ export function resetSettings() {
  * @param value value to update setting with
  * @returns true if successful, false if not
  */
-export function setSetting(setting: string, value: integer): boolean {
+export function setSetting(setting: string, value: number): boolean {
   const index: number = settingIndex(setting);
   if (index === -1) {
     return false;

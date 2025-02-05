@@ -102,7 +102,7 @@ export class MoveHelper extends GameManagerHelper {
   * defaults to 0 (first slot) and 4 aborts the procedure
   * @returns a promise that resolves once the move has been successfully learnt
  */
-  public async learnMove(move: Moves | integer, partyIndex: integer = 0, moveSlotIndex: integer = 0) {
+  public async learnMove(move: Moves | number, partyIndex: number = 0, moveSlotIndex: number = 0) {
     return new Promise<void>(async (resolve, reject) => {
       this.game.scene.pushPhase(new LearnMovePhase(partyIndex, move));
 

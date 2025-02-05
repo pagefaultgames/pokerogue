@@ -11,7 +11,7 @@ export function toReadableString(str: string): string {
   return str.replace(/\_/g, " ").split(" ").map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`).join(" ");
 }
 
-export function randomString(length: integer, seeded: boolean = false) {
+export function randomString(length: number, seeded: boolean = false) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
 
@@ -23,7 +23,7 @@ export function randomString(length: integer, seeded: boolean = false) {
   return result;
 }
 
-export function shiftCharCodes(str: string, shiftCount: integer) {
+export function shiftCharCodes(str: string, shiftCount: number) {
   if (!shiftCount) {
     shiftCount = 0;
   }
@@ -59,7 +59,7 @@ export function randSeedGauss(stdev: number, mean: number = 0): number {
   return z * stdev + mean;
 }
 
-export function padInt(value: integer, length: integer, padWith?: string): string {
+export function padInt(value: number, length: number, padWith?: string): string {
   if (!padWith) {
     padWith = "0";
   }
@@ -75,7 +75,7 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
 * @param range The amount of possible numbers
 * @param min The starting number
 */
-export function randInt(range: integer, min: integer = 0): integer {
+export function randInt(range: number, min: number = 0): number {
   if (range === 1) {
     return min;
   }
@@ -88,7 +88,7 @@ export function randInt(range: integer, min: integer = 0): integer {
  * @param min The minimum integer to pick, default `0`
  * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
  */
-export function randSeedInt(range: integer, min: integer = 0): integer {
+export function randSeedInt(range: number, min: number = 0): number {
   if (range <= 1) {
     return min;
   }
@@ -100,7 +100,7 @@ export function randSeedInt(range: integer, min: integer = 0): integer {
 * @param min The lowest number
 * @param max The highest number
 */
-export function randIntRange(min: integer, max: integer): integer {
+export function randIntRange(min: number, max: number): number {
   return randInt(max - min, min);
 }
 
@@ -139,7 +139,7 @@ export function randSeedShuffle<T>(items: T[]): T[] {
   return newArray;
 }
 
-export function getFrameMs(frameCount: integer): integer {
+export function getFrameMs(frameCount: number): number {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }
 
@@ -150,7 +150,7 @@ export function getCurrentTime(): number {
 
 const secondsInHour = 3600;
 
-export function getPlayTimeString(totalSeconds: integer): string {
+export function getPlayTimeString(totalSeconds: number): string {
   const days = `${Math.floor(totalSeconds / (secondsInHour * 24))}`;
   const hours = `${Math.floor(totalSeconds % (secondsInHour * 24) / secondsInHour)}`;
   const minutes = `${Math.floor(totalSeconds % secondsInHour / 60)}`;
@@ -176,7 +176,7 @@ export function getIvsFromId(id: number): number[] {
   ];
 }
 
-export function formatLargeNumber(count: integer, threshold: integer): string {
+export function formatLargeNumber(count: number, threshold: number): string {
   if (count < threshold) {
     return count.toString();
   }
@@ -236,7 +236,7 @@ export function formatMoney(format: MoneyFormat, amount: number) {
   return amount.toLocaleString();
 }
 
-export function formatStat(stat: integer, forHp: boolean = false): string {
+export function formatStat(stat: number, forHp: boolean = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
@@ -244,7 +244,7 @@ export function getEnumKeys(enumType: any): string[] {
   return Object.values(enumType).filter(v => isNaN(parseInt(v!.toString()))).map(v => v!.toString());
 }
 
-export function getEnumValues(enumType: any): integer[] {
+export function getEnumValues(enumType: any): number[] {
   return Object.values(enumType).filter(v => !isNaN(parseInt(v!.toString()))).map(v => parseInt(v!.toString()));
 }
 
@@ -344,7 +344,7 @@ export class NumberHolder {
 
 /** @deprecated Use {@linkcode NumberHolder} */
 export class IntegerHolder extends NumberHolder {
-  constructor(value: integer) {
+  constructor(value: number) {
     super(value);
   }
 }
@@ -357,8 +357,8 @@ export class FixedInt {
   }
 }
 
-export function fixedInt(value: integer): integer {
-  return new FixedInt(value) as unknown as integer;
+export function fixedInt(value: number): number {
+  return new FixedInt(value) as unknown as number;
 }
 
 /**
@@ -382,7 +382,7 @@ export function toCamelCaseString(unformattedText: string): string {
   return unformattedText.split(/[_ ]/).filter(f => f).map((f, i) => i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
 }
 
-export function rgbToHsv(r: integer, g: integer, b: integer) {
+export function rgbToHsv(r: number, g: number, b: number) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
   const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c));
@@ -394,7 +394,7 @@ export function rgbToHsv(r: integer, g: integer, b: integer) {
  * @param {Array} rgb1 First RGB color in array
  * @param {Array} rgb2 Second RGB color in array
  */
-export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
+export function deltaRgb(rgb1: number[], rgb2: number[]): number {
   const [ r1, g1, b1 ] = rgb1;
   const [ r2, g2, b2 ] = rgb2;
   const drp2 = Math.pow(r1 - r2, 2);
@@ -415,7 +415,7 @@ export function rgbHexToRgba(hex: string) {
   };
 }
 
-export function rgbaToInt(rgba: integer[]): integer {
+export function rgbaToInt(rgba: number[]): number {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
 

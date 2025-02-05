@@ -21,7 +21,6 @@ enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
   STATS,
-  RUN_HISTORY,
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
@@ -172,7 +171,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     const manageDataOptions: any[] = []; // TODO: proper type
 
-    const confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
+    const confirmSlot = (message: string, slotFilter: (i: number) => boolean, callback: (i: number) => void) => {
       ui.revertMode();
       ui.showText(message, null, () => {
         const config: OptionSelectConfig = {
@@ -213,7 +212,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:exportSession"),
       handler: () => {
-        const dataSlots: integer[] = [];
+        const dataSlots: number[] = [];
         Promise.all(
           new Array(5).fill(null).map((_, i) => {
             const slotId = i;
@@ -508,10 +507,6 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(Mode.GAME_STATS);
           success = true;
           break;
-        case MenuOptions.RUN_HISTORY:
-          ui.setOverlayMode(Mode.RUN_HISTORY);
-          success = true;
-          break;
         case MenuOptions.EGG_LIST:
           if (globalScene.gameData.eggs.length) {
             ui.revertMode();
@@ -685,7 +680,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
