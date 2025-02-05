@@ -593,6 +593,11 @@ export class TrainerConfig {
     return this;
   }
 
+  /**
+   * Sets random pokemon from the trainers team to instant tera. Uses their specialty types is they have one.
+   * @param count The amount of pokemon to have instant tera
+   * @returns this
+   */
   setRandomTeraModifiers(count: () => integer): TrainerConfig {
     this.genAIFuncs.push((party: EnemyPokemon[]) => {
       const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
@@ -608,6 +613,11 @@ export class TrainerConfig {
     return this;
   }
 
+  /**
+   * Sets a specific pokemon to instant tera
+   * @param index The index within the team to have instant tera
+   * @returns this
+   */
   setInstantTera(index: number): TrainerConfig {
     this.trainerAI.setInstantTera(index);
     return this;
