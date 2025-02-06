@@ -241,11 +241,10 @@ export class AttemptCapturePhase extends PokemonPhase {
       };
       const removePokemon = () => {
         globalScene.addFaintedEnemyScore(pokemon);
-        globalScene.getPlayerField().filter(p => p.isActive(true)).forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
         pokemon.hp = 0;
         pokemon.trySetStatus(StatusEffect.FAINT);
         globalScene.clearEnemyHeldItemModifiers();
-        globalScene.field.remove(pokemon, true);
+        pokemon.leaveField(true, true, true);
       };
       const addToParty = (slotIndex?: number) => {
         const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex);
