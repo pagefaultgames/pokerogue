@@ -8,6 +8,7 @@ import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import { addWindow } from "./ui-theme";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -19,6 +20,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessageText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
   private appVersionText: Phaser.GameObjects.Text;
+  private announcementText: Phaser.GameObjects.Text;
+  private announcementBg: Phaser.GameObjects.NineSlice;
 
   private titleStatsTimer: NodeJS.Timeout | null;
 
@@ -75,6 +78,33 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.appVersionText.setOrigin(0.5, 0.5);
     this.appVersionText.setAngle(0);
     this.titleContainer.add(this.appVersionText);
+
+    const startDate = new Date(1738994400000).toLocaleString();
+    const endDate = new Date(1739167200000).toLocaleString();
+    const localizedAnnouncementString: { [key: string]: string } = {
+      "en": ` - INFORMATION - \nA maintenance is scheduled for the following period:\n${startDate} until ${endDate}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
+      "de": ` - INFORMATION - German test:\n${startDate} until ${endDate}`,
+      "es-ES":"",
+      "fr":"",
+      "it":"",
+      "pt_BR":"",
+      "zh":"",
+      "pt":"",
+      "ko":"",
+      "ja":"",
+      "ca-ES":"",
+    };
+    const currentLanguage = i18next.resolvedLanguage ?? "en";
+    const announcementString = localizedAnnouncementString[Object.keys(localizedAnnouncementString).find(lang => currentLanguage.includes(lang)) ?? "en"];
+    this.announcementText = addTextObject(logo.x - 138, logo.y + logo.displayHeight + 116, announcementString, TextStyle.MONEY, { fontSize: "78px", wordWrap: { width: 200 * 6 }});
+    this.announcementText.setOrigin(0, 1);
+    this.announcementText.setAngle(0);
+    this.announcementBg = addWindow(this.announcementText.x - 8, this.announcementText.y + 6, this.announcementText.width / 6 + 14, this.announcementText.height / 6 + 12);
+    this.announcementBg.setName("announcement-bg");
+    this.announcementBg.setOrigin(0, 1);
+    this.titleContainer.add(this.announcementText);
+    this.titleContainer.add(this.announcementBg);
+    this.titleContainer.bringToTop(this.announcementText);
   }
 
   updateTitleStats(): void {
