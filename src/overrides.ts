@@ -2,7 +2,6 @@
 import { type PokeballCounts } from "#app/battle-scene";
 import { Gender } from "#app/data/gender";
 import { Variant } from "#app/data/variant";
-import { BerryType } from "#app/enums/berry-type";
 import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
@@ -33,14 +32,7 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {
-  OPP_HELD_ITEMS_OVERRIDE: [{ name: "BERRY", type: BerryType.GANLON, count: 3 }],
-  ABILITY_OVERRIDE: Abilities.PICKPOCKET,
-  OPP_LEVEL_OVERRIDE: 1,
-  STARTING_LEVEL_OVERRIDE: 100,
-  OPP_MOVESET_OVERRIDE: Moves.TACKLE,
-  MOVESET_OVERRIDE: Moves.SPLASH
-} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
