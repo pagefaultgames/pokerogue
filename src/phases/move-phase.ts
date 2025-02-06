@@ -350,7 +350,7 @@ export class MovePhase extends BattlePhase {
       if (failureMessage) {
         failedText = failureMessage;
       } else if (failedDueToTerrain) {
-        failedText = getTerrainBlockMessage(targets[0], this.scene.arena.getTerrainType());
+        failedText = getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType());
       }
 
       this.showFailedText(failedText);
