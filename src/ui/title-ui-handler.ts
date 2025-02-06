@@ -82,7 +82,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const startDate = new Date(1738994400000).toLocaleString();
     const endDate = new Date(1739167200000).toLocaleString();
     const localizedAnnouncementString: { [key: string]: string } = {
-      "en": ` - INFORMATION - \nA maintenance is scheduled for the following period:\n${startDate} until ${endDate}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
+      "en": ` - INFORMATION - \nServer maintenance is scheduled for the following period:\n${startDate} until ${endDate}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
       "de": ` - INFORMATION - German test:\n${startDate} until ${endDate}`,
       "es-ES":"",
       "fr":"",
