@@ -20,8 +20,10 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessageText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
   private appVersionText: Phaser.GameObjects.Text;
+  // -- start temporary maintenance announcement fields --
   private announcementText: Phaser.GameObjects.Text;
   private announcementBg: Phaser.GameObjects.NineSlice;
+  // -- end temporary maintenance announcement fields --
 
   private titleStatsTimer: NodeJS.Timeout | null;
 
@@ -79,6 +81,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.appVersionText.setAngle(0);
     this.titleContainer.add(this.appVersionText);
 
+    // #region Temporary Maintenance Announcement
     const currentLanguage = i18next.resolvedLanguage ?? "en";
     const getTimeFormat = (): boolean => {
       switch (currentLanguage) {
@@ -128,6 +131,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleContainer.add(this.announcementText);
     this.titleContainer.add(this.announcementBg);
     this.titleContainer.bringToTop(this.announcementText);
+    // #endregion
   }
 
   updateTitleStats(): void {
