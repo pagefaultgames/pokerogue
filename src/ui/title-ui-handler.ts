@@ -83,16 +83,15 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const endDate = new Date(1739167200000).toLocaleString();
     const localizedAnnouncementString: { [key: string]: string } = {
       "en": ` - INFORMATION - \nServer maintenance is scheduled for the following period:\n${startDate} until ${endDate}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
-      "de": ` - INFORMATION - German test:\n${startDate} until ${endDate}`,
-      "es-ES":"",
-      "fr":"",
-      "it":"",
-      "pt_BR":"",
-      "zh":"",
-      "pt":"",
-      "ko":"",
-      "ja":"",
-      "ca-ES":"",
+      "de": ` - INFORMATION - German translation goes here:\n${startDate} until ${endDate}`,
+      "es-ES": ` - INFORMATION - Spanish translation goes here:\n${startDate} until ${endDate}`,
+      "fr": ` - INFORMATION - French translation goes here:\n${startDate} until ${endDate}`,
+      "it": ` - INFORMATION - Italian translation goes here:\n${startDate} until ${endDate}`,
+      "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDate} until ${endDate}`,
+      "zh-TW": ` - INFORMATION - Chinese-traditional translation goes here:\n${startDate} until ${endDate}`,
+      "zh-CN": ` - INFORMATION - Chinese-simplified translation goes here:\n${startDate} until ${endDate}`,
+      "ko": ` - INFORMATION - Korean translation goes here:\n${startDate} until ${endDate}`,
+      "ja": ` - INFORMATION - Japanese translation goes here:\n${startDate} until ${endDate}`,
     };
     const currentLanguage = i18next.resolvedLanguage ?? "en";
     const announcementString = localizedAnnouncementString[Object.keys(localizedAnnouncementString).find(lang => currentLanguage.includes(lang)) ?? "en"];
