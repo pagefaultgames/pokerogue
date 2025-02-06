@@ -91,7 +91,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       "zh-TW": ` - 通知 - \n伺服器預計在以下時間維護：\n${startDate} 至 ${endDate}\n維護結束時間是預計時間\n維護可能稍早或稍晚結束。`,
       "zh-CN": ` - 通知 - \n服务器预计在以下时间维护：\n${startDate} 至 ${endDate}\n维护结束时间是预计时间\n维护可能稍早或稍晚结束。`,
       "ko": ` - INFORMATION - Korean translation goes here:\n${startDate} until ${endDate}`,
-      "ja": ` - INFORMATION - Japanese translation goes here:\n${startDate} until ${endDate}`,
+      "ja": ` - 情報 - \nサーバーメンテナンスの予定は以下の期間:\n${startDate} から ${endDate} まで\n終了日・時間は推定です。\nメンテナンスはこの時期より早く終了する場合も遅く終了する場合もあります。`,
     };
     const currentLanguage = i18next.resolvedLanguage ?? "en";
     const announcementString = localizedAnnouncementString[Object.keys(localizedAnnouncementString).find(lang => currentLanguage.includes(lang)) ?? "en"];
