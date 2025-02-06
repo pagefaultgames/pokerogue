@@ -84,7 +84,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const localizedAnnouncementString: { [key: string]: string } = {
       "en": ` - INFORMATION - \nServer maintenance is scheduled for the following period:\n${startDate} until ${endDate}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
       "de": ` - INFORMATION - German translation goes here:\n${startDate} until ${endDate}`,
-      "es-ES": ` - INFORMATION - Spanish translation goes here:\n${startDate} until ${endDate}`,
+      "es-ES": ` - INFORMACIÓN -\nUn mantenimiento del servidor está programado para el siguiente período:\nDesde el ${startDate} hasta el ${endDate}.\nLa fecha y hora de finalización son aproximadas.\nEl mantenimiento podría finalizar antes o extenderse más de lo previsto.`,
       "fr": ` - INFORMATION - \nUne maintenance du serveur est prévue sur la période suivante :\nDu ${startDate} au ${endDate}\nL’heure de fin est une estimation et peut s’avérer plus en avance ou tardive qu’annoncé.`,
       "it": ` - INFORMATION - Italian translation goes here:\n${startDate} until ${endDate}`,
       "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDate} until ${endDate}`,
