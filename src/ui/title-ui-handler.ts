@@ -111,7 +111,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const endDateLocalized = new Intl.DateTimeFormat(currentLanguage, dateOptions).format(endDate);
     const localizedAnnouncementString: { [key: string]: string } = {
       "en": ` - INFORMATION - \nServer maintenance is scheduled for the following period:\n${startDateLocalized} until ${endDateLocalized}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
-      "de": ` - INFORMATION - German translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
+      "de": `- INFORMATION -\nServerwartung ist für den folgenden Zeitraum geplant:\n${startDateLocalized} bis ${endDateLocalized}\nEnddatum und Uhrzeit sind eine Schätzung.\nDie Wartung kann früher oder später beendet werden.`,
       "es-ES": ` - INFORMACIÓN -\nUn mantenimiento del servidor está programado para el siguiente período:\nDesde el ${startDateLocalized} hasta el ${endDateLocalized}.\nLa fecha y hora de finalización son aproximadas.\nEl mantenimiento podría finalizar antes o extenderse más de lo previsto.`,
       "fr": ` - INFORMATION - \nUne maintenance du serveur est prévue sur la période suivante :\nDu ${startDateLocalized} au ${endDateLocalized}\nL’heure de fin est une estimation et peut s’avérer plus en avance ou tardive qu’annoncé.`,
       "it": ` - INFORMATION - Italian translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
