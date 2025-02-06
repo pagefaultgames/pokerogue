@@ -591,7 +591,7 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
 }
 
 export class PostDefendAbAttr extends AbAttr {
-  canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
+  canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     return true;
   }
 
@@ -869,7 +869,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-    return hitResult < HitResult.NO_EFFECT && !move.hitsSubstitute(attacker, pokemon);
+    return hitResult < HitResult.NO_EFFECT && !move.hitsSubstitute(attacker, pokemon) && globalScene.arena.canSetTerrain(this.terrainType);
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, _args: any[]): boolean {
@@ -1048,7 +1048,8 @@ export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return (!(this.condition && !this.condition(pokemon, attacker, move) || move.hitsSubstitute(attacker, pokemon)) && !globalScene.arena.weather?.isImmutable());
+    return (!(this.condition && !this.condition(pokemon, attacker, move) || move.hitsSubstitute(attacker, pokemon))
+    && !globalScene.arena.weather?.isImmutable() && globalScene.arena.canSetWeather(this.weatherType));
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
@@ -1619,7 +1620,7 @@ export class PostAttackAbAttr extends AbAttr {
    * applying the effect of any inherited class. This can be changed by providing a different {@link attackCondition} to the constructor. See {@link ConfusionOnStatusEffectAbAttr}
    * for an example of an effect that does not require a damaging move.
    */
-  canApplyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
+  canApplyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean | Promise<boolean> {
     // When attackRequired is true, we require the move to be an attack move and to deal damage before checking secondary requirements.
     // If attackRequired is false, we always defer to the secondary requirements.
     return this.attackCondition(pokemon, defender, move);
@@ -1674,32 +1675,33 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     this.stealCondition = stealCondition ?? null;
   }
 
-  canApplyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args); // && SUCCESS CHECK
+  canApplyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (!super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args)) {
+        return resolve(false);
+      }
+
+      canStealHeldItem(pokemon, passive, simulated, defender, move, hitResult, this.stealCondition, args).then(success => {
+        resolve(success);
+      });
+    });
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (!simulated && hitResult < HitResult.NO_EFFECT && (!this.stealCondition || this.stealCondition(pokemon, defender, move))) {
-        const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferable);
-        if (heldItems.length) {
-          const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
-          globalScene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
-            if (success) {
-              globalScene.queueMessage(i18next.t("abilityTriggers:postAttackStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), defenderName: defender.name, stolenItemType: stolenItem.type.name }));
-            }
-            resolve(success);
-          });
-          return;
-        }
+      const heldItems = getTargetHeldItems(defender).filter(i => i.isTransferable);
+      if (heldItems.length) {
+        const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
+        globalScene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
+          if (success) {
+            globalScene.queueMessage(i18next.t("abilityTriggers:postAttackStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), defenderName: defender.name, stolenItemType: stolenItem.type.name }));
+          }
+          resolve(success);
+        });
+        return;
       }
       resolve(simulated);
     });
-  }
-
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
   }
 }
 
@@ -1776,30 +1778,33 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
     this.condition = condition;
   }
 
-  // SUCCESS CHECK
-
-  override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, _args: any[]): Promise<boolean> {
+  override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (!simulated && hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, attacker, move)) && !move.hitsSubstitute(attacker, pokemon)) {
-        const heldItems = this.getTargetHeldItems(attacker).filter(i => i.isTransferable);
-        if (heldItems.length) {
-          const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
-          globalScene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
-            if (success) {
-              globalScene.queueMessage(i18next.t("abilityTriggers:postDefendStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), attackerName: attacker.name, stolenItemType: stolenItem.type.name }));
-            }
-            resolve(success);
-          });
-          return;
-        }
+      if (move.hitsSubstitute(attacker, pokemon)) {
+        return resolve(false);
       }
-      resolve(simulated);
+
+      canStealHeldItem(pokemon, passive, simulated, attacker, move, hitResult, this.condition, args).then(success => {
+        resolve(success);
+      });
     });
   }
 
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+  override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, _args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      const heldItems = getTargetHeldItems(attacker).filter(i => i.isTransferable);
+      if (heldItems.length) {
+        const stolenItem = heldItems[pokemon.randSeedInt(heldItems.length)];
+        globalScene.tryTransferHeldItemModifier(stolenItem, pokemon, false).then(success => {
+          if (success) {
+            globalScene.queueMessage(i18next.t("abilityTriggers:postDefendStealHeldItem", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), attackerName: attacker.name, stolenItemType: stolenItem.type.name }));
+          }
+          resolve(success);
+        });
+        return;
+      }
+      resolve(simulated);
+    });
   }
 }
 
@@ -1841,7 +1846,8 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
       StatusEffect.TOXIC
     ]);
 
-    return (sourcePokemon && syncStatuses.has(effect)) ?? false;
+    // synchronize does not need to check canSetStatus because the ability shows even if it fails to set the status
+    return ((sourcePokemon ?? false) && syncStatuses.has(effect));
   }
 
   /**
@@ -2307,7 +2313,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
     const weatherReplaceable = (this.weatherType === WeatherType.HEAVY_RAIN ||
       this.weatherType === WeatherType.HARSH_SUN ||
       this.weatherType === WeatherType.STRONG_WINDS) || !globalScene.arena.weather?.isImmutable();
-    return weatherReplaceable;
+    return weatherReplaceable && globalScene.arena.canSetWeather(this.weatherType);
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
@@ -2326,6 +2332,10 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
     super();
 
     this.terrainType = terrainType;
+  }
+
+  canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return globalScene.arena.canSetTerrain(this.terrainType);
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
@@ -3889,7 +3899,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 
   canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return (globalScene.arena.weather?.isImmutable() && globalScene.arena.weather?.weatherType !== this.weatherType) ?? false;
+    return ((globalScene.arena.weather?.isImmutable() ?? false) && globalScene.arena.canSetWeather(this.weatherType));
   }
 
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -3915,7 +3925,7 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 
   canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return globalScene.arena.terrain?.terrainType !== this.terrainType;
+    return globalScene.arena.canSetTerrain(this.terrainType);
   }
 
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -5020,10 +5030,17 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
     const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
     for (const attr of ability.getAttrs(attrType)) {
       const condition = attr.getCondition();
-      if ((condition && !condition(pokemon)) || successFunc && !successFunc(attr, passive)) {
+      if ((condition && !condition(pokemon))) {
         continue;
       }
+      let success = successFunc(attr, passive);
+      if (success instanceof Promise) {
+        success = await success;
+      }
 
+      if (!success) {
+        continue;
+      }
       globalScene.setPhaseQueueSplice();
 
       if (attr.showAbility && !simulated) {
@@ -5512,6 +5529,31 @@ function getPokemonWithWeatherBasedForms() {
     (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM)
     || (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM)
   );
+}
+
+/**
+ * Returns if a target's held item can be stolen
+ *
+ * Common to attrs for {@linkcode Abilities.MAGICIAN} and {@linkcode Abilities.PICKPOCKET}
+ */
+async function canStealHeldItem(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, condition: any, args: any[]): Promise<boolean> {
+  if (!simulated && hitResult < HitResult.NO_EFFECT && (!condition || condition(pokemon, attacker, move))) {
+    const heldItems = getTargetHeldItems(attacker).filter(i => i.isTransferable);
+    if (heldItems.length) {
+      return globalScene.tryTransferHeldItemModifier(heldItems[pokemon.randSeedInt(heldItems.length)], pokemon, false, 1, false, false, true, true);
+    }
+  }
+  return simulated;
+}
+
+/**
+ * Gets the held items of a pokemon
+ * @param target Target Pokemon
+ * @returns List of {@linkcode target}'s held items
+ */
+function getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
+  return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
+    && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
 }
 
 export const allAbilities = [ new Ability(Abilities.NONE, 3) ];

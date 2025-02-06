@@ -2699,15 +2699,17 @@ export default class BattleScene extends SceneBase {
    * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
    * @returns `true` if the transfer was successful
    */
-  tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean, transferQuantity: number = 1, instant?: boolean, ignoreUpdate?: boolean, itemLost: boolean = true): Promise<boolean> {
+  tryTransferHeldItemModifier(_itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean, transferQuantity: number = 1, instant?: boolean, ignoreUpdate?: boolean, itemLost: boolean = true, simulated: boolean = false): Promise<boolean> {
     return new Promise(resolve => {
-      const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
+      const source = _itemModifier.pokemonId ? _itemModifier.getPokemon() : null;
       const cancelled = new Utils.BooleanHolder(false);
+      const removeFunc: (modifier: PersistentModifier, enemy: boolean | undefined) => boolean = simulated ? (modifier, enemy) => this.canRemoveModifier(modifier, enemy) : (modifier, enemy) => this.removeModifier(modifier, enemy);
       Utils.executeIf(!!source && source.isPlayer() !== target.isPlayer(), () => applyAbAttrs(BlockItemTheftAbAttr, source! /* checked in condition*/, cancelled)).then(() => {
         if (cancelled.value) {
           return resolve(false);
         }
-        const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+        const newItemModifier = _itemModifier.clone() as PokemonHeldItemModifier;
+        const itemModifier = simulated ? _itemModifier.clone() : _itemModifier;
         newItemModifier.pokemonId = target.id;
         const matchingModifier = this.findModifier(m => m instanceof PokemonHeldItemModifier
                     && (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
@@ -2727,9 +2729,12 @@ export default class BattleScene extends SceneBase {
           newItemModifier.stackCount = countTaken;
         }
         removeOld = !itemModifier.stackCount;
-        if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
+        if (!removeOld || !source || removeFunc(simulated ? _itemModifier : itemModifier, !source.isPlayer())) {
           const addModifier = () => {
-            if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
+            if (!matchingModifier || removeFunc(matchingModifier, !target.isPlayer())) {
+              if (simulated) {
+                return resolve(true);
+              }
               if (target.isPlayer()) {
                 this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => {
                   if (source && itemLost) {
@@ -2749,7 +2754,7 @@ export default class BattleScene extends SceneBase {
               resolve(false);
             }
           };
-          if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
+          if (!simulated && source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
             this.updateModifiers(source.isPlayer(), instant).then(() => addModifier());
           } else {
             addModifier();
@@ -2907,6 +2912,11 @@ export default class BattleScene extends SceneBase {
         return p.updateInfo(instant);
       })).then(() => resolve());
     });
+  }
+
+  canRemoveModifier(modifier: PersistentModifier, enemy: boolean = false): boolean {
+    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+    return modifiers.indexOf(modifier) > -1;
   }
 
   /**
