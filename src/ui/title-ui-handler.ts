@@ -118,7 +118,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
       "zh-TW": ` - 通知 - \n伺服器預計在以下時間維護：\n${startDateLocalized} 至 ${endDateLocalized}\n維護結束時間是預計時間\n維護可能稍早或稍晚結束。`,
       "zh-CN": ` - 通知 - \n服务器预计在以下时间维护：\n${startDateLocalized} 至 ${endDateLocalized}\n维护结束时间是预计时间\n维护可能稍早或稍晚结束。`,
-      "ko": ` - 공지사항 -\n 아래 기간동안 점검 예정입니다. :\n${startDateLocalized} ~ ${endDateLocalized}\n 종료시각은 예상시간입니다.\n 점검은 예상했던 것보다 빠르게 혹은 늦게  끝날 수 있습니다.`,
+      "ko": ` - 공지사항 -\n아래 기간동안 점검 예정입니다. :\n${startDateLocalized} ~ ${endDateLocalized}\n종료시각은 예상시간입니다.\n점검은 예상했던 것보다 빠르게 혹은 늦게  끝날 수 있습니다.`,
       "ja": ` - 情報 - \nサーバーメンテナンスの予定は以下の期間:\n${startDateLocalized} から ${endDateLocalized} まで\n終了日・時間は推定です。\nメンテナンスはこの時期より早く終了する場合も遅く終了する場合もあります。`,
     };
     const announcementString = localizedAnnouncementString[Object.keys(localizedAnnouncementString).find(lang => currentLanguage.includes(lang)) ?? "en"];
