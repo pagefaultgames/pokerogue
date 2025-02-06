@@ -89,7 +89,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       "it": ` - INFORMATION - Italian translation goes here:\n${startDate} until ${endDate}`,
       "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDate} until ${endDate}`,
       "zh-TW": ` - INFORMATION - Chinese-traditional translation goes here:\n${startDate} until ${endDate}`,
-      "zh-CN": ` - INFORMATION - Chinese-simplified translation goes here:\n${startDate} until ${endDate}`,
+      "zh-CN": ` - 通知 - \n服务器预计在以下时间维护：\n${startDate} 至 ${endDate}\n维护结束时间是预计时间\n维护可能稍早或稍晚结束。`,
       "ko": ` - INFORMATION - Korean translation goes here:\n${startDate} until ${endDate}`,
       "ja": ` - INFORMATION - Japanese translation goes here:\n${startDate} until ${endDate}`,
     };
