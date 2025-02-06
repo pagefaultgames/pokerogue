@@ -88,7 +88,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       "fr": ` - INFORMATION - \nUne maintenance du serveur est prévue sur la période suivante :\nDu ${startDate} au ${endDate}\nL’heure de fin est une estimation et peut s’avérer plus en avance ou tardive qu’annoncé.`,
       "it": ` - INFORMATION - Italian translation goes here:\n${startDate} until ${endDate}`,
       "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDate} until ${endDate}`,
-      "zh-TW": ` - INFORMATION - Chinese-traditional translation goes here:\n${startDate} until ${endDate}`,
+      "zh-TW": ` - 通知 - \n伺服器預計在以下時間維護：\n${startDate} 至 ${endDate}\n維護結束時間是預計時間\n維護可能稍早或稍晚結束。`,
       "zh-CN": ` - 通知 - \n服务器预计在以下时间维护：\n${startDate} 至 ${endDate}\n维护结束时间是预计时间\n维护可能稍早或稍晚结束。`,
       "ko": ` - INFORMATION - Korean translation goes here:\n${startDate} until ${endDate}`,
       "ja": ` - INFORMATION - Japanese translation goes here:\n${startDate} until ${endDate}`,
