@@ -122,7 +122,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       "ja": ` - 情報 -\nサーバーメンテナンスの予定は以下の期間:\n${startDateLocalized} から ${endDateLocalized} まで\n終了日・時間は推定です。\nメンテナンスはこの時期より早く終了する場合も遅く終了する場合もあります。`,
     };
     const announcementString = localizedAnnouncementString[Object.keys(localizedAnnouncementString).find(lang => currentLanguage.includes(lang)) ?? "en"];
-    this.announcementText = addTextObject(logo.x - 148, logo.y + logo.displayHeight + 116, announcementString, TextStyle.MONEY, { fontSize: "78px", wordWrap: { width: 200 * 6 }});
+    this.announcementText = addTextObject(logo.x - 148, logo.y + logo.displayHeight + 116, announcementString, TextStyle.MONEY, { fontSize: "76px", wordWrap: { width: 200 * 6 }});
     this.announcementText.setOrigin(0, 1);
     this.announcementText.setAngle(0);
     this.announcementBg = addWindow(this.announcementText.x - 8, this.announcementText.y + 6, this.announcementText.width / 6 + 14, this.announcementText.height / 6 + 12);
