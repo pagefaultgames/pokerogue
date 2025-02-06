@@ -79,21 +79,28 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.appVersionText.setAngle(0);
     this.titleContainer.add(this.appVersionText);
 
-    const startDate = new Date(1738994400000).toLocaleString();
-    const endDate = new Date(1739167200000).toLocaleString();
-    const localizedAnnouncementString: { [key: string]: string } = {
-      "en": ` - INFORMATION - \nServer maintenance is scheduled for the following period:\n${startDate} until ${endDate}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
-      "de": ` - INFORMATION - German translation goes here:\n${startDate} until ${endDate}`,
-      "es-ES": ` - INFORMACIÓN -\nUn mantenimiento del servidor está programado para el siguiente período:\nDesde el ${startDate} hasta el ${endDate}.\nLa fecha y hora de finalización son aproximadas.\nEl mantenimiento podría finalizar antes o extenderse más de lo previsto.`,
-      "fr": ` - INFORMATION - \nUne maintenance du serveur est prévue sur la période suivante :\nDu ${startDate} au ${endDate}\nL’heure de fin est une estimation et peut s’avérer plus en avance ou tardive qu’annoncé.`,
-      "it": ` - INFORMATION - Italian translation goes here:\n${startDate} until ${endDate}`,
-      "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDate} until ${endDate}`,
-      "zh-TW": ` - 通知 - \n伺服器預計在以下時間維護：\n${startDate} 至 ${endDate}\n維護結束時間是預計時間\n維護可能稍早或稍晚結束。`,
-      "zh-CN": ` - 通知 - \n服务器预计在以下时间维护：\n${startDate} 至 ${endDate}\n维护结束时间是预计时间\n维护可能稍早或稍晚结束。`,
-      "ko": ` - INFORMATION - Korean translation goes here:\n${startDate} until ${endDate}`,
-      "ja": ` - 情報 - \nサーバーメンテナンスの予定は以下の期間:\n${startDate} から ${endDate} まで\n終了日・時間は推定です。\nメンテナンスはこの時期より早く終了する場合も遅く終了する場合もあります。`,
-    };
     const currentLanguage = i18next.resolvedLanguage ?? "en";
+    const startDate = new Date(1738994400000);
+    const endDate = new Date(1739167200000);
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      dateStyle: "short",
+      timeStyle: "short",
+      hour12: true,
+    };
+    const startDateLocalized = new Intl.DateTimeFormat(currentLanguage, dateOptions).format(startDate);
+    const endDateLocalized = new Intl.DateTimeFormat(currentLanguage, dateOptions).format(endDate);
+    const localizedAnnouncementString: { [key: string]: string } = {
+      "en": ` - INFORMATION - \nServer maintenance is scheduled for the following period:\n${startDateLocalized} until ${endDateLocalized}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
+      "de": ` - INFORMATION - German translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
+      "es-ES": ` - INFORMACIÓN -\nUn mantenimiento del servidor está programado para el siguiente período:\nDesde el ${startDateLocalized} hasta el ${endDateLocalized}.\nLa fecha y hora de finalización son aproximadas.\nEl mantenimiento podría finalizar antes o extenderse más de lo previsto.`,
+      "fr": ` - INFORMATION - \nUne maintenance du serveur est prévue sur la période suivante :\nDu ${startDateLocalized} au ${endDateLocalized}\nL’heure de fin est une estimation et peut s’avérer plus en avance ou tardive qu’annoncé.`,
+      "it": ` - INFORMATION - Italian translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
+      "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
+      "zh-TW": ` - 通知 - \n伺服器預計在以下時間維護：\n${startDateLocalized} 至 ${endDateLocalized}\n維護結束時間是預計時間\n維護可能稍早或稍晚結束。`,
+      "zh-CN": ` - 通知 - \n服务器预计在以下时间维护：\n${startDateLocalized} 至 ${endDateLocalized}\n维护结束时间是预计时间\n维护可能稍早或稍晚结束。`,
+      "ko": ` - INFORMATION - Korean translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
+      "ja": ` - 情報 - \nサーバーメンテナンスの予定は以下の期間:\n${startDateLocalized} から ${endDateLocalized} まで\n終了日・時間は推定です。\nメンテナンスはこの時期より早く終了する場合も遅く終了する場合もあります。`,
+    };
     const announcementString = localizedAnnouncementString[Object.keys(localizedAnnouncementString).find(lang => currentLanguage.includes(lang)) ?? "en"];
     this.announcementText = addTextObject(logo.x - 138, logo.y + logo.displayHeight + 116, announcementString, TextStyle.MONEY, { fontSize: "78px", wordWrap: { width: 200 * 6 }});
     this.announcementText.setOrigin(0, 1);
