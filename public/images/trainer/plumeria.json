@@ -4,8 +4,8 @@
 			"image": "plumeria.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 72,
-				"h": 72
+				"w": 76,
+				"h": 76
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 40,
+						"h": 76
 					},
 					"spriteSourceSize": {
-						"x": 23,
-						"y": 7,
-						"w": 36,
-						"h": 72
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 76
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 36,
-						"h": 72
+						"w": 40,
+						"h": 76
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:5527e7b646932d429928b53f055e9d27:c0640510780d2974f9b74a7f8e6b29aa:7bfec029bae78c9d483f59c35b73afad$"
+		"smartupdate": "$TexturePacker:SmartUpdate:d0e080a4dcc30b39616c49dfd96c98f7:47c6a714be68fabdf11801166e154db6:7bfec029bae78c9d483f59c35b73afad$"
 	}
 }

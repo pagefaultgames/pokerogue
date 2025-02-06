@@ -133,7 +133,7 @@ export class TitlePhase extends Phase {
       label: i18next.t("menu:loadGame"),
       handler: () => {
         globalScene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
-          (slotId: integer) => {
+          (slotId: number) => {
             if (slotId === -1) {
               return this.showOptions();
             }
@@ -174,7 +174,7 @@ export class TitlePhase extends Phase {
     globalScene.ui.setMode(Mode.TITLE, config);
   }
 
-  loadSaveSlot(slotId: integer): void {
+  loadSaveSlot(slotId: number): void {
     globalScene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
     globalScene.ui.setMode(Mode.MESSAGE);
     globalScene.ui.resetModeChain();
@@ -192,7 +192,7 @@ export class TitlePhase extends Phase {
   }
 
   initDailyRun(): void {
-    globalScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+    globalScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
       globalScene.clearPhaseQueue();
       if (slotId === -1) {
         globalScene.pushPhase(new TitlePhase());

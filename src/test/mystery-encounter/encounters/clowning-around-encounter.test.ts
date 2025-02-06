@@ -372,7 +372,7 @@ describe("Clowning Around - Mystery Encounter", () => {
   });
 });
 
-async function addItemToPokemon(scene: BattleScene, pokemon: Pokemon, stackCount: integer, itemType: PokemonHeldItemModifierType) {
+async function addItemToPokemon(scene: BattleScene, pokemon: Pokemon, stackCount: number, itemType: PokemonHeldItemModifierType) {
   const itemMod = itemType.newModifier(pokemon) as PokemonHeldItemModifier;
   itemMod.stackCount = stackCount;
   await scene.addModifier(itemMod, true, false, false, true);

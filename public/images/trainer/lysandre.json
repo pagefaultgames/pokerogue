@@ -4,8 +4,8 @@
 			"image": "lysandre.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 80,
-				"h": 80
+				"w": 82,
+				"h": 82
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 50,
+						"h": 82
 					},
 					"spriteSourceSize": {
-						"x": 14,
+						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 80
+						"w": 50,
+						"h": 82
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 80
+						"w": 50,
+						"h": 82
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:6b887c8bab74885a1b05f2b382759db6:ba102d9d25ddd794a3a17f029b971daf:e6066149f6ec4ccb9fc28faea3d64a7f$"
+		"smartupdate": "$TexturePacker:SmartUpdate:b09528fe2d3137bba8ce5c667d2a962f:7c522eefcc85ee87df485d34b58e814b:e6066149f6ec4ccb9fc28faea3d64a7f$"
 	}
 }

@@ -12,7 +12,7 @@ export enum EggEventType {
 */
 export class EggCountChangedEvent extends Event {
   /** The updated egg count. */
-  public eggCount: integer;
+  public eggCount: number;
 
   constructor(eggCount: number) {
     super(EggEventType.EGG_COUNT_CHANGED);

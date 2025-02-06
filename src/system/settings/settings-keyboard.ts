@@ -133,7 +133,7 @@ export const settingKeyboardBlackList = [
 ];
 
 
-export function setSettingKeyboard(setting: SettingKeyboard, value: integer): boolean {
+export function setSettingKeyboard(setting: SettingKeyboard, value: number): boolean {
   switch (setting) {
     case SettingKeyboard.Button_Up:
     case SettingKeyboard.Button_Down:

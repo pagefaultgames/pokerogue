@@ -373,8 +373,8 @@ export class Egg {
       }
     }
 
-    let minStarterValue: integer;
-    let maxStarterValue: integer;
+    let minStarterValue: number;
+    let maxStarterValue: number;
 
     switch (this.tier) {
       case EggTier.RARE:

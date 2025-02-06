@@ -8,7 +8,7 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
     super(mode);
   }
 
-  getWindowWidth(): integer {
+  getWindowWidth(): number {
     return 64;
   }
 

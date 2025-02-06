@@ -11,7 +11,7 @@ import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { Biome } from "#app/enums/biome";
 
 export interface DailyRunConfig {
-  seed: integer;
+  seed: number;
   starters: Starter;
 }
 
@@ -38,7 +38,7 @@ export function getDailyRunStarters(seed: string): Starter[] {
       return;
     }
 
-    const starterCosts: integer[] = [];
+    const starterCosts: number[] = [];
     starterCosts.push(Math.min(Math.round(3.5 + Math.abs(Utils.randSeedGauss(1))), 8));
     starterCosts.push(Utils.randSeedInt(9 - starterCosts[0], 1));
     starterCosts.push(10 - (starterCosts[0] + starterCosts[1]));
@@ -57,7 +57,7 @@ export function getDailyRunStarters(seed: string): Starter[] {
   return starters;
 }
 
-function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLevel: integer): Starter {
+function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLevel: number): Starter {
   const starterSpecies = starterSpeciesForm instanceof PokemonSpecies ? starterSpeciesForm : getPokemonSpecies(starterSpeciesForm.speciesId);
   const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
   const pokemon = new PlayerPokemon(starterSpecies, startingLevel, undefined, formIndex, undefined, undefined, undefined, undefined, undefined, undefined);
@@ -74,7 +74,7 @@ function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLeve
 }
 
 interface BiomeWeights {
-  [key: integer]: integer
+  [key: number]: number
 }
 
 // Initially weighted by amount of exits each biome has
@@ -125,7 +125,7 @@ export function getDailyStartingBiome(): Biome {
   const biomes = Utils.getEnumValues(Biome).filter(b => b !== Biome.TOWN && b !== Biome.END);
 
   let totalWeight = 0;
-  const biomeThresholds: integer[] = [];
+  const biomeThresholds: number[] = [];
   for (const biome of biomes) {
     // Keep track of the total weight
     totalWeight += dailyBiomeWeights[biome];

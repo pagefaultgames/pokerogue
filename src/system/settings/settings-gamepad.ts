@@ -80,7 +80,7 @@ export const settingGamepadBlackList = [
   SettingKeyboard.Button_Right,
 ];
 
-export function setSettingGamepad(setting: SettingGamepad, value: integer): boolean {
+export function setSettingGamepad(setting: SettingGamepad, value: number): boolean {
   switch (setting) {
     case SettingGamepad.Gamepad_Support:
     // if we change the value of the gamepad support, we call a method in the inputController to

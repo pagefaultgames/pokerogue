@@ -77,9 +77,9 @@ export enum EvolutionItem {
 /**
  * Pokemon Evolution tuple type consisting of:
  * @property 0 {@linkcode Species} The species of the Pokemon.
- * @property 1 {@linkcode integer} The level at which the Pokemon evolves.
+ * @property 1 {@linkcode number} The level at which the Pokemon evolves.
  */
-export type EvolutionLevel = [species: Species, level: integer];
+export type EvolutionLevel = [species: Species, level: number];
 
 export type EvolutionConditionPredicate = (p: Pokemon) => boolean;
 export type EvolutionConditionEnforceFunc = (p: Pokemon) => void;
@@ -88,12 +88,12 @@ export class SpeciesFormEvolution {
   public speciesId: Species;
   public preFormKey: string | null;
   public evoFormKey: string | null;
-  public level: integer;
+  public level: number;
   public item: EvolutionItem | null;
   public condition: SpeciesEvolutionCondition | null;
   public wildDelay: SpeciesWildEvolutionDelay;
 
-  constructor(speciesId: Species, preFormKey: string | null, evoFormKey: string | null, level: integer, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay) {
+  constructor(speciesId: Species, preFormKey: string | null, evoFormKey: string | null, level: number, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay) {
     this.speciesId = speciesId;
     this.preFormKey = preFormKey;
     this.evoFormKey = evoFormKey;
@@ -105,7 +105,7 @@ export class SpeciesFormEvolution {
 }
 
 export class SpeciesEvolution extends SpeciesFormEvolution {
-  constructor(speciesId: Species, level: integer, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay) {
+  constructor(speciesId: Species, level: number, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay) {
     super(speciesId, null, null, level, item, condition, wildDelay);
   }
 }
@@ -169,7 +169,7 @@ class MoveEvolutionCondition extends SpeciesEvolutionCondition {
 }
 
 class FriendshipEvolutionCondition extends SpeciesEvolutionCondition {
-  public amount: integer;
+  public amount: number;
   constructor(amount: number) {
     super(p => p.friendship >= amount);
     this.amount = amount;
@@ -178,7 +178,7 @@ class FriendshipEvolutionCondition extends SpeciesEvolutionCondition {
 }
 
 class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
-  public amount: integer;
+  public amount: number;
   public timesOfDay: TimeOfDay[];
   constructor(amount: number, tod: "day" | "night") {
     if (tod === "day") {
@@ -197,7 +197,7 @@ class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
 }
 
 class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
-  public amount: integer;
+  public amount: number;
   public type: Type;
   constructor(amount: number, type: Type) {
     super(p => p.friendship >= amount && !!p.getMoveset().find(m => m?.getMove().type === type));

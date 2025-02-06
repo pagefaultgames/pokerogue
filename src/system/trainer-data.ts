@@ -4,7 +4,7 @@ import Trainer, { TrainerVariant } from "../field/trainer";
 export default class TrainerData {
   public trainerType: TrainerType;
   public variant: TrainerVariant;
-  public partyTemplateIndex: integer;
+  public partyTemplateIndex: number;
   public name: string;
   public partnerName: string;
 

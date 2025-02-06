@@ -4,8 +4,8 @@
 			"image": "faba.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 74,
-				"h": 74
+				"w": 76,
+				"h": 76
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 29,
+						"h": 76
 					},
 					"spriteSourceSize": {
-						"x": 25,
-						"y": 5,
-						"w": 31,
-						"h": 74
+						"x": 0,
+						"y": 0,
+						"w": 29,
+						"h": 76
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 31,
-						"h": 74
+						"w": 29,
+						"h": 76
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:47622708d99a504998950bd9c389a504:fe1c51be191dd9fafb5b6f309c08ae1a:8d64db18930325b8b513740c1d83ce4c$"
+		"smartupdate": "$TexturePacker:SmartUpdate:bbfce6e1ed69401694ce8c2537dd1fea:a2c9351e4ba08d44cafa66ecdf509866:8d64db18930325b8b513740c1d83ce4c$"
 	}
 }

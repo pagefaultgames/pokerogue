@@ -4,8 +4,8 @@
 			"image": "rose.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 79,
-				"h": 79
+				"w": 77,
+				"h": 77
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 31,
+						"h": 77
 					},
 					"spriteSourceSize": {
-						"x": 16,
-						"y": 1,
-						"w": 52,
-						"h": 79
+						"x": 0,
+						"y": 0,
+						"w": 31,
+						"h": 77
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 79
+						"w": 31,
+						"h": 77
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:2b4ccaff7255c7d72661eac13de83ff8:72ee3660cdf470bd67375d355307e19d:8d35b104fc841baa4443581e6cea979e$"
+		"smartupdate": "$TexturePacker:SmartUpdate:be2215e7232e2260242613e54c91c3c4:852fb3fda379db104106f8888649d9d5:8d35b104fc841baa4443581e6cea979e$"
 	}
 }

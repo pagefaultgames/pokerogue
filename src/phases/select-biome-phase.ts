@@ -37,7 +37,7 @@ export class SelectBiomePhase extends BattlePhase {
     } else if (Array.isArray(biomeLinks[currentBiome])) {
       let biomes: Biome[] = [];
       globalScene.executeWithSeedOffset(() => {
-        biomes = (biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
+        biomes = (biomeLinks[currentBiome] as (Biome | [Biome, number])[])
           .filter(b => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
           .map(b => !Array.isArray(b) ? b : b[0]);
       }, globalScene.currentBattle.waveIndex);
@@ -46,7 +46,7 @@ export class SelectBiomePhase extends BattlePhase {
         globalScene.executeWithSeedOffset(() => {
           biomeChoices = (!Array.isArray(biomeLinks[currentBiome])
             ? [ biomeLinks[currentBiome] as Biome ]
-            : biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
+            : biomeLinks[currentBiome] as (Biome | [Biome, number])[])
             .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
             .map(b => Array.isArray(b) ? b[0] : b);
         }, globalScene.currentBattle.waveIndex);

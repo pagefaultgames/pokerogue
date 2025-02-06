@@ -5,11 +5,11 @@ import { EGG_SEED, Egg } from "../data/egg";
 import type { EggSourceType } from "#app/enums/egg-source-types";
 
 export default class EggData {
-  public id: integer;
+  public id: number;
   public tier: EggTier;
   public sourceType: EggSourceType;
-  public hatchWaves: integer;
-  public timestamp: integer;
+  public hatchWaves: number;
+  public timestamp: number;
   public variantTier: VariantTier;
   public isShiny: boolean;
   public species: Species;

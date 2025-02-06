@@ -110,7 +110,7 @@ export default class BallUiHandler extends UiHandler {
     this.countsText.setText(Object.values(globalScene.pokeballCounts).map(c => `x${c}`).join("\n"));
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {

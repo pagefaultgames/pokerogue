@@ -624,7 +624,7 @@ export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameO
                   });
                 }, false);
               }, () => {
-                globalScene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: integer, _option: PartyOption) => {
+                globalScene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: number, _option: PartyOption) => {
                   globalScene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
                       addToParty(slotIndex);

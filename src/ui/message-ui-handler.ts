@@ -34,24 +34,24 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  showText(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  showDialogue(text: string, name?: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  private showTextInternal(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  private showTextInternal(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     if (delay === null || delay === undefined) {
       delay = 20;
     }
 
     // Pattern matching regex that checks for @c{}, @f{}, @s{}, and @f{} patterns within message text and parses them to their respective behaviors.
-    const charVarMap = new Map<integer, string>();
-    const delayMap = new Map<integer, integer>();
-    const soundMap = new Map<integer, string>();
-    const fadeMap = new Map<integer, integer>();
+    const charVarMap = new Map<number, string>();
+    const delayMap = new Map<number, number>();
+    const soundMap = new Map<number, string>();
+    const fadeMap = new Map<number, number>();
     const actionPattern = /@(c|d|s|f)\{(.*?)\}/;
     let actionMatch: RegExpExecArray | null;
     while ((actionMatch = actionPattern.exec(text))) {
@@ -188,7 +188,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showPrompt(callback?: Function | null, callbackDelay?: integer | null) {
+  showPrompt(callback?: Function | null, callbackDelay?: number | null) {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];

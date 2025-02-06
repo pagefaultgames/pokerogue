@@ -4,30 +4,30 @@
 			"image": "magma_grunt_f.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 80,
-				"h": 80
+				"w": 72,
+				"h": 72
 			},
 			"scale": 1,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 43,
+						"h": 72
 					},
 					"spriteSourceSize": {
-						"x": 10,
+						"x": 0,
 						"y": 0,
-						"w": 60,
-						"h": 80
+						"w": 43,
+						"h": 72
 					},
 					"frame": {
-						"x": 10,
+						"x": 0,
 						"y": 0,
-						"w": 60,
-						"h": 80
+						"w": 43,
+						"h": 72
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f63ad48affc076f60fae78992c96a2bf:80928b32710abcb28c07c6fc5a425d99:3b961d8852b62aaf24ceb2030c036515$"
+		"smartupdate": "$TexturePacker:SmartUpdate:219462e400564a65012cda9dbc31ab22:4e0070239d24311df52a263271698c59:3b961d8852b62aaf24ceb2030c036515$"
 	}
 }
