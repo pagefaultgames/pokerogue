@@ -114,18 +114,19 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       "de": `- INFORMATION -\nServerwartung ist für den folgenden Zeitraum geplant:\n${startDateLocalized} bis ${endDateLocalized}\nEnddatum und Uhrzeit sind eine Schätzung.\nDie Wartung kann früher oder später beendet werden.`,
       "es-ES": ` - INFORMACIÓN -\nUn mantenimiento del servidor está programado para el siguiente período:\nDesde el ${startDateLocalized} hasta el ${endDateLocalized}.\nLa fecha y hora de finalización son aproximadas.\nEl mantenimiento podría finalizar antes o extenderse más de lo previsto.`,
       "fr": ` - INFORMATION -\nUne maintenance du serveur est prévue sur la période suivante :\nDu ${startDateLocalized} au ${endDateLocalized}\nL’heure de fin est une estimation et peut s’avérer plus en avance ou tardive qu’annoncé.`,
-      "it": ` - INFORMATION - Italian translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
+      "it": ` - ANNUNCIO -\nUna manutenzione del server avrà luogo nel periodo seguente:\nDal ${startDateLocalized} al ${endDateLocalized}\nData e ora di fine manutenzione sono una stima,\npotrebbe terminare in anticipo o più tardi.`,
       "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
       "zh-TW": ` - 通知 -\n伺服器預計在以下時間維護：\n${startDateLocalized} 至 ${endDateLocalized}\n維護結束時間是預計時間\n維護可能稍早或稍晚結束。`,
       "zh-CN": ` - 通知 -\n服务器预计在以下时间维护：\n${startDateLocalized} 至 ${endDateLocalized}\n维护结束时间是预计时间\n维护可能稍早或稍晚结束。`,
       "ko": ` - 공지사항 -\n아래 기간동안 점검 예정입니다. :\n${startDateLocalized} ~ ${endDateLocalized}\n종료시각은 예상시간입니다.\n점검은 예상했던 것보다 빠르게 혹은 늦게  끝날 수 있습니다.`,
-      "ja": ` - 情報 -\nサーバーメンテナンスの予定は以下の期間:\n${startDateLocalized} から ${endDateLocalized} まで\n終了日・時間は推定です。\nメンテナンスはこの時期より早く終了する場合も遅く終了する場合もあります。`,
+      "ja": ` - 情報 -\nサーバーメンテナンスの予定は以下の期間:\n${startDateLocalized} から ${endDateLocalized} まで\n終了日・時間は推定です。\nメンテナンスはこの時期より早く終了する場合も\n遅く終了する場合もあります。`,
     };
     const announcementString = localizedAnnouncementString[Object.keys(localizedAnnouncementString).find(lang => currentLanguage.includes(lang)) ?? "en"];
     this.announcementText = addTextObject(logo.x - 148, logo.y + logo.displayHeight + 116, announcementString, TextStyle.MONEY, { fontSize: "76px", wordWrap: { width: 200 * 6 }});
     this.announcementText.setOrigin(0, 1);
     this.announcementText.setAngle(0);
-    this.announcementBg = addWindow(this.announcementText.x - 8, this.announcementText.y + 6, this.announcementText.width / 6 + 14, this.announcementText.height / 6 + 12);
+    const heightOffset = currentLanguage === "ja" ? -2 : 12;
+    this.announcementBg = addWindow(this.announcementText.x - 8, this.announcementText.y + 6, this.announcementText.width / 6 + 14, this.announcementText.height / 6 + heightOffset);
     this.announcementBg.setName("announcement-bg");
     this.announcementBg.setOrigin(0, 1);
     this.titleContainer.add(this.announcementText);
