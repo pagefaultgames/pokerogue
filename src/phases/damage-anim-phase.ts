@@ -6,11 +6,11 @@ import { fixedInt } from "#app/utils";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 
 export class DamageAnimPhase extends PokemonPhase {
-  private amount: integer;
+  private amount: number;
   private damageResult: DamageResult;
   private critical: boolean;
 
-  constructor(battlerIndex: BattlerIndex, amount: integer, damageResult?: DamageResult, critical: boolean = false) {
+  constructor(battlerIndex: BattlerIndex, amount: number, damageResult?: DamageResult, critical: boolean = false) {
     super(battlerIndex);
 
     this.amount = amount;
@@ -35,7 +35,7 @@ export class DamageAnimPhase extends PokemonPhase {
     this.applyDamage();
   }
 
-  updateAmount(amount: integer): void {
+  updateAmount(amount: number): void {
     this.amount = amount;
   }
 
