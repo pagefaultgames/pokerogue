@@ -80,12 +80,29 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleContainer.add(this.appVersionText);
 
     const currentLanguage = i18next.resolvedLanguage ?? "en";
+    const getTimeFormat = (): boolean => {
+      switch (currentLanguage) {
+        case "en":
+        case "es-ES":
+        case "ko":
+        case "zh-TW":
+        default:
+          return true; // 12h
+        case "de":
+        case "fr":
+        case "it":
+        case "ja":
+        case "pt-BR": // <-- in review
+        case "zh-CN":
+          return false; // 24h
+      }
+    };
     const startDate = new Date(1738994400000);
     const endDate = new Date(1739167200000);
     const dateOptions: Intl.DateTimeFormatOptions = {
       dateStyle: "short",
       timeStyle: "short",
-      hour12: true,
+      hour12: getTimeFormat(),
     };
     const startDateLocalized = new Intl.DateTimeFormat(currentLanguage, dateOptions).format(startDate);
     const endDateLocalized = new Intl.DateTimeFormat(currentLanguage, dateOptions).format(endDate);
