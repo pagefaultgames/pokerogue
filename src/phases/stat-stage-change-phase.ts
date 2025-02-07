@@ -60,13 +60,13 @@ export class StatStageChangePhase extends PokemonPhase {
     if (pokemon.isPlayer()) {
       /** If this SSCP is not from sticky web, then we find the opponent pokemon that last did something */
       if (!this.comingFromStickyWeb) {
-        opponentPokemon = this.scene.getEnemyField()[this.scene.currentBattle.lastEnemyInvolved];
+        opponentPokemon = globalScene.getEnemyField()[globalScene.currentBattle.lastEnemyInvolved];
       } else {
         /** If this SSCP is from sticky web, then check if pokemon that last sucessfully used sticky web is on field */
-        const stickyTagID = this.scene.arena.findTagsOnSide(
+        const stickyTagID = globalScene.arena.findTagsOnSide(
           (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
           ArenaTagSide.PLAYER)[0].sourceId;
-        this.scene.getEnemyField().forEach((e) => {
+        globalScene.getEnemyField().forEach((e) => {
           if (e.id === stickyTagID) {
             opponentPokemon = e;
           }
@@ -74,12 +74,12 @@ export class StatStageChangePhase extends PokemonPhase {
       }
     } else {
       if (!this.comingFromStickyWeb) {
-        opponentPokemon = this.scene.getPlayerField()[this.scene.currentBattle.lastPlayerInvolved];
+        opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
       } else {
-        const stickyTagID = this.scene.arena.findTagsOnSide(
+        const stickyTagID = globalScene.arena.findTagsOnSide(
           (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
           ArenaTagSide.ENEMY)[0].sourceId;
-        this.scene.getPlayerField().forEach((e) => {
+        globalScene.getPlayerField().forEach((e) => {
           if (e.id === stickyTagID) {
             opponentPokemon = e;
           }

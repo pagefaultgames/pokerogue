@@ -2779,7 +2779,7 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
     const stages = args[1];
     this.reflectedStat = stat;
     if (!simulated) {
-      attacker.scene.unshiftPhase(new StatStageChangePhase(attacker.scene, attacker.getBattlerIndex(), false, [ stat ], stages, true, false, true, null, true));
+      globalScene.unshiftPhase(new StatStageChangePhase(attacker.getBattlerIndex(), false, [ stat ], stages, true, false, true, null, true));
     }
     cancelled.value = true;
     return true;

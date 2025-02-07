@@ -97,9 +97,9 @@ export class MoveEffectPhase extends PokemonPhase {
 
     /** If an enemy used this move, set this as last enemy that used move or ability */
     if (!user.isPlayer()) {
-      this.scene.currentBattle.lastEnemyInvolved = this.fieldIndex;
+      globalScene.currentBattle.lastEnemyInvolved = this.fieldIndex;
     } else {
-      this.scene.currentBattle.lastPlayerInvolved = this.fieldIndex;
+      globalScene.currentBattle.lastPlayerInvolved = this.fieldIndex;
     }
 
     const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
