@@ -4403,13 +4403,17 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
    * @returns true if stat stages where correctly stolen
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Copy all positive stat stages to user and reduce copied stat stages on target
+    /**
+     * Copy all positive stat stages to user and reduce copied stat stages on target.
+     */
     for (const s of BATTLE_STATS) {
       const statStageValueTarget = target.getStatStage(s);
       const statStageValueUser = user.getStatStage(s);
 
       if (statStageValueTarget > 0) {
-        // Only value of up to 6 can be stolen (stat stages don't exceed 6)
+        /**
+         * Only value of up to 6 can be stolen (stat stages don't exceed 6)
+         */
         const availableToSteal = Math.min(statStageValueTarget, 6 - statStageValueUser);
 
         globalScene.unshiftPhase(new StatStageChangePhase(user.getBattlerIndex(), this.selfTarget, [ s ], availableToSteal));
