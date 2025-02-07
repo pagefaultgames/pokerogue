@@ -1,18 +1,18 @@
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 
-export type LevelMoves = ([integer, Moves])[];
+export type LevelMoves = ([number, Moves])[];
 
 interface PokemonSpeciesLevelMoves {
-  [key: integer]: LevelMoves
+  [key: number]: LevelMoves
 }
 
 interface PokemonFormLevelMoves {
-  [key: integer]: LevelMoves
+  [key: number]: LevelMoves
 }
 
 interface PokemonSpeciesFormLevelMoves {
-  [key: integer]: PokemonFormLevelMoves
+  [key: number]: PokemonFormLevelMoves
 }
 
 /** Moves that can only be learned with a memory-mushroom */
@@ -19700,6 +19700,44 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
   },
   [Species.URSHIFU]: {
     1: [
+      [ EVOLVE_MOVE, Moves.SURGING_STRIKES ],
+      [ 1, Moves.LEER ],
+      [ 1, Moves.FOCUS_ENERGY ],
+      [ 1, Moves.ENDURE ],
+      [ 1, Moves.ROCK_SMASH ],
+      [ 1, Moves.AQUA_JET ],
+      [ 12, Moves.AERIAL_ACE ],
+      [ 16, Moves.SCARY_FACE ],
+      [ 20, Moves.HEADBUTT ],
+      [ 24, Moves.BRICK_BREAK ],
+      [ 28, Moves.DETECT ],
+      [ 32, Moves.BULK_UP ],
+      [ 36, Moves.IRON_HEAD ],
+      [ 40, Moves.DYNAMIC_PUNCH ],
+      [ 44, Moves.COUNTER ],
+      [ 48, Moves.CLOSE_COMBAT ],
+      [ 52, Moves.FOCUS_PUNCH ],
+    ],
+    2: [
+      [ EVOLVE_MOVE, Moves.WICKED_BLOW ],
+      [ 1, Moves.LEER ],
+      [ 1, Moves.FOCUS_ENERGY ],
+      [ 1, Moves.ENDURE ],
+      [ 1, Moves.ROCK_SMASH ],
+      [ 1, Moves.SUCKER_PUNCH ],
+      [ 12, Moves.AERIAL_ACE ],
+      [ 16, Moves.SCARY_FACE ],
+      [ 20, Moves.HEADBUTT ],
+      [ 24, Moves.BRICK_BREAK ],
+      [ 28, Moves.DETECT ],
+      [ 32, Moves.BULK_UP ],
+      [ 36, Moves.IRON_HEAD ],
+      [ 40, Moves.DYNAMIC_PUNCH ],
+      [ 44, Moves.COUNTER ],
+      [ 48, Moves.CLOSE_COMBAT ],
+      [ 52, Moves.FOCUS_PUNCH ],
+    ],
+    3: [
       [ EVOLVE_MOVE, Moves.SURGING_STRIKES ],
       [ 1, Moves.LEER ],
       [ 1, Moves.FOCUS_ENERGY ],

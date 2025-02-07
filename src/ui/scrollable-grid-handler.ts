@@ -1,6 +1,6 @@
 import { Button } from "#enums/buttons";
-import UiHandler from "#app/ui/ui-handler";
-import { ScrollBar } from "#app/ui/scroll-bar";
+import type UiHandler from "#app/ui/ui-handler";
+import type { ScrollBar } from "#app/ui/scroll-bar";
 
 type UpdateGridCallbackFunction = () => void;
 type UpdateDetailsCallbackFunction = (index: number) => void;
@@ -24,15 +24,14 @@ export default class ScrollableGridUiHandler {
   private cursor: number;
   private scrollCursor: number;
   private scrollBar?: ScrollBar;
+  /** Optional function that will get called if the whole grid needs to get updated */
   private updateGridCallback?: UpdateGridCallbackFunction;
+  /** Optional function that will get called if a single element's information needs to get updated */
   private updateDetailsCallback?: UpdateDetailsCallbackFunction;
 
   /**
-   * @param scene the {@linkcode UiHandler} that needs its cursor updated based on the scrolling
    * @param rows the maximum number of rows shown at once
    * @param columns the maximum number of columns shown at once
-   * @param updateGridCallback optional function that will get called if the whole grid needs to get updated
-   * @param updateDetailsCallback optional function that will get called if a single element's information needs to get updated
    */
   constructor(handler: UiHandler, rows: number, columns: number) {
     this.handler = handler;

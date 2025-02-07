@@ -1,14 +1,14 @@
 import { BattlerIndex } from "../battle";
-import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
 import { Button } from "#enums/buttons";
-import { Moves } from "#enums/moves";
-import Pokemon from "#app/field/pokemon";
-import { ModifierBar } from "#app/modifier/modifier";
+import type { Moves } from "#enums/moves";
+import type Pokemon from "#app/field/pokemon";
+import type { ModifierBar } from "#app/modifier/modifier";
 import { SubstituteTag } from "#app/data/battler-tags";
+import { globalScene } from "#app/global-scene";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
@@ -26,8 +26,8 @@ export default class TargetSelectUiHandler extends UiHandler {
   private enemyModifiers: ModifierBar;
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.TARGET_SELECT);
+  constructor() {
+    super(Mode.TARGET_SELECT);
 
     this.cursor = -1;
   }
@@ -41,10 +41,10 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     super.show(args);
 
-    this.fieldIndex = args[0] as integer;
+    this.fieldIndex = args[0] as number;
     this.move = args[1] as Moves;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
-    const user = this.scene.getPlayerField()[this.fieldIndex];
+    const user = globalScene.getPlayerField()[this.fieldIndex];
 
     const moveTargets = getMoveTargets(user, this.move);
     this.targets = moveTargets.targets;
@@ -54,7 +54,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       return false;
     }
 
-    this.enemyModifiers = this.scene.getModifierBar(true);
+    this.enemyModifiers = globalScene.getModifierBar(true);
 
     if (this.fieldIndex === BattlerIndex.PLAYER) {
       this.resetCursor(this.cursor0, user);
@@ -131,9 +131,9 @@ export default class TargetSelectUiHandler extends UiHandler {
     return success;
   }
 
-  setCursor(cursor: integer): boolean {
-    const singleTarget = this.scene.getField()[cursor];
-    const multipleTargets = this.targets.map(index => this.scene.getField()[index]);
+  setCursor(cursor: number): boolean {
+    const singleTarget = globalScene.getField()[cursor];
+    const multipleTargets = this.targets.map(index => globalScene.getField()[index]);
 
     this.targetsHighlighted = this.isMultipleTargets ? multipleTargets : [ singleTarget ];
 
@@ -147,7 +147,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       }
     }
 
-    this.targetFlashTween = this.scene.tweens.add({
+    this.targetFlashTween = globalScene.tweens.add({
       targets: this.targetsHighlighted,
       key: { start: 1, to: 0.25 },
       loop: -1,
@@ -173,7 +173,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     const targetsBattleInfo = this.targetsHighlighted.map(target => target.getBattleInfo());
 
     targetsBattleInfo.map(info => {
-      this.targetBattleInfoMoveTween.push(this.scene.tweens.add({
+      this.targetBattleInfoMoveTween.push(globalScene.tweens.add({
         targets: [ info ],
         y: { start: info.getBaseY(), to: info.getBaseY() + 1 },
         loop: -1,

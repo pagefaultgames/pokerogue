@@ -9,7 +9,7 @@ import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -81,8 +81,8 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
     expect(TrashToTreasureEncounter.onInit).toBeDefined();
 
-    TrashToTreasureEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    TrashToTreasureEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(TrashToTreasureEncounter.enemyPartyConfigs).toEqual([
       {
