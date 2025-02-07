@@ -390,6 +390,12 @@ export class MoveEffectPhase extends PokemonPhase {
               target.lapseTag(BattlerTagType.SUBSTITUTE);
             }
           });
+
+          const moveType = user.getMoveType(move, true);
+          if (move.category !== MoveCategory.STATUS && !user.stellarTypesBoosted.includes(moveType)) {
+            user.stellarTypesBoosted.push(moveType);
+          }
+
           this.end();
         });
       });

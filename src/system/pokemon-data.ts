@@ -48,6 +48,7 @@ export default class PokemonData {
   public evoCounter: number;
   public teraType: Type;
   public isTerastallized: boolean;
+  public stellarTypesBoosted: Type[];
 
   public fusionSpecies: Species;
   public fusionFormIndex: number;
@@ -108,6 +109,7 @@ export default class PokemonData {
     this.pokerus = !!source.pokerus;
     this.teraType = (source.teraType || 0) as Type;
     this.isTerastallized = source.isTerastallized || false;
+    this.stellarTypesBoosted = source.stellarTypesBoosted || [];
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;

@@ -132,6 +132,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public evoCounter: number;
   public teraType: Type;
   public isTerastallized: boolean;
+  public stellarTypesBoosted: Type[];
 
   public fusionSpecies: PokemonSpecies | null;
   public fusionFormIndex: number;
@@ -244,6 +245,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.customPokemonData = new CustomPokemonData(dataSource.customPokemonData);
       this.teraType = dataSource.teraType;
       this.isTerastallized = dataSource.isTerastallized;
+      this.stellarTypesBoosted = dataSource.stellarTypesBoosted;
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -295,6 +297,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.teraType = Utils.randSeedItem(this.getTypes(false, false, true));
       this.isTerastallized = false;
+      this.stellarTypesBoosted = [];
     }
 
     this.generateName();
@@ -2759,16 +2762,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const matchesSourceType = sourceTypes.includes(moveType);
     /** A damage multiplier for when the attack is of the attacker's type and/or Tera type. */
     const stabMultiplier = new Utils.NumberHolder(1);
-    if (matchesSourceType) {
-      stabMultiplier.value += 0.5;
-    }
-    applyMoveAttrs(CombinedPledgeStabBoostAttr, source, this, move, stabMultiplier);
-    if (source.isTerastallized && sourceTeraType === moveType) {
+    if (matchesSourceType && moveType !== Type.STELLAR) {
       stabMultiplier.value += 0.5;
     }
 
     if (!ignoreSourceAbility) {
       applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
+    }
+
+    applyMoveAttrs(CombinedPledgeStabBoostAttr, source, this, move, stabMultiplier);
+
+    if (source.isTerastallized && sourceTeraType === moveType && moveType !== Type.STELLAR) {
+      stabMultiplier.value += 0.5;
+    }
+
+    if (source.isTerastallized && source.teraType === Type.STELLAR && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(Species.TERAPAGOS))) {
+      if (matchesSourceType) {
+        stabMultiplier.value += 0.5;
+      } else {
+        stabMultiplier.value += 0.2;
+      }
     }
 
     stabMultiplier.value = Math.min(stabMultiplier.value, 2.25);
@@ -3808,6 +3821,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   resetTera(): void {
     const wasTerastallized = this.isTerastallized;
     this.isTerastallized = false;
+    this.stellarTypesBoosted = [];
     if (wasTerastallized) {
       this.updateSpritePipelineData();
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
