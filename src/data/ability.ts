@@ -2791,6 +2791,10 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
 }
 
 export class PreLeaveFieldAbAttr extends AbAttr {
+  canApplyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return true;
+  }
+
   applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -2800,6 +2804,35 @@ export class PreLeaveFieldAbAttr extends AbAttr {
  * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
  */
 export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
+  private turnOffWeather: boolean;
+
+  canApplyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    this.turnOffWeather = false;
+    const weatherType = globalScene.arena.weather?.weatherType;
+    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
+    switch (weatherType) {
+      case (WeatherType.HARSH_SUN):
+        if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
+          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
+          return true;
+        }
+        break;
+      case (WeatherType.HEAVY_RAIN):
+        if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
+          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
+          return true;
+        }
+        break;
+      case (WeatherType.STRONG_WINDS):
+        if (pokemon.hasAbility(Abilities.DELTA_STREAM)
+          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
+          return true;
+        }
+        break;
+    }
+    return false;
+  }
+
   /**
    * @param pokemon The {@linkcode Pokemon} with the ability
    * @param passive N/A
@@ -2807,41 +2840,10 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
    * @returns Returns `true` if the weather clears, otherwise `false`.
    */
   applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    let turnOffWeather = false;
-
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case (WeatherType.HARSH_SUN):
-        if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
-          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-      case (WeatherType.HEAVY_RAIN):
-        if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
-          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-      case (WeatherType.STRONG_WINDS):
-        if (pokemon.hasAbility(Abilities.DELTA_STREAM)
-          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-    }
-
-    if (simulated) {
-      return turnOffWeather;
-    }
-
-    if (turnOffWeather) {
+    if (!simulated) {
       globalScene.arena.trySetWeather(WeatherType.NONE, false);
-      return true;
     }
-
-    return false;
+    return true;
   }
 }
 
@@ -5396,7 +5398,8 @@ export function applyPreSwitchOutAbAttrs(attrType: Constructor<PreSwitchOutAbAtt
 
 export function applyPreLeaveFieldAbAttrs(attrType: Constructor<PreLeaveFieldAbAttr>,
   pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreLeaveFieldAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, args), args, true, simulated);
+  return applyAbAttrsInternal<PreLeaveFieldAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, args),
+    (attr, passive) => attr.canApplyPreLeaveField(pokemon, passive, simulated, args), args, true, simulated);
 }
 
 export function applyPreStatStageChangeAbAttrs(attrType: Constructor<PreStatStageChangeAbAttr>,
