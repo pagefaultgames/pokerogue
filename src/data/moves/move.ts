@@ -658,8 +658,8 @@ export default class Move implements Localizable {
           }
           // Sunsteel strike, Moongeist beam, and photon geyser will not ignore abilities if invoked
           // by another move, such as via metronome.
-          return this.hasFlag(MoveFlags.IGNORE_ABILITIES) && !isFollowUp;
         }
+        return this.hasFlag(MoveFlags.IGNORE_ABILITIES) && !isFollowUp;
         break;
       case MoveFlags.IGNORE_PROTECT:
         if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
