@@ -161,6 +161,14 @@ export abstract class AbAttr {
     this.showAbility = showAbility;
   }
 
+  /**
+   * Applies ability effects without checking conditions
+   * @param pokemon The pokemon to apply this ability to
+   * @param passive Whether or not the ability is a passive
+   * @param simulated Whether the call is simulated
+   * @param args
+   * @see {@linkcode canApply}
+   */
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean> {
     return false;
   }
@@ -178,6 +186,15 @@ export abstract class AbAttr {
     return this;
   }
 
+  /**
+   * Returns a boolean describing whether the ability can be applied under current conditions
+   * @param pokemon The pokemon to apply this ability to
+   * @param passive Whether or not the ability is a passive
+   * @param simulated Whether the call is simulated
+   * @param args
+   * @returns True if the ability can be applied, false otherwise
+   * @see {@linkcode apply}
+   */
   canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return true;
   }
@@ -198,7 +215,7 @@ export class BlockRecoilDamageAttr extends AbAttr {
 /**
  * Attribute for abilities that increase the chance of a double battle
  * occurring.
- * @see apply
+ * @see {@linkcode apply}
  */
 export class DoubleBattleChanceAbAttr extends AbAttr {
   constructor() {
