@@ -41,7 +41,7 @@ export class SceneBase extends Phaser.Scene {
     }
   }
 
-  loadSpritesheet(key: string, folder: string, size: integer, filename?: string) {
+  loadSpritesheet(key: string, folder: string, size: number, filename?: string) {
     if (!filename) {
       filename = `${key}.png`;
     }
