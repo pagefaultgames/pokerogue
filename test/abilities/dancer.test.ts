@@ -39,20 +39,24 @@ describe("Abilities - Dancer", () => {
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SWORDS_DANCE, 1);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
-    await game.phaseInterceptor.to("MovePhase");
-    // immediately copies ally move
-    await game.phaseInterceptor.to("MovePhase", false);
+    await game.phaseInterceptor.to("MovePhase"); // feebas uses swords dance
+    await game.phaseInterceptor.to("MovePhase", false); // oricorio copies swords dance
+
     let currentPhase = game.scene.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(oricorio);
     expect(currentPhase.move.moveId).toBe(Moves.SWORDS_DANCE);
-    await game.phaseInterceptor.to("MoveEndPhase");
-    await game.phaseInterceptor.to("MovePhase");
-    // immediately copies enemy move
-    await game.phaseInterceptor.to("MovePhase", false);
+
+    await game.phaseInterceptor.to("MoveEndPhase"); // end oricorio's move
+    await game.phaseInterceptor.to("MovePhase"); // magikarp 1 copies swords dance
+    await game.phaseInterceptor.to("MovePhase"); // magikarp 2 copies swords dance
+    await game.phaseInterceptor.to("MovePhase"); // magikarp (left) uses victory dance
+    await game.phaseInterceptor.to("MovePhase", false); // oricorio copies magikarp's victory dance
+
     currentPhase = game.scene.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(oricorio);
     expect(currentPhase.move.moveId).toBe(Moves.VICTORY_DANCE);
-    await game.phaseInterceptor.to("BerryPhase");
+
+    await game.phaseInterceptor.to("BerryPhase"); // finish the turn
 
     // doesn't use PP if copied move is also in moveset
     expect(oricorio.moveset[0]?.ppUsed).toBe(0);
