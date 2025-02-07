@@ -575,7 +575,7 @@ function onGameOver() {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        globalScene.field.remove(pokemon, true);
+        pokemon.leaveField(true, true, true);
       }
     });
   }
