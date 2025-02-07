@@ -1477,7 +1477,21 @@ export const modifierTypes = {
     if (!globalScene.getModifiers(TerastallizeAccessModifier).length) {
       return null;
     }
-    return new TerastallizeModifierType(randSeedInt(64) ? randSeedInt(18) as Type : Type.STELLAR);
+    const teraTypes: Type[] = [];
+    party.forEach(p => {
+      if (!(p.hasSpecies(Species.TERAPAGOS) || p.hasSpecies(Species.OGERPON) || p.hasSpecies(Species.SHEDINJA))) {
+        teraTypes.push(p.teraType);
+      }
+    });
+    let excludedType = Type.UNKNOWN;
+    if (teraTypes.length > 0 && teraTypes.filter(t => t === teraTypes[0]).length === teraTypes.length) {
+      excludedType = teraTypes[0];
+    }
+    let shardType = randSeedInt(64) ? randSeedInt(18) as Type : Type.STELLAR;
+    while (shardType === excludedType) {
+      shardType = randSeedInt(64) ? randSeedInt(18) as Type : Type.STELLAR;
+    }
+    return new TerastallizeModifierType(shardType);
   }),
 
   BERRY: () => new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
@@ -1720,7 +1734,7 @@ const modifierPool: ModifierPool = {
       return Math.min(Math.ceil(highestPartyLevel / 20), 4);
     }, 4),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
-    new WeightedModifierType(modifierTypes.TERA_SHARD, 1),
+    new WeightedModifierType(modifierTypes.TERA_SHARD, (party: Pokemon[]) => party.filter(p => !(p.hasSpecies(Species.TERAPAGOS) || p.hasSpecies(Species.OGERPON) || p.hasSpecies(Species.SHEDINJA))).length > 0 ? 1 : 0),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => globalScene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
     new WeightedModifierType(modifierTypes.VOUCHER, (_party: Pokemon[], rerollCount: number) => !globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0, 1),
   ].map(m => {
