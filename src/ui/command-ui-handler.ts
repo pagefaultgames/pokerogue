@@ -84,6 +84,7 @@ export default class CommandUiHandler extends UiHandler {
         this.setCursor(Command.FIGHT);
       }
     }
+    this.toggleTeraButton();
 
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setVisible(true);
