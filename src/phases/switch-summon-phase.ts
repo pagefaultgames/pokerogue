@@ -64,6 +64,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
     (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+
     if (this.switchType === SwitchType.SWITCH || this.switchType === SwitchType.INITIAL_SWITCH) {
       const substitute = pokemon.getTag(SubstituteTag);
       if (substitute) {
@@ -93,8 +94,8 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        pokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
         globalScene.time.delayedCall(750, () => this.switchAndSummon());
+        pokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
       }
     });
   }

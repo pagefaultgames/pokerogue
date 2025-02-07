@@ -51,7 +51,30 @@ import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { Type } from "#enums/type";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
+import {
+  DamageMoneyRewardModifier,
+  EnemyDamageBoosterModifier,
+  EnemyDamageReducerModifier,
+  EnemyEndureChanceModifier,
+  EnemyFusionChanceModifier,
+  HiddenAbilityRateBoosterModifier,
+  BaseStatModifier,
+  PokemonFriendshipBoosterModifier,
+  PokemonHeldItemModifier,
+  PokemonNatureWeightModifier,
+  ShinyRateBoosterModifier,
+  SurviveDamageModifier,
+  TempStatStageBoosterModifier,
+  TempCritBoosterModifier,
+  StatBoosterModifier,
+  CritBoosterModifier,
+  TerastallizeModifier,
+  PokemonBaseStatFlatModifier,
+  PokemonBaseStatTotalModifier,
+  PokemonIncrementingStatModifier,
+  EvoTrackerModifier,
+  PokemonMultiHitModifier,
+} from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
@@ -59,11 +82,83 @@ import { Status, getRandomStatus } from "#app/data/status-effect";
 import type { SpeciesFormEvolution, SpeciesEvolutionCondition } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions, FusionSpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/tms";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
+import {
+  BattlerTag,
+  BattlerTagLapseType,
+  EncoreTag,
+  GroundedTag,
+  HighestStatBoostTag,
+  SubstituteTag,
+  TypeImmuneTag,
+  getBattlerTag,
+  SemiInvulnerableTag,
+  TypeBoostTag,
+  MoveRestrictionBattlerTag,
+  ExposedTag,
+  DragonCheerTag,
+  CritBoostTag,
+  TrappedTag,
+  TarShotTag,
+  AutotomizedTag,
+  PowerTrickTag,
+} from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
 import type { Ability, AbAttr } from "#app/data/ability";
-import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr, AllyStatMultiplierAbAttr, applyAllyStatMultiplierAbAttrs, MoveAbilityBypassAbAttr } from "#app/data/ability";
+import {
+  StatMultiplierAbAttr,
+  BlockCritAbAttr,
+  BonusCritAbAttr,
+  BypassBurnDamageReductionAbAttr,
+  FieldPriorityMoveImmunityAbAttr,
+  IgnoreOpponentStatStagesAbAttr,
+  MoveImmunityAbAttr,
+  PreDefendFullHpEndureAbAttr,
+  ReceivedMoveDamageMultiplierAbAttr,
+  StabBoostAbAttr,
+  StatusEffectImmunityAbAttr,
+  TypeImmunityAbAttr,
+  WeightMultiplierAbAttr,
+  allAbilities,
+  applyAbAttrs,
+  applyStatMultiplierAbAttrs,
+  applyPreApplyBattlerTagAbAttrs,
+  applyPreAttackAbAttrs,
+  applyPreDefendAbAttrs,
+  applyPreSetStatusAbAttrs,
+  UnsuppressableAbilityAbAttr,
+  SuppressFieldAbilitiesAbAttr,
+  NoFusionAbilityAbAttr,
+  MultCritAbAttr,
+  IgnoreTypeImmunityAbAttr,
+  DamageBoostAbAttr,
+  IgnoreTypeStatusEffectImmunityAbAttr,
+  ConditionalCritAbAttr,
+  applyFieldStatMultiplierAbAttrs,
+  FieldMultiplyStatAbAttr,
+  AddSecondStrikeAbAttr,
+  UserFieldStatusEffectImmunityAbAttr,
+  UserFieldBattlerTagImmunityAbAttr,
+  BattlerTagImmunityAbAttr,
+  MoveTypeChangeAbAttr,
+  FullHpResistTypeAbAttr,
+  applyCheckTrappedAbAttrs,
+  CheckTrappedAbAttr,
+  PostSetStatusAbAttr,
+  applyPostSetStatusAbAttrs,
+  InfiltratorAbAttr,
+  AlliedFieldDamageReductionAbAttr,
+  PostDamageAbAttr,
+  applyPostDamageAbAttrs,
+  CommanderAbAttr,
+  applyPostItemLostAbAttrs,
+  PostItemLostAbAttr,
+  AllyStatMultiplierAbAttr,
+  applyAllyStatMultiplierAbAttrs,
+  MoveAbilityBypassAbAttr,
+  PreLeaveFieldAbAttr,
+  applyPreLeaveFieldAbAttrs,
+} from "#app/data/ability";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -1459,8 +1554,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public hasPassive(): boolean {
     // returns override if valid for current case
-    if ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && this.isPlayer())
-        || (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer())) {
+    if (
+      (Overrides.HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isPlayer())
+      || (Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE === false && !this.isPlayer())
+    ) {
+      return false;
+    }
+    if (
+      ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE) && this.isPlayer())
+      || ((Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE || Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE) && !this.isPlayer())
+    ) {
       return true;
     }
 
@@ -4190,9 +4293,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param hideInfo Indicates if this should also play the animation to hide the Pokemon's
    * info container.
    */
-  leaveField(clearEffects: boolean = true, hideInfo: boolean = true) {
+  leaveField(clearEffects: boolean = true, hideInfo: boolean = true, destroy: boolean = false) {
     this.resetSprite();
     this.resetTurnData();
+    globalScene.getField(true).filter(p => p !== this).forEach(p => p.removeTagsBySourceId(this.id));
+
     if (clearEffects) {
       this.destroySubstitute();
       this.resetSummonData(); // this also calls `resetBattleSummonData`
@@ -4200,9 +4305,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (hideInfo) {
       this.hideInfo();
     }
-    globalScene.field.remove(this);
+    // Trigger abilities that activate upon leaving the field
+    applyPreLeaveFieldAbAttrs(PreLeaveFieldAbAttr, this);
     this.setSwitchOutStatus(true);
     globalScene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
+    globalScene.field.remove(this, destroy);
   }
 
   destroy(): void {

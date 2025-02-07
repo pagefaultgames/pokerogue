@@ -24,6 +24,7 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import type InputsHandler from "#app/test/utils/inputsHandler";
+import type BallUiHandler from "#app/ui/ball-ui-handler";
 import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import type CommandUiHandler from "#app/ui/command-ui-handler";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -455,6 +456,24 @@ export default class GameManager {
       partyHandler.setCursor(slot);
       partyHandler.processInput(Button.ACTION); // select party slot
       partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
+    });
+  }
+
+  /**
+   * Select the BALL option from the command menu, then press Action; in the BALL
+   * menu, select a pokéball type and press Action again to throw it.
+   * @param ballIndex the index of the pokeball to throw
+   */
+  public doThrowPokeball(ballIndex: number) {
+    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
+      (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
+    });
+
+    this.onNextPrompt("CommandPhase", Mode.BALL, () => {
+      const ballHandler = this.scene.ui.getHandler() as BallUiHandler;
+      ballHandler.setCursor(ballIndex);
+      ballHandler.processInput(Button.ACTION); // select ball and throw
     });
   }
 
