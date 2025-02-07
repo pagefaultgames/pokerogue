@@ -34,7 +34,7 @@ function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
     });
   }
 
-  const addParticle = (index: integer) => {
+  const addParticle = (index: number) => {
     const particle = globalScene.add.sprite(x, y, "pb_open_particle");
     globalScene.field.add(particle);
     const angle = index * 45;
@@ -68,7 +68,7 @@ function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
   });
 }
 
-function doUbOpenParticles(x: number, y: number, frameIndex: integer) {
+function doUbOpenParticles(x: number, y: number, frameIndex: number) {
   const particles: Phaser.GameObjects.Image[] = [];
   for (let i = 0; i < 10; i++) {
     particles.push(doFanOutParticle(i * 25, x, y, 1, 1, 5, frameIndex));
@@ -110,7 +110,7 @@ function doMbOpenParticles(x: number, y: number) {
   }
 }
 
-function doFanOutParticle(trigIndex: integer, x: integer, y: integer, xSpeed: integer, ySpeed: integer, angle: integer, frameIndex: integer): Phaser.GameObjects.Image {
+function doFanOutParticle(trigIndex: number, x: number, y: number, xSpeed: number, ySpeed: number, angle: number, frameIndex: number): Phaser.GameObjects.Image {
   let f = 0;
 
   const particle = globalScene.add.image(x, y, "pb_particles", `${frameIndex}.png`);
@@ -179,11 +179,11 @@ export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): vo
   new Array(3).fill(null).map(() => addParticle());
 }
 
-export function sin(index: integer, amplitude: integer): number {
+export function sin(index: number, amplitude: number): number {
   return amplitude * Math.sin(index * (Math.PI / 128));
 }
 
-export function cos(index: integer, amplitude: integer): number {
+export function cos(index: number, amplitude: number): number {
   return amplitude * Math.cos(index * (Math.PI / 128));
 }
 
