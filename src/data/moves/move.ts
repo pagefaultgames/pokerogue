@@ -623,6 +623,11 @@ export default class Move implements Localizable {
    * calling this method for {@linkcode MoveFlags.MAKES_CONTACT | MAKES_CONTACT}
    * will return `false` if the user has a {@linkcode Abilities.LONG_REACH} that is not being suppressed.
    *
+   * **Note:** This method only checks if the move should have effectively have the flag applied to its use.
+   * It does *not* check whether the flag will trigger related effects.
+   * For example using this method to check {@linkcode MoveFlags.WIND_MOVE}
+   * will not consider {@linkcode Abilities.WIND_RIDER | Wind Rider }.
+   *
    * To simply check whether the move has a flag, use {@linkcode hasFlag}.
    * @param flag {@linkcode MoveFlags} MoveFlag to check on user and/or target
    * @param user {@linkcode Pokemon} the Pokemon using the move
