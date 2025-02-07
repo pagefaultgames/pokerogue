@@ -4419,7 +4419,7 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
 
     target.updateInfo();
     user.updateInfo();
-    target.scene.queueMessage(i18next.t("moveTriggers:stealPositiveStats", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
+    globalScene.queueMessage(i18next.t("moveTriggers:stealPositiveStats", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
