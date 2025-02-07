@@ -9,6 +9,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
 import { Type } from "#app/enums/type";
+import { getTypeRgb } from "#app/data/type";
 
 export enum Command {
   FIGHT = 0,
@@ -45,10 +46,11 @@ export default class CommandUiHandler extends UiHandler {
     this.commandsContainer.setVisible(false);
     ui.add(this.commandsContainer);
 
-    this.teraButton = globalScene.add.sprite(-35, 15, "button_tera");
+    this.teraButton = globalScene.add.sprite(-32, 15, "button_tera");
     this.teraButton.setName("terrastallize-button");
-    this.teraButton.setScale(1.5);
+    this.teraButton.setScale(1.3);
     this.teraButton.setFrame("fire");
+    this.teraButton.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true, teraColor: getTypeRgb(Type.FIRE), isTerastallized: false });
     this.commandsContainer.add(this.teraButton);
 
     for (let c = 0; c < commands.length; c++) {
@@ -87,7 +89,7 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.bg.setVisible(true);
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
-    messageHandler.message.setWordWrapWidth(1110);
+    messageHandler.message.setWordWrapWidth(this.canTera() ? 910 : 1110);
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()) }), 0);
     if (this.getCursor() === Command.POKEMON) {
       this.setCursor(Command.FIGHT);
@@ -154,6 +156,7 @@ export default class CommandUiHandler extends UiHandler {
             success = this.setCursor(cursor - 1);
           } else if ((cursor === Command.FIGHT || cursor === Command.POKEMON) && this.canTera()) {
             success = this.setCursor(Command.TERA);
+            this.toggleTeraButton();
           }
           break;
         case Button.RIGHT:
@@ -161,6 +164,7 @@ export default class CommandUiHandler extends UiHandler {
             success = this.setCursor(cursor + 1);
           } else if (cursor === Command.TERA) {
             success = this.setCursor(Command.FIGHT);
+            this.toggleTeraButton();
           }
           break;
       }
@@ -178,6 +182,10 @@ export default class CommandUiHandler extends UiHandler {
     const currentTeras = globalScene.arena.playerTerasUsed;
     const plannedTera = globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;
     return hasTeraMod && (currentTeras + plannedTera) < 1;
+  }
+
+  toggleTeraButton() {
+    this.teraButton.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true, teraColor: getTypeRgb(globalScene.getField()[this.fieldIndex].getTeraType()), isTerastallized: this.getCursor() === Command.TERA });
   }
 
   getCursor(): number {
