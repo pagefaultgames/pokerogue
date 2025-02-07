@@ -6782,7 +6782,7 @@ const invalidMetronomeMoves: Moves[] = [
   Moves.SNATCH,
   Moves.SNORE,
   Moves.SNOWSCAPE,
-  Moves.SPECTRAL_THIEF,
+  Moves.F,
   Moves.SPICY_EXTRACT,
   Moves.SPIKY_SHIELD,
   Moves.SPIRIT_BREAK,
@@ -10406,8 +10406,7 @@ export function initMoves() {
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
       .attr(SpectralThiefAttr)
-      .ignoresSubstitute()
-      .partial(), // Does not steal stats
+      .ignoresSubstitute(),
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities(),
     new AttackMove(Moves.MOONGEIST_BEAM, Type.GHOST, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
