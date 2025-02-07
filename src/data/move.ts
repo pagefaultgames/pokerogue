@@ -6782,7 +6782,7 @@ const invalidMetronomeMoves: Moves[] = [
   Moves.SNATCH,
   Moves.SNORE,
   Moves.SNOWSCAPE,
-  Moves.F,
+  Moves.SPECTRAL_THIEF,
   Moves.SPICY_EXTRACT,
   Moves.SPIKY_SHIELD,
   Moves.SPIRIT_BREAK,
