@@ -663,7 +663,7 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_PROTECT:
         if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
-          && this.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user, target })) {
+          && this.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user, target: null })) {
           return true;
         }
         break;
