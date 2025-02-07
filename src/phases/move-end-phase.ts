@@ -4,15 +4,17 @@ import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class MoveEndPhase extends PokemonPhase {
-  constructor(battlerIndex: BattlerIndex) {
+  private wasFollowUp: boolean;
+  constructor(battlerIndex: BattlerIndex, wasFollowUp: boolean = false) {
     super(battlerIndex);
+    this.wasFollowUp = wasFollowUp;
   }
 
   start() {
     super.start();
 
     const pokemon = this.getPokemon();
-    if (pokemon.isActive(true)) {
+    if (!this.wasFollowUp && pokemon.isActive(true)) {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
     }
 
