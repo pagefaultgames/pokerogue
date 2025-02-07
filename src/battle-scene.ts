@@ -1336,14 +1336,15 @@ export default class BattleScene extends SceneBase {
     }
 
     this.executeWithSeedOffset(() => {
-      this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble, this.currentBattle?.playerFaints, this.currentBattle?.enemyFaints);
+      this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble, this.currentBattle?.enemyFaints);
     }, newWaveIndex << 3, this.waveSeed);
     this.currentBattle.incrementTurn();
 
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
       // Will generate the actual Mystery Encounter during NextEncounterPhase, to ensure it uses proper biome
       this.currentBattle.mysteryEncounterType = mysteryEncounterType;
-      this.resetFaintsCount();
+      this.resetEnemyFaintCount();
+      this.arena.resetPlayerFaintCount();
     }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
@@ -1361,7 +1362,8 @@ export default class BattleScene extends SceneBase {
         this.arena.updatePoolsForTimeOfDay();
       }
       if (resetArenaState) {
-        this.resetFaintsCount();
+        this.resetEnemyFaintCount();
+        this.arena.resetPlayerFaintCount();
 
         this.arena.resetArenaEffects();
 
@@ -1403,8 +1405,8 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: Biome): Arena {
-    this.arena = new Arena(biome, Biome[biome].toLowerCase());
+  newArena(biome: Biome, playerFaints?: number): Arena {
+    this.arena = new Arena(biome, Biome[biome].toLowerCase(), playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
@@ -1413,10 +1415,9 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * resets player/enemyFaints count on {@linkcode currentBattle}
+   * resets enemyFaints count on {@linkcode currentBattle}.
    */
-  resetFaintsCount(): void {
-    this.currentBattle.playerFaints = 0;
+  resetEnemyFaintCount(): void {
     this.currentBattle.enemyFaints = 0;
   }
 
