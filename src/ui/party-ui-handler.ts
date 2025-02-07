@@ -125,16 +125,16 @@ export enum PartyOption {
   ALL = 4000,
 }
 
-export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
-export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, itemQuantity?: integer, toCursor?: integer) => void;
-export type PartyModifierSpliceSelectCallback = (fromCursor: integer, toCursor?: integer) => void;
+export type PartySelectCallback = (cursor: number, option: PartyOption) => void;
+export type PartyModifierTransferSelectCallback = (fromCursor: number, index: number, itemQuantity?: number, toCursor?: number) => void;
+export type PartyModifierSpliceSelectCallback = (fromCursor: number, toCursor?: number) => void;
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string | null;
 export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;
 
 export default class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
-  private fieldIndex: integer;
+  private fieldIndex: number;
 
   private partyBg: Phaser.GameObjects.Image;
   private partyContainer: Phaser.GameObjects.Container;
@@ -146,26 +146,26 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   private optionsMode: boolean;
   private optionsScroll: boolean;
-  private optionsCursor: integer = 0;
-  private optionsScrollCursor: integer = 0;
-  private optionsScrollTotal: integer = 0;
+  private optionsCursor: number = 0;
+  private optionsScrollCursor: number = 0;
+  private optionsScrollTotal: number = 0;
   /** This is only public for test/ui/transfer-item.test.ts */
   public optionsContainer: Phaser.GameObjects.Container;
   private optionsBg: Phaser.GameObjects.NineSlice;
   private optionsCursorObj: Phaser.GameObjects.Image | null;
-  private options: integer[];
+  private options: number[];
 
   private transferMode: boolean;
-  private transferOptionCursor: integer;
-  private transferCursor: integer;
+  private transferOptionCursor: number;
+  private transferCursor: number;
   /** Current quantity selection for every item held by the pokemon selected for the transfer */
-  private transferQuantities: integer[];
+  private transferQuantities: number[];
   /** Stack size of every item that the selected pokemon is holding */
-  private transferQuantitiesMax: integer[];
+  private transferQuantitiesMax: number[];
   /** Whether to transfer all items */
   private transferAll: boolean;
 
-  private lastCursor: integer = 0;
+  private lastCursor: number = 0;
   private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback | null;
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
@@ -304,7 +304,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.partyUiMode = args[0] as PartyUiMode;
 
-    this.fieldIndex = args.length > 1 ? args[1] as integer : -1;
+    this.fieldIndex = args.length > 1 ? args[1] as number : -1;
 
     this.selectCallback = args.length > 2 && args[2] instanceof Function ? args[2] : undefined;
     this.selectFilter = args.length > 3 && args[3] instanceof Function
@@ -689,7 +689,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     let changed: boolean;
 
     if (this.optionsMode) {
@@ -749,7 +749,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  showText(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     if (text.length === 0) {
       text = defaultMessage;
     }
@@ -1060,7 +1060,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
   }
 
-  doRelease(slotIndex: integer): void {
+  doRelease(slotIndex: number): void {
     this.showText(this.getReleaseMessage(getPokemonNameWithAffix(globalScene.getPlayerParty()[slotIndex])), null, () => {
       this.clearPartySlots();
       globalScene.removePartyMemberModifiers(slotIndex);
@@ -1121,7 +1121,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return formChangeItemModifiers;
   }
 
-  getOptionsCursorWithScroll(): integer {
+  getOptionsCursorWithScroll(): number {
     return this.optionsCursor + this.optionsScrollCursor + (this.options && this.options[0] === PartyOption.SCROLL_UP ? -1 : 0);
   }
 
@@ -1164,7 +1164,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 class PartySlot extends Phaser.GameObjects.Container {
   private selected: boolean;
   private transfer: boolean;
-  private slotIndex: integer;
+  private slotIndex: number;
   private pokemon: PlayerPokemon;
 
   private slotBg: Phaser.GameObjects.Image;
@@ -1179,7 +1179,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   private pokemonIcon: Phaser.GameObjects.Container;
   private iconAnimHandler: PokemonIconAnimHandler;
 
-  constructor(slotIndex: integer, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves) {
+  constructor(slotIndex: number, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves) {
     super(globalScene, slotIndex >= globalScene.currentBattle.getBattlerCount() ? 230.5 : 64,
       slotIndex >= globalScene.currentBattle.getBattlerCount() ? -184 + (globalScene.currentBattle.double ? -40 : 0)
       + (28 + (globalScene.currentBattle.double ? 8 : 0)) * slotIndex : -124 + (globalScene.currentBattle.double ? -8 : 0) + slotIndex * 64);
