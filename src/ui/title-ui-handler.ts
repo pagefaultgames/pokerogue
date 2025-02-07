@@ -95,7 +95,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
         case "fr":
         case "it":
         case "ja":
-        case "pt-BR": // <-- in review
+        case "pt-BR":
         case "zh-CN":
           return false; // 24h
       }
@@ -115,7 +115,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       "es-ES": ` - INFORMACIÓN -\nUn mantenimiento del servidor está programado para el siguiente período:\nDesde el ${startDateLocalized} hasta el ${endDateLocalized}.\nLa fecha y hora de finalización son aproximadas.\nEl mantenimiento podría finalizar antes o extenderse más de lo previsto.`,
       "fr": ` - INFORMATION -\nUne maintenance du serveur est prévue sur la période suivante :\nDu ${startDateLocalized} au ${endDateLocalized}\nL’heure de fin est une estimation et peut s’avérer plus en avance ou tardive qu’annoncé.`,
       "it": ` - ANNUNCIO -\nUna manutenzione del server avrà luogo nel periodo seguente:\nDal ${startDateLocalized} al ${endDateLocalized}\nData e ora di fine manutenzione sono una stima,\npotrebbe terminare in anticipo o più tardi.`,
-      "pt-BR": ` - INFORMATION - Portugese translation goes here:\n${startDateLocalized} until ${endDateLocalized}`,
+      "pt-BR": ` - INFORMATION -\nServer maintenance is scheduled for the following period:\n${startDateLocalized} until ${endDateLocalized}\nEnd date and hour are an estimate.\nMaintenance may end at an earlier or later time.`,
       "zh-TW": ` - 通知 -\n伺服器預計在以下時間維護：\n${startDateLocalized} 至 ${endDateLocalized}\n維護結束時間是預計時間\n維護可能稍早或稍晚結束。`,
       "zh-CN": ` - 通知 -\n服务器预计在以下时间维护：\n${startDateLocalized} 至 ${endDateLocalized}\n维护结束时间是预计时间\n维护可能稍早或稍晚结束。`,
       "ko": ` - 공지사항 -\n아래 기간동안 점검 예정입니다. :\n${startDateLocalized} ~ ${endDateLocalized}\n종료시각은 예상시간입니다.\n점검은 예상했던 것보다 빠르게 혹은 늦게  끝날 수 있습니다.`,
