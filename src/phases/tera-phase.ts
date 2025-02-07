@@ -21,20 +21,10 @@ export class TeraPhase extends BattlePhase {
   start() {
     super.start();
 
-    console.log(this.pokemon.name, "terastallized to", Type[this.pokemon.teraType].toString()); // TODO: Improve log
+    console.log(this.pokemon.name, "terastallized to", Type[this.pokemon.teraType].toString());
 
-    // const parent = this.pokemon.parentContainer;
-    // // const texture = this.pokemon.getSprite().texture;
-    // // const [ width, height ] = [ texture.source[0].width, texture.source[0].height ];
-    // // const [ xOffset, yOffset ] = [ -this.pokemon.getSprite().originX * width, -s.originY * s.height ];
-    // const teraburst = globalScene.addFieldSprite(((this.pokemon?.x || 0)), ((this.pokemon?.y || 0)), "terastallize");
-    // teraburst.setName("sprite-terastallize");
-    // teraburst.play("terastallize");
-    // parent.add(teraburst);
-    // this.pokemon.scene.time.delayedCall(Utils.fixedInt(Math.floor((1000 / 12) * 13)), () => teraburst.destroy());
-
-    globalScene.queueMessage(getPokemonNameWithAffix(this.pokemon) + " terrastallized into a " + i18next.t(`pokemonInfo:Type.${Type[this.pokemon.teraType]}`) + " type!"); // TODO: Localize this
-    globalScene.unshiftPhase(new CommonAnimPhase(this.pokemon.getBattlerIndex(), this.pokemon.getBattlerIndex(), CommonAnim.TERASTALLIZE, false));
+    globalScene.queueMessage(i18next.t("battle:pokemonTerastallized", { pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon), type: i18next.t(`pokemonInfo:Type.${Type[this.pokemon.teraType]}`) }));
+    globalScene.unshiftPhase(new CommonAnimPhase(this.pokemon.getBattlerIndex(), undefined, CommonAnim.TERASTALLIZE));
 
     this.end();
   }
