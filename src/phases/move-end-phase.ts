@@ -14,7 +14,7 @@ export class MoveEndPhase extends PokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-    if (!this.wasFollowUp && pokemon.isActive(true)) {
+    if (!this.wasFollowUp && pokemon?.isActive(true)) {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
     }
 
