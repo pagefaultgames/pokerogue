@@ -6,7 +6,7 @@ export default class OptionSelectUiHandler extends AbstractOptionSelectUiHandler
     super(mode);
   }
 
-  getWindowWidth(): integer {
+  getWindowWidth(): number {
     return 64;
   }
 }

@@ -18,7 +18,7 @@ import { globalScene } from "#app/global-scene";
 export class SummonPhase extends PartyMemberPokemonPhase {
   private loaded: boolean;
 
-  constructor(fieldIndex: integer, player: boolean = true, loaded: boolean = false) {
+  constructor(fieldIndex: number, player: boolean = true, loaded: boolean = false) {
     super(fieldIndex, player);
 
     this.loaded = loaded;

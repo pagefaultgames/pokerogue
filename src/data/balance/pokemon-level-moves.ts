@@ -1,18 +1,18 @@
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 
-export type LevelMoves = ([integer, Moves])[];
+export type LevelMoves = ([number, Moves])[];
 
 interface PokemonSpeciesLevelMoves {
-  [key: integer]: LevelMoves
+  [key: number]: LevelMoves
 }
 
 interface PokemonFormLevelMoves {
-  [key: integer]: LevelMoves
+  [key: number]: LevelMoves
 }
 
 interface PokemonSpeciesFormLevelMoves {
-  [key: integer]: PokemonFormLevelMoves
+  [key: number]: PokemonFormLevelMoves
 }
 
 /** Moves that can only be learned with a memory-mushroom */

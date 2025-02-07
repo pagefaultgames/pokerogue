@@ -4,7 +4,7 @@ import { NumberHolder } from "#app/utils";
 import { PokeballType } from "#enums/pokeball";
 import i18next from "i18next";
 
-export const MAX_PER_TYPE_POKEBALLS: integer = 99;
+export const MAX_PER_TYPE_POKEBALLS: number = 99;
 
 export function getPokeballAtlasKey(type: PokeballType): string {
   switch (type) {

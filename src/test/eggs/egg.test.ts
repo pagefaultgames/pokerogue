@@ -14,7 +14,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Egg Generation Tests", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const EGG_HATCH_COUNT: integer = 1000;
+  const EGG_HATCH_COUNT: number = 1000;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({

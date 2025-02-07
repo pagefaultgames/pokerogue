@@ -15,10 +15,10 @@ import { BattlerTagType } from "#enums/battler-tag-type";
  * @see {@linkcode EnemyPokemon.getNextMove}
  */
 export class EnemyCommandPhase extends FieldPhase {
-  protected fieldIndex: integer;
+  protected fieldIndex: number;
   protected skipTurn: boolean = false;
 
-  constructor(fieldIndex: integer) {
+  constructor(fieldIndex: number) {
     super();
 
     this.fieldIndex = fieldIndex;

@@ -47,7 +47,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showStarterSpeciesCandy(starterSpeciesId: Species, count: integer): Promise<void> {
+  showStarterSpeciesCandy(starterSpeciesId: Species, count: number): Promise<void> {
     return new Promise<void>(resolve => {
       if (this.shown) {
         if (this.speciesId === starterSpeciesId) {

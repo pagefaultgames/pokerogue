@@ -9,9 +9,9 @@ import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class ScanIvsPhase extends PokemonPhase {
-  private shownIvs: integer;
+  private shownIvs: number;
 
-  constructor(battlerIndex: BattlerIndex, shownIvs: integer) {
+  constructor(battlerIndex: BattlerIndex, shownIvs: number) {
     super(battlerIndex);
 
     this.shownIvs = shownIvs;

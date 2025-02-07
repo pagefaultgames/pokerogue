@@ -91,7 +91,7 @@ export class GameMode implements GameModeConfig {
    * - 20 for Daily Runs
    * - 5 for all other modes
    */
-  getStartingLevel(): integer {
+  getStartingLevel(): number {
     if (Overrides.STARTING_LEVEL_OVERRIDE) {
       return Overrides.STARTING_LEVEL_OVERRIDE;
     }
@@ -108,7 +108,7 @@ export class GameMode implements GameModeConfig {
    * - override from overrides.ts
    * - 1000
    */
-  getStartingMoney(): integer {
+  getStartingMoney(): number {
     return Overrides.STARTING_MONEY_OVERRIDE || 1000;
   }
 
@@ -127,7 +127,7 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getWaveForDifficulty(waveIndex: integer, ignoreCurveChanges: boolean = false): integer {
+  getWaveForDifficulty(waveIndex: number, ignoreCurveChanges: boolean = false): number {
     switch (this.modeId) {
       case GameModes.DAILY:
         return waveIndex + 30 + (!ignoreCurveChanges ? Math.floor(waveIndex / 5) : 0);
@@ -142,7 +142,7 @@ export class GameMode implements GameModeConfig {
    * @param arena the current {@linkcode Arena}
    * @returns `true` if a trainer should be generated, `false` otherwise
    */
-  isWaveTrainer(waveIndex: integer, arena: Arena): boolean {
+  isWaveTrainer(waveIndex: number, arena: Arena): boolean {
     /**
      * Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
      */
@@ -186,7 +186,7 @@ export class GameMode implements GameModeConfig {
     return false;
   }
 
-  isTrainerBoss(waveIndex: integer, biomeType: Biome, offsetGym: boolean): boolean {
+  isTrainerBoss(waveIndex: number, biomeType: Biome, offsetGym: boolean): boolean {
     switch (this.modeId) {
       case GameModes.DAILY:
         return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
@@ -195,7 +195,7 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getOverrideSpecies(waveIndex: integer): PokemonSpecies | null {
+  getOverrideSpecies(waveIndex: number): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
       const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
         && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
@@ -211,7 +211,7 @@ export class GameMode implements GameModeConfig {
    * @param modeId game mode
    * @returns if the current wave is final for classic or daily OR a minor boss in endless
    */
-  isWaveFinal(waveIndex: integer, modeId: GameModes = this.modeId): boolean {
+  isWaveFinal(waveIndex: number, modeId: GameModes = this.modeId): boolean {
     switch (modeId) {
       case GameModes.CLASSIC:
       case GameModes.CHALLENGE:
@@ -228,7 +228,7 @@ export class GameMode implements GameModeConfig {
      * Every 10 waves is a boss battle
      * @returns true if waveIndex is a multiple of 10
      */
-  isBoss(waveIndex: integer): boolean {
+  isBoss(waveIndex: number): boolean {
     return waveIndex % 10 === 0;
   }
 
@@ -244,7 +244,7 @@ export class GameMode implements GameModeConfig {
      * At this time it is paradox pokemon
      * @returns true if waveIndex is a multiple of 50 in Endless
      */
-  isEndlessBoss(waveIndex: integer): boolean {
+  isEndlessBoss(waveIndex: number): boolean {
     return waveIndex % 50 === 0 &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
@@ -254,7 +254,7 @@ export class GameMode implements GameModeConfig {
      * At this time it is Eternatus
      * @returns true if waveIndex is a multiple of 250 in Endless
      */
-  isEndlessMinorBoss(waveIndex: integer): boolean {
+  isEndlessMinorBoss(waveIndex: number): boolean {
     return waveIndex % 250 === 0 &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
@@ -264,27 +264,27 @@ export class GameMode implements GameModeConfig {
      * At this time it is Eternamax Eternatus
      * @returns true if waveIndex is a multiple of 1000 in Endless
      */
-  isEndlessMajorBoss(waveIndex: integer): boolean {
+  isEndlessMajorBoss(waveIndex: number): boolean {
     return waveIndex % 1000 === 0 &&
         (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
   /**
    * Checks whether there is a fixed battle on this gamemode on a given wave.
-   * @param {integer} waveIndex The wave to check.
+   * @param {number} waveIndex The wave to check.
    * @returns {boolean} If this game mode has a fixed battle on this wave
    */
-  isFixedBattle(waveIndex: integer): boolean {
+  isFixedBattle(waveIndex: number): boolean {
     const dummyConfig = new FixedBattleConfig();
     return this.battleConfig.hasOwnProperty(waveIndex) || applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig);
   }
 
   /**
    * Returns the config for the fixed battle for a particular wave.
-   * @param {integer} waveIndex The wave to check.
+   * @param {number} waveIndex The wave to check.
    * @returns {boolean} The fixed battle for this wave.
    */
-  getFixedBattle(waveIndex: integer): FixedBattleConfig {
+  getFixedBattle(waveIndex: number): FixedBattleConfig {
     const challengeConfig = new FixedBattleConfig();
     if (applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
       return challengeConfig;
@@ -294,7 +294,7 @@ export class GameMode implements GameModeConfig {
   }
 
 
-  getClearScoreBonus(): integer {
+  getClearScoreBonus(): number {
     switch (this.modeId) {
       case GameModes.CLASSIC:
       case GameModes.CHALLENGE:
@@ -306,7 +306,7 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getEnemyModifierChance(isBoss: boolean): integer {
+  getEnemyModifierChance(isBoss: boolean): number {
     switch (this.modeId) {
       case GameModes.CLASSIC:
       case GameModes.CHALLENGE:

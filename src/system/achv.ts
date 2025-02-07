@@ -25,7 +25,7 @@ export class Achv {
   public name: string;
   public description: string;
   public iconImage: string;
-  public score: integer;
+  public score: number;
 
   public secret: boolean;
   public hasParent: boolean;
@@ -33,7 +33,7 @@ export class Achv {
 
   private conditionFunc: ConditionFn | undefined;
 
-  constructor(localizationKey:string, name: string, description: string, iconImage: string, score: integer, conditionFunc?: ConditionFn) {
+  constructor(localizationKey:string, name: string, description: string, iconImage: string, score: number, conditionFunc?: ConditionFn) {
     this.name = name;
     this.description = description;
     this.iconImage = iconImage;
@@ -89,58 +89,58 @@ export class Achv {
 }
 
 export class MoneyAchv extends Achv {
-  moneyAmount: integer;
+  moneyAmount: number;
 
-  constructor(localizationKey: string, name: string, moneyAmount: integer, iconImage: string, score: integer) {
+  constructor(localizationKey: string, name: string, moneyAmount: number, iconImage: string, score: number) {
     super(localizationKey, name, "", iconImage, score, (_args: any[]) => globalScene.money >= this.moneyAmount);
     this.moneyAmount = moneyAmount;
   }
 }
 
 export class RibbonAchv extends Achv {
-  ribbonAmount: integer;
+  ribbonAmount: number;
 
-  constructor(localizationKey: string, name: string, ribbonAmount: integer, iconImage: string, score: integer) {
+  constructor(localizationKey: string, name: string, ribbonAmount: number, iconImage: string, score: number) {
     super(localizationKey, name, "", iconImage, score, (_args: any[]) => globalScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
     this.ribbonAmount = ribbonAmount;
   }
 }
 
 export class DamageAchv extends Achv {
-  damageAmount: integer;
+  damageAmount: number;
 
-  constructor(localizationKey: string, name: string, damageAmount: integer, iconImage: string, score: integer) {
+  constructor(localizationKey: string, name: string, damageAmount: number, iconImage: string, score: number) {
     super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount);
     this.damageAmount = damageAmount;
   }
 }
 
 export class HealAchv extends Achv {
-  healAmount: integer;
+  healAmount: number;
 
-  constructor(localizationKey: string, name: string, healAmount: integer, iconImage: string, score: integer) {
+  constructor(localizationKey: string, name: string, healAmount: number, iconImage: string, score: number) {
     super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount);
     this.healAmount = healAmount;
   }
 }
 
 export class LevelAchv extends Achv {
-  level: integer;
+  level: number;
 
-  constructor(localizationKey: string, name: string, level: integer, iconImage: string, score: integer) {
+  constructor(localizationKey: string, name: string, level: number, iconImage: string, score: number) {
     super(localizationKey, name, "", iconImage, score, (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level);
     this.level = level;
   }
 }
 
 export class ModifierAchv extends Achv {
-  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, modifierFunc: (modifier: Modifier) => boolean) {
+  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: number, modifierFunc: (modifier: Modifier) => boolean) {
     super(localizationKey, name, description, iconImage, score, (args: any[]) => modifierFunc((args[0] as Modifier)));
   }
 }
 
 export class ChallengeAchv extends Achv {
-  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, challengeFunc: (challenge: Challenge) => boolean) {
+  constructor(localizationKey: string, name: string, description: string, iconImage: string, score: number, challengeFunc: (challenge: Challenge) => boolean) {
     super(localizationKey, name, description, iconImage, score, (args: any[]) => challengeFunc(args[0] as Challenge));
   }
 }
@@ -370,7 +370,7 @@ export const achvs = {
 
 export function initAchievements() {
   const achvKeys = Object.keys(achvs);
-  achvKeys.forEach((a: string, i: integer) => {
+  achvKeys.forEach((a: string, i: number) => {
     achvs[a].id = a;
     if (achvs[a].hasParent) {
       achvs[a].parentId = achvKeys[i - 1];

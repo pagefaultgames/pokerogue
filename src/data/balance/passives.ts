@@ -6,7 +6,7 @@ export interface PassiveAbilities {
 }
 
 interface StarterPassiveAbilities {
-  [key: integer]: PassiveAbilities
+  [key: number]: PassiveAbilities
 }
 
 export const starterPassiveAbilities: StarterPassiveAbilities = {
