@@ -289,7 +289,8 @@ export class MoveEffectPhase extends PokemonPhase {
           /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
           const isProtected =
             ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.getMove().moveTarget) &&
-            (bypassIgnoreProtect.value || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target)) &&
+            (bypassIgnoreProtect.value ||
+              !this.move.getMove().doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target })) &&
             (hasConditionalProtectApplied.value ||
               (!target.findTags(t => t instanceof DamageProtectedTag).length &&
                 target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType))) ||

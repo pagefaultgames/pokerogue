@@ -1,4 +1,4 @@
-import { ChargeAnim, MoveChargeAnim } from "../battle-anims";
+import { ChargeAnim, initMoveAnim, loadMoveAnimAssets, MoveChargeAnim } from "../battle-anims";
 import {
   CommandedTag,
   EncoreTag,
@@ -618,12 +618,25 @@ export default class Move implements Localizable {
 
   /**
    * Checks if the move flag applies to the pokemon(s) using/receiving the move
+   *
+   * This method will take the `user`'s ability into account when reporting flags, e.g.
+   * calling this method for {@linkcode MoveFlags.MAKES_CONTACT | MAKES_CONTACT}
+   * will return `false` if the user has a {@linkcode Abilities.LONG_REACH} that is not being suppressed.
+   *
+   * To simply check whether the move has a flag, use {@linkcode hasFlag}.
    * @param flag {@linkcode MoveFlags} MoveFlag to check on user and/or target
    * @param user {@linkcode Pokemon} the Pokemon using the move
    * @param target {@linkcode Pokemon} the Pokemon receiving the move
+   * @param isFollowUp (defaults to `false) `true` if the move was used as a follow up
    * @returns boolean
+   * @see {@linkcode hasFlag}
    */
-  checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon | null): boolean {
+  doesFlagEffectApply({ flag, user, target = null, isFollowUp = false }: {
+    flag: MoveFlags;
+    user: Pokemon;
+    target?: Pokemon | null;
+    isFollowUp?: boolean;
+  }): boolean {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
       case MoveFlags.MAKES_CONTACT:
@@ -638,11 +651,14 @@ export default class Move implements Localizable {
           if (abilityEffectsIgnored.value) {
             return true;
           }
+          // Sunsteel strike, Moongeist beam, and photon geyser will not ignore abilities if invoked
+          // by another move, such as via metronome.
+          return this.hasFlag(MoveFlags.IGNORE_ABILITIES) && !isFollowUp;
         }
         break;
       case MoveFlags.IGNORE_PROTECT:
         if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
-          && this.checkFlag(MoveFlags.MAKES_CONTACT, user, null)) {
+          && this.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user, target })) {
           return true;
         }
         break;
@@ -1214,7 +1230,7 @@ export class MoveEffectAttr extends MoveAttr {
   canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]) {
     return !! (this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
            && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) ||
-                move.checkFlag(MoveFlags.IGNORE_PROTECT, user, target));
+                move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }));
   }
 
   /** Applies move effects so long as they are able based on {@linkcode canApply} */
