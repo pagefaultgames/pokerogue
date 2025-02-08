@@ -121,7 +121,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 const valueReductionMax = 2;
 
 // Position of UI elements
-const speciesContainerX = 109; // if team on the RIGHT: 109 / if on the LEFT: 143
+const speciesContainerX = 109;
 
 interface SpeciesDetails {
   shiny?: boolean,
@@ -1375,7 +1375,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.getRegionName(preSpecies ?? this.species),
                         handler: () => {
                           const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
-                          // Attempts to find the formIndex of the evolved species
+                          // Attempts to find the formIndex of the prevolved species
                           const newFormKey = pre.preFormKey ? pre.preFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
                           const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
                           const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
@@ -1568,15 +1568,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 do {
                   newVariant = (newVariant + 1) % 3;
                   if (newVariant === 0) {
-                    if (this.isCaught() & DexAttr.DEFAULT_VARIANT) { // TODO: is this bang correct?
+                    if (this.isCaught() & DexAttr.DEFAULT_VARIANT) {
                       break;
                     }
                   } else if (newVariant === 1) {
-                    if (this.isCaught() & DexAttr.VARIANT_2) { // TODO: is this bang correct?
+                    if (this.isCaught() & DexAttr.VARIANT_2) {
                       break;
                     }
                   } else {
-                    if (this.isCaught() & DexAttr.VARIANT_3) { // TODO: is this bang correct?
+                    if (this.isCaught() & DexAttr.VARIANT_3) {
                       break;
                     }
                   }
@@ -1612,7 +1612,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   break;
                 }
               } while (newFormIndex !== props.formIndex);
-              // TODO: Is this still needed?
               starterAttributes.form = newFormIndex; // store the selected form
               this.savedStarterAttributes.form = starterAttributes.form;
               this.formIndex = newFormIndex;
@@ -1632,7 +1631,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           case Button.STATS:
             if (!isCaught || !isFormCaught) {
               error = true;
-            } else { // checks to see if the party has 6 or fewer pokemon
+            } else {
               const ui = this.getUi();
               const options: any[] = []; // TODO: add proper type
 
@@ -1780,7 +1779,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
               const newIndex = index <= 0 ? allSpecies.length - 1 : index - 1;
               const newSpecies = allSpecies[newIndex];
-              // Attempts to find the formIndex of the evolved species
               const matchingForm = newSpecies?.forms.find(form => form.formKey === this.species?.forms[this.formIndex]?.formKey);
               const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
               this.starterAttributes.form = newFormIndex;
@@ -1796,7 +1794,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
               const newIndex = index >= allSpecies.length - 1 ? 0 : index + 1;
               const newSpecies = allSpecies[newIndex];
-              // Attempts to find the formIndex of the evolved species
               const matchingForm = newSpecies?.forms.find(form => form.formKey === this.species?.forms[this.formIndex]?.formKey);
               const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
               this.starterAttributes.form = newFormIndex;

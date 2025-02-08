@@ -43,20 +43,6 @@ import { Biome } from "#enums/biome";
 import { globalScene } from "#app/global-scene";
 
 
-// We don't need this interface here
-export interface Starter {
-  species: PokemonSpecies;
-  starter: PokemonSpecies;
-  dexAttr: bigint;
-  abilityIndex: number,
-  passive: boolean;
-  nature: Nature;
-  moveset?: StarterMoveset;
-  pokerus: boolean;
-  nickname?: string;
-}
-
-
 interface LanguageSetting {
   starterInfoTextSize: string,
   instructionTextSize: string,
@@ -130,7 +116,7 @@ const valueReductionMax = 2;
 
 // Position of UI elements
 const filterBarHeight = 17;
-const speciesContainerX = 143; // if team on the RIGHT: 109 / if on the LEFT: 143
+const speciesContainerX = 143;
 
 /**
  * Calculates the starter position for a Pokemon of a given UI index
@@ -196,8 +182,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   protected blockInput: boolean = false;
 
   // for text filters
-
-
   private readonly textPadding = 8;
   private readonly defaultMessageBoxWidth = 220;
   private readonly defaultWordWrapWidth = 1224;
@@ -845,13 +829,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
     }
 
     const maxColumns = 9;
-    //    const maxRows = 9;
     const numberOfStarters = this.filteredPokemonContainers.length;
     const numOfRows = Math.ceil(numberOfStarters / maxColumns);
     const currentRow = Math.floor(this.cursor / maxColumns);
-    const onScreenFirstIndex = this.scrollCursor * maxColumns; // this is first starter index on the screen
-    //    const onScreenLastIndex = Math.min(this.filteredPokemonContainers.length - 1, onScreenFirstIndex + maxRows * maxColumns - 1); // this is the last starter index on the screen
-    //    const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
+    const onScreenFirstIndex = this.scrollCursor * maxColumns; // this is first index on the screen
 
     // TODO: use the above to let the cursor go to the correct position when switching back.
 
@@ -867,7 +848,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         // CANCEL with a filter menu open > close it
         this.filterBar.toggleDropDown(this.filterBarCursor);
 
-        // if there are possible starters go the first one of the list
+        // if there are possible pokemon go the first one of the list
         if (numberOfStarters > 0) {
           this.setFilterMode(false);
           this.scrollCursor = 0;
@@ -948,7 +929,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
           if (this.filterBar.openDropDown) {
             success = this.filterBar.incDropDownCursor();
           } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
-          // DOWN from the last filter, move to Pokemon in party if any
+          // DOWN from the last filter
             this.setFilterMode(false);
             this.cursorObj.setVisible(false);
             success = true;
@@ -1033,18 +1014,18 @@ export default class PokedexUiHandler extends MessageUiHandler {
             break;
           case Button.DOWN:
             if (currentRow < numOfRows - 1) { // not last row
-              if (currentRow - this.scrollCursor === 8) { // last row of visible starters
+              if (currentRow - this.scrollCursor === 8) { // last row of visible pokemon
                 this.scrollCursor++;
               }
               success = this.setCursor(this.cursor + 9);
               this.updateScroll();
             } else if (numOfRows > 1) {
-            // DOWN from last row of Pokemon > Wrap around to first row
+            // DOWN from last row of pokemon > Wrap around to first row
               this.scrollCursor = 0;
               this.updateScroll();
               success = this.setCursor(this.cursor % 9);
             } else {
-            // DOWN from single row of Pokemon > Go to filters
+            // DOWN from single row of pokemon > Go to filters
               this.filterBarCursor = this.filterBar.getNearestFilter(this.filteredPokemonContainers[this.cursor]);
               this.setFilterMode(true);
               success = true;
@@ -1054,7 +1035,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             if (this.cursor % 9 !== 0) {
               success = this.setCursor(this.cursor - 1);
             } else {
-            // LEFT from filtered Pokemon, on the left edge
+            // LEFT from filtered pokemon, on the left edge
               this.filterTextCursor = this.filterText.getNearestFilter(this.filteredPokemonContainers[this.cursor]);
               this.setFilterTextMode(true);
               success = true;
@@ -1065,7 +1046,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
               success = this.setCursor(this.cursor + 1);
             } else {
-            // RIGHT from filtered Pokemon, on the right edge
+            // RIGHT from filtered pokemon, on the right edge
               this.filterTextCursor = this.filterText.getNearestFilter(this.filteredPokemonContainers[this.cursor]);
               this.setFilterTextMode(true);
               success = true;
@@ -1126,7 +1107,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     controlLabel.setVisible(true);
   }
 
-  // TODO: add a toggle to return props (show shinies in dex or not)
   getSanitizedProps(props: DexAttrProps): DexAttrProps {
     const sanitizedProps: DexAttrProps = {
       shiny: false,
@@ -1267,13 +1247,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
       const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
-      //const biomes = catchableSpecies[container.species.speciesId].map(b => Biome[b.biome]);
-      //      if (uncatchableSpecies.includes(container.species.speciesId) && biomes.length === 0) {
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }
-      // Only show uncatchable mons if all biomes are selected.
-      // TODO: Have an entry for uncatchable mons.
       const showNoBiome = (biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36) ? true : false;
       const fitsBiome = this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? "")) || showNoBiome;
 
@@ -1894,7 +1870,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   clear(): void {
     super.clear();
 
-    //    StarterPrefs.save(this.starterPreferences);
     this.cursor = -1;
     globalScene.ui.hideTooltip();
 

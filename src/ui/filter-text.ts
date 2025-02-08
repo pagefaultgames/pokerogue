@@ -21,11 +21,9 @@ export class FilterText extends Phaser.GameObjects.Container {
   private labels:  Phaser.GameObjects.Text[] = [];
   private selections:  Phaser.GameObjects.Text[] = [];
   private selectionStrings: string[] = [];
-  //  private dropDowns: DropDown[] = [];
   private rows: FilterTextRow[] = [];
   public cursorObj: Phaser.GameObjects.Image;
   public numFilters: number = 0;
-  //  public openDropDown: boolean = false;
   private lastCursor: number = -1;
   private uiTheme: UiTheme;
 
@@ -70,9 +68,6 @@ export class FilterText extends Phaser.GameObjects.Container {
     menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
 
-    //    this.initTutorialOverlay(this.menuContainer);
-    //    this.initPromptSprite(this.menuMessageBoxContainer);
-
     this.message = menuMessageText;
 
   }
@@ -85,7 +80,6 @@ export class FilterText extends Phaser.GameObjects.Container {
    * @returns true if successful, false if the provided column was already in use for another filter
    */
   addFilter(row: FilterTextRow, title: string): boolean {
-    // The column should be unique to each filter,
 
     const paddingX = 6;
     const cursorOffset = 8;
@@ -132,7 +126,6 @@ export class FilterText extends Phaser.GameObjects.Container {
     const buttonAction: any = {};
     buttonAction["buttonActions"] = [
       (sanitizedName: string) => {
-        //        ui.revertMode();
         ui.playSelect();
         const dialogueTestName = sanitizedName;
         //TODO: Is it really necessary to encode and decode?
@@ -160,8 +153,6 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.lastCursor = cursor;
   }
 
-
-  /////////////////From here down changes must be made
   /**
    * Highlight the labels of the FilterBar if the filters are different from their default values
    */
@@ -195,9 +186,6 @@ export class FilterText extends Phaser.GameObjects.Container {
         this.labels[i].y = lastBottom + spacing;
         this.selections[i].y = lastBottom + spacing;
       }
-      // Uncomment and adjust if necessary to position dropdowns vertically
-      // this.dropDowns[i].y = this.labels[i].y + this.labels[i].displayHeight + paddingY;
-      // this.dropDowns[i].x = this.width;
     }
   }
 
