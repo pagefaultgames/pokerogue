@@ -119,7 +119,8 @@ export class FaintPhase extends PokemonPhase {
     const alivePlayField = globalScene.getField(true);
     alivePlayField.forEach(p => applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon));
     if (pokemon.turnData?.attacksReceived?.length) {
-      const defeatSource = globalScene.getPokemonById(pokemon.turnData.attacksReceived[0].sourceId);
+      const defeatSource = this.source;
+
       if (defeatSource?.isOnField()) {
         applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
@@ -181,9 +182,7 @@ export class FaintPhase extends PokemonPhase {
         y: pokemon.y + 150,
         ease: "Sine.easeIn",
         onComplete: () => {
-          pokemon.resetSprite();
           pokemon.lapseTags(BattlerTagLapseType.FAINT);
-          globalScene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
 
           pokemon.y -= 150;
           pokemon.trySetStatus(StatusEffect.FAINT);
@@ -193,7 +192,7 @@ export class FaintPhase extends PokemonPhase {
             globalScene.addFaintedEnemyScore(pokemon as EnemyPokemon);
             globalScene.currentBattle.addPostBattleLoot(pokemon as EnemyPokemon);
           }
-          globalScene.field.remove(pokemon);
+          pokemon.leaveField();
           this.end();
         }
       });

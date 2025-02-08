@@ -221,7 +221,8 @@ describe("Moves - Instruct", () => {
   it("should allow for dancer copying of instructed dance move", async () => {
     game.override
       .battleType("double")
-      .enemyMoveset([ Moves.INSTRUCT, Moves.SPLASH ]);
+      .enemyMoveset([ Moves.INSTRUCT, Moves.SPLASH ])
+      .enemyLevel(1000);
     await game.classicMode.startBattle([ Species.ORICORIO, Species.VOLCARONA ]);
 
     const [ oricorio, volcarona ] = game.scene.getPlayerField();
@@ -236,11 +237,9 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     // fiery dance triggered dancer successfully for a total of 4 hits
-    // Volcarona fiery dance has a _small_ chance to 3HKO a shuckle in worst case, so we add the hit count of both
-    // foes to account for spillover
+    // Enemy level is set to a high value so that it does not faint even after all 4 hits
     instructSuccess(volcarona, Moves.FIERY_DANCE);
-    expect(game.scene.getEnemyField()[0].turnData.attacksReceived.length +
-    game.scene.getEnemyField()[1].turnData.attacksReceived.length).toBe(4);
+    expect(game.scene.getEnemyField()[0].turnData.attacksReceived.length).toBe(4);
   });
 
   it("should not repeat move when switching out", async () => {

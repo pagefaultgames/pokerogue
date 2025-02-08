@@ -8,7 +8,7 @@ export const variantData: any = {};
 
 export const variantColorCache = {};
 
-export function getVariantTint(variant: Variant): integer {
+export function getVariantTint(variant: Variant): number {
   switch (variant) {
     case 0:
       return 0xf8c020;
@@ -19,7 +19,7 @@ export function getVariantTint(variant: Variant): integer {
   }
 }
 
-export function getVariantIcon(variant: Variant): integer {
+export function getVariantIcon(variant: Variant): number {
   switch (variant) {
     case 0:
       return VariantTier.STANDARD;

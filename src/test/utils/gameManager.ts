@@ -24,6 +24,7 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
 import type InputsHandler from "#app/test/utils/inputsHandler";
+import type BallUiHandler from "#app/ui/ball-ui-handler";
 import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import type CommandUiHandler from "#app/ui/command-ui-handler";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -255,7 +256,7 @@ export default class GameManager {
    * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
    * @param movePosition The index of the move in the pokemon's moveset array
    */
-  selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
+  selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
@@ -387,7 +388,7 @@ export default class GameManager {
    * @param path - The path to the data file.
    * @returns A promise that resolves with a tuple containing a boolean indicating success and an integer status code.
    */
-  async importData(path): Promise<[boolean, integer]> {
+  async importData(path): Promise<[boolean, number]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
@@ -455,6 +456,24 @@ export default class GameManager {
       partyHandler.setCursor(slot);
       partyHandler.processInput(Button.ACTION); // select party slot
       partyHandler.processInput(Button.ACTION); // send out (or whatever option is at the top)
+    });
+  }
+
+  /**
+   * Select the BALL option from the command menu, then press Action; in the BALL
+   * menu, select a pokéball type and press Action again to throw it.
+   * @param ballIndex the index of the pokeball to throw
+   */
+  public doThrowPokeball(ballIndex: number) {
+    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
+      (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
+    });
+
+    this.onNextPrompt("CommandPhase", Mode.BALL, () => {
+      const ballHandler = this.scene.ui.getHandler() as BallUiHandler;
+      ballHandler.setCursor(ballIndex);
+      ballHandler.processInput(Button.ACTION); // select ball and throw
     });
   }
 

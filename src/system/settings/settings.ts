@@ -9,6 +9,7 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
+import { isLocal } from "#app/utils";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) => i ? {
   value: (i * 10).toString(),
@@ -150,6 +151,7 @@ export const SettingKeys = {
   Show_Stats_on_Level_Up: "SHOW_LEVEL_UP_STATS",
   Shop_Cursor_Target: "SHOP_CURSOR_TARGET",
   Command_Cursor_Memory: "COMMAND_CURSOR_MEMORY",
+  Dex_For_Devs: "DEX_FOR_DEVS",
   Candy_Upgrade_Notification: "CANDY_UPGRADE_NOTIFICATION",
   Candy_Upgrade_Display: "CANDY_UPGRADE_DISPLAY",
   Move_Info: "MOVE_INFO",
@@ -691,6 +693,16 @@ export const Setting: Array<Setting> = [
   }
 ];
 
+if (isLocal) {
+  Setting.push({
+    key: SettingKeys.Dex_For_Devs,
+    label: i18next.t("settings:dexForDevs"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.GENERAL
+  });
+}
+
 /**
  * Return the index of a Setting
  * @param key SettingKey
@@ -713,7 +725,7 @@ export function resetSettings() {
  * @param value value to update setting with
  * @returns true if successful, false if not
  */
-export function setSetting(setting: string, value: integer): boolean {
+export function setSetting(setting: string, value: number): boolean {
   const index: number = settingIndex(setting);
   if (index === -1) {
     return false;
@@ -827,6 +839,9 @@ export function setSetting(setting: string, value: integer): boolean {
       break;
     case SettingKeys.Command_Cursor_Memory:
       globalScene.commandCursorMemory = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Dex_For_Devs:
+      globalScene.dexForDevs = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.EXP_Gains_Speed:
       globalScene.expGainsSpeed = value;
