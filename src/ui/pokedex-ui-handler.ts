@@ -928,19 +928,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
         case Button.DOWN:
           if (this.filterBar.openDropDown) {
             success = this.filterBar.incDropDownCursor();
-          } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
-          // DOWN from the last filter
-            this.setFilterMode(false);
-            this.cursorObj.setVisible(false);
-            success = true;
           } else if (numberOfStarters > 0) {
           // DOWN from filter bar to top of Pokemon list
             this.setFilterMode(false);
             this.scrollCursor = 0;
             this.updateScroll();
             const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
-            const targetCol = Math.min(8, Math.floor(proportion * 11));
+            const targetCol = Math.min(8, Math.floor(proportion * 8));
             this.setCursor(Math.min(targetCol, numberOfStarters));
+            console.log(this.filterBar.numFilters, proportion, targetCol);
             success = true;
           }
           break;
