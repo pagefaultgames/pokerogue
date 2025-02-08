@@ -54,7 +54,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK) === 0); // Attack stage should still be at 0
+    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not grant stat boost if enemy is KO'd by status effect", async () => {
@@ -68,7 +68,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK) === 0); // Attack stage should still be at 0
+    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not grant stat boost if enemy is KO'd by damaging weather", async () => {
@@ -81,7 +81,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK) === 0); // Attack stage should still be at 0
+    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not grant stat boost if enemy is KO'd by Dry Skin + Harsh Sunlight", async () => {
@@ -97,7 +97,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK) === 0); // Attack stage should still be at 0
+    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not grant stat boost if enemy is saved by Reviver Seed", async () => {
@@ -110,7 +110,7 @@ describe("Moves - Fell Stinger", () => {
     game.move.select(Moves.FELL_STINGER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(leadPokemon.getStatStage(Stat.ATK) === 0); // Attack stage should still be at 0
+    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not grant stat boost if enemy is KO'd by Salt Cure", async () => {
@@ -196,6 +196,6 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon?.getStatStage(Stat.ATK)).toBe(3); // Attack stage should have risen to 3
+    expect(leadPokemon?.getStatStage(Stat.ATK)).toBe(3);
   });
 });
