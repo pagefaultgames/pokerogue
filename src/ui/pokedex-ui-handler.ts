@@ -905,18 +905,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
         case Button.UP:
           if (this.filterBar.openDropDown) {
             success = this.filterBar.decDropDownCursor();
-          } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
-          // UP from the last filter, move to start button
-            this.setFilterMode(false);
-            this.cursorObj.setVisible(false);
-            success = true;
           } else if (numberOfStarters > 0) {
           // UP from filter bar to bottom of Pokemon list
             this.setFilterMode(false);
             this.scrollCursor = Math.max(0, numOfRows - 9);
             this.updateScroll();
-            const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
-            const targetCol = Math.min(8, Math.floor(proportion * 11));
+            const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
+            const targetCol = Math.min(8, proportion < 0.5 ? Math.floor(proportion * 8) : Math.ceil(proportion * 8));
             if (numberOfStarters % 9 > targetCol) {
               this.setCursor(numberOfStarters - (numberOfStarters) % 9 + targetCol);
             } else {
@@ -934,9 +929,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
             this.scrollCursor = 0;
             this.updateScroll();
             const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
-            const targetCol = Math.min(8, Math.floor(proportion * 8));
+            const targetCol = Math.min(8, proportion < 0.5 ? Math.floor(proportion * 8) : Math.ceil(proportion * 8));
             this.setCursor(Math.min(targetCol, numberOfStarters));
-            console.log(this.filterBar.numFilters, proportion, targetCol);
             success = true;
           }
           break;
