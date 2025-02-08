@@ -2264,7 +2264,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       // Form text
       if (isFormCaught || isFormSeen) {
         this.pokemonFormText.setVisible(true);
-        if (isFormSeen) {
+        if (!isFormCaught) {
           this.pokemonFormText.setY(18);
         }
       } else {
