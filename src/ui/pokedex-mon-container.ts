@@ -1,7 +1,16 @@
+import type { Variant } from "#app/data/variant";
 import { globalScene } from "#app/global-scene";
+import { isNullOrUndefined } from "#app/utils";
 import type PokemonSpecies from "../data/pokemon-species";
 import { addTextObject, TextStyle } from "./text";
 
+
+interface SpeciesDetails {
+  shiny?: boolean,
+  formIndex?: number
+  female?: boolean,
+  variant?: Variant
+}
 export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
   public icon: Phaser.GameObjects.Sprite;
@@ -21,13 +30,28 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public passive2Icon: Phaser.GameObjects.Image;
   public cost: number = 0;
 
-  constructor(species: PokemonSpecies) {
+  constructor(species: PokemonSpecies, options: SpeciesDetails = {}) {
     super(globalScene, 0, 0);
 
     this.species = species;
 
+    const { shiny, formIndex, female, variant } = options;
+
     const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
     const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+
+    if (!isNullOrUndefined(formIndex)) {
+      defaultProps.formIndex = formIndex;
+    }
+    if (!isNullOrUndefined(shiny)) {
+      defaultProps.shiny = shiny;
+    }
+    if (!isNullOrUndefined(variant)) {
+      defaultProps.variant = variant;
+    }
+    if (!isNullOrUndefined(female)) {
+      defaultProps.female = female;
+    }
 
     // starter passive bg
     const starterPassiveBg = globalScene.add.image(2, 5, "passive_bg");

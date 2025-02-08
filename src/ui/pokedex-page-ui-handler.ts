@@ -43,7 +43,6 @@ import type { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
-import { StarterContainer } from "#app/ui/starter-container";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 import { BooleanHolder, capitalizeString, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, rgbHexToRgba, toReadableString } from "#app/utils";
 import type { Nature } from "#enums/nature";
@@ -127,8 +126,7 @@ interface SpeciesDetails {
   shiny?: boolean,
   formIndex?: number
   female?: boolean,
-  variant?: number,
-  forSeen?: boolean, // default = false
+  variant?: number
 }
 
 enum MenuOptions {
@@ -147,8 +145,6 @@ enum MenuOptions {
 export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private shinyOverlay: Phaser.GameObjects.Image;
-  private starterContainers: StarterContainer[] = [];
-  private filteredStarterContainers: StarterContainer[] = [];
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNameText: Phaser.GameObjects.Text;
@@ -312,10 +308,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
       this.speciesLoaded.set(species.speciesId, false);
       this.allSpecies.push(species);
-
-      const starterContainer = new StarterContainer(species).setVisible(false);
-      this.starterContainers.push(starterContainer);
-      starterBoxContainer.add(starterContainer);
     }
 
     this.starterSelectContainer.add(starterBoxContainer);
@@ -799,38 +791,42 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const hasShiny = caughtAttr & DexAttr.SHINY;
     const hasNonShiny = caughtAttr & DexAttr.NON_SHINY;
-    if (starterAttributes.shiny && !hasShiny) {
+    if (!hasShiny || (starterAttributes.shiny === undefined && hasNonShiny)) {
       // shiny form wasn't unlocked, purging shiny and variant setting
       starterAttributes.shiny = false;
       starterAttributes.variant = 0;
-    } else if (starterAttributes.shiny === false && !hasNonShiny) {
-      // non shiny form wasn't unlocked, purging shiny setting
-      starterAttributes.shiny = false;
+    } else if (!hasNonShiny || (starterAttributes.shiny === undefined && hasShiny)) {
+      starterAttributes.shiny = true;
+      starterAttributes.variant = 0;
     }
 
-    if (starterAttributes.variant !== undefined) {
-      const unlockedVariants = [
-        hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT,
-        hasShiny && caughtAttr & DexAttr.VARIANT_2,
-        hasShiny && caughtAttr & DexAttr.VARIANT_3
-      ];
-      if (isNaN(starterAttributes.variant) || starterAttributes.variant < 0) {
-        starterAttributes.variant = 0;
-      } else if (!unlockedVariants[starterAttributes.variant]) {
-        let highestValidIndex = -1;
-        for (let i = 0; i <= starterAttributes.variant && i < unlockedVariants.length; i++) {
-          if (unlockedVariants[i] !== 0n) {
-            highestValidIndex = i;
-          }
+    const unlockedVariants = [
+      hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT,
+      hasShiny && caughtAttr & DexAttr.VARIANT_2,
+      hasShiny && caughtAttr & DexAttr.VARIANT_3
+    ];
+    if (starterAttributes.variant === undefined || isNaN(starterAttributes.variant) || starterAttributes.variant < 0) {
+      starterAttributes.variant = 0;
+    } else if (!unlockedVariants[starterAttributes.variant]) {
+      let highestValidIndex = -1;
+      for (let i = 0; i <= starterAttributes.variant && i < unlockedVariants.length; i++) {
+        if (unlockedVariants[i] !== 0n) {
+          highestValidIndex = i;
         }
-        // Set to the highest valid index found or default to 0
-        starterAttributes.variant = highestValidIndex !== -1 ? highestValidIndex : 0;
       }
+      // Set to the highest valid index found or default to 0
+      starterAttributes.variant = highestValidIndex !== -1 ? highestValidIndex : 0;
     }
 
     if (starterAttributes.female !== undefined) {
       if ((starterAttributes.female && !(caughtAttr & DexAttr.FEMALE)) || (!starterAttributes.female && !(caughtAttr & DexAttr.MALE))) {
         starterAttributes.female = !starterAttributes.female;
+      }
+    } else {
+      if (caughtAttr & DexAttr.FEMALE) {
+        starterAttributes.female = true;
+      } else if (caughtAttr & DexAttr.MALE) {
+        starterAttributes.female = false;
       }
     }
 
@@ -1967,88 +1963,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.isCaught())) {
       this.pokemonNumberText.setText(padInt(species.speciesId, 4));
-      if (starterAttributes?.nickname) {
-        const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
-        this.pokemonNameText.setText(name);
-      } else {
-        this.pokemonNameText.setText(species.name);
-      }
 
       if (this.isCaught()) {
-        const colorScheme = starterColors[species.speciesId];
-
-        const luck = globalScene.gameData.getDexAttrLuck(this.isCaught());
-        this.pokemonLuckText.setVisible(!!luck);
-        this.pokemonLuckText.setText(luck.toString());
-        this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
-        this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
-
-        //Growth translate
-        let growthReadable = toReadableString(GrowthRate[species.growthRate]);
-        const growthAux = growthReadable.replace(" ", "_");
-        if (i18next.exists("growth:" + growthAux)) {
-          growthReadable = i18next.t("growth:" + growthAux as any);
-        }
-        this.pokemonGrowthRateText.setText(growthReadable);
-
-        this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
-        this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
-        this.pokemonGrowthRateLabelText.setVisible(true);
-        this.pokemonUncaughtText.setVisible(false);
-        this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);
-        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
-          this.pokemonHatchedIcon.setFrame("manaphy");
-        } else {
-          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
-        }
-        this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry?.hatchedCount}`);
 
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
-        const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        const variant = defaultProps.variant;
-        const tint = getVariantTint(variant);
-        this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
-        this.pokemonShinyIcon.setTint(tint);
-        this.pokemonShinyIcon.setVisible(defaultProps.shiny);
-        this.pokemonCaughtHatchedContainer.setVisible(true);
-        this.pokemonFormText.setVisible(true);
-
-        if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
-          this.pokemonCaughtHatchedContainer.setY(16);
-          this.pokemonShinyIcon.setY(135);
-          this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
-          [
-            this.pokemonCandyContainer,
-            this.pokemonHatchedIcon,
-            this.pokemonHatchedCountText
-          ].map(c => c.setVisible(false));
-          this.pokemonFormText.setY(25);
-        } else {
-          this.pokemonCaughtHatchedContainer.setY(25);
-          this.pokemonShinyIcon.setY(117);
-          this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-          this.pokemonCandyCountText.setText(`x${globalScene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].candyCount}`);
-          this.pokemonCandyContainer.setVisible(true);
-          this.pokemonFormText.setY(42);
-          this.pokemonHatchedIcon.setVisible(true);
-          this.pokemonHatchedCountText.setVisible(true);
-
-          const { currentFriendship, friendshipCap } = this.getFriendship(this.species.speciesId);
-          const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
-          this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
-
-          this.pokemonCandyContainer.on("pointerover", () => {
-            globalScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
-            this.activeTooltip = "CANDY";
-          });
-          this.pokemonCandyContainer.on("pointerout", () => {
-            globalScene.ui.hideTooltip();
-            this.activeTooltip = undefined;
-          });
-
-        }
-
         // Set default attributes if for some reason starterAttributes does not exist or attributes missing
         const props: StarterAttributes = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
         if (starterAttributes?.variant && !isNaN(starterAttributes.variant)) {
@@ -2065,12 +1983,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           female: props.female,
           variant: props.variant ?? 0,
         });
-
-        if (this.isFormCaught(this.species, props.form)) {
-          const speciesForm = getPokemonSpeciesForm(species.speciesId, props.form ?? 0);
-          this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-          this.pokemonSprite.clearTint();
-        }
       } else {
         this.pokemonGrowthRateText.setText("");
         this.pokemonGrowthRateLabelText.setVisible(false);
@@ -2091,8 +2003,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           shiny: props.shiny,
           formIndex: props.formIndex,
           female: props.female,
-          variant: props.variant,
-          forSeen: true
+          variant: props.variant
         });
         this.pokemonSprite.setTint(0x808080);
       }
@@ -2123,7 +2034,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}, forceUpdate?: boolean): void {
     let { shiny, formIndex, female, variant } = options;
-    const forSeen: boolean = options.forSeen ?? false;
     const oldProps = species ? this.starterAttributes : null;
 
     // We will only update the sprite if there is a change to form, shiny/variant
@@ -2194,11 +2104,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
 
       const isFormCaught = this.isFormCaught();
+      const isFormSeen = dexEntry ? (dexEntry.seenAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
       this.pokemonNumberText.setShadowColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true));
-
 
       const assetLoadCancelled = new BooleanHolder(false);
       this.assetLoadCancelled = assetLoadCancelled;
@@ -2219,13 +2129,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         });
       } else {
         this.pokemonSprite.setVisible(!this.statsMode);
-      }
-
-      const currentFilteredContainer = this.filteredStarterContainers.find(p => p.species.speciesId === species.speciesId);
-      if (currentFilteredContainer) {
-        const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
-        starterSprite.setTexture(species.getIconAtlasKey(formIndex, shiny, variant), species.getIconId(female!, formIndex, shiny, variant));
-        currentFilteredContainer.checkIconId(female, formIndex, shiny, variant);
       }
 
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
@@ -2250,24 +2153,127 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonGenderText.setText("");
       }
 
-      if (caughtAttr) {
-        if (isFormCaught) {
-          this.species.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
-            const crier = (this.species.forms && this.species.forms.length > 0) ? this.species.forms[formIndex ?? this.formIndex] : this.species;
-            crier.cry();
-          });
-
-          this.pokemonSprite.clearTint();
-        } else {
-          this.pokemonSprite.setTint(0x000000);
-        }
+      // Setting tint of the sprite
+      if (isFormCaught) {
+        this.species.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
+          const crier = (this.species.forms && this.species.forms.length > 0) ? this.species.forms[formIndex ?? this.formIndex] : this.species;
+          crier.cry();
+        });
+        this.pokemonSprite.clearTint();
+      } else if (isFormSeen) {
+        this.pokemonSprite.setTint(0x808080);
+      } else {
+        this.pokemonSprite.setTint(0);
       }
 
-      if (caughtAttr || forSeen) {
+      // Setting luck text and sparks
+      if (isFormCaught) {
+        const luck = globalScene.gameData.getDexAttrLuck(this.isCaught());
+        this.pokemonLuckText.setVisible(!!luck);
+        this.pokemonLuckText.setText(luck.toString());
+        this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
+        this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
+      } else {
+        this.pokemonLuckText.setVisible(false);
+        this.pokemonLuckLabelText.setVisible(false);
+      }
+
+      // Setting growth rate text
+      if (isFormCaught) {
+        let growthReadable = toReadableString(GrowthRate[species.growthRate]);
+        const growthAux = growthReadable.replace(" ", "_");
+        if (i18next.exists("growth:" + growthAux)) {
+          growthReadable = i18next.t("growth:" + growthAux as any);
+        }
+        this.pokemonGrowthRateText.setText(growthReadable);
+
+        this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
+        this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
+        this.pokemonGrowthRateLabelText.setVisible(true);
+      } else {
+        this.pokemonGrowthRateText.setText("");
+        this.pokemonGrowthRateLabelText.setVisible(false);
+      }
+
+      // Caught and hatched
+      if (isFormCaught) {
+        const colorScheme = starterColors[species.speciesId];
+
+        this.pokemonUncaughtText.setVisible(false);
+        this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);
+        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+          this.pokemonHatchedIcon.setFrame("manaphy");
+        } else {
+          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
+        }
+        this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry?.hatchedCount}`);
+
+        const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
+        const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        const variant = defaultProps.variant;
+        const tint = getVariantTint(variant);
+        this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
+        this.pokemonShinyIcon.setTint(tint);
+        this.pokemonShinyIcon.setVisible(defaultProps.shiny);
+        this.pokemonCaughtHatchedContainer.setVisible(true);
+
+        if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
+          this.pokemonCaughtHatchedContainer.setY(16);
+          this.pokemonShinyIcon.setY(135);
+          this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
+          [
+            this.pokemonCandyContainer,
+            this.pokemonHatchedIcon,
+            this.pokemonHatchedCountText
+          ].map(c => c.setVisible(false));
+          this.pokemonFormText.setY(25);
+        } else {
+          this.pokemonCaughtHatchedContainer.setY(25);
+          this.pokemonShinyIcon.setY(117);
+          this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
+          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
+          this.pokemonCandyCountText.setText(`x${globalScene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].candyCount}`);
+          this.pokemonCandyContainer.setVisible(true);
+          this.pokemonFormText.setY(42);
+          this.pokemonHatchedIcon.setVisible(true);
+          this.pokemonHatchedCountText.setVisible(true);
+
+          const { currentFriendship, friendshipCap } = this.getFriendship(this.species.speciesId);
+          const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
+          this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
+
+          this.pokemonCandyContainer.on("pointerover", () => {
+            globalScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
+            this.activeTooltip = "CANDY";
+          });
+          this.pokemonCandyContainer.on("pointerout", () => {
+            globalScene.ui.hideTooltip();
+            this.activeTooltip = undefined;
+          });
+
+        }
+      } else {
+        this.pokemonUncaughtText.setVisible(true);
+        this.pokemonCaughtHatchedContainer.setVisible(false);
+        this.pokemonCandyContainer.setVisible(false);
+        this.pokemonShinyIcon.setVisible(false);
+      }
+
+      // Form text
+      if (isFormCaught || isFormSeen) {
+        this.pokemonFormText.setVisible(true);
+        if (isFormSeen) {
+          this.pokemonFormText.setY(18);
+        }
+      } else {
+        this.pokemonFormText.setVisible(false);
+      }
+
+      // Setting type icons
+      if (isFormCaught || isFormSeen) {
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
         this.pokemonFormText.setText(this.getFormString((speciesForm as PokemonForm).formKey, species));
-
       } else {
         this.setTypeIcons(null, null);
         this.pokemonFormText.setText("");
