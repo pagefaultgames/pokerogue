@@ -1287,13 +1287,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const passives = starterPassiveAbilities[this.getStarterSpeciesId(container.species.speciesId)] ?? {} as PassiveAbilities;
 
       const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
-      const fitsFormAbility = container.species.forms.some(form => allAbilities[form.ability1].name === selectedAbility1);
-      const fitsAbility1 = abilities.includes(selectedAbility1) || fitsFormAbility || selectedAbility1 === this.filterText.defaultText;
-      const fitsPassive1 = Object.values(passives).some(p => p.name === selectedAbility1);
+      const fitsFormAbility1 = container.species.forms.some(form => [ form.ability1, form.ability2, form.abilityHidden ].map(a => allAbilities[a].name).includes(selectedAbility1));
+      const fitsAbility1 = abilities.includes(selectedAbility1) || fitsFormAbility1 || selectedAbility1 === this.filterText.defaultText;
+      const fitsPassive1 = Object.values(passives).some(p => allAbilities[p].name === selectedAbility1);
 
       const selectedAbility2 = this.filterText.getValue(FilterTextRow.ABILITY_2);
-      const fitsAbility2 = abilities.includes(selectedAbility2) || fitsFormAbility || selectedAbility2 === this.filterText.defaultText;
-      const fitsPassive2 = Object.values(passives).some(p => p.name === selectedAbility2);
+      const fitsFormAbility2 = container.species.forms.some(form => [ form.ability1, form.ability2, form.abilityHidden ].map(a => allAbilities[a].name).includes(selectedAbility2));
+      const fitsAbility2 = abilities.includes(selectedAbility2) || fitsFormAbility2 || selectedAbility2 === this.filterText.defaultText;
+      const fitsPassive2 = Object.values(passives).some(p => allAbilities[p].name === selectedAbility2);
 
       // If both fields have been set to the same ability, show both ability and passive
       const fitsAbilities = (fitsAbility1 && (fitsPassive2 || selectedAbility2 === this.filterText.defaultText)) ||
@@ -1301,11 +1302,18 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       container.passive1Icon.setVisible(false);
       container.passive2Icon.setVisible(false);
-      if (fitsPassive1) {
-        container.passive1Icon.setVisible(true);
-      }
-      if (fitsPassive2) {
-        container.passive2Icon.setVisible(true);
+      if (fitsPassive1 || fitsPassive2) {
+        const starterId = starterColors.hasOwnProperty(container.species.speciesId) ? container.species.speciesId : pokemonStarters[container.species.speciesId];
+        const colorScheme = starterColors[starterId];
+        if (fitsPassive1) {
+          container.passive1Icon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
+          container.passive1OverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
+          container.passive1Icon.setVisible(true);
+        } else {
+          container.passive2Icon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
+          container.passive2OverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
+          container.passive2Icon.setVisible(true);
+        }
       }
 
       // Gen filter
