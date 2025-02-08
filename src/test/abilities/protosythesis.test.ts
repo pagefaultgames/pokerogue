@@ -24,7 +24,7 @@ describe("Abilities - Protosynthesis", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([ Moves.SPLASH, Moves.TACKLE ])
       .ability(Abilities.PROTOSYNTHESIS)
       .battleType("single")
       .disableCrits()
@@ -36,25 +36,23 @@ describe("Abilities - Protosynthesis", () => {
   it("should not consider temporary items when determining which stat to boost", async() => {
     // Mew has uniform base stats
     game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }])
-      .ability(Abilities.PROTOSYNTHESIS)
       .enemyMoveset(Moves.SUNNY_DAY)
       .startingLevel(100)
-      .enemyLevel(100)
-      .moveset([ Moves.TACKLE, Moves.SPLASH ]);
+      .enemyLevel(100);
     await game.classicMode.startBattle([ Species.MEW ]);
     const mew = game.scene.getPlayerPokemon()!;
     // Nature of starting mon is randomized. We need to fix it to a neutral nature for the automated test.
     mew.setNature(Nature.HARDY);
     const enemy = game.scene.getEnemyPokemon()!;
-    const def_before_boost = mew?.getEffectiveStat(Stat.DEF, undefined, undefined, false, undefined, false, false, true);
-    const atk_before_boost = mew?.getEffectiveStat(Stat.ATK, undefined, undefined, false, undefined, false, false, true);
+    const def_before_boost = mew.getEffectiveStat(Stat.DEF, undefined, undefined, false, undefined, false, false, true);
+    const atk_before_boost = mew.getEffectiveStat(Stat.ATK, undefined, undefined, false, undefined, false, false, true);
     const initialHp = enemy.hp;
     game.move.select(Moves.TACKLE);
     await game.toNextTurn();
     const unboosted_dmg = initialHp - enemy.hp;
     enemy.hp = initialHp;
-    const def_after_boost = mew?.getEffectiveStat(Stat.DEF, undefined, undefined, false, undefined, false, false, true);
-    const atk_after_boost = mew?.getEffectiveStat(Stat.ATK, undefined, undefined, false, undefined, false, false, true);
+    const def_after_boost = mew.getEffectiveStat(Stat.DEF, undefined, undefined, false, undefined, false, false, true);
+    const atk_after_boost = mew.getEffectiveStat(Stat.ATK, undefined, undefined, false, undefined, false, false, true);
     game.move.select(Moves.TACKLE);
     await game.toNextTurn();
     const boosted_dmg = initialHp - enemy.hp;
