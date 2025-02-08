@@ -99,7 +99,7 @@ describe("Moves - Fell Stinger", () => {
 
   it("should not grant stat boost if enemy is saved by Reviver Seed", async () => {
     game.override
-      .enemyAbility(Abilities.KLUTZ)
+      .enemyAbility(Abilities.BALL_FETCH)
       .enemyHeldItems([{ name: "REVIVER_SEED" }]);
 
     await game.classicMode.startBattle([ Species.LEAVANNY ]);
@@ -170,10 +170,10 @@ describe("Moves - Fell Stinger", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
-    // Turn 1: set Bind, enemy splashes and does nothing
+    // Turn 1: set Leech Seed, enemy splashes and does nothing
     game.move.select(Moves.LEECH_SEED, 0, leftEnemy.getBattlerIndex());
 
-    // Turn 2: enemy Endures Fell Stinger, then dies to Bind
+    // Turn 2: enemy Endures Fell Stinger, then dies to Leech Seed
     await game.toNextTurn();
     expect(leftEnemy.isFainted()).toBe(false);
     leftEnemy.heal(leftEnemy.getMaxHp());
