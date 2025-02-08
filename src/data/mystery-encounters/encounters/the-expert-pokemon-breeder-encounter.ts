@@ -452,7 +452,7 @@ function getSpeciesFromPool(speciesPool: (Species | BreederSpeciesEvolution)[][]
 }
 
 function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number] {
-  const bst = pokemon.calculateBaseStats().reduce((a, b) => a + b, 0);
+  const bst = pokemon.getSpeciesForm().getBaseStatTotal();
   // 1 point for every 20 points below 680 BST the pokemon is, (max 18, min 1)
   const pointsFromBst = Math.min(Math.max(Math.floor((680 - bst) / 20), 1), 18);
 
@@ -575,7 +575,7 @@ function onGameOver() {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        globalScene.field.remove(pokemon, true);
+        pokemon.leaveField(true, true, true);
       }
     });
   }

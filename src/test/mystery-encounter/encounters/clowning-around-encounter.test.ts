@@ -345,9 +345,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       scene.getPlayerParty()[2].moveset = [];
       await runMysteryEncounterToEnd(game, 3);
 
-      const leadTypesAfter = scene.getPlayerParty()[0].customPokemonData?.types;
-      const secondaryTypesAfter = scene.getPlayerParty()[1].customPokemonData?.types;
-      const thirdTypesAfter = scene.getPlayerParty()[2].customPokemonData?.types;
+      const leadTypesAfter = scene.getPlayerParty()[0].getTypes();
+      const secondaryTypesAfter = scene.getPlayerParty()[1].getTypes();
+      const thirdTypesAfter = scene.getPlayerParty()[2].getTypes();
 
       expect(leadTypesAfter.length).toBe(2);
       expect(leadTypesAfter[0]).toBe(Type.WATER);
@@ -372,7 +372,7 @@ describe("Clowning Around - Mystery Encounter", () => {
   });
 });
 
-async function addItemToPokemon(scene: BattleScene, pokemon: Pokemon, stackCount: integer, itemType: PokemonHeldItemModifierType) {
+async function addItemToPokemon(scene: BattleScene, pokemon: Pokemon, stackCount: number, itemType: PokemonHeldItemModifierType) {
   const itemMod = itemType.newModifier(pokemon) as PokemonHeldItemModifier;
   itemMod.stackCount = stackCount;
   await scene.addModifier(itemMod, true, false, false, true);

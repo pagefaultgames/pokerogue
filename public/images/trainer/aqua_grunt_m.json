@@ -4,8 +4,8 @@
 			"image": "aqua_grunt_m.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 73,
-				"h": 73
+				"w": 74,
+				"h": 74
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 38,
+						"h": 74
 					},
 					"spriteSourceSize": {
-						"x": 17,
-						"y": 6,
-						"w": 46,
-						"h": 73
+						"x": 0,
+						"y": 0,
+						"w": 38,
+						"h": 74
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 46,
-						"h": 73
+						"w": 38,
+						"h": 74
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:efd07ff3ed1e610150a4b8ca18974343:d9b85b9eb11182e9e4669e2bd8b08694:72b7b50231708a9486d5f315824e4df1$"
+		"smartupdate": "$TexturePacker:SmartUpdate:ea2cdca90584089079af92307948ecdc:331e1f5314abbfcf58331ab0b9fd1c40:72b7b50231708a9486d5f315824e4df1$"
 	}
 }
