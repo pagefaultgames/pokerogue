@@ -1,4 +1,4 @@
-import { Game } from "phaser";
+import type { Game } from "phaser";
 
 const fragShader = `
 precision mediump float;

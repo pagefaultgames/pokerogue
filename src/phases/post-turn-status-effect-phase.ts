@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex } from "#app/battle";
-import { applyAbAttrs, BlockNonDirectDamageAbAttr, BlockStatusDamageAbAttr, ReduceBurnDamageAbAttr } from "#app/data/ability";
+import { globalScene } from "#app/global-scene";
+import type { BattlerIndex } from "#app/battle";
+import { applyAbAttrs, applyPostDamageAbAttrs, BlockNonDirectDamageAbAttr, BlockStatusDamageAbAttr, PostDamageAbAttr, ReduceBurnDamageAbAttr } from "#app/data/ability";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectActivationText } from "#app/data/status-effect";
 import { BattleSpec } from "#app/enums/battle-spec";
@@ -10,20 +10,20 @@ import * as Utils from "#app/utils";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
-    super(scene, battlerIndex);
+  constructor(battlerIndex: BattlerIndex) {
+    super(battlerIndex);
   }
 
   start() {
     const pokemon = this.getPokemon();
-    if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn()) {
+    if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn() && !pokemon.switchOutStatus) {
       pokemon.status.incrementTurn();
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
       applyAbAttrs(BlockStatusDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        this.scene.queueMessage(getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+        globalScene.queueMessage(getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
         const damage = new Utils.NumberHolder(0);
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
@@ -39,10 +39,11 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         }
         if (damage.value) {
           // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
-          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
+          globalScene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
           pokemon.updateInfo();
+          applyPostDamageAbAttrs(PostDamageAbAttr, pokemon, damage.value, pokemon.hasPassive(), false, []);
         }
-        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, false, () => this.end());
+        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(false, () => this.end());
       } else {
         this.end();
       }
@@ -52,8 +53,8 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
   }
 
   override end() {
-    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      this.scene.initFinalBossPhaseTwo(this.getPokemon());
+    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      globalScene.initFinalBossPhaseTwo(this.getPokemon());
     } else {
       super.end();
     }

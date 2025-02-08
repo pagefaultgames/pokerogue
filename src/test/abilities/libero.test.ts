@@ -1,13 +1,14 @@
 import { allMoves } from "#app/data/move";
-import { Type } from "#app/data/type";
-import { Weather, WeatherType } from "#app/data/weather";
-import { PlayerPokemon } from "#app/field/pokemon";
+import { Type } from "#enums/type";
+import { Weather } from "#app/data/weather";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -53,6 +54,7 @@ describe("Abilities - Libero", () => {
     },
   );
 
+  // Test for Gen9+ functionality, we are using previous funcionality
   test.skip(
     "ability applies only once per switch in",
     async () => {

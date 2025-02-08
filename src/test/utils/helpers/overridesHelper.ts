@@ -1,19 +1,22 @@
-import { StatusEffect } from "#app/data/status-effect";
-import { Weather, WeatherType } from "#app/data/weather";
+import type { Variant } from "#app/data/variant";
+import { Weather } from "#app/data/weather";
 import { Abilities } from "#app/enums/abilities";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
 import * as GameMode from "#app/game-mode";
-import { GameModes, getGameMode } from "#app/game-mode";
-import { ModifierOverride } from "#app/modifier/modifier-type";
+import type { GameModes } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode";
+import type { ModifierOverride } from "#app/modifier/modifier-type";
+import type { BattleStyle } from "#app/overrides";
 import Overrides from "#app/overrides";
+import type { Unlockables } from "#app/system/unlockables";
+import { Biome } from "#enums/biome";
+import { Moves } from "#enums/moves";
+import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
+import type { WeatherType } from "#enums/weather-type";
 import { vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
-import { Unlockables } from "#app/system/unlockables";
-import { Variant } from "#app/data/variant";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
 /**
  * Helper to handle overrides in tests
@@ -65,6 +68,26 @@ export class OverridesHelper extends GameManagerHelper {
   public xpMultiplier(value: number): this {
     vi.spyOn(Overrides, "XP_MULTIPLIER_OVERRIDE", "get").mockReturnValue(value);
     this.log(`XP Multiplier set to ${value}!`);
+    return this;
+  }
+
+  /**
+   * Override the wave level cap
+   * @param cap the level cap value to set; 0 uses normal level caps and negative values
+   * disable it completely
+   * @returns `this`
+   */
+  public levelCap(cap: number): this {
+    vi.spyOn(Overrides, "LEVEL_CAP_OVERRIDE", "get").mockReturnValue(cap);
+    let capStr: string;
+    if (cap > 0) {
+      capStr = `Level cap set to ${cap}!`;
+    } else if (cap < 0) {
+      capStr = "Level cap disabled!";
+    } else {
+      capStr = "Level cap reset to default value for wave.";
+    }
+    this.log(capStr);
     return this;
   }
 
@@ -137,7 +160,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Abilities | ability}
+   * Override the player (pokemon) {@linkcode Abilities | ability}.
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
    * @returns `this`
    */
@@ -158,6 +181,20 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  /**
+   * Forces the status of the player (pokemon) **passive** {@linkcode Abilities | ability}
+   * @param hasPassiveAbility forces the passive to be active if `true`, inactive if `false`
+   * @returns `this`
+   */
+  public hasPassiveAbility(hasPassiveAbility: boolean | null): this {
+    vi.spyOn(Overrides, "HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
+    if (hasPassiveAbility === null) {
+      this.log("Player Pokemon PASSIVE ability no longer force enabled or disabled!");
+    } else {
+      this.log(`Player Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!`);
+    }
+    return this;
+  }
   /**
    * Override the player (pokemon) {@linkcode Moves | moves}set
    * @param moveset the {@linkcode Moves | moves}set to set
@@ -237,13 +274,14 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the battle type (single or double)
+   * Override the battle type (e.g., single or double).
+   * @see {@linkcode Overrides.BATTLE_TYPE_OVERRIDE}
    * @param battleType battle type to set
    * @returns `this`
    */
-  public battleType(battleType: "single" | "double" | null): this {
+  public battleType(battleType: BattleStyle | null): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
-    this.log(`Battle type set to ${battleType} only!`);
+    this.log(battleType === null ? "Battle type override disabled!" : `Battle type set to ${battleType}!`);
     return this;
   }
 
@@ -298,6 +336,21 @@ export class OverridesHelper extends GameManagerHelper {
   public enemyPassiveAbility(passiveAbility: Abilities): this {
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
     this.log(`Enemy Pokemon PASSIVE ability set to ${Abilities[passiveAbility]} (=${passiveAbility})!`);
+    return this;
+  }
+
+  /**
+   * Forces the status of the enemy (pokemon) **passive** {@linkcode Abilities | ability}
+   * @param hasPassiveAbility forces the passive to be active if `true`, inactive if `false`
+   * @returns `this`
+   */
+  public enemyHasPassiveAbility(hasPassiveAbility: boolean | null): this {
+    vi.spyOn(Overrides, "OPP_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
+    if (hasPassiveAbility === null) {
+      this.log("Enemy Pokemon PASSIVE ability no longer force enabled or disabled!");
+    } else {
+      this.log(`Enemy Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!`);
+    }
     return this;
   }
 

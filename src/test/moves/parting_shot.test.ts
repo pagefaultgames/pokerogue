@@ -75,7 +75,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot should fail if target is -6/-6 de-buffed",
     async () => {
       game.override.moveset([ Moves.PARTING_SHOT, Moves.MEMENTO, Moves.SPLASH ]);
@@ -84,19 +84,19 @@ describe("Moves - Parting Shot", () => {
       // use Memento 3 times to debuff enemy
       game.move.select(Moves.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
-      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
       game.doSelectPartyPokemon(1);
 
       await game.phaseInterceptor.to(TurnInitPhase, false);
       game.move.select(Moves.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
-      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
       game.doSelectPartyPokemon(2);
 
       await game.phaseInterceptor.to(TurnInitPhase, false);
       game.move.select(Moves.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
-      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
       game.doSelectPartyPokemon(3);
 
       // set up done
@@ -117,7 +117,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out when mist is active",
     async () => {
       game.override
@@ -138,7 +138,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out against clear body ability",
     async () => {
       game.override
@@ -158,7 +158,7 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot should de-buff and not fail if no party available to switch - party size 1",
     async () => {
       await game.startBattle([ Species.MURKROW ]);
@@ -175,15 +175,15 @@ describe("Moves - Parting Shot", () => {
     }
   );
 
-  it.skip( // TODO: fix this bug to pass the test!
+  it.todo( // TODO: fix this bug to pass the test!
     "Parting shot regularly not fail if no party available to switch - party fainted",
     async () => {
       await game.startBattle([ Species.MURKROW, Species.MEOWTH ]);
       game.move.select(Moves.SPLASH);
 
       // intentionally kill party pokemon, switch to second slot (now 1 party mon is fainted)
-      await game.killPokemon(game.scene.getParty()[0]);
-      expect(game.scene.getParty()[0].isFainted()).toBe(true);
+      await game.killPokemon(game.scene.getPlayerParty()[0]);
+      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
       await game.phaseInterceptor.run(MessagePhase);
       game.doSelectPartyPokemon(1);
 

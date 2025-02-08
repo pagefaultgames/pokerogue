@@ -1,9 +1,9 @@
 import { EggTier } from "#enums/egg-type";
 import { UiTheme } from "#enums/ui-theme";
-import Phaser from "phaser";
+import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import BattleScene from "../battle-scene";
+import { globalScene } from "#app/global-scene";
 import { ModifierTier } from "../modifier/modifier-tier";
 import i18next from "#app/plugins/i18n";
 
@@ -22,7 +22,8 @@ export enum TextStyle {
   SUMMARY_GOLD,
   SUMMARY_GRAY,
   SUMMARY_GREEN,
-  MONEY,
+  MONEY, // Money default styling (pale yellow)
+  MONEY_WINDOW, // Money displayed in Windows (needs different colors based on theme)
   STATS_LABEL,
   STATS_VALUE,
   SETTINGS_VALUE,
@@ -38,7 +39,9 @@ export enum TextStyle {
   MOVE_PP_EMPTY,
   SMALLER_WINDOW_ALT,
   BGM_BAR,
-  PERFECT_IV
+  PERFECT_IV,
+  ME_OPTION_DEFAULT, // Default style for choices in ME
+  ME_OPTION_SPECIAL, // Style for choices with special requirements in ME
 }
 
 export interface TextStyleOptions {
@@ -49,10 +52,10 @@ export interface TextStyleOptions {
   shadowYpos: number
 }
 
-export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
-  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+export function addTextObject(x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
 
-  const ret = scene.add.text(x, y, content, styleOptions);
+  const ret = globalScene.add.text(x, y, content, styleOptions);
   ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
@@ -66,8 +69,8 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   return ret;
 }
 
-export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
-  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+export function setTextStyle(obj: Phaser.GameObjects.Text, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
   obj.setScale(scale);
   obj.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
@@ -79,11 +82,11 @@ export function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, 
   }
 }
 
-export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
-  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+export function addBBCodeTextObject(x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
+  const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
 
-  const ret = new BBCodeText(scene, x, y, content, styleOptions as BBCodeText.TextStyle);
-  scene.add.existing(ret);
+  const ret = new BBCodeText(globalScene, x, y, content, styleOptions as BBCodeText.TextStyle);
+  globalScene.add.existing(ret);
   ret.setScale(scale);
   ret.setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
@@ -97,11 +100,11 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
   return ret;
 }
 
-export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText {
-  const { scale, styleOptions } = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
+export function addTextInputObject(x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText {
+  const { scale, styleOptions } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
 
-  const ret = new InputText(scene, x, y, width, height, styleOptions as InputText.IConfig);
-  scene.add.existing(ret);
+  const ret = new InputText(globalScene, x, y, width, height, styleOptions as InputText.IConfig);
+  globalScene.add.existing(ret);
   ret.setScale(scale);
 
   return ret;
@@ -139,6 +142,8 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
     case TextStyle.SUMMARY_GREEN:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
+    case TextStyle.ME_OPTION_DEFAULT:
+    case TextStyle.ME_OPTION_SPECIAL:
       shadowXpos = 3;
       shadowYpos = 3;
       break;
@@ -177,6 +182,7 @@ export function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraSty
       break;
     case TextStyle.BATTLE_INFO:
     case TextStyle.MONEY:
+    case TextStyle.MONEY_WINDOW:
     case TextStyle.TOOLTIP_TITLE:
       styleOptions.fontSize = defaultFontSize - 24;
       shadowXpos = 3.5;
@@ -238,12 +244,21 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
  * - "red text" with TextStyle.SUMMARY_RED applied
  * @param content string with styling that need to be applied for BBCodeTextObject
  * @param primaryStyle Primary style is required in order to escape BBCode styling properly.
- * @param uiTheme
+ * @param uiTheme the {@linkcode UiTheme} to get TextStyle for
+ * @param forWindow set to `true` if the text is to be displayed in a window ({@linkcode BattleScene.addWindow})
+ *  it will replace all instances of the default MONEY TextStyle by {@linkcode TextStyle.MONEY_WINDOW}
  */
-export function getTextWithColors(content: string, primaryStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+export function getTextWithColors(content: string, primaryStyle: TextStyle, uiTheme: UiTheme, forWindow?: boolean): string {
   // Apply primary styling before anything else
   let text = getBBCodeFrag(content, primaryStyle, uiTheme) + "[/color][/shadow]";
   const primaryStyleString = [ ...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))! ][0];
+
+  /* For money text displayed in game windows, we can't use the default {@linkcode TextStyle.MONEY}
+   * or it will look wrong in legacy mode because of the different window background color
+   * So, for text to be displayed in windows replace all "@[MONEY]" with "@[MONEY_WINDOW]" */
+  if (forWindow) {
+    text = text.replace(/@\[MONEY\]/g, (_substring: string) => "@[MONEY_WINDOW]");
+  }
 
   // Set custom colors
   text = text.replace(/@\[([^{]*)\]{([^}]*)}/gi, (substring, textStyle: string, textToColor: string) => {
@@ -310,7 +325,12 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       return !shadow ? "#f89890" : "#984038";
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.MONEY:
-      return !shadow ? "#e8e8a8" : "#a0a060";
+      return !shadow ? "#e8e8a8" : "#a0a060"; // Pale Yellow/Gold
+    case TextStyle.MONEY_WINDOW:
+      if (isLegacyTheme) {
+        return !shadow ? "#f8b050" : "#c07800"; // Gold
+      }
+      return !shadow ? "#e8e8a8" : "#a0a060"; // Pale Yellow/Gold
     case TextStyle.SETTINGS_LOCKED:
     case TextStyle.SUMMARY_GRAY:
       return !shadow ? "#a0a0a0" : "#636363";
@@ -332,10 +352,17 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       return !shadow ? "#484848" : "#d0d0c8";
     case TextStyle.BGM_BAR:
       return !shadow ? "#f8f8f8" : "#6b5a73";
+    case TextStyle.ME_OPTION_DEFAULT:
+      return !shadow ? "#f8f8f8" : "#6b5a73"; // White
+    case TextStyle.ME_OPTION_SPECIAL:
+      if (isLegacyTheme) {
+        return !shadow ? "#f8b050" : "#c07800"; // Gold
+      }
+      return !shadow ? "#78c850" : "#306850"; // Green
   }
 }
 
-export function getModifierTierTextTint(tier: ModifierTier): integer {
+export function getModifierTierTextTint(tier: ModifierTier): number {
   switch (tier) {
     case ModifierTier.COMMON:
       return 0xf8f8f8;
@@ -352,7 +379,7 @@ export function getModifierTierTextTint(tier: ModifierTier): integer {
   }
 }
 
-export function getEggTierTextTint(tier: EggTier): integer {
+export function getEggTierTextTint(tier: EggTier): number {
   switch (tier) {
     case EggTier.COMMON:
       return getModifierTierTextTint(ModifierTier.COMMON);

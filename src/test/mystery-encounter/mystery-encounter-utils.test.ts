@@ -1,17 +1,17 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "#app/test/utils/gameManager";
-import Phaser from "phaser";
-import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
-import { Species } from "#enums/species";
-import BattleScene from "#app/battle-scene";
-import { StatusEffect } from "#app/data/status-effect";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import type BattleScene from "#app/battle-scene";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Type } from "#app/data/type";
-import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterTier, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { getEncounterText, queueEncounterMessage, showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterCost, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { Type } from "#enums/type";
 import { MessagePhase } from "#app/phases/message-phase";
+import GameManager from "#app/test/utils/gameManager";
+import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
+import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Mystery Encounter Utils", () => {
   let phaserGame: Phaser.Game;
@@ -39,18 +39,18 @@ describe("Mystery Encounter Utils", () => {
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
 
-      let result = getRandomPlayerPokemon(scene);
+      let result = getRandomPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
       game.override.seed("random2");
 
-      result = getRandomPlayerPokemon(scene);
+      result = getRandomPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
     it("gets a fainted pokemon from player party if isAllowedInBattle is false", () => {
       // Both pokemon fainted
-      scene.getParty().forEach(p => {
+      scene.getPlayerParty().forEach(p => {
         p.hp = 0;
         p.trySetStatus(StatusEffect.FAINT);
         p.updateInfo();
@@ -59,18 +59,18 @@ describe("Mystery Encounter Utils", () => {
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
 
-      let result = getRandomPlayerPokemon(scene);
+      let result = getRandomPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
       game.override.seed("random2");
 
-      result = getRandomPlayerPokemon(scene);
+      result = getRandomPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
     it("gets an unfainted legal pokemon from player party if isAllowed is true and isFainted is false", () => {
       // Only faint 1st pokemon
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
       party[0].updateInfo();
@@ -78,18 +78,18 @@ describe("Mystery Encounter Utils", () => {
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
 
-      let result = getRandomPlayerPokemon(scene, true);
+      let result = getRandomPlayerPokemon(true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
       game.override.seed("random2");
 
-      result = getRandomPlayerPokemon(scene, true);
+      result = getRandomPlayerPokemon(true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
     });
 
     it("returns last unfainted pokemon if doNotReturnLastAbleMon is false", () => {
       // Only faint 1st pokemon
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
       party[0].updateInfo();
@@ -97,18 +97,18 @@ describe("Mystery Encounter Utils", () => {
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
 
-      let result = getRandomPlayerPokemon(scene, true, false);
+      let result = getRandomPlayerPokemon(true, false);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
 
       game.override.seed("random2");
 
-      result = getRandomPlayerPokemon(scene, true, false);
+      result = getRandomPlayerPokemon(true, false);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
     });
 
     it("never returns last unfainted pokemon if doNotReturnLastAbleMon is true", () => {
       // Only faint 1st pokemon
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
       party[0].updateInfo();
@@ -116,97 +116,97 @@ describe("Mystery Encounter Utils", () => {
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
 
-      let result = getRandomPlayerPokemon(scene, true, false, true);
+      let result = getRandomPlayerPokemon(true, false, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
 
       game.override.seed("random2");
 
-      result = getRandomPlayerPokemon(scene, true, false, true);
+      result = getRandomPlayerPokemon(true, false, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
   });
 
   describe("getHighestLevelPlayerPokemon", () => {
     it("gets highest level pokemon", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].level = 100;
 
-      const result = getHighestLevelPlayerPokemon(scene);
+      const result = getHighestLevelPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
     it("gets highest level pokemon at different index", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[1].level = 100;
 
-      const result = getHighestLevelPlayerPokemon(scene);
+      const result = getHighestLevelPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.MANAPHY);
     });
 
     it("breaks ties by getting returning lower index", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].level = 100;
       party[1].level = 100;
 
-      const result = getHighestLevelPlayerPokemon(scene);
+      const result = getHighestLevelPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
     it("returns highest level unfainted if unfainted is true", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].level = 100;
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
       party[0].updateInfo();
       party[1].level = 10;
 
-      const result = getHighestLevelPlayerPokemon(scene, true);
+      const result = getHighestLevelPlayerPokemon(true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
     });
   });
 
   describe("getLowestLevelPokemon", () => {
     it("gets lowest level pokemon", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].level = 100;
 
-      const result = getLowestLevelPlayerPokemon(scene);
+      const result = getLowestLevelPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.MANAPHY);
     });
 
     it("gets lowest level pokemon at different index", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[1].level = 100;
 
-      const result = getLowestLevelPlayerPokemon(scene);
+      const result = getLowestLevelPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
     it("breaks ties by getting returning lower index", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].level = 100;
       party[1].level = 100;
 
-      const result = getLowestLevelPlayerPokemon(scene);
+      const result = getLowestLevelPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
     it("returns lowest level unfainted if unfainted is true", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       party[0].level = 10;
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
       party[0].updateInfo();
       party[1].level = 100;
 
-      const result = getLowestLevelPlayerPokemon(scene, true);
+      const result = getLowestLevelPlayerPokemon(true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
     });
   });
 
-  describe("getRandomSpeciesByStarterTier", () => {
+  describe("getRandomSpeciesByStarterCost", () => {
     it("gets species for a starter tier", () => {
-      const result = getRandomSpeciesByStarterTier(5);
+      const result = getRandomSpeciesByStarterCost(5);
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
@@ -214,7 +214,7 @@ describe("Mystery Encounter Utils", () => {
     });
 
     it("gets species for a starter tier range", () => {
-      const result = getRandomSpeciesByStarterTier([ 5, 8 ]);
+      const result = getRandomSpeciesByStarterCost([ 5, 8 ]);
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
@@ -224,14 +224,14 @@ describe("Mystery Encounter Utils", () => {
 
     it("excludes species from search", () => {
       // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
-      const result = getRandomSpeciesByStarterTier(9, [ Species.KORAIDON, Species.MIRAIDON, Species.ARCEUS, Species.RAYQUAZA, Species.KYOGRE, Species.GROUDON ]);
+      const result = getRandomSpeciesByStarterCost(9, [ Species.KORAIDON, Species.MIRAIDON, Species.ARCEUS, Species.RAYQUAZA, Species.KYOGRE, Species.GROUDON ]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.ZACIAN);
     });
 
     it("gets species of specified types", () => {
       // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
-      const result = getRandomSpeciesByStarterTier(9, undefined, [ Type.GROUND ]);
+      const result = getRandomSpeciesByStarterCost(9, undefined, [ Type.GROUND ]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.GROUDON);
     });
@@ -239,12 +239,12 @@ describe("Mystery Encounter Utils", () => {
 
   describe("koPlayerPokemon", () => {
     it("KOs a pokemon", () => {
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       const arceus = party[0];
       arceus.hp = 100;
       expect(arceus.isAllowedInBattle()).toBe(true);
 
-      koPlayerPokemon(scene, arceus);
+      koPlayerPokemon(arceus);
       expect(arceus.isAllowedInBattle()).toBe(false);
     });
   });
@@ -254,7 +254,7 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
 
-      const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
+      const result = getEncounterText("mysteryEncounter:unit_test_dialogue");
       expect(result).toEqual("mysteryEncounter:unit_test_dialogue");
     });
 
@@ -263,7 +263,7 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       scene.currentBattle.mysteryEncounter.setDialogueToken("testvalue", "new");
 
-      const result = getEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
+      const result = getEncounterText("mysteryEncounter:unit_test_dialogue");
       expect(result).toEqual("mysteryEncounter:unit_test_dialogue");
     });
   });
@@ -275,7 +275,7 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene, "queueMessage");
       const phaseSpy = vi.spyOn(game.scene, "unshiftPhase");
 
-      queueEncounterMessage(scene, "mysteryEncounter:unit_test_dialogue");
+      queueEncounterMessage("mysteryEncounter:unit_test_dialogue");
       expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", null, true);
       expect(phaseSpy).toHaveBeenCalledWith(expect.any(MessagePhase));
     });
@@ -287,7 +287,7 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       const spy = vi.spyOn(game.scene.ui, "showText");
 
-      await showEncounterText(scene, "mysteryEncounter:unit_test_dialogue");
+      await showEncounterText("mysteryEncounter:unit_test_dialogue");
       expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", null, expect.any(Function), 0, true, null);
     });
   });
@@ -298,7 +298,7 @@ describe("Mystery Encounter Utils", () => {
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
       const spy = vi.spyOn(game.scene.ui, "showDialogue");
 
-      await showEncounterDialogue(scene, "mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue");
+      await showEncounterDialogue("mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue");
       expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue", null, expect.any(Function), 0);
     });
   });

@@ -6,7 +6,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -75,8 +75,8 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     expect(FightOrFlightEncounter.onInit).toBeDefined();
 
-    FightOrFlightEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    FightOrFlightEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     const config = FightOrFlightEncounter.enemyPartyConfigs[0];
     expect(config).toBeDefined();
@@ -151,7 +151,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     it("should NOT be selectable if the player doesn't have a Stealing move", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
-      scene.getParty().forEach(p => p.moveset = []);
+      scene.getPlayerParty().forEach(p => p.moveset = []);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -175,7 +175,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
       // Mock moveset
-      scene.getParty()[0].moveset = [ new PokemonMove(Moves.KNOCK_OFF) ];
+      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.KNOCK_OFF) ];
       const item = game.scene.currentBattle.mysteryEncounter!.misc;
 
       await runMysteryEncounterToEnd(game, 2);

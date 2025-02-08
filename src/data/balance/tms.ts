@@ -3,7 +3,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 
 interface TmSpecies {
-    [key: integer]: Array<Species | Array<Species | string>>
+    [key: number]: Array<Species | Array<Species | string>>
 }
 
 export const reverseCompatibleTms: Moves[] = [];/*[
@@ -3302,11 +3302,23 @@ export const tmSpecies: TmSpecies = {
     Species.FERALIGATR,
     Species.SENTRET,
     Species.FURRET,
+    Species.HOOTHOOT,
     Species.NOCTOWL,
+    Species.LEDYBA,
+    Species.LEDIAN,
+    Species.SPINARAK,
+    Species.ARIADOS,
     Species.CROBAT,
     Species.CHINCHOU,
     Species.LANTURN,
+    Species.PICHU,
+    Species.CLEFFA,
     Species.IGGLYBUFF,
+    Species.TYROGUE,
+    Species.TOGEPI,
+    Species.TOGETIC,
+    Species.NATU,
+    Species.XATU,
     Species.MAREEP,
     Species.FLAAFFY,
     Species.AMPHAROS,
@@ -3328,6 +3340,7 @@ export const tmSpecies: TmSpecies = {
     Species.UMBREON,
     Species.MURKROW,
     Species.SLOWKING,
+    Species.MISDREAVUS,
     Species.GIRAFARIG,
     Species.PINECO,
     Species.FORRETRESS,
@@ -3338,11 +3351,21 @@ export const tmSpecies: TmSpecies = {
     Species.GRANBULL,
     Species.QWILFISH,
     Species.SCIZOR,
+    Species.SHUCKLE,
     Species.HERACROSS,
+    Species.SNEASEL,
     Species.TEDDIURSA,
     Species.URSARING,
+    Species.SLUGMA,
+    Species.MAGCARGO,
     Species.SWINUB,
     Species.PILOSWINE,
+    Species.CORSOLA,
+    Species.REMORAID,
+    Species.OCTILLERY,
+    Species.DELIBIRD,
+    Species.MANTINE,
+    Species.SKARMORY,
     Species.HOUNDOUR,
     Species.HOUNDOOM,
     Species.KINGDRA,
@@ -3350,9 +3373,12 @@ export const tmSpecies: TmSpecies = {
     Species.DONPHAN,
     Species.PORYGON2,
     Species.STANTLER,
+    Species.TYROGUE,
     Species.HITMONTOP,
+    Species.SMOOCHUM,
     Species.ELEKID,
     Species.MAGBY,
+    Species.MILTANK,
     Species.BLISSEY,
     Species.RAIKOU,
     Species.ENTEI,
@@ -3362,6 +3388,9 @@ export const tmSpecies: TmSpecies = {
     Species.TYRANITAR,
     Species.LUGIA,
     Species.HO_OH,
+    Species.CELEBI,
+    Species.TREECKO,
+    Species.GROVYLE,
     Species.SCEPTILE,
     Species.TORCHIC,
     Species.COMBUSKEN,
@@ -3371,41 +3400,116 @@ export const tmSpecies: TmSpecies = {
     Species.SWAMPERT,
     Species.POOCHYENA,
     Species.MIGHTYENA,
+    Species.ZIGZAGOON,
+    Species.LINOONE,
+    Species.BEAUTIFLY,
+    Species.DUSTOX,
     Species.LOTAD,
     Species.LOMBRE,
     Species.LUDICOLO,
     Species.SEEDOT,
     Species.NUZLEAF,
     Species.SHIFTRY,
+    Species.TAILLOW,
+    Species.SWELLOW,
+    Species.WINGULL,
+    Species.PELIPPER,
+    Species.RALTS,
+    Species.KIRLIA,
+    Species.GARDEVOIR,
+    Species.SURSKIT,
+    Species.MASQUERAIN,
+    Species.SHROOMISH,
+    Species.BRELOOM,
     Species.VIGOROTH,
     Species.SLAKING,
+    Species.NINCADA,
+    Species.NINJASK,
+    Species.SHEDINJA,
+    Species.WHISMUR,
+    Species.LOUDRED,
+    Species.EXPLOUD,
     Species.MAKUHITA,
     Species.HARIYAMA,
+    Species.AZURILL,
     Species.NOSEPASS,
+    Species.SKITTY,
+    Species.DELCATTY,
+    Species.SABLEYE,
+    Species.MAWILE,
+    Species.ARON,
+    Species.LAIRON,
+    Species.AGGRON,
+    Species.MEDITITE,
+    Species.MEDICHAM,
+    Species.ELECTRIKE,
+    Species.MANECTRIC,
+    Species.PLUSLE,
+    Species.MINUN,
     Species.VOLBEAT,
     Species.ILLUMISE,
+    Species.ROSELIA,
+    Species.GULPIN,
     Species.SWALOT,
+    Species.CARVANHA,
+    Species.SHARPEDO,
+    Species.WAILMER,
+    Species.WAILORD,
     Species.NUMEL,
     Species.CAMERUPT,
     Species.TORKOAL,
+    Species.SPOINK,
+    Species.GRUMPIG,
+    Species.SPINDA,
+    Species.TRAPINCH,
+    Species.VIBRAVA,
     Species.FLYGON,
+    Species.CACNEA,
+    Species.CACTURNE,
+    Species.SWABLU,
     Species.ALTARIA,
     Species.ZANGOOSE,
     Species.SEVIPER,
+    Species.LUNATONE,
+    Species.SOLROCK,
     Species.BARBOACH,
     Species.WHISCASH,
     Species.CORPHISH,
     Species.CRAWDAUNT,
+    Species.BALTOY,
+    Species.CLAYDOL,
+    Species.LILEEP,
+    Species.CRADILY,
+    Species.ANORITH,
+    Species.ARMALDO,
     Species.FEEBAS,
     Species.MILOTIC,
+    Species.CASTFORM,
+    Species.KECLEON,
+    Species.SHUPPET,
+    Species.BANETTE,
+    Species.DUSKULL,
+    Species.DUSCLOPS,
     Species.TROPIUS,
     Species.CHIMECHO,
+    Species.ABSOL,
+    Species.SNORUNT,
+    Species.GLALIE,
+    Species.SPHEAL,
+    Species.SEALEO,
+    Species.WALREIN,
+    Species.CLAMPERL,
+    Species.HUNTAIL,
+    Species.GOREBYSS,
+    Species.RELICANTH,
+    Species.LUVDISC,
     Species.BAGON,
     Species.SHELGON,
     Species.SALAMENCE,
     Species.METANG,
     Species.METAGROSS,
     Species.REGIROCK,
+    Species.REGICE,
     Species.REGISTEEL,
     Species.LATIAS,
     Species.LATIOS,
@@ -3413,6 +3517,7 @@ export const tmSpecies: TmSpecies = {
     Species.GROUDON,
     Species.RAYQUAZA,
     Species.JIRACHI,
+    Species.DEOXYS,
     Species.TURTWIG,
     Species.GROTLE,
     Species.TORTERRA,
@@ -64246,12 +64351,16 @@ export const tmSpecies: TmSpecies = {
     Species.BLOODMOON_URSALUNA,
   ],
   [Moves.LIQUIDATION]: [
+    Species.SQUIRTLE,
+    Species.WARTORTLE,
     Species.BLASTOISE,
     Species.PSYDUCK,
     Species.GOLDUCK,
     Species.POLIWAG,
     Species.POLIWHIRL,
     Species.POLIWRATH,
+    Species.TENTACOOL,
+    Species.TENTACRUEL,
     Species.SLOWPOKE,
     Species.SLOWBRO,
     Species.DEWGONG,
@@ -64267,7 +64376,11 @@ export const tmSpecies: TmSpecies = {
     Species.KABUTO,
     Species.KABUTOPS,
     Species.MEW,
+    Species.TOTODILE,
+    Species.CROCONAW,
     Species.FERALIGATR,
+    Species.CHINCHOU,
+    Species.LANTURN,
     Species.MARILL,
     Species.AZUMARILL,
     Species.POLITOED,
@@ -64280,6 +64393,9 @@ export const tmSpecies: TmSpecies = {
     Species.MANTINE,
     Species.KINGDRA,
     Species.SUICUNE,
+    Species.LUGIA,
+    Species.MUDKIP,
+    Species.MARSHTOMP,
     Species.SWAMPERT,
     Species.WINGULL,
     Species.PELIPPER,
@@ -64296,6 +64412,8 @@ export const tmSpecies: TmSpecies = {
     Species.WALREIN,
     Species.RELICANTH,
     Species.LUVDISC,
+    Species.LATIAS,
+    Species.LATIOS,
     Species.KYOGRE,
     Species.PIPLUP,
     Species.PRINPLUP,
@@ -64407,11 +64525,13 @@ export const tmSpecies: TmSpecies = {
     Species.ONIX,
     Species.HYPNO,
     Species.LICKITUNG,
+    Species.RHYHORN,
     Species.RHYDON,
     Species.LAPRAS,
     Species.SNORLAX,
     Species.DRAGONITE,
     Species.MEW,
+    Species.MEGANIUM,
     Species.SUDOWOODO,
     Species.QUAGSIRE,
     Species.FORRETRESS,
@@ -64445,6 +64565,8 @@ export const tmSpecies: TmSpecies = {
     Species.REGISTEEL,
     Species.GROUDON,
     Species.TORTERRA,
+    Species.RAMPARDOS,
+    Species.BASTIODON,
     Species.BRONZONG,
     Species.HIPPOPOTAS,
     Species.HIPPOWDON,
@@ -64459,6 +64581,7 @@ export const tmSpecies: TmSpecies = {
     Species.HEATRAN,
     Species.REGIGIGAS,
     Species.ARCEUS,
+    Species.EMBOAR,
     Species.ROGGENROLA,
     Species.BOLDORE,
     Species.GIGALITH,
@@ -64471,6 +64594,7 @@ export const tmSpecies: TmSpecies = {
     Species.CUBCHOO,
     Species.BEARTIC,
     Species.GOLURK,
+    Species.COBALION,
     Species.RESHIRAM,
     Species.ZEKROM,
     Species.KYUREM,
@@ -67024,6 +67148,7 @@ export const tmSpecies: TmSpecies = {
     Species.VELUZA,
     Species.DONDOZO,
     Species.TATSUGIRI,
+    Species.ANNIHILAPE,
     Species.CLODSIRE,
     Species.FARIGIRAF,
     Species.DUDUNSPARCE,
@@ -68308,8 +68433,48 @@ export const tmSpecies: TmSpecies = {
   ],
 };
 
+interface SpeciesTmMoves {
+  [key: number]: (Moves | [string | Species, Moves])[];
+}
+
+function transposeTmSpecies(): SpeciesTmMoves {
+  const flipped: SpeciesTmMoves = {};
+
+  for (const move in tmSpecies) {
+    const moveKey = Number(move);
+    const speciesList = tmSpecies[move];
+
+    for (const species of speciesList) {
+
+      if (Array.isArray(species)) {
+        // Extract base species and all associated forms
+        const [ baseSpecies, ...forms ] = species;
+        const speciesKey = Number(baseSpecies);
+
+        if (!flipped[speciesKey]) {
+          flipped[speciesKey] = [];
+        }
+
+        for (const form of forms) {
+          flipped[speciesKey].push([ form, moveKey ]);
+        }
+
+      } else {
+        const speciesKey = Number(species);
+        if (!flipped[speciesKey]) {
+          flipped[speciesKey] = [];
+        }
+        flipped[speciesKey].push(moveKey);
+      }
+    }
+  }
+  return flipped;
+}
+
+export const speciesTmMoves: SpeciesTmMoves = transposeTmSpecies();
+
 interface TmPoolTiers {
-    [key: integer]: ModifierTier
+    [key: number]: ModifierTier
 }
 
 export const tmPoolTiers: TmPoolTiers = {

@@ -1,21 +1,22 @@
 import { Biome } from "#enums/biome";
 import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
-import Pokemon from "../field/pokemon";
-import { Type } from "./type";
-import Move, { AttackMove } from "./move";
+import type Pokemon from "../field/pokemon";
+import { Type } from "#enums/type";
+import type Move from "./move";
+import { AttackMove } from "./move";
 import * as Utils from "../utils";
-import BattleScene from "../battle-scene";
 import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
+import { globalScene } from "#app/global-scene";
+import type { Arena } from "#app/field/arena";
 
-export { WeatherType };
 export class Weather {
   public weatherType: WeatherType;
-  public turnsLeft: integer;
+  public turnsLeft: number;
 
-  constructor(weatherType: WeatherType, turnsLeft?: integer) {
+  constructor(weatherType: WeatherType, turnsLeft?: number) {
     this.weatherType = weatherType;
     this.turnsLeft = !this.isImmutable() ? turnsLeft || 0 : 0;
   }
@@ -101,8 +102,8 @@ export class Weather {
     return false;
   }
 
-  isEffectSuppressed(scene: BattleScene): boolean {
-    const field = scene.getField(true);
+  isEffectSuppressed(): boolean {
+    const field = globalScene.getField(true);
 
     for (const pokemon of field) {
       let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null  = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
@@ -243,12 +244,12 @@ export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainTyp
   return i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), terrainName: getTerrainName(terrainType) });
 }
 
-interface WeatherPoolEntry {
+export interface WeatherPoolEntry {
   weatherType: WeatherType;
-  weight: integer;
+  weight: number;
 }
 
-export function getRandomWeatherType(arena: any /* Importing from arena causes a circular dependency */): WeatherType {
+export function getRandomWeatherType(arena: Arena): WeatherType {
   let weatherPool: WeatherPoolEntry[] = [];
   const hasSun = arena.getTimeOfDay() < 2;
   switch (arena.biomeType) {
@@ -372,6 +373,10 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
       }
       break;
+  }
+
+  if (arena.biomeType === Biome.TOWN && globalScene.eventManager.isEventActive()) {
+    globalScene.eventManager.getWeather()?.map(w => weatherPool.push(w));
   }
 
   if (weatherPool.length > 1) {

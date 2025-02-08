@@ -1,17 +1,17 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex } from "#app/battle";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { DamageResult, HitResult } from "#app/field/pokemon";
-import * as Utils from "#app/utils";
-import { PokemonPhase } from "./pokemon-phase";
+import { globalScene } from "#app/global-scene";
+import { type BattlerIndex } from "#app/battle";
+import { BattleSpec } from "#enums/battle-spec";
+import { type DamageResult, HitResult } from "#app/field/pokemon";
+import { fixedInt } from "#app/utils";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
 
-export class DamagePhase extends PokemonPhase {
-  private amount: integer;
+export class DamageAnimPhase extends PokemonPhase {
+  private amount: number;
   private damageResult: DamageResult;
   private critical: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, amount: integer, damageResult?: DamageResult, critical: boolean = false) {
-    super(scene, battlerIndex);
+  constructor(battlerIndex: BattlerIndex, amount: number, damageResult?: DamageResult, critical: boolean = false) {
+    super(battlerIndex);
 
     this.amount = amount;
     this.damageResult = damageResult || HitResult.EFFECTIVE;
@@ -22,11 +22,11 @@ export class DamagePhase extends PokemonPhase {
     super.start();
 
     if (this.damageResult === HitResult.ONE_HIT_KO) {
-      if (this.scene.moveAnimations) {
-        this.scene.toggleInvert(true);
+      if (globalScene.moveAnimations) {
+        globalScene.toggleInvert(true);
       }
-      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
-        this.scene.toggleInvert(false);
+      globalScene.time.delayedCall(fixedInt(1000), () => {
+        globalScene.toggleInvert(false);
         this.applyDamage();
       });
       return;
@@ -35,30 +35,30 @@ export class DamagePhase extends PokemonPhase {
     this.applyDamage();
   }
 
-  updateAmount(amount: integer): void {
+  updateAmount(amount: number): void {
     this.amount = amount;
   }
 
   applyDamage() {
     switch (this.damageResult) {
       case HitResult.EFFECTIVE:
-        this.scene.playSound("se/hit");
+        globalScene.playSound("se/hit");
         break;
       case HitResult.SUPER_EFFECTIVE:
       case HitResult.ONE_HIT_KO:
-        this.scene.playSound("se/hit_strong");
+        globalScene.playSound("se/hit_strong");
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
-        this.scene.playSound("se/hit_weak");
+        globalScene.playSound("se/hit_weak");
         break;
     }
 
     if (this.amount) {
-      this.scene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
+      globalScene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
     }
 
     if (this.damageResult !== HitResult.OTHER && this.amount > 0) {
-      const flashTimer = this.scene.time.addEvent({
+      const flashTimer = globalScene.time.addEvent({
         delay: 100,
         repeat: 5,
         startAt: 200,
@@ -75,8 +75,8 @@ export class DamagePhase extends PokemonPhase {
   }
 
   override end() {
-    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      this.scene.initFinalBossPhaseTwo(this.getPokemon());
+    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      globalScene.initFinalBossPhaseTwo(this.getPokemon());
     } else {
       super.end();
     }

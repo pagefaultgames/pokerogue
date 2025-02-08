@@ -1,6 +1,5 @@
 import {
   Status,
-  StatusEffect,
   getStatusEffectActivationText,
   getStatusEffectDescriptor,
   getStatusEffectHealText,
@@ -11,6 +10,7 @@ import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/utils/gameManager";
 import { mockI18next } from "#test/utils/testUtils";
 import i18next from "i18next";
@@ -398,6 +398,44 @@ describe("Status Effects", () => {
 
       expect(player.status?.effect).toBeUndefined();
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    });
+  });
+
+  describe("Behavior", () => {
+    let phaserGame: Phaser.Game;
+    let game: GameManager;
+
+    beforeAll(() => {
+      phaserGame = new Phaser.Game({
+        type: Phaser.HEADLESS,
+      });
+    });
+
+    afterEach(() => {
+      game.phaseInterceptor.restoreOg();
+    });
+
+    beforeEach(() => {
+      game = new GameManager(phaserGame);
+      game.override
+        .moveset([ Moves.SPLASH ])
+        .ability(Abilities.BALL_FETCH)
+        .battleType("single")
+        .disableCrits()
+        .enemySpecies(Species.MAGIKARP)
+        .enemyAbility(Abilities.BALL_FETCH)
+        .enemyMoveset(Moves.NUZZLE)
+        .enemyLevel(2000);
+    });
+
+    it("should not inflict a 0 HP mon with a status", async () => {
+      await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
+
+      const player = game.scene.getPlayerPokemon()!;
+      player.hp = 0;
+
+      expect(player.trySetStatus(StatusEffect.BURN)).toBe(false);
+      expect(player.status?.effect).not.toBe(StatusEffect.BURN);
     });
   });
 });

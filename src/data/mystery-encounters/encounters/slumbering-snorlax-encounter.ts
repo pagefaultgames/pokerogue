@@ -1,13 +1,16 @@
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "#app/battle-scene";
-import { StatusEffect } from "#app/data/status-effect";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { globalScene } from "#app/global-scene";
+import { StatusEffect } from "#enums/status-effect";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { EnemyPartyConfig, EnemyPokemonConfig, generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
+import { generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
@@ -51,8 +54,8 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
         text: `${namespace}:intro`,
       },
     ])
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .withOnInit(() => {
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
       console.log(encounter);
 
       // Calculate boss mon
@@ -60,15 +63,16 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       const pokemonConfig: EnemyPokemonConfig = {
         species: bossSpecies,
         isBoss: true,
+        shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
         status: [ StatusEffect.SLEEP, 5 ], // Extra turns on timer for Snorlax's start of fight moves
         moveSet: [ Moves.REST, Moves.SLEEP_TALK, Moves.CRUNCH, Moves.GIGA_IMPACT ],
         modifierConfigs: [
           {
-            modifier: generateModifierType(scene, modifierTypes.BERRY, [ BerryType.SITRUS ]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(modifierTypes.BERRY, [ BerryType.SITRUS ]) as PokemonHeldItemModifierType,
             stackCount: 2
           },
           {
-            modifier: generateModifierType(scene, modifierTypes.BERRY, [ BerryType.ENIGMA ]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(modifierTypes.BERRY, [ BerryType.ENIGMA ]) as PokemonHeldItemModifierType,
             stackCount: 2
           },
         ],
@@ -82,7 +86,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
       encounter.enemyPartyConfigs = [ config ];
 
       // Load animations/sfx for Snorlax fight start moves
-      loadCustomMovesForEncounter(scene, [ Moves.SNORE ]);
+      loadCustomMovesForEncounter([ Moves.SNORE ]);
 
       encounter.setDialogueToken("snorlaxName", getPokemonSpecies(Species.SNORLAX).getName());
 
@@ -102,10 +106,10 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Pick battle
-        const encounter = scene.currentBattle.mysteryEncounter!;
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.LEFTOVERS ], fillRemaining: true });
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
+        setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.LEFTOVERS ], fillRemaining: true });
         encounter.startOfBattleEffects.push(
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
@@ -119,7 +123,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
             move: new PokemonMove(Moves.SNORE),
             ignorePp: true
           });
-        await initBattleWithEnemyConfig(scene, encounter.enemyPartyConfigs[0]);
+        await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
       }
     )
     .withSimpleOption(
@@ -132,12 +136,12 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Fall asleep waiting for Snorlax
         // Full heal party
-        scene.unshiftPhase(new PartyHealPhase(scene, true));
-        queueEncounterMessage(scene, `${namespace}:option.2.rest_result`);
-        leaveEncounterWithoutBattle(scene);
+        globalScene.unshiftPhase(new PartyHealPhase(true));
+        queueEncounterMessage(`${namespace}:option.2.rest_result`);
+        leaveEncounterWithoutBattle();
       }
     )
     .withOption(
@@ -154,13 +158,13 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter =
             }
           ]
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Steal the Snorlax's Leftovers
-          const instance = scene.currentBattle.mysteryEncounter!;
-          setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [ modifierTypes.LEFTOVERS ], fillRemaining: false });
+          const instance = globalScene.currentBattle.mysteryEncounter!;
+          setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.LEFTOVERS ], fillRemaining: false });
           // Snorlax exp to Pokemon that did the stealing
-          setEncounterExp(scene, instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);
-          leaveEncounterWithoutBattle(scene);
+          setEncounterExp(instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);
+          leaveEncounterWithoutBattle();
         })
         .build()
     )

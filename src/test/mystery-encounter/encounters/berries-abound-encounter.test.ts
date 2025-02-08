@@ -5,7 +5,7 @@ import { Species } from "#app/enums/species";
 import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { BerryModifier } from "#app/modifier/modifier";
@@ -80,8 +80,8 @@ describe("Berries Abound - Mystery Encounter", () => {
 
     expect(BerriesAboundEncounter.onInit).toBeDefined();
 
-    BerriesAboundEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    BerriesAboundEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     const config = BerriesAboundEncounter.enemyPartyConfigs[0];
     expect(config).toBeDefined();
@@ -176,7 +176,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      scene.getParty().forEach(pkm => {
+      scene.getPlayerParty().forEach(pkm => {
         vi.spyOn(pkm, "getStat").mockReturnValue(1); // for ease return for every stat
       });
 
@@ -192,7 +192,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       // Should be enraged
       expect(enemyField[0].summonData.statStages).toEqual([ 0, 1, 0, 1, 1, 0, 0 ]);
-      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}:option.2.selected_bad`);
+      expect(encounterTextSpy).toHaveBeenCalledWith(`${namespace}:option.2.selected_bad`);
     });
 
     it("should start battle if fastest pokemon is slower than boss above wave 50", async () => {
@@ -200,7 +200,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      scene.getParty().forEach(pkm => {
+      scene.getPlayerParty().forEach(pkm => {
         vi.spyOn(pkm, "getStat").mockReturnValue(1); // for ease return for every stat
       });
 
@@ -216,7 +216,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       // Should be enraged
       expect(enemyField[0].summonData.statStages).toEqual([ 1, 1, 1, 1, 1, 0, 0 ]);
-      expect(encounterTextSpy).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}:option.2.selected_bad`);
+      expect(encounterTextSpy).toHaveBeenCalledWith(`${namespace}:option.2.selected_bad`);
     });
 
     it("Should skip battle when fastest pokemon is faster than boss", async () => {
@@ -225,7 +225,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 
-      scene.getParty().forEach(pkm => {
+      scene.getPlayerParty().forEach(pkm => {
         vi.spyOn(pkm, "getStat").mockReturnValue(9999); // for ease return for every stat
       });
 
@@ -241,7 +241,7 @@ describe("Berries Abound - Mystery Encounter", () => {
         expect(option.modifierTypeOption.type.id).toContain("BERRY");
       }
 
-      expect(EncounterDialogueUtils.showEncounterText).toHaveBeenCalledWith(expect.any(BattleScene), `${namespace}:option.2.selected`);
+      expect(EncounterDialogueUtils.showEncounterText).toHaveBeenCalledWith(`${namespace}:option.2.selected`);
       expect(EncounterPhaseUtils.leaveEncounterWithoutBattle).toBeCalled();
     });
   });

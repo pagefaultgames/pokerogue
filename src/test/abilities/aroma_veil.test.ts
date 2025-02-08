@@ -7,7 +7,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#app/battle";
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 
 describe("Moves - Aroma Veil", () => {
   let phaserGame: Phaser.Game;
@@ -36,7 +36,7 @@ describe("Moves - Aroma Veil", () => {
   it("Aroma Veil protects the Pokemon's side against most Move Restriction Battler Tags", async () => {
     await game.classicMode.startBattle([ Species.REGIELEKI, Species.BULBASAUR ]);
 
-    const party = game.scene.getParty()! as PlayerPokemon[];
+    const party = game.scene.getPlayerParty()! as PlayerPokemon[];
 
     game.move.select(Moves.GROWL);
     game.move.select(Moves.GROWL);
@@ -50,7 +50,7 @@ describe("Moves - Aroma Veil", () => {
   it("Aroma Veil does not protect against Imprison", async () => {
     await game.classicMode.startBattle([ Species.REGIELEKI, Species.BULBASAUR ]);
 
-    const party = game.scene.getParty()! as PlayerPokemon[];
+    const party = game.scene.getPlayerParty()! as PlayerPokemon[];
 
     game.move.select(Moves.GROWL);
     game.move.select(Moves.GROWL, 1);

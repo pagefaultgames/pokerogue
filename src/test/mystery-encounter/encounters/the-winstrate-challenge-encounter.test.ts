@@ -1,12 +1,12 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
-import GameManager from "#app/test/utils/gameManager";
+import { Biome } from "#enums/biome";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { Mode } from "#app/ui/ui";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -19,12 +19,13 @@ import { Nature } from "#enums/nature";
 import { Moves } from "#enums/moves";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/encounters/the-winstrate-challenge-encounter";
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Status } from "#app/data/status-effect";
 import { MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
+import { StatusEffect } from "#enums/status-effect";
 
 const namespace = "mysteryEncounters/theWinstrateChallenge";
 const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
@@ -100,8 +101,8 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
     expect(encounter.onInit).toBeDefined();
 
-    encounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    encounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
     expect(encounter.enemyPartyConfigs.length).toBe(5);
@@ -362,7 +363,7 @@ async function skipBattleToNextBattle(game: GameManager, isFinalBattle: boolean 
     game.scene.field.remove(p);
   });
   game.phaseInterceptor["onHold"] = [];
-  game.scene.pushPhase(new VictoryPhase(game.scene, 0));
+  game.scene.pushPhase(new VictoryPhase(0));
   game.phaseInterceptor.superEndPhase();
   if (isFinalBattle) {
     await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);

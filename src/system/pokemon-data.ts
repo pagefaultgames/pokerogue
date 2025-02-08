@@ -1,61 +1,61 @@
 import { BattleType } from "../battle";
-import BattleScene from "../battle-scene";
-import { Gender } from "../data/gender";
-import { Nature } from "../data/nature";
-import { PokeballType } from "../data/pokeball";
+import { globalScene } from "#app/global-scene";
+import type { Gender } from "../data/gender";
+import type { Nature } from "#enums/nature";
+import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "../data/trainer-config";
-import { Variant } from "#app/data/variant";
+import type { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
-import { Biome } from "#enums/biome";
+import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 export default class PokemonData {
-  public id: integer;
+  public id: number;
   public player: boolean;
   public species: Species;
   public nickname: string;
-  public formIndex: integer;
-  public abilityIndex: integer;
+  public formIndex: number;
+  public abilityIndex: number;
   public passive: boolean;
   public shiny: boolean;
   public variant: Variant;
   public pokeball: PokeballType;
-  public level: integer;
-  public exp: integer;
-  public levelExp: integer;
+  public level: number;
+  public exp: number;
+  public levelExp: number;
   public gender: Gender;
-  public hp: integer;
-  public stats: integer[];
-  public ivs: integer[];
+  public hp: number;
+  public stats: number[];
+  public ivs: number[];
   public nature: Nature;
   public moveset: (PokemonMove | null)[];
   public status: Status | null;
-  public friendship: integer;
-  public metLevel: integer;
+  public friendship: number;
+  public metLevel: number;
   public metBiome: Biome | -1;        // -1 for starters
   public metSpecies: Species;
   public metWave: number;            // 0 for unknown (previous saves), -1 for starters
-  public luck: integer;
+  public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public usedTMs: Moves[];
-  public evoCounter: integer;
+  public evoCounter: number;
 
   public fusionSpecies: Species;
-  public fusionFormIndex: integer;
-  public fusionAbilityIndex: integer;
+  public fusionFormIndex: number;
+  public fusionAbilityIndex: number;
   public fusionShiny: boolean;
   public fusionVariant: Variant;
   public fusionGender: Gender;
-  public fusionLuck: integer;
+  public fusionLuck: number;
 
   public boss: boolean;
-  public bossSegments?: integer;
+  public bossSegments?: number;
 
   public summonData: PokemonSummonData;
 
@@ -163,15 +163,15 @@ export default class PokemonData {
     }
   }
 
-  toPokemon(scene: BattleScene, battleType?: BattleType, partyMemberIndex: integer = 0, double: boolean = false): Pokemon {
+  toPokemon(battleType?: BattleType, partyMemberIndex: number = 0, double: boolean = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
-      ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
+      ? globalScene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
         if (this.nickname) {
           playerPokemon.nickname = this.nickname;
         }
       })
-      : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
+      : globalScene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, false, this);
     if (this.summonData) {
       ret.primeSummonData(this.summonData);
     }

@@ -6,7 +6,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/mystery-encounter/encounter-test-utils";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -101,15 +101,15 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Override party levels to 50 so stats can be fully reflective
-      scene.getParty().forEach(p => {
+      scene.getPlayerParty().forEach(p => {
         p.level = 50;
         p.calculateStats();
       });
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 });
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(1), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(1), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getParty()[0].moveset;
+      const moves = scene.getPlayerParty()[0].moveset;
       for (const move of moves) {
         expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
@@ -120,16 +120,16 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Override party levels to 50 so stats can be fully reflective
-      scene.getParty().forEach(p => {
+      scene.getPlayerParty().forEach(p => {
         p.level = 50;
         p.ivs = [ 20, 20, 20, 20, 20, 20 ];
         p.calculateStats();
       });
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 2 });
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(4), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(4), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getParty()[1].moveset;
+      const moves = scene.getPlayerParty()[1].moveset;
       for (const move of moves) {
         expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
@@ -166,15 +166,15 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Override party levels to 50 so stats can be fully reflective
-      scene.getParty().forEach(p => {
+      scene.getPlayerParty().forEach(p => {
         p.level = 50;
         p.calculateStats();
       });
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 3 });
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(1), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(1), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getParty()[2].moveset;
+      const moves = scene.getPlayerParty()[2].moveset;
       for (const move of moves) {
         expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
@@ -185,16 +185,16 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Override party levels to 50 so stats can be fully reflective
-      scene.getParty().forEach(p => {
+      scene.getPlayerParty().forEach(p => {
         p.level = 50;
         p.ivs = [ 20, 20, 20, 20, 20, 20 ];
         p.calculateStats();
       });
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 4 });
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(4), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(4), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getParty()[3].moveset;
+      const moves = scene.getPlayerParty()[3].moveset;
       for (const move of moves) {
         expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
@@ -232,7 +232,7 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Mock movesets
-      scene.getParty().forEach(p => p.moveset = []);
+      scene.getPlayerParty().forEach(p => p.moveset = []);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -256,12 +256,12 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Mock moveset
-      scene.getParty()[0].moveset = [ new PokemonMove(Moves.ATTRACT) ];
+      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.ATTRACT) ];
       await runMysteryEncounterToEnd(game, 3);
 
-      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene, scene.getWaveMoneyAmount(2.5), true, false);
+      expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(2.5), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getParty()[0].moveset;
+      const moves = scene.getPlayerParty()[0].moveset;
       for (const move of moves) {
         expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }

@@ -1,8 +1,8 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
-import GameManager from "#app/test/utils/gameManager";
+import { Biome } from "#enums/biome";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Species } from "#enums/species";
+import GameManager from "#test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 import { Gender } from "#app/data/gender";
@@ -11,10 +11,10 @@ import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { Type } from "#app/data/type";
-import { Status, StatusEffect } from "#app/data/status-effect";
+import { Type } from "#enums/type";
+import { Status } from "#app/data/status-effect";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -25,6 +25,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Abilities } from "#enums/abilities";
 import i18next from "i18next";
+import { StatusEffect } from "#enums/status-effect";
 
 const namespace = "mysteryEncounters/fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
@@ -103,8 +104,8 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     expect(FieryFalloutEncounter.onInit).toBeDefined();
 
-    FieryFalloutEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    FieryFalloutEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(FieryFalloutEncounter.enemyPartyConfigs).toEqual([
       {
@@ -175,7 +176,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const leadPokemonId = scene.getParty()?.[0].id;
+      const leadPokemonId = scene.getPlayerParty()?.[0].id;
       const leadPokemonItems = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).pokemonId === leadPokemonId, true) as PokemonHeldItemModifier[];
       const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
@@ -202,7 +203,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     it("should damage all non-fire party PKM by 20%, and burn + give Heatproof to a random Pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
 
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       const lapras = party.find((pkm) => pkm.species.speciesId === Species.LAPRAS)!;
       lapras.status = new Status(StatusEffect.POISON);
       const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA)!;
@@ -254,7 +255,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const leadPokemonItems = scene.getParty()?.[0].getHeldItems() as PokemonHeldItemModifier[];
+      const leadPokemonItems = scene.getPlayerParty()?.[0].getHeldItems() as PokemonHeldItemModifier[];
       const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
       expect(item).toBeDefined;
     });

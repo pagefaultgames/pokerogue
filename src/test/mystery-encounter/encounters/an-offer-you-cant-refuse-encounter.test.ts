@@ -7,7 +7,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { AnOfferYouCantRefuseEncounter } from "#app/data/mystery-encounters/encounters/an-offer-you-cant-refuse-encounter";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -91,8 +91,8 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
     expect(AnOfferYouCantRefuseEncounter.onInit).toBeDefined();
 
-    AnOfferYouCantRefuseEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    AnOfferYouCantRefuseEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.strongestPokemon).toBeDefined();
     expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.price).toBeDefined();
@@ -130,7 +130,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, price);
+      expect(updateMoneySpy).toHaveBeenCalledWith(price);
       expect(scene.money).toBe(initialMoney + price);
     });
 
@@ -147,13 +147,13 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     it("Should remove the Pokemon from the party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
 
-      const initialPartySize = scene.getParty().length;
+      const initialPartySize = scene.getPlayerParty().length;
       const pokemonName = scene.currentBattle.mysteryEncounter!.misc.pokemon.name;
 
       await runMysteryEncounterToEnd(game, 1);
 
-      expect(scene.getParty().length).toBe(initialPartySize - 1);
-      expect(scene.getParty().find(p => p.name === pokemonName)).toBeUndefined();
+      expect(scene.getPlayerParty().length).toBe(initialPartySize - 1);
+      expect(scene.getPlayerParty().find(p => p.name === pokemonName)).toBeUndefined();
     });
 
     it("should leave encounter without battle", async () => {
@@ -186,7 +186,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
     it("should award EXP to a pokemon with an ability in EXTORTION_ABILITIES", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       const gyarados = party.find((pkm) => pkm.species.speciesId === Species.GYARADOS)!;
       const expBefore = gyarados.exp;
 
@@ -199,7 +199,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     it("should award EXP to a pokemon with a move in EXTORTION_MOVES", async () => {
       game.override.ability(Abilities.SYNCHRONIZE); // Not an extortion ability, so we can test extortion move
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [ Species.ABRA ]);
-      const party = scene.getParty();
+      const party = scene.getPlayerParty();
       const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA)!;
       abra.moveset = [ new PokemonMove(Moves.BEAT_UP) ];
       const expBefore = abra.exp;
@@ -220,7 +220,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, price);
+      expect(updateMoneySpy).toHaveBeenCalledWith(price);
       expect(scene.money).toBe(initialMoney + price);
     });
 

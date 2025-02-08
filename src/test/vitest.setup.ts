@@ -19,11 +19,13 @@ process.env.TZ = "UTC";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();
 
   return {
     default: defaultOverrides,
     defaultOverrides,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   } satisfies typeof import("#app/overrides");
 });
 
@@ -38,7 +40,7 @@ vi.mock("i18next", async (importOriginal) => {
   const { setupServer } = await import("msw/node");
   const { http, HttpResponse } = await import("msw");
 
-  global.i18nServer = setupServer(
+  global.server = setupServer(
     http.get("/locales/en/*", async (req) => {
       const filename = req.params[0];
 
@@ -50,9 +52,12 @@ vi.mock("i18next", async (importOriginal) => {
         console.log(`Failed to load locale ${filename}!`, err);
         return HttpResponse.json({});
       }
-    })
+    }),
+    http.get("https://fonts.googleapis.com/*", () => {
+      return HttpResponse.text("");
+    }),
   );
-  global.i18nServer.listen({ onUnhandledRequest: "error" });
+  global.server.listen({ onUnhandledRequest: "error" });
   console.log("i18n MSW server listening!");
 
   return await importOriginal();
@@ -83,6 +88,6 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  global.i18nServer.close();
+  global.server.close();
   console.log("Closing i18n MSW server!");
 });

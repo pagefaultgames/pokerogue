@@ -1,25 +1,4 @@
-export enum Type {
-  UNKNOWN = -1,
-  NORMAL = 0,
-  FIGHTING,
-  FLYING,
-  POISON,
-  GROUND,
-  ROCK,
-  BUG,
-  GHOST,
-  STEEL,
-  FIRE,
-  WATER,
-  GRASS,
-  ELECTRIC,
-  PSYCHIC,
-  ICE,
-  DRAGON,
-  DARK,
-  FAIRY,
-  STELLAR
-}
+import { Type } from "#enums/type";
 
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
@@ -334,7 +313,7 @@ export function getTypeDamageMultiplierColor(multiplier: TypeDamageMultiplier, s
   }
 }
 
-export function getTypeRgb(type: Type): [ integer, integer, integer ] {
+export function getTypeRgb(type: Type): [ number, number, number ] {
   switch (type) {
     case Type.NORMAL:
       return [ 168, 168, 120 ];

@@ -1,18 +1,16 @@
-import BattleScene from "../../battle-scene";
-import { Mode } from "../ui";
-"#app/inputs-controller";
+import type { Mode } from "../ui";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { SettingKeys, SettingType } from "#app/system/settings/settings";
+"#app/inputs-controller";
 
 export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *
-   * @param scene - The BattleScene instance.
    * @param mode - The UI mode, optional.
    */
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, SettingType.DISPLAY, mode);
+  constructor(mode: Mode | null = null) {
+    super(SettingType.DISPLAY, mode);
     this.title = "Display";
 
     /**
@@ -29,10 +27,10 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
             label: "English",
           };
           break;
-        case "es":
+        case "es-ES":
           this.settings[languageIndex].options[0] = {
-            value: "Español",
-            label: "Español",
+            value: "Español (ES)",
+            label: "Español (ES)",
           };
           break;
         case "it":
