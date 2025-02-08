@@ -7,6 +7,7 @@ import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { BattlerIndex } from "#app/battle";
 
 describe("Moves - Telekinesis", () => {
   let phaserGame: Phaser.Game;
@@ -120,5 +121,18 @@ describe("Moves - Telekinesis", () => {
     expect(enemyOpponent.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
     expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeUndefined();
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+  });
+
+  it("should not be baton passed onto a mega gengar", async () => {
+    game.override.moveset([ Moves.BATON_PASS ])
+      .enemyMoveset([ Moves.TELEKINESIS ])
+      .starterForms({ [Species.GENGAR]: 1 });
+
+    await game.classicMode.startBattle([ Species.MAGIKARP, Species.GENGAR ]);
+    game.move.select(Moves.BATON_PASS);
+    game.doSelectPartyPokemon(1);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(game.scene.getPlayerPokemon()!.getTag(BattlerTagType.TELEKINESIS)).toBeUndefined();
   });
 });
