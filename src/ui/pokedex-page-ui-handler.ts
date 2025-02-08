@@ -628,7 +628,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.tmMoves = speciesTmMoves[species.speciesId]?.filter(m => Array.isArray(m) ? (m[0] === formKey ? true : false ) : true)
       .map(m => Array.isArray(m) ? m[1] : m).sort((a, b) => allMoves[a].name > allMoves[b].name ? 1 : -1) ?? [];
 
-    const passives = starterPassiveAbilities[this.getStarterSpeciesId(species.speciesId)];
+    const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId) ? species.speciesId :
+      starterPassiveAbilities.hasOwnProperty(this.getStarterSpeciesId(species.speciesId)) ? this.getStarterSpeciesId(species.speciesId) : pokemonPrevolutions[this.getStarterSpeciesId(species.speciesId)];
+    const passives = starterPassiveAbilities[passiveId];
     this.passive = (this.formIndex in passives) ? passives[formIndex] : passives[0];
 
     const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)];
