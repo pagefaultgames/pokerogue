@@ -1374,7 +1374,7 @@ export default class BattleScene extends SceneBase {
           pokemon.resetBattleData();
           pokemon.resetTera();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
-          if (pokemon.hasSpecies(Species.TERAPAGOS)) {
+          if (pokemon.hasSpecies(Species.TERAPAGOS) || (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)) {
             this.arena.playerTerasUsed = 0;
           }
         }
