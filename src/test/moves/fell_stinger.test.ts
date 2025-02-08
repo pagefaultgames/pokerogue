@@ -35,14 +35,11 @@ describe("Moves - Fell Stinger", () => {
         Moves.LEECH_SEED
       ])
       .startingLevel(50)
-      .disableCrits();
-
-    game.override.enemyAbility(Abilities.STURDY)
+      .disableCrits()
+      .enemyAbility(Abilities.STURDY)
       .enemySpecies(Species.HYPNO)
-      .enemyMoveset([ Moves.SPLASH ])
+      .enemyMoveset(Moves.SPLASH)
       .enemyLevel(5);
-
-    game.override.weather(WeatherType.NONE);
   });
 
   it("should not grant stat boost if opponent gets KO'd by recoil", async () => {
