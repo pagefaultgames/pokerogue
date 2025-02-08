@@ -324,8 +324,8 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
-  getSpriteAtlasPath(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {
-    const spriteId = this.getSpriteId(female, formIndex, shiny, variant).replace(/\_{2}/g, "/");
+  getSpriteAtlasPath(female: boolean, formIndex?: number, shiny?: boolean, variant?: number, back?: boolean): string {
+    const spriteId = this.getSpriteId(female, formIndex, shiny, variant, back).replace(/\_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
@@ -346,8 +346,8 @@ export abstract class PokemonSpeciesForm {
     return `${back ? "back__" : ""}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? "shiny__" : ""}${baseSpriteKey}${shiny && variantSet && variantSet[variant] === 2 ? `_${variant + 1}` : ""}`;
   }
 
-  getSpriteKey(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {
-    return `pkmn__${this.getSpriteId(female, formIndex, shiny, variant)}`;
+  getSpriteKey(female: boolean, formIndex?: number, shiny?: boolean, variant?: number, back?: boolean): string {
+    return `pkmn__${this.getSpriteId(female, formIndex, shiny, variant, back)}`;
   }
 
   abstract getFormSpriteKey(formIndex?: number): string;
@@ -520,10 +520,10 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
-  loadAssets(female: boolean, formIndex?: number, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
+  loadAssets(female: boolean, formIndex?: number, shiny?: boolean, variant?: Variant, startLoad?: boolean, back?: boolean): Promise<void> {
     return new Promise(resolve => {
-      const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
-      globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
+      const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
+      globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
       globalScene.load.audio(`${this.getCryKey(formIndex)}`, `audio/${this.getCryKey(formIndex)}.m4a`);
       globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
@@ -533,7 +533,7 @@ export abstract class PokemonSpeciesForm {
         console.warn = originalWarn;
         if (!(globalScene.anims.exists(spriteKey))) {
           globalScene.anims.create({
-            key: this.getSpriteKey(female, formIndex, shiny, variant),
+            key: this.getSpriteKey(female, formIndex, shiny, variant, back),
             frames: frameNames,
             frameRate: 10,
             repeat: -1
@@ -541,7 +541,7 @@ export abstract class PokemonSpeciesForm {
         } else {
           globalScene.anims.get(spriteKey).frameRate = 10;
         }
-        const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant).replace("variant/", "").replace(/_[1-3]$/, "");
+        const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back).replace("variant/", "").replace(/_[1-3]$/, "");
         globalScene.loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
       });
       if (startLoad) {
