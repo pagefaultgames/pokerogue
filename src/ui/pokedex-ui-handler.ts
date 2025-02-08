@@ -11,7 +11,7 @@ import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { catchableSpecies } from "#app/data/balance/biomes";
 import { Type } from "#enums/type";
-import type { DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences } from "#app/system/game-data";
+import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
 import { AbilityAttr, DexAttr, StarterPrefs } from "#app/system/game-data";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
@@ -19,7 +19,6 @@ import { TextStyle, addTextObject } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
-import type { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
@@ -159,7 +158,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   private filterMode: boolean;
   private filterBarCursor: number = 0;
-  private starterMoveset: StarterMoveset | null;
   private scrollCursor: number;
 
   private allSpecies: PokemonSpecies[] = [];
@@ -167,7 +165,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
   private pokerusSpecies: PokemonSpecies[] = [];
   private speciesStarterDexEntry: DexEntry | null;
-  private speciesStarterMoves: Moves[];
 
   private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
@@ -214,6 +211,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private trayCursorObj: Phaser.GameObjects.Image;
   private trayCursor: number = 0;
   private showTray: boolean = false;
+  private showFormTrayIconElement: Phaser.GameObjects.Sprite;
+  private showFormTrayLabel: Phaser.GameObjects.Text;
+  private canShowFormTray: boolean;
+
 
   constructor() {
     super(Mode.POKEDEX);
@@ -509,6 +510,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.toggleDecorationsLabel.setName("text-toggleDecorations-label");
     this.starterSelectContainer.add(this.toggleDecorationsIconElement);
     this.starterSelectContainer.add(this.toggleDecorationsLabel);
+
+    this.showFormTrayIconElement = new Phaser.GameObjects.Sprite(globalScene, 6, 168, "keyboard", "F.png");
+    this.showFormTrayIconElement.setName("sprite-showFormTray-icon-element");
+    this.showFormTrayIconElement.setScale(0.675);
+    this.showFormTrayIconElement.setOrigin(0.0, 0.0);
+    this.showFormTrayLabel = addTextObject(16, 168, i18next.t("pokedexUiHandler:showForms"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.showFormTrayLabel.setName("text-showFormTray-label");
+    this.starterSelectContainer.add(this.showFormTrayIconElement);
+    this.starterSelectContainer.add(this.showFormTrayLabel);
 
     this.message = addTextObject(8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     this.message.setOrigin(0, 0);
@@ -1123,7 +1133,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             break;
           case Button.CYCLE_FORM:
             const species = this.filteredPokemonContainers[this.cursor].species;
-            if (species.forms && species.forms.length > 1) {
+            if (this.canShowFormTray) {
               success = this.openFormTray(species);
             }
             break;
@@ -1852,9 +1862,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.assetLoadCancelled = null;
     }
 
-    this.starterMoveset = null;
-    this.speciesStarterMoves = [];
-
     if (species) {
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
 
@@ -1913,13 +1920,20 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.setTypeIcons(null, null);
       }
 
+      if (species?.forms?.length > 1) {
+        this.showFormTrayIconElement.setVisible(true);
+        this.showFormTrayLabel.setVisible(true);
+        this.canShowFormTray = true;
+      } else  {
+        this.showFormTrayIconElement.setVisible(false);
+        this.showFormTrayLabel.setVisible(false);
+        this.canShowFormTray = false;
+      }
+
     } else {
       this.setTypeIcons(null, null);
     }
 
-    if (!this.starterMoveset) {
-      this.starterMoveset = this.speciesStarterMoves.slice(0, 4) as StarterMoveset;
-    }
   }
 
   setTypeIcons(type1: Type | null, type2: Type | null): void {
