@@ -15,7 +15,7 @@ export default class DamageNumberHandler {
     this.damageNumbers = new Map();
   }
 
-  add(target: Pokemon, amount: integer, result: DamageResult | HitResult.HEAL = HitResult.EFFECTIVE, critical: boolean = false): void {
+  add(target: Pokemon, amount: number, result: DamageResult | HitResult.HEAL = HitResult.EFFECTIVE, critical: boolean = false): void {
     if (!globalScene?.damageNumbersMode) {
       return;
     }

@@ -4,8 +4,8 @@
 			"image": "giacomo.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 75,
-				"h": 75
+				"w": 71,
+				"h": 71
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 37,
+						"h": 71
 					},
 					"spriteSourceSize": {
-						"x": 23,
-						"y": 4,
+						"x": 0,
+						"y": 0,
 						"w": 37,
-						"h": 75
+						"h": 71
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
 						"w": 37,
-						"h": 75
+						"h": 71
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:8c4e7da48e5667abc6d364330268c092:0fa43e58d8a746d3b86cb2dd763719f4:8603cc19e888c8c8de62177f4011577c$"
+		"smartupdate": "$TexturePacker:SmartUpdate:8d4b9bca01f3729556cd02a8795c3e89:cb2840cbbd1e5a614bfa6bcb23db5b62:8603cc19e888c8c8de62177f4011577c$"
 	}
 }
