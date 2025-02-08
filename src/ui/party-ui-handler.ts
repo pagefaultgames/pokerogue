@@ -398,7 +398,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.POKEDEX && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL && option !== PartyOption.RENAME)
+        } else if ((![ PartyOption.SUMMARY, PartyOption.POKEDEX, PartyOption.UNPAUSE_EVOLUTION, PartyOption.UNSPLICE, PartyOption.RELEASE, PartyOption.CANCEL, PartyOption.RENAME ].includes(option))
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string | null;
           const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
