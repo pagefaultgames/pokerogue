@@ -5,6 +5,7 @@ import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
+import { BattlerIndex } from "#app/battle";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Protosynthesis", () => {
@@ -48,12 +49,14 @@ describe("Abilities - Protosynthesis", () => {
     const atk_before_boost = mew.getEffectiveStat(Stat.ATK, undefined, undefined, false, undefined, false, false, true);
     const initialHp = enemy.hp;
     game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.toNextTurn();
     const unboosted_dmg = initialHp - enemy.hp;
     enemy.hp = initialHp;
     const def_after_boost = mew.getEffectiveStat(Stat.DEF, undefined, undefined, false, undefined, false, false, true);
     const atk_after_boost = mew.getEffectiveStat(Stat.ATK, undefined, undefined, false, undefined, false, false, true);
     game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
     await game.toNextTurn();
     const boosted_dmg = initialHp - enemy.hp;
     expect(boosted_dmg).toBeGreaterThan(unboosted_dmg);
