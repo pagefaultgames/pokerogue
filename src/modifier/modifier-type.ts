@@ -1702,7 +1702,8 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
     }, 8),
-    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex < 180 ? 1 : 0, 1),
+    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode.isClassic && party[0].scene.currentBattle.waveIndex < 180 ? 2 : 0, 2),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 2),
     new WeightedModifierType(modifierTypes.TM_GREAT, 3),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
       if (!party.find(p => p.getLearnableLevelMoves().length)) {
@@ -1730,8 +1731,14 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
       const { gameMode, gameData } = party[0].scene;
       if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
-        return party.some(p => ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions)))
-          && !p.getHeldItems().some(i => i instanceof EvolutionStatBoosterModifier) && !p.isMax()) ? 10 : 0;
+        return party.some(p => {
+          // Check if Pokemon's species (or fusion species, if applicable) can evolve or if they're G-Max'd
+          if (!p.isMax() && ((p.getSpeciesForm(true).speciesId in pokemonEvolutions) || (p.isFusion() && (p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions)))) {
+            // Check if Pokemon is already holding an Eviolite
+            return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");
+          }
+          return false;
+        }) ? 10 : 0;
       }
       return 0;
     }),
@@ -1744,19 +1751,59 @@ const modifierPool: ModifierPool = {
         || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId)))) ? 12 : 0;
     }, 12),
     new WeightedModifierType(modifierTypes.TOXIC_ORB, (party: Pokemon[]) => {
-      const checkedAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ];
-      const checkedMoves = [ Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT ];
-      // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof TurnStatusEffectModifier)
-        && (checkedAbilities.some(a => p.hasAbility(a, false, true))
-        || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
+      return party.some(p => {
+        const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
+
+        const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
+        const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+
+        // Moves that take advantage of obtaining the actual status effect
+        const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
+          .some(m => moveset.includes(m));
+        // Moves that take advantage of being able to give the target a status orb
+        // TODO: Take moves from comment they are implemented
+        const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
+          .some(m => moveset.includes(m));
+        // Abilities that take advantage of obtaining the actual status effect
+        const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.TOXIC_BOOST, Abilities.POISON_HEAL, Abilities.MAGIC_GUARD ]
+          .some(a => p.hasAbility(a, false, true));
+
+        if (!isHoldingOrb) {
+          if (canSetStatus) {
+            return hasRelevantAbilities || hasStatusMoves;
+          } else {
+            return hasItemMoves;
+          }
+        }
+        return false;
+      }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.FLAME_ORB, (party: Pokemon[]) => {
-      const checkedAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ];
-      const checkedMoves = [ Moves.FACADE, Moves.TRICK, Moves.FLING, Moves.SWITCHEROO, Moves.PSYCHO_SHIFT ];
-      // If a party member doesn't already have one of these two orbs and has one of the above moves or abilities, the orb can appear
-      return party.some(p => !p.getHeldItems().some(i => i instanceof TurnStatusEffectModifier)
-        && (checkedAbilities.some(a => p.hasAbility(a, false, true)) || p.getMoveset(true).some(m => m && checkedMoves.includes(m.moveId)))) ? 10 : 0;
+      return party.some(p => {
+        const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
+        const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
+        const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+
+        // Moves that take advantage of obtaining the actual status effect
+        const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
+          .some(m => moveset.includes(m));
+        // Moves that take advantage of being able to give the target a status orb
+        // TODO: Take moves from comment they are implemented
+        const hasItemMoves = [ /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */ ]
+          .some(m => moveset.includes(m));
+        // Abilities that take advantage of obtaining the actual status effect
+        const hasRelevantAbilities = [ Abilities.QUICK_FEET, Abilities.GUTS, Abilities.MARVEL_SCALE, Abilities.FLARE_BOOST, Abilities.MAGIC_GUARD ]
+          .some(a => p.hasAbility(a, false, true));
+
+        if (!isHoldingOrb) {
+          if (canSetStatus) {
+            return hasRelevantAbilities || hasStatusMoves;
+          } else {
+            return hasItemMoves;
+          }
+        }
+        return false;
+      }) ? 10 : 0;
     }, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB, (party: Pokemon[]) => {
       const checkedAbilities = [ Abilities.WEAK_ARMOR, Abilities.CONTRARY, Abilities.MOODY, Abilities.ANGER_SHELL, Abilities.COMPETITIVE, Abilities.DEFIANT ];
@@ -1794,7 +1841,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
     new WeightedModifierType(modifierTypes.CATCHING_CHARM, (party: Pokemon[]) => !party[0].scene.gameMode.isFreshStartChallenge() && party[0].scene.gameData.getSpeciesCount(d => !!d.caughtAttr) > 100 ? 4 : 0, 4),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),

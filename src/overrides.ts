@@ -86,6 +86,8 @@ class DefaultOverrides {
   readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
   /** Set to `true` to show all tutorials */
   readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
+  /** Set to `true` to be able to re-earn already unlocked achievements */
+  readonly ACHIEVEMENTS_REUNLOCK_OVERRIDE: boolean = false;
   /** Set to `true` to force Paralysis and Freeze to always activate, or `false` to force them to not activate */
   readonly STATUS_ACTIVATION_OVERRIDE: boolean | null = null;
 
@@ -175,7 +177,11 @@ class DefaultOverrides {
   // MYSTERY ENCOUNTER OVERRIDES
   // -------------------------
 
-  /** 1 to 256, set to null to ignore */
+  /**
+   * `1` (almost never) to `256` (always), set to `null` to disable the override
+   *
+   * Note: Make sure `STARTING_WAVE_OVERRIDE > 10`, otherwise MEs won't trigger
+   */
   readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
   readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;

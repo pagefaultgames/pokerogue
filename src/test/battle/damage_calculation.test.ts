@@ -102,7 +102,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     game.move.select(Moves.JUMP_KICK);
 
-    await game.phaseInterceptor.to("DamagePhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(shedinja.hp).toBe(shedinja.getMaxHp() - 1);
   });

@@ -43,7 +43,12 @@ export class QuietFormChangePhase extends BattlePhase {
     const getPokemonSprite = () => {
       const sprite = this.scene.addPokemonSprite(this.pokemon, this.pokemon.x + this.pokemon.getSprite().x, this.pokemon.y + this.pokemon.getSprite().y, "pkmn__sub");
       sprite.setOrigin(0.5, 1);
-      sprite.play(this.pokemon.getBattleSpriteKey()).stop();
+      const spriteKey = this.pokemon.getBattleSpriteKey();
+      try {
+        sprite.play(spriteKey).stop();
+      } catch (err: unknown) {
+        console.error(`Failed to play animation for ${spriteKey}`, err);
+      }
       sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
       [ "spriteColors", "fusionSpriteColors" ].map(k => {
         if (this.pokemon.summonData?.speciesForm) {
@@ -81,7 +86,12 @@ export class QuietFormChangePhase extends BattlePhase {
         this.pokemon.setVisible(false);
         this.pokemon.changeForm(this.formChange).then(() => {
           pokemonFormTintSprite.setScale(0.01);
-          pokemonFormTintSprite.play(this.pokemon.getBattleSpriteKey()).stop();
+          const spriteKey = this.pokemon.getBattleSpriteKey();
+          try {
+            pokemonFormTintSprite.play(spriteKey).stop();
+          } catch (err: unknown) {
+            console.error(`Failed to play animation for ${spriteKey}`, err);
+          }
           pokemonFormTintSprite.setVisible(true);
           this.scene.tweens.add({
             targets: pokemonTintSprite,
