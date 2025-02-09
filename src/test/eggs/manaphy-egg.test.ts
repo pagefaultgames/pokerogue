@@ -9,7 +9,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Manaphy Eggs", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const EGG_HATCH_COUNT: integer = 48;
+  const EGG_HATCH_COUNT: number = 48;
   let rngSweepProgress: number = 0;
 
   beforeAll(() => {
