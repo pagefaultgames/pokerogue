@@ -2841,7 +2841,7 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
 }
 
 export class PreLeaveFieldAbAttr extends AbAttr {
-  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return false;
   }
 }
@@ -2856,7 +2856,7 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
    * @param args N/A
    * @returns Returns `true` if the weather clears, otherwise `false`.
    */
-  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const weatherType = globalScene.arena.weather?.weatherType;
     let turnOffWeather = false;
 
@@ -5643,6 +5643,23 @@ export function applyPreSwitchOutAbAttrs(
     args,
     true,
     simulated,
+  );
+}
+
+export function applyPreLeaveFieldAbAttrs(
+  attrType: Constructor<PreLeaveFieldAbAttr>,
+  pokemon: Pokemon,
+  simulated: boolean = false,
+  ...args: any[]
+): void {
+  return applyAbAttrsInternal<PreLeaveFieldAbAttr>(
+    attrType,
+    pokemon,
+    (attr, passive) =>
+      attr.applyPreLeaveField(pokemon, passive, simulated, args),
+    args,
+    true,
+    simulated
   );
 }
 
