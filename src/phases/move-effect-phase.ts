@@ -480,8 +480,8 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param lastHit - `true` if this is the last hit in a multi-hit attack
    * @returns a function intended to be passed into a `then()` call.
    */
-  protected applySelfTargetEffects(user: Pokemon, target: Pokemon, firstHit: boolean, lastHit: boolean): () => void {
-    return () => applyFilteredMoveAttrs((attr: MoveAttr) =>
+  protected applySelfTargetEffects(user: Pokemon, target: Pokemon, firstHit: boolean, lastHit: boolean): void {
+    applyFilteredMoveAttrs((attr: MoveAttr) =>
       attr instanceof MoveEffectAttr
       && attr.trigger === MoveEffectTrigger.POST_APPLY
       && attr.selfTarget
@@ -578,20 +578,18 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param dealsDamage - `true` if the attempted move successfully dealt damage
    * @returns a function intended to be passed into a `then()` call.
    */
-  protected applyHeldItemFlinchCheck(user: Pokemon, target: Pokemon, dealsDamage: boolean) : () => void {
-    return () => {
-      if (this.move.getMove().hasAttr(FlinchAttr)) {
-        return;
-      }
+  protected applyHeldItemFlinchCheck(user: Pokemon, target: Pokemon, dealsDamage: boolean) : void {
+    if (this.move.getMove().hasAttr(FlinchAttr)) {
+      return;
+    }
 
-      if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !this.move.getMove().hitsSubstitute(user, target)) {
-        const flinched = new BooleanHolder(false);
-        globalScene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
-        if (flinched.value) {
-          target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
-        }
+    if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !this.move.getMove().hitsSubstitute(user, target)) {
+      const flinched = new BooleanHolder(false);
+      globalScene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
+      if (flinched.value) {
+        target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
       }
-    };
+    }
   }
 
   /**
