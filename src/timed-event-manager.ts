@@ -173,6 +173,7 @@ const timedEvents: TimedEvent[] = [
       { species: Species.ESPURR },
       { species: Species.SPRITZEE },
       { species: Species.SWIRLIX },
+      { species: Species.APPLIN },
       { species: Species.MILCERY },
       { species: Species.INDEEDEE },
       { species: Species.TANDEMAUS },
