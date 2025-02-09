@@ -498,8 +498,8 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param lastHit - `true` if this is the last hit in a multi-hit attack
    * @returns a function intended to be passed into a `then()` call.
    */
-  protected applyPostApplyEffects(user: Pokemon, target: Pokemon, firstHit: boolean, lastHit: boolean): () => void {
-    return () => applyFilteredMoveAttrs((attr: MoveAttr) =>
+  protected applyPostApplyEffects(user: Pokemon, target: Pokemon, firstHit: boolean, lastHit: boolean): void {
+    applyFilteredMoveAttrs((attr: MoveAttr) =>
       attr instanceof MoveEffectAttr
       && attr.trigger === MoveEffectTrigger.POST_APPLY
       && !attr.selfTarget
