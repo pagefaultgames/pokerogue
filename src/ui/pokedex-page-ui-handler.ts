@@ -548,8 +548,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     // Filter bar sits above everything, except the message box
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
-
-    this.updateInstructions();
   }
 
   show(args: any[]): boolean {
