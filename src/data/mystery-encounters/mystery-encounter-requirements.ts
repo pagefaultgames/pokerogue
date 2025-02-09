@@ -549,17 +549,17 @@ export class MoveRequirement extends EncounterPokemonRequirement {
       // get the Pokemon with at least one move in the required moves list
       return partyPokemon.filter((pokemon) =>
         (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
-        && pokemon.moveset.some((move) => move?.moveId && this.requiredMoves.includes(move.moveId)));
+        && pokemon.moveset.some((move) => move.moveId && this.requiredMoves.includes(move.moveId)));
     } else {
       // for an inverted query, we only want to get the pokemon that don't have ANY of the listed moves
       return partyPokemon.filter((pokemon) =>
         (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
-        && !pokemon.moveset.some((move) => move?.moveId && this.requiredMoves.includes(move.moveId)));
+        && !pokemon.moveset.some((move) => move.moveId && this.requiredMoves.includes(move.moveId)));
     }
   }
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
-    const includedMoves = pokemon?.moveset.filter((move) => move?.moveId && this.requiredMoves.includes(move.moveId));
+    const includedMoves = pokemon?.moveset.filter((move) => move.moveId && this.requiredMoves.includes(move.moveId));
     if (includedMoves && includedMoves.length > 0 && includedMoves[0]) {
       return [ "move", includedMoves[0].getName() ];
     }
