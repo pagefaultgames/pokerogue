@@ -558,7 +558,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.species = args[0];
       this.formIndex = args[1] ?? 0;
       this.savedStarterAttributes = args[2] ?? { shiny:false, female:true, variant:0, form:0 };
-      this.starterId = this.getStarterSpeciesId(this.species.speciesId);
       this.starterSetup();
     }
 
@@ -594,6 +593,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const species = this.species;
     const formIndex = this.formIndex ?? 0;
+
+    this.starterId = this.getStarterSpeciesId(this.species.speciesId);
 
     const allEvolutions = pokemonEvolutions.hasOwnProperty(species.speciesId) ? pokemonEvolutions[species.speciesId] : [];
 
@@ -876,7 +877,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * @returns the id of the corresponding starter
    */
   getStarterSpeciesId(speciesId): number {
-    if (globalScene.gameData.starterData.hasOwnProperty(speciesId)) {
+    if (speciesId === Species.PIKACHU) {
+      if ([ 0, 1, 8 ].includes(this.formIndex)) {
+        return Species.PICHU;
+      } else {
+        return Species.PIKACHU;
+      }
+    }
+    if (speciesStarterCosts.hasOwnProperty(speciesId)) {
       return speciesId;
     } else {
       return pokemonStarters[speciesId];
@@ -884,7 +892,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   getStarterSpecies(species): PokemonSpecies {
-    if (globalScene.gameData.starterData.hasOwnProperty(species.speciesId)) {
+    if (speciesStarterCosts.hasOwnProperty(species.speciesId)) {
       return species;
     } else {
       return allSpecies.find(sp => sp.speciesId === pokemonStarters[species.speciesId]) ?? species;
