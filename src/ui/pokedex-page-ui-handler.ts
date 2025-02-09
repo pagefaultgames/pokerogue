@@ -195,6 +195,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   private allSpecies: PokemonSpecies[] = [];
   private species: PokemonSpecies;
+  private starterId: number;
   private formIndex: number;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
   private levelMoves: LevelMoves;
@@ -559,6 +560,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.species = args[0];
       this.formIndex = args[1] ?? 0;
       this.savedStarterAttributes = args[2] ?? { shiny:false, female:true, variant:0, form:0 };
+      this.starterId = this.getStarterSpeciesId(this.species.speciesId);
       this.starterSetup();
     }
 
@@ -621,19 +623,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.baseTotal = species.baseTotal;
     }
 
-    this.eggMoves = speciesEggMoves[this.getStarterSpeciesId(species.speciesId)] ?? [];
-    this.hasEggMoves = Array.from({ length: 4 }, (_, em) => (globalScene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].eggMoves & (1 << em)) !== 0);
+    this.eggMoves = speciesEggMoves[this.starterId] ?? [];
+    this.hasEggMoves = Array.from({ length: 4 }, (_, em) => (globalScene.gameData.starterData[this.starterId].eggMoves & (1 << em)) !== 0);
 
     const formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
     this.tmMoves = speciesTmMoves[species.speciesId]?.filter(m => Array.isArray(m) ? (m[0] === formKey ? true : false ) : true)
       .map(m => Array.isArray(m) ? m[1] : m).sort((a, b) => allMoves[a].name > allMoves[b].name ? 1 : -1) ?? [];
 
     const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId) ? species.speciesId :
-      starterPassiveAbilities.hasOwnProperty(this.getStarterSpeciesId(species.speciesId)) ? this.getStarterSpeciesId(species.speciesId) : pokemonPrevolutions[this.getStarterSpeciesId(species.speciesId)];
+      starterPassiveAbilities.hasOwnProperty(this.starterId) ? this.starterId : pokemonPrevolutions[this.starterId];
     const passives = starterPassiveAbilities[passiveId];
     this.passive = (this.formIndex in passives) ? passives[formIndex] : passives[0];
 
-    const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)];
+    const starterData = globalScene.gameData.starterData[this.starterId];
     const abilityAttr = starterData.abilityAttr;
     this.hasPassive = starterData.passiveAttr > 0;
 
@@ -649,9 +651,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const allBiomes = catchableSpecies[species.speciesId] ?? [];
     this.preBiomes = this.sanitizeBiomes(
-      (catchableSpecies[this.getStarterSpeciesId(species.speciesId)] ?? [])
+      (catchableSpecies[this.starterId] ?? [])
         .filter(b => !allBiomes.some(bm => (b.biome === bm.biome && b.tier === bm.tier)) && !(b.biome === Biome.TOWN)),
-      this.getStarterSpeciesId(species.speciesId));
+      this.starterId);
     this.biomes = this.sanitizeBiomes(allBiomes, species.speciesId);
 
     const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId) ? pokemonFormChanges[species.speciesId] : [];
@@ -968,7 +970,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     } else {
 
-      const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(this.species.speciesId)];
+      const starterData = globalScene.gameData.starterData[this.starterId];
       // prepare persistent starter data to store changes
       const starterAttributes = this.starterAttributes;
 
@@ -1631,90 +1633,55 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               error = true;
             } else {
               const ui = this.getUi();
+              ui.showText("");
               const options: any[] = []; // TODO: add proper type
 
               const passiveAttr = starterData.passiveAttr;
               const candyCount = starterData.candyCount;
 
-              if (!pokemonPrevolutions.hasOwnProperty(this.species.speciesId)) {
-                if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
-                  const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.getStarterSpeciesId(this.species.speciesId)]);
-                  options.push({
-                    label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[this.passive].name})`,
-                    handler: () => {
-                      if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
-                        starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                        if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                          starterData.candyCount -= passiveCost;
-                        }
-                        this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-                        globalScene.gameData.saveSystem().then(success => {
-                          if (!success) {
-                            return globalScene.reset(true);
-                          }
-                        });
-                        ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                        this.setSpeciesDetails(this.species);
-                        globalScene.playSound("se/buy");
-
-                        return true;
-                      }
-                      return false;
-                    },
-                    item: "candy",
-                    itemArgs: starterColors[this.getStarterSpeciesId(this.species.speciesId)]
-                  });
-                }
-
-                // Reduce cost option
-                const valueReduction = starterData.valueReduction;
-                if (valueReduction < valueReductionMax) {
-                  const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(this.species.speciesId)])[valueReduction];
-                  options.push({
-                    label: `x${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
-                    handler: () => {
-                      if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
-                        starterData.valueReduction++;
-                        if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                          starterData.candyCount -= reductionCost;
-                        }
-                        this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-                        globalScene.gameData.saveSystem().then(success => {
-                          if (!success) {
-                            return globalScene.reset(true);
-                          }
-                        });
-                        ui.setMode(Mode.POKEDEX_PAGE, "refresh");
-                        globalScene.playSound("se/buy");
-
-                        return true;
-                      }
-                      return false;
-                    },
-                    item: "candy",
-                    itemArgs: starterColors[this.getStarterSpeciesId(this.species.speciesId)]
-                  });
-                }
-
-                // Same species egg menu option.
-                const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(this.species.speciesId)]);
+              if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
+                const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.starterId]);
                 options.push({
-                  label: `x${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
+                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[this.passive].name})`,
                   handler: () => {
-                    if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
-                      if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
-                        // Egg list full, show error message at the top of the screen and abort
-                        this.showText(i18next.t("egg:tooManyEggs"), undefined, () => this.showText("", 0, () => this.tutorialActive = false), 2000, false, undefined, true);
-                        return false;
-                      }
+                    if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
+                      starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
                       if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                        starterData.candyCount -= sameSpeciesEggCost;
+                        starterData.candyCount -= passiveCost;
                       }
                       this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                      globalScene.gameData.saveSystem().then(success => {
+                        if (!success) {
+                          return globalScene.reset(true);
+                        }
+                      });
+                      this.setSpeciesDetails(this.species);
+                      globalScene.playSound("se/buy");
+                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
 
-                      const egg = new Egg({ scene: globalScene, species: this.species.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG });
-                      egg.addEggToGameData();
+                      return true;
+                    }
+                    return false;
+                  },
+                  style: this.isPassiveAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+                  item: "candy",
+                  itemArgs: this.isPassiveAvailable() ? starterColors[this.starterId] : [ "808080", "808080" ]
+                });
+              }
 
+              // Reduce cost option
+              const valueReduction = starterData.valueReduction;
+              if (valueReduction < valueReductionMax) {
+                const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[valueReduction];
+                options.push({
+                  label: `x${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
+                  handler: () => {
+                    if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
+                      starterData.valueReduction++;
+                      if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                        starterData.candyCount -= reductionCost;
+                      }
+                      this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
                       globalScene.gameData.saveSystem().then(success => {
                         if (!success) {
                           return globalScene.reset(true);
@@ -1727,24 +1694,59 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     }
                     return false;
                   },
+                  style: this.isValueReductionAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                   item: "candy",
-                  itemArgs: starterColors[this.getStarterSpeciesId(this.species.speciesId)]
+                  itemArgs: this.isValueReductionAvailable() ? starterColors[this.starterId] : [ "808080", "808080" ]
                 });
-                options.push({
-                  label: i18next.t("menu:cancel"),
-                  handler: () => {
+              }
+
+              // Same species egg menu option.
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId]);
+              options.push({
+                label: `x${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
+                handler: () => {
+                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
+                    if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                      // Egg list full, show error message at the top of the screen and abort
+                      this.showText(i18next.t("egg:tooManyEggs"), undefined, () => this.showText("", 0, () => this.tutorialActive = false), 2000, false, undefined, true);
+                      return false;
+                    }
+                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      starterData.candyCount -= sameSpeciesEggCost;
+                    }
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+
+                    const egg = new Egg({ scene: globalScene, species: this.species.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG });
+                    egg.addEggToGameData();
+
+                    globalScene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return globalScene.reset(true);
+                      }
+                    });
                     ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                    globalScene.playSound("se/buy");
+
                     return true;
                   }
-                });
-                ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                  options: options,
-                  yOffset: 47
-                });
-                success = true;
-              } else {
-                error = true;
-              }
+                  return false;
+                },
+                style: this.isSameSpeciesEggAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+                item: "candy",
+                itemArgs: this.isSameSpeciesEggAvailable() ? starterColors[this.starterId] : [ "808080", "808080" ]
+              });
+              options.push({
+                label: i18next.t("menu:cancel"),
+                handler: () => {
+                  ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                  return true;
+                }
+              });
+              ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                options: options,
+                yOffset: 47
+              });
+              success = true;
             }
             break;
           case Button.CYCLE_ABILITY:
@@ -1875,9 +1877,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     if (this.isCaught()) {
       if (isFormCaught) {
-        if (!pokemonPrevolutions.hasOwnProperty(this.species.speciesId)) {
-          this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
-        }
+        this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
         if (this.canCycleShiny) {
           this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
         }
@@ -1934,14 +1934,49 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   getFriendship(speciesId: number) {
-    let currentFriendship = globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)].friendship;
+    let currentFriendship = globalScene.gameData.starterData[this.starterId].friendship;
     if (!currentFriendship || currentFriendship === undefined) {
       currentFriendship = 0;
     }
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.getStarterSpeciesId(speciesId)]);
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.starterId]);
 
     return { currentFriendship, friendshipCap };
+  }
+
+  /**
+   * Determines if a passive upgrade is available for the current species
+   * @returns true if the user has enough candies and a passive has not been unlocked already
+   */
+  isPassiveAvailable(): boolean {
+    // Get this species ID's starter data
+    const starterData = globalScene.gameData.starterData[this.starterId];
+
+    return starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.starterId])
+      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED);
+  }
+
+  /**
+   * Determines if a value reduction upgrade is available for the current species
+   * @returns true if the user has enough candies and all value reductions have not been unlocked already
+   */
+  isValueReductionAvailable(): boolean {
+    // Get this species ID's starter data
+    const starterData = globalScene.gameData.starterData[this.starterId];
+
+    return starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction]
+        && starterData.valueReduction < valueReductionMax;
+  }
+
+  /**
+   * Determines if an same species egg can be bought for the current species
+   * @returns true if the user has enough candies
+   */
+  isSameSpeciesEggAvailable(): boolean {
+    // Get this species ID's starter data
+    const starterData = globalScene.gameData.starterData[this.starterId];
+
+    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId]);
   }
 
   setSpecies() {
@@ -2199,7 +2234,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
       // Caught and hatched
       if (isFormCaught) {
-        const colorScheme = starterColors[species.speciesId];
+        const colorScheme = starterColors[this.starterId];
 
         this.pokemonUncaughtText.setVisible(false);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);
@@ -2219,26 +2254,23 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonShinyIcon.setVisible(defaultProps.shiny);
         this.pokemonCaughtHatchedContainer.setVisible(true);
 
+        this.pokemonCaughtHatchedContainer.setY(25);
+        this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
+        this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
+        this.pokemonCandyCountText.setText(`x${globalScene.gameData.starterData[this.starterId].candyCount}`);
+        this.pokemonCandyContainer.setVisible(true);
+
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
-          this.pokemonCaughtHatchedContainer.setY(16);
           this.pokemonShinyIcon.setY(135);
           this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
-          [
-            this.pokemonCandyContainer,
-            this.pokemonHatchedIcon,
-            this.pokemonHatchedCountText
-          ].map(c => c.setVisible(false));
-          this.pokemonFormText.setY(25);
+          this.pokemonHatchedIcon.setVisible(false);
+          this.pokemonHatchedCountText.setVisible(false);
+          this.pokemonFormText.setY(36);
         } else {
-          this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonShinyIcon.setY(117);
-          this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-          this.pokemonCandyCountText.setText(`x${globalScene.gameData.starterData[this.getStarterSpeciesId(species.speciesId)].candyCount}`);
-          this.pokemonCandyContainer.setVisible(true);
-          this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
+          this.pokemonFormText.setY(42);
 
           const { currentFriendship, friendshipCap } = this.getFriendship(this.species.speciesId);
           const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
