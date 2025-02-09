@@ -422,7 +422,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
    * @param duration
    * @param ease
    */
-  private tint(sprite, color: number, alpha?: number, duration?: integer, ease?: string): void {
+  private tint(sprite, color: number, alpha?: number, duration?: number, ease?: string): void {
     // const tintSprites = this.getTintSprites();
     sprite.setTintFill(color);
     sprite.setVisible(true);
@@ -448,7 +448,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
    * @param duration
    * @param ease
    */
-  tintAll(color: number, alpha?: number, duration?: integer, ease?: string): void {
+  tintAll(color: number, alpha?: number, duration?: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.map(tintSprite => {
       this.tint(tintSprite, color, alpha, duration, ease);
@@ -461,7 +461,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
    * @param duration
    * @param ease
    */
-  private untint(sprite, duration: integer, ease?: string): void {
+  private untint(sprite, duration: number, ease?: string): void {
     if (duration) {
       globalScene.tweens.add({
         targets: sprite,
@@ -485,7 +485,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
    * @param duration
    * @param ease
    */
-  untintAll(duration: integer, ease?: string): void {
+  untintAll(duration: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.map(tintSprite => {
       this.untint(tintSprite, duration, ease);

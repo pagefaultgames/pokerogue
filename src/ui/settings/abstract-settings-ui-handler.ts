@@ -463,7 +463,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.cursorObj = null;
   }
 
-  override showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  override showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number) {
     this.messageBoxContainer.setVisible(!!text?.length);
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
