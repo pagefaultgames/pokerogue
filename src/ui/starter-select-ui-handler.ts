@@ -1971,6 +1971,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             });
           }
           options.push({
+            label: i18next.t("menuUiHandler:POKEDEX"),
+            handler: () => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => {
+                const attributes = {
+                  shiny: starterAttributes.shiny,
+                  variant: starterAttributes.variant,
+                  form: starterAttributes.form,
+                  female: starterAttributes.female
+                };
+                ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, starterAttributes.form, attributes);
+                return true;
+              });
+            }
+          });
+          options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
               ui.setMode(Mode.STARTER_SELECT);
