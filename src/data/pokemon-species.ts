@@ -690,6 +690,26 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.name;
   }
 
+  /**
+   * Find the name of species with proper attachments for regionals and separate starter forms (Floette, Ursaluna)
+   * @param species the species to check
+   * @returns a string with the region name or other form name attached
+   */
+  getExpandedSpeciesName(): string {
+    const name = this.name;
+    const region = this.getRegion();
+    if (this.speciesId === Species.ETERNAL_FLOETTE) {
+      return i18next.t("pokemonInfo:eternal_floette_expanded");
+    } else if (this.speciesId === Species.BLOODMOON_URSALUNA) {
+      return i18next.t("pokemonInfo:bloodmoon_ursaluna_expanded");
+    } else if (region === Region.NORMAL) {
+      return name;
+    } else {
+      const regionalName = i18next.t(`pokemonInfo:expandedName${Region[region]}`, { species: name });
+      return regionalName;
+    }
+  }
+
   localize(): void {
     this.name = i18next.t(`pokemon:${Species[this.speciesId].toLowerCase()}`);
   }

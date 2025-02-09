@@ -918,18 +918,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return label;
   }
 
-  /**
-   * Find the name of the region for regional species
-   * @param species the species to check
-   * @returns a string with the region name
-   */
-  getRegionName(species: PokemonSpecies): string {
-    const name = species.name;
-    const label = Species[species.speciesId];
-    const suffix = label.includes("_") ? " (" + label.split("_")[0].toLowerCase() + ")" : "";
-    return name + suffix;
-  }
-
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
@@ -1372,7 +1360,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       options.push({
                         label: pre.preFormKey ?
                           this.getFormString(pre.preFormKey, preSpecies ?? this.species, true) :
-                          this.getRegionName(preSpecies ?? this.species),
+                          (preSpecies ?? this.species).getExpandedSpeciesName(),
                         handler: () => {
                           const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
                           // Attempts to find the formIndex of the prevolved species
@@ -1413,7 +1401,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       options.push({
                         label: evo.evoFormKey ?
                           this.getFormString(evo.evoFormKey, evoSpecies ?? this.species, true) :
-                          this.getRegionName(evoSpecies ?? this.species),
+                          (evoSpecies ?? this.species).getExpandedSpeciesName(),
                         style: isCaughtEvo && isFormCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                         handler: () => {
                           this.starterAttributes.form = newFormIndex;

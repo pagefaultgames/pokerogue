@@ -160,7 +160,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonCandyCountText.setVisible(true);
 
     this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
-    this.pokemonNameText.setText(species.name);
+    this.pokemonNameText.setText(species.getExpandedSpeciesName());
 
     const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
 
