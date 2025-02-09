@@ -126,7 +126,7 @@ interface SpeciesDetails {
   shiny?: boolean,
   formIndex?: number
   female?: boolean,
-  variant?: number
+  variant?: number,
 }
 
 enum MenuOptions {
@@ -2040,7 +2040,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           shiny: props.shiny,
           formIndex: props.formIndex,
           female: props.female,
-          variant: props.variant
+          variant: props.variant,
         });
         this.pokemonSprite.setTint(0x808080);
       }

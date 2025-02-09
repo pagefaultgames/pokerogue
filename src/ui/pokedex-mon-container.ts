@@ -11,6 +11,7 @@ interface SpeciesDetails {
   female?: boolean,
   variant?: Variant
 }
+
 export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
   public icon: Phaser.GameObjects.Sprite;

@@ -136,7 +136,7 @@ interface SpeciesDetails {
   female?: boolean,
   variant?: Variant,
   abilityIndex?: number,
-  natureIndex?: number
+  natureIndex?: number,
 }
 
 export default class PokedexUiHandler extends MessageUiHandler {
@@ -214,7 +214,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private showFormTrayIconElement: Phaser.GameObjects.Sprite;
   private showFormTrayLabel: Phaser.GameObjects.Text;
   private canShowFormTray: boolean;
-
 
   constructor() {
     super(Mode.POKEDEX);
@@ -1740,7 +1739,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       return false;
     }
 
-    cursor = Math.max(Math.min(this.trayContainers.length - 1, cursor), 0);
+    cursor = Phaser.Math.Clamp(this.trayContainers.length - 1, cursor, 0);
     const changed = this.trayCursor !== cursor;
     if (changed) {
       this.trayCursor = cursor;
