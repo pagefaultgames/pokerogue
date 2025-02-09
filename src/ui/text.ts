@@ -42,6 +42,7 @@ export enum TextStyle {
   PERFECT_IV,
   ME_OPTION_DEFAULT, // Default style for choices in ME
   ME_OPTION_SPECIAL, // Style for choices with special requirements in ME
+  SHADOW_TEXT // To obscure unavailable options
 }
 
 export interface TextStyleOptions {
@@ -359,10 +360,16 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
         return !shadow ? "#f8b050" : "#c07800"; // Gold
       }
       return !shadow ? "#78c850" : "#306850"; // Green
+    // Leaving the logic in place, in case someone wants to pick an even darker hue for the shadow down the line
+    case TextStyle.SHADOW_TEXT:
+      if (isLegacyTheme) {
+        return !shadow ? "#d0d0c8" : "#d0d0c8";
+      }
+      return !shadow ? "#6b5a73" : "#6b5a73";
   }
 }
 
-export function getModifierTierTextTint(tier: ModifierTier): integer {
+export function getModifierTierTextTint(tier: ModifierTier): number {
   switch (tier) {
     case ModifierTier.COMMON:
       return 0xf8f8f8;
@@ -379,7 +386,7 @@ export function getModifierTierTextTint(tier: ModifierTier): integer {
   }
 }
 
-export function getEggTierTextTint(tier: EggTier): integer {
+export function getEggTierTextTint(tier: EggTier): number {
   switch (tier) {
     case EggTier.COMMON:
       return getModifierTierTextTint(ModifierTier.COMMON);
