@@ -10,6 +10,7 @@ export enum Tutorial {
   Access_Menu = "ACCESS_MENU",
   Menu = "MENU",
   Starter_Select = "STARTER_SELECT",
+  Pokedex = "POKEDEX",
   Pokerus = "POKERUS",
   Stat_Change = "STAT_CHANGE",
   Select_Item = "SELECT_ITEM",

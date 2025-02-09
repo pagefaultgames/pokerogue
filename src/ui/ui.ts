@@ -23,6 +23,7 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
+import PokedexUiHandler from "./pokedex-ui-handler";
 import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
@@ -53,6 +54,8 @@ import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import { Device } from "#enums/devices";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
+import PokedexScanUiHandler from "./pokedex-scan-ui-handler";
+import PokedexPageUiHandler from "./pokedex-page-ui-handler";
 import { NavigationManager } from "./settings/navigationMenu";
 
 export enum Mode {
@@ -85,6 +88,9 @@ export enum Mode {
   GAME_STATS,
   EGG_LIST,
   EGG_GACHA,
+  POKEDEX,
+  POKEDEX_SCAN,
+  POKEDEX_PAGE,
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
@@ -109,6 +115,8 @@ const transitionModes = [
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
+  Mode.POKEDEX,
+  Mode.POKEDEX_PAGE,
   Mode.CHALLENGE_SELECT,
   Mode.RUN_HISTORY,
 ];
@@ -128,6 +136,7 @@ const noTransitionModes = [
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
+  Mode.POKEDEX_SCAN,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
@@ -193,6 +202,9 @@ export default class UI extends Phaser.GameObjects.Container {
       new GameStatsUiHandler(),
       new EggListUiHandler(),
       new EggGachaUiHandler(),
+      new PokedexUiHandler(),
+      new PokedexScanUiHandler(Mode.TEST_DIALOGUE),
+      new PokedexPageUiHandler(),
       new LoginFormUiHandler(),
       new RegistrationFormUiHandler(),
       new LoadingModalUiHandler(),
@@ -563,6 +575,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
+
       if (!this?.modeChain?.length) {
         return resolve(false);
       }

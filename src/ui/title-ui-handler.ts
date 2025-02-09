@@ -1,7 +1,7 @@
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
+import { TextStyle, addTextObject } from "./text";
 import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
@@ -47,8 +47,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     }
 
     this.playerCountLabel = addTextObject(
-      (globalScene.game.canvas.width / 6) - 2,
-      (globalScene.game.canvas.height / 6) - 13 - 576 * getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale,
+      // Actual y position will be determined after the title menu has been populated with options
+      (globalScene.game.canvas.width / 6) - 2, 0,
       `? ${i18next.t("menu:playersOnline")}`,
       TextStyle.MESSAGE,
       { fontSize: "54px" }
@@ -96,6 +96,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const ret = super.show(args);
 
     if (ret) {
+      // Moving player count to top of the menu
+      this.playerCountLabel.setY((globalScene.game.canvas.height / 6) - 13 - this.getWindowHeight());
+
       this.splashMessage = Utils.randItem(getSplashMessages());
       this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
 

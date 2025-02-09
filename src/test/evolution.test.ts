@@ -174,7 +174,7 @@ describe("Evolution", () => {
     for (let f = 1; f < 4; f++) {
       vi.spyOn(Utils, "randSeedInt").mockReturnValue(f); // setting the random generator to 1, 2 and 3 to force 4 family mausholds
       const fourForm = playerPokemon.getEvolution()!;
-      expect(fourForm.evoFormKey).toBe(null); // meanwhile, according to the pokemon-forms, the evoFormKey for a 4 family maushold is null
+      expect(fourForm.evoFormKey).toBe("four"); // meanwhile, according to the pokemon-forms, the evoFormKey for a 4 family maushold is "four"
     }
   });
 });
