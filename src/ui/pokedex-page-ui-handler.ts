@@ -2188,6 +2188,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonGenderText.setText("");
       }
 
+      // Setting the name
+      if (isFormCaught || isFormSeen) {
+        this.pokemonNameText.setText(species.name);
+      } else {
+        this.pokemonNameText.setText(species ? "???" : "");
+      }
+
       // Setting tint of the sprite
       if (isFormCaught) {
         this.species.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
@@ -2291,24 +2298,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonShinyIcon.setVisible(false);
       }
 
-      // Form text
+      // Setting type icons and form text
       if (isFormCaught || isFormSeen) {
+        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
+        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
+        this.pokemonFormText.setText(this.getFormString((speciesForm as PokemonForm).formKey, species));
         this.pokemonFormText.setVisible(true);
         if (!isFormCaught) {
           this.pokemonFormText.setY(18);
         }
       } else {
-        this.pokemonFormText.setVisible(false);
-      }
-
-      // Setting type icons
-      if (isFormCaught || isFormSeen) {
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
-        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-        this.pokemonFormText.setText(this.getFormString((speciesForm as PokemonForm).formKey, species));
-      } else {
         this.setTypeIcons(null, null);
         this.pokemonFormText.setText("");
+        this.pokemonFormText.setVisible(false);
       }
     } else {
       this.shinyOverlay.setVisible(false);
