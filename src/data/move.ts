@@ -9200,7 +9200,7 @@ export function initMoves() {
           return 1;
         }
         const weatherTypes = [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN ];
-        if (weatherTypes.includes(weather.weatherType) && !weather.isEffectSuppressed(user.scene)) {
+        if (weatherTypes.includes(weather.weatherType) && !weather.isEffectSuppressed()) {
           return 2;
         }
         return 1;
@@ -11030,7 +11030,7 @@ export function initMoves() {
         if (!weather) {
           return 1;
         }
-        return [ WeatherType.SUNNY, WeatherType.HARSH_SUN ].includes(weather.weatherType) && !weather.isEffectSuppressed(user.scene) ? 1.5 : 1;
+        return [ WeatherType.SUNNY, WeatherType.HARSH_SUN ].includes(weather.weatherType) && !weather.isEffectSuppressed() ? 1.5 : 1;
       }),
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
