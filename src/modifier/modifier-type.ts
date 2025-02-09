@@ -2547,7 +2547,7 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     return DailyLuck.value;
   }
   const eventSpecies = globalScene.eventManager.getEventLuckBoostedSpecies();
-  const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() + (eventSpecies.includes(p.species.speciesId) ? 1 : 0) : 0)
+  const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() + (eventSpecies.includes(p.species.speciesId) ? 3 : 0) : 0)
     .reduce((total: number, value: number) => total += value, 0), 0, 14);
   return Math.min(globalScene.eventManager.getEventLuckBoost() + (luck ?? 0), 14);
 }

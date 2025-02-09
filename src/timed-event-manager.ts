@@ -150,7 +150,7 @@ const timedEvents: TimedEvent[] = [
   {
     name: "Valentine",
     eventType: EventType.SHINY,
-    startDate: new Date(Date.UTC(2025, 1, 10, 12)),
+    startDate: new Date(Date.UTC(2025, 1, 10)),
     endDate: new Date(Date.UTC(2025, 1, 21)),
     boostFusions: true,
     shinyMultiplier: 2,
@@ -177,7 +177,8 @@ const timedEvents: TimedEvent[] = [
       { species: Species.INDEEDEE },
       { species: Species.TANDEMAUS },
       { species: Species.ENAMORUS }
-    ]
+    ],
+    luckBoostedSpecies: [ Species.LUVDISC ]
   }
 ];
 
