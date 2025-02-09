@@ -161,6 +161,7 @@ export default class BattleScene extends SceneBase {
   public reroll: boolean = false;
   public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public commandCursorMemory: boolean = false;
+  public dexForDevs: boolean = false;
   public showMovesetFlyout: boolean = true;
   public showArenaFlyout: boolean = true;
   public showTimeOfDayWidget: boolean = true;

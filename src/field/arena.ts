@@ -772,6 +772,8 @@ export class Arena {
         return 0.000;
       case Biome.SNOWY_FOREST:
         return 3.047;
+      case Biome.END:
+        return 17.153;
       default:
         console.warn(`missing bgm loop-point for biome "${Biome[this.biomeType]}" (=${this.biomeType})`);
         return 0;
