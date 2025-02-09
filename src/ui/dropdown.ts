@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
+import { ScrollBar } from "#app/ui/scroll-bar";
 import i18next from "i18next";
 
 export enum DropDownState {
@@ -293,21 +294,37 @@ export class DropDown extends Phaser.GameObjects.Container {
   private onChange: () => void;
   private lastDir: SortDirection = SortDirection.ASC;
   private defaultSettings: any[];
+  private dropDownScrollBar: ScrollBar;
+  private totalOptions: number = 0;
+  private maxOptions: number = 0;
+  private shownOptions: number = 0;
+  private tooManyOptions: Boolean = false;
+  private firstShown: number = 0;
+  private optionHeight: number = 0;
+  private optionSpacing: number = 0;
+  private optionPaddingX: number = 4;
+  private optionPaddingY: number = 6;
+  private optionWidth: number = 100;
+  private cursorOffset: number = 0;
 
   constructor(x: number, y: number, options: DropDownOption[], onChange: () => void, type: DropDownType = DropDownType.MULTI, optionSpacing: number = 2) {
     const windowPadding = 5;
-    const optionHeight = 7;
-    const optionPaddingX = 4;
-    const optionPaddingY = 6;
     const cursorOffset = 7;
-    const optionWidth = 100;
 
     super(globalScene, x - cursorOffset - windowPadding, y);
+
+    this.optionWidth = 100;
+    this.optionHeight = 7;
+    this.optionSpacing = optionSpacing;
+    this.optionPaddingX = 4;
+    this.optionPaddingY = 6;
+    this.cursorOffset = cursorOffset;
+
     this.options = options;
     this.dropDownType = type;
     this.onChange = onChange;
 
-    this.cursorObj = globalScene.add.image(optionPaddingX + 3, 0, "cursor");
+    this.cursorObj = globalScene.add.image(this.optionPaddingX + 3, 0, "cursor");
     this.cursorObj.setScale(0.5);
     this.cursorObj.setOrigin(0, 0.5);
     this.cursorObj.setVisible(false);
@@ -317,31 +334,51 @@ export class DropDown extends Phaser.GameObjects.Container {
       this.options.unshift(new DropDownOption("ALL", new DropDownLabel(i18next.t("filterBar:all"), undefined, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF)));
     }
 
+    this.maxOptions = 19;
+    this.totalOptions = this.options.length;
+    this.tooManyOptions = this.totalOptions > this.maxOptions;
+    this.shownOptions = this.tooManyOptions ? this.maxOptions : this.totalOptions;
+
     this.defaultSettings = this.getSettings();
 
     // Place ui elements in the correct spot
     options.forEach((option, index) => {
+
       const toggleVisibility = type !== DropDownType.SINGLE || option.state === DropDownState.ON;
       option.setupToggleIcon(type, toggleVisibility);
 
-      option.width = optionWidth;
-      option.y = index * optionHeight + index * optionSpacing + optionPaddingY;
+      option.width = this.optionWidth;
+      option.y = index * this.optionHeight + index * optionSpacing + this.optionPaddingY;
 
-      const baseX = cursorOffset + optionPaddingX + 3;
-      const baseY = optionHeight / 2;
+      const baseX = cursorOffset + this.optionPaddingX + 3;
+      const baseY = this.optionHeight / 2;
       option.setLabelPosition(baseX + 8, baseY);
       if (type === DropDownType.SINGLE) {
         option.setTogglePosition(baseX + 3, baseY + 1);
       } else {
         option.setTogglePosition(baseX, baseY);
       }
+
+      if (index >= this.shownOptions) {
+        option.visible = false;
+      }
+
+      this.firstShown = 0;
     });
 
-    this.window = addWindow(0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, undefined, undefined, WindowVariant.XTHIN);
+    this.window = addWindow(0, 0, this.optionWidth, options[this.shownOptions - 1].y + this.optionHeight + this.optionPaddingY, false, false, undefined, undefined, WindowVariant.XTHIN);
     this.add(this.window);
     this.add(options);
     this.add(this.cursorObj);
     this.setVisible(false);
+
+    if (this.tooManyOptions) {
+      // Setting the last parameter to 1 turns out to be optimal in all cases.
+      this.dropDownScrollBar = new ScrollBar(this.window.width - 3, 5, 5, this.window.height - 10, 1);
+      this.add(this.dropDownScrollBar);
+      this.dropDownScrollBar.setTotalRows(this.totalOptions);
+      this.dropDownScrollBar.setScrollCursor(0);
+    }
   }
 
   getWidth(): number {
@@ -371,6 +408,11 @@ export class DropDown extends Phaser.GameObjects.Container {
   }
 
   setCursor(cursor: number): boolean {
+
+    if (this.tooManyOptions) {
+      this.setLabels(cursor);
+    }
+
     this.cursor = cursor;
     if (cursor < 0) {
       cursor = 0;
@@ -391,6 +433,41 @@ export class DropDown extends Phaser.GameObjects.Container {
       }
     }
     return true;
+  }
+
+  setLabels(cursor: number) {
+
+    if ((cursor === 0) && (this.lastCursor === this.totalOptions - 1)) {
+      this.firstShown = 0;
+    } else if ((cursor === this.totalOptions - 1) && (this.lastCursor === 0)) {
+      this.firstShown = this.totalOptions - this.shownOptions;
+    } else if ((cursor - this.firstShown >= this.shownOptions) && (cursor > this.lastCursor)) {
+      this.firstShown += 1;
+    } else if ((cursor < this.firstShown) && (cursor < this.lastCursor)) {
+      this.firstShown -= 1;
+    }
+
+    this.options.forEach((option, index) => {
+
+      option.y = (index - this.firstShown) * (this.optionHeight + this.optionSpacing) + this.optionPaddingY;
+
+      const baseX = this.cursorOffset + this.optionPaddingX + 3;
+      const baseY = this.optionHeight / 2;
+      option.setLabelPosition(baseX + 8, baseY);
+      if (this.dropDownType === DropDownType.SINGLE) {
+        option.setTogglePosition(baseX + 3, baseY + 1);
+      } else {
+        option.setTogglePosition(baseX, baseY);
+      }
+
+      if ((index < this.firstShown) || ( index >= this.firstShown + this.shownOptions)) {
+        option.visible = false;
+      } else {
+        option.visible = true;
+      }
+    });
+
+    this.dropDownScrollBar.setScrollCursor(cursor);
   }
 
   /**
@@ -597,7 +674,12 @@ export class DropDown extends Phaser.GameObjects.Container {
         x = this.options[i].getCurrentLabelX() ?? 0;
       }
     }
-    this.window.width = maxWidth + x - this.window.x + 6;
+    this.window.width = maxWidth + x - this.window.x + 9;
+
+    if (this.tooManyOptions) {
+      this.window.width += 6;
+      this.dropDownScrollBar.x = this.window.width - 9;
+    }
 
     if (this.x + this.window.width > this.parentContainer.width) {
       this.x = this.parentContainer.width - this.window.width;

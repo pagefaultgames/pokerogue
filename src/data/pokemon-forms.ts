@@ -327,7 +327,8 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
     this.move = move;
     this.known = known;
     const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
-    this.description = i18next.t("pokemonEvolutions:Forms.moveLearned", { move: i18next.t(`move:${moveKey}.name`) });
+    this.description = known ? i18next.t("pokemonEvolutions:Forms.moveLearned", { move: i18next.t(`move:${moveKey}.name`) }) :
+      i18next.t("pokemonEvolutions:Forms.moveForgotten", { move: i18next.t(`move:${moveKey}.name`) });
   }
 
   canChange(pokemon: Pokemon): boolean {
