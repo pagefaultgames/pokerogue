@@ -15,7 +15,6 @@ import type { SpeciesFormChange } from "#app/data/pokemon-forms";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
-import type { PokemonForm } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
@@ -45,7 +44,7 @@ import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import { StarterContainer } from "#app/ui/starter-container";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
-import { BooleanHolder, capitalizeString, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, rgbHexToRgba, toReadableString } from "#app/utils";
+import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, rgbHexToRgba, toReadableString } from "#app/utils";
 import type { Nature } from "#enums/nature";
 import BgmBar from "./bgm-bar";
 import * as Utils from "../utils";
@@ -893,31 +892,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
   }
 
-  /**
-   * Assign a form string to a given species and form
-   * @param formKey the form to format
-   * @param species the species to format
-   * @param speciesId whether the name of the species should be shown at the end
-   * @returns the formatted string
-   */
-  getFormString(formKey: string, species: PokemonSpecies, append: boolean = false): string {
-    let label: string;
-    const formText = capitalizeString(formKey, "-", false, false) ?? "";
-    const speciesName = capitalizeString(this.getStarterSpecies(species).name, "_", true, false) ?? "";
-    if (species.speciesId === Species.ARCEUS) {
-      label = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
-      return label;
-    }
-    label = formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : "";
-    if (label === `${speciesName}${formText}`) {
-      label = i18next.t(`battlePokemonForm:${formKey}`, { pokemonName:species.name });
-    } else {
-      // If the label is only the form, we can append the name of the pokemon
-      label += append ? ` ${species.name}` : "";
-    }
-    return label;
-  }
-
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
@@ -1354,12 +1328,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     });
                     this.prevolutions.map(pre => {
                       const preSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.species.speciesId]);
+                      const preFormIndex: number = preSpecies?.forms.find(f => f.formKey === pre.preFormKey)?.formIndex ?? 0;
 
                       const conditionText: string = pre.description;
 
                       options.push({
                         label: pre.preFormKey ?
-                          this.getFormString(pre.preFormKey, preSpecies ?? this.species, true) :
+                          (preSpecies ?? this.species).getFormNameToDisplay(preFormIndex, pre.preFormKey, true) :
                           (preSpecies ?? this.species).getExpandedSpeciesName(),
                         handler: () => {
                           const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
@@ -1400,7 +1375,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                       options.push({
                         label: evo.evoFormKey ?
-                          this.getFormString(evo.evoFormKey, evoSpecies ?? this.species, true) :
+                          (evoSpecies ?? this.species).getFormNameToDisplay(newFormIndex, evo.evoFormKey, true) :
                           (evoSpecies ?? this.species).getExpandedSpeciesName(),
                         style: isCaughtEvo && isFormCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                         handler: () => {
@@ -1424,6 +1399,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => false
                     });
                     this.battleForms.map(bf => {
+                      const matchingForm = this.species?.forms.find(form => form.formKey === bf.formKey);
+                      const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
 
                       let conditionText:string = "";
                       if (bf.trigger) {
@@ -1431,12 +1408,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       } else {
                         conditionText = "";
                       }
-                      let label: string = this.getFormString(bf.formKey, this.species);
+                      let label: string = this.species.getFormNameToDisplay(newFormIndex, bf.formKey);
                       if (label === "") {
                         label = this.species.name;
                       }
-                      const matchingForm = this.species?.forms.find(form => form.formKey === bf.formKey);
-                      const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
                       const isFormCaught = this.isFormCaught(this.species, newFormIndex);
 
                       if (conditionText) {
@@ -2254,7 +2229,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       if (caughtAttr || forSeen) {
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-        this.pokemonFormText.setText(this.getFormString((speciesForm as PokemonForm).formKey, species));
+        this.pokemonFormText.setText(species.getFormNameToDisplay(formIndex));
 
       } else {
         this.setTypeIcons(null, null);

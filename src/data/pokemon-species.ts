@@ -710,6 +710,42 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     }
   }
 
+  /**
+ * Find the form name for species with just one form (regional variants, Floette, Ursaluna)
+ * @param species the species to check
+ * @returns the pokemon-form locale key for the single form name ("Alolan Form", "Eternal Flower" etc)
+ */
+  getFormNameToDisplay(formIndex: number = 0, key?: string, append: boolean = false): string {
+    const formKey = key ?? (this.forms?.[formIndex!]?.formKey);
+    const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
+    const speciesName = Utils.capitalizeString(Species[this.speciesId], "_", true, false);
+    let ret: string = "";
+
+    const region = this.getRegion();
+    if (this.speciesId === Species.ARCEUS) {
+      ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
+    } else if ([ SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE ].includes(formKey)) {
+      return i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: "" });
+    } else if (region === Region.NORMAL || (this.speciesId === Species.GALAR_DARMANITAN && formIndex > 0) || this.speciesId === Species.PALDEA_TAUROS) {
+      const i18key = `pokemonForm:${speciesName}${formText}`;
+      if (i18next.exists(i18key)) {
+        ret = i18next.t(i18key);
+      } else {
+        const rootSpeciesName = Utils.capitalizeString(Species[this.getRootSpeciesId()], "_", true, false);
+        const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
+        ret = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
+      }
+    } else if (this.speciesId === Species.ETERNAL_FLOETTE) {
+      ret = i18next.t("pokemonForm:floetteEternalFlower");
+    } else if (this.speciesId === Species.BLOODMOON_URSALUNA) {
+      ret = i18next.t("pokemonForm:ursalunaBloodmoon");
+    } else {
+      const regionalName = i18next.t(`pokemonForm:regionalForm${Region[region]}`);
+      ret = regionalName;
+    }
+    return ret + (append ? this.name : "");
+  }
+
   localize(): void {
     this.name = i18next.t(`pokemon:${Species[this.speciesId].toLowerCase()}`);
   }
