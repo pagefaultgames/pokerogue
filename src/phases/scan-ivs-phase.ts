@@ -1,5 +1,5 @@
-import BattleScene from "#app/battle-scene";
-import { BattlerIndex } from "#app/battle";
+import { globalScene } from "#app/global-scene";
+import type { BattlerIndex } from "#app/battle";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
 import { Stat } from "#app/enums/stat";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -11,8 +11,8 @@ import { PokemonPhase } from "./pokemon-phase";
 export class ScanIvsPhase extends PokemonPhase {
   private shownIvs: number;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, shownIvs: number) {
-    super(scene, battlerIndex);
+  constructor(battlerIndex: BattlerIndex, shownIvs: number) {
+    super(battlerIndex);
 
     this.shownIvs = shownIvs;
   }
@@ -29,12 +29,12 @@ export class ScanIvsPhase extends PokemonPhase {
     let enemyIvs: number[] = [];
     let statsContainer: Phaser.GameObjects.Sprite[] = [];
     let statsContainerLabels: Phaser.GameObjects.Sprite[] = [];
-    const enemyField = this.scene.getEnemyField();
-    const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
+    const enemyField = globalScene.getEnemyField();
+    const uiTheme = globalScene.uiTheme; // Assuming uiTheme is accessible
     for (let e = 0; e < enemyField.length; e++) {
       enemyIvs = enemyField[e].ivs;
-      const currentIvs = this.scene.gameData.dexData[enemyField[e].species.getRootSpeciesId()].ivs;  // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
-      const ivsToShow = this.scene.ui.getMessageHandler().getTopIvs(enemyIvs, this.shownIvs);
+      const currentIvs = globalScene.gameData.dexData[enemyField[e].species.getRootSpeciesId()].ivs;  // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
+      const ivsToShow = globalScene.ui.getMessageHandler().getTopIvs(enemyIvs, this.shownIvs);
       statsContainer = enemyField[e].getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
       statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
       for (let s = 0; s < statsContainerLabels.length; s++) {
@@ -48,17 +48,17 @@ export class ScanIvsPhase extends PokemonPhase {
       }
     }
 
-    if (!this.scene.hideIvs) {
-      this.scene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
-        this.scene.ui.setMode(Mode.CONFIRM, () => {
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.clearText();
-          new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(this.scene, false, () => {
-            this.scene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, this.shownIvs).then(() => this.end());
+    if (!globalScene.hideIvs) {
+      globalScene.ui.showText(i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }), null, () => {
+        globalScene.ui.setMode(Mode.CONFIRM, () => {
+          globalScene.ui.setMode(Mode.MESSAGE);
+          globalScene.ui.clearText();
+          new CommonBattleAnim(CommonAnim.LOCK_ON, pokemon, pokemon).play(false, () => {
+            globalScene.ui.getMessageHandler().promptIvs(pokemon.id, pokemon.ivs, this.shownIvs).then(() => this.end());
           });
         }, () => {
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.clearText();
+          globalScene.ui.setMode(Mode.MESSAGE);
+          globalScene.ui.clearText();
           this.end();
         });
       });

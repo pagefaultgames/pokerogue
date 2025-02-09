@@ -1,10 +1,9 @@
-import BattleScene from "#app/battle-scene";
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
 
 export abstract class PlayerPartyMemberPokemonPhase extends PartyMemberPokemonPhase {
-  constructor(scene: BattleScene, partyMemberIndex: number) {
-    super(scene, partyMemberIndex, true);
+  constructor(partyMemberIndex: number) {
+    super(partyMemberIndex, true);
   }
 
   getPlayerPokemon(): PlayerPokemon {

@@ -1,23 +1,21 @@
-import BattleScene from "../battle-scene";
-import { TextStyle, getTextColor } from "./text";
-import { Mode } from "./ui";
-import { Button } from "#enums/buttons";
+import { globalScene } from "#app/global-scene";
+import type { TextStyle } from "./text";
+import { getTextColor } from "./text";
+import type { Mode } from "./ui";
+import type { Button } from "#enums/buttons";
 
 /**
  * A basic abstract class to act as a holder and processor for UI elements.
  */
 export default abstract class UiHandler {
-  protected scene: BattleScene;
-  protected mode: integer | null;
-  protected cursor: integer = 0;
+  protected mode: number | null;
+  protected cursor: number = 0;
   public active: boolean = false;
 
   /**
-   * @param {BattleScene} scene The same scene as everything else.
-   * @param {Mode} mode The mode of the UI element. These should be unique.
+   * @param mode The mode of the UI element. These should be unique.
    */
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    this.scene = scene;
+  constructor(mode: Mode | null = null) {
     this.mode = mode;
   }
 
@@ -32,18 +30,18 @@ export default abstract class UiHandler {
   abstract processInput(button: Button): boolean;
 
   getUi() {
-    return this.scene.ui;
+    return globalScene.ui;
   }
 
   getTextColor(style: TextStyle, shadow: boolean = false): string {
-    return getTextColor(style, shadow, this.scene.uiTheme);
+    return getTextColor(style, shadow, globalScene.uiTheme);
   }
 
-  getCursor(): integer {
+  getCursor(): number {
     return this.cursor;
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const changed = this.cursor !== cursor;
     if (changed) {
       this.cursor = cursor;
@@ -58,10 +56,15 @@ export default abstract class UiHandler {
    * @param cursorStyle cursor style to apply
    */
   protected setMouseCursorStyle(cursorStyle: "pointer" | "default") {
-    this.scene.input.manager.canvas.style.cursor = cursorStyle;
+    globalScene.input.manager.canvas.style.cursor = cursorStyle;
   }
 
   clear() {
     this.active = false;
   }
+  /**
+   * To be implemented by individual handlers when necessary to free memory
+   * Called when {@linkcode BattleScene} is reset
+   */
+  destroy(): void {}
 }

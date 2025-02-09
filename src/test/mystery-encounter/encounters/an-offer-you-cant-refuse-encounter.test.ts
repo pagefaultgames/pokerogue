@@ -7,7 +7,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { AnOfferYouCantRefuseEncounter } from "#app/data/mystery-encounters/encounters/an-offer-you-cant-refuse-encounter";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -91,8 +91,8 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
     expect(AnOfferYouCantRefuseEncounter.onInit).toBeDefined();
 
-    AnOfferYouCantRefuseEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    AnOfferYouCantRefuseEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.strongestPokemon).toBeDefined();
     expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.price).toBeDefined();
@@ -130,7 +130,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, price);
+      expect(updateMoneySpy).toHaveBeenCalledWith(price);
       expect(scene.money).toBe(initialMoney + price);
     });
 
@@ -220,7 +220,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
       const price = scene.currentBattle.mysteryEncounter!.misc.price;
 
-      expect(updateMoneySpy).toHaveBeenCalledWith(scene, price);
+      expect(updateMoneySpy).toHaveBeenCalledWith(price);
       expect(scene.money).toBe(initialMoney + price);
     });
 

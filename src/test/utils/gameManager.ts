@@ -2,7 +2,7 @@ import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
 import { getMoveTargets } from "#app/data/move";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
@@ -17,28 +17,29 @@ import { MovePhase } from "#app/phases/move-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import type { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import ErrorInterceptor from "#app/test/utils/errorInterceptor";
-import InputsHandler from "#app/test/utils/inputsHandler";
-import BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
-import CommandUiHandler from "#app/ui/command-ui-handler";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
+import type InputsHandler from "#app/test/utils/inputsHandler";
+import type BallUiHandler from "#app/ui/ball-ui-handler";
+import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
+import type CommandUiHandler from "#app/ui/command-ui-handler";
+import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import type PartyUiHandler from "#app/ui/party-ui-handler";
+import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { isNullOrUndefined } from "#app/utils";
 import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
-import { Moves } from "#enums/moves";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { Moves } from "#enums/moves";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
-import { Species } from "#enums/species";
+import type { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
 import GameWrapper from "#test/utils/gameWrapper";
 import { ChallengeModeHelper } from "#test/utils/helpers/challengeModeHelper";
@@ -129,9 +130,10 @@ export default class GameManager {
 
   /**
    * Adds an action to be executed on the next prompt.
+   * This can be used to (among other things) simulate inputs or run functions mid-phase.
    * @param phaseTarget - The target phase.
    * @param mode - The mode to wait for.
-   * @param callback - The callback to execute.
+   * @param callback - The callback function to execute on next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
    */
   onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
@@ -173,8 +175,8 @@ export default class GameManager {
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.scene.gameMode = getGameMode(mode);
       const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      this.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 
@@ -206,8 +208,8 @@ export default class GameManager {
     this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.scene);
-      this.scene.pushPhase(new EncounterPhase(this.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      this.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     }, () => this.isCurrentPhase(EncounterPhase));
 
@@ -254,7 +256,7 @@ export default class GameManager {
    * @param {BattlerIndex} targetIndex The index of the attack target, or `undefined` for multi-target attacks
    * @param movePosition The index of the move in the pokemon's moveset array
    */
-  selectTarget(movePosition: integer, targetIndex?: BattlerIndex) {
+  selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
       const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
       const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
@@ -375,7 +377,7 @@ export default class GameManager {
   exportSaveToTest(): Promise<string> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     return new Promise(async (resolve) => {
-      const sessionSaveData = this.scene.gameData.getSessionSaveData(this.scene);
+      const sessionSaveData = this.scene.gameData.getSessionSaveData();
       const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
       resolve(encryptedSaveData);
     });
@@ -386,7 +388,7 @@ export default class GameManager {
    * @param path - The path to the data file.
    * @returns A promise that resolves with a tuple containing a boolean indicating success and an integer status code.
    */
-  async importData(path): Promise<[boolean, integer]> {
+  async importData(path): Promise<[boolean, number]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
@@ -400,10 +402,15 @@ export default class GameManager {
     return updateUserInfo();
   }
 
+  /**
+   * Faints a player or enemy pokemon instantly by setting their HP to 0.
+   * @param pokemon The player/enemy pokemon being fainted
+   * @returns A promise that resolves once the fainted pokemon's FaintPhase finishes running.
+   */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
-      this.scene.pushPhase(new FaintPhase(this.scene, pokemon.getBattlerIndex(), true));
+      this.scene.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
       resolve();
     });
@@ -453,8 +460,27 @@ export default class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks the getSpeedOrder's return value {@linkcode TurnStartPhase.getSpeedOrder}
-   * Used to modify the turn order.
+   * Select the BALL option from the command menu, then press Action; in the BALL
+   * menu, select a pokéball type and press Action again to throw it.
+   * @param ballIndex the index of the pokeball to throw
+   */
+  public doThrowPokeball(ballIndex: number) {
+    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
+      (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
+    });
+
+    this.onNextPrompt("CommandPhase", Mode.BALL, () => {
+      const ballHandler = this.scene.ui.getHandler() as BallUiHandler;
+      ballHandler.setCursor(ballIndex);
+      ballHandler.processInput(Button.ACTION); // select ball and throw
+    });
+  }
+
+  /**
+   * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
+   * Used to manually modify Pokemon turn order.
+   * Note: This *DOES NOT* account for priority, only speed.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
    * ```ts
@@ -468,7 +494,7 @@ export default class GameManager {
   }
 
   /**
-   * Removes all held items from enemy pokemon
+   * Removes all held items from enemy pokemon.
    */
   removeEnemyHeldItems(): void {
     this.scene.clearEnemyHeldItemModifiers();

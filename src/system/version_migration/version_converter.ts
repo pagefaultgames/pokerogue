@@ -1,4 +1,4 @@
-import { SessionSaveData, SystemSaveData } from "../game-data";
+import type { SessionSaveData, SystemSaveData } from "../game-data";
 import { version } from "../../../package.json";
 
 // --- v1.0.4 (and below) PATCHES --- //
