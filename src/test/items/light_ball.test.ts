@@ -31,7 +31,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL activates in battle correctly", async() => {
     game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "LIGHT_BALL" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -64,7 +64,7 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL held by PIKACHU", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
@@ -83,7 +83,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -92,7 +92,7 @@ describe("Items - Light Ball", () => {
   }, 20000);
 
   it("LIGHT_BALL held by fused PIKACHU (base)", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU,
       Species.MAROWAK
     ]);
@@ -122,7 +122,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -161,7 +161,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
@@ -189,7 +189,7 @@ describe("Items - Light Ball", () => {
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
