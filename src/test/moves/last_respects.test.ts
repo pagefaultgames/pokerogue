@@ -42,7 +42,7 @@ describe("Moves - Last Respects", () => {
   });
 
   it("should have 150 power if 2 allies faint before using move", async () => {
-    await game.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
     /**
      * Bulbasur faints once
@@ -67,8 +67,8 @@ describe("Moves - Last Respects", () => {
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + (2 * 50));
   });
 
-  it("should have 200 power if an ally fainted twice and antoher one once", async () => {
-    await game.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+  it("should have 200 power if an ally fainted twice and another one once", async () => {
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
     /**
      * Bulbasur faints once
@@ -102,12 +102,13 @@ describe("Moves - Last Respects", () => {
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + (3 * 50));
   });
 
-  it("should maintain its power during next battle if it is within the same arena encounter", async () => {
+  it("should maintain its power for the player during the next battle if it is within the same arena encounter", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .startingWave(1)
       .enemyLevel(1)
-      .startingLevel(100);
+      .startingLevel(100)
+      .enemyMoveset(Moves.SPLASH);
 
     await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
 
@@ -125,12 +126,45 @@ describe("Moves - Last Respects", () => {
     game.move.select(Moves.LAST_RESPECTS);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.toNextWave();
+    expect(game.scene.arena.playerFaints).toBe(1);
 
     game.move.select(Moves.LAST_RESPECTS);
     await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower + (1 * 50));
+  });
+
+  it("should reset enemyFaints count on progressing to the next wave.", async () => {
+    game.override
+      .enemySpecies(Species.MAGIKARP)
+      .startingWave(1)
+      .enemyLevel(1)
+      .startingLevel(100)
+      .enemyMoveset(Moves.LAST_RESPECTS)
+      .moveset([ Moves.LUNAR_DANCE, Moves.LAST_RESPECTS, Moves.SPLASH ]);
+
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    /**
+     * The first Pokemon faints and another Pokemon in the party is selected.
+    */
+    game.move.select(Moves.LUNAR_DANCE);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    /**
+     * Enemy Pokemon faints and new wave is entered.
+     */
+    game.move.select(Moves.LAST_RESPECTS);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextWave();
+    expect(game.scene.currentBattle.enemyFaints).toBe(0);
+
+    game.move.select(Moves.LAST_RESPECTS);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower);
   });
 
   it("should reset playerFaints count if we enter new trainer battle", async () => {
