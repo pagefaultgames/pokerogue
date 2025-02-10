@@ -7534,8 +7534,6 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
     target.setTempAbility(tempAbility);
     // Swaps Forecast/Flower Gift from Castform/Cherrim
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
-    // Swaps Forecast/Flower Gift to Castform/Cherrim (edge case)
-    globalScene.arena.triggerWeatherBasedFormChanges();
 
     return true;
   }
