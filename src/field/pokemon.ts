@@ -7,7 +7,39 @@ import { variantColorCache } from "#app/data/variant";
 import { variantData } from "#app/data/variant";
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
 import type Move from "#app/data/move";
-import { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, VariableMoveTypeAttr, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatStagesAttr, SacrificialAttr, VariableMoveCategoryAttr, CounterDamageAttr, StatStageChangeAttr, RechargeAttr, IgnoreWeatherTypeDebuffAttr, BypassBurnDamageReductionAttr, SacrificialAttrOnHit, OneHitKOAccuracyAttr, RespectAttackTypeImmunityAttr, MoveTarget, CombinedPledgeStabBoostAttr, VariableMoveTypeChartAttr, HpSplitAttr } from "#app/data/move";
+import {
+  HighCritAttr,
+  HitsTagAttr,
+  applyMoveAttrs,
+  FixedDamageAttr,
+  VariableAtkAttr,
+  allMoves,
+  MoveCategory,
+  TypelessAttr,
+  CritOnlyAttr,
+  getMoveTargets,
+  OneHitKOAttr,
+  VariableMoveTypeAttr,
+  VariableDefAttr,
+  AttackMove,
+  ModifiedDamageAttr,
+  VariableMoveTypeMultiplierAttr,
+  IgnoreOpponentStatStagesAttr,
+  SacrificialAttr, VariableMoveCategoryAttr,
+  CounterDamageAttr,
+  StatStageChangeAttr,
+  RechargeAttr,
+  IgnoreWeatherTypeDebuffAttr,
+  BypassBurnDamageReductionAttr,
+  SacrificialAttrOnHit,
+  OneHitKOAccuracyAttr,
+  RespectAttackTypeImmunityAttr,
+  MoveTarget,
+  CombinedPledgeStabBoostAttr,
+  VariableMoveTypeChartAttr,
+  MoveFlags,
+  HpSplitAttr
+} from "#app/data/move";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import { default as PokemonSpecies, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
@@ -19,7 +51,30 @@ import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { Type } from "#enums/type";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat, type PermanentStat, type BattleStat, type EffectiveStat, PERMANENT_STATS, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, BaseStatModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempStatStageBoosterModifier, TempCritBoosterModifier, StatBoosterModifier, CritBoosterModifier, TerastallizeModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonIncrementingStatModifier, EvoTrackerModifier, PokemonMultiHitModifier } from "#app/modifier/modifier";
+import {
+  DamageMoneyRewardModifier,
+  EnemyDamageBoosterModifier,
+  EnemyDamageReducerModifier,
+  EnemyEndureChanceModifier,
+  EnemyFusionChanceModifier,
+  HiddenAbilityRateBoosterModifier,
+  BaseStatModifier,
+  PokemonFriendshipBoosterModifier,
+  PokemonHeldItemModifier,
+  PokemonNatureWeightModifier,
+  ShinyRateBoosterModifier,
+  SurviveDamageModifier,
+  TempStatStageBoosterModifier,
+  TempCritBoosterModifier,
+  StatBoosterModifier,
+  CritBoosterModifier,
+  TerastallizeModifier,
+  PokemonBaseStatFlatModifier,
+  PokemonBaseStatTotalModifier,
+  PokemonIncrementingStatModifier,
+  EvoTrackerModifier,
+  PokemonMultiHitModifier,
+} from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
@@ -27,11 +82,83 @@ import { Status, getRandomStatus } from "#app/data/status-effect";
 import type { SpeciesFormEvolution, SpeciesEvolutionCondition } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions, FusionSpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/tms";
-import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
+import {
+  BattlerTag,
+  BattlerTagLapseType,
+  EncoreTag,
+  GroundedTag,
+  HighestStatBoostTag,
+  SubstituteTag,
+  TypeImmuneTag,
+  getBattlerTag,
+  SemiInvulnerableTag,
+  TypeBoostTag,
+  MoveRestrictionBattlerTag,
+  ExposedTag,
+  DragonCheerTag,
+  CritBoostTag,
+  TrappedTag,
+  TarShotTag,
+  AutotomizedTag,
+  PowerTrickTag,
+} from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
 import type { Ability, AbAttr } from "#app/data/ability";
-import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr, PreLeaveFieldAbAttr, applyPreLeaveFieldAbAttrs } from "#app/data/ability";
+import {
+  StatMultiplierAbAttr,
+  BlockCritAbAttr,
+  BonusCritAbAttr,
+  BypassBurnDamageReductionAbAttr,
+  FieldPriorityMoveImmunityAbAttr,
+  IgnoreOpponentStatStagesAbAttr,
+  MoveImmunityAbAttr,
+  PreDefendFullHpEndureAbAttr,
+  ReceivedMoveDamageMultiplierAbAttr,
+  StabBoostAbAttr,
+  StatusEffectImmunityAbAttr,
+  TypeImmunityAbAttr,
+  WeightMultiplierAbAttr,
+  allAbilities,
+  applyAbAttrs,
+  applyStatMultiplierAbAttrs,
+  applyPreApplyBattlerTagAbAttrs,
+  applyPreAttackAbAttrs,
+  applyPreDefendAbAttrs,
+  applyPreSetStatusAbAttrs,
+  UnsuppressableAbilityAbAttr,
+  SuppressFieldAbilitiesAbAttr,
+  NoFusionAbilityAbAttr,
+  MultCritAbAttr,
+  IgnoreTypeImmunityAbAttr,
+  DamageBoostAbAttr,
+  IgnoreTypeStatusEffectImmunityAbAttr,
+  ConditionalCritAbAttr,
+  applyFieldStatMultiplierAbAttrs,
+  FieldMultiplyStatAbAttr,
+  AddSecondStrikeAbAttr,
+  UserFieldStatusEffectImmunityAbAttr,
+  UserFieldBattlerTagImmunityAbAttr,
+  BattlerTagImmunityAbAttr,
+  MoveTypeChangeAbAttr,
+  FullHpResistTypeAbAttr,
+  applyCheckTrappedAbAttrs,
+  CheckTrappedAbAttr,
+  PostSetStatusAbAttr,
+  applyPostSetStatusAbAttrs,
+  InfiltratorAbAttr,
+  AlliedFieldDamageReductionAbAttr,
+  PostDamageAbAttr,
+  applyPostDamageAbAttrs,
+  CommanderAbAttr,
+  applyPostItemLostAbAttrs,
+  PostItemLostAbAttr,
+  AllyStatMultiplierAbAttr,
+  applyAllyStatMultiplierAbAttrs,
+  MoveAbilityBypassAbAttr,
+  PreLeaveFieldAbAttr,
+  applyPreLeaveFieldAbAttrs,
+} from "#app/data/ability";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -945,11 +1072,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param move the {@linkcode Move} being used
    * @param ignoreAbility determines whether this Pokemon's abilities should be ignored during the stat calculation
    * @param ignoreOppAbility during an attack, determines whether the opposing Pokemon's abilities should be ignored during the stat calculation.
+   * @param ignoreAllyAbility during an attack, determines whether the ally Pokemon's abilities should be ignored during the stat calculation.
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @param simulated if `true`, nullifies any effects that produce any changes to game state from triggering
    * @returns the final in-battle value of a stat
    */
-  getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreAbility: boolean = false, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): number {
+  getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreAbility: boolean = false, ignoreOppAbility: boolean = false, ignoreAllyAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): number {
     const statValue = new Utils.NumberHolder(this.getStat(stat, false));
     globalScene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
 
@@ -963,6 +1091,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (!ignoreAbility) {
       applyStatMultiplierAbAttrs(StatMultiplierAbAttr, this, stat, statValue, simulated);
+    }
+    const ally = this.getAlly();
+    if (ally) {
+      applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, stat, statValue, simulated, this, move?.hasFlag(MoveFlags.IGNORE_ABILITIES) || ignoreAllyAbility);
     }
 
     let ret = statValue.value * this.getStatStageMultiplier(stat, opponent, move, ignoreOppAbility, isCritical, simulated);
@@ -2569,6 +2701,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const evasionMultiplier = new Utils.NumberHolder(1);
     applyStatMultiplierAbAttrs(StatMultiplierAbAttr, target, Stat.EVA, evasionMultiplier);
 
+    const ally = this.getAlly();
+    if (ally) {
+      const ignore = this.hasAbilityWithAttr(MoveAbilityBypassAbAttr) || sourceMove.hasFlag(MoveFlags.IGNORE_ABILITIES);
+      applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.ACC, accuracyMultiplier, false, this, ignore);
+      applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.EVA, evasionMultiplier, false, this, ignore);
+    }
+
     return accuracyMultiplier.value / evasionMultiplier.value;
   }
 
@@ -2580,11 +2719,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param moveCategory the move's {@linkcode MoveCategory} after variable-category effects are applied.
    * @param ignoreAbility if `true`, ignores this Pokemon's defensive ability effects (defaults to `false`).
    * @param ignoreSourceAbility if `true`, ignore's the attacking Pokemon's ability effects (defaults to `false`).
+   * @param ignoreAllyAbility if `true`, ignores the ally Pokemon's ability effects (defaults to `false`).
+   * @param ignoreSourceAllyAbility if `true`, ignores the attacking Pokemon's ally's ability effects (defaults to `false`).
    * @param isCritical if `true`, calculates effective stats as if the hit were critical (defaults to `false`).
    * @param simulated if `true`, suppresses changes to game state during calculation (defaults to `true`).
    * @returns The move's base damage against this Pokemon when used by the source Pokemon.
    */
-  getBaseDamage(source: Pokemon, move: Move, moveCategory: MoveCategory, ignoreAbility: boolean = false, ignoreSourceAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): number {
+  getBaseDamage(source: Pokemon, move: Move, moveCategory: MoveCategory, ignoreAbility: boolean = false, ignoreSourceAbility: boolean = false, ignoreAllyAbility: boolean = false, ignoreSourceAllyAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): number {
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
     /** A base damage multiplier based on the source's level */
@@ -2597,14 +2738,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * The attacker's offensive stat for the given move's category.
      * Critical hits cause negative stat stages to be ignored.
      */
-    const sourceAtk = new Utils.NumberHolder(source.getEffectiveStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, ignoreSourceAbility, ignoreAbility, isCritical, simulated));
+    const sourceAtk = new Utils.NumberHolder(source.getEffectiveStat(isPhysical ? Stat.ATK : Stat.SPATK, this, undefined, ignoreSourceAbility, ignoreAbility, ignoreAllyAbility, isCritical, simulated));
     applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
 
     /**
      * This Pokemon's defensive stat for the given move's category.
      * Critical hits cause positive stat stages to be ignored.
      */
-    const targetDef = new Utils.NumberHolder(this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, ignoreSourceAbility, isCritical, simulated));
+    const targetDef = new Utils.NumberHolder(this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, ignoreAbility, ignoreSourceAbility, ignoreSourceAllyAbility, isCritical, simulated));
     applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
     /**
@@ -2627,6 +2768,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param move {@linkcode Pokemon} the move used in the attack
    * @param ignoreAbility If `true`, ignores this Pokemon's defensive ability effects
    * @param ignoreSourceAbility If `true`, ignores the attacking Pokemon's ability effects
+   * @param ignoreAllyAbility If `true`, ignores the ally Pokemon's ability effects
+   * @param ignoreSourceAllyAbility If `true`, ignores the ability effects of the attacking pokemon's ally
    * @param isCritical If `true`, calculates damage for a critical hit.
    * @param simulated If `true`, suppresses changes to game state during the calculation.
    * @returns a {@linkcode DamageCalculationResult} object with three fields:
@@ -2634,7 +2777,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * - `result`: {@linkcode HitResult} indicates the attack's type effectiveness.
    * - `damage`: `number` the attack's final damage output.
    */
-  getAttackDamage(source: Pokemon, move: Move, ignoreAbility: boolean = false, ignoreSourceAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): DamageCalculationResult {
+  getAttackDamage(source: Pokemon, move: Move, ignoreAbility: boolean = false, ignoreSourceAbility: boolean = false, ignoreAllyAbility: boolean = false, ignoreSourceAllyAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): DamageCalculationResult {
     const damage = new Utils.NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
@@ -2703,7 +2846,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * The attack's base damage, as determined by the source's level, move power
      * and Attack stat as well as this Pokemon's Defense stat
      */
-    const baseDamage = this.getBaseDamage(source, move, moveCategory, ignoreAbility, ignoreSourceAbility, isCritical, simulated);
+    const baseDamage = this.getBaseDamage(source, move, moveCategory, ignoreAbility, ignoreSourceAbility, ignoreAllyAbility, ignoreSourceAllyAbility, isCritical, simulated);
 
     /** 25% damage debuff on moves hitting more than one non-fainted target (regardless of immunities) */
     const { targets, multiple } = getMoveTargets(source, move.id);
@@ -2895,7 +3038,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         isCritical = false;
       }
 
-      const { cancelled, result, damage: dmg } = this.getAttackDamage(source, move, false, false, isCritical, false);
+      const { cancelled, result, damage: dmg } = this.getAttackDamage(source, move, false, false, false, false, isCritical, false);
 
       const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === source.getMoveType(move)) as TypeBoostTag;
       if (typeBoost?.oneUse) {
@@ -4891,7 +5034,7 @@ export class EnemyPokemon extends Pokemon {
             return move.category !== MoveCategory.STATUS
             && moveTargets.some(p => {
               const doesNotFail = move.applyConditions(this, p, move) || [ Moves.SUCKER_PUNCH, Moves.UPPER_HAND, Moves.THUNDERCLAP ].includes(move.id);
-              return doesNotFail && p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, isCritical).damage >= p.hp;
+              return doesNotFail && p.getAttackDamage(this, move, !p.battleData.abilityRevealed, false, !p.getAlly()?.battleData.abilityRevealed, false, isCritical).damage >= p.hp;
             });
           }, this);
 
