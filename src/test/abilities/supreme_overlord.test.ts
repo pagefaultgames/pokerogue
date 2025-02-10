@@ -60,6 +60,41 @@ describe("Abilities - Supreme Overlord", () => {
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.2);
   });
 
+  it("should increase Power by 30% if an ally fainted twice and another one once", async () => {
+    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE ]);
+
+    /**
+     * Bulbasur faints once
+     */
+    game.move.select(Moves.EXPLOSION);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    /**
+     * Charmander faints once
+     */
+    game.doRevivePokemon(1);
+    game.move.select(Moves.EXPLOSION);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    /**
+     * Bulbasur faints twice
+     */
+    game.move.select(Moves.EXPLOSION);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    game.doSelectPartyPokemon(2);
+    await game.toNextTurn();
+
+    game.move.select(Moves.TACKLE);
+    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.phaseInterceptor.to(MoveEffectPhase);
+
+    expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.3);
+  });
+
   it("should maintain its power during next battle if it is within the same arena encounter", async () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
