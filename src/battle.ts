@@ -117,7 +117,7 @@ export default class Battle {
 
   private rngCounter: number = 0;
 
-  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double?: boolean, enemyFaints?: number) {
+  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double: boolean = false, enemyFaints: number = 0) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
@@ -126,8 +126,8 @@ export default class Battle {
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
       : trainer?.getPartyLevels(this.waveIndex);
-    this.double = double ?? false;
-    this.enemyFaints = enemyFaints ?? 0;
+    this.double = double;
+    this.enemyFaints = enemyFaints;
   }
 
   private initBattleSpec(): void {
