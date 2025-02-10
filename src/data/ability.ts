@@ -3282,6 +3282,32 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr
  */
 export class UserFieldStatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr { }
 
+/**
+ * Conditionally provides immunity to status effects to the user's field.
+ *
+ * Used by {@linkcode Abilities.FLOWER_VEIL | Flower Veil}.
+ * @extends UserFieldStatusEffectImmunityAbAttr
+ *
+ */
+export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldStatusEffectImmunityAbAttr {
+  protected condition: (target: Pokemon, source: Pokemon | null) => boolean;
+
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    if (cancelled.value || !this.condition(pokemon, args[1] as Pokemon)) {
+      return false;
+    }
+
+    return super.apply(pokemon, passive, simulated, cancelled, args);
+  }
+
+  constructor(condition: (target: Pokemon, source: Pokemon | null) => boolean, ...immuneEffects: StatusEffect[]) {
+    super(...immuneEffects);
+
+    this.condition = condition;
+  }
+}
+
+
 export class PreApplyBattlerTagAbAttr extends AbAttr {
   canApplyPreApplyBattlerTag(
     pokemon: Pokemon,
@@ -3347,6 +3373,24 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
  * @extends PreApplyBattlerTagImmunityAbAttr
  */
 export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
+
+export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattlerTagImmunityAbAttr {
+  private condition: (target: Pokemon, source: Pokemon | null) => boolean;
+
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    if (cancelled.value || !this.condition(pokemon, args[1] as Pokemon)) {
+      return false;
+    }
+
+    return super.apply(pokemon, passive, simulated, cancelled, args);
+  }
+
+  constructor(condition: (target: Pokemon, source: Pokemon | null) => boolean, immuneTagTypes: BattlerTagType | BattlerTagType[]) {
+    super(immuneTagTypes);
+
+    this.condition = condition;
+  }
+}
 
 export class BlockCritAbAttr extends AbAttr {
   constructor() {
@@ -6670,6 +6714,16 @@ export function initAbilities() {
       .attr(UserFieldBattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT, BattlerTagType.DISABLED, BattlerTagType.TORMENT, BattlerTagType.HEAL_BLOCK ])
       .ignorable(),
     new Ability(Abilities.FLOWER_VEIL, 6)
+      .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target: Pokemon, source: Pokemon | null) => {
+        return source ? target.getTypes().includes(Type.GRASS) && target.id !== source.id : false;
+      })
+      .attr(ConditionalUserFieldBattlerTagImmunityAbAttr,
+        (target: Pokemon, source: Pokemon | null) => {
+          return source ? target.getTypes().includes(Type.GRASS) && target.id !== source.id : false;
+        },
+        [ BattlerTagType.DROWSY ],
+
+      )
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.CHEEK_POUCH, 6)
