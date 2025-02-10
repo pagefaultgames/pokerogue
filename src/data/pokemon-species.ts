@@ -692,7 +692,6 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   /**
    * Find the name of species with proper attachments for regionals and separate starter forms (Floette, Ursaluna)
-   * @param species the species to check
    * @returns a string with the region name or other form name attached
    */
   getExpandedSpeciesName(): string {
@@ -712,7 +711,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   /**
  * Find the form name for species with just one form (regional variants, Floette, Ursaluna)
- * @param species the species to check
+ * @param formIndex The form index to check (defaults to 0)
+ * @param append Whether to append the species name to the end (defaults to false)
  * @returns the pokemon-form locale key for the single form name ("Alolan Form", "Eternal Flower" etc)
  */
   getFormNameToDisplay(formIndex: number = 0, append: boolean = false): string {
