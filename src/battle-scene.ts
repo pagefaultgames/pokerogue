@@ -1410,13 +1410,6 @@ export default class BattleScene extends SceneBase {
     return this.arena;
   }
 
-  /**
-   * resets enemyFaints count on {@linkcode currentBattle}.
-   */
-  resetEnemyFaintCount(): void {
-    this.currentBattle.enemyFaints = 0;
-  }
-
   updateFieldScale(): Promise<void> {
     return new Promise(resolve => {
       const fieldScale = Math.floor(Math.pow(1 / this.getField(true)
