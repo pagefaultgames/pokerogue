@@ -516,6 +516,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.showFormTrayIconElement.setOrigin(0.0, 0.0);
     this.showFormTrayLabel = addTextObject(16, 168, i18next.t("pokedexUiHandler:showForms"), TextStyle.PARTY, { fontSize: instructionTextSize });
     this.showFormTrayLabel.setName("text-showFormTray-label");
+    this.showFormTrayIconElement.setVisible(false);
+    this.showFormTrayLabel.setVisible(false);
     this.starterSelectContainer.add(this.showFormTrayIconElement);
     this.starterSelectContainer.add(this.showFormTrayLabel);
 
@@ -1657,6 +1659,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.cursorObj.setVisible(!filterMode);
     this.filterBar.cursorObj.setVisible(filterMode);
     this.pokemonSprite.setVisible(false);
+    this.showFormTrayIconElement.setVisible(false);
+    this.showFormTrayLabel.setVisible(false);
 
     if (filterMode !== this.filterMode) {
       this.filterMode = filterMode;
@@ -1673,6 +1677,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.cursorObj.setVisible(!filterTextMode);
     this.filterText.cursorObj.setVisible(filterTextMode);
     this.pokemonSprite.setVisible(false);
+    this.showFormTrayIconElement.setVisible(false);
+    this.showFormTrayLabel.setVisible(false);
 
     if (filterTextMode !== this.filterTextMode) {
       this.filterTextMode = filterTextMode;
