@@ -16,7 +16,7 @@ class TrainerNameConfig {
 }
 
 interface TrainerNameConfigs {
-  [key: integer]: TrainerNameConfig
+  [key: number]: TrainerNameConfig
 }
 
 // used in a commented code

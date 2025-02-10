@@ -18,7 +18,7 @@ import {
   MoveFlags,
   StatusCategoryOnAllyAttr
 } from "#app/data/move";
-import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
 import { Type } from "#enums/type";
@@ -137,7 +137,7 @@ export interface TerrainBattlerTag {
  * to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove?: Moves, sourceId?: number) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
   }
 
@@ -2149,7 +2149,7 @@ export class FormBlockDamageTag extends BattlerTag {
     super.onAdd(pokemon);
 
     if (pokemon.formIndex !== 0) {
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
     }
   }
 
@@ -2161,7 +2161,7 @@ export class FormBlockDamageTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 }
 /** Provides the additional weather-based effects of the Ice Face ability */
@@ -2361,12 +2361,12 @@ export class GulpMissileTag extends BattlerTag {
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 }
 
@@ -2559,7 +2559,7 @@ export class SubstituteTag extends BattlerTag {
   /** Is the source Pokemon "in focus," i.e. is it fully visible on the field? */
   public sourceInFocus: boolean;
 
-  constructor(sourceMove: Moves, sourceId: integer) {
+  constructor(sourceMove: Moves, sourceId: number) {
     super(BattlerTagType.SUBSTITUTE, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT ], 0, sourceMove, sourceId, true);
   }
 
@@ -2871,7 +2871,7 @@ export class SyrupBombTag extends BattlerTag {
 /**
  * Telekinesis raises the target into the air for three turns and causes all moves used against the target (aside from OHKO moves) to hit the target unless the target is in a semi-invulnerable state from Fly/Dig.
  * The first effect is provided by {@linkcode FloatingTag}, the accuracy-bypass effect is provided by TelekinesisTag
- * The effects of Telekinesis can be baton passed to a teammate. Unlike the mainline games, Telekinesis can be baton-passed to Mega Gengar.
+ * The effects of Telekinesis can be baton passed to a teammate.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
  */
 export class TelekinesisTag extends BattlerTag {
