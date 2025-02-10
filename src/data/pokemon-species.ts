@@ -715,8 +715,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
  * @param species the species to check
  * @returns the pokemon-form locale key for the single form name ("Alolan Form", "Eternal Flower" etc)
  */
-  getFormNameToDisplay(formIndex: number = 0, key?: string, append: boolean = false): string {
-    const formKey = key ?? (this.forms?.[formIndex!]?.formKey);
+  getFormNameToDisplay(formIndex: number = 0, append: boolean = false): string {
+    const formKey = this.forms?.[formIndex!]?.formKey;
     const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
     const speciesName = Utils.capitalizeString(Species[this.speciesId], "_", true, false);
     let ret: string = "";
@@ -724,7 +724,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     const region = this.getRegion();
     if (this.speciesId === Species.ARCEUS) {
       ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
-    } else if ([ SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE ].includes(formKey)) {
+    } else if ([ SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE ].includes(formKey as SpeciesFormKey)) {
       return i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: "" });
     } else if (region === Region.NORMAL || (this.speciesId === Species.GALAR_DARMANITAN && formIndex > 0) || this.speciesId === Species.PALDEA_TAUROS) {
       const i18key = `pokemonForm:${speciesName}${formText}`;

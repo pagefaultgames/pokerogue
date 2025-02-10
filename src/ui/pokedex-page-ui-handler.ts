@@ -1334,7 +1334,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                       options.push({
                         label: pre.preFormKey ?
-                          (preSpecies ?? this.species).getFormNameToDisplay(preFormIndex, pre.preFormKey, true) :
+                          (preSpecies ?? this.species).getFormNameToDisplay(preFormIndex, true) :
                           (preSpecies ?? this.species).getExpandedSpeciesName(),
                         handler: () => {
                           const newSpecies = allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
@@ -1375,7 +1375,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                       options.push({
                         label: evo.evoFormKey ?
-                          (evoSpecies ?? this.species).getFormNameToDisplay(newFormIndex, evo.evoFormKey, true) :
+                          (evoSpecies ?? this.species).getFormNameToDisplay(newFormIndex, true) :
                           (evoSpecies ?? this.species).getExpandedSpeciesName(),
                         style: isCaughtEvo && isFormCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                         handler: () => {
@@ -1408,7 +1408,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       } else {
                         conditionText = "";
                       }
-                      let label: string = this.species.getFormNameToDisplay(newFormIndex, bf.formKey);
+                      let label: string = this.species.getFormNameToDisplay(newFormIndex);
                       if (label === "") {
                         label = this.species.name;
                       }
