@@ -1991,7 +1991,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     ui.showText(i18next.t("pokedexUiHandler:confirmExit"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
         ui.setMode(Mode.POKEDEX, "refresh");
-        globalScene.clearPhaseQueue();
         this.clearText();
         this.clear();
         ui.revertMode();
