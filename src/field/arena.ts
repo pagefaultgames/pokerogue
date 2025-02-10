@@ -694,6 +694,7 @@ export class Arena {
       this.trySetWeather(WeatherType.NONE, false);
     }
     this.trySetTerrain(TerrainType.NONE, false, true);
+    this.resetPlayerFaintCount();
     this.removeAllTags();
   }
 

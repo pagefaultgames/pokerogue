@@ -1344,7 +1344,6 @@ export default class BattleScene extends SceneBase {
     if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
       // Will generate the actual Mystery Encounter during NextEncounterPhase, to ensure it uses proper biome
       this.currentBattle.mysteryEncounterType = mysteryEncounterType;
-      this.arena.resetPlayerFaintCount();
     }
 
     //this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
@@ -1362,9 +1361,6 @@ export default class BattleScene extends SceneBase {
         this.arena.updatePoolsForTimeOfDay();
       }
       if (resetArenaState) {
-        this.resetEnemyFaintCount();
-        this.arena.resetPlayerFaintCount();
-
         this.arena.resetArenaEffects();
 
         playerField.forEach((pokemon) => pokemon.lapseTag(BattlerTagType.COMMANDED));
