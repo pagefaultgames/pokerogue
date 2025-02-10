@@ -210,7 +210,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private trayColumns: number;
   private trayCursorObj: Phaser.GameObjects.Image;
   private trayCursor: number = 0;
-  private showTray: boolean = false;
+  private showingTray: boolean = false;
   private showFormTrayIconElement: Phaser.GameObjects.Sprite;
   private showFormTrayLabel: Phaser.GameObjects.Text;
   private canShowFormTray: boolean;
@@ -893,14 +893,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
       } else if (this.filterTextMode && !(this.filterText.getValue(this.filterTextCursor) === this.filterText.defaultText)) {
         this.filterText.resetSelection(this.filterTextCursor);
         success = true;
-      } else if (this.showTray) {
+      } else if (this.showingTray) {
         success = this.closeFormTray();
       } else {
         this.tryExit();
         success = true;
       }
     }  else if (button === Button.STATS) {
-      if (!this.filterMode && !this.showTray) {
+      if (!this.filterMode && !this.showingTray) {
         this.cursorObj.setVisible(false);
         this.setSpecies(null);
         this.filterText.cursorObj.setVisible(false);
@@ -911,7 +911,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         error = true;
       }
     }  else if (button === Button.V) {
-      if (!this.filterTextMode && !this.showTray) {
+      if (!this.filterTextMode && !this.showingTray) {
         this.cursorObj.setVisible(false);
         this.setSpecies(null);
         this.filterBar.cursorObj.setVisible(false);
@@ -922,7 +922,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         error = true;
       }
     } else if (button === Button.CYCLE_SHINY) {
-      if (!this.showTray) {
+      if (!this.showingTray) {
         this.showDecorations = !this.showDecorations;
         this.updateScroll();
         success = true;
@@ -1025,7 +1025,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
           success = true;
           break;
       }
-    } else if (this.showTray) {
+    } else if (this.showingTray) {
       if (button === Button.ACTION) {
         const formIndex = this.trayForms[this.trayCursor].formIndex;
         ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, { form: formIndex });
@@ -1739,11 +1739,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.trayContainers.push(formContainer);
     });
 
-    this.showTray = true;
+    this.showingTray = true;
 
     this.setTrayCursor(0);
 
     this.formTrayContainer.setVisible(true);
+
+    this.showFormTrayIconElement.setVisible(false);
+    this.showFormTrayLabel.setVisible(false);
 
     return true;
   }
@@ -1756,14 +1759,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.trayContainers = [];
     this.formTrayContainer.setVisible(false);
-    this.showTray = false;
+    this.showingTray = false;
 
     this.setSpeciesDetails(this.lastSpecies);
     return true;
   }
 
   setTrayCursor(cursor: number): boolean {
-    if (!this.showTray) {
+    if (!this.showingTray) {
       return false;
     }
 
@@ -1948,8 +1951,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
 
       if (species?.forms?.length > 1) {
-        this.showFormTrayIconElement.setVisible(true);
-        this.showFormTrayLabel.setVisible(true);
+        if (!this.showingTray) {
+          this.showFormTrayIconElement.setVisible(true);
+          this.showFormTrayLabel.setVisible(true);
+        }
         this.canShowFormTray = true;
       } else  {
         this.showFormTrayIconElement.setVisible(false);
