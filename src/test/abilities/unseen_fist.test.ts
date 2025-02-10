@@ -45,9 +45,9 @@ describe("Abilities - Unseen Fist", () => {
 
   it(
     "should not apply if the source has Long Reach",
-    () => {
+    async () => {
       game.override.passiveAbility(Abilities.LONG_REACH);
-      testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
+      await testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
     }
   );
 
@@ -67,7 +67,7 @@ describe("Abilities - Unseen Fist", () => {
       game.override.enemyLevel(1);
       game.override.moveset([ Moves.TACKLE ]);
 
-      await game.startBattle();
+      await game.classicMode.startBattle();
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, enemyPokemon.id);
@@ -86,7 +86,7 @@ async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, pro
   game.override.moveset([ attackMove ]);
   game.override.enemyMoveset([ protectMove, protectMove, protectMove, protectMove ]);
 
-  await game.startBattle();
+  await game.classicMode.startBattle();
 
   const leadPokemon = game.scene.getPlayerPokemon()!;
   expect(leadPokemon).not.toBe(undefined);

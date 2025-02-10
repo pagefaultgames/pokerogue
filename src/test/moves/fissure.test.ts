@@ -41,14 +41,10 @@ describe("Moves - Fissure", () => {
     game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
     game.override.enemyLevel(100);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     partyPokemon = game.scene.getPlayerParty()[0];
     enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    // remove berries
-    game.scene.removePartyMemberModifiers(0);
-    game.scene.clearEnemyHeldItemModifiers();
   });
 
   it("ignores damage modification from abilities, for example FUR_COAT", async () => {

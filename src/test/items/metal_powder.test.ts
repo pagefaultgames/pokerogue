@@ -31,7 +31,7 @@ describe("Items - Metal Powder", () => {
   it("METAL_POWDER activates in battle correctly", async() => {
     game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "METAL_POWDER" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.DITTO
     ]);
 
@@ -79,7 +79,7 @@ describe("Items - Metal Powder", () => {
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
@@ -112,7 +112,7 @@ describe("Items - Metal Powder", () => {
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
@@ -145,7 +145,7 @@ describe("Items - Metal Powder", () => {
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
@@ -167,7 +167,7 @@ describe("Items - Metal Powder", () => {
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "METAL_POWDER" ])!.newModifier(partyMember), true);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);

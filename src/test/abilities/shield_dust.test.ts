@@ -53,11 +53,11 @@ describe("Abilities - Shield Dust", () => {
     expect(move.id).toBe(Moves.AIR_SLASH);
 
     const chance = new NumberHolder(move.chance);
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
-    applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, phase.getFirstTarget()!, phase.getUserPokemon()!, null, null, false, chance);
+    await applyAbAttrs(MoveEffectChanceMultiplierAbAttr, phase.getUserPokemon()!, null, false, chance, move, phase.getFirstTarget(), false);
+    await applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, phase.getFirstTarget()!, phase.getUserPokemon()!, null, null, false, chance);
     expect(chance.value).toBe(0);
 
-  }, 20000);
+  });
 
   //TODO King's Rock Interaction Unit Test
 });
