@@ -5315,7 +5315,7 @@ export function applyMidTurnAbAttrs(pokemon: Pokemon, simulated: boolean = false
  * Clears primal weather during the turn if {@linkcode pokemon}'s ability corresponds to one
  */
 export function applyMidTurnClearWeatherAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreSwitchOutAbAttr>(PreSwitchOutClearWeatherAbAttr, pokemon, (attr, passive) => attr.applyPreSwitchOut(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated, [], true);
+  return applyAbAttrsInternal<PreLeaveFieldClearWeatherAbAttr>(PreLeaveFieldClearWeatherAbAttr, pokemon, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated, [], true);
 }
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
