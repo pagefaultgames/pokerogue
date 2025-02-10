@@ -23,6 +23,7 @@ enum MenuOptions {
   STATS,
   EGG_LIST,
   EGG_GACHA,
+  POKEDEX,
   MANAGE_DATA,
   COMMUNITY,
   SAVE_AND_QUIT,
@@ -171,7 +172,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     const manageDataOptions: any[] = []; // TODO: proper type
 
-    const confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
+    const confirmSlot = (message: string, slotFilter: (i: number) => boolean, callback: (i: number) => void) => {
       ui.revertMode();
       ui.showText(message, null, () => {
         const config: OptionSelectConfig = {
@@ -212,7 +213,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:exportSession"),
       handler: () => {
-        const dataSlots: integer[] = [];
+        const dataSlots: number[] = [];
         Promise.all(
           new Array(5).fill(null).map((_, i) => {
             const slotId = i;
@@ -522,6 +523,11 @@ export default class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(Mode.EGG_GACHA);
           success = true;
           break;
+        case MenuOptions.POKEDEX:
+          ui.revertMode();
+          ui.setOverlayMode(Mode.POKEDEX);
+          success = true;
+          break;
         case MenuOptions.MANAGE_DATA:
           if (!bypassLogin && !this.manageDataConfig.options.some(o => o.label === i18next.t("menuUiHandler:linkDiscord") || o.label === i18next.t("menuUiHandler:unlinkDiscord"))) {
             this.manageDataConfig.options.splice(this.manageDataConfig.options.length - 1, 0,
@@ -680,7 +686,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
