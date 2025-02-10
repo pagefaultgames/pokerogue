@@ -506,7 +506,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
     this.menuBg = addWindow(
-      (globalScene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25),
+      (globalScene.game.canvas.width / 6 - 83),
       0,
       this.optionSelectText.displayWidth + 19 + 24 * this.scale,
       (globalScene.game.canvas.height / 6) - 2
