@@ -1242,13 +1242,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.validPokemonContainers.forEach(container => {
       container.setVisible(false);
 
-      container.cost = globalScene.gameData.getSpeciesStarterValue(this.getStarterSpeciesId(container.species.speciesId));
+      const starterId = this.getStarterSpeciesId(container.species.speciesId);
+
+      container.cost = globalScene.gameData.getSpeciesStarterValue(starterId);
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
       // TODO: This might be removed depending on how accessible we want the pokedex function to be
       const caughtAttr = globalScene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
-      const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(container.species.speciesId)];
-      const isStarterProgressable = speciesEggMoves.hasOwnProperty(this.getStarterSpeciesId(container.species.speciesId));
+      const starterData = globalScene.gameData.starterData[starterId];
+      const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
 
       // Name filter
       const selectedName = this.filterText.getValue(FilterTextRow.NAME);
@@ -1259,8 +1261,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       // On the other hand, in some cases it is possible to switch between different forms and combine (Deoxys)
       const levelMoves = pokemonSpeciesLevelMoves[container.species.speciesId].map(m => allMoves[m[1]].name);
       // This always gets egg moves from the starter
-      const eggMoves = speciesEggMoves[this.getStarterSpeciesId(container.species.speciesId)]?.map(m => allMoves[m].name) ?? [];
-      const tmMoves = speciesTmMoves[this.getStarterSpeciesId(container.species.speciesId)]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
+      const eggMoves = speciesEggMoves[starterId]?.map(m => allMoves[m].name) ?? [];
+      const tmMoves = speciesTmMoves[starterId]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
       const selectedMove1 = this.filterText.getValue(FilterTextRow.MOVE_1);
       const selectedMove2 = this.filterText.getValue(FilterTextRow.MOVE_2);
 
@@ -1282,18 +1284,30 @@ export default class PokedexUiHandler extends MessageUiHandler {
       container.tmMove2Icon.setVisible(false);
       if (fitsEggMove1 && !fitsLevelMove1) {
         container.eggMove1Icon.setVisible(true);
+        const em1 = eggMoves.findIndex(name => name === selectedMove1);
+        if ((starterData[starterId].eggMoves & (1 << em1)) === 0) {
+          container.eggMove1Icon.setTint(0x808080);
+        } else {
+          container.eggMove1Icon.clearTint();
+        }
       } else if (fitsTmMove1 && !fitsLevelMove1) {
         container.tmMove1Icon.setVisible(true);
       }
       if (fitsEggMove2 && !fitsLevelMove2) {
         container.eggMove2Icon.setVisible(true);
+        const em2 = eggMoves.findIndex(name => name === selectedMove2);
+        if ((starterData[starterId].eggMoves & (1 << em2)) === 0) {
+          container.eggMove2Icon.setTint(0x808080);
+        } else {
+          container.eggMove2Icon.clearTint();
+        }
       } else if (fitsTmMove2 && !fitsLevelMove2) {
         container.tmMove2Icon.setVisible(true);
       }
 
       // Ability filter
       const abilities = [ container.species.ability1, container.species.ability2, container.species.abilityHidden ].map(a => allAbilities[a].name);
-      const passives = starterPassiveAbilities[this.getStarterSpeciesId(container.species.speciesId)] ?? {} as PassiveAbilities;
+      const passives = starterPassiveAbilities[starterId] ?? {} as PassiveAbilities;
 
       const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
       const fitsFormAbility1 = container.species.forms.some(form => [ form.ability1, form.ability2, form.abilityHidden ].map(a => allAbilities[a].name).includes(selectedAbility1));
@@ -1312,15 +1326,23 @@ export default class PokedexUiHandler extends MessageUiHandler {
       container.passive1Icon.setVisible(false);
       container.passive2Icon.setVisible(false);
       if (fitsPassive1 || fitsPassive2) {
-        const starterId = starterColors.hasOwnProperty(container.species.speciesId) ? container.species.speciesId : pokemonStarters[container.species.speciesId];
-        const colorScheme = starterColors[starterId];
         if (fitsPassive1) {
-          container.passive1Icon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-          container.passive1OverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
+          if (starterData.passiveAttr > 0) {
+            container.passive1Icon.clearTint();
+            container.passive1OverlayIcon.clearTint();
+          } else {
+            container.passive1Icon.setTint(0x808080);
+            container.passive1OverlayIcon.setTint(0x808080);
+          }
           container.passive1Icon.setVisible(true);
         } else {
-          container.passive2Icon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-          container.passive2OverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
+          if (starterData.passiveAttr > 0) {
+            container.passive2Icon.clearTint();
+            container.passive2OverlayIcon.clearTint();
+          } else {
+            container.passive2Icon.setTint(0x808080);
+            container.passive2OverlayIcon.setTint(0x808080);
+          }
           container.passive2Icon.setVisible(true);
         }
       }
@@ -1341,7 +1363,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
+      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[starterId]).map(b => Biome[b.biome]);
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }
