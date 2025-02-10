@@ -1132,6 +1132,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
             if (!isCaught || !isFormCaught) {
               error = true;
+            } else if (this.tmMoves.length < 1) {
+              error = true;
             } else {
               this.blockInput = true;
 
