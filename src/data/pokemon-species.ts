@@ -698,7 +698,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if (this.speciesId < 2000) {
       return this.name; // Other special cases could be put here too
     } else { // Everything beyond this point essentially follows the pattern of FORMNAME_SPECIES
-      return i18next.t(`pokemonForm:appendForm.${Species[this.speciesId].split("_")[0]}`, { species: this.name });
+      return i18next.t(`pokemonForm:appendForm.${Species[this.speciesId].split("_")[0]}`, { pokemonName: this.name });
     }
   }
 
