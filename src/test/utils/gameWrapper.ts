@@ -91,6 +91,7 @@ export default class GameWrapper {
     Pokemon.prototype.updateFusionPalette = () => null;
     Pokemon.prototype.cry = () => null;
     Pokemon.prototype.faintCry = (cb) => { if (cb) cb(); };
+    BattleScene.prototype.addPokemonIcon = () => new Phaser.GameObjects.Container(this.scene);
   }
 
   setScene(scene: BattleScene) {

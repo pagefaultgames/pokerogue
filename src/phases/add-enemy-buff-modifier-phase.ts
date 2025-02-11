@@ -21,6 +21,7 @@ export class AddEnemyBuffModifierPhase extends Phase {
     for (let i = 0; i < count; i++) {
       globalScene.addEnemyModifier(getEnemyBuffModifierForWave(tier, globalScene.findModifiers(m => m instanceof EnemyPersistentModifier, false)), true, true);
     }
-    globalScene.updateModifiers(false, true).then(() => this.end());
+    globalScene.updateModifiers(false, true);
+    this.end();
   }
 }

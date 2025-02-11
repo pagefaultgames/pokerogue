@@ -216,11 +216,11 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       const sitrus = generateModifierType(modifierTypes.BERRY, [ BerryType.SITRUS ])!;
       const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
       sitrusMod.stackCount = 2;
-      await scene.addModifier(sitrusMod, true, false, false, true);
+      scene.addModifier(sitrusMod, true, false, false, true);
       const ganlon = generateModifierType(modifierTypes.BERRY, [ BerryType.GANLON ])!;
       const ganlonMod = ganlon.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
       ganlonMod.stackCount = 3;
-      await scene.addModifier(ganlonMod, true, false, false, true);
+      scene.addModifier(ganlonMod, true, false, false, true);
       await scene.updateModifiers(true);
 
       await runMysteryEncounterToEnd(game, 2);

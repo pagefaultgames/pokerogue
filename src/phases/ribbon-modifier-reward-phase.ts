@@ -17,17 +17,16 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
-      globalScene.addModifier(newModifier).then(() => {
-        globalScene.playSound("level_up_fanfare");
-        globalScene.ui.setMode(Mode.MESSAGE);
-        globalScene.ui.showText(i18next.t("battle:beatModeFirstTime", {
-          speciesName: this.species.name,
-          gameMode: globalScene.gameMode.getName(),
-          newModifier: newModifier?.type.name
-        }), null, () => {
-          resolve();
-        }, null, true, 1500);
-      });
+      globalScene.addModifier(newModifier);
+      globalScene.playSound("level_up_fanfare");
+      globalScene.ui.setMode(Mode.MESSAGE);
+      globalScene.ui.showText(i18next.t("battle:beatModeFirstTime", {
+        speciesName: this.species.name,
+        gameMode: globalScene.gameMode.getName(),
+        newModifier: newModifier?.type.name,
+      }), null, () => {
+        resolve();
+      }, null, true, 1500);
     });
   }
 }
