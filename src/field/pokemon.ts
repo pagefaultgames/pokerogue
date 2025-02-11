@@ -1066,6 +1066,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     globalScene.applyModifiers(PokemonBaseStatFlatModifier, this.isPlayer(), this, baseStats);
     if (this.isFusion()) {
       const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
+      applyChallenges(globalScene.gameMode, ChallengeType.FLIP_STAT, this, fusionBaseStats);
+
       for (const s of PERMANENT_STATS) {
         baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
       }
