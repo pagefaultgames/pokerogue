@@ -1868,7 +1868,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
-    new WeightedModifierType(modifierTypes.CATCHING_CHARM, () => globalScene.gameMode.isDaily || (!globalScene.gameMode.isClassic() && globalScene.gameData.getSpeciesCount(d => !!d.caughtAttr) > 100) ? 4 : 0, 4),
+    new WeightedModifierType(modifierTypes.CATCHING_CHARM, () => globalScene.gameMode.isDaily || (!globalScene.gameMode.isClassic && globalScene.gameData.getSpeciesCount(d => !!d.caughtAttr) > 100) ? 4 : 0, 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
