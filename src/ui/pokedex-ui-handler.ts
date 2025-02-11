@@ -1961,7 +1961,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.setTypeIcons(null, null);
       }
 
-      if (species?.forms?.length > 1) {
+      if (species?.forms?.filter(f => !f.isUnobtainable).length > 1) {
         if (!this.showingTray) {
           this.showFormTrayIconElement.setVisible(true);
           this.showFormTrayLabel.setVisible(true);
