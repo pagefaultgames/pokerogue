@@ -1725,7 +1725,7 @@ const modifierPool: ModifierPool = {
         if (globalScene.gameMode.isSplicedOnly) {
           return 4;
         } else if (globalScene.gameMode.isClassic && globalScene.eventManager.areFusionsBoosted()) {
-          return 1;
+          return 2;
         }
       }
       return 0;
