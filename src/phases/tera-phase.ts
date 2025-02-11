@@ -6,8 +6,7 @@ import { globalScene } from "#app/global-scene";
 import { Type } from "#app/enums/type";
 import { achvs } from "#app/system/achv";
 import { SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
-import { CommonAnim } from "#app/data/battle-anims";
-import { CommonAnimPhase } from "./common-anim-phase";
+import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 
 export class TeraPhase extends BattlePhase {
   public pokemon: Pokemon;
@@ -24,9 +23,9 @@ export class TeraPhase extends BattlePhase {
     console.log(this.pokemon.name, "terastallized to", Type[this.pokemon.teraType].toString());
 
     globalScene.queueMessage(i18next.t("battle:pokemonTerastallized", { pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon), type: i18next.t(`pokemonInfo:Type.${Type[this.pokemon.teraType]}`) }));
-    globalScene.unshiftPhase(new CommonAnimPhase(this.pokemon.getBattlerIndex(), undefined, CommonAnim.TERASTALLIZE));
-
-    this.end();
+    new CommonBattleAnim(CommonAnim.TERASTALLIZE, this.pokemon).play(false, () => {
+      this.end();
+    });
   }
 
 
