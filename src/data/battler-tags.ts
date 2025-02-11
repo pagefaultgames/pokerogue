@@ -2976,6 +2976,24 @@ export class PsychoShiftTag extends BattlerTag {
 }
 
 /**
+ * Tag associated with the move Magic Coat.
+ */
+export class MagicCoatTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MAGIC_COAT, BattlerTagLapseType.TURN_END, 1, Moves.MAGIC_COAT);
+  }
+
+  /**
+   * Queues the "[PokemonName] shrouded itself with Magic Coat" message when the tag is added.
+   * @param pokemon - The target {@linkcode Pokemon}
+   */
+  override onAdd(pokemon: Pokemon) {
+    // "{pokemonNameWithAffix} shrouded itself with Magic Coat!"
+    globalScene.queueMessage(i18next.t("battlerTags:magicCoatOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
  * @returns The corresponding {@linkcode BattlerTag} object.
@@ -3164,6 +3182,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new GrudgeTag();
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
+    case BattlerTagType.MAGIC_COAT:
+      return new MagicCoatTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
