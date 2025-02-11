@@ -1735,7 +1735,16 @@ const modifierPool: ModifierPool = {
     }, 4),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.TERA_SHARD, (party: Pokemon[]) => party.filter(p => !(p.hasSpecies(Species.TERAPAGOS) || p.hasSpecies(Species.OGERPON) || p.hasSpecies(Species.SHEDINJA))).length > 0 ? 1 : 0),
-    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => globalScene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
+    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => {
+      if (party.filter(p => !p.fusionSpecies).length > 1) {
+        if (globalScene.gameMode.isSplicedOnly) {
+          return 4;
+        } else if (globalScene.gameMode.isClassic && globalScene.eventManager.areFusionsBoosted()) {
+          return 1;
+        }
+      }
+      return 0;
+    }, 4),
     new WeightedModifierType(modifierTypes.VOUCHER, (_party: Pokemon[], rerollCount: number) => !globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.GREAT); return m;
@@ -1894,7 +1903,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MULTI_LENS, 18),
     new WeightedModifierType(modifierTypes.VOUCHER_PREMIUM, (_party: Pokemon[], rerollCount: number) =>
       !globalScene.gameMode.isDaily && !globalScene.gameMode.isEndless && !globalScene.gameMode.isSplicedOnly ? Math.max(5 - rerollCount * 2, 0) : 0, 5),
-    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !globalScene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
+    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !(globalScene.gameMode.isClassic && globalScene.eventManager.areFusionsBoosted()) && !globalScene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, () => (globalScene.gameMode.isDaily || (!globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))) ? 1 : 0, 1),
   ].map(m => {
     m.setTier(ModifierTier.MASTER); return m;
@@ -2553,7 +2562,7 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     return DailyLuck.value;
   }
   const eventSpecies = globalScene.eventManager.getEventLuckBoostedSpecies();
-  const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() + (eventSpecies.includes(p.species.speciesId) ? 1 : 0) : 0)
+  const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() + (eventSpecies.includes(p.species.speciesId) ? 3 : 0) : 0)
     .reduce((total: number, value: number) => total += value, 0), 0, 14);
   return Math.min(globalScene.eventManager.getEventLuckBoost() + (luck ?? 0), 14);
 }

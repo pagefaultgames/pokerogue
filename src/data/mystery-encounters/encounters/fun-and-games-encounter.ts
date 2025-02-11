@@ -41,8 +41,6 @@ export const FunAndGamesEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
     .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Cost equal to 1 Max Potion to play
     .withAutoHideIntroVisuals(false)
-    // Allows using move without a visible enemy pokemon
-    .withBattleAnimationsWithoutTargets(true)
     // The Wobbuffet won't use moves
     .withSkipEnemyBattleTurns(true)
     // Will skip COMMAND selection menu and go straight to FIGHT (move select) menu
