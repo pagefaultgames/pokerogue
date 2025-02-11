@@ -6,7 +6,6 @@ import { addWindow } from "./ui-theme";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
-import type { Stat } from "#app/enums/stat";
 import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
@@ -191,13 +190,12 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
-  promptIvs(pokemonId: number, ivs: number[], shownIvsCount: number): Promise<void> {
+  promptIvs(pokemonId: number, ivs: number[]): Promise<void> {
     return new Promise(resolve => {
       globalScene.executeWithSeedOffset(() => {
         let levelUpStatsValuesText = "";
-        const shownStats = this.getTopIvs(ivs, shownIvsCount);
         for (const s of PERMANENT_STATS) {
-          levelUpStatsValuesText += `${shownStats.includes(s) ? this.getIvDescriptor(ivs[s], s, pokemonId) : "???"}\n`;
+          levelUpStatsValuesText += `${this.getIvDescriptor(ivs[s], s, pokemonId)}\n`;
         }
         this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
         this.levelUpStatsIncrContent.setVisible(false);
@@ -209,21 +207,6 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         };
       }, pokemonId);
     });
-  }
-
-  getTopIvs(ivs: number[], shownIvsCount: number): Stat[] {
-    let shownStats: Stat[] = [];
-    if (shownIvsCount < 6) {
-      const statsPool = PERMANENT_STATS.slice();
-      // Sort the stats from highest to lowest iv
-      statsPool.sort((s1, s2) => ivs[s2] - ivs[s1]);
-      for (let i = 0; i < shownIvsCount; i++) {
-        shownStats.push(statsPool[i]);
-      }
-    } else {
-      shownStats = PERMANENT_STATS.slice();
-    }
-    return shownStats;
   }
 
   getIvDescriptor(value: number, typeIv: number, pokemonId: number): string {
