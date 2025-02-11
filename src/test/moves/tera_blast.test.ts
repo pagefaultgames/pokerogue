@@ -38,8 +38,8 @@ describe("Moves - Tera Blast", () => {
       .startingHeldItems([{ name: "TERA_SHARD", type: Type.FIRE }])
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyLevel(20);
+      .enemyAbility(Abilities.STURDY)
+      .enemyLevel(50);
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
