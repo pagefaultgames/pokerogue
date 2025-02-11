@@ -699,7 +699,7 @@ async function addEggMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, speciesR
     let randomEggMoveIndex = eggMoveIndices.pop();
     let randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
     let retries = 0;
-    while (retries < 3 && (!randomEggMove || newPokemon.moveset.some(m => m?.moveId === randomEggMove))) {
+    while (retries < 3 && (!randomEggMove || newPokemon.moveset.some(m => m.moveId === randomEggMove))) {
       // If Pokemon already knows this move, roll for another egg move
       randomEggMoveIndex = eggMoveIndices.pop();
       randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
@@ -707,7 +707,7 @@ async function addEggMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, speciesR
     }
 
     if (randomEggMove) {
-      if (!newPokemon.moveset.some(m => m?.moveId === randomEggMove)) {
+      if (!newPokemon.moveset.some(m => m.moveId === randomEggMove)) {
         if (newPokemon.moveset.length < 4) {
           newPokemon.moveset.push(new PokemonMove(randomEggMove));
         } else {
@@ -732,11 +732,11 @@ async function addEggMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, speciesR
  * @param newPokemonGeneratedMoveset
  * @param newEggMoveIndex
  */
-function addFavoredMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, newPokemonGeneratedMoveset: (PokemonMove | null)[], newEggMoveIndex: number | null) {
+function addFavoredMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, newPokemonGeneratedMoveset: (PokemonMove)[], newEggMoveIndex: number | null) {
   let favoredMove: PokemonMove | null = null;
   for (const move of newPokemonGeneratedMoveset) {
     // Needs to match first type, second type will be replaced
-    if (move?.getMove().type === newPokemon.getTypes()[0] && !newPokemon.moveset.some(m => m?.moveId === move?.moveId)) {
+    if (move?.getMove().type === newPokemon.getTypes()[0] && !newPokemon.moveset.some(m => m.moveId === move.moveId)) {
       favoredMove = move;
       break;
     }
@@ -746,7 +746,7 @@ function addFavoredMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, newPokemon
   if (!favoredMove) {
     for (const move of newPokemonGeneratedMoveset) {
       // Needs to match first type, second type will be replaced
-      if (!newPokemon.moveset.some(m => m?.moveId === move?.moveId)) {
+      if (!newPokemon.moveset.some(m => m.moveId === move.moveId)) {
         favoredMove = move;
         break;
       }

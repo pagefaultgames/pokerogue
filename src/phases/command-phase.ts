@@ -86,8 +86,8 @@ export class CommandPhase extends FieldPhase {
     const moveQueue = playerPokemon.getMoveQueue();
 
     while (moveQueue.length && moveQueue[0]
-        && moveQueue[0].move && !moveQueue[0].virtual && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
-          || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move)]!.isUsable(playerPokemon, moveQueue[0].ignorePP))) { // TODO: is the bang correct?
+        && moveQueue[0].move && !moveQueue[0].virtual && (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move)
+          || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(playerPokemon, moveQueue[0].ignorePP))) {
       moveQueue.shift();
     }
 
@@ -96,8 +96,8 @@ export class CommandPhase extends FieldPhase {
       if (!queuedMove.move) {
         this.handleCommand(Command.FIGHT, -1);
       } else {
-        const moveIndex = playerPokemon.getMoveset().findIndex(m => m?.moveId === queuedMove.move);
-        if ((moveIndex > -1 && playerPokemon.getMoveset()[moveIndex]!.isUsable(playerPokemon, queuedMove.ignorePP)) || queuedMove.virtual) { // TODO: is the bang correct?
+        const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
+        if ((moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) || queuedMove.virtual) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
         } else {
           globalScene.ui.setMode(Mode.COMMAND, this.fieldIndex);
@@ -123,7 +123,7 @@ export class CommandPhase extends FieldPhase {
         const turnMove: TurnMove | undefined = (args.length === 2 ? (args[1] as TurnMove) : undefined);
         if (cursor === -1 ||
             playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
-            (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m?.isUsable(playerPokemon)).length)) {
+            (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
 
           let moveId: Moves;
           if (useStruggle) {
@@ -131,7 +131,7 @@ export class CommandPhase extends FieldPhase {
           } else if (turnMove !== undefined) {
             moveId = turnMove.move;
           } else if (cursor > -1) {
-            moveId = playerPokemon.getMoveset()[cursor]!.moveId;
+            moveId = playerPokemon.getMoveset()[cursor].moveId;
           } else {
             moveId = Moves.NONE;
           }
@@ -145,17 +145,17 @@ export class CommandPhase extends FieldPhase {
           if (moveTargets.targets.length > 1 && moveTargets.multiple) {
             globalScene.unshiftPhase(new SelectTargetPhase(this.fieldIndex));
           }
-          if (moveTargets.targets.length <= 1 || moveTargets.multiple) {
-            turnCommand.move!.targets = moveTargets.targets; //TODO: is the bang correct here?
-          } else if (playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
-            turnCommand.move!.targets = playerPokemon.getMoveQueue()[0].targets; //TODO: is the bang correct here?
+          if (turnCommand.move && (moveTargets.targets.length <= 1 || moveTargets.multiple)) {
+            turnCommand.move.targets = moveTargets.targets;
+          } else if (turnCommand.move && playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
+            turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
           } else {
             globalScene.unshiftPhase(new SelectTargetPhase(this.fieldIndex));
           }
           globalScene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
           success = true;
         } else if (cursor < playerPokemon.getMoveset().length) {
-          const move = playerPokemon.getMoveset()[cursor]!; //TODO: is this bang correct?
+          const move = playerPokemon.getMoveset()[cursor];
           globalScene.ui.setMode(Mode.MESSAGE);
 
           // Decides between a Disabled, Not Implemented, or No PP translation message

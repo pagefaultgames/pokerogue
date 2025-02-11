@@ -127,7 +127,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GREEDENT);
-      const moveset = enemyField[0].moveset.map(m => m?.moveId);
+      const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
       expect(moveset).toEqual([ Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH ]);
 
@@ -238,7 +238,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const greedent = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(greedent.species.speciesId).toBe(Species.GREEDENT);
-      const moveset = greedent.moveset.map(m => m?.moveId);
+      const moveset = greedent.moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
       expect(moveset).toEqual([ Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF ]);
     });
