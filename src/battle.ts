@@ -105,9 +105,11 @@ export default class Battle {
   public lastEnemyInvolved: number;
   public lastPlayerInvolved: number;
   public lastUsedPokeball: PokeballType | null = null;
-  /** The number of times a Pokemon on the player's side has fainted this battle */
-  public playerFaints: number = 0;
-  /** The number of times a Pokemon on the enemy's side has fainted this battle */
+  /**
+   * Saves the number of times a Pokemon on the enemy's side has fainted during this battle.
+   * This is saved here since we encounter a new enemy every wave.
+   * {@linkcode globalScene.arena.playerFaints} is the corresponding faint counter for the player and needs to be save across waves (reset every arena encounter).
+   */
   public enemyFaints: number = 0;
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
@@ -118,7 +120,7 @@ export default class Battle {
 
   private rngCounter: number = 0;
 
-  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double?: boolean) {
+  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double: boolean = false) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
@@ -127,7 +129,7 @@ export default class Battle {
     this.enemyLevels = battleType !== BattleType.TRAINER
       ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
       : trainer?.getPartyLevels(this.waveIndex);
-    this.double = double ?? false;
+    this.double = double;
   }
 
   private initBattleSpec(): void {

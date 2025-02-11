@@ -4484,6 +4484,13 @@ export class InfiltratorAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(ability) | Magic Bounce}.
+ * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
+ *  moves as if the user had used {@linkcode Moves.MAGIC_COAT | Magic Coat}.
+ */
+export class ReflectStatusMoveAbAttr extends AbAttr { }
+
 export class UncopiableAbilityAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -5805,8 +5812,11 @@ export function initAbilities() {
       }, Stat.SPD, 1)
       .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.SPD ], 1),
     new Ability(Abilities.MAGIC_BOUNCE, 5)
+      .attr(ReflectStatusMoveAbAttr)
       .ignorable()
-      .unimplemented(),
+      // Interactions with stomping tantrum, instruct, encore, and probably other moves that
+      // rely on move history
+      .edgeCase(),
     new Ability(Abilities.SAP_SIPPER, 5)
       .attr(TypeImmunityStatStageChangeAbAttr, Type.GRASS, Stat.ATK, 1)
       .ignorable(),
@@ -6313,8 +6323,8 @@ export function initAbilities() {
     new Ability(Abilities.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, 9)
-      .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? globalScene.currentBattle.playerFaints : globalScene.currentBattle.enemyFaints, 5))
-      .partial(), // Counter resets every wave instead of on arena reset
+      .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints, 5))
+      .partial(), // Should only boost once, on summon
     new Ability(Abilities.COSTAR, 9)
       .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(Abilities.TOXIC_DEBRIS, 9)
