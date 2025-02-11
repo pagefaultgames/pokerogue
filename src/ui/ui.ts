@@ -23,6 +23,7 @@ import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import EggHatchSceneHandler from "./egg-hatch-scene-handler";
 import EggListUiHandler from "./egg-list-ui-handler";
 import EggGachaUiHandler from "./egg-gacha-ui-handler";
+import PokedexUiHandler from "./pokedex-ui-handler";
 import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
@@ -53,6 +54,8 @@ import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
 import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import { Device } from "#enums/devices";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
+import PokedexScanUiHandler from "./pokedex-scan-ui-handler";
+import PokedexPageUiHandler from "./pokedex-page-ui-handler";
 import { NavigationManager } from "./settings/navigationMenu";
 
 export enum Mode {
@@ -85,6 +88,9 @@ export enum Mode {
   GAME_STATS,
   EGG_LIST,
   EGG_GACHA,
+  POKEDEX,
+  POKEDEX_SCAN,
+  POKEDEX_PAGE,
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
@@ -109,6 +115,8 @@ const transitionModes = [
   Mode.EGG_HATCH_SCENE,
   Mode.EGG_LIST,
   Mode.EGG_GACHA,
+  Mode.POKEDEX,
+  Mode.POKEDEX_PAGE,
   Mode.CHALLENGE_SELECT,
   Mode.RUN_HISTORY,
 ];
@@ -128,6 +136,7 @@ const noTransitionModes = [
   Mode.SETTINGS_KEYBOARD,
   Mode.ACHIEVEMENTS,
   Mode.GAME_STATS,
+  Mode.POKEDEX_SCAN,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
@@ -193,6 +202,9 @@ export default class UI extends Phaser.GameObjects.Container {
       new GameStatsUiHandler(),
       new EggListUiHandler(),
       new EggGachaUiHandler(),
+      new PokedexUiHandler(),
+      new PokedexScanUiHandler(Mode.TEST_DIALOGUE),
+      new PokedexPageUiHandler(),
       new LoginFormUiHandler(),
       new RegistrationFormUiHandler(),
       new LoadingModalUiHandler(),
@@ -269,7 +281,7 @@ export default class UI extends Phaser.GameObjects.Container {
       return false;
     }
 
-    if ([ Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE ].includes(this.mode)) {
+    if ([ Mode.CONFIRM, Mode.COMMAND, Mode.FIGHT, Mode.MESSAGE, Mode.TARGET_SELECT ].includes(this.mode)) {
       globalScene?.processInfoButton(pressed);
       return true;
     }
@@ -277,6 +289,11 @@ export default class UI extends Phaser.GameObjects.Container {
     return true;
   }
 
+  /**
+   * Process a player input of a button (delivering it to the current UI handler for processing)
+   * @param button The {@linkcode Button} being inputted
+   * @returns true if the input attempt succeeds
+   */
   processInput(button: Button): boolean {
     if (this.overlayActive) {
       return false;
@@ -291,13 +308,13 @@ export default class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
-  showTextPromise(text: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay?: integer | null): Promise<void> {
+  showTextPromise(text: string, callbackDelay: number = 0, prompt: boolean = true, promptDelay?: number | null): Promise<void> {
     return new Promise<void>(resolve => {
       this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
     });
   }
 
-  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void {
+  showText(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null): void {
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
       let showMessageAndCallback = () => callback && callback();
@@ -317,7 +334,7 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  showDialogue(keyOrText: string, name: string | undefined, delay: integer | null = 0, callback: Function, callbackDelay?: integer, promptDelay?: integer): void {
+  showDialogue(keyOrText: string, name: string | undefined, delay: number | null = 0, callback: Function, callbackDelay?: number, promptDelay?: number): void {
     // Get localized dialogue (if available)
     let hasi18n = false;
     let text = keyOrText;
@@ -438,7 +455,7 @@ export default class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const changed = this.getHandler().setCursor(cursor);
     if (changed) {
       this.playSelect();
@@ -455,7 +472,7 @@ export default class UI extends Phaser.GameObjects.Container {
     globalScene.playSound("ui/error");
   }
 
-  fadeOut(duration: integer): Promise<void> {
+  fadeOut(duration: number): Promise<void> {
     return new Promise(resolve => {
       if (this.overlayActive) {
         return resolve();
@@ -473,7 +490,7 @@ export default class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  fadeIn(duration: integer): Promise<void> {
+  fadeIn(duration: number): Promise<void> {
     return new Promise(resolve => {
       if (!this.overlayActive) {
         return resolve();
@@ -558,6 +575,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
+
       if (!this?.modeChain?.length) {
         return resolve(false);
       }

@@ -14,9 +14,9 @@ import type { Arena } from "#app/field/arena";
 
 export class Weather {
   public weatherType: WeatherType;
-  public turnsLeft: integer;
+  public turnsLeft: number;
 
-  constructor(weatherType: WeatherType, turnsLeft?: integer) {
+  constructor(weatherType: WeatherType, turnsLeft?: number) {
     this.weatherType = weatherType;
     this.turnsLeft = !this.isImmutable() ? turnsLeft || 0 : 0;
   }
@@ -246,7 +246,7 @@ export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainTyp
 
 export interface WeatherPoolEntry {
   weatherType: WeatherType;
-  weight: integer;
+  weight: number;
 }
 
 export function getRandomWeatherType(arena: Arena): WeatherType {
@@ -375,8 +375,8 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       break;
   }
 
-  if (arena.biomeType === Biome.TOWN && globalScene.eventManager.isEventActive() && (globalScene.eventManager.activeEvent()?.weather?.length ?? 0) > 0) {
-    globalScene.eventManager.activeEvent()?.weather?.map(w => weatherPool.push(w));
+  if (arena.biomeType === Biome.TOWN && globalScene.eventManager.isEventActive()) {
+    globalScene.eventManager.getWeather()?.map(w => weatherPool.push(w));
   }
 
   if (weatherPool.length > 1) {

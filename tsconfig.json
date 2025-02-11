@@ -13,7 +13,6 @@
 		"paths": {
 			"#enums/*": ["./enums/*.ts"],
 			"#app/*": ["*.ts"],
-			"#app": ["."],
 			"#test/*": ["./test/*.ts"]
 		},
 		"outDir": "./build",

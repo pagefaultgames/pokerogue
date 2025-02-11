@@ -51,13 +51,13 @@ export class Ability implements Localizable {
   private nameAppend: string;
   public name: string;
   public description: string;
-  public generation: integer;
+  public generation: number;
   public isBypassFaint: boolean;
   public isIgnorable: boolean;
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
 
-  constructor(id: Abilities, generation: integer) {
+  constructor(id: Abilities, generation: number) {
     this.id = id;
 
     this.nameAppend = "";
@@ -221,9 +221,9 @@ export class PostBattleInitAbAttr extends AbAttr {
 }
 
 export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
-  private formFunc: (p: Pokemon) => integer;
+  private formFunc: (p: Pokemon) => number;
 
-  constructor(formFunc: ((p: Pokemon) => integer)) {
+  constructor(formFunc: ((p: Pokemon) => number)) {
     super(true);
 
     this.formFunc = formFunc;
@@ -491,9 +491,9 @@ class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
 
 class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
   private tagType: BattlerTagType;
-  private turnCount: integer;
+  private turnCount: number;
 
-  constructor(immuneType: Type, tagType: BattlerTagType, turnCount: integer, condition?: AbAttrCondition) {
+  constructor(immuneType: Type, tagType: BattlerTagType, turnCount: number, condition?: AbAttrCondition) {
     super(immuneType, condition);
 
     this.tagType = tagType;
@@ -605,7 +605,7 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
 }
 
 export class PostStatStageChangeAbAttr extends AbAttr {
-  applyPostStatStageChange(pokemon: Pokemon, simulated: boolean, statsChanged: BattleStat[], stagesChanged: integer, selfTarget: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostStatStageChange(pokemon: Pokemon, simulated: boolean, statsChanged: BattleStat[], stagesChanged: number, selfTarget: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -866,10 +866,10 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
-  public chance: integer;
+  public chance: number;
   private effects: StatusEffect[];
 
-  constructor(chance: integer, ...effects: StatusEffect[]) {
+  constructor(chance: number, ...effects: StatusEffect[]) {
     super();
 
     this.chance = chance;
@@ -905,11 +905,11 @@ export class EffectSporeAbAttr extends PostDefendContactApplyStatusEffectAbAttr 
 }
 
 export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
-  private chance: integer;
+  private chance: number;
   private tagType: BattlerTagType;
-  private turnCount: integer | undefined;
+  private turnCount: number | undefined;
 
-  constructor(chance: integer, tagType: BattlerTagType, turnCount?: integer) {
+  constructor(chance: number, tagType: BattlerTagType, turnCount?: number) {
     super();
 
     this.tagType = tagType;
@@ -959,9 +959,9 @@ export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
-  private damageRatio: integer;
+  private damageRatio: number;
 
-  constructor(damageRatio: integer) {
+  constructor(damageRatio: number) {
     super();
 
     this.damageRatio = damageRatio;
@@ -993,9 +993,9 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
  * @extends {PostDefendAbAttr}
  */
 export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
-  private turns: integer;
+  private turns: number;
 
-  constructor(turns: integer) {
+  constructor(turns: number) {
     super();
 
     this.turns = turns;
@@ -1101,11 +1101,11 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
-  private chance: integer;
+  private chance: number;
   private attacker: Pokemon;
   private move: Move;
 
-  constructor(chance: integer) {
+  constructor(chance: number) {
     super();
 
     this.chance = chance;
@@ -1688,10 +1688,10 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
 
 export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   private contactRequired: boolean;
-  private chance: integer;
+  private chance: number;
   private effects: StatusEffect[];
 
-  constructor(contactRequired: boolean, chance: integer, ...effects: StatusEffect[]) {
+  constructor(contactRequired: boolean, chance: number, ...effects: StatusEffect[]) {
     super();
 
     this.contactRequired = contactRequired;
@@ -1715,18 +1715,18 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
 }
 
 export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackApplyStatusEffectAbAttr {
-  constructor(chance: integer, ...effects: StatusEffect[]) {
+  constructor(chance: number, ...effects: StatusEffect[]) {
     super(true, chance, ...effects);
   }
 }
 
 export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
   private contactRequired: boolean;
-  private chance: (user: Pokemon, target: Pokemon, move: Move) => integer;
+  private chance: (user: Pokemon, target: Pokemon, move: Move) => number;
   private effects: BattlerTagType[];
 
 
-  constructor(contactRequired: boolean, chance: (user: Pokemon, target: Pokemon, move: Move) =>  integer, ...effects: BattlerTagType[]) {
+  constructor(contactRequired: boolean, chance: (user: Pokemon, target: Pokemon, move: Move) =>  number, ...effects: BattlerTagType[]) {
     super();
 
     this.contactRequired = contactRequired;
@@ -1863,9 +1863,9 @@ class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
 }
 
 export class PostVictoryFormChangeAbAttr extends PostVictoryAbAttr {
-  private formFunc: (p: Pokemon) => integer;
+  private formFunc: (p: Pokemon) => number;
 
-  constructor(formFunc: ((p: Pokemon) => integer)) {
+  constructor(formFunc: ((p: Pokemon) => number)) {
     super(true);
 
     this.formFunc = formFunc;
@@ -2081,9 +2081,9 @@ export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
 
 export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   private tagType: BattlerTagType;
-  private turnCount: integer;
+  private turnCount: number;
 
-  constructor(tagType: BattlerTagType, turnCount: integer, showAbility?: boolean) {
+  constructor(tagType: BattlerTagType, turnCount: number, showAbility?: boolean) {
     super(showAbility);
 
     this.tagType = tagType;
@@ -2209,9 +2209,9 @@ export class PostSummonClearAllyStatStagesAbAttr extends PostSummonAbAttr {
  * @see {applyPostSummon}
  */
 export class DownloadAbAttr extends PostSummonAbAttr {
-  private enemyDef: integer;
-  private enemySpDef: integer;
-  private enemyCountTally: integer;
+  private enemyDef: number;
+  private enemySpDef: number;
+  private enemyCountTally: number;
   private stats: BattleStat[];
 
   /**
@@ -2295,9 +2295,9 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
-  private formFunc: (p: Pokemon) => integer;
+  private formFunc: (p: Pokemon) => number;
 
-  constructor(formFunc: ((p: Pokemon) => integer)) {
+  constructor(formFunc: ((p: Pokemon) => number)) {
     super(true);
 
     this.formFunc = formFunc;
@@ -2643,18 +2643,75 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
   }
 }
 
+
+export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    if (!pokemon.isFullHp()) {
+      if (!simulated) {
+        const healAmount = Utils.toDmgValue(pokemon.getMaxHp() * 0.33);
+        pokemon.heal(healAmount);
+        pokemon.updateInfo();
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Attribute for form changes that occur on switching out
+ * @extends PreSwitchOutAbAttr
+ * @see {@linkcode applyPreSwitchOut}
+ */
+export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
+  private formFunc: (p: Pokemon) => number;
+
+  constructor(formFunc: ((p: Pokemon) => number)) {
+    super();
+
+    this.formFunc = formFunc;
+  }
+
+  /**
+   * On switch out, trigger the form change to the one defined in the ability
+   * @param pokemon The pokemon switching out and changing form {@linkcode Pokemon}
+   * @param passive N/A
+   * @param args N/A
+   * @returns true if the form change was successful
+   */
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    const formIndex = this.formFunc(pokemon);
+    if (formIndex !== pokemon.formIndex) {
+      if (!simulated) {
+        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+}
+
+export class PreLeaveFieldAbAttr extends AbAttr {
+  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
 /**
  * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
  */
-export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
-
+export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
   /**
    * @param pokemon The {@linkcode Pokemon} with the ability
    * @param passive N/A
    * @param args N/A
-   * @returns {boolean} Returns true if the weather clears, otherwise false.
+   * @returns Returns `true` if the weather clears, otherwise `false`.
    */
-  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     const weatherType = globalScene.arena.weather?.weatherType;
     let turnOffWeather = false;
 
@@ -2693,60 +2750,47 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
   }
 }
 
-export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
-  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
-    if (!pokemon.isFullHp()) {
-      if (!simulated) {
-        const healAmount = Utils.toDmgValue(pokemon.getMaxHp() * 0.33);
-        pokemon.heal(healAmount);
-        pokemon.updateInfo();
-      }
-
-      return true;
-    }
-
+export class PreStatStageChangeAbAttr extends AbAttr {
+  applyPreStatStageChange(pokemon: Pokemon | null, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
 /**
- * Attribute for form changes that occur on switching out
- * @extends PreSwitchOutAbAttr
- * @see {@linkcode applyPreSwitchOut}
+ * Reflect all {@linkcode BattleStat} reductions caused by other Pokémon's moves and Abilities.
+ * Currently only applies to Mirror Armor.
  */
-export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
-  private formFunc: (p: Pokemon) => integer;
-
-  constructor(formFunc: ((p: Pokemon) => integer)) {
-    super();
-
-    this.formFunc = formFunc;
-  }
+export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
+  /** {@linkcode BattleStat} to reflect */
+  private reflectedStat? : BattleStat;
 
   /**
-   * On switch out, trigger the form change to the one defined in the ability
-   * @param pokemon The pokemon switching out and changing form {@linkcode Pokemon}
-   * @param passive N/A
-   * @param args N/A
-   * @returns true if the form change was successful
+   * Apply the {@linkcode ReflectStatStageChangeAbAttr} to an interaction
+   * @param _pokemon The user pokemon
+   * @param _passive N/A
+   * @param simulated `true` if the ability is being simulated by the AI
+   * @param stat the {@linkcode BattleStat} being affected
+   * @param cancelled The {@linkcode Utils.BooleanHolder} that will be set to true due to reflection
+   * @param args
+   * @returns true because it reflects any stat being lowered
    */
-  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
-    const formIndex = this.formFunc(pokemon);
-    if (formIndex !== pokemon.formIndex) {
-      if (!simulated) {
-        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
-      }
-      return true;
+  applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const attacker: Pokemon = args[0];
+    const stages = args[1];
+    this.reflectedStat = stat;
+    if (!simulated) {
+      globalScene.unshiftPhase(new StatStageChangePhase(attacker.getBattlerIndex(), false, [ stat ], stages, true, false, true, null, true));
     }
-
-    return false;
+    cancelled.value = true;
+    return true;
   }
 
-}
-
-export class PreStatStageChangeAbAttr extends AbAttr {
-  applyPreStatStageChange(pokemon: Pokemon | null, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
-    return false;
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ..._args: any[]): string {
+    return i18next.t("abilityTriggers:protectStat", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      abilityName,
+      statName: this.reflectedStat ? i18next.t(getStatKey(this.reflectedStat)) : i18next.t("battle:stats")
+    });
   }
 }
 
@@ -2861,7 +2905,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
    * @returns A boolean indicating the result of the status application.
    */
   applyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) {
+    if (effect !== StatusEffect.FAINT && this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) {
       cancelled.value = true;
       return true;
     }
@@ -3338,10 +3382,10 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
 
 export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr {
   private tagType: BattlerTagType;
-  private turnCount: integer;
+  private turnCount: number;
   private weatherTypes: WeatherType[];
 
-  constructor(tagType: BattlerTagType, turnCount: integer, ...weatherTypes: WeatherType[]) {
+  constructor(tagType: BattlerTagType, turnCount: number, ...weatherTypes: WeatherType[]) {
     super();
 
     this.tagType = tagType;
@@ -3382,9 +3426,9 @@ export class PostWeatherLapseAbAttr extends AbAttr {
 }
 
 export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
-  private healFactor: integer;
+  private healFactor: number;
 
-  constructor(healFactor: integer, ...weatherTypes: WeatherType[]) {
+  constructor(healFactor: number, ...weatherTypes: WeatherType[]) {
     super(...weatherTypes);
 
     this.healFactor = healFactor;
@@ -3405,9 +3449,9 @@ export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
 }
 
 export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
-  private damageFactor: integer;
+  private damageFactor: number;
 
-  constructor(damageFactor: integer, ...weatherTypes: WeatherType[]) {
+  constructor(damageFactor: number, ...weatherTypes: WeatherType[]) {
     super(...weatherTypes);
 
     this.damageFactor = damageFactor;
@@ -3436,10 +3480,10 @@ export class PostTerrainChangeAbAttr extends AbAttr {
 
 export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr {
   private tagType: BattlerTagType;
-  private turnCount: integer;
+  private turnCount: number;
   private terrainTypes: TerrainType[];
 
-  constructor(tagType: BattlerTagType, turnCount: integer, ...terrainTypes: TerrainType[]) {
+  constructor(tagType: BattlerTagType, turnCount: number, ...terrainTypes: TerrainType[]) {
     super();
 
     this.tagType = tagType;
@@ -3692,9 +3736,9 @@ export class PostTurnHealAbAttr extends PostTurnAbAttr {
 }
 
 export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
-  private formFunc: (p: Pokemon) => integer;
+  private formFunc: (p: Pokemon) => number;
 
-  constructor(formFunc: ((p: Pokemon) => integer)) {
+  constructor(formFunc: ((p: Pokemon) => number)) {
     super(true);
 
     this.formFunc = formFunc;
@@ -3916,9 +3960,9 @@ export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
 }
 
 export class StatStageChangeMultiplierAbAttr extends AbAttr {
-  private multiplier: integer;
+  private multiplier: number;
 
-  constructor(multiplier: integer) {
+  constructor(multiplier: number) {
     super(true);
 
     this.multiplier = multiplier;
@@ -4171,63 +4215,10 @@ export class PostFaintUnsuppressedWeatherFormChangeAbAttr extends PostFaintAbAtt
   }
 }
 
-/**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon fainting
- */
-export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
-
-  /**
-   * @param pokemon The {@linkcode Pokemon} with the ability
-   * @param passive N/A
-   * @param attacker N/A
-   * @param move N/A
-   * @param hitResult N/A
-   * @param args N/A
-   * @returns {boolean} Returns true if the weather clears, otherwise false.
-   */
-  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    let turnOffWeather = false;
-
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case (WeatherType.HARSH_SUN):
-        if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
-          && globalScene.getField(true).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-      case (WeatherType.HEAVY_RAIN):
-        if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
-          && globalScene.getField(true).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-      case (WeatherType.STRONG_WINDS):
-        if (pokemon.hasAbility(Abilities.DELTA_STREAM)
-          && globalScene.getField(true).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-    }
-
-    if (simulated) {
-      return turnOffWeather;
-    }
-
-    if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
-      return true;
-    }
-
-    return false;
-  }
-}
-
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
-  private damageRatio: integer;
+  private damageRatio: number;
 
-  constructor(damageRatio: integer) {
+  constructor(damageRatio: number) {
     super();
 
     this.damageRatio = damageRatio;
@@ -4404,9 +4395,9 @@ export class ReduceBerryUseThresholdAbAttr extends AbAttr {
  * Used for Heavy Metal (doubling weight) and Light Metal (halving weight)
  */
 export class WeightMultiplierAbAttr extends AbAttr {
-  private multiplier: integer;
+  private multiplier: number;
 
-  constructor(multiplier: integer) {
+  constructor(multiplier: number) {
     super();
 
     this.multiplier = multiplier;
@@ -4700,12 +4691,12 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
  * @extends AbAttr
  */
 export class BypassSpeedChanceAbAttr extends AbAttr {
-  public chance: integer;
+  public chance: number;
 
   /**
-   * @param {integer} chance probability of ability being active.
+   * @param {number} chance probability of ability being active.
    */
-  constructor(chance: integer) {
+  constructor(chance: number) {
     super(true);
     this.chance = chance;
   }
@@ -5229,13 +5220,18 @@ export function applyPreSwitchOutAbAttrs(attrType: Constructor<PreSwitchOutAbAtt
   return applyAbAttrsInternal<PreSwitchOutAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSwitchOut(pokemon, passive, simulated, args), args, true, simulated);
 }
 
+export function applyPreLeaveFieldAbAttrs(attrType: Constructor<PreLeaveFieldAbAttr>,
+  pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PreLeaveFieldAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, args), args, true, simulated);
+}
+
 export function applyPreStatStageChangeAbAttrs(attrType: Constructor<PreStatStageChangeAbAttr>,
   pokemon: Pokemon | null, stat: BattleStat, cancelled: Utils.BooleanHolder, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PreStatStageChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreStatStageChange(pokemon, passive, simulated, stat, cancelled, args), args, false, simulated);
 }
 
 export function applyPostStatStageChangeAbAttrs(attrType: Constructor<PostStatStageChangeAbAttr>,
-  pokemon: Pokemon, stats: BattleStat[], stages: integer, selfTarget: boolean, simulated: boolean = false, ...args: any[]): Promise<void> {
+  pokemon: Pokemon, stats: BattleStat[], stages: number, selfTarget: boolean, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostStatStageChangeAbAttr>(attrType, pokemon, (attr, _passive) => attr.applyPostStatStageChange(pokemon, simulated, stats, stages, selfTarget, args), args, false, simulated);
 }
 
@@ -5912,20 +5908,17 @@ export function initAbilities() {
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
-      .attr(PreSwitchOutClearWeatherAbAttr)
-      .attr(PostFaintClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
-      .attr(PreSwitchOutClearWeatherAbAttr)
-      .attr(PostFaintClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
-      .attr(PreSwitchOutClearWeatherAbAttr)
-      .attr(PostFaintClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr)
       .bypassFaint(),
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
@@ -5943,12 +5936,14 @@ export function initAbilities() {
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
+      .conditionalAttr(p => p.formIndex !== 7, StatusEffectImmunityAbAttr)
+      .conditionalAttr(p => p.formIndex !== 7, BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .bypassFaint()
-      .partial(), // Meteor form should protect against status effects and yawn
+      .attr(NoTransformAbilityAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.STAKEOUT, 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => !!target?.turnData.switchedInThisTurn, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
@@ -6108,8 +6103,8 @@ export function initAbilities() {
     new Ability(Abilities.PROPELLER_TAIL, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.MIRROR_ARMOR, 8)
-      .ignorable()
-      .unimplemented(),
+      .attr(ReflectStatStageChangeAbAttr)
+      .ignorable(),
     /**
      * Right now, the logic is attached to Surf and Dive moves. Ideally, the post-defend/hit should be an
      * ability attribute but the current implementation of move effects for BattlerTag does not support this- in the case
@@ -6287,9 +6282,8 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .partial(), // While setting the tag, the getbattlestat should ignore all modifiers to stats except stat stages
     new Ability(Abilities.GOOD_AS_GOLD, 9)
-      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.category === MoveCategory.STATUS)
-      .ignorable()
-      .partial(), // Lots of weird interactions with moves and abilities such as negating status moves that target the field
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.category === MoveCategory.STATUS && ![ MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES, MoveTarget.USER_SIDE ].includes(move.moveTarget))
+      .ignorable(),
     new Ability(Abilities.VESSEL_OF_RUIN, 9)
       .attr(FieldMultiplyStatAbAttr, Stat.SPATK, 0.75)
       .attr(PostSummonMessageAbAttr, (user) => i18next.t("abilityTriggers:postSummonVesselOfRuin", { pokemonNameWithAffix: getPokemonNameWithAffix(user), statName: i18next.t(getStatKey(Stat.SPATK)) }))
@@ -6319,8 +6313,8 @@ export function initAbilities() {
     new Ability(Abilities.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, 9)
-      .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? globalScene.currentBattle.playerFaints : globalScene.currentBattle.enemyFaints, 5))
-      .partial(), // Counter resets every wave instead of on arena reset
+      .attr(VariableMovePowerBoostAbAttr, (user, target, move) => 1 + 0.1 * Math.min(user.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints, 5))
+      .partial(), // Should only boost once, on summon
     new Ability(Abilities.COSTAR, 9)
       .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(Abilities.TOXIC_DEBRIS, 9)

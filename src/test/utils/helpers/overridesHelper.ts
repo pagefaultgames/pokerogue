@@ -72,6 +72,26 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Override the wave level cap
+   * @param cap the level cap value to set; 0 uses normal level caps and negative values
+   * disable it completely
+   * @returns `this`
+   */
+  public levelCap(cap: number): this {
+    vi.spyOn(Overrides, "LEVEL_CAP_OVERRIDE", "get").mockReturnValue(cap);
+    let capStr: string;
+    if (cap > 0) {
+      capStr = `Level cap set to ${cap}!`;
+    } else if (cap < 0) {
+      capStr = "Level cap disabled!";
+    } else {
+      capStr = "Level cap reset to default value for wave.";
+    }
+    this.log(capStr);
+    return this;
+  }
+
+  /**
    * Override the player (pokemon) starting held items
    * @param items the items to hold
    * @returns `this`
@@ -140,7 +160,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Abilities | ability}
+   * Override the player (pokemon) {@linkcode Abilities | ability}.
    * @param ability the (pokemon) {@linkcode Abilities | ability} to set
    * @returns `this`
    */
@@ -161,6 +181,20 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
+  /**
+   * Forces the status of the player (pokemon) **passive** {@linkcode Abilities | ability}
+   * @param hasPassiveAbility forces the passive to be active if `true`, inactive if `false`
+   * @returns `this`
+   */
+  public hasPassiveAbility(hasPassiveAbility: boolean | null): this {
+    vi.spyOn(Overrides, "HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
+    if (hasPassiveAbility === null) {
+      this.log("Player Pokemon PASSIVE ability no longer force enabled or disabled!");
+    } else {
+      this.log(`Player Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!`);
+    }
+    return this;
+  }
   /**
    * Override the player (pokemon) {@linkcode Moves | moves}set
    * @param moveset the {@linkcode Moves | moves}set to set
@@ -302,6 +336,21 @@ export class OverridesHelper extends GameManagerHelper {
   public enemyPassiveAbility(passiveAbility: Abilities): this {
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
     this.log(`Enemy Pokemon PASSIVE ability set to ${Abilities[passiveAbility]} (=${passiveAbility})!`);
+    return this;
+  }
+
+  /**
+   * Forces the status of the enemy (pokemon) **passive** {@linkcode Abilities | ability}
+   * @param hasPassiveAbility forces the passive to be active if `true`, inactive if `false`
+   * @returns `this`
+   */
+  public enemyHasPassiveAbility(hasPassiveAbility: boolean | null): this {
+    vi.spyOn(Overrides, "OPP_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
+    if (hasPassiveAbility === null) {
+      this.log("Enemy Pokemon PASSIVE ability no longer force enabled or disabled!");
+    } else {
+      this.log(`Enemy Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!`);
+    }
     return this;
   }
 
