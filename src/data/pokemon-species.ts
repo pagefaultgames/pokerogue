@@ -690,6 +690,56 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.name;
   }
 
+  /**
+   * Find the name of species with proper attachments for regionals and separate starter forms (Floette, Ursaluna)
+   * @returns a string with the region name or other form name attached
+   */
+  getExpandedSpeciesName(): string {
+    if (this.speciesId < 2000) {
+      return this.name; // Other special cases could be put here too
+    } else { // Everything beyond this point essentially follows the pattern of FORMNAME_SPECIES
+      return i18next.t(`pokemonForm:appendForm.${Species[this.speciesId].split("_")[0]}`, { pokemonName: this.name });
+    }
+  }
+
+  /**
+ * Find the form name for species with just one form (regional variants, Floette, Ursaluna)
+ * @param formIndex The form index to check (defaults to 0)
+ * @param append Whether to append the species name to the end (defaults to false)
+ * @returns the pokemon-form locale key for the single form name ("Alolan Form", "Eternal Flower" etc)
+ */
+  getFormNameToDisplay(formIndex: number = 0, append: boolean = false): string {
+    const formKey = this.forms?.[formIndex!]?.formKey;
+    const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
+    const speciesName = Utils.capitalizeString(Species[this.speciesId], "_", true, false);
+    let ret: string = "";
+
+    const region = this.getRegion();
+    if (this.speciesId === Species.ARCEUS) {
+      ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
+    } else if ([ SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.PRIMAL, SpeciesFormKey.GIGANTAMAX, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE, SpeciesFormKey.ETERNAMAX ].includes(formKey as SpeciesFormKey)) {
+      return i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: (append ? this.name : "") });
+    } else if (region === Region.NORMAL || (this.speciesId === Species.GALAR_DARMANITAN && formIndex > 0) || this.speciesId === Species.PALDEA_TAUROS) { // More special cases can be added here
+      const i18key = `pokemonForm:${speciesName}${formText}`;
+      if (i18next.exists(i18key)) {
+        ret = i18next.t(i18key);
+      } else {
+        const rootSpeciesName = Utils.capitalizeString(Species[this.getRootSpeciesId()], "_", true, false);
+        const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
+        ret = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
+      }
+    } else if (append) { // Everything beyond this has an expanded name
+      return this.getExpandedSpeciesName();
+    } else if (this.speciesId === Species.ETERNAL_FLOETTE) { // Not a real form, so the key is made up
+      return i18next.t("pokemonForm:floetteEternalFlower");
+    } else if (this.speciesId === Species.BLOODMOON_URSALUNA) { // Not a real form, so the key is made up
+      return i18next.t("pokemonForm:ursalunaBloodmoon");
+    } else { // Only regional forms should be left at this point
+      return i18next.t(`pokemonForm:regionalForm.${Region[region]}`);
+    }
+    return append ? i18next.t("pokemonForm:appendForm.GENERIC", { pokemonName: this.name, formName: ret }) : ret;
+  }
+
   localize(): void {
     this.name = i18next.t(`pokemon:${Species[this.speciesId].toLowerCase()}`);
   }
