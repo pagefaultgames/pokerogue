@@ -150,6 +150,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNameText: Phaser.GameObjects.Text;
+  private pokemonFormText: Phaser.GameObjects.Text;
   private type1Icon: Phaser.GameObjects.Sprite;
   private type2Icon: Phaser.GameObjects.Sprite;
 
@@ -417,6 +418,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.pokemonNameText = addTextObject(6, 127, "", TextStyle.SUMMARY);
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
+
+    this.pokemonFormText = addTextObject(6, 122, "", TextStyle.PARTY, { fontSize: textSettings.instructionTextSize });
+    this.pokemonFormText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonFormText);
 
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
@@ -1941,6 +1946,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0x808080);
       } else {
         this.pokemonSprite.setTint(0);
+      }
+
+      if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
+        this.pokemonFormText.setText("Form Text");
+      } else {
+        this.pokemonFormText.setText("");
       }
 
       if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
