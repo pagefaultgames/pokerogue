@@ -4362,8 +4362,12 @@ export class PlayerPokemon extends Pokemon {
       ].filter(d => !!d);
       const amount = new Utils.NumberHolder(friendship);
       globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
-      const candyFriendshipMultiplier = globalScene.eventManager.getClassicFriendshipMultiplier();
-      const starterAmount = new Utils.NumberHolder(Math.floor(amount.value * (globalScene.gameMode.isClassic ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
+      const candyFriendshipMultiplier = globalScene.gameMode.isClassic ? globalScene.eventManager.getClassicFriendshipMultiplier() : 1;
+      const fusionReduction = fusionStarterSpeciesId
+        ? globalScene.eventManager.areFusionsBoosted() ? 1.5 // Divide candy gain for fusions by 1.5 during events
+          : 2   // 2 for fusions outside events
+        : 1;    // 1 for non-fused mons
+      const starterAmount = new Utils.NumberHolder(Math.floor(amount.value * candyFriendshipMultiplier / fusionReduction));
 
       // Add friendship to this PlayerPokemon
       this.friendship = Math.min(this.friendship + amount.value, 255);
