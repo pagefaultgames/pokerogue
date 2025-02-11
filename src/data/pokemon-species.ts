@@ -695,17 +695,10 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
    * @returns a string with the region name or other form name attached
    */
   getExpandedSpeciesName(): string {
-    const name = this.name;
-    const region = this.getRegion();
-    if (this.speciesId === Species.ETERNAL_FLOETTE) {
-      return i18next.t("pokemonInfo:eternal_floette_expanded");
-    } else if (this.speciesId === Species.BLOODMOON_URSALUNA) {
-      return i18next.t("pokemonInfo:bloodmoon_ursaluna_expanded");
-    } else if (region === Region.NORMAL) {
-      return name;
-    } else {
-      const regionalName = i18next.t(`pokemonInfo:expandedName${Region[region]}`, { species: name });
-      return regionalName;
+    if (this.speciesId < 2000) {
+      return this.name; // Other special cases could be put here too
+    } else { // Everything beyond this point essentially follows the pattern of FORMNAME_SPECIES
+      return i18next.t(`pokemonForm:appendForm.${Species[this.speciesId].split("_")[0]}`, { species: this.name });
     }
   }
 
@@ -725,8 +718,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if (this.speciesId === Species.ARCEUS) {
       ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
     } else if ([ SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.PRIMAL, SpeciesFormKey.GIGANTAMAX, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE, SpeciesFormKey.ETERNAMAX ].includes(formKey as SpeciesFormKey)) {
-      return i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: "" });
-    } else if (region === Region.NORMAL || (this.speciesId === Species.GALAR_DARMANITAN && formIndex > 0) || this.speciesId === Species.PALDEA_TAUROS) {
+      return i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: (append ? this.name : "") });
+    } else if (region === Region.NORMAL || (this.speciesId === Species.GALAR_DARMANITAN && formIndex > 0) || this.speciesId === Species.PALDEA_TAUROS) { // More special cases can be added here
       const i18key = `pokemonForm:${speciesName}${formText}`;
       if (i18next.exists(i18key)) {
         ret = i18next.t(i18key);
@@ -735,15 +728,16 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
         const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
         ret = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
       }
-    } else if (this.speciesId === Species.ETERNAL_FLOETTE) {
-      ret = i18next.t("pokemonForm:floetteEternalFlower");
-    } else if (this.speciesId === Species.BLOODMOON_URSALUNA) {
-      ret = i18next.t("pokemonForm:ursalunaBloodmoon");
-    } else {
-      const regionalName = i18next.t(`pokemonForm:regionalForm${Region[region]}`);
-      ret = regionalName;
+    } else if (append) { // Everything beyond this has an expanded name
+      return this.getExpandedSpeciesName();
+    } else if (this.speciesId === Species.ETERNAL_FLOETTE) { // Not a real form, so the key is made up
+      return i18next.t("pokemonForm:floetteEternalFlower");
+    } else if (this.speciesId === Species.BLOODMOON_URSALUNA) { // Not a real form, so the key is made up
+      return i18next.t("pokemonForm:ursalunaBloodmoon");
+    } else { // Only regional forms should be left at this point
+      return i18next.t(`pokemonForm:regionalForm.${Region[region]}`);
     }
-    return ret + (append ? this.name : "");
+    return append ? i18next.t("pokemonForm:appendForm.GENERIC", { pokemonName: this.name, formName: ret }) : ret;
   }
 
   localize(): void {
