@@ -1949,7 +1949,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
 
       if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
-        this.pokemonFormText.setText("Form Text");
+        this.pokemonFormText.setText(species.getFormNameToDisplay(formIndex, false));
       } else {
         this.pokemonFormText.setText("");
       }
