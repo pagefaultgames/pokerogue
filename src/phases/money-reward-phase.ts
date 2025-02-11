@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { MoneyMultiplierModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 
 export class MoneyRewardPhase extends BattlePhase {
@@ -15,7 +15,7 @@ export class MoneyRewardPhase extends BattlePhase {
   }
 
   start() {
-    const moneyAmount = new Utils.IntegerHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
+    const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
 
     globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 

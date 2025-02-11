@@ -13,7 +13,7 @@ import { vouchers } from "#app/system/voucher";
 import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { isLocal, isLocalServerConnected } from "#app/utils";
 import i18next from "i18next";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { EncounterPhase } from "./encounter-phase";
@@ -24,15 +24,9 @@ import { globalScene } from "#app/global-scene";
 
 
 export class TitlePhase extends Phase {
-  private loaded: boolean;
+  private loaded: boolean = false;
   private lastSessionData: SessionSaveData;
   public gameMode: GameModes;
-
-  constructor() {
-    super();
-
-    this.loaded = false;
-  }
 
   start(): void {
     super.start();
@@ -245,7 +239,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!Utils.isLocal || Utils.isLocalServerConnected) {
+      if (!isLocal || isLocalServerConnected) {
         fetchDailyRunSeed().then(seed => {
           if (seed) {
             generateDaily(seed);

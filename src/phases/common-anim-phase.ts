@@ -6,13 +6,13 @@ import { PokemonPhase } from "./pokemon-phase";
 
 export class CommonAnimPhase extends PokemonPhase {
   private anim: CommonAnim | null;
-  private targetIndex: number | undefined;
+  private targetIndex?: BattlerIndex;
   private playOnEmptyField: boolean;
 
-  constructor(battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex, anim?: CommonAnim, playOnEmptyField: boolean = false) {
+  constructor(battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex, anim: CommonAnim | null = null, playOnEmptyField: boolean = false) {
     super(battlerIndex);
 
-    this.anim = anim!; // TODO: is this bang correct?
+    this.anim = anim;
     this.targetIndex = targetIndex;
     this.playOnEmptyField = playOnEmptyField;
   }

@@ -42,10 +42,10 @@ import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mys
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
 
-  constructor(loaded?: boolean) {
+  constructor(loaded: boolean = false) {
     super();
 
-    this.loaded = !!loaded;
+    this.loaded = loaded;
   }
 
   start() {

@@ -5,7 +5,7 @@ import { globalScene } from "#app/global-scene";
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import type EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
-import * as Utils from "#app/utils";
+import { fixedInt, getFrameMs, randInt } from "#app/utils";
 import { Mode } from "#app/ui/ui";
 import { cos, sin } from "#app/field/anims";
 import type { PlayerPokemon } from "#app/field/pokemon";
@@ -270,8 +270,8 @@ export class EvolutionPhase extends Phase {
           globalScene.playSoundWithoutBgm("evolution_fanfare");
 
           evolvedPokemon.destroy();
-          globalScene.ui.showText(i18next.t("menu:evolutionDone", { pokemonName: this.preEvolvedPokemonName, evolvedPokemonName: this.pokemon.name }), null, () => this.end(), null, true, Utils.fixedInt(4000));
-          globalScene.time.delayedCall(Utils.fixedInt(4250), () => globalScene.playBgm());
+          globalScene.ui.showText(i18next.t("menu:evolutionDone", { pokemonName: this.preEvolvedPokemonName, evolvedPokemonName: this.pokemon.name }), null, () => this.end(), null, true, fixedInt(4000));
+          globalScene.time.delayedCall(fixedInt(4250), () => globalScene.playBgm());
         });
       });
     };
@@ -323,7 +323,7 @@ export class EvolutionPhase extends Phase {
 
     globalScene.tweens.addCounter({
       repeat: 64,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         if (f < 64) {
           if (!(f & 7)) {
@@ -342,7 +342,7 @@ export class EvolutionPhase extends Phase {
 
     globalScene.tweens.addCounter({
       repeat: 96,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         if (f < 96) {
           if (f < 6) {
@@ -392,7 +392,7 @@ export class EvolutionPhase extends Phase {
 
     globalScene.tweens.addCounter({
       repeat: 48,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         if (!f) {
           for (let i = 0; i < 16; i++) {
@@ -413,14 +413,14 @@ export class EvolutionPhase extends Phase {
 
     globalScene.tweens.addCounter({
       repeat: 48,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         if (!f) {
           for (let i = 0; i < 8; i++) {
             this.doSprayParticle(i);
           }
         } else if (f < 50) {
-          this.doSprayParticle(Utils.randInt(8));
+          this.doSprayParticle(randInt(8));
         }
         f++;
       }
@@ -437,7 +437,7 @@ export class EvolutionPhase extends Phase {
 
     const particleTimer = globalScene.tweens.addCounter({
       repeat: -1,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }
@@ -474,7 +474,7 @@ export class EvolutionPhase extends Phase {
 
     const particleTimer = globalScene.tweens.addCounter({
       repeat: -1,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }
@@ -506,7 +506,7 @@ export class EvolutionPhase extends Phase {
 
     const particleTimer = globalScene.tweens.addCounter({
       repeat: -1,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }
@@ -536,12 +536,12 @@ export class EvolutionPhase extends Phase {
 
     let f = 0;
     let yOffset = 0;
-    const speed = 3 - Utils.randInt(8);
-    const amp = 48 + Utils.randInt(64);
+    const speed = 3 - randInt(8);
+    const amp = 48 + randInt(64);
 
     const particleTimer = globalScene.tweens.addCounter({
       repeat: -1,
-      duration: Utils.getFrameMs(1),
+      duration: getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }

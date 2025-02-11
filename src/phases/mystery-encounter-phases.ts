@@ -26,8 +26,7 @@ import { TrainerSlot } from "../data/trainer-config";
 import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
-import * as Utils from "../utils";
-import { isNullOrUndefined } from "../utils";
+import { isNullOrUndefined, randSeedItem } from "#app/utils";
 
 /**
  * Will handle (in order):
@@ -367,7 +366,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       } else {
         const trainer = globalScene.currentBattle.trainer;
         let message: string;
-        globalScene.executeWithSeedOffset(() => message = Utils.randSeedItem(encounterMessages), globalScene.currentBattle.mysteryEncounter?.getSeedOffset());
+        globalScene.executeWithSeedOffset(() => message = randSeedItem(encounterMessages), globalScene.currentBattle.mysteryEncounter?.getSeedOffset());
         message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
           globalScene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
