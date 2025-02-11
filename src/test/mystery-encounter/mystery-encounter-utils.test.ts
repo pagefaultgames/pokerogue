@@ -48,12 +48,12 @@ describe("Mystery Encounter Utils", () => {
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
-    it("gets a fainted pokemon from player party if isAllowedInBattle is false", () => {
+    it("gets a fainted pokemon from player party if isAllowedInBattle is false", async () => {
       // Both pokemon fainted
       scene.getPlayerParty().forEach(p => {
         p.hp = 0;
         p.trySetStatus(StatusEffect.FAINT);
-        p.updateInfo();
+        void p.updateInfo();
       });
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
@@ -68,12 +68,12 @@ describe("Mystery Encounter Utils", () => {
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
-    it("gets an unfainted legal pokemon from player party if isAllowed is true and isFainted is false", () => {
+    it("gets an unfainted legal pokemon from player party if isAllowed is true and isFainted is false", async () => {
       // Only faint 1st pokemon
       const party = scene.getPlayerParty();
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
-      party[0].updateInfo();
+      await party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
@@ -87,12 +87,12 @@ describe("Mystery Encounter Utils", () => {
       expect(result.species.speciesId).toBe(Species.MANAPHY);
     });
 
-    it("returns last unfainted pokemon if doNotReturnLastAbleMon is false", () => {
+    it("returns last unfainted pokemon if doNotReturnLastAbleMon is false", async () => {
       // Only faint 1st pokemon
       const party = scene.getPlayerParty();
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
-      party[0].updateInfo();
+      await party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
@@ -106,12 +106,12 @@ describe("Mystery Encounter Utils", () => {
       expect(result.species.speciesId).toBe(Species.MANAPHY);
     });
 
-    it("never returns last unfainted pokemon if doNotReturnLastAbleMon is true", () => {
+    it("never returns last unfainted pokemon if doNotReturnLastAbleMon is true", async () => {
       // Only faint 1st pokemon
       const party = scene.getPlayerParty();
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
-      party[0].updateInfo();
+      await party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
       game.override.seed("random");
@@ -152,12 +152,12 @@ describe("Mystery Encounter Utils", () => {
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
-    it("returns highest level unfainted if unfainted is true", () => {
+    it("returns highest level unfainted if unfainted is true", async () => {
       const party = scene.getPlayerParty();
       party[0].level = 100;
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
-      party[0].updateInfo();
+      await party[0].updateInfo();
       party[1].level = 10;
 
       const result = getHighestLevelPlayerPokemon(true);
@@ -191,12 +191,12 @@ describe("Mystery Encounter Utils", () => {
       expect(result.species.speciesId).toBe(Species.ARCEUS);
     });
 
-    it("returns lowest level unfainted if unfainted is true", () => {
+    it("returns lowest level unfainted if unfainted is true", async () => {
       const party = scene.getPlayerParty();
       party[0].level = 10;
       party[0].hp = 0;
       party[0].trySetStatus(StatusEffect.FAINT);
-      party[0].updateInfo();
+      await party[0].updateInfo();
       party[1].level = 100;
 
       const result = getLowestLevelPlayerPokemon(true);

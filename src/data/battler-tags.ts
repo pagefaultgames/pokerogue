@@ -1752,7 +1752,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     super.onAdd(pokemon);
 
     let highestStat: EffectiveStat;
-    EFFECTIVE_STATS.map(s => pokemon.getEffectiveStat(s)).reduce((highestValue: number, value: number, i: number) => {
+    EFFECTIVE_STATS.map(s => pokemon.getEffectiveStat(s, undefined, undefined, undefined, undefined, undefined, undefined, true)).reduce((highestValue: number, value: number, i: number) => {
       if (value > highestValue) {
         highestStat = EFFECTIVE_STATS[i];
         return value;
@@ -1763,15 +1763,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     highestStat = highestStat!; // tell TS compiler it's defined!
     this.stat = highestStat;
 
-    switch (this.stat) {
-      case Stat.SPD:
-        this.multiplier = 1.5;
-        break;
-      default:
-        this.multiplier = 1.3;
-        break;
-    }
-
+    this.multiplier = this.stat === Stat.SPD ? 1.5 : 1.3;
     globalScene.queueMessage(i18next.t("battlerTags:highestStatBoostOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), statName: i18next.t(getStatKey(highestStat)) }), null, false, null, true);
   }
 
