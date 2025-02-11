@@ -1981,8 +1981,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   female: starterAttributes.female
                 };
                 ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, starterAttributes.form, attributes);
-                return true;
               });
+              return true;
             }
           });
           options.push({
