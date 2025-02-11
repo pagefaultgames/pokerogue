@@ -1500,9 +1500,9 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ROCKET_GRUNT]: new TrainerConfig(++t).setHasGenders("Rocket Grunt Female").setHasDouble("Rocket Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_rocket_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.WEEDLE, Species.RATTATA, Species.EKANS, Species.SANDSHREW, Species.ZUBAT, Species.GEODUDE, Species.KOFFING, Species.GRIMER, Species.ODDISH, Species.SLOWPOKE ],
-      [TrainerPoolTier.UNCOMMON]: [ Species.GYARADOS, Species.LICKITUNG, Species.TAUROS, Species.MANKEY, Species.SCYTHER, Species.ELEKID, Species.MAGBY, Species.CUBONE, Species.GROWLITHE, Species.MURKROW, Species.GASTLY, Species.EXEGGCUTE, Species.VOLTORB, Species.MAGNEMITE ],
-      [TrainerPoolTier.RARE]: [ Species.PORYGON, Species.ALOLA_RATTATA, Species.ALOLA_SANDSHREW, Species.ALOLA_MEOWTH, Species.ALOLA_GRIMER, Species.ALOLA_GEODUDE, Species.PALDEA_TAUROS, Species.OMANYTE, Species.KABUTO ],
+      [TrainerPoolTier.COMMON]: [ Species.WEEDLE, Species.RATTATA, Species.EKANS, Species.SANDSHREW, Species.ZUBAT, Species.ODDISH, Species.GEODUDE, Species.SLOWPOKE, Species.GRIMER, Species.KOFFING ],
+      [TrainerPoolTier.UNCOMMON]: [ Species.MANKEY, Species.GROWLITHE, Species.MAGNEMITE, Species.GASTLY, Species.VOLTORB, Species.EXEGGCUTE, Species.CUBONE, Species.LICKITUNG, Species.SCYTHER, Species.TAUROS, Species.GYARADOS, Species.MURKROW, Species.ELEKID, Species.MAGBY ],
+      [TrainerPoolTier.RARE]: [ Species.PORYGON, Species.OMANYTE, Species.KABUTO, Species.ALOLA_RATTATA, Species.ALOLA_SANDSHREW, Species.ALOLA_MEOWTH, Species.ALOLA_GEODUDE, Species.ALOLA_GRIMER, Species.PALDEA_TAUROS ],
       [TrainerPoolTier.SUPER_RARE]: [ Species.DRATINI, Species.LARVITAR ]
     }),
   [TrainerType.ARCHER]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("rocket_admin", "rocket", [ Species.HOUNDOOM ]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_rocket_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
@@ -2477,7 +2477,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
-      p.formIndex = 1; // Mega Gyardos
+      p.formIndex = 1; // Mega Gyarados
       p.generateName();
       p.gender = Gender.MALE;
     }))
