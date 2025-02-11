@@ -724,7 +724,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     const region = this.getRegion();
     if (this.speciesId === Species.ARCEUS) {
       ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
-    } else if ([ SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE ].includes(formKey as SpeciesFormKey)) {
+    } else if ([ SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.PRIMAL, SpeciesFormKey.GIGANTAMAX, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE, SpeciesFormKey.ETERNAMAX ].includes(formKey as SpeciesFormKey)) {
       return i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: "" });
     } else if (region === Region.NORMAL || (this.speciesId === Species.GALAR_DARMANITAN && formIndex > 0) || this.speciesId === Species.PALDEA_TAUROS) {
       const i18key = `pokemonForm:${speciesName}${formText}`;
