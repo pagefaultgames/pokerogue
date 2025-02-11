@@ -1511,10 +1511,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.PETREL]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("rocket_admin", "rocket", [ Species.WEEZING ]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_rocket_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
   [TrainerType.MAGMA_GRUNT]: new TrainerConfig(++t).setHasGenders("Magma Grunt Female").setHasDouble("Magma Grunts").setMoneyMultiplier(1.0).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_aqua_magma_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.SLUGMA, Species.POOCHYENA, Species.NUMEL, Species.ZIGZAGOON, Species.DIGLETT, Species.MAGBY, Species.TORKOAL, Species.GROWLITHE, Species.BALTOY ],
-      [TrainerPoolTier.UNCOMMON]: [ Species.SOLROCK, Species.HIPPOPOTAS, Species.SANDACONDA, Species.PHANPY, Species.ROLYCOLY, Species.GLIGAR, Species.RHYHORN, Species.HEATMOR ],
-      [TrainerPoolTier.RARE]: [ Species.TRAPINCH, Species.LILEEP, Species.ANORITH, Species.HISUI_GROWLITHE, Species.TURTONATOR, Species.ARON, Species.TOEDSCOOL ],
-      [TrainerPoolTier.SUPER_RARE]: [ Species.CAPSAKID, Species.CHARCADET ]
+      [TrainerPoolTier.COMMON]: [ Species.DIGLETT, Species.GROWLITHE, Species.SLUGMA, Species.MAGBY, Species.POOCHYENA, Species.ZIGZAGOON, Species.NUMEL, Species.TORKOAL, Species.BALTOY ],
+      [TrainerPoolTier.UNCOMMON]: [ Species.RHYHORN, Species.GLIGAR, Species.PHANPY, Species.SOLROCK, Species.HIPPOPOTAS, Species.HEATMOR, Species.ROLYCOLY, Species.SILICOBRA ],
+      [TrainerPoolTier.RARE]: [ Species.ARON, Species.TRAPINCH, Species.LILEEP, Species.ANORITH, Species.TURTONATOR, Species.TOEDSCOOL, Species.HISUI_GROWLITHE ],
+      [TrainerPoolTier.SUPER_RARE]: [ Species.CHARCADET, Species.CAPSAKID ]
     }),
   [TrainerType.TABITHA]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("magma_admin", "magma", [ Species.CAMERUPT ]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_aqua_magma_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
   [TrainerType.COURTNEY]: new TrainerConfig(++t).setMoneyMultiplier(1.5).initForEvilTeamAdmin("magma_admin_female", "magma", [ Species.CAMERUPT ]).setEncounterBgm(TrainerType.PLASMA_GRUNT).setBattleBgm("battle_plasma_grunt").setMixedBattleBgm("battle_aqua_magma_grunt").setVictoryBgm("victory_team_plasma").setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
