@@ -4559,7 +4559,8 @@ export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
 
-    if (user.isTerastallized() && user.getEffectiveStat(Stat.ATK, target, move) > user.getEffectiveStat(Stat.SPATK, target, move)) {
+    if (user.isTerastallized() && user.getEffectiveStat(Stat.ATK, target, move, true, true, false, false, true) >
+    user.getEffectiveStat(Stat.SPATK, target, move, true, true, false, false, true)) {
       category.value = MoveCategory.PHYSICAL;
       return true;
     }
@@ -10956,8 +10957,7 @@ export function initMoves() {
       .attr(TeraMoveCategoryAttr)
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, { condition: (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR) })
-      .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, { condition: (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR) }),
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP)
       .condition(failIfLastCondition),
