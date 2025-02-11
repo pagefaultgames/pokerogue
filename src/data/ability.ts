@@ -1005,10 +1005,6 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
     if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !move.hitsSubstitute(attacker, pokemon)) {
       if (attacker.getTag(BattlerTagType.PERISH_SONG)) {
         return false;
-      } else if (pokemon.getTag(BattlerTagType.PERISH_SONG)) {
-        if (!simulated) {
-          attacker.addTag(BattlerTagType.PERISH_SONG, this.turns);
-        }
       } else {
         if (!simulated) {
           attacker.addTag(BattlerTagType.PERISH_SONG, this.turns);
