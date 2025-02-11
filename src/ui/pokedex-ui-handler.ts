@@ -1698,7 +1698,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   openFormTray(species: PokemonSpecies): boolean {
 
-    this.trayForms = species.forms;
+    this.trayForms = species.forms.filter(f => !f.isUnobtainable);
 
     this.trayNumIcons = this.trayForms.length;
     this.trayRows = Math.floor(this.trayNumIcons / 9) + (this.trayNumIcons % 9 === 0 ? 0 : 1);
