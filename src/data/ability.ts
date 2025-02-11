@@ -877,7 +877,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.status
+    if (move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) && !attacker.status
       && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !move.hitsSubstitute(attacker, pokemon)) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       if (simulated) {
@@ -918,7 +918,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100) < this.chance && !move.hitsSubstitute(attacker, pokemon)) {
+    if (move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) && pokemon.randSeedInt(100) < this.chance && !move.hitsSubstitute(attacker, pokemon)) {
       if (simulated) {
         return attacker.canAddTag(this.tagType);
       } else {
@@ -968,7 +968,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
-    if (!simulated && move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)
+    if (!simulated && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
       && !attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !move.hitsSubstitute(attacker, pokemon)) {
       attacker.damageAndUpdate(Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
       attacker.turnData.damageTaken += Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio));
@@ -1002,7 +1002,7 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !move.hitsSubstitute(attacker, pokemon)) {
+    if (move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) && !move.hitsSubstitute(attacker, pokemon)) {
       if (pokemon.getTag(BattlerTagType.PERISH_SONG) || attacker.getTag(BattlerTagType.PERISH_SONG)) {
         return false;
       } else {
@@ -1053,7 +1053,7 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)
+    if (move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
       && !attacker.getAbility().hasAttr(UnswappableAbilityAbAttr) && !move.hitsSubstitute(attacker, pokemon)) {
       if (!simulated) {
         const tempAbilityId = attacker.getAbility().id;
@@ -1080,7 +1080,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
-    if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.getAbility().hasAttr(UnsuppressableAbilityAbAttr)
+    if (move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) && !attacker.getAbility().hasAttr(UnsuppressableAbilityAbAttr)
       && !attacker.getAbility().hasAttr(PostDefendAbilityGiveAbAttr) && !move.hitsSubstitute(attacker, pokemon)) {
       if (!simulated) {
         attacker.summonData.ability = this.ability;
@@ -1113,7 +1113,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
     if (attacker.getTag(BattlerTagType.DISABLED) === null && !move.hitsSubstitute(attacker, pokemon)) {
-      if (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance)) {
+      if (move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance)) {
         if (simulated) {
           return true;
         }
@@ -1705,7 +1705,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
     }
 
     /**Status inflicted by abilities post attacking are also considered additional effects.*/
-    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !simulated && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !simulated && pokemon !== attacker && (!this.contactRequired || move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       return attacker.trySetStatus(effect, true, pokemon);
     }
@@ -1736,7 +1736,7 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 
   applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     /**Battler tags inflicted by abilities post attacking are also considered additional effects.*/
-    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
+    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       return simulated || attacker.addTag(effect);
     }
@@ -4225,7 +4225,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 
   applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
-    if (move !== undefined && attacker !== undefined && move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {  //If the mon didn't die to indirect damage
+    if (move !== undefined && attacker !== undefined && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })) {  //If the mon didn't die to indirect damage
       const cancelled = new Utils.BooleanHolder(false);
       globalScene.getField(true).map(p => applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled, simulated));
       if (cancelled.value || attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
