@@ -2643,55 +2643,6 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
   }
 }
 
-/**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
- */
-export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
-
-  /**
-   * @param pokemon The {@linkcode Pokemon} with the ability
-   * @param passive N/A
-   * @param args N/A
-   * @returns {boolean} Returns true if the weather clears, otherwise false.
-   */
-  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    let turnOffWeather = false;
-
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case (WeatherType.HARSH_SUN):
-        if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
-          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-      case (WeatherType.HEAVY_RAIN):
-        if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
-          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-      case (WeatherType.STRONG_WINDS):
-        if (pokemon.hasAbility(Abilities.DELTA_STREAM)
-          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-    }
-
-    if (simulated) {
-      return turnOffWeather;
-    }
-
-    if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
-      return true;
-    }
-
-    return false;
-  }
-}
 
 export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
@@ -2744,9 +2695,102 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
 
 }
 
+export class PreLeaveFieldAbAttr extends AbAttr {
+  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+/**
+ * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
+ */
+export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
+  /**
+   * @param pokemon The {@linkcode Pokemon} with the ability
+   * @param passive N/A
+   * @param args N/A
+   * @returns Returns `true` if the weather clears, otherwise `false`.
+   */
+  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    const weatherType = globalScene.arena.weather?.weatherType;
+    let turnOffWeather = false;
+
+    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
+    switch (weatherType) {
+      case (WeatherType.HARSH_SUN):
+        if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
+          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
+          turnOffWeather = true;
+        }
+        break;
+      case (WeatherType.HEAVY_RAIN):
+        if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
+          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
+          turnOffWeather = true;
+        }
+        break;
+      case (WeatherType.STRONG_WINDS):
+        if (pokemon.hasAbility(Abilities.DELTA_STREAM)
+          && globalScene.getField(true).filter(p => p !== pokemon).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
+          turnOffWeather = true;
+        }
+        break;
+    }
+
+    if (simulated) {
+      return turnOffWeather;
+    }
+
+    if (turnOffWeather) {
+      globalScene.arena.trySetWeather(WeatherType.NONE, false);
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PreStatStageChangeAbAttr extends AbAttr {
   applyPreStatStageChange(pokemon: Pokemon | null, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
+  }
+}
+
+/**
+ * Reflect all {@linkcode BattleStat} reductions caused by other Pokémon's moves and Abilities.
+ * Currently only applies to Mirror Armor.
+ */
+export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
+  /** {@linkcode BattleStat} to reflect */
+  private reflectedStat? : BattleStat;
+
+  /**
+   * Apply the {@linkcode ReflectStatStageChangeAbAttr} to an interaction
+   * @param _pokemon The user pokemon
+   * @param _passive N/A
+   * @param simulated `true` if the ability is being simulated by the AI
+   * @param stat the {@linkcode BattleStat} being affected
+   * @param cancelled The {@linkcode Utils.BooleanHolder} that will be set to true due to reflection
+   * @param args
+   * @returns true because it reflects any stat being lowered
+   */
+  applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const attacker: Pokemon = args[0];
+    const stages = args[1];
+    this.reflectedStat = stat;
+    if (!simulated) {
+      globalScene.unshiftPhase(new StatStageChangePhase(attacker.getBattlerIndex(), false, [ stat ], stages, true, false, true, null, true));
+    }
+    cancelled.value = true;
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ..._args: any[]): string {
+    return i18next.t("abilityTriggers:protectStat", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      abilityName,
+      statName: this.reflectedStat ? i18next.t(getStatKey(this.reflectedStat)) : i18next.t("battle:stats")
+    });
   }
 }
 
@@ -4171,59 +4215,6 @@ export class PostFaintUnsuppressedWeatherFormChangeAbAttr extends PostFaintAbAtt
   }
 }
 
-/**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon fainting
- */
-export class PostFaintClearWeatherAbAttr extends PostFaintAbAttr {
-
-  /**
-   * @param pokemon The {@linkcode Pokemon} with the ability
-   * @param passive N/A
-   * @param attacker N/A
-   * @param move N/A
-   * @param hitResult N/A
-   * @param args N/A
-   * @returns {boolean} Returns true if the weather clears, otherwise false.
-   */
-  applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    let turnOffWeather = false;
-
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case (WeatherType.HARSH_SUN):
-        if (pokemon.hasAbility(Abilities.DESOLATE_LAND)
-          && globalScene.getField(true).filter(p => p.hasAbility(Abilities.DESOLATE_LAND)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-      case (WeatherType.HEAVY_RAIN):
-        if (pokemon.hasAbility(Abilities.PRIMORDIAL_SEA)
-          && globalScene.getField(true).filter(p => p.hasAbility(Abilities.PRIMORDIAL_SEA)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-      case (WeatherType.STRONG_WINDS):
-        if (pokemon.hasAbility(Abilities.DELTA_STREAM)
-          && globalScene.getField(true).filter(p => p.hasAbility(Abilities.DELTA_STREAM)).length === 0) {
-          turnOffWeather = true;
-        }
-        break;
-    }
-
-    if (simulated) {
-      return turnOffWeather;
-    }
-
-    if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
-      return true;
-    }
-
-    return false;
-  }
-}
-
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private damageRatio: number;
 
@@ -5229,6 +5220,11 @@ export function applyPreSwitchOutAbAttrs(attrType: Constructor<PreSwitchOutAbAtt
   return applyAbAttrsInternal<PreSwitchOutAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreSwitchOut(pokemon, passive, simulated, args), args, true, simulated);
 }
 
+export function applyPreLeaveFieldAbAttrs(attrType: Constructor<PreLeaveFieldAbAttr>,
+  pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PreLeaveFieldAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, args), args, true, simulated);
+}
+
 export function applyPreStatStageChangeAbAttrs(attrType: Constructor<PreStatStageChangeAbAttr>,
   pokemon: Pokemon | null, stat: BattleStat, cancelled: Utils.BooleanHolder, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PreStatStageChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreStatStageChange(pokemon, passive, simulated, stat, cancelled, args), args, false, simulated);
@@ -5912,20 +5908,17 @@ export function initAbilities() {
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
-      .attr(PreSwitchOutClearWeatherAbAttr)
-      .attr(PostFaintClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
-      .attr(PreSwitchOutClearWeatherAbAttr)
-      .attr(PostFaintClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
-      .attr(PreSwitchOutClearWeatherAbAttr)
-      .attr(PostFaintClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr)
       .bypassFaint(),
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
@@ -6110,8 +6103,8 @@ export function initAbilities() {
     new Ability(Abilities.PROPELLER_TAIL, 8)
       .attr(BlockRedirectAbAttr),
     new Ability(Abilities.MIRROR_ARMOR, 8)
-      .ignorable()
-      .unimplemented(),
+      .attr(ReflectStatStageChangeAbAttr)
+      .ignorable(),
     /**
      * Right now, the logic is attached to Surf and Dive moves. Ideally, the post-defend/hit should be an
      * ability attribute but the current implementation of move effects for BattlerTag does not support this- in the case

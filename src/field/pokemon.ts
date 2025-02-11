@@ -31,7 +31,7 @@ import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoo
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
 import type { Ability, AbAttr } from "#app/data/ability";
-import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/ability";
+import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr, PreLeaveFieldAbAttr, applyPreLeaveFieldAbAttrs } from "#app/data/ability";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -947,11 +947,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreOppAbility during an attack, determines whether the opposing Pokemon's abilities should be ignored during the stat calculation.
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @param simulated if `true`, nullifies any effects that produce any changes to game state from triggering
+   * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
    * @returns the final in-battle value of a stat
    */
-  getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreAbility: boolean = false, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): number {
+  getEffectiveStat(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreAbility: boolean = false, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true, ignoreHeldItems: boolean = false): number {
     const statValue = new Utils.NumberHolder(this.getStat(stat, false));
-    globalScene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
+    if (!ignoreHeldItems) {
+      globalScene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
+    }
 
     // The Ruin abilities here are never ignored, but they reveal themselves on summon anyway
     const fieldApplied = new Utils.BooleanHolder(false);
@@ -965,7 +968,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyStatMultiplierAbAttrs(StatMultiplierAbAttr, this, stat, statValue, simulated);
     }
 
-    let ret = statValue.value * this.getStatStageMultiplier(stat, opponent, move, ignoreOppAbility, isCritical, simulated);
+    let ret = statValue.value * this.getStatStageMultiplier(stat, opponent, move, ignoreOppAbility, isCritical, simulated, ignoreHeldItems);
 
     switch (stat) {
       case Stat.ATK:
@@ -1422,8 +1425,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public hasPassive(): boolean {
     // returns override if valid for current case
-    if ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && this.isPlayer())
-        || (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer())) {
+    if (
+      (Overrides.HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isPlayer())
+      || (Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE === false && !this.isPlayer())
+    ) {
+      return false;
+    }
+    if (
+      ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE) && this.isPlayer())
+      || ((Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE || Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE) && !this.isPlayer())
+    ) {
       return true;
     }
 
@@ -2479,9 +2490,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreOppAbility determines whether the effects of the opponent's abilities (i.e. Unaware) should be ignored (`false` by default)
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @param simulated determines whether effects are applied without altering game state (`true` by default)
+   * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
    * @return the stat stage multiplier to be used for effective stat calculation
    */
-  getStatStageMultiplier(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true): number {
+  getStatStageMultiplier(stat: EffectiveStat, opponent?: Pokemon, move?: Move, ignoreOppAbility: boolean = false, isCritical: boolean = false, simulated: boolean = true, ignoreHeldItems: boolean = false): number {
     const statStage = new Utils.IntegerHolder(this.getStatStage(stat));
     const ignoreStatStage = new Utils.BooleanHolder(false);
 
@@ -2508,7 +2520,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (!ignoreStatStage.value) {
       const statStageMultiplier = new Utils.NumberHolder(Math.max(2, 2 + statStage.value) / Math.max(2, 2 - statStage.value));
-      globalScene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), stat, statStageMultiplier);
+      if (!ignoreHeldItems) {
+        globalScene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), stat, statStageMultiplier);
+      }
       return Math.min(statStageMultiplier.value, 4);
     }
     return 1;
@@ -3226,7 +3240,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     for (const tag of source.summonData.tags) {
-      if (!tag.isBatonPassable) {
+      if (!tag.isBatonPassable || (tag.tagType === BattlerTagType.TELEKINESIS && this.species.speciesId === Species.GENGAR && this.getFormKey() === "mega")) {
         continue;
       }
 
@@ -4142,9 +4156,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param hideInfo Indicates if this should also play the animation to hide the Pokemon's
    * info container.
    */
-  leaveField(clearEffects: boolean = true, hideInfo: boolean = true) {
+  leaveField(clearEffects: boolean = true, hideInfo: boolean = true, destroy: boolean = false) {
     this.resetSprite();
     this.resetTurnData();
+    globalScene.getField(true).filter(p => p !== this).forEach(p => p.removeTagsBySourceId(this.id));
+
     if (clearEffects) {
       this.destroySubstitute();
       this.resetSummonData(); // this also calls `resetBattleSummonData`
@@ -4152,9 +4168,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (hideInfo) {
       this.hideInfo();
     }
-    globalScene.field.remove(this);
+    // Trigger abilities that activate upon leaving the field
+    applyPreLeaveFieldAbAttrs(PreLeaveFieldAbAttr, this);
     this.setSwitchOutStatus(true);
     globalScene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
+    globalScene.field.remove(this, destroy);
   }
 
   destroy(): void {
@@ -4344,8 +4362,12 @@ export class PlayerPokemon extends Pokemon {
       ].filter(d => !!d);
       const amount = new Utils.NumberHolder(friendship);
       globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
-      const candyFriendshipMultiplier = globalScene.eventManager.getClassicFriendshipMultiplier();
-      const starterAmount = new Utils.NumberHolder(Math.floor(amount.value * (globalScene.gameMode.isClassic ? candyFriendshipMultiplier : 1) / (fusionStarterSpeciesId ? 2 : 1)));
+      const candyFriendshipMultiplier = globalScene.gameMode.isClassic ? globalScene.eventManager.getClassicFriendshipMultiplier() : 1;
+      const fusionReduction = fusionStarterSpeciesId
+        ? globalScene.eventManager.areFusionsBoosted() ? 1.5 // Divide candy gain for fusions by 1.5 during events
+          : 2   // 2 for fusions outside events
+        : 1;    // 1 for non-fused mons
+      const starterAmount = new Utils.NumberHolder(Math.floor(amount.value * candyFriendshipMultiplier / fusionReduction));
 
       // Add friendship to this PlayerPokemon
       this.friendship = Math.min(this.friendship + amount.value, 255);

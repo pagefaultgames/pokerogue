@@ -910,7 +910,7 @@ class StickyWebTag extends ArenaTrapTag {
       if (!cancelled.value) {
         globalScene.queueMessage(i18next.t("arenaTag:stickyWebActivateTrap", { pokemonName: pokemon.getNameToRender() }));
         const stages = new NumberHolder(-1);
-        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, [ Stat.SPD ], stages.value));
+        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, [ Stat.SPD ], stages.value, true, false, true, null, false, true));
         return true;
       }
     }
