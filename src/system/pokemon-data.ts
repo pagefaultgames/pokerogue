@@ -57,6 +57,7 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: number;
+  public fusionTeraType: Type;
 
   public boss: boolean;
   public bossSegments?: number;
@@ -107,7 +108,7 @@ export default class PokemonData {
       this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
-    this.teraType = (source.teraType || 0) as Type;
+    this.teraType = source.teraType as Type;
     this.isTerastallized = source.isTerastallized || false;
     this.stellarTypesBoosted = source.stellarTypesBoosted || [];
 
@@ -119,6 +120,7 @@ export default class PokemonData {
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
+    this.fusionTeraType = (source.fusionTeraType ?? 0) as Type;
     this.usedTMs = source.usedTMs ?? [];
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);

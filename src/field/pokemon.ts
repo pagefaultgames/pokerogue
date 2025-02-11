@@ -273,12 +273,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionGender = dataSource.fusionGender;
       this.fusionLuck = dataSource.fusionLuck;
       this.fusionCustomPokemonData = dataSource.fusionCustomPokemonData;
-      this.fusionTeraType = dataSource.teraType;
+      this.fusionTeraType = dataSource.fusionTeraType;
       this.usedTMs = dataSource.usedTMs ?? [];
       this.customPokemonData = new CustomPokemonData(dataSource.customPokemonData);
       this.teraType = dataSource.teraType;
       this.isTerastallized = dataSource.isTerastallized;
-      this.stellarTypesBoosted = dataSource.stellarTypesBoosted;
+      this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
