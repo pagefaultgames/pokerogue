@@ -165,9 +165,9 @@ export abstract class PersistentModifier extends Modifier {
   public stackCount: number;
   public virtualStackCount: number;
 
-  constructor(type: ModifierType, stackCount?: number) {
+  constructor(type: ModifierType, stackCount: number = 1) {
     super(type);
-    this.stackCount = stackCount ?? 1;
+    this.stackCount = stackCount;
     this.virtualStackCount = 0;
   }
 
