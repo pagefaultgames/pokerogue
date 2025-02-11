@@ -1955,7 +1955,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
 
       if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, 0); // TODO: always selecting the first form
+        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex ?? 0); // TODO: always selecting the first form
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.setTypeIcons(null, null);
