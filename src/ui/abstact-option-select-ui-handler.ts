@@ -6,7 +6,7 @@ import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 export interface OptionSelectConfig {
   xOffset?: number;

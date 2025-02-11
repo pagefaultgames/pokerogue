@@ -1,6 +1,16 @@
+import type { Variant } from "#app/data/variant";
 import { globalScene } from "#app/global-scene";
+import { isNullOrUndefined } from "#app/utils";
 import type PokemonSpecies from "../data/pokemon-species";
 import { addTextObject, TextStyle } from "./text";
+
+
+interface SpeciesDetails {
+  shiny?: boolean,
+  formIndex?: number
+  female?: boolean,
+  variant?: Variant
+}
 
 export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
@@ -19,15 +29,33 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public tmMove2Icon: Phaser.GameObjects.Image;
   public passive1Icon: Phaser.GameObjects.Image;
   public passive2Icon: Phaser.GameObjects.Image;
+  public passive1OverlayIcon: Phaser.GameObjects.Image;
+  public passive2OverlayIcon: Phaser.GameObjects.Image;
   public cost: number = 0;
 
-  constructor(species: PokemonSpecies) {
+  constructor(species: PokemonSpecies, options: SpeciesDetails = {}) {
     super(globalScene, 0, 0);
 
     this.species = species;
 
+    const { shiny, formIndex, female, variant } = options;
+
     const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
     const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+
+    if (!isNullOrUndefined(formIndex)) {
+      defaultProps.formIndex = formIndex;
+    }
+    if (!isNullOrUndefined(shiny)) {
+      defaultProps.shiny = shiny;
+    }
+    if (!isNullOrUndefined(variant)) {
+      defaultProps.variant = variant;
+    }
+    if (!isNullOrUndefined(female)) {
+      defaultProps.female = female;
+    }
+
 
     // starter passive bg
     const starterPassiveBg = globalScene.add.image(2, 5, "passive_bg");
@@ -137,7 +165,7 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.tmMove2Icon = tmMove2Icon;
 
 
-    // move icons
+    // passive icons
     const passive1Icon = globalScene.add.image(3, 3, "candy");
     passive1Icon.setOrigin(0, 0);
     passive1Icon.setScale(0.25);
@@ -145,13 +173,27 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.add(passive1Icon);
     this.passive1Icon = passive1Icon;
 
-    // move icons
+    const passive1OverlayIcon = globalScene.add.image(12, 12, "candy_overlay");
+    passive1OverlayIcon.setOrigin(0, 0);
+    passive1OverlayIcon.setScale(0.25);
+    passive1OverlayIcon.setVisible(false);
+    this.add(passive1OverlayIcon);
+    this.passive1OverlayIcon = passive1OverlayIcon;
+
+    // passive icons
     const passive2Icon = globalScene.add.image(12, 3, "candy");
     passive2Icon.setOrigin(0, 0);
     passive2Icon.setScale(0.25);
     passive2Icon.setVisible(false);
     this.add(passive2Icon);
     this.passive2Icon = passive2Icon;
+
+    const passive2OverlayIcon = globalScene.add.image(12, 12, "candy_overlay");
+    passive2OverlayIcon.setOrigin(0, 0);
+    passive2OverlayIcon.setScale(0.25);
+    passive2OverlayIcon.setVisible(false);
+    this.add(passive2OverlayIcon);
+    this.passive2OverlayIcon = passive2OverlayIcon;
   }
 
   checkIconId(female, formIndex, shiny, variant) {
