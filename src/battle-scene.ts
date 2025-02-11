@@ -1401,8 +1401,8 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: Biome): Arena {
-    this.arena = new Arena(biome, Biome[biome].toLowerCase());
+  newArena(biome: Biome, playerFaints?: number): Arena {
+    this.arena = new Arena(biome, Biome[biome].toLowerCase(), playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
