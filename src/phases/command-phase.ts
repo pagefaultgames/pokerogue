@@ -85,6 +85,19 @@ export class CommandPhase extends FieldPhase {
 
     const moveQueue = playerPokemon.getMoveQueue();
 
+    /**
+     * Checks if the playerPokemon has a move that might be unselectable
+     */
+    const moveset = playerPokemon.getMoveset();
+    const conditionalMove = moveset.find(m => {
+      const move = m?.getMove();
+      return move && move.selectableCondition && move.selectableCondition.length > 0;
+    });
+
+    if (conditionalMove) {
+      conditionalMove.getMove().applySelectableConditions(playerPokemon);
+    }
+
     while (moveQueue.length && moveQueue[0]
         && moveQueue[0].move && !moveQueue[0].virtual && (!playerPokemon.getMoveset().find(m => m?.moveId === moveQueue[0].move)
           || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m?.moveId === moveQueue[0].move)]!.isUsable(playerPokemon, moveQueue[0].ignorePP))) { // TODO: is the bang correct?
