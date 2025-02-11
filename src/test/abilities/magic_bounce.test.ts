@@ -93,8 +93,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
   });
 
-  // todo while Mirror Armor is not implemented
-  it.todo("should receive the stat change after reflecting a move back to a mirror armor user", async () => {
+  it("should receive the stat change after reflecting a move back to a mirror armor user", async () => {
     game.override.ability(Abilities.MIRROR_ARMOR);
     await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
