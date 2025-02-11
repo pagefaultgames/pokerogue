@@ -3,7 +3,6 @@ import { globalScene } from "#app/global-scene";
 import type { Egg } from "#app/data/egg";
 import { EggCountChangedEvent } from "#app/events/egg";
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { Phase } from "#app/phase";
 import { achvs } from "#app/system/achv";
 import EggCounterContainer from "#app/ui/egg-counter-container";
@@ -356,7 +355,7 @@ export class EggHatchPhase extends Phase {
 
         globalScene.playSoundWithoutBgm("evolution_fanfare");
 
-        globalScene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: getPokemonNameWithAffix(this.pokemon) }), null, () => {
+        globalScene.ui.showText(i18next.t("egg:hatchFromTheEgg", { pokemonName: this.pokemon.species.getExpandedSpeciesName() }), null, () => {
           globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
           globalScene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
             globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then((value) => {
