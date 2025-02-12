@@ -1866,6 +1866,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else {
       this.pokemonNumberText.setText(species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
+      this.pokemonFormText.setText("");
       this.type1Icon.setVisible(false);
       this.type2Icon.setVisible(false);
       if (species) {
