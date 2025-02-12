@@ -7,7 +7,7 @@ import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
-import type { StarterMoveset } from "#app/system/game-data";
+import { DexAttr, type StarterMoveset } from "#app/system/game-data";
 import * as Utils from "#app/utils";
 import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
@@ -1027,6 +1027,33 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.forms?.length
       ? this.forms[formIndex || 0].getFormSpriteKey()
       : "";
+  }
+
+  /**
+   * Generates a {@linkcode bigint} corresponding to the maximum unlocks possible for this species,
+   * taking into account if the species has a male/female gender, and which variants are implemented.
+   * @returns {@linkcode bigint} Maximum unlocks, can be compared with {@linkcode DexEntry.caughtAttr}.
+   */
+  getFullUnlocksData(): bigint {
+    let caughtAttr: bigint = 0n;
+    caughtAttr += DexAttr.NON_SHINY;
+    caughtAttr += DexAttr.SHINY;
+    if (this.malePercent !== null) {
+      if (this.malePercent > 0) {
+        caughtAttr += DexAttr.MALE;
+      }
+      if (this.malePercent < 100) {
+        caughtAttr += DexAttr.FEMALE;
+      }
+    }
+    caughtAttr += DexAttr.DEFAULT_VARIANT;
+    if (this.hasVariants()) {
+      caughtAttr += DexAttr.VARIANT_2;
+      caughtAttr += DexAttr.VARIANT_3;
+    }
+    caughtAttr += DexAttr.DEFAULT_FORM;
+
+    return caughtAttr;
   }
 }
 
