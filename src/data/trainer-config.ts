@@ -2243,7 +2243,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GASTRODON, Species.SEISMITOAD ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.GASTRODON, Species.SEISMITOAD ], TrainerSlot.TRAINER, true, p => {
       if (p.species.speciesId === Species.GASTRODON) {
         p.abilityIndex = 0; // Storm Drain
       } else if (p.species.speciesId === Species.SEISMITOAD) {
@@ -2258,7 +2258,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 0; // Sand Rush
       }
     }))
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.RHYPERIOR ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.RHYPERIOR ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
       p.abilityIndex = 1; // Solid Rock
