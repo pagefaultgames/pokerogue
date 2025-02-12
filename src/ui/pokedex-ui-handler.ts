@@ -1292,7 +1292,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       if (fitsEggMove1 && !fitsLevelMove1) {
         container.eggMove1Icon.setVisible(true);
         const em1 = eggMoves.findIndex(name => name === selectedMove1);
-        if ((starterData[starterId].eggMoves & (1 << em1)) === 0) {
+        if ((starterData.eggMoves & (1 << em1)) === 0) {
           container.eggMove1Icon.setTint(0x808080);
         } else {
           container.eggMove1Icon.clearTint();
@@ -1303,7 +1303,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       if (fitsEggMove2 && !fitsLevelMove2) {
         container.eggMove2Icon.setVisible(true);
         const em2 = eggMoves.findIndex(name => name === selectedMove2);
-        if ((starterData[starterId].eggMoves & (1 << em2)) === 0) {
+        if ((starterData.eggMoves & (1 << em2)) === 0) {
           container.eggMove2Icon.setTint(0x808080);
         } else {
           container.eggMove2Icon.clearTint();
