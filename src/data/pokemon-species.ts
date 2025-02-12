@@ -32,6 +32,37 @@ export enum Region {
   PALDEA
 }
 
+// TODO: this is horrible and will need to be removed once a refactor/cleanup of forms is executed.
+export const normalForm: Species[] = [
+  Species.PIKACHU,
+  Species.RAICHU,
+  Species.EEVEE,
+  Species.JOLTEON,
+  Species.FLAREON,
+  Species.VAPOREON,
+  Species.ESPEON,
+  Species.UMBREON,
+  Species.LEAFEON,
+  Species.GLACEON,
+  Species.SYLVEON,
+  Species.PICHU,
+  Species.ROTOM,
+  Species.DIALGA,
+  Species.PALKIA,
+  Species.KYUREM,
+  Species.GENESECT,
+  Species.FROAKIE,
+  Species.FROGADIER,
+  Species.GRENINJA,
+  Species.ROCKRUFF,
+  Species.NECROZMA,
+  Species.MAGEARNA,
+  Species.MARSHADOW,
+  Species.CRAMORANT,
+  Species.ZARUDE,
+  Species.CALYREX
+];
+
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode Species} enum given
  * @param species The species to fetch

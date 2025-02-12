@@ -7,7 +7,7 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type { PokemonForm } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
+import { allSpecies, getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { catchableSpecies } from "#app/data/balance/biomes";
 import { Type } from "#enums/type";
@@ -1950,7 +1950,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
 
       if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
-        this.pokemonFormText.setText(species.getFormNameToDisplay(formIndex, false));
+        // TODO: change this once forms are refactored
+        if (normalForm.includes(species.speciesId) && !formIndex) {
+          this.pokemonFormText.setText("");
+        } else {
+          this.pokemonFormText.setText(species.getFormNameToDisplay(formIndex, false));
+        }
       } else {
         this.pokemonFormText.setText("");
       }
