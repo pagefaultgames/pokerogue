@@ -1685,7 +1685,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     }
                     this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
 
-                    const egg = new Egg({ scene: globalScene, species: this.species.speciesId, sourceType: EggSourceType.SAME_SPECIES_EGG });
+                    const egg = new Egg({ scene: globalScene, species: this.starterId, sourceType: EggSourceType.SAME_SPECIES_EGG });
                     egg.addEggToGameData();
 
                     globalScene.gameData.saveSystem().then(success => {
