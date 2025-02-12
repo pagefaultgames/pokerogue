@@ -741,14 +741,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return biomes;
   }
 
-  isCaught(otherSpeciesDexEntry?: DexEntry): bigint {
+  isCaught(otherSpecies?: PokemonSpecies): bigint {
     if (globalScene.dexForDevs) {
       return 255n;
     }
 
-    const dexEntry = otherSpeciesDexEntry ? otherSpeciesDexEntry : this.speciesStarterDexEntry;
+    const species = otherSpecies ? otherSpecies : this.species;
+    const dexEntry = globalScene.gameData.dexData[species.speciesId];
 
-    return dexEntry?.caughtAttr ?? 0n;
+    return (dexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
   }
   /**
    * Check whether a given form is caught for a given species.
@@ -765,11 +766,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
     const species = otherSpecies ? otherSpecies : this.species;
     const formIndex = otherFormIndex !== undefined ? otherFormIndex : this.formIndex;
-    const dexEntry = globalScene.gameData.dexData[species.speciesId];
+    const caughtAttr = this.isCaught(species);
 
-    const isFormCaught = dexEntry ?
-      (dexEntry.caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n
-      : false;
+    const isFormCaught = (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
     return isFormCaught;
   }
 
@@ -783,8 +782,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    */
   initStarterPrefs(): StarterAttributes {
     const starterAttributes : StarterAttributes | null = this.species ? { ...this.savedStarterAttributes } : null;
-    const dexEntry = globalScene.gameData.dexData[this.species.speciesId];
-    const caughtAttr = this.isCaught(dexEntry);
+    const caughtAttr = this.isCaught();
 
     // no preferences or Pokemon wasn't caught, return empty attribute
     if (!starterAttributes || !caughtAttr) {
@@ -1235,7 +1233,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.BIOMES:
 
-            if (!(this.isCaught() || this.speciesStarterDexEntry?.seenAttr)) {
+            if (!(isCaught || this.speciesStarterDexEntry?.seenAttr)) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1372,8 +1370,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     });
                     this.evolutions.map(evo => {
                       const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
-                      const evoSpeciesStarterDexEntry = evoSpecies ? globalScene.gameData.dexData[evoSpecies.speciesId] : undefined;
-                      const isCaughtEvo = this.isCaught(evoSpeciesStarterDexEntry) ? true : false;
+                      const isCaughtEvo = this.isCaught(evoSpecies) ? true : false;
                       // Attempts to find the formIndex of the evolved species
                       const newFormKey = evo.evoFormKey ? evo.evoFormKey : (this.species.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "");
                       const matchingForm = evoSpecies?.forms.find(form => form.formKey === newFormKey);
@@ -2096,7 +2093,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     if (species) {
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
 
-      const caughtAttr = this.isCaught(dexEntry);
+      const caughtAttr = this.isCaught(species);
 
       if (!caughtAttr) {
         const props = this.starterAttributes;
@@ -2329,7 +2326,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    */
   getCurrentDexProps(speciesId: number): bigint {
     let props = 0n;
-    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr;
+    const species = allSpecies.find(sp => sp.speciesId === speciesId);
+    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & (species?.getFullUnlocksData() ?? 0n);
 
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
