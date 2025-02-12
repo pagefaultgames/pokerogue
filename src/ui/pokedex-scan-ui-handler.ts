@@ -169,7 +169,8 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
       this.submitAction = (_) => {
         if (ui.getMode() === Mode.POKEDEX_SCAN) {
           this.sanitizeInputs();
-          const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
+          const outputName = this.reducedKeys.includes(this.inputs[0].text) ? this.inputs[0].text : "";
+          const sanitizedName = btoa(unescape(encodeURIComponent(outputName)));
           config.buttonActions[0](sanitizedName);
           return true;
         }
