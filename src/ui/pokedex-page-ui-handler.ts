@@ -601,7 +601,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       const form = species.forms[formIndex];
 
       // If this form has a specific set of moves, we get them.
-      this.levelMoves = (formIndex > 0 && pokemonFormLevelMoves.hasOwnProperty(species.speciesId)) ? pokemonFormLevelMoves[species.speciesId][formIndex] : pokemonSpeciesLevelMoves[species.speciesId];
+      this.levelMoves = (formIndex > 0 && pokemonFormLevelMoves.hasOwnProperty(species.speciesId) && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)) ? pokemonFormLevelMoves[species.speciesId][formIndex] : pokemonSpeciesLevelMoves[species.speciesId];
       this.ability1 = form.ability1;
       this.ability2 = (form.ability2 === form.ability1) ? undefined : form.ability2;
       this.abilityHidden = (form.abilityHidden === form.ability1) ? undefined : form.abilityHidden;
@@ -1856,6 +1856,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         if (this.canCycleGender) {
           this.updateButtonIcon(SettingKeyboard.Button_Cycle_Gender, gamepadType, this.genderIconElement, this.genderLabel);
         }
+      } else {
+        // Making space for "Uncaught" text
+        this.instructionRowY += 8;
       }
       if (this.canCycleForm) {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
