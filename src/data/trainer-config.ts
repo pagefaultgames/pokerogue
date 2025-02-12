@@ -2238,21 +2238,30 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
     })),
   [TrainerType.ROCKET_BOSS_GIOVANNI_2]: new TrainerConfig(++t).setName("Giovanni").initForEvilTeamLeader("Rocket Boss", [], true).setMixedBattleBgm("battle_rocket_boss").setVictoryBgm("victory_team_plasma")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.RHYPERIOR ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.TYRANITAR ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
-      p.abilityIndex = 1; // Solid Rock
     }))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HONCHKROW ]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.GASTRODON, Species.SEISMITOAD ], TrainerSlot.TRAINER, true, p => {
+      if (p.species.speciesId === Species.GASTRODON) {
+        p.abilityIndex = 0; // Storm Drain
+      } else if (p.species.speciesId === Species.SEISMITOAD) {
+        p.abilityIndex = 2; // Water Absorb
+      }
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.GARCHOMP, Species.EXCADRILL ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
-      p.abilityIndex = 2; // Rough Skin Garchomp, Mold Breaker Excadrill
+      if (p.species.speciesId === Species.GARCHOMP) {
+        p.abilityIndex = 2; // Rough Skin
+      } else if (p.species.speciesId === Species.EXCADRILL) {
+        p.abilityIndex = 0; // Sand Rush
+      }
     }))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.SANDY_SHOCKS ], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.RHYPERIOR ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.ROGUE_BALL;
+      p.pokeball = PokeballType.ULTRA_BALL;
+      p.abilityIndex = 1; // Solid Rock
     }))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.KANGASKHAN ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
