@@ -411,15 +411,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup();
 
-    this.pokemonNumberText = addTextObject(6, 140, "", TextStyle.SUMMARY);
+    this.pokemonNumberText = addTextObject(6, 141, "", TextStyle.SUMMARY);
     this.pokemonNumberText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
-    this.pokemonNameText = addTextObject(6, 127, "", TextStyle.SUMMARY);
+    this.pokemonNameText = addTextObject(6, 128, "", TextStyle.SUMMARY);
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
-    this.pokemonFormText = addTextObject(6, 122, "", TextStyle.PARTY, { fontSize: textSettings.instructionTextSize });
+    this.pokemonFormText = addTextObject(6, 121, "", TextStyle.PARTY, { fontSize: textSettings.instructionTextSize });
     this.pokemonFormText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonFormText);
 
