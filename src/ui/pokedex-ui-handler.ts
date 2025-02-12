@@ -1698,7 +1698,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   openFormTray(species: PokemonSpecies): boolean {
 
-    this.trayForms = species.forms;
+    this.trayForms = species.forms.filter(f => !f.isUnobtainable);
 
     this.trayNumIcons = this.trayForms.length;
     this.trayRows = Math.floor(this.trayNumIcons / 9) + (this.trayNumIcons % 9 === 0 ? 0 : 1);
@@ -1949,19 +1949,19 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
 
       if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
-        this.pokemonFormText.setText("Form Text");
+        this.pokemonFormText.setText(species.getFormNameToDisplay(formIndex, false));
       } else {
         this.pokemonFormText.setText("");
       }
 
       if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, 0); // TODO: always selecting the first form
+        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex ?? 0); // TODO: always selecting the first form
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.setTypeIcons(null, null);
       }
 
-      if (species?.forms?.length > 1) {
+      if (species?.forms?.filter(f => !f.isUnobtainable).length > 1) {
         if (!this.showingTray) {
           this.showFormTrayIconElement.setVisible(true);
           this.showFormTrayLabel.setVisible(true);

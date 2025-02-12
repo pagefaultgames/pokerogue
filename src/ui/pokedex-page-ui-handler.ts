@@ -1583,7 +1583,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 if (this.species.forms[newFormIndex].isStarterSelectable || globalScene.dexForDevs) { // TODO: are those bangs correct?
                   break;
                 }
-              } while (newFormIndex !== props.formIndex);
+              } while (newFormIndex !== props.formIndex || this.species.forms[newFormIndex].isUnobtainable);
               starterAttributes.form = newFormIndex; // store the selected form
               this.savedStarterAttributes.form = starterAttributes.form;
               this.formIndex = newFormIndex;
