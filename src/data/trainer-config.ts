@@ -2249,6 +2249,7 @@ export const trainerConfigs: TrainerConfigs = {
       } else if (p.species.speciesId === Species.SEISMITOAD) {
         p.abilityIndex = 2; // Water Absorb
       }
+    }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.GARCHOMP, Species.EXCADRILL ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
