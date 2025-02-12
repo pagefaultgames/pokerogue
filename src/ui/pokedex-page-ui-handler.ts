@@ -1532,6 +1532,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.pokemonShinyIcon.setVisible(true);
 
                 starterAttributes.shiny = true;
+                this.savedStarterAttributes.shiny = starterAttributes.shiny;
               } else {
                 let newVariant = props.variant;
                 do {
