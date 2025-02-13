@@ -44,6 +44,7 @@ export enum ClassicFixedBossWaves {
   ELITE_FOUR_4 = 188,
   CHAMPION = 190,
   RIVAL_6 = 195,
+  ETERNATUS = 200,
 }
 
 export enum BattleType {
@@ -250,7 +251,7 @@ export default class Battle {
       } else {
         return this.trainer?.getMixedBattleBgm() ?? null;
       }
-    } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
+    } else if (this.gameMode.isClassic && this.waveIndex > ClassicFixedBossWaves.RIVAL_6 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
       return "end_summit";
     }
     const wildOpponents = globalScene.getEnemyParty();
@@ -419,7 +420,7 @@ export default class Battle {
       }
     }
 
-    if (globalScene.gameMode.isClassic && this.waveIndex <= 4) {
+    if (globalScene.gameMode.isClassic && this.waveIndex < ClassicFixedBossWaves.TOWN_YOUNGSTER) {
       return "battle_wild";
     }
 
