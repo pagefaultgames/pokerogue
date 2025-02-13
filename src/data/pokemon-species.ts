@@ -7,7 +7,7 @@ import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
-import type { StarterMoveset } from "#app/system/game-data";
+import { DexAttr, type StarterMoveset } from "#app/system/game-data";
 import * as Utils from "#app/utils";
 import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
@@ -31,6 +31,37 @@ export enum Region {
   HISUI,
   PALDEA
 }
+
+// TODO: this is horrible and will need to be removed once a refactor/cleanup of forms is executed.
+export const normalForm: Species[] = [
+  Species.PIKACHU,
+  Species.RAICHU,
+  Species.EEVEE,
+  Species.JOLTEON,
+  Species.FLAREON,
+  Species.VAPOREON,
+  Species.ESPEON,
+  Species.UMBREON,
+  Species.LEAFEON,
+  Species.GLACEON,
+  Species.SYLVEON,
+  Species.PICHU,
+  Species.ROTOM,
+  Species.DIALGA,
+  Species.PALKIA,
+  Species.KYUREM,
+  Species.GENESECT,
+  Species.FROAKIE,
+  Species.FROGADIER,
+  Species.GRENINJA,
+  Species.ROCKRUFF,
+  Species.NECROZMA,
+  Species.MAGEARNA,
+  Species.MARSHADOW,
+  Species.CRAMORANT,
+  Species.ZARUDE,
+  Species.CALYREX
+];
 
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode Species} enum given
@@ -996,6 +1027,33 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.forms?.length
       ? this.forms[formIndex || 0].getFormSpriteKey()
       : "";
+  }
+
+  /**
+   * Generates a {@linkcode bigint} corresponding to the maximum unlocks possible for this species,
+   * taking into account if the species has a male/female gender, and which variants are implemented.
+   * @returns {@linkcode bigint} Maximum unlocks, can be compared with {@linkcode DexEntry.caughtAttr}.
+   */
+  getFullUnlocksData(): bigint {
+    let caughtAttr: bigint = 0n;
+    caughtAttr += DexAttr.NON_SHINY;
+    caughtAttr += DexAttr.SHINY;
+    if (this.malePercent !== null) {
+      if (this.malePercent > 0) {
+        caughtAttr += DexAttr.MALE;
+      }
+      if (this.malePercent < 100) {
+        caughtAttr += DexAttr.FEMALE;
+      }
+    }
+    caughtAttr += DexAttr.DEFAULT_VARIANT;
+    if (this.hasVariants()) {
+      caughtAttr += DexAttr.VARIANT_2;
+      caughtAttr += DexAttr.VARIANT_3;
+    }
+    caughtAttr += DexAttr.DEFAULT_FORM;
+
+    return caughtAttr;
   }
 }
 
