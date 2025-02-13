@@ -583,7 +583,7 @@ export class TrainerConfig {
         return {
           [TrainerPoolTier.COMMON]: [ Species.RATICATE, Species.ARBOK, Species.VILEPLUME, Species.ARCANINE, Species.GENGAR, Species.HYPNO, Species.ELECTRODE, Species.EXEGGUTOR, Species.CUBONE, Species.KOFFING, Species.GYARADOS, Species.CROBAT, Species.STEELIX, Species.HOUNDOOM, Species.HONCHKROW ],
           [TrainerPoolTier.UNCOMMON]: [ Species.OMASTAR, Species.KABUTOPS, Species.MAGNEZONE, Species.ELECTIVIRE, Species.MAGMORTAR, Species.PORYGON_Z, Species.ANNIHILAPE, Species.ALOLA_SANDSLASH, Species.ALOLA_PERSIAN, Species.ALOLA_GOLEM, Species.ALOLA_MUK, Species.PALDEA_TAUROS ],
-          [TrainerPoolTier.RARE]: [ Species.DRAGONAIR, Species.PUPITAR ]
+          [TrainerPoolTier.RARE]: [ Species.DRAGONITE, Species.TYRANITAR ]
         };
       }
       case "magma": {
@@ -611,7 +611,7 @@ export class TrainerConfig {
         return {
           [TrainerPoolTier.COMMON]: [ Species.GIGALITH, Species.CONKELDURR, Species.SEISMITOAD, Species.KROOKODILE, Species.DARMANITAN, Species.COFAGRIGUS, Species.VANILLUXE, Species.AMOONGUSS, Species.JELLICENT, Species.GALVANTULA, Species.FERROTHORN, Species.BEARTIC ],
           [TrainerPoolTier.UNCOMMON]: [ Species.EXCADRILL, Species.SIGILYPH, Species.ZOROARK, Species.KLINKLANG, Species.EELEKTROSS, Species.MIENSHAO, Species.GOLURK, Species.BISHARP, Species.MANDIBUZZ, Species.DURANT, Species.GALAR_DARMANITAN ],
-          [TrainerPoolTier.RARE]: [ Species.HAXORUS, Species.ZWEILOUS, Species.HISUI_ZOROARK, Species.HISUI_BRAVIARY ]
+          [TrainerPoolTier.RARE]: [ Species.HAXORUS, Species.HYDREIGON, Species.HISUI_ZOROARK, Species.HISUI_BRAVIARY ]
         };
       }
       case "plasma_2": {
@@ -653,14 +653,14 @@ export class TrainerConfig {
         return {
           [TrainerPoolTier.COMMON]: [ Species.SHIFTRY, Species.CACTURNE, Species.HONCHKROW, Species.SKUNTANK, Species.KROOKODILE, Species.OBSTAGOON, Species.LOKIX, Species.MABOSSTIFF ],
           [TrainerPoolTier.UNCOMMON]: [ Species.UMBREON, Species.CRAWDAUNT, Species.WEAVILE, Species.ZOROARK, Species.MALAMAR, Species.BOMBIRDIER ],
-          [TrainerPoolTier.RARE]: [ Species.ZWEILOUS, Species.MEOWSCARADA ]
+          [TrainerPoolTier.RARE]: [ Species.HYDREIGON, Species.MEOWSCARADA ]
         };
       }
       case "star_2": {
         return {
           [TrainerPoolTier.COMMON]: [ Species.ARCANINE, Species.HOUNDOOM, Species.CAMERUPT, Species.CHANDELURE, Species.TALONFLAME, Species.PYROAR, Species.COALOSSAL, Species.SCOVILLAIN ],
           [TrainerPoolTier.UNCOMMON]: [ Species.RAPIDASH, Species.FLAREON, Species.TORKOAL, Species.MAGMORTAR, Species.SALAZZLE, Species.TURTONATOR ],
-          [TrainerPoolTier.RARE]: [ Species.LARVESTA, Species.SKELEDIRGE ]
+          [TrainerPoolTier.RARE]: [ Species.VOLCARONA, Species.SKELEDIRGE ]
         };
       }
       case "star_3": {
