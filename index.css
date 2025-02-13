@@ -67,6 +67,11 @@ input:-internal-autofill-selected {
   background-clip: text;
 }
 
+/*So autofill text appears in white instead of default black*/
+input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff;
+}
+
 /* Need adjust input font-size */
 input {
   font-size: 3.2rem;
