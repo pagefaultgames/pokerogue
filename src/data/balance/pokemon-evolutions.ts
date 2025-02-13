@@ -1668,7 +1668,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.APPLETUN, 1, EvolutionItem.SWEET_APPLE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.CLOBBOPUS]: [
-    new SpeciesEvolution(Species.GRAPPLOCT, 35, null, new MoveEvolutionCondition(Moves.TAUNT)/*Once Taunt is implemented, change evo level to 1 and delay to LONG*/)
+    new SpeciesEvolution(Species.GRAPPLOCT, 1, null, new MoveEvolutionCondition(Moves.TAUNT), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SINISTEA]: [
     new SpeciesFormEvolution(Species.POLTEAGEIST, "phony", "phony", 1, EvolutionItem.CRACKED_POT, null, SpeciesWildEvolutionDelay.LONG),
