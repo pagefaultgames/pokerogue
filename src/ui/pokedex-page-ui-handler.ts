@@ -748,8 +748,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const species = otherSpecies ? otherSpecies : this.species;
     const dexEntry = globalScene.gameData.dexData[species.speciesId];
+    const starterDexEntry = globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)];
 
-    return (dexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
+    return (dexEntry?.caughtAttr ?? 0n) & (starterDexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
   }
   /**
    * Check whether a given form is caught for a given species.
@@ -2326,7 +2327,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   getCurrentDexProps(speciesId: number): bigint {
     let props = 0n;
     const species = allSpecies.find(sp => sp.speciesId === speciesId);
-    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & (species?.getFullUnlocksData() ?? 0n);
+    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr & (species?.getFullUnlocksData() ?? 0n);
 
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props

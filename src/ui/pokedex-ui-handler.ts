@@ -1255,7 +1255,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
       // TODO: This might be removed depending on how accessible we want the pokedex function to be
-      const caughtAttr = (globalScene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0)) & container.species.getFullUnlocksData();
+      const caughtAttr = (globalScene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0)) &
+        (globalScene.gameData.dexData[this.getStarterSpeciesId(container.species.speciesId)]?.caughtAttr || BigInt(0)) &
+        container.species.getFullUnlocksData();
       const starterData = globalScene.gameData.starterData[starterId];
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
 
@@ -1580,7 +1582,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
           }
 
           const speciesId = container.species.speciesId;
-          const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & container.species.getFullUnlocksData();
+          const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr & container.species.getFullUnlocksData();
           this.updateStarterValueLabel(container);
 
           container.label.setVisible(true);
@@ -1901,7 +1903,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     if (species) {
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
-      const caughtAttr = dexEntry.caughtAttr & species.getFullUnlocksData();
+      const caughtAttr = dexEntry.caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)].caughtAttr & species.getFullUnlocksData();
 
       if (!caughtAttr) {
         const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)));
@@ -2063,7 +2065,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   getCurrentDexProps(speciesId: number): bigint {
     let props = 0n;
     const species = allSpecies.find(sp => sp.speciesId === speciesId);
-    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & (species?.getFullUnlocksData() ?? 0n);
+    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr & (species?.getFullUnlocksData() ?? 0n);
 
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
