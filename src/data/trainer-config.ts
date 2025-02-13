@@ -581,23 +581,23 @@ export class TrainerConfig {
     switch (team) {
       case "rocket": {
         return {
-          [TrainerPoolTier.COMMON]: [ Species.RATTATA, Species.KOFFING, Species.EKANS, Species.ZUBAT, Species.MAGIKARP, Species.HOUNDOUR, Species.ONIX, Species.CUBONE, Species.GROWLITHE, Species.MURKROW, Species.GASTLY, Species.EXEGGCUTE, Species.VOLTORB, Species.DROWZEE, Species.VILEPLUME ],
-          [TrainerPoolTier.UNCOMMON]: [ Species.PORYGON, Species.MANKEY, Species.MAGNEMITE, Species.ALOLA_SANDSHREW, Species.ALOLA_MEOWTH, Species.ALOLA_GRIMER, Species.ALOLA_GEODUDE, Species.PALDEA_TAUROS, Species.OMANYTE, Species.KABUTO, Species.MAGBY, Species.ELEKID ],
-          [TrainerPoolTier.RARE]: [ Species.DRATINI, Species.LARVITAR ]
+          [TrainerPoolTier.COMMON]: [ Species.RATICATE, Species.ARBOK, Species.GOLBAT, Species.VILEPLUME, Species.ARCANINE, Species.GENGAR, Species.HYPNO, Species.ELECTRODE, Species.EXEGGUTOR, Species.CUBONE, Species.KOFFING, Species.GYARADOS, Species.STEELIX, Species.HOUNDOOM, Species.HONCHKROW ],
+          [TrainerPoolTier.UNCOMMON]: [ Species.PRIMEAPE, Species.MAGNETON, Species.OMASTAR, Species.KABUTOPS, Species.ELECTIVIRE, Species.MAGMORTAR, Species.PORYGON_Z, Species.ALOLA_SANDSLASH, Species.ALOLA_PERSIAN, Species.ALOLA_GOLEM, Species.ALOLA_MUK, Species.PALDEA_TAUROS ],
+          [TrainerPoolTier.RARE]: [ Species.DRAGONAIR, Species.PUPITAR ]
         };
       }
       case "magma": {
         return {
-          [TrainerPoolTier.COMMON]: [ Species.GROWLITHE, Species.SLUGMA, Species.SOLROCK, Species.HIPPOPOTAS, Species.BALTOY, Species.ROLYCOLY, Species.GLIGAR, Species.TORKOAL, Species.HOUNDOUR, Species.MAGBY ],
-          [TrainerPoolTier.UNCOMMON]: [ Species.TRAPINCH, Species.SILICOBRA, Species.RHYHORN, Species.ANORITH, Species.LILEEP, Species.HISUI_GROWLITHE, Species.TURTONATOR, Species.ARON, Species.TOEDSCOOL ],
-          [TrainerPoolTier.RARE]: [ Species.CAPSAKID, Species.CHARCADET ]
+          [TrainerPoolTier.COMMON]: [ Species.ARCANINE, Species.MAGCARGO, Species.HOUNDOOM, Species.TORKOAL, Species.SOLROCK, Species.CLAYDOL, Species.HIPPOWDON, Species.MAGMORTAR, Species.GLISCOR, Species.COALOSSAL ],
+          [TrainerPoolTier.UNCOMMON]: [ Species.AGGRON, Species.FLYGON, Species.CRADILY, Species.ARMALDO, Species.RHYPERIOR, Species.TURTONATOR, Species.SANDACONDA, Species.TOEDSCRUEL, Species.HISUI_ARCANINE ],
+          [TrainerPoolTier.RARE]: [ Species.CHARCADET, Species.SCOVILLAIN ]
         };
       }
       case "aqua": {
         return {
-          [TrainerPoolTier.COMMON]: [ Species.CORPHISH, Species.SPHEAL, Species.CLAMPERL, Species.CHINCHOU, Species.WOOPER, Species.WINGULL, Species.TENTACOOL, Species.AZURILL, Species.LOTAD, Species.WAILMER, Species.REMORAID, Species.BARBOACH ],
-          [TrainerPoolTier.UNCOMMON]: [ Species.MANTYKE, Species.HISUI_QWILFISH, Species.ARROKUDA, Species.DHELMISE, Species.CLOBBOPUS, Species.FEEBAS, Species.PALDEA_WOOPER, Species.HORSEA, Species.SKRELP ],
-          [TrainerPoolTier.RARE]: [ Species.DONDOZO, Species.BASCULEGION ]
+          [TrainerPoolTier.COMMON]: [ Species.TENTACRUEL, Species.LANTURN, Species.AZUMARILL, Species.QUAGSIRE, Species.OCTILLERY, Species.LUDICOLO, Species.PELIPPER, Species.WAILORD, Species.WHISCASH, Species.CRAWDAUNT, Species.WALREIN, Species.CLAMPERL ],
+          [TrainerPoolTier.UNCOMMON]: [ Species.QUAGSIRE, Species.MANTINE, Species.KINGDRA, Species.MILOTIC, Species.DRAGALGE, Species.DHELMISE, Species.BARRASKEWDA, Species.GRAPPLOCT, Species.OVERQWIL ],
+          [TrainerPoolTier.RARE]: [ Species.BASCULEGION, Species.DONDOZO ]
         };
       }
       case "galactic": {
