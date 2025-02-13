@@ -630,22 +630,22 @@ export class TrainerConfig {
       }
       case "aether": {
         return {
-          [TrainerPoolTier.COMMON]: [ Species.ALAKAZAM, Species.SLOWPOKE, Species.EXEGGUTOR, Species.XATU, Species.CLAYDOL, Species.BEHEEYEM, Species.ORANGURU, Species.BRUXISH, Species.ORBEETLE, Species.FARIGIRAF, Species.ALOLA_RAICHU ],
-          [TrainerPoolTier.UNCOMMON]: [ Species.KIRLIA, Species.MEDICHAM, Species.METAGROSS, Species.MALAMAR, Species.HATTERENE, Species.MR_RIME, Species.GALAR_SLOWPOKE ],
+          [TrainerPoolTier.COMMON]: [ Species.ALAKAZAM, Species.SLOWBRO, Species.EXEGGUTOR, Species.XATU, Species.CLAYDOL, Species.BEHEEYEM, Species.ORANGURU, Species.BRUXISH, Species.ORBEETLE, Species.FARIGIRAF, Species.ALOLA_RAICHU ],
+          [TrainerPoolTier.UNCOMMON]: [ Species.KIRLIA, Species.MEDICHAM, Species.METAGROSS, Species.MALAMAR, Species.HATTERENE, Species.MR_RIME, Species.GALAR_SLOWKING ],
           [TrainerPoolTier.RARE]: [ Species.PORYGON_Z, Species.ARMAROUGE, Species.HISUI_BRAVIARY ]
         };
       }
       case "skull": {
         return {
           [TrainerPoolTier.COMMON]: [ Species.NIDOQUEEN, Species.GENGAR, Species.KOFFING, Species.CROBAT, Species.ROSERADE, Species.SKUNTANK, Species.TOXICROAK, Species.SCOLIPEDE, Species.TOXAPEX, Species.LURANTIS, Species.ALOLA_MUK ],
-          [TrainerPoolTier.UNCOMMON]: [ Species.DRAPION, Species.MANDIBUZZ, Species.OVERQWIL, Species.GLIMMORA, Species.CLODSIRE, Species.GALAR_SLOWPOKE ],
+          [TrainerPoolTier.UNCOMMON]: [ Species.DRAPION, Species.MANDIBUZZ, Species.OVERQWIL, Species.GLIMMORA, Species.CLODSIRE, Species.GALAR_SLOWBRO ],
           [TrainerPoolTier.RARE]: [ Species.DRAGALGE, Species.SNEASLER ]
         };
       }
       case "macro": {
         return {
-          [TrainerPoolTier.COMMON]: [ Species.NINETALES, Species.ODDISH, Species.MILOTIC, Species.FROSLASS, Species.GOTHITELLE, Species.JELLICENT, Species.SALAZZLE, Species.TSAREENA, Species.POLTEAGEIST, Species.HATTERENE, Species.GALAR_RAPIDASH ],
-          [TrainerPoolTier.UNCOMMON]: [ Species.TOGEKISS, Species.MANDIBUZZ, Species.TOXAPEX, Species.APPLIN, Species.CURSOLA, Species.ALOLA_NINETALES ],
+          [TrainerPoolTier.COMMON]: [ Species.NINETALES, Species.BELLOSSOM, Species.MILOTIC, Species.FROSLASS, Species.GOTHITELLE, Species.JELLICENT, Species.SALAZZLE, Species.TSAREENA, Species.POLTEAGEIST, Species.HATTERENE, Species.GALAR_RAPIDASH ],
+          [TrainerPoolTier.UNCOMMON]: [ Species.TOGEKISS, Species.MANDIBUZZ, Species.TOXAPEX, Species.APPLETUN, Species.CURSOLA, Species.ALOLA_NINETALES ],
           [TrainerPoolTier.RARE]: [ Species.TINKATON, Species.HISUI_LILLIGANT ]
         };
       }
@@ -666,7 +666,7 @@ export class TrainerConfig {
       case "star_3": {
         return {
           [TrainerPoolTier.COMMON]: [ Species.MUK, Species.CROBAT, Species.SKUNTANK, Species.AMOONGUSS, Species.TOXAPEX, Species.TOXTRICITY, Species.GRAFAIAI, Species.CLODSIRE ],
-          [TrainerPoolTier.UNCOMMON]: [ Species.GENGAR, Species.SEVIPER, Species.DRAGALGE, Species.OVERQWIL, Species.ALOLA_MUK, Species.GALAR_SLOWPOKE ],
+          [TrainerPoolTier.UNCOMMON]: [ Species.GENGAR, Species.SEVIPER, Species.DRAGALGE, Species.OVERQWIL, Species.ALOLA_MUK, Species.GALAR_SLOWBRO ],
           [TrainerPoolTier.RARE]: [ Species.GLIMMORA, Species.VENUSAUR ]
         };
       }
