@@ -315,7 +315,7 @@ async function summonSafariPokemon() {
 
   const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
   if (ivScannerModifier) {
-    globalScene.pushPhase(new ScanIvsPhase(pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
+    globalScene.pushPhase(new ScanIvsPhase(pokemon.getBattlerIndex()));
   }
 }
 

@@ -478,7 +478,7 @@ export class EncounterPhase extends BattlePhase {
       }));
       const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
-        enemyField.map(p => globalScene.pushPhase(new ScanIvsPhase(p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
+        enemyField.map(p => globalScene.pushPhase(new ScanIvsPhase(p.getBattlerIndex())));
       }
     }
 
