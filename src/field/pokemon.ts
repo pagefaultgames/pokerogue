@@ -1322,6 +1322,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           } else if (fusionType1 !== types[0]) {
             secondType = fusionType1;
           }
+
+
+          if (secondType === Type.UNKNOWN && Utils.isNullOrUndefined(fusionType2)) { // If second pokemon was monotype and shared its primary type
+            secondType = (customTypes && this.customPokemonData.types.length > 1 && this.customPokemonData.types[1] !== Type.UNKNOWN)
+              ? this.customPokemonData.types[1] : (speciesForm.type2 ?? Type.UNKNOWN);
+          }
         } else {
           // If not a fusion, just get the second type from the species, checking for permanent changes from ME
           secondType = (customTypes && this.customPokemonData.types.length > 1 && this.customPokemonData.types[1] !== Type.UNKNOWN)
