@@ -1844,7 +1844,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.REGIGIGAS, 4, true, false, false, "Colossal Pokémon", Type.NORMAL, null, 3.7, 420, Abilities.SLOW_START, Abilities.NONE, Abilities.NORMALIZE, 670, 110, 160, 110, 80, 110, 100, 3, 0, 335, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.GIRATINA, 4, false, true, false, "Renegade Pokémon", Type.GHOST, Type.DRAGON, 4.5, 750, Abilities.PRESSURE, Abilities.NONE, Abilities.TELEPATHY, 680, 150, 100, 120, 100, 120, 90, 3, 0, 340, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Altered Forme", "altered", Type.GHOST, Type.DRAGON, 4.5, 750, Abilities.PRESSURE, Abilities.NONE, Abilities.TELEPATHY, 680, 150, 100, 120, 100, 120, 90, 3, 0, 340, false, null, true),
-      new PokemonForm("Origin Forme", "origin", Type.GHOST, Type.DRAGON, 6.9, 650, Abilities.LEVITATE, Abilities.NONE, Abilities.NONE, 680, 150, 120, 100, 120, 100, 90, 3, 0, 340),
+      new PokemonForm("Origin Forme", "origin", Type.GHOST, Type.DRAGON, 6.9, 650, Abilities.LEVITATE, Abilities.NONE, Abilities.LEVITATE, 680, 150, 120, 100, 120, 100, 90, 3, 0, 340),
     ),
     new PokemonSpecies(Species.CRESSELIA, 4, true, false, false, "Lunar Pokémon", Type.PSYCHIC, null, 1.5, 85.6, Abilities.LEVITATE, Abilities.NONE, Abilities.NONE, 580, 120, 70, 110, 75, 120, 85, 3, 100, 300, GrowthRate.SLOW, 0, false),
     new PokemonSpecies(Species.PHIONE, 4, false, false, true, "Sea Drifter Pokémon", Type.WATER, null, 0.4, 3.1, Abilities.HYDRATION, Abilities.NONE, Abilities.NONE, 480, 80, 80, 80, 80, 80, 80, 30, 70, 240, GrowthRate.SLOW, null, false),
