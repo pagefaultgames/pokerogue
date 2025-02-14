@@ -58,6 +58,7 @@ export class MovePhase extends BattlePhase {
   protected ignorePp: boolean;
   protected failed: boolean = false;
   protected cancelled: boolean = false;
+  protected reflected: boolean = false;
 
   public get pokemon(): Pokemon {
     return this._pokemon;
@@ -84,10 +85,12 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * @param followUp Indicates that the move being uses is a "follow-up" - for example, a move being used by Metronome or Dancer.
+   * @param followUp Indicates that the move being used is a "follow-up" - for example, a move being used by Metronome or Dancer.
    *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze and volatile status checks, etc.
+   * @param reflected Indicates that the move was reflected by Magic Coat or Magic Bounce.
+   *                  Reflected moves cannot be reflected again and will not trigger Dancer.
    */
-  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false) {
+  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false, reflected: boolean = false) {
     super();
 
     this.pokemon = pokemon;
@@ -95,6 +98,7 @@ export class MovePhase extends BattlePhase {
     this.move = move;
     this.followUp = followUp;
     this.ignorePp = ignorePp;
+    this.reflected = reflected;
   }
 
   /**
@@ -140,7 +144,7 @@ export class MovePhase extends BattlePhase {
     }
 
     // Check move to see if arena.ignoreAbilities should be true.
-    if (!this.followUp) {
+    if (!this.followUp || this.reflected) {
       if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null)) {
         globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
@@ -335,7 +339,7 @@ export class MovePhase extends BattlePhase {
      */
     if (success) {
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
-      globalScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, this.move));
+      globalScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, this.move, this.reflected));
 
     } else {
       if ([ Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE ].includes(this.move.moveId)) {
@@ -543,7 +547,7 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    globalScene.queueMessage(i18next.t("battle:useMove", {
+    globalScene.queueMessage(i18next.t(this.reflected ? "battle:magicCoatActivated" : "battle:useMove", {
       pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
       moveName: this.move.getName()
     }), 500);
