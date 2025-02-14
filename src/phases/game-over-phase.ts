@@ -249,7 +249,8 @@ export class GameOverPhase extends BattlePhase {
       timestamp: new Date().getTime(),
       challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
-      mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData
+      mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,
+      playerFaints: globalScene.arena.playerFaints
     } as SessionSaveData;
   }
 }

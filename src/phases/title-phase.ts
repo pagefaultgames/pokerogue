@@ -77,30 +77,36 @@ export class TitlePhase extends Phase {
           this.end();
         };
         const { gameData } = globalScene;
+        const options: OptionSelectItem[] = [];
+        options.push({
+          label: GameMode.getModeName(GameModes.CLASSIC),
+          handler: () => {
+            setModeAndEnd(GameModes.CLASSIC);
+            return true;
+          }
+        });
+        options.push({
+          label: i18next.t("menu:dailyRun"),
+          handler: () => {
+            this.initDailyRun();
+            return true;
+          }
+        });
         if (gameData.isUnlocked(Unlockables.ENDLESS_MODE)) {
-          const options: OptionSelectItem[] = [
-            {
-              label: GameMode.getModeName(GameModes.CLASSIC),
-              handler: () => {
-                setModeAndEnd(GameModes.CLASSIC);
-                return true;
-              }
-            },
-            {
-              label: GameMode.getModeName(GameModes.CHALLENGE),
-              handler: () => {
-                setModeAndEnd(GameModes.CHALLENGE);
-                return true;
-              }
-            },
-            {
-              label: GameMode.getModeName(GameModes.ENDLESS),
-              handler: () => {
-                setModeAndEnd(GameModes.ENDLESS);
-                return true;
-              }
+          options.push({
+            label: GameMode.getModeName(GameModes.CHALLENGE),
+            handler: () => {
+              setModeAndEnd(GameModes.CHALLENGE);
+              return true;
             }
-          ];
+          });
+          options.push({
+            label: GameMode.getModeName(GameModes.ENDLESS),
+            handler: () => {
+              setModeAndEnd(GameModes.ENDLESS);
+              return true;
+            }
+          });
           if (gameData.isUnlocked(Unlockables.SPLICED_ENDLESS_MODE)) {
             options.push({
               label: GameMode.getModeName(GameModes.SPLICED_ENDLESS),
@@ -110,22 +116,17 @@ export class TitlePhase extends Phase {
               }
             });
           }
-          options.push({
-            label: i18next.t("menu:cancel"),
-            handler: () => {
-              globalScene.clearPhaseQueue();
-              globalScene.pushPhase(new TitlePhase());
-              super.end();
-              return true;
-            }
-          });
-          globalScene.ui.showText(i18next.t("menu:selectGameMode"), null, () => globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
-        } else {
-          this.gameMode = GameModes.CLASSIC;
-          globalScene.ui.setMode(Mode.MESSAGE);
-          globalScene.ui.clearText();
-          this.end();
         }
+        options.push({
+          label: i18next.t("menu:cancel"),
+          handler: () => {
+            globalScene.clearPhaseQueue();
+            globalScene.pushPhase(new TitlePhase());
+            super.end();
+            return true;
+          }
+        });
+        globalScene.ui.showText(i18next.t("menu:selectGameMode"), null, () => globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
         return true;
       }
     },
@@ -141,14 +142,6 @@ export class TitlePhase extends Phase {
           });
         return true;
       }
-    },
-    {
-      label: i18next.t("menu:dailyRun"),
-      handler: () => {
-        this.initDailyRun();
-        return true;
-      },
-      keepOpen: true
     },
     {
       label: i18next.t("menu:runHistory"),
@@ -192,6 +185,7 @@ export class TitlePhase extends Phase {
   }
 
   initDailyRun(): void {
+    globalScene.ui.clearText();
     globalScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
       globalScene.clearPhaseQueue();
       if (slotId === -1) {
