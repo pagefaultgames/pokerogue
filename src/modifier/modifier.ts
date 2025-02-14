@@ -165,9 +165,9 @@ export abstract class PersistentModifier extends Modifier {
   public stackCount: number;
   public virtualStackCount: number;
 
-  constructor(type: ModifierType, stackCount?: number) {
+  constructor(type: ModifierType, stackCount: number = 1) {
     super(type);
-    this.stackCount = stackCount === undefined ? 1 : stackCount;
+    this.stackCount = stackCount;
     this.virtualStackCount = 0;
   }
 
@@ -3259,7 +3259,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
 
 export class IvScannerModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: number) {
-    super(type, stackCount);
+    super(type);
   }
 
   match(modifier: Modifier): boolean {
@@ -3267,7 +3267,7 @@ export class IvScannerModifier extends PersistentModifier {
   }
 
   clone(): IvScannerModifier {
-    return new IvScannerModifier(this.type, this.stackCount);
+    return new IvScannerModifier(this.type);
   }
 
   /**
@@ -3275,11 +3275,11 @@ export class IvScannerModifier extends PersistentModifier {
    * @returns always `true`
    */
   override apply(): boolean {
-    return true;
+    return true; //Dude are you kidding me
   }
 
   getMaxStackCount(): number {
-    return 3;
+    return 1;
   }
 }
 
