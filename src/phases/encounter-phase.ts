@@ -272,7 +272,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = globalScene.getEnemyField();
     globalScene.tweens.add({
       targets: [ globalScene.arenaEnemy, globalScene.currentBattle.trainer, enemyField, globalScene.arenaPlayer, globalScene.trainer ].flat(),
-      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
+      x: (_target, _key, value, fieldIndex: number) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
       onComplete: () => {
         if (!this.tryOverrideForBattleSpec()) {
@@ -478,7 +478,7 @@ export class EncounterPhase extends BattlePhase {
       }));
       const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
-        enemyField.map(p => globalScene.pushPhase(new ScanIvsPhase(p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
+        enemyField.map(p => globalScene.pushPhase(new ScanIvsPhase(p.getBattlerIndex())));
       }
     }
 

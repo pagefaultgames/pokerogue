@@ -1,4 +1,4 @@
-import type { Type } from "#enums/type";
+import { Type } from "#enums/type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import { globalScene } from "#app/global-scene";
@@ -360,7 +360,7 @@ function getTeamTransformations(): PokemonTransformation[] {
     const index = pokemonTransformations.findIndex(p => p.previousPokemon.id === removed.id);
     pokemonTransformations[index].heldItems = removed.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
 
-    const bst = removed.calculateBaseStats().reduce((a, b) => a + b, 0);
+    const bst = removed.getSpeciesForm().getBaseStatTotal();
     let newBstRange: [number, number];
     if (i < 2) {
       newBstRange = HIGH_BST_TRANSFORM_BASE_VALUES;
@@ -528,7 +528,7 @@ async function postProcessTransformedPokemon(previousPokemon: PlayerPokemon, new
 
   // Randomize the second type of the pokemon
   // If the pokemon does not normally have a second type, it will gain 1
-  const newTypes = [ newPokemon.getTypes()[0] ];
+  const newTypes = [ Type.UNKNOWN ];
   let newType = randSeedInt(18) as Type;
   while (newType === newTypes[0]) {
     newType = randSeedInt(18) as Type;

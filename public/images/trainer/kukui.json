@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "668-female.png",
+			"image": "kukui.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 74,
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 74,
-						"h": 72
+						"w": 37,
+						"h": 74
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 74,
-						"h": 72
+						"w": 37,
+						"h": 74
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 74,
-						"h": 72
+						"w": 37,
+						"h": 74
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:a3f814ea1f5b062df0ecc4e7c343d89b:769178f31dc2505ae0e67b72b1319828:d99ed0e84a0695b54e479aa98271aba1$"
+		"smartupdate": "$TexturePacker:SmartUpdate:bccd7af37a8608585716e34d0acb49af:8e1ebc6f022707fbb1e6b4f7d1dbb00c:70bdbf4bca082082ae121aa8ef03c2be$"
 	}
 }
