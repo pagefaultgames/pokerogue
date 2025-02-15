@@ -4042,6 +4042,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    if (fusionPixelColors.length === 0) { // ERROR HANDLING IS NOT OPTIONAL BUDDY
+      console.log("Failed to create fusion palette");
+      return;
+    }
+
     let paletteColors: Map<number, number>;
     let fusionPaletteColors: Map<number, number>;
 
@@ -4055,8 +4060,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     Math.random = originalRandom;
 
-    paletteColors = paletteColors!; // tell TS compiler that paletteColors is defined!
-    fusionPaletteColors = fusionPaletteColors!; // TS compiler that fusionPaletteColors is defined!
+    paletteColors = paletteColors!; // erroneously tell TS compiler that paletteColors is defined!
+    fusionPaletteColors = fusionPaletteColors!; // mischievously misinform TS compiler that fusionPaletteColors is defined!
     const [ palette, fusionPalette ] = [ paletteColors, fusionPaletteColors ]
       .map(paletteColors => {
         let keys = Array.from(paletteColors.keys()).sort((a: number, b: number) => paletteColors.get(a)! < paletteColors.get(b)! ? 1 : -1);
