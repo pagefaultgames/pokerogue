@@ -133,7 +133,7 @@ export class FilterText extends Phaser.GameObjects.Container {
         const handler = ui.getHandler() as AwaitableUiHandler;
         handler.tutorialActive = true;
         // Switch to the dialog test window
-        this.selections[index].setText(String(i18next.t(dialogueName)));
+        this.selections[index].setText( dialogueName === "" ? this.defaultText : String(i18next.t(dialogueName)));
         ui.revertMode();
         this.onChange();
       },

@@ -115,6 +115,10 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
 
     this.reduceKeys();
 
+    setTimeout(() => {
+      input.setFocus(); // Focus after a short delay to avoid unwanted input
+    }, 50);
+
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if ([ "escape", "space" ].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
         // Delete autocomplete list and recovery focus.
@@ -169,7 +173,8 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
       this.submitAction = (_) => {
         if (ui.getMode() === Mode.POKEDEX_SCAN) {
           this.sanitizeInputs();
-          const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
+          const outputName = this.reducedKeys.includes(this.inputs[0].text) ? this.inputs[0].text : "";
+          const sanitizedName = btoa(unescape(encodeURIComponent(outputName)));
           config.buttonActions[0](sanitizedName);
           return true;
         }

@@ -1401,8 +1401,8 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: Biome): Arena {
-    this.arena = new Arena(biome, Biome[biome].toLowerCase());
+  newArena(biome: Biome, playerFaints?: number): Arena {
+    this.arena = new Arena(biome, Biome[biome].toLowerCase(), playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
@@ -2353,14 +2353,14 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Adds Phase to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
-   * @param phase {@linkcode Phase} the phase to add
+   * Adds Phase(s) to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
+   * @param phases {@linkcode Phase} the phase(s) to add
    */
-  unshiftPhase(phase: Phase): void {
+  unshiftPhase(...phases: Phase[]): void {
     if (this.phaseQueuePrependSpliceIndex === -1) {
-      this.phaseQueuePrepend.push(phase);
+      this.phaseQueuePrepend.push(...phases);
     } else {
-      this.phaseQueuePrepend.splice(this.phaseQueuePrependSpliceIndex, 0, phase);
+      this.phaseQueuePrepend.splice(this.phaseQueuePrependSpliceIndex, 0, ...phases);
     }
   }
 
@@ -2498,32 +2498,38 @@ export default class BattleScene extends SceneBase {
    * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
    * @returns boolean if a targetPhase was found and added
    */
-  prependToPhase(phase: Phase, targetPhase: Constructor<Phase>): boolean {
+  prependToPhase(phase: Phase | Phase [], targetPhase: Constructor<Phase>): boolean {
+    if (!Array.isArray(phase)) {
+      phase = [ phase ];
+    }
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
 
     if (targetIndex !== -1) {
-      this.phaseQueue.splice(targetIndex, 0, phase);
+      this.phaseQueue.splice(targetIndex, 0, ...phase);
       return true;
     } else {
-      this.unshiftPhase(phase);
+      this.unshiftPhase(...phase);
       return false;
     }
   }
 
   /**
-   * Tries to add the input phase to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
-   * @param phase {@linkcode Phase} the phase to be added
+   * Tries to add the input phase(s) to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
+   * @param phase {@linkcode Phase} the phase(s) to be added
    * @param targetPhase {@linkcode Phase} the type of phase to search for in {@linkcode phaseQueue}
    * @returns `true` if a `targetPhase` was found to append to
    */
-  appendToPhase(phase: Phase, targetPhase: Constructor<Phase>): boolean {
+  appendToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
+    if (!Array.isArray(phase)) {
+      phase = [ phase ];
+    }
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
 
     if (targetIndex !== -1 && this.phaseQueue.length > targetIndex) {
-      this.phaseQueue.splice(targetIndex + 1, 0, phase);
+      this.phaseQueue.splice(targetIndex + 1, 0, ...phase);
       return true;
     } else {
-      this.unshiftPhase(phase);
+      this.unshiftPhase(...phase);
       return false;
     }
   }

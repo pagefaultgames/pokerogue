@@ -7,11 +7,11 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type { PokemonForm } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
+import { allSpecies, getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { catchableSpecies } from "#app/data/balance/biomes";
 import { Type } from "#enums/type";
-import type { DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences } from "#app/system/game-data";
+import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
 import { AbilityAttr, DexAttr, StarterPrefs } from "#app/system/game-data";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
@@ -19,7 +19,6 @@ import { TextStyle, addTextObject } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
-import type { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
@@ -41,7 +40,6 @@ import { speciesTmMoves } from "#app/data/balance/tms";
 import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { Biome } from "#enums/biome";
 import { globalScene } from "#app/global-scene";
-
 
 interface LanguageSetting {
   starterInfoTextSize: string,
@@ -139,7 +137,6 @@ interface SpeciesDetails {
   variant?: Variant,
   abilityIndex?: number,
   natureIndex?: number,
-  forSeen?: boolean, // default = false
 }
 
 export default class PokedexUiHandler extends MessageUiHandler {
@@ -153,6 +150,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNameText: Phaser.GameObjects.Text;
+  private pokemonFormText: Phaser.GameObjects.Text;
   private type1Icon: Phaser.GameObjects.Sprite;
   private type2Icon: Phaser.GameObjects.Sprite;
 
@@ -161,7 +159,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   private filterMode: boolean;
   private filterBarCursor: number = 0;
-  private starterMoveset: StarterMoveset | null;
   private scrollCursor: number;
 
   private allSpecies: PokemonSpecies[] = [];
@@ -169,7 +166,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
   private pokerusSpecies: PokemonSpecies[] = [];
   private speciesStarterDexEntry: DexEntry | null;
-  private speciesStarterMoves: Moves[];
 
   private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
@@ -205,6 +201,20 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private goFilterLabel: Phaser.GameObjects.Text;
   private toggleDecorationsIconElement: Phaser.GameObjects.Sprite;
   private toggleDecorationsLabel: Phaser.GameObjects.Text;
+
+  private formTrayContainer: Phaser.GameObjects.Container;
+  private trayBg: Phaser.GameObjects.NineSlice;
+  private trayForms: PokemonForm[];
+  private trayContainers: PokedexMonContainer[] = [];
+  private trayNumIcons: number;
+  private trayRows: number;
+  private trayColumns: number;
+  private trayCursorObj: Phaser.GameObjects.Image;
+  private trayCursor: number = 0;
+  private showingTray: boolean = false;
+  private showFormTrayIconElement: Phaser.GameObjects.Sprite;
+  private showFormTrayLabel: Phaser.GameObjects.Text;
+  private canShowFormTray: boolean;
 
   constructor() {
     super(Mode.POKEDEX);
@@ -401,13 +411,17 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup();
 
-    this.pokemonNumberText = addTextObject(6, 140, "", TextStyle.SUMMARY);
+    this.pokemonNumberText = addTextObject(6, 141, "", TextStyle.SUMMARY);
     this.pokemonNumberText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
-    this.pokemonNameText = addTextObject(6, 127, "", TextStyle.SUMMARY);
+    this.pokemonNameText = addTextObject(6, 128, "", TextStyle.SUMMARY);
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
+
+    this.pokemonFormText = addTextObject(6, 121, "", TextStyle.PARTY, { fontSize: textSettings.instructionTextSize });
+    this.pokemonFormText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonFormText);
 
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
@@ -425,7 +439,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.cursorObj = globalScene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
-
     starterBoxContainer.add(this.cursorObj);
 
     for (const species of allSpecies) {
@@ -438,6 +451,20 @@ export default class PokedexUiHandler extends MessageUiHandler {
       starterBoxContainer.add(pokemonContainer);
     }
 
+    // Tray to display forms
+    this.formTrayContainer = globalScene.add.container(0, 0);
+
+    this.trayBg = addWindow(0, 0, 0, 0);
+    this.trayBg.setOrigin(0, 0);
+    this.formTrayContainer.add(this.trayBg);
+
+    this.trayCursorObj = globalScene.add.image(0, 0, "select_cursor");
+    this.trayCursorObj.setOrigin(0, 0);
+    this.formTrayContainer.add(this.trayCursorObj);
+    starterBoxContainer.add(this.formTrayContainer);
+    starterBoxContainer.bringToTop(this.formTrayContainer);
+    this.formTrayContainer.setVisible(false);
+
     this.starterSelectContainer.add(starterBoxContainer);
 
     this.pokemonSprite = globalScene.add.sprite(96, 143, "pkmn__sub");
@@ -449,7 +476,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.type1Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type1Icon);
 
-    this.type2Icon = globalScene.add.sprite(10, 166, getLocalizedSpriteKey("types"));
+    this.type2Icon = globalScene.add.sprite(28, 158, getLocalizedSpriteKey("types"));
     this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
@@ -488,6 +515,17 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.toggleDecorationsIconElement);
     this.starterSelectContainer.add(this.toggleDecorationsLabel);
 
+    this.showFormTrayIconElement = new Phaser.GameObjects.Sprite(globalScene, 6, 168, "keyboard", "F.png");
+    this.showFormTrayIconElement.setName("sprite-showFormTray-icon-element");
+    this.showFormTrayIconElement.setScale(0.675);
+    this.showFormTrayIconElement.setOrigin(0.0, 0.0);
+    this.showFormTrayLabel = addTextObject(16, 168, i18next.t("pokedexUiHandler:showForms"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.showFormTrayLabel.setName("text-showFormTray-label");
+    this.showFormTrayIconElement.setVisible(false);
+    this.showFormTrayLabel.setVisible(false);
+    this.starterSelectContainer.add(this.showFormTrayIconElement);
+    this.starterSelectContainer.add(this.showFormTrayLabel);
+
     this.message = addTextObject(8, 8, "", TextStyle.WINDOW, { maxLines: 2 });
     this.message.setOrigin(0, 0);
     this.starterSelectMessageBoxContainer.add(this.message);
@@ -499,6 +537,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.bringToTop(this.filterBarContainer);
     this.initTutorialOverlay(this.starterSelectContainer);
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
+    this.starterSelectContainer.bringToTop(this.pokemonNameText);
+    this.starterSelectContainer.bringToTop(this.pokemonFormText);
   }
 
   show(args: any[]): boolean {
@@ -527,7 +567,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       this.starterPreferences[species.speciesId] = this.initStarterPrefs(species);
 
-      if (dexEntry.caughtAttr) {
+      if ((dexEntry.caughtAttr & species.getFullUnlocksData()) || globalScene.dexForDevs) {
         icon.clearTint();
       } else if (dexEntry.seenAttr) {
         icon.setTint(0x808080);
@@ -568,7 +608,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       return {};
     }
 
-    const caughtAttr = dexEntry.caughtAttr;
+    const caughtAttr = dexEntry.caughtAttr & species.getFullUnlocksData();
 
     const hasShiny = caughtAttr & DexAttr.SHINY;
     const hasNonShiny = caughtAttr & DexAttr.NON_SHINY;
@@ -860,32 +900,42 @@ export default class PokedexUiHandler extends MessageUiHandler {
       } else if (this.filterTextMode && !(this.filterText.getValue(this.filterTextCursor) === this.filterText.defaultText)) {
         this.filterText.resetSelection(this.filterTextCursor);
         success = true;
+      } else if (this.showingTray) {
+        success = this.closeFormTray();
       } else {
         this.tryExit();
         success = true;
       }
     }  else if (button === Button.STATS) {
-      if (!this.filterMode) {
+      if (!this.filterMode && !this.showingTray) {
         this.cursorObj.setVisible(false);
         this.setSpecies(null);
         this.filterText.cursorObj.setVisible(false);
         this.filterTextMode = false;
         this.filterBarCursor = 0;
         this.setFilterMode(true);
+      } else {
+        error = true;
       }
     }  else if (button === Button.V) {
-      if (!this.filterTextMode) {
+      if (!this.filterTextMode && !this.showingTray) {
         this.cursorObj.setVisible(false);
         this.setSpecies(null);
         this.filterBar.cursorObj.setVisible(false);
         this.filterMode = false;
         this.filterTextCursor = 0;
         this.setFilterTextMode(true);
+      } else {
+        error = true;
       }
     } else if (button === Button.CYCLE_SHINY) {
-      this.showDecorations = !this.showDecorations;
-      this.updateScroll();
-      success = true;
+      if (!this.showingTray) {
+        this.showDecorations = !this.showDecorations;
+        this.updateScroll();
+        success = true;
+      } else {
+        error = true;
+      }
     } else if (this.filterMode) {
       switch (button) {
         case Button.LEFT:
@@ -982,8 +1032,55 @@ export default class PokedexUiHandler extends MessageUiHandler {
           success = true;
           break;
       }
+    } else if (this.showingTray) {
+      if (button === Button.ACTION) {
+        const formIndex = this.trayForms[this.trayCursor].formIndex;
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, { form: formIndex });
+        success = true;
+      } else {
+        const numberOfForms = this.trayContainers.length;
+        const numOfRows = Math.ceil(numberOfForms / maxColumns);
+        const currentRow = Math.floor(this.trayCursor / maxColumns);
+        switch (button) {
+          case Button.UP:
+            if (currentRow > 0) {
+              success = this.setTrayCursor(this.trayCursor - 9);
+            } else {
+              const targetCol = this.trayCursor;
+              if (numberOfForms % 9 > targetCol) {
+                success = this.setTrayCursor(numberOfForms - (numberOfForms) % 9 + targetCol);
+              } else {
+                success = this.setTrayCursor(Math.max(numberOfForms - (numberOfForms) % 9 + targetCol - 9, 0));
+              }
+            }
+            break;
+          case Button.DOWN:
+            if (currentRow < numOfRows - 1) {
+              success = this.setTrayCursor(this.trayCursor + 9);
+            } else {
+              success = this.setTrayCursor(this.trayCursor % 9);
+            }
+            break;
+          case Button.LEFT:
+            if (this.trayCursor % 9 !== 0) {
+              success = this.setTrayCursor(this.trayCursor - 1);
+            } else {
+              success = this.setTrayCursor(currentRow < numOfRows - 1 ? (currentRow + 1) * maxColumns - 1 : numberOfForms - 1);
+            }
+            break;
+          case Button.RIGHT:
+            if (this.trayCursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfForms - 1) % 9)) {
+              success = this.setTrayCursor(this.trayCursor + 1);
+            } else {
+              success = this.setTrayCursor(currentRow * 9);
+            }
+            break;
+          case Button.CYCLE_FORM:
+            success = this.closeFormTray();
+            break;
+        }
+      }
     } else {
-
       if (button === Button.ACTION) {
         ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, 0);
         success = true;
@@ -1042,6 +1139,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
               success = true;
             }
             break;
+          case Button.CYCLE_FORM:
+            const species = this.filteredPokemonContainers[this.cursor].species;
+            if (this.canShowFormTray) {
+              success = this.openFormTray(species);
+            }
+            break;
         }
       }
     }
@@ -1067,6 +1170,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
           break;
         case SettingKeyboard.Button_Cycle_Variant:
           iconPath = "V.png";
+          break;
+        case SettingKeyboard.Button_Cycle_Form:
+          iconPath = "F.png";
           break;
         case SettingKeyboard.Button_Stats:
           iconPath = "C.png";
@@ -1145,13 +1251,17 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.validPokemonContainers.forEach(container => {
       container.setVisible(false);
 
-      container.cost = globalScene.gameData.getSpeciesStarterValue(this.getStarterSpeciesId(container.species.speciesId));
+      const starterId = this.getStarterSpeciesId(container.species.speciesId);
+
+      container.cost = globalScene.gameData.getSpeciesStarterValue(starterId);
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
       // TODO: This might be removed depending on how accessible we want the pokedex function to be
-      const caughtAttr = globalScene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
-      const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(container.species.speciesId)];
-      const isStarterProgressable = speciesEggMoves.hasOwnProperty(this.getStarterSpeciesId(container.species.speciesId));
+      const caughtAttr = (globalScene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0)) &
+        (globalScene.gameData.dexData[this.getStarterSpeciesId(container.species.speciesId)]?.caughtAttr || BigInt(0)) &
+        container.species.getFullUnlocksData();
+      const starterData = globalScene.gameData.starterData[starterId];
+      const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
 
       // Name filter
       const selectedName = this.filterText.getValue(FilterTextRow.NAME);
@@ -1162,8 +1272,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       // On the other hand, in some cases it is possible to switch between different forms and combine (Deoxys)
       const levelMoves = pokemonSpeciesLevelMoves[container.species.speciesId].map(m => allMoves[m[1]].name);
       // This always gets egg moves from the starter
-      const eggMoves = speciesEggMoves[this.getStarterSpeciesId(container.species.speciesId)]?.map(m => allMoves[m].name) ?? [];
-      const tmMoves = speciesTmMoves[this.getStarterSpeciesId(container.species.speciesId)]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
+      const eggMoves = speciesEggMoves[starterId]?.map(m => allMoves[m].name) ?? [];
+      const tmMoves = speciesTmMoves[starterId]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
       const selectedMove1 = this.filterText.getValue(FilterTextRow.MOVE_1);
       const selectedMove2 = this.filterText.getValue(FilterTextRow.MOVE_2);
 
@@ -1185,27 +1295,40 @@ export default class PokedexUiHandler extends MessageUiHandler {
       container.tmMove2Icon.setVisible(false);
       if (fitsEggMove1 && !fitsLevelMove1) {
         container.eggMove1Icon.setVisible(true);
+        const em1 = eggMoves.findIndex(name => name === selectedMove1);
+        if ((starterData.eggMoves & (1 << em1)) === 0) {
+          container.eggMove1Icon.setTint(0x808080);
+        } else {
+          container.eggMove1Icon.clearTint();
+        }
       } else if (fitsTmMove1 && !fitsLevelMove1) {
         container.tmMove1Icon.setVisible(true);
       }
       if (fitsEggMove2 && !fitsLevelMove2) {
         container.eggMove2Icon.setVisible(true);
+        const em2 = eggMoves.findIndex(name => name === selectedMove2);
+        if ((starterData.eggMoves & (1 << em2)) === 0) {
+          container.eggMove2Icon.setTint(0x808080);
+        } else {
+          container.eggMove2Icon.clearTint();
+        }
       } else if (fitsTmMove2 && !fitsLevelMove2) {
         container.tmMove2Icon.setVisible(true);
       }
 
       // Ability filter
       const abilities = [ container.species.ability1, container.species.ability2, container.species.abilityHidden ].map(a => allAbilities[a].name);
-      const passives = starterPassiveAbilities[this.getStarterSpeciesId(container.species.speciesId)] ?? {} as PassiveAbilities;
+      const passives = starterPassiveAbilities[starterId] ?? {} as PassiveAbilities;
 
       const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
-      const fitsFormAbility = container.species.forms.some(form => allAbilities[form.ability1].name === selectedAbility1);
-      const fitsAbility1 = abilities.includes(selectedAbility1) || fitsFormAbility || selectedAbility1 === this.filterText.defaultText;
-      const fitsPassive1 = Object.values(passives).some(p => p.name === selectedAbility1);
+      const fitsFormAbility1 = container.species.forms.some(form => [ form.ability1, form.ability2, form.abilityHidden ].map(a => allAbilities[a].name).includes(selectedAbility1));
+      const fitsAbility1 = abilities.includes(selectedAbility1) || fitsFormAbility1 || selectedAbility1 === this.filterText.defaultText;
+      const fitsPassive1 = Object.values(passives).some(p => allAbilities[p].name === selectedAbility1);
 
       const selectedAbility2 = this.filterText.getValue(FilterTextRow.ABILITY_2);
-      const fitsAbility2 = abilities.includes(selectedAbility2) || fitsFormAbility || selectedAbility2 === this.filterText.defaultText;
-      const fitsPassive2 = Object.values(passives).some(p => p.name === selectedAbility2);
+      const fitsFormAbility2 = container.species.forms.some(form => [ form.ability1, form.ability2, form.abilityHidden ].map(a => allAbilities[a].name).includes(selectedAbility2));
+      const fitsAbility2 = abilities.includes(selectedAbility2) || fitsFormAbility2 || selectedAbility2 === this.filterText.defaultText;
+      const fitsPassive2 = Object.values(passives).some(p => allAbilities[p].name === selectedAbility2);
 
       // If both fields have been set to the same ability, show both ability and passive
       const fitsAbilities = (fitsAbility1 && (fitsPassive2 || selectedAbility2 === this.filterText.defaultText)) ||
@@ -1213,11 +1336,26 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       container.passive1Icon.setVisible(false);
       container.passive2Icon.setVisible(false);
-      if (fitsPassive1) {
-        container.passive1Icon.setVisible(true);
-      }
-      if (fitsPassive2) {
-        container.passive2Icon.setVisible(true);
+      if (fitsPassive1 || fitsPassive2) {
+        if (fitsPassive1) {
+          if (starterData.passiveAttr > 0) {
+            container.passive1Icon.clearTint();
+            container.passive1OverlayIcon.clearTint();
+          } else {
+            container.passive1Icon.setTint(0x808080);
+            container.passive1OverlayIcon.setTint(0x808080);
+          }
+          container.passive1Icon.setVisible(true);
+        } else {
+          if (starterData.passiveAttr > 0) {
+            container.passive2Icon.clearTint();
+            container.passive2OverlayIcon.clearTint();
+          } else {
+            container.passive2Icon.setTint(0x808080);
+            container.passive2OverlayIcon.setTint(0x808080);
+          }
+          container.passive2Icon.setVisible(true);
+        }
       }
 
       // Gen filter
@@ -1236,7 +1374,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[this.getStarterSpeciesId(container.species.speciesId)]).map(b => Biome[b.biome]);
+      const biomes = catchableSpecies[container.species.speciesId].concat(catchableSpecies[starterId]).map(b => Biome[b.biome]);
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }
@@ -1446,11 +1584,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
           }
 
           const speciesId = container.species.speciesId;
+          const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr & container.species.getFullUnlocksData();
           this.updateStarterValueLabel(container);
 
           container.label.setVisible(true);
-          const speciesVariants = speciesId && globalScene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
-            ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(globalScene.gameData.dexData[speciesId].caughtAttr & v))
+          const speciesVariants = speciesId && caughtAttr & DexAttr.SHINY
+            ? [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => !!(caughtAttr & v))
             : [];
           for (let v = 0; v < 3; v++) {
             const hasVariant = speciesVariants.length > v;
@@ -1461,7 +1600,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
           }
 
           container.starterPassiveBgs.setVisible(!!globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)].passiveAttr);
-          container.hiddenAbilityIcon.setVisible(!!globalScene.gameData.dexData[speciesId].caughtAttr && !!(globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)].abilityAttr & 4));
+          container.hiddenAbilityIcon.setVisible(!!caughtAttr && !!(globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)].abilityAttr & 4));
           container.classicWinIcon.setVisible(globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)].classicWinCount > 0);
           container.favoriteIcon.setVisible(this.starterPreferences[speciesId]?.favorite ?? false);
 
@@ -1530,6 +1669,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.cursorObj.setVisible(!filterMode);
     this.filterBar.cursorObj.setVisible(filterMode);
     this.pokemonSprite.setVisible(false);
+    this.showFormTrayIconElement.setVisible(false);
+    this.showFormTrayLabel.setVisible(false);
 
     if (filterMode !== this.filterMode) {
       this.filterMode = filterMode;
@@ -1546,6 +1687,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.cursorObj.setVisible(!filterTextMode);
     this.filterText.cursorObj.setVisible(filterTextMode);
     this.pokemonSprite.setVisible(false);
+    this.showFormTrayIconElement.setVisible(false);
+    this.showFormTrayLabel.setVisible(false);
 
     if (filterTextMode !== this.filterTextMode) {
       this.filterTextMode = filterTextMode;
@@ -1556,6 +1699,101 @@ export default class PokedexUiHandler extends MessageUiHandler {
       return true;
     }
     return false;
+  }
+
+  openFormTray(species: PokemonSpecies): boolean {
+
+    this.trayForms = species.forms.filter(f => !f.isUnobtainable);
+
+    this.trayNumIcons = this.trayForms.length;
+    this.trayRows = Math.floor(this.trayNumIcons / 9) + (this.trayNumIcons % 9 === 0 ? 0 : 1);
+    this.trayColumns = Math.min(this.trayNumIcons, 9);
+
+    const maxColumns = 9;
+    const onScreenFirstIndex = this.scrollCursor * maxColumns;
+    const boxCursor = this.cursor - onScreenFirstIndex;
+    const boxCursorY = Math.floor(boxCursor / maxColumns);
+    const boxCursorX = boxCursor - boxCursorY * 9;
+    const spaceBelow = 9 - 1 - boxCursorY;
+    const spaceRight = 9 - boxCursorX;
+    const boxPos = calcStarterPosition(this.cursor, this.scrollCursor);
+    const goUp = this.trayRows <= spaceBelow - 1 ? 0 : 1;
+    const goLeft = this.trayColumns <= spaceRight ? 0 : 1;
+
+    this.trayBg.setSize(13 + this.trayColumns * 17, 8 + this.trayRows * 18);
+    this.formTrayContainer.setX(
+      (goLeft ? boxPos.x - 18 * (this.trayColumns - spaceRight) : boxPos.x) - 3
+    );
+    this.formTrayContainer.setY(
+      goUp ? boxPos.y - this.trayBg.height : boxPos.y + 17
+    );
+
+    const dexEntry = globalScene.gameData.dexData[species.speciesId];
+    const dexAttr = this.getCurrentDexProps(species.speciesId);
+    const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr));
+
+    this.trayContainers = [];
+    this.trayForms.map((f, index) => {
+      const isFormCaught = dexEntry ? (dexEntry.caughtAttr & species.getFullUnlocksData() & globalScene.gameData.getFormAttr(f.formIndex ?? 0)) > 0n : false;
+      const isFormSeen = dexEntry ? (dexEntry.seenAttr & globalScene.gameData.getFormAttr(f.formIndex ?? 0)) > 0n : false;
+      const formContainer = new PokedexMonContainer(species, { formIndex: f.formIndex, female: props.female, shiny: props.shiny, variant: props.variant });
+      this.iconAnimHandler.addOrUpdate(formContainer.icon, PokemonIconAnimMode.NONE);
+      // Setting tint, for all saves some caught forms may only show up as seen
+      if (isFormCaught || globalScene.dexForDevs) {
+        formContainer.icon.clearTint();
+      } else if (isFormSeen) {
+        formContainer.icon.setTint(0x808080);
+      }
+      formContainer.setPosition(5 + (index % 9) * 18, 4 + Math.floor(index / 9) * 17);
+      this.formTrayContainer.add(formContainer);
+      this.trayContainers.push(formContainer);
+    });
+
+    this.showingTray = true;
+
+    this.setTrayCursor(0);
+
+    this.formTrayContainer.setVisible(true);
+
+    this.showFormTrayIconElement.setVisible(false);
+    this.showFormTrayLabel.setVisible(false);
+
+    return true;
+  }
+
+  closeFormTray(): boolean {
+
+    this.trayContainers.forEach(obj => {
+      this.formTrayContainer.remove(obj, true); // Removes from container and destroys it
+    });
+
+    this.trayContainers = [];
+    this.formTrayContainer.setVisible(false);
+    this.showingTray = false;
+
+    this.setSpeciesDetails(this.lastSpecies);
+    return true;
+  }
+
+  setTrayCursor(cursor: number): boolean {
+    if (!this.showingTray) {
+      return false;
+    }
+
+    cursor = Phaser.Math.Clamp(this.trayContainers.length - 1, cursor, 0);
+    const changed = this.trayCursor !== cursor;
+    if (changed) {
+      this.trayCursor = cursor;
+    }
+
+    this.trayCursorObj.setPosition(5 + (cursor % 9) * 18, 4 + Math.floor(cursor / 9) * 17);
+
+    const species = this.lastSpecies;
+    const formIndex = this.trayForms[cursor].formIndex;
+
+    this.setSpeciesDetails(species, { formIndex: formIndex });
+
+    return changed;
   }
 
   getFriendship(speciesId: number) {
@@ -1592,13 +1830,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.lastSpecies = species!; // TODO: is this bang correct?
 
-    if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
+    if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs)) {
 
       this.pokemonNumberText.setText(i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4));
 
       this.pokemonNameText.setText(species.name);
 
-      if (this.speciesStarterDexEntry?.caughtAttr) {
+      if (this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs) {
 
         // Pause the animation when the species is selected
         const speciesIndex = this.allSpecies.indexOf(species);
@@ -1627,14 +1865,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.type1Icon.setVisible(true);
         this.type2Icon.setVisible(true);
 
-        this.setSpeciesDetails(species, {
-          forSeen: true
-        });
+        this.setSpeciesDetails(species);
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
       this.pokemonNumberText.setText(species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
+      this.pokemonFormText.setText("");
       this.type1Icon.setVisible(false);
       this.type2Icon.setVisible(false);
       if (species) {
@@ -1646,7 +1883,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     let { shiny, formIndex, female, variant } = options;
-    const forSeen: boolean = options.forSeen ?? false;
 
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
@@ -1667,34 +1903,34 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.assetLoadCancelled = null;
     }
 
-    this.starterMoveset = null;
-    this.speciesStarterMoves = [];
-
     if (species) {
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
+      const caughtAttr = dexEntry.caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)].caughtAttr & species.getFullUnlocksData();
 
-      if (!dexEntry.caughtAttr) {
+      if (!caughtAttr) {
         const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)));
 
-        if (shiny === undefined || shiny !== props.shiny) {
+        if (shiny === undefined) {
           shiny = props.shiny;
         }
-        if (formIndex === undefined || formIndex !== props.formIndex) {
+        if (formIndex === undefined) {
           formIndex = props.formIndex;
         }
-        if (female === undefined || female !== props.female) {
+        if (female === undefined) {
           female = props.female;
         }
-        if (variant === undefined || variant !== props.variant) {
+        if (variant === undefined) {
           variant = props.variant;
         }
       }
+
+      const isFormCaught = dexEntry ? (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
+      const isFormSeen = dexEntry ? (dexEntry.seenAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
 
       const assetLoadCancelled = new BooleanHolder(false);
       this.assetLoadCancelled = assetLoadCancelled;
 
       if (shouldUpdateSprite) {
-
         species.loadAssets(female!, formIndex, shiny, variant, true).then(() => { // TODO: is this bang correct?
           if (assetLoadCancelled.value) {
             return;
@@ -1711,21 +1947,48 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.pokemonSprite.setVisible(!(this.filterMode || this.filterTextMode));
       }
 
-      if (dexEntry.caughtAttr || forSeen) {
+      if (isFormCaught || globalScene.dexForDevs) {
+        this.pokemonSprite.clearTint();
+      } else if (isFormSeen) {
+        this.pokemonSprite.setTint(0x808080);
+      } else {
+        this.pokemonSprite.setTint(0);
+      }
 
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, 0); // TODO: always selecting the first form
+      if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
+        // TODO: change this once forms are refactored
+        if (normalForm.includes(species.speciesId) && !formIndex) {
+          this.pokemonFormText.setText("");
+        } else {
+          this.pokemonFormText.setText(species.getFormNameToDisplay(formIndex, false));
+        }
+      } else {
+        this.pokemonFormText.setText("");
+      }
 
+      if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
+        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex ?? 0); // TODO: always selecting the first form
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.setTypeIcons(null, null);
       }
+
+      if (species?.forms?.filter(f => !f.isUnobtainable).length > 1) {
+        if (!this.showingTray) {
+          this.showFormTrayIconElement.setVisible(true);
+          this.showFormTrayLabel.setVisible(true);
+        }
+        this.canShowFormTray = true;
+      } else  {
+        this.showFormTrayIconElement.setVisible(false);
+        this.showFormTrayLabel.setVisible(false);
+        this.canShowFormTray = false;
+      }
+
     } else {
       this.setTypeIcons(null, null);
     }
 
-    if (!this.starterMoveset) {
-      this.starterMoveset = this.speciesStarterMoves.slice(0, 4) as StarterMoveset;
-    }
   }
 
   setTypeIcons(type1: Type | null, type2: Type | null): void {
@@ -1784,7 +2047,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     ui.showText(i18next.t("pokedexUiHandler:confirmExit"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
         ui.setMode(Mode.POKEDEX, "refresh");
-        globalScene.clearPhaseQueue();
         this.clearText();
         this.clear();
         ui.revertMode();
@@ -1804,7 +2066,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
    */
   getCurrentDexProps(speciesId: number): bigint {
     let props = 0n;
-    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr;
+    const species = allSpecies.find(sp => sp.speciesId === speciesId);
+    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr & (species?.getFullUnlocksData() ?? 0n);
 
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props

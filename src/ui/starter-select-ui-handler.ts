@@ -53,7 +53,7 @@ import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
-import { BooleanHolder, capitalizeString, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
+import { BooleanHolder, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
 import type { Nature } from "#enums/nature";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 
@@ -1981,8 +1981,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   female: starterAttributes.female
                 };
                 ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, starterAttributes.form, attributes);
-                return true;
               });
+              return true;
             }
           });
           options.push({
@@ -3408,15 +3408,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
-        const formText = capitalizeString(species?.forms[formIndex!]?.formKey, "-", false, false); // TODO: is the bang correct?
-
-        const speciesName = capitalizeString(Species[species.speciesId], "_", true, false);
-
-        if (species.speciesId === Species.ARCEUS) {
-          this.pokemonFormText.setText(i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`));
-        } else {
-          this.pokemonFormText.setText(formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : "");
-        }
+        const formText = species.getFormNameToDisplay(formIndex);
+        this.pokemonFormText.setText(formText);
 
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
