@@ -537,6 +537,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.bringToTop(this.filterBarContainer);
     this.initTutorialOverlay(this.starterSelectContainer);
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
+    this.starterSelectContainer.bringToTop(this.pokemonNameText);
+    this.starterSelectContainer.bringToTop(this.pokemonFormText);
   }
 
   show(args: any[]): boolean {
