@@ -4525,7 +4525,7 @@ export class NoFusionAbilityAbAttr extends AbAttr {
 /**
  * Attach to a post-summon ability if it shouldn't be activated when it is obtained or activated during the battle
  */
-export class NoMidTurnActivationAttr extends AbAttr {
+export class NoOnGainActivationAttr extends AbAttr {
   constructor() {
     super(false);
   }
@@ -4874,11 +4874,11 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   showAbilityInstant: boolean = false,
   simulated: boolean = false,
   messages: string[] = [],
-  midTurn: boolean = false /** Ignore passives and abilities with {@linkcode NoMidTurnActivationAttr} */
+  gainedMidTurn: boolean = false /** Ignore passives and abilities with {@linkcode NoOnGainActivationAttr} */
 ) {
   for (const passive of [ false, true ]) {
-    if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id || midTurn))
-        || (midTurn && pokemon.getAbility().hasAttr(NoMidTurnActivationAttr))) {
+    if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id || gainedMidTurn))
+        || (gainedMidTurn && pokemon.getAbility().hasAttr(NoOnGainActivationAttr))) {
       continue;
     }
 
@@ -5314,14 +5314,14 @@ export function applyPostItemLostAbAttrs(attrType: Constructor<PostItemLostAbAtt
  *
  * Ignores passives as they don't change and shouldn't be reapplied when main abilities change
  */
-export function applyMidTurnAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
+export function applyOnGainAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostSummonAbAttr>(PostSummonAbAttr, pokemon, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args), args, false, simulated, [], true);
 }
 
 /**
  * Clears primal weather during the turn if {@linkcode pokemon}'s ability corresponds to one
  */
-export function applyMidTurnClearWeatherAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
+export function applyOnGainClearWeatherAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PreLeaveFieldClearWeatherAbAttr>(PreLeaveFieldClearWeatherAbAttr, pokemon, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated, [], true);
 }
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
