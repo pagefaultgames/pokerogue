@@ -47,7 +47,7 @@ class DefaultOverrides {
   // -----------------
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
-  readonly DAILY_RUN_SEED_OVERRIDE: string = "";
+  readonly DAILY_RUN_SEED_OVERRIDE: string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   /**
    * If `null`, ignore this override.
