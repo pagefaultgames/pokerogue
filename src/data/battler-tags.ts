@@ -1646,6 +1646,16 @@ export class CenterOfAttentionTag extends BattlerTag {
   }
 }
 
+export class SplashTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.SPLASH, BattlerTagLapseType.TURN_END, 1, Moves.SPLASH, undefined, false);
+  }
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    globalScene.queueMessage(i18next.t("battlerTags:splashLapse"));
+  }
+}
+
 export class AbilityBattlerTag extends BattlerTag {
   public ability: Abilities;
 
@@ -3000,6 +3010,8 @@ export class MagicCoatTag extends BattlerTag {
  */
 export function getBattlerTag(tagType: BattlerTagType, turnCount: number, sourceMove: Moves, sourceId: number): BattlerTag {
   switch (tagType) {
+    case BattlerTagType.SPLASH:
+      return new SplashTag();
     case BattlerTagType.RECHARGING:
       return new RechargingTag(sourceMove);
     case BattlerTagType.BEAK_BLAST_CHARGING:
