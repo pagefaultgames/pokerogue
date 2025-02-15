@@ -1,6 +1,6 @@
 """
 Validates the contents of the variant's masterlist file and identifies
-any mismatched entries for the sprite of the same key between front, back, exp, and female.
+any mismatched entries for the sprite of the same key between front, back, exp, exp back, and female.
 
 This will create a csv file that contains all of the entries with mismatches.
 
@@ -32,15 +32,16 @@ class Sprite:
     back: list[int] = field(default_factory=list, compare=False)
     female: list[int] = field(default_factory=list, compare=False)
     exp: list[int] = field(default_factory=list, compare=False)
+    expback: list[int] = field(default_factory=list, compare=False)
     sortedKey: tuple[int] | tuple[int, str] = field(init=False, repr=False, compare=True)
 
-    def as_row(self) -> tuple[str, list[int] | L[""], list[int] | L[""], list[int] | L[""], list[int] | L[""]]:
+    def as_row(self) -> tuple[str, list[int] | L[""], list[int] | L[""], list[int] | L[""], list[int] | L[""], list[int] | L[""]]:
         """return sprite information as a tuple for csv writing"""
-        return (self.key, self.front or "", self.back or "", self.exp or "", self.female or "")
+        return (self.key, self.front or "", self.back or "", self.exp or "", self.expback or "", self.female or "")
 
     def is_mismatch(self) -> bool:
-        """return True if the front, back, or exp sprites do not match the front"""
-        for val in [self.back, self.exp, self.female]:
+        """return True if the female, back, or exp sprites do not match the front"""
+        for val in [self.back, self.exp, self.expback, self.female]:
             if val != [] and val != self.front:
                 return True
         return False
@@ -57,13 +58,14 @@ def make_mismatch_sprite_list(path):
     # Go through the keys in "front" and "back" and make sure they match the masterlist
     back_data: dict[str, list[int]] = masterlist.pop("back", {})
     exp_data: dict[str, list[int]] = masterlist.pop("exp", {})
+    exp_back_data: dict[str, list[int]] = exp_data.get("back", [])
     female_data: dict[str, list[int]] = masterlist.pop("female", {})
 
     sprites: list[Sprite] = []
 
     for key, item in masterlist.items():
         sprite = Sprite(
-            key, front=item, back=back_data.get(key, []), exp=exp_data.get(key, []), female=female_data.get(key, [])
+            key, front=item, back=back_data.get(key, []), exp=exp_data.get(key, []), expback=exp_back_data.get(key, []), female=female_data.get(key, [])
         )
         if sprite.is_mismatch():
             sprites.append(sprite)
@@ -74,7 +76,7 @@ def make_mismatch_sprite_list(path):
 def write_mismatch_csv(filename: str, mismatches: list[Sprite]):
     with open(filename, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["key", "front", "back", "exp", "female"])
+        writer.writerow(["key", "front", "back", "exp", "expback", "female"])
         for sprite in sorted(mismatches):
             writer.writerow(sprite.as_row())
 
