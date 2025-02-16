@@ -1317,8 +1317,14 @@ export class PreMoveMessageAttr extends MoveAttr {
   }
 }
 
-export class MoveInterruptedMessageAttr extends MoveAttr {
-  protected message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
+/**
+ * Attribute for moves that can be conditionally interrupted to be considered to
+ * have failed before their "useMove" message is displayed. Currently used by
+ * Focus Punch.
+ * @extends MoveAttr
+ */
+export class PreUseInterruptAttr extends MoveAttr {
+  protected message: string | ((user: Pokemon, target: Pokemon, move: Move) => string) | undefined;
   protected overridesFailedMessage: boolean;
   protected conditionFunc: MoveConditionFunc;
 
@@ -1326,7 +1332,7 @@ export class MoveInterruptedMessageAttr extends MoveAttr {
    * Create a new MoveInterruptedMessageAttr.
    * @param message The message to display when the move is interrupted, or a function that formats the message based on the user, target, and move.
    */
-  constructor(message: string | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc?: MoveConditionFunc) {
+  constructor(message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc?: MoveConditionFunc) {
     super();
     this.message = message;
     this.conditionFunc = conditionFunc ?? (() => true);
@@ -1338,8 +1344,18 @@ export class MoveInterruptedMessageAttr extends MoveAttr {
    * @param target {@linkcode Pokemon} target of the move
    * @param move {@linkcode Move} with this attribute
    */
+  override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    return this.conditionFunc(user, target, move);
+  }
+
+  /**
+   * Message to display when a move is interrupted.
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   */
   override getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
-    if (this.conditionFunc(user, target, move)) {
+    if (this.message && this.conditionFunc(user, target, move)) {
       const message =
         typeof this.message === "string"
           ? (this.message as string)
@@ -9208,9 +9224,8 @@ export function initMoves() {
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .attr(MessageHeaderAttr, (user, move) => i18next.t("moveTriggers:isTighteningFocus", { pokemonName: getPokemonNameWithAffix(user) }))
-      .attr(MoveInterruptedMessageAttr, i18next.t("moveTriggers:lostFocus"), user => !!user.turnData.attacksReceived.find(r => r.damage))
-      .punchingMove()
-      .condition((user, target, move) => !user.turnData.attacksReceived.find(r => r.damage)),
+      .attr(PreUseInterruptAttr, i18next.t("moveTriggers:lostFocus"), user => !!user.turnData.attacksReceived.find(r => r.damage))
+      .punchingMove(),
     new AttackMove(Moves.SMELLING_SALTS, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS),

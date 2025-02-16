@@ -9,7 +9,7 @@ import {
   PokemonTypeChangeAbAttr,
   PostMoveUsedAbAttr,
   RedirectMoveAbAttr,
-  ReduceStatusEffectDurationAbAttr
+  ReduceStatusEffectDurationAbAttr,
 } from "#app/data/ability";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
@@ -24,7 +24,8 @@ import {
   frenzyMissFunc,
   HealStatusEffectAttr,
   MoveFlags,
-  PreMoveMessageAttr
+  PreMoveMessageAttr,
+  PreUseInterruptAttr,
 } from "#app/data/move";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
@@ -281,7 +282,18 @@ export class MovePhase extends BattlePhase {
       }
     }
 
-    this.showMoveText();
+    let success: boolean = true;
+    // Check if there are any attributes that can interrupt the move, overriding the fail message.
+    for (const move of this.move.getMove().getAttrs(PreUseInterruptAttr)) {
+      if (move.apply(this.pokemon, targets[0], this.move.getMove())) {
+        success = false;
+        break;
+      }
+    }
+
+    if (success) {
+      this.showMoveText();
+    }
 
     if (moveQueue.length > 0) {
       // Using .shift here clears out two turn moves once they've been used
@@ -317,11 +329,13 @@ export class MovePhase extends BattlePhase {
      * Move conditions assume the move has a single target
      * TODO: is this sustainable?
      */
-    const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
-    const failedDueToWeather: boolean = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
-    const failedDueToTerrain: boolean = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
+    if (success) {
+      const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
+      const failedDueToWeather: boolean = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
+      const failedDueToTerrain: boolean = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
+      success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
+    }
 
-    const success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
 
     // Update the battle's "last move" pointer, unless we're currently mimicking a move.
     if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
