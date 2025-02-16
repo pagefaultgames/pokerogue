@@ -71,7 +71,7 @@ describe("Moves - Secret Power", () => {
       await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
 
       const sereneGraceAttr = allAbilities[Abilities.SERENE_GRACE].getAttrs(MoveEffectChanceMultiplierAbAttr)[0];
-      vi.spyOn(sereneGraceAttr, "apply");
+      vi.spyOn(sereneGraceAttr, "canApply");
 
       game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
       game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
@@ -89,8 +89,8 @@ describe("Moves - Secret Power", () => {
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(sereneGraceAttr.apply).toHaveBeenCalledOnce();
-      expect(sereneGraceAttr.apply).toHaveLastReturnedWith(true);
+      expect(sereneGraceAttr.canApply).toHaveBeenCalledOnce();
+      expect(sereneGraceAttr.canApply).toHaveLastReturnedWith(true);
 
       expect(rainbowEffect.apply).toHaveBeenCalledTimes(0);
     }

@@ -29,7 +29,7 @@ export class ShowAbilityPhase extends PokemonPhase {
       } else {
         globalScene.currentBattle.lastPlayerInvolved = pokemon.getBattlerIndex() % 2;
       }
-      
+
       globalScene.abilityBar.showAbility(this.pokemonName, this.abilityName, this.passive).then(() => {
         if (pokemon?.battleData) {
           pokemon.battleData.abilityRevealed = true;
