@@ -2485,7 +2485,7 @@ export class TarShotTag extends BattlerTag {
    * @returns whether the tag is applied
    */
   override canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isTerastallized();
+    return !pokemon.isTerastallized;
   }
 
   override onAdd(pokemon: Pokemon): void {

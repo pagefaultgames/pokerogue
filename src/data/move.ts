@@ -791,7 +791,7 @@ export default class Move implements Localizable {
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, null, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
-    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
       power.value = 60;
     }
 
@@ -4634,7 +4634,7 @@ export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
 
-    if (user.isTerastallized() && user.getEffectiveStat(Stat.ATK, target, move, true, true, false, false, true) >
+    if (user.isTerastallized && user.getEffectiveStat(Stat.ATK, target, move, true, true, false, false, true) >
     user.getEffectiveStat(Stat.SPATK, target, move, true, true, false, false, true)) {
       category.value = MoveCategory.PHYSICAL;
       return true;
@@ -4662,7 +4662,7 @@ export class TeraBlastPowerAttr extends VariablePowerAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
-    if (user.isTerastallized() && user.getTeraType() === Type.STELLAR) {
+    if (user.isTerastallized && user.getTeraType() === Type.STELLAR) {
       power.value = 100;
       return true;
     }
@@ -4716,30 +4716,6 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
 
 export class VariableMoveTypeAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return false;
-  }
-}
-
-/**
- * Attribute used for Tera Starstorm that changes the move type to Stellar
- * @extends VariableMoveTypeAttr
- */
-export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
-  /**
-   *
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target n/a
-   * @param move n/a
-   * @param args[0] {@linkcode Utils.NumberHolder} the move type
-   * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
-   */
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.isTerastallized() && (user.hasFusionSpecies(Species.TERAPAGOS) || user.species.speciesId === Species.TERAPAGOS)) {
-      const moveType = args[0] as Utils.NumberHolder;
-
-      moveType.value = Type.STELLAR;
-      return true;
-    }
     return false;
   }
 }
@@ -5009,11 +4985,35 @@ export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if (user.isTerastallized()) {
+    if (user.isTerastallized) {
       moveType.value = user.getTeraType(); // changes move type to tera type
       return true;
     }
 
+    return false;
+  }
+}
+
+/**
+ * Attribute used for Tera Starstorm that changes the move type to Stellar
+ * @extends VariableMoveTypeAttr
+ */
+export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
+  /**
+   *
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target n/a
+   * @param move n/a
+   * @param args[0] {@linkcode Utils.NumberHolder} the move type
+   * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.isTerastallized && user.hasSpecies(Species.TERAPAGOS)) {
+      const moveType = args[0] as Utils.NumberHolder;
+
+      moveType.value = Type.STELLAR;
+      return true;
+    }
     return false;
   }
 }
@@ -6345,7 +6345,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (user.isTerastallized() && user.getTeraType() === this.removedType) { // active tera types cannot be removed
+    if (user.isTerastallized && user.getTeraType() === this.removedType) { // active tera types cannot be removed
       return false;
     }
 
@@ -6525,7 +6525,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.isTerastallized() && !target.hasAbility(Abilities.MULTITYPE) && !target.hasAbility(Abilities.RKS_SYSTEM) && !(target.getTypes().length === 1 && target.getTypes()[0] === this.type);
+    return (user, target, move) => !target.isTerastallized && !target.hasAbility(Abilities.MULTITYPE) && !target.hasAbility(Abilities.RKS_SYSTEM) && !(target.getTypes().length === 1 && target.getTypes()[0] === this.type);
   }
 }
 
@@ -6548,7 +6548,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.isTerastallized() && !target.getTypes().includes(this.type);
+    return (user, target, move) => !target.isTerastallized && !target.getTypes().includes(this.type);
   }
 }
 
@@ -11076,7 +11076,7 @@ export function initMoves() {
       .attr(TeraMoveCategoryAttr)
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, { condition: (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR) }),
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, { condition: (user, target, move) => user.isTerastallized && user.isOfType(Type.STELLAR) }),
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP)
       .condition(failIfLastCondition),
@@ -11271,7 +11271,7 @@ export function initMoves() {
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraMoveCategoryAttr)
       .attr(TeraStarstormTypeAttr)
-      .attr(VariableTargetAttr, (user, target, move) => (user.hasFusionSpecies(Species.TERAPAGOS) || user.species.speciesId === Species.TERAPAGOS) && user.isTerastallized() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
+      .attr(VariableTargetAttr, (user, target, move) => user.hasSpecies(Species.TERAPAGOS) && user.isTerastallized ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
       .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
     new AttackMove(Moves.FICKLE_BEAM, Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)

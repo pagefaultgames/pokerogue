@@ -9,7 +9,7 @@ import type { Constructor } from "#app/utils";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import * as Utils from "#app/utils";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
-import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, ModifierBar, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier, TerastallizeModifier } from "./modifier/modifier";
+import { ConsumableModifier, ConsumablePokemonModifier, DoubleBattleChanceBoosterModifier, ExpBalanceModifier, ExpShareModifier, FusePokemonModifier, HealingBoosterModifier, ModifierBar, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, RememberMoveModifier } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from "#app/data/battle-anims";
 import type { Phase } from "#app/phase";
@@ -1373,7 +1373,11 @@ export default class BattleScene extends SceneBase {
 
         for (const pokemon of this.getPlayerParty()) {
           pokemon.resetBattleData();
+          pokemon.resetTera();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+          if (pokemon.hasSpecies(Species.TERAPAGOS) || (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)) {
+            this.arena.playerTerasUsed = 0;
+          }
         }
 
         if (!this.trainer.visible) {
@@ -1658,7 +1662,7 @@ export default class BattleScene extends SceneBase {
   }
 
   initPokemonSprite(sprite: Phaser.GameObjects.Sprite, pokemon?: Pokemon, hasShadow: boolean = false, ignoreOverride: boolean = false): Phaser.GameObjects.Sprite {
-    sprite.setPipeline(this.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: hasShadow, ignoreOverride: ignoreOverride, teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined });
+    sprite.setPipeline(this.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: hasShadow, ignoreOverride: ignoreOverride, teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined, isTerastallized: pokemon ? pokemon.isTerastallized : false });
     this.spriteSparkleHandler.add(sprite);
     return sprite;
   }
@@ -2589,11 +2593,8 @@ export default class BattleScene extends SceneBase {
       const modifiersToRemove: PersistentModifier[] = [];
       const modifierPromises: Promise<boolean>[] = [];
       if (modifier instanceof PersistentModifier) {
-        if (modifier instanceof TerastallizeModifier) {
-          modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
-        }
         if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
-          if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
+          if (modifier instanceof PokemonFormChangeItemModifier) {
             const pokemon = this.getPokemonById(modifier.pokemonId);
             if (pokemon) {
               success = modifier.apply(pokemon, true);
@@ -2670,11 +2671,8 @@ export default class BattleScene extends SceneBase {
   addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
       const modifiersToRemove: PersistentModifier[] = [];
-      if (modifier instanceof TerastallizeModifier) {
-        modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId, false)));
-      }
       if ((modifier as PersistentModifier).add(this.enemyModifiers, false)) {
-        if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
+        if (modifier instanceof PokemonFormChangeItemModifier) {
           const pokemon = this.getPokemonById(modifier.pokemonId);
           if (pokemon) {
             modifier.apply(pokemon, true);
@@ -2798,6 +2796,8 @@ export default class BattleScene extends SceneBase {
         for (const modifier of modifiers) {
           this.addEnemyModifier(modifier, true, true);
         }
+
+        this.currentBattle.trainer.genAI(party);
       }
 
       party.forEach((enemyPokemon: EnemyPokemon, i: number) => {
@@ -2929,7 +2929,7 @@ export default class BattleScene extends SceneBase {
     const modifierIndex = modifiers.indexOf(modifier);
     if (modifierIndex > -1) {
       modifiers.splice(modifierIndex, 1);
-      if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier) {
+      if (modifier instanceof PokemonFormChangeItemModifier) {
         const pokemon = this.getPokemonById(modifier.pokemonId);
         if (pokemon) {
           modifier.apply(pokemon, false);
@@ -3130,7 +3130,8 @@ export default class BattleScene extends SceneBase {
           name: p.name,
           form: p.getFormKey(),
           types: p.getTypes().map((type) => Type[type]),
-          teraType: p.getTeraType() !== Type.UNKNOWN ? Type[p.getTeraType()] : "",
+          teraType: Type[p.getTeraType()],
+          isTerastallized: p.isTerastallized,
           level: p.level,
           currentHP: p.hp,
           maxHP: p.getMaxHp(),
