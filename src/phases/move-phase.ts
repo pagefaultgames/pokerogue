@@ -329,10 +329,11 @@ export class MovePhase extends BattlePhase {
      * Move conditions assume the move has a single target
      * TODO: is this sustainable?
      */
+    let failedDueToTerrain: boolean = false;
     if (success) {
       const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
       const failedDueToWeather: boolean = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
-      const failedDueToTerrain: boolean = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
+      failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
       success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
     }
 
