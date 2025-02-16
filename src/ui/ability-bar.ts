@@ -1,6 +1,4 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
 
@@ -11,9 +9,6 @@ const baseY = -116;
 export default class AbilityBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.Image;
   private abilityBarText: Phaser.GameObjects.Text;
-
-  private tween: Phaser.Tweens.Tween | null;
-  private autoHideTimer: NodeJS.Timeout | null;
 
   public shown: boolean;
 
@@ -36,66 +31,54 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showAbility(pokemon: Pokemon, passive: boolean = false): void {
-    this.abilityBarText.setText(`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: getPokemonNameWithAffix(pokemon), passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ?  pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`);
+  override setVisible(shown: boolean): this {
+    this.shown = shown;
+    super.setVisible(shown);
+    return this;
+  }
 
-    if (this.shown) {
-      return;
+  startTween(config: any, text?: string): Promise<void> {
+    this.setVisible(true);
+    if (text) {
+      this.abilityBarText.setText(text);
     }
+    return new Promise((resolve) => {
+      globalScene.tweens.add({
+        ...config,
+        onComplete: () => {
+          if (config.onComplete) {
+            config.onComplete();
+          }
+          resolve();
+        }
+      });
+    });
+  }
+
+  showAbility(pokemonName: string, abilityName: string, passive: boolean = false): Promise<void> {
+    const text = (`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: abilityName })}`);
 
     globalScene.fieldUI.bringToTop(this);
 
-
     this.y = baseY + (globalScene.currentBattle.double ? 14 : 0);
-    this.tween = globalScene.tweens.add({
+    return this.startTween({
       targets: this,
       x: shownX,
       duration: 500,
       ease: "Sine.easeOut",
-      onComplete: () => {
-        this.tween = null;
-        this.resetAutoHideTimer();
-      }
-    });
-
-    this.setVisible(true);
-    this.shown = true;
+      hold: 1000,
+    }, text);
   }
 
-  hide(): void {
-    if (!this.shown) {
-      return;
-    }
-
-    if (this.autoHideTimer) {
-      clearInterval(this.autoHideTimer);
-    }
-
-    if (this.tween) {
-      this.tween.stop();
-    }
-
-    this.tween = globalScene.tweens.add({
+  hide(): Promise<void> {
+    return this.startTween({
       targets: this,
       x: -91,
-      duration: 500,
+      duration: 200,
       ease: "Sine.easeIn",
       onComplete: () => {
-        this.tween = null;
         this.setVisible(false);
       }
     });
-
-    this.shown = false;
-  }
-
-  resetAutoHideTimer(): void {
-    if (this.autoHideTimer) {
-      clearInterval(this.autoHideTimer);
-    }
-    this.autoHideTimer = setTimeout(() => {
-      this.hide();
-      this.autoHideTimer = null;
-    }, 2500);
   }
 }
