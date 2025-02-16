@@ -1156,11 +1156,11 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
 
         if (p.species.speciesId === Species.NECROZMA) {
           // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
-
           let foundULTRA_Z = false,
             foundN_LUNA = false,
             foundN_SOLAR = false;
           formChangeItemTriggers.forEach((fc, _i) => {
+            console.log("Checking ", fc.item);
             switch (fc.item) {
               case FormChangeItem.ULTRANECROZIUM_Z:
                 foundULTRA_Z = true;
@@ -1176,6 +1176,8 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
           if (foundULTRA_Z && foundN_LUNA && foundN_SOLAR) {
             // all three items are present -> user hasn't acquired any of the N_*ARIZERs -> block ULTRANECROZIUM_Z acquisition.
             formChangeItemTriggers = formChangeItemTriggers.filter(fc => fc.item !== FormChangeItem.ULTRANECROZIUM_Z);
+          } else {
+            console.log("DID NOT FIND ");
           }
         }
         return formChangeItemTriggers;
