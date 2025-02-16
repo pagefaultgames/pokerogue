@@ -203,7 +203,7 @@ export default class Battle {
   }
 
   pickUpScatteredMoney(): void {
-    const moneyAmount = new Utils.IntegerHolder(globalScene.currentBattle.moneyScattered);
+    const moneyAmount = new Utils.NumberHolder(globalScene.currentBattle.moneyScattered);
     globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
     if (globalScene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {

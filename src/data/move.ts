@@ -908,7 +908,7 @@ export class AttackMove extends Move {
     attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
     if (attackScore) {
       if (this.category === MoveCategory.PHYSICAL) {
-        const atk = new Utils.IntegerHolder(user.getEffectiveStat(Stat.ATK, target));
+        const atk = new Utils.NumberHolder(user.getEffectiveStat(Stat.ATK, target));
         applyMoveAttrs(VariableAtkAttr, user, target, move, atk);
         if (atk.value > user.getEffectiveStat(Stat.SPATK, target)) {
           const statRatio = user.getEffectiveStat(Stat.SPATK, target) / atk.value;
@@ -919,7 +919,7 @@ export class AttackMove extends Move {
           }
         }
       } else {
-        const spAtk = new Utils.IntegerHolder(user.getEffectiveStat(Stat.SPATK, target));
+        const spAtk = new Utils.NumberHolder(user.getEffectiveStat(Stat.SPATK, target));
         applyMoveAttrs(VariableAtkAttr, user, target, move, spAtk);
         if (spAtk.value > user.getEffectiveStat(Stat.ATK, target)) {
           const statRatio = user.getEffectiveStat(Stat.ATK, target) / spAtk.value;
@@ -1337,7 +1337,7 @@ export class IgnoreOpponentStatStagesAttr extends MoveAttr {
 
 export class HighCritAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value++;
+    (args[0] as Utils.NumberHolder).value++;
 
     return true;
   }
@@ -1369,7 +1369,7 @@ export class FixedDamageAttr extends MoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = this.getDamage(user, target, move);
+    (args[0] as Utils.NumberHolder).value = this.getDamage(user, target, move);
 
     return true;
   }
@@ -1385,7 +1385,7 @@ export class UserHpDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = user.hp;
+    (args[0] as Utils.NumberHolder).value = user.hp;
 
     return true;
   }
@@ -1437,7 +1437,7 @@ export class MatchHpAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = target.hp - user.hp;
+    (args[0] as Utils.NumberHolder).value = target.hp - user.hp;
 
     return true;
   }
@@ -1467,7 +1467,7 @@ export class CounterDamageAttr extends FixedDamageAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).reduce((total: number, ar: AttackMoveResult) => total + ar.damage, 0);
-    (args[0] as Utils.IntegerHolder).value = Utils.toDmgValue(damage * this.multiplier);
+    (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(damage * this.multiplier);
 
     return true;
   }
@@ -1499,7 +1499,7 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
 
 export class ModifiedDamageAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const initialDamage = args[0] as Utils.IntegerHolder;
+    const initialDamage = args[0] as Utils.NumberHolder;
     initialDamage.value = this.getModifiedDamage(user, target, move, initialDamage.value);
 
     return true;
@@ -2164,7 +2164,7 @@ export class IncrementMovePriorityAttr extends MoveAttr {
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} being used
-   * @param args [0] {@linkcode Utils.IntegerHolder} for move priority.
+   * @param args [0] {@linkcode Utils.NumberHolder} for move priority.
    * @returns true if function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2172,7 +2172,7 @@ export class IncrementMovePriorityAttr extends MoveAttr {
       return false;
     }
 
-    (args[0] as Utils.IntegerHolder).value += this.increaseAmount;
+    (args[0] as Utils.NumberHolder).value += this.increaseAmount;
     return true;
   }
 }
@@ -2210,7 +2210,7 @@ export class MultiHitAttr extends MoveAttr {
    * @param user {@linkcode Pokemon} that used the attack
    * @param target {@linkcode Pokemon} targeted by the attack
    * @param move {@linkcode Move} being used
-   * @param args [0] {@linkcode Utils.IntegerHolder} storing the hit count of the attack
+   * @param args [0] {@linkcode Utils.NumberHolder} storing the hit count of the attack
    * @returns True
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2277,7 +2277,7 @@ export class ChangeMultiHitTypeAttr extends MoveAttr {
 export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.species.speciesId === Species.GRENINJA && user.hasAbility(Abilities.BATTLE_BOND) && user.formIndex === 2) {
-      (args[0] as Utils.IntegerHolder).value = MultiHitType._3;
+      (args[0] as Utils.NumberHolder).value = MultiHitType._3;
       return true;
     }
     return false;
@@ -4118,7 +4118,7 @@ export class PresentPowerAttr extends VariablePowerAttr {
 export class WaterShurikenPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.species.speciesId === Species.GRENINJA && user.hasAbility(Abilities.BATTLE_BOND) && user.formIndex === 2) {
-      (args[0] as Utils.IntegerHolder).value = 20;
+      (args[0] as Utils.NumberHolder).value = 20;
       return true;
     }
     return false;
@@ -4140,7 +4140,7 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
     const stockpilingTag = user.getTag(StockpilingTag);
 
     if (stockpilingTag && stockpilingTag.stockpiledCount > 0) {
-      const power = args[0] as Utils.IntegerHolder;
+      const power = args[0] as Utils.NumberHolder;
       power.value = this.multiplier * stockpilingTag.stockpiledCount;
       return true;
     }
@@ -4449,7 +4449,7 @@ export class VariableAtkAttr extends MoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    //const atk = args[0] as Utils.IntegerHolder;
+    //const atk = args[0] as Utils.NumberHolder;
     return false;
   }
 }
@@ -4459,7 +4459,7 @@ export class TargetAtkUserAtkAttr extends VariableAtkAttr {
     super();
   }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = target.getEffectiveStat(Stat.ATK, target);
+    (args[0] as Utils.NumberHolder).value = target.getEffectiveStat(Stat.ATK, target);
     return true;
   }
 }
@@ -4470,7 +4470,7 @@ export class DefAtkAttr extends VariableAtkAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = user.getEffectiveStat(Stat.DEF, target);
+    (args[0] as Utils.NumberHolder).value = user.getEffectiveStat(Stat.DEF, target);
     return true;
   }
 }
@@ -4481,7 +4481,7 @@ export class VariableDefAttr extends MoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    //const def = args[0] as Utils.IntegerHolder;
+    //const def = args[0] as Utils.NumberHolder;
     return false;
   }
 }
@@ -4492,7 +4492,7 @@ export class DefDefAttr extends VariableDefAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = target.getEffectiveStat(Stat.DEF, user);
+    (args[0] as Utils.NumberHolder).value = target.getEffectiveStat(Stat.DEF, user);
     return true;
   }
 }
