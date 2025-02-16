@@ -1212,7 +1212,7 @@ export default class BattleScene extends SceneBase {
   }
 
   getDoubleBattleChance(newWaveIndex: number, playerField: PlayerPokemon[]) {
-    const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+    const doubleChance = new Utils.NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
     this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
     playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance));
     return Math.max(doubleChance.value, 1);
@@ -2628,7 +2628,7 @@ export default class BattleScene extends SceneBase {
             const args: unknown[] = [];
             if (modifier instanceof PokemonHpRestoreModifier) {
               if (!(modifier as PokemonHpRestoreModifier).fainted) {
-                const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+                const hpRestoreMultiplier = new Utils.NumberHolder(1);
                 this.applyModifiers(HealingBoosterModifier, true, hpRestoreMultiplier);
                 args.push(hpRestoreMultiplier.value);
               } else {
