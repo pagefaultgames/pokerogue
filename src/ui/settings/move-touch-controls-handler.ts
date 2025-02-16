@@ -88,9 +88,9 @@ export default class MoveTouchControlsHandler {
    * @returns A new div element that contains the toolbar for the configuration mode.
    */
   private createToolbarElement(): HTMLDivElement {
-  const toolbar = document.createElement("div");
-  toolbar.id = "configToolbar";
-  toolbar.innerHTML = `
+    const toolbar = document.createElement("div");
+    toolbar.id = "configToolbar";
+    toolbar.innerHTML = `
     <div class="column">
       <div class="button-row">
         <div id="resetButton" class="button">${i18next.t("settings:reset")}</div>
@@ -107,8 +107,8 @@ export default class MoveTouchControlsHandler {
       </div>
     </div>
   `;
-  return toolbar;
-}
+    return toolbar;
+  }
 
   /**
    * Initializes the toolbar of the configuration mode.
