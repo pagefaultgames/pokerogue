@@ -44,6 +44,11 @@ export class Arena {
   public bgm: string;
   public ignoreAbilities: boolean;
   public ignoringEffectSource: BattlerIndex | null;
+  /**
+   * Saves the number of times a party pokemon faints during a arena encounter.
+   * {@linkcode globalScene.currentBattle.enemyFaints} is the corresponding faint counter for the enemy (this resets every wave).
+   */
+  public playerFaints: number;
 
   private lastTimeOfDay: TimeOfDay;
 
@@ -52,12 +57,13 @@ export class Arena {
 
   public readonly eventTarget: EventTarget = new EventTarget();
 
-  constructor(biome: Biome, bgm: string) {
+  constructor(biome: Biome, bgm: string, playerFaints: number = 0) {
     this.biomeType = biome;
     this.tags = [];
     this.bgm = bgm;
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
+    this.playerFaints = playerFaints;
   }
 
   init() {
@@ -698,6 +704,7 @@ export class Arena {
       this.trySetWeather(WeatherType.NONE, false);
     }
     this.trySetTerrain(TerrainType.NONE, false, true);
+    this.resetPlayerFaintCount();
     this.removeAllTags();
   }
 
@@ -776,10 +783,16 @@ export class Arena {
         return 0.000;
       case Biome.SNOWY_FOREST:
         return 3.047;
+      case Biome.END:
+        return 17.153;
       default:
         console.warn(`missing bgm loop-point for biome "${Biome[this.biomeType]}" (=${this.biomeType})`);
         return 0;
     }
+  }
+
+  resetPlayerFaintCount(): void {
+    this.playerFaints = 0;
   }
 }
 
