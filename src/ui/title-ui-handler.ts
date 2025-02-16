@@ -8,6 +8,8 @@ import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import type { Species } from "#enums/species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -92,6 +94,15 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       });
   }
 
+  /** Used solely to display a random Pokémon name in a splash message. */
+  randomPokemon(): void {
+    const rand = Utils.randInt(1025, 1);
+    const pokemon = getPokemonSpecies(rand as Species);
+    if (this.splashMessage === "splashMessages:pokemon") {
+      this.splashMessageText.setText(i18next.t(this.splashMessage, { pokemonName: pokemon.name }));
+    }
+  }
+
   show(args: any[]): boolean {
     const ret = super.show(args);
 
@@ -110,6 +121,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
         this.eventDisplay.setWidth(globalScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
         this.eventDisplay.show();
       }
+
+      this.randomPokemon();
 
       this.updateTitleStats();
 
