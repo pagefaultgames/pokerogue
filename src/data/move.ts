@@ -677,19 +677,17 @@ export default class Move implements Localizable {
   /**
    * Sees if a move has a custom failure text (by looking at each {@linkcode MoveAttr} of this move)
    * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} receiving the move
-   * @param move {@linkcode Move} using the move
-   * @param cancelled {@linkcode Utils.BooleanHolder} to hold boolean value
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
    * @returns string of the custom failure text, or `null` if it uses the default text ("But it failed!")
    */
-  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+  getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
     for (const attr of this.attrs) {
-      const failedText = attr.getFailedText(user, target, move, cancelled);
-      if (failedText !== null) {
+      const failedText = attr.getFailedText(user, target, move);
+      if (failedText) {
         return failedText;
       }
     }
-    return null;
   }
 
   /**
@@ -1074,11 +1072,10 @@ export abstract class MoveAttr {
    * @param user {@linkcode Pokemon} using the move
    * @param target {@linkcode Pokemon} target of the move
    * @param move {@linkcode Move} with this attribute
-   * @param cancelled {@linkcode Utils.BooleanHolder} which stores if the move should fail
    * @returns the string representing failure of this {@linkcode Move}
    */
-  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
-    return null;
+  getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
+    return;
   }
 
   /**
@@ -1317,6 +1314,38 @@ export class PreMoveMessageAttr extends MoveAttr {
       return true;
     }
     return false;
+  }
+}
+
+export class MoveInterruptedMessageAttr extends MoveAttr {
+  protected message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
+  protected overridesFailedMessage: boolean;
+  protected conditionFunc: MoveConditionFunc;
+
+  /**
+   * Create a new MoveInterruptedMessageAttr.
+   * @param message The message to display when the move is interrupted, or a function that formats the message based on the user, target, and move.
+   */
+  constructor(message: string | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc?: MoveConditionFunc) {
+    super();
+    this.message = message;
+    this.conditionFunc = conditionFunc ?? (() => true);
+  }
+
+  /**
+   * Message to display when a move is interrupted.
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   */
+  override getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
+    if (this.conditionFunc(user, target, move)) {
+      const message =
+        typeof this.message === "string"
+          ? (this.message as string)
+          : this.message(user, target, move);
+      return message;
+    }
   }
 }
 
@@ -1739,13 +1768,16 @@ export class AddSubstituteAttr extends MoveEffectAttr {
     return (user, target, move) => !user.getTag(SubstituteTag) && user.hp > Math.floor(user.getMaxHp() * this.hpCost) && user.getMaxHp() > 1;
   }
 
-  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+  /**
+   * Get the substitute-specific failure message if one should be displayed.
+   * @param user The pokemon using the move.
+   * @returns The substitute-specific failure message if the conditions apply, otherwise `undefined`
+   */
+  getFailedText(user: Pokemon, _target: Pokemon, _move: Move): string | undefined {
     if (user.getTag(SubstituteTag)) {
       return i18next.t("moveTriggers:substituteOnOverlap", { pokemonName: getPokemonNameWithAffix(user) });
     } else if (user.hp <= Math.floor(user.getMaxHp() / 4) || user.getMaxHp() === 1) {
       return i18next.t("moveTriggers:substituteNotEnoughHp");
-    } else {
-      return i18next.t("battle:attackFailed");
     }
   }
 }
@@ -6240,10 +6272,12 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
   }
 
-  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+  getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
     const blockedByAbility = new Utils.BooleanHolder(false);
     applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
-    return blockedByAbility.value ? i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) }) : null;
+    if (blockedByAbility.value) {
+      return i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) });
+    }
   }
 
   getSwitchOutCondition(): MoveConditionFunc {
@@ -9174,6 +9208,7 @@ export function initMoves() {
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .attr(MessageHeaderAttr, (user, move) => i18next.t("moveTriggers:isTighteningFocus", { pokemonName: getPokemonNameWithAffix(user) }))
+      .attr(MoveInterruptedMessageAttr, i18next.t("moveTriggers:lostFocus"), user => !!user.turnData.attacksReceived.find(r => r.damage))
       .punchingMove()
       .condition((user, target, move) => !user.turnData.attacksReceived.find(r => r.damage)),
     new AttackMove(Moves.SMELLING_SALTS, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 3)

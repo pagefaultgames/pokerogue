@@ -42,7 +42,7 @@ import { MoveChargePhase } from "#app/phases/move-charge-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { BooleanHolder, NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -348,9 +348,8 @@ export class MovePhase extends BattlePhase {
 
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
+      const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
       let failedText: string | undefined;
-      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
-
       if (failureMessage) {
         failedText = failureMessage;
       } else if (failedDueToTerrain) {
@@ -386,7 +385,7 @@ export class MovePhase extends BattlePhase {
     } else {
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
-      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
+      const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
       this.showMoveText();
       this.showFailedText(failureMessage ?? undefined);
 
@@ -554,7 +553,7 @@ export class MovePhase extends BattlePhase {
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents()[0], this.move.getMove());
   }
 
-  public showFailedText(failedText?: string): void {
-    globalScene.queueMessage(failedText ?? i18next.t("battle:attackFailed"));
+  public showFailedText(failedText: string = i18next.t("battle:attackFailed")): void {
+    globalScene.queueMessage(failedText);
   }
 }
