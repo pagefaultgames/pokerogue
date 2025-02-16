@@ -176,6 +176,10 @@ const commonSplashMessages = [
   "timeForYourDeliDelivery",
   "goodFirstImpression",
   "iPreferRarerCandies",
+  "pocketRoguelite",
+  "porygonDidNothingWrong",
+  "critMattered",
+  "pickupNotRequired",
 ];
 
 //#region Seasonal Messages
