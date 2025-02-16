@@ -141,6 +141,7 @@ interface SpeciesDetails {
 
 export default class PokedexUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
+  private starterBoxContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
   private filterBarContainer: Phaser.GameObjects.Container;
   private filterBar: FilterBar;
@@ -425,32 +426,27 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.pokemonFormText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonFormText);
 
-    const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
+    this.starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
     this.starterSelectScrollBar = new ScrollBar(161, 12, 5, pokemonContainerWindow.height - 6, 9);
 
-    starterBoxContainer.add(this.starterSelectScrollBar);
+    this.starterBoxContainer.add(this.starterSelectScrollBar);
 
     this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
       const cursorObj = globalScene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
-      starterBoxContainer.add(cursorObj);
+      this.starterBoxContainer.add(cursorObj);
       return cursorObj;
     });
 
     this.cursorObj = globalScene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
-    starterBoxContainer.add(this.cursorObj);
+    this.starterBoxContainer.add(this.cursorObj);
 
     for (const species of allSpecies) {
       this.speciesLoaded.set(species.speciesId, false);
       this.allSpecies.push(species);
-
-      const pokemonContainer = new PokedexMonContainer(species).setVisible(false);
-      this.iconAnimHandler.addOrUpdate(pokemonContainer.icon, PokemonIconAnimMode.NONE);
-      this.pokemonContainers.push(pokemonContainer);
-      starterBoxContainer.add(pokemonContainer);
     }
 
     // Tray to display forms
@@ -463,11 +459,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.trayCursorObj = globalScene.add.image(0, 0, "select_cursor");
     this.trayCursorObj.setOrigin(0, 0);
     this.formTrayContainer.add(this.trayCursorObj);
-    starterBoxContainer.add(this.formTrayContainer);
-    starterBoxContainer.bringToTop(this.formTrayContainer);
+    this.starterBoxContainer.add(this.formTrayContainer);
+    this.starterBoxContainer.bringToTop(this.formTrayContainer);
     this.formTrayContainer.setVisible(false);
 
-    this.starterSelectContainer.add(starterBoxContainer);
+    this.starterSelectContainer.add(this.starterBoxContainer);
 
     this.pokemonSprite = globalScene.add.sprite(96, 143, "pkmn__sub");
     this.pokemonSprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
@@ -544,6 +540,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
+
+    for (const species of this.allSpecies) {
+      const pokemonContainer = new PokedexMonContainer(species).setVisible(false);
+      this.iconAnimHandler.addOrUpdate(pokemonContainer.icon, PokemonIconAnimMode.NONE);
+      this.pokemonContainers.push(pokemonContainer);
+      this.starterBoxContainer.add(pokemonContainer);
+    }
 
     if (!this.starterPreferences) {
       this.starterPreferences = StarterPrefs.load();
@@ -2124,6 +2127,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   clear(): void {
     super.clear();
+
+    this.pokemonContainers.forEach(obj => {
+      this.starterBoxContainer.remove(obj, true); // Removes from container and destroys it
+    });
+    this.pokemonContainers = [];
+    // These arrays must be emptied too, or garbage is not collected properly
+    this.validPokemonContainers = [];
+    this.filteredPokemonContainers = [];
 
     this.cursor = -1;
     globalScene.ui.hideTooltip();
