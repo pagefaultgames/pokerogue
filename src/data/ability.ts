@@ -265,6 +265,52 @@ export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Removes a specified weather when a Pokemon is form changed via terastallization.
+ */
+export class PostTeraFormChangeRemoveWeatherAbAttr extends AbAttr {
+  private weather: WeatherType[];
+
+  /**
+   * @param weather {@linkcode WeatherType[]} - the weather to be removed
+   */
+  constructor(weather: WeatherType[]) {
+    super(true);
+
+    this.weather = weather;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!simulated) {
+      globalScene.arena.trySetWeather(WeatherType.NONE, true);
+    }
+    return true;
+  }
+}
+
+/**
+ * Removes a specified terrain when a Pokemon is form changed via terastallization.
+ */
+export class PostTeraFormChangeRemoveTerrainAbAttr extends AbAttr {
+  private terrain: TerrainType[];
+
+  /**
+   * @param terrain {@linkcode TerrainType[]} - the terrain to be removed
+   */
+  constructor(terrain: TerrainType[]) {
+    super(true);
+
+    this.terrain = terrain;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!simulated) {
+      globalScene.arena.trySetTerrain(TerrainType.NONE, true, true);
+    }
+    return true;
+  }
+}
+
 type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: Move) => boolean;
 
 export class PreDefendAbAttr extends AbAttr {
@@ -6373,9 +6419,11 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
+      .attr(PostTeraFormChangeRemoveWeatherAbAttr, [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.STRONG_WINDS ])
+      .attr(PostTeraFormChangeRemoveTerrainAbAttr, [ TerrainType.MISTY, TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.PSYCHIC ])
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .unimplemented(),
+      .partial(), // Does not have the one use per Tera restriction yet
     new Ability(Abilities.POISON_PUPPETEER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
