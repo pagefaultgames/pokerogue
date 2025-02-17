@@ -117,11 +117,12 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 2x damage to steel type terastallized into water", async () => {
-    game.override.enemySpecies(Species.SKARMORY)
-      .enemyHeldItems([{ name: "TERA_SHARD", type: Type.WATER }]);
+    game.override.enemySpecies(Species.SKARMORY);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
+    enemy.teraType = Type.WATER;
+    enemy.isTerastallized = true;
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(Moves.FREEZE_DRY);
@@ -132,11 +133,12 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 0.5x damage to water type terastallized into fire", async () => {
-    game.override.enemySpecies(Species.PELIPPER)
-      .enemyHeldItems([{ name: "TERA_SHARD", type: Type.FIRE }]);
+    game.override.enemySpecies(Species.PELIPPER);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
+    enemy.teraType = Type.FIRE;
+    enemy.isTerastallized = true;
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(Moves.FREEZE_DRY);
