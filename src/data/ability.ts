@@ -6423,7 +6423,7 @@ export function initAbilities() {
       .attr(PostTeraFormChangeRemoveTerrainAbAttr, [ TerrainType.MISTY, TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.PSYCHIC ])
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .partial(), // Does not have the one use per Tera restriction yet
+      .condition(getOncePerBattleCondition(Abilities.TERAFORM_ZERO)),
     new Ability(Abilities.POISON_PUPPETEER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
