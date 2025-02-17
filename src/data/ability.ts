@@ -266,9 +266,9 @@ export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
 }
 
 /**
- * Removes a specified weather when a Pokemon is form changed via terastallization.
+ * Clears a specified weather whenever this attribute is called.
  */
-export class PostTeraFormChangeRemoveWeatherAbAttr extends AbAttr {
+export class ClearWeatherAbAttr extends AbAttr {
   private weather: WeatherType[];
 
   /**
@@ -289,9 +289,9 @@ export class PostTeraFormChangeRemoveWeatherAbAttr extends AbAttr {
 }
 
 /**
- * Removes a specified terrain when a Pokemon is form changed via terastallization.
+ * Clears a specified terrain whenever this attribute is called.
  */
-export class PostTeraFormChangeRemoveTerrainAbAttr extends AbAttr {
+export class ClearTerrainAbAttr extends AbAttr {
   private terrain: TerrainType[];
 
   /**
@@ -6419,8 +6419,8 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
-      .attr(PostTeraFormChangeRemoveWeatherAbAttr, [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.STRONG_WINDS ])
-      .attr(PostTeraFormChangeRemoveTerrainAbAttr, [ TerrainType.MISTY, TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.PSYCHIC ])
+      .attr(ClearWeatherAbAttr, [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.STRONG_WINDS ])
+      .attr(ClearTerrainAbAttr, [ TerrainType.MISTY, TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.PSYCHIC ])
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .condition(getOncePerBattleCondition(Abilities.TERAFORM_ZERO)),

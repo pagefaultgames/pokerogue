@@ -11,7 +11,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
 import { MovePhase } from "./move-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
-import { applyAbAttrs, PostTeraFormChangeRemoveTerrainAbAttr, PostTeraFormChangeRemoveWeatherAbAttr, PostTeraFormChangeStatChangeAbAttr } from "#app/data/ability";
+import { applyAbAttrs, ClearTerrainAbAttr, ClearWeatherAbAttr, PostTeraFormChangeStatChangeAbAttr } from "#app/data/ability";
 
 export class QuietFormChangePhase extends BattlePhase {
   protected pokemon: Pokemon;
@@ -148,8 +148,8 @@ export class QuietFormChangePhase extends BattlePhase {
     }
     if (this.formChange.trigger instanceof SpeciesFormChangeTeraTrigger) {
       applyAbAttrs(PostTeraFormChangeStatChangeAbAttr, this.pokemon, null);
-      applyAbAttrs(PostTeraFormChangeRemoveWeatherAbAttr, this.pokemon, null);
-      applyAbAttrs(PostTeraFormChangeRemoveTerrainAbAttr, this.pokemon, null);
+      applyAbAttrs(ClearWeatherAbAttr, this.pokemon, null);
+      applyAbAttrs(ClearTerrainAbAttr, this.pokemon, null);
     }
 
     super.end();
