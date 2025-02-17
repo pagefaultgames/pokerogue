@@ -172,7 +172,7 @@ class SystemVersionConverter extends VersionConverter {
         this.callMigrators(data, v1_1_0.systemMigrators);
       }
       if (curMinor < 7) {
-        console.log("Applying v1.7.0 session data migration!");
+        console.log("Applying v1.7.0 system data migration!");
         this.callMigrators(data, v1_7_0.systemMigrators);
       }
     }
@@ -202,11 +202,11 @@ class SettingsVersionConverter extends VersionConverter {
         this.callMigrators(data, v1_1_0.settingsMigrators);
       }
       if (curMinor < 7) {
-        console.log("Applying v1.7.0 session data migration!");
+        console.log("Applying v1.7.0 settings data migration!");
         this.callMigrators(data, v1_7_0.settingsMigrators);
       }
     }
 
-    console.log(`System data successfully migrated to v${version}!`);
+    console.log(`Settings data successfully migrated to v${version}!`);
   }
 }
