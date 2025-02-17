@@ -45,7 +45,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (!this.isCopy) {
       regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
     }
-    const modifierCount = new Utils.IntegerHolder(3);
+    const modifierCount = new Utils.NumberHolder(3);
     if (this.isPlayer()) {
       globalScene.applyModifiers(ExtraModifierModifier, true, modifierCount);
       globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCount);

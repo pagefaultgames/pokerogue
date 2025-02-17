@@ -7,6 +7,9 @@ import * as v1_0_4 from "./versions/v1_0_4";
 // --- v1.1.0 PATCHES --- //
 import * as v1_1_0 from "./versions/v1_1_0";
 
+// --- v1.7.0 PATCHES --- //
+import * as v1_7_0 from "./versions/v1_7_0";
+
 const LATEST_VERSION = version.split(".").map(value => parseInt(value));
 
 /**
@@ -138,6 +141,10 @@ class SessionVersionConverter extends VersionConverter {
         console.log("Applying v1.1.0 session data migration!");
         this.callMigrators(data, v1_1_0.sessionMigrators);
       }
+      if (curMinor < 7) {
+        console.log("Applying v1.7.0 session data migration!");
+        this.callMigrators(data, v1_7_0.sessionMigrators);
+      }
     }
 
     console.log(`Session data successfully migrated to v${version}!`);
@@ -163,6 +170,10 @@ class SystemVersionConverter extends VersionConverter {
       if (curMinor <= 1) {
         console.log("Applying v1.1.0 system data migraton!");
         this.callMigrators(data, v1_1_0.systemMigrators);
+      }
+      if (curMinor < 7) {
+        console.log("Applying v1.7.0 system data migration!");
+        this.callMigrators(data, v1_7_0.systemMigrators);
       }
     }
 
@@ -190,8 +201,12 @@ class SettingsVersionConverter extends VersionConverter {
         console.log("Applying v1.1.0 settings data migraton!");
         this.callMigrators(data, v1_1_0.settingsMigrators);
       }
+      if (curMinor < 7) {
+        console.log("Applying v1.7.0 settings data migration!");
+        this.callMigrators(data, v1_7_0.settingsMigrators);
+      }
     }
 
-    console.log(`System data successfully migrated to v${version}!`);
+    console.log(`Settings data successfully migrated to v${version}!`);
   }
 }
