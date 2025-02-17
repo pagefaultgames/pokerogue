@@ -33,6 +33,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   private moveInfoOverlay : MoveInfoOverlay;
 
   protected fieldIndex: number = 0;
+  protected fromCommand: Command = Command.FIGHT;
   protected cursor2: number = 0;
 
   constructor() {
@@ -114,6 +115,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     super.show(args);
 
     this.fieldIndex = args.length ? args[0] as number : 0;
+    this.fromCommand = args.length > 1 ? args[1] as Command : Command.FIGHT;
 
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setVisible(false);
@@ -140,7 +142,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     if (button === Button.CANCEL || button === Button.ACTION) {
       if (button === Button.ACTION) {
-        if ((globalScene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, cursor, false)) {
+        if ((globalScene.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, false)) {
           success = true;
         } else {
           ui.playError();
