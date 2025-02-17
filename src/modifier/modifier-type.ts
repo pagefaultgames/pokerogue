@@ -1859,7 +1859,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.IV_SCANNER, skipInLastClassicWaveOrDefault(4)),
     new WeightedModifierType(modifierTypes.EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
     new WeightedModifierType(modifierTypes.EXP_SHARE, skipInLastClassicWaveOrDefault(10)),
-    new WeightedModifierType(modifierTypes.TERA_ORB, () => Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
+    new WeightedModifierType(modifierTypes.TERA_ORB, () => !globalScene.gameMode.isClassic ? Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4) : 0, 4),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 7),
   ].map(m => {
