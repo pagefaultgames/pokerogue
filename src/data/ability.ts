@@ -2005,6 +2005,21 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
  * @see {@linkcode applyPostSummon()}
  */
 export class PostSummonAbAttr extends AbAttr {
+  /** Should the ability activate when gained in battle? This will almost always be true */
+  private activateOnGain: boolean;
+
+  constructor(showAbility: boolean = true, activateOnGain: boolean = true) {
+    super(showAbility);
+    this.activateOnGain = activateOnGain;
+  }
+
+  /**
+   * @returns Whether the ability should activate when gained in battle
+   */
+  shouldActivateOnGain(): boolean {
+    return this.activateOnGain;
+  }
+
   /**
    * Applies ability post summon (after switching in)
    * @param pokemon {@linkcode Pokemon} with this ability
@@ -2439,7 +2454,7 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
  */
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   constructor() {
-    super(true);
+    super(true, false);
   }
 
   async applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): Promise<boolean> {
@@ -4522,15 +4537,6 @@ export class NoFusionAbilityAbAttr extends AbAttr {
   }
 }
 
-/**
- * Attach to a post-summon ability if it shouldn't be activated when it is obtained or activated during the battle
- */
-export class NoOnGainActivationAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-}
-
 export class IgnoreTypeImmunityAbAttr extends AbAttr {
   private defenderType: Type;
   private allowedMoveTypes: Type[];
@@ -4878,7 +4884,7 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
 ) {
   for (const passive of [ false, true ]) {
     if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id || gainedMidTurn))
-        || (gainedMidTurn && pokemon.getAbility().hasAttr(NoOnGainActivationAttr))) {
+        || (gainedMidTurn && pokemon.getAbility().getAttrs(PostSummonAbAttr).some(a => !a.shouldActivateOnGain()))) {
       continue;
     }
 
