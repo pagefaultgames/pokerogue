@@ -216,6 +216,7 @@ interface SpeciesDetails {
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
+  private starterBoxContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
   private filterBarContainer: Phaser.GameObjects.Container;
   private filterBar: FilterBar;
@@ -623,19 +624,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.randomCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.randomCursorObj);
 
-    const starterSpecies: Species[] = [];
-
-    const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
+    this.starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
     this.starterSelectScrollBar = new ScrollBar(161, 12, 5, starterContainerWindow.height - 6, 9);
 
-    starterBoxContainer.add(this.starterSelectScrollBar);
+    this.starterBoxContainer.add(this.starterSelectScrollBar);
 
     this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
       const cursorObj = globalScene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
-      starterBoxContainer.add(cursorObj);
+      this.starterBoxContainer.add(cursorObj);
       return cursorObj;
     });
 
@@ -643,7 +642,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const cursorObj = globalScene.add.image(0, 0, "select_cursor_highlight");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
-      starterBoxContainer.add(cursorObj);
+      this.starterBoxContainer.add(cursorObj);
       return cursorObj;
     });
 
@@ -655,24 +654,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterIconsCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.starterIconsCursorObj);
 
-    starterBoxContainer.add(this.cursorObj);
+    this.starterBoxContainer.add(this.cursorObj);
+
+    this.starterSelectContainer.add(this.starterBoxContainer);
 
     for (const species of allSpecies) {
       if (!speciesStarterCosts.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
         continue;
       }
 
-      starterSpecies.push(species.speciesId);
       this.speciesLoaded.set(species.speciesId, false);
       this.allSpecies.push(species);
-
-      const starterContainer = new StarterContainer(species).setVisible(false);
-      this.iconAnimHandler.addOrUpdate(starterContainer.icon, PokemonIconAnimMode.NONE);
-      this.starterContainers.push(starterContainer);
-      starterBoxContainer.add(starterContainer);
     }
-
-    this.starterSelectContainer.add(starterBoxContainer);
 
     this.starterIcons = new Array(6).fill(null).map((_, i) => {
       const icon = globalScene.add.sprite(teamWindowX + 7, calcStarterIconY(i), "pokemon_icons_0");
@@ -924,6 +917,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
+
+    for (const species of this.allSpecies) {
+      const starterContainer = new StarterContainer(species).setVisible(false);
+      this.iconAnimHandler.addOrUpdate(starterContainer.icon, PokemonIconAnimMode.NONE);
+      this.starterContainers.push(starterContainer);
+      this.starterBoxContainer.add(starterContainer);
+    }
+
     if (!this.starterPreferences) {
       // starterPreferences haven't been loaded yet
       this.starterPreferences = StarterPrefs.load();
@@ -3828,6 +3829,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.hideInstructions();
     this.activeTooltip = undefined;
     globalScene.ui.hideTooltip();
+
+    this.starterContainers.forEach(obj => {
+      this.starterBoxContainer.remove(obj, true); // Removes from container and destroys it
+    });
+    this.starterContainers = [];
+    // These arrays must be emptied too, or garbage is not collected properly
+    this.validStarterContainers = [];
+    this.filteredStarterContainers = [];
 
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
