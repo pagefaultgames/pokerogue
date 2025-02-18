@@ -47,7 +47,6 @@ export class Ability implements Localizable {
   public description: string;
   public generation: integer;
   public isBypassFaint: boolean;
-  public isBypassOnField: boolean;
   public isIgnorable: boolean;
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
@@ -105,11 +104,6 @@ export class Ability implements Localizable {
 
   bypassFaint(): Ability {
     this.isBypassFaint = true;
-    return this;
-  }
-
-  bypassOnField(): Ability {
-    this.isBypassOnField = true;
     return this;
   }
 
@@ -5429,8 +5423,7 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr)
       .ignorable(),
     new Ability(Abilities.NATURAL_CURE, 3)
-      .attr(PreSwitchOutResetStatusAbAttr)
-      .bypassOnField(),
+      .attr(PreSwitchOutResetStatusAbAttr),
     new Ability(Abilities.LIGHTNING_ROD, 3)
       .attr(RedirectTypeMoveAbAttr, Type.ELECTRIC)
       .attr(TypeImmunityStatStageChangeAbAttr, Type.ELECTRIC, Stat.SPATK, 1)
@@ -5776,8 +5769,7 @@ export function initAbilities() {
     new Ability(Abilities.POISON_TOUCH, 5)
       .attr(PostAttackContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
     new Ability(Abilities.REGENERATOR, 5)
-      .attr(PreSwitchOutHealAbAttr)
-      .bypassOnField(),
+      .attr(PreSwitchOutHealAbAttr),
     new Ability(Abilities.BIG_PECKS, 5)
       .attr(ProtectStatAbAttr, Stat.DEF)
       .ignorable(),
@@ -5923,22 +5915,19 @@ export function initAbilities() {
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PreSwitchOutClearWeatherAbAttr)
       .attr(PostFaintClearWeatherAbAttr)
-      .bypassFaint()
-      .bypassOnField(),
+      .bypassFaint(),
     new Ability(Abilities.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PreSwitchOutClearWeatherAbAttr)
       .attr(PostFaintClearWeatherAbAttr)
-      .bypassFaint()
-      .bypassOnField(),
+      .bypassFaint(),
     new Ability(Abilities.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
       .attr(PreSwitchOutClearWeatherAbAttr)
       .attr(PostFaintClearWeatherAbAttr)
-      .bypassFaint()
-      .bypassOnField(),
+      .bypassFaint(),
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
@@ -6275,7 +6264,6 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PreSwitchOutFormChangeAbAttr, (pokemon) => !pokemon.isFainted() ? 1 : pokemon.formIndex)
-      .bypassOnField()
       .bypassFaint(),
     new Ability(Abilities.COMMANDER, 9)
       .attr(CommanderAbAttr)
