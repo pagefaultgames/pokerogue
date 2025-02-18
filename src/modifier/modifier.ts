@@ -3,16 +3,16 @@ import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
 import { allMoves } from "#app/data/move";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import { type FormChangeItem, SpeciesFormChangeItemTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
+import { type FormChangeItem, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
-import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { LearnMovePhase, LearnMoveType } from "#app/phases/learn-move-phase";
 import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { achvs } from "#app/system/achv";
 import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
@@ -25,7 +25,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { Type } from "#enums/type";
+import type { Type } from "#enums/type";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
@@ -165,9 +165,9 @@ export abstract class PersistentModifier extends Modifier {
   public stackCount: number;
   public virtualStackCount: number;
 
-  constructor(type: ModifierType, stackCount?: number) {
+  constructor(type: ModifierType, stackCount: number = 1) {
     super(type);
-    this.stackCount = stackCount === undefined ? 1 : stackCount;
+    this.stackCount = stackCount;
     this.virtualStackCount = 0;
   }
 
@@ -782,72 +782,6 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
   }
 
   getMaxStackCount(forThreshold?: boolean): number {
-    return 1;
-  }
-}
-
-export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
-  public override type: TerastallizeModifierType;
-  public teraType: Type;
-  public isTransferable: boolean = false;
-
-  constructor(type: TerastallizeModifierType, pokemonId: number, teraType: Type, battlesLeft?: number, stackCount?: number) {
-    super(type, pokemonId, battlesLeft || 10, stackCount);
-
-    this.teraType = teraType;
-  }
-
-  matchType(modifier: Modifier): boolean {
-    if (modifier instanceof TerastallizeModifier && modifier.teraType === this.teraType) {
-      return true;
-    }
-    return false;
-  }
-
-  clone(): TerastallizeModifier {
-    return new TerastallizeModifier(this.type, this.pokemonId, this.teraType, this.battlesLeft, this.stackCount);
-  }
-
-  getArgs(): any[] {
-    return [ this.pokemonId, this.teraType, this.battlesLeft ];
-  }
-
-  /**
-   * Applies the {@linkcode TerastallizeModifier} to the specified {@linkcode Pokemon}.
-   * @param pokemon the {@linkcode Pokemon} to be terastallized
-   * @returns always `true`
-   */
-  override apply(pokemon: Pokemon): boolean {
-    if (pokemon.isPlayer()) {
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeTeraTrigger);
-      globalScene.validateAchv(achvs.TERASTALLIZE);
-      if (this.teraType === Type.STELLAR) {
-        globalScene.validateAchv(achvs.STELLAR_TERASTALLIZE);
-      }
-    }
-    pokemon.updateSpritePipelineData();
-    return true;
-  }
-
-  /**
-   * Triggers {@linkcode LapsingPokemonHeldItemModifier.lapse} and if it returns `0` a form change is triggered.
-   * @param pokemon THe {@linkcode Pokemon} to be terastallized
-   * @returns the result of {@linkcode LapsingPokemonHeldItemModifier.lapse}
-   */
-  public override lapse(pokemon: Pokemon): boolean {
-    const ret = super.lapse(pokemon);
-    if (!ret) {
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeLapseTeraTrigger);
-      pokemon.updateSpritePipelineData();
-    }
-    return ret;
-  }
-
-  getScoreMultiplier(): number {
-    return 1.25;
-  }
-
-  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 1;
   }
 }
@@ -2019,6 +1953,36 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 
   getPokemon() {
     return globalScene.getPlayerParty().find(p => p.id === this.pokemonId);
+  }
+}
+
+export class TerrastalizeModifier extends ConsumablePokemonModifier {
+  public override type: TerastallizeModifierType;
+  public teraType: Type;
+
+  constructor(type: TerastallizeModifierType, pokemonId: number, teraType: Type) {
+    super(type, pokemonId);
+
+    this.teraType = teraType;
+  }
+
+  /**
+   * Checks if {@linkcode TerrastalizeModifier} should be applied
+   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @returns `true` if the {@linkcode TerrastalizeModifier} should be applied
+   */
+  override shouldApply(playerPokemon?: PlayerPokemon): boolean {
+    return super.shouldApply(playerPokemon) && [ playerPokemon?.species.speciesId, playerPokemon?.fusionSpecies?.speciesId ].filter(s => s === Species.TERAPAGOS || s === Species.OGERPON || s === Species.SHEDINJA).length === 0;
+  }
+
+  /**
+   * Applies {@linkcode TerrastalizeModifier}
+   * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @returns `true` if hp was restored
+   */
+  override apply(pokemon: Pokemon): boolean {
+    pokemon.teraType = this.teraType;
+    return true;
   }
 }
 
@@ -3295,7 +3259,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
 
 export class IvScannerModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: number) {
-    super(type, stackCount);
+    super(type);
   }
 
   match(modifier: Modifier): boolean {
@@ -3303,7 +3267,7 @@ export class IvScannerModifier extends PersistentModifier {
   }
 
   clone(): IvScannerModifier {
-    return new IvScannerModifier(this.type, this.stackCount);
+    return new IvScannerModifier(this.type);
   }
 
   /**
@@ -3311,11 +3275,11 @@ export class IvScannerModifier extends PersistentModifier {
    * @returns always `true`
    */
   override apply(): boolean {
-    return true;
+    return true; //Dude are you kidding me
   }
 
   getMaxStackCount(): number {
-    return 3;
+    return 1;
   }
 }
 

@@ -116,7 +116,7 @@ export class EvolutionPhase extends Phase {
           console.error(`Failed to play animation for ${spriteKey}`, err);
         }
 
-        sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
+        sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()), isTerastallized: this.pokemon.isTerastallized });
         sprite.setPipelineData("ignoreTimeTint", true);
         sprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
         sprite.setPipelineData("shiny", this.pokemon.shiny);
@@ -270,7 +270,7 @@ export class EvolutionPhase extends Phase {
           globalScene.playSoundWithoutBgm("evolution_fanfare");
 
           evolvedPokemon.destroy();
-          globalScene.ui.showText(i18next.t("menu:evolutionDone", { pokemonName: this.preEvolvedPokemonName, evolvedPokemonName: this.pokemon.name }), null, () => this.end(), null, true, Utils.fixedInt(4000));
+          globalScene.ui.showText(i18next.t("menu:evolutionDone", { pokemonName: this.preEvolvedPokemonName, evolvedPokemonName: this.pokemon.species.getExpandedSpeciesName() }), null, () => this.end(), null, true, Utils.fixedInt(4000));
           globalScene.time.delayedCall(Utils.fixedInt(4250), () => globalScene.playBgm());
         });
       });

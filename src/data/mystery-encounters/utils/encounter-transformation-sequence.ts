@@ -61,7 +61,7 @@ export function doPokemonTransformationSequence(previousPokemon: PlayerPokemon, 
         console.error(`Failed to play animation for ${spriteKey}`, err);
       }
 
-      sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(previousPokemon.getTeraType()) });
+      sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(previousPokemon.getTeraType()), isTerastallized: previousPokemon.isTerastallized });
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", previousPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", previousPokemon.shiny);

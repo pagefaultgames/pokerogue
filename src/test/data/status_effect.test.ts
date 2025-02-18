@@ -20,8 +20,8 @@ const pokemonName = "PKM";
 const sourceText = "SOURCE";
 
 describe("Status Effect Messages", () => {
-  beforeAll(() => {
-    i18next.init();
+  beforeAll(async () => {
+    await i18next.init();
   });
 
   describe("NONE", () => {

@@ -10,7 +10,7 @@ import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifi
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { PokeballType } from "#enums/pokeball";
 import { PlayerGender } from "#enums/player-gender";
-import { IntegerHolder, randSeedInt } from "#app/utils";
+import { NumberHolder, randSeedInt } from "#app/utils";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
@@ -279,7 +279,7 @@ async function summonSafariPokemon() {
     if (pokemon.species.abilityHidden) {
       const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
       if (pokemon.abilityIndex < hiddenIndex) {
-        const hiddenAbilityChance = new IntegerHolder(256);
+        const hiddenAbilityChance = new NumberHolder(256);
         globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
         const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
@@ -315,7 +315,7 @@ async function summonSafariPokemon() {
 
   const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
   if (ivScannerModifier) {
-    globalScene.pushPhase(new ScanIvsPhase(pokemon.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6)));
+    globalScene.pushPhase(new ScanIvsPhase(pokemon.getBattlerIndex()));
   }
 }
 
