@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "../mockGameObject";
 import Sprite = Phaser.GameObjects.Sprite;
 import Frame = Phaser.Textures.Frame;
 

@@ -1,7 +1,7 @@
-import BattleScene from "../battle-scene";
 import AwaitableUiHandler from "./awaitable-ui-handler";
-import { Mode } from "./ui";
+import type { Mode } from "./ui";
 import * as Utils from "../utils";
+import { globalScene } from "#app/global-scene";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
@@ -11,8 +11,8 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
 
     this.pendingPrompt = false;
   }
@@ -23,7 +23,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
    */
   initPromptSprite(container: Phaser.GameObjects.Container) {
     if (!this.prompt) {
-      const promptSprite = this.scene.add.sprite(0, 0, "prompt");
+      const promptSprite = globalScene.add.sprite(0, 0, "prompt");
       promptSprite.setVisible(false);
       promptSprite.setOrigin(0, 0);
       this.prompt = promptSprite;
@@ -34,24 +34,24 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  showText(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  showDialogue(text: string, name?: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  private showTextInternal(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  private showTextInternal(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     if (delay === null || delay === undefined) {
       delay = 20;
     }
 
     // Pattern matching regex that checks for @c{}, @f{}, @s{}, and @f{} patterns within message text and parses them to their respective behaviors.
-    const charVarMap = new Map<integer, string>();
-    const delayMap = new Map<integer, integer>();
-    const soundMap = new Map<integer, string>();
-    const fadeMap = new Map<integer, integer>();
+    const charVarMap = new Map<number, string>();
+    const delayMap = new Map<number, number>();
+    const soundMap = new Map<number, string>();
+    const fadeMap = new Map<number, number>();
     const actionPattern = /@(c|d|s|f)\{(.*?)\}/;
     let actionMatch: RegExpExecArray | null;
     while ((actionMatch = actionPattern.exec(text))) {
@@ -108,7 +108,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       callback = () => {
         const showPrompt = () => this.showPrompt(originalCallback, callbackDelay);
         if (promptDelay) {
-          this.scene.time.delayedCall(promptDelay, showPrompt);
+          globalScene.time.delayedCall(promptDelay, showPrompt);
         } else {
           showPrompt();
         }
@@ -119,7 +119,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       if (prompt) {
         this.pendingPrompt = true;
       }
-      this.textTimer = this.scene.time.addEvent({
+      this.textTimer = globalScene.time.addEvent({
         delay: delay,
         callback: () => {
           const charIndex = text.length - (this.textTimer?.repeatCount!); // TODO: is this bang correct?
@@ -130,14 +130,14 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           this.message.setText(text.slice(0, charIndex));
           const advance = () => {
             if (charVar) {
-              this.scene.charSprite.setVariant(charVar);
+              globalScene.charSprite.setVariant(charVar);
             }
             if (charSound) {
-              this.scene.playSound(charSound);
+              globalScene.playSound(charSound);
             }
             if (callback && !this.textTimer?.repeatCount) {
               if (callbackDelay && !prompt) {
-                this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {
+                this.textCallbackTimer = globalScene.time.delayedCall(callbackDelay, () => {
                   if (this.textCallbackTimer) {
                     this.textCallbackTimer.destroy();
                     this.textCallbackTimer = null;
@@ -151,7 +151,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           };
           if (charDelay) {
             this.textTimer!.paused = true; // TODO: is the bang correct?
-            this.scene.tweens.addCounter({
+            globalScene.tweens.addCounter({
               duration: Utils.getFrameMs(charDelay),
               onComplete: () => {
                 this.textTimer!.paused = false; // TODO: is the bang correct?
@@ -160,11 +160,11 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
             });
           } else if (charFade) {
             this.textTimer!.paused = true;
-            this.scene.time.delayedCall(150, () => {
-              this.scene.ui.fadeOut(750).then(() => {
+            globalScene.time.delayedCall(150, () => {
+              globalScene.ui.fadeOut(750).then(() => {
                 const delay = Utils.getFrameMs(charFade);
-                this.scene.time.delayedCall(delay, () => {
-                  this.scene.ui.fadeIn(500).then(() => {
+                globalScene.time.delayedCall(delay, () => {
+                  globalScene.ui.fadeIn(500).then(() => {
                     this.textTimer!.paused = false;
                     advance();
                   });
@@ -188,11 +188,11 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showPrompt(callback?: Function | null, callbackDelay?: integer | null) {
+  showPrompt(callback?: Function | null, callbackDelay?: number | null) {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
-    const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: "96px emerald" });
+    const lastLineTest = globalScene.add.text(0, 0, lastTextLine, { font: "96px emerald" });
     lastLineTest.setScale(this.message.scale);
     const lastLineWidth = lastLineTest.displayWidth;
     lastLineTest.destroy();
@@ -209,7 +209,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       }
       if (callback) {
         if (callbackDelay) {
-          this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {
+          this.textCallbackTimer = globalScene.time.delayedCall(callbackDelay, () => {
             if (this.textCallbackTimer) {
               this.textCallbackTimer.destroy();
               this.textCallbackTimer = null;

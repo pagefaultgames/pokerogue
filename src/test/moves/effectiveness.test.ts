@@ -25,7 +25,7 @@ function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Sp
   game.scene.field.add(target);
 
   if (teraType !== undefined) {
-    overrideHeldItems(game.scene, target, false);
+    overrideHeldItems(target, false);
   }
 
   expect(target.getMoveEffectiveness(user, allMoves[move])).toBe(expected);
@@ -73,6 +73,10 @@ describe("Moves - Type Effectiveness", () => {
 
   it("Electric-type attacks are super-effective against Water-type Pokemon",
     () => testMoveEffectiveness(game, Moves.THUNDERBOLT, Species.BLASTOISE, 2)
+  );
+
+  it("Ghost-type attacks have no effect on Normal-type Pokemon",
+    () => testMoveEffectiveness(game, Moves.SHADOW_BALL, Species.URSALUNA, 0)
   );
 
   it("Electric-type attacks are doubly super-effective against Water/Flying-type Pokemon",

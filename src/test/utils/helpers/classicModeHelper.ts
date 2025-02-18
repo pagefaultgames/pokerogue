@@ -1,5 +1,5 @@
 import { BattleStyle } from "#app/enums/battle-style";
-import { Species } from "#app/enums/species";
+import type { Species } from "#app/enums/species";
 import { GameModes, getGameMode } from "#app/game-mode";
 import overrides from "#app/overrides";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -30,8 +30,8 @@ export class ClassicModeHelper extends GameManagerHelper {
     this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(this.game.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.game.scene);
-      this.game.scene.pushPhase(new EncounterPhase(this.game.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      this.game.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 

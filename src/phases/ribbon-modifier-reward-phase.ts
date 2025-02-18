@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
-import PokemonSpecies from "#app/data/pokemon-species";
-import { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import { globalScene } from "#app/global-scene";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
@@ -8,8 +8,8 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 export class RibbonModifierRewardPhase extends ModifierRewardPhase {
   private species: PokemonSpecies;
 
-  constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc, species: PokemonSpecies) {
-    super(scene, modifierTypeFunc);
+  constructor(modifierTypeFunc: ModifierTypeFunc, species: PokemonSpecies) {
+    super(modifierTypeFunc);
 
     this.species = species;
   }
@@ -17,12 +17,12 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
-      this.scene.addModifier(newModifier).then(() => {
-        this.scene.playSound("level_up_fanfare");
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText(i18next.t("battle:beatModeFirstTime", {
+      globalScene.addModifier(newModifier).then(() => {
+        globalScene.playSound("level_up_fanfare");
+        globalScene.ui.setMode(Mode.MESSAGE);
+        globalScene.ui.showText(i18next.t("battle:beatModeFirstTime", {
           speciesName: this.species.name,
-          gameMode: this.scene.gameMode.getName(),
+          gameMode: globalScene.gameMode.getName(),
           newModifier: newModifier?.type.name
         }), null, () => {
           resolve();

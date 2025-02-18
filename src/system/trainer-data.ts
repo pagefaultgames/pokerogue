@@ -1,11 +1,10 @@
-import BattleScene from "../battle-scene";
-import { TrainerType } from "#enums/trainer-type";
+import type { TrainerType } from "#enums/trainer-type";
 import Trainer, { TrainerVariant } from "../field/trainer";
 
 export default class TrainerData {
   public trainerType: TrainerType;
   public variant: TrainerVariant;
-  public partyTemplateIndex: integer;
+  public partyTemplateIndex: number;
   public name: string;
   public partnerName: string;
 
@@ -18,7 +17,7 @@ export default class TrainerData {
     this.partnerName = source.partnerName;
   }
 
-  toTrainer(scene: BattleScene): Trainer {
-    return new Trainer(scene, this.trainerType, this.variant, this.partyTemplateIndex, this.name, this.partnerName);
+  toTrainer(): Trainer {
+    return new Trainer(this.trainerType, this.variant, this.partyTemplateIndex, this.name, this.partnerName);
   }
 }
