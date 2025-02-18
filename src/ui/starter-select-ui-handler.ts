@@ -70,6 +70,7 @@ export interface Starter {
   moveset?: StarterMoveset;
   pokerus: boolean;
   nickname?: string;
+  teraType?: Type;
 }
 
 interface LanguageSetting {
@@ -3220,7 +3221,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.dexAttrCursor |= globalScene.gameData.getFormAttr(formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex)); // TODO: is this bang correct?
       this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
       this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-      this.teraCursor = teraType !== undefined ? teraType : (teraType = species.type1);
+      this.teraCursor = !Utils.isNullOrUndefined(teraType) ? teraType : (teraType = species.type1);
       const [ isInParty, partyIndex ]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
       if (isInParty) {
         this.updatePartyIcon(species, partyIndex);
@@ -3751,7 +3752,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 abilityIndex: thisObj.starterAbilityIndexes[i],
                 passive: !(globalScene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
                 nature: thisObj.starterNatures[i] as Nature,
-                tera: thisObj.starterTeras[i] as Type,
+                teraType: thisObj.starterTeras[i] as Type,
                 moveset: thisObj.starterMovesets[i],
                 pokerus: thisObj.pokerusSpecies.includes(starterSpecies),
                 nickname: thisObj.starterPreferences[starterSpecies.speciesId]?.nickname,
