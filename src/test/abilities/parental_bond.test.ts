@@ -488,7 +488,6 @@ describe("Abilities - Parental Bond", () => {
     game.doSwitchPokemon(2);
     await game.toNextTurn();
 
-    // TODO: Update hit count to 1 once Future Sight is fixed to not activate abilities if user is off the field
-    expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
+    expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(1);
   });
 });

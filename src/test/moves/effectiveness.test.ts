@@ -18,6 +18,8 @@ function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Sp
 
   const user = game.scene.addPlayerPokemon(getPokemonSpecies(Species.SNORLAX), 5);
   const target = game.scene.addEnemyPokemon(getPokemonSpecies(targetSpecies), 5, TrainerSlot.NONE);
+  game.scene.field.add(user);
+  game.scene.field.add(target);
 
   if (teraType !== undefined) {
     target.teraType = teraType;
