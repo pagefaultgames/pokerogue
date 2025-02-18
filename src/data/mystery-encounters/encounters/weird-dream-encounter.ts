@@ -12,7 +12,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
-import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
+import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -452,7 +452,7 @@ async function postProcessTransformedPokemon(previousPokemon: PlayerPokemon, new
   if (newPokemon.species.abilityHidden) {
     const hiddenIndex = newPokemon.species.ability2 ? 2 : 1;
     if (newPokemon.abilityIndex < hiddenIndex) {
-      const hiddenAbilityChance = new IntegerHolder(256);
+      const hiddenAbilityChance = new NumberHolder(256);
       globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
       const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
