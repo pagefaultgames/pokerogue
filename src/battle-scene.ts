@@ -1523,6 +1523,25 @@ export default class BattleScene extends SceneBase {
         }
     }
 
+    if (species.speciesId === Species.ROTOM // Set Rotom form for Trainers to match specialty type
+      && this.currentBattle.battleType === BattleType.TRAINER && !isNullOrUndefined(this.currentBattle.trainer)
+      && [ Type.FLYING, Type.GHOST, Type.FIRE, Type.GRASS, Type.WATER, Type.ICE ].includes(this.currentBattle.trainer.config.specialtyType)) {
+      switch (this.currentBattle.trainer.config.specialtyType) {
+        case Type.FLYING:
+          return 4; // Fan Rotom
+        case Type.GHOST:
+          return 0; // Light bulb Rotom
+        case Type.FIRE:
+          return 1; // Heat Rotom
+        case Type.GRASS:
+          return 5; // Mow Rotom
+        case Type.WATER:
+          return 2; // Wash Rotom
+        case Type.ICE:
+          return 3; // Frost Rotom
+      }
+    }
+
     if (ignoreArena) {
       switch (species.speciesId) {
         case Species.BURMY:

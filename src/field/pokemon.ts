@@ -2348,10 +2348,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       weightMultiplier += 0.4;
     }
     const baseWeights: [Moves, number][] = movePool.map(m => [ m[0], Math.ceil(Math.pow(m[1], weightMultiplier) * 100) ]);
+    const checkTera = this.teraType !== Type.UNKNOWN && !this.isOfType(this.teraType); // Whether the mon has an off-type Tera. If so, moves matching Tera type (and Tera Blast) are considered STAB
 
     // Trainers and bosses always force a stab move
     if (this.hasTrainer() || this.isBoss()) {
-      const stabMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS && this.isOfType(allMoves[m[0]].type));
+      const stabMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS && (this.isOfType(allMoves[m[0]].type) || (checkTera && (m[0] === Moves.TERA_BLAST || this.teraType === allMoves[m[0]].type))));
 
       if (stabMovePool.length) {
         const totalWeight = stabMovePool.reduce((v, m) => v + m[1], 0);
@@ -2385,7 +2386,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type)) {
             ret = Math.ceil(Math.sqrt(m[1]));
           } else if (allMoves[m[0]].category !== MoveCategory.STATUS) {
-            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1));
+            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) || (checkTera && (m[0] === Moves.TERA_BLAST || this.teraType === allMoves[m[0]].type)) ? 2 : 1));
           } else {
             ret = m[1];
           }
