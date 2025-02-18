@@ -4898,7 +4898,7 @@ async function applySingleAbAttrs<TAttr extends AbAttr>(
 
   for (const attr of ability.getAttrs(attrType)) {
     const condition = attr.getCondition();
-    if ((condition && !condition(pokemon))) {
+    if (condition && !condition(pokemon)) {
       continue;
     }
 
