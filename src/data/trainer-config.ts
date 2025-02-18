@@ -597,9 +597,9 @@ export class TrainerConfig {
   }
 
   /**
-   * Sets random pokemon from the trainers team to instant tera. Uses their specialty types is they have one.
-   * @param minWave The minimum wave to start using tera
+   * Sets random pokemon from the trainers team to instant tera. Uses their specialty type if they have one.
    * @param firstSlot Whether to guarantee first signature species slot (last party slot) is tera
+   * @param minWave The minimum wave to start using tera
    * @returns this
    */
   setRandomTeraModifiers(firstSlot: boolean = false, minWave: number = 0): TrainerConfig {
@@ -817,28 +817,16 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
-   * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
-   * @param {Type} specialtyType The specialty types for the Stat Trainer.
-   * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
+   * @param isMale Whether the stat trainer is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    **/
-  initForStatTrainer(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN): TrainerConfig {
+  initForStatTrainer(isMale: boolean = false): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
 
     this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
 
-    signatureSpecies.forEach((speciesPool, s) => {
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [ speciesPool ];
-      }
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
-    });
-    if (specialtyType > Type.UNKNOWN) {
-      this.setSpeciesFilter(p => p.isOfType(specialtyType));
-      this.setSpecialtyType(specialtyType);
-    }
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
     this.name = i18next.t(`trainerNames:${nameForCall}`);
     this.setMoneyMultiplier(2);
@@ -894,7 +882,7 @@ export class TrainerConfig {
   /**
      * Initializes the trainer configuration for a Gym Leader.
      * @param {Species | Species[]} signatureSpecies The signature species for the Gym Leader.
-     * @param {Type} specialtyType The specialty types for the Gym Leader.
+     * @param {Type} specialtyType The specialty type for the Gym Leader.
      * @param isMale Whether the Gym Leader is Male or Not (for localization of the title).
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
@@ -917,7 +905,7 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // If specialty types are provided, set species filter and specialty types.
+    // If specialty type is provided, set species filter and specialty type.
     if (specialtyType > Type.UNKNOWN) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
       this.setSpecialtyType(specialtyType);
@@ -971,7 +959,7 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
 
-    // Set species filter and specialty types if provided, otherwise filter by base total.
+    // Set species filter and specialty type if provided, otherwise filter by base total.
     if (specialtyType > Type.UNKNOWN) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
       this.setSpecialtyType(specialtyType);
@@ -2782,7 +2770,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.MASTER_BALL;
     }))
     .setInstantTera(0),
-  [TrainerType.BUCK]: new TrainerConfig(++t).setName("Buck").initForStatTrainer([], true)
+  [TrainerType.BUCK]: new TrainerConfig(++t).setName("Buck").initForStatTrainer(true)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.CLAYDOL ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
       p.generateAndPopulateMoveset();
@@ -2814,7 +2802,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     })),
-  [TrainerType.CHERYL]: new TrainerConfig(++t).setName("Cheryl").initForStatTrainer([], false)
+  [TrainerType.CHERYL]: new TrainerConfig(++t).setName("Cheryl").initForStatTrainer()
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BLISSEY ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
       p.generateAndPopulateMoveset();
@@ -2842,7 +2830,7 @@ export const trainerConfigs: TrainerConfigs = {
       }
       p.pokeball = PokeballType.MASTER_BALL;
     })),
-  [TrainerType.MARLEY]: new TrainerConfig(++t).setName("Marley").initForStatTrainer([], false)
+  [TrainerType.MARLEY]: new TrainerConfig(++t).setName("Marley").initForStatTrainer()
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ARCANINE ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
       p.generateAndPopulateMoveset();
@@ -2866,7 +2854,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     })),
-  [TrainerType.MIRA]: new TrainerConfig(++t).setName("Mira").initForStatTrainer([], false)
+  [TrainerType.MIRA]: new TrainerConfig(++t).setName("Mira").initForStatTrainer()
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ALAKAZAM ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
@@ -2888,7 +2876,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     })),
-  [TrainerType.RILEY]: new TrainerConfig(++t).setName("Riley").initForStatTrainer([], true)
+  [TrainerType.RILEY]: new TrainerConfig(++t).setName("Riley").initForStatTrainer(true)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LUCARIO ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
       p.generateAndPopulateMoveset();
