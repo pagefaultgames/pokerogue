@@ -20,9 +20,7 @@ export class TeraPhase extends BattlePhase {
   start() {
     super.start();
 
-    console.log(this.pokemon.name, "terastallized to", Type[this.pokemon.teraType].toString());
-
-    globalScene.queueMessage(i18next.t("battle:pokemonTerastallized", { pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon), type: i18next.t(`pokemonInfo:Type.${Type[this.pokemon.teraType]}`) }));
+    globalScene.queueMessage(i18next.t("battle:pokemonTerastallized", { pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon), type: i18next.t(`pokemonInfo:Type.${Type[this.pokemon.getTeraType()]}`) }));
     new CommonBattleAnim(CommonAnim.TERASTALLIZE, this.pokemon).play(false, () => {
       this.end();
     });
@@ -41,7 +39,7 @@ export class TeraPhase extends BattlePhase {
 
     if (this.pokemon.isPlayer()) {
       globalScene.validateAchv(achvs.TERASTALLIZE);
-      if (this.pokemon.teraType === Type.STELLAR) {
+      if (this.pokemon.getTeraType() === Type.STELLAR) {
         globalScene.validateAchv(achvs.STELLAR_TERASTALLIZE);
       }
     }
