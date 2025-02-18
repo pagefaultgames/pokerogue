@@ -3717,7 +3717,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
 
     const userField = this.getAlliedField();
-    userField.forEach(pokemon => applyPreSetStatusAbAttrs(UserFieldStatusEffectImmunityAbAttr, pokemon, effect, cancelled, quiet));
+    userField.forEach(pokemon => applyPreSetStatusAbAttrs(UserFieldStatusEffectImmunityAbAttr, pokemon, effect, cancelled, quiet, this, sourcePokemon));
 
     if (cancelled.value) {
       return false;
