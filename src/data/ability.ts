@@ -4868,52 +4868,69 @@ async function applyAbAttrsInternal<TAttr extends AbAttr>(
   showAbilityInstant: boolean = false,
   simulated: boolean = false,
   messages: string[] = [],
-  gainedMidTurn: boolean = false /** Ignore passives and abilities with {@linkcode NoOnGainActivationAttr} */
+  gainedMidTurn: boolean = false
 ) {
   for (const passive of [ false, true ]) {
-    if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id || gainedMidTurn))
-        || (gainedMidTurn && pokemon.getAbility().getAttrs(PostSummonAbAttr).some(a => !a.shouldActivateOnGain()))) {
+    if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
       continue;
     }
 
-    const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
-    for (const attr of ability.getAttrs(attrType)) {
-      const condition = attr.getCondition();
-      if (condition && !condition(pokemon)) {
-        continue;
-      }
-
-      globalScene.setPhaseQueueSplice();
-
-      let result = applyFunc(attr, passive);
-      // TODO Remove this when promises get reworked
-      if (result instanceof Promise) {
-        result = await result;
-      }
-      if (result) {
-        if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
-          pokemon.summonData.abilitiesApplied.push(ability.id);
-        }
-        if (pokemon.battleData && !simulated && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
-          pokemon.battleData.abilitiesApplied.push(ability.id);
-        }
-        if (attr.showAbility && !simulated) {
-          if (showAbilityInstant) {
-            globalScene.abilityBar.showAbility(pokemon, passive);
-          } else {
-            queueShowAbility(pokemon, passive);
-          }
-        }
-        const message = attr.getTriggerMessage(pokemon, ability.name, args);
-        if (message) {
-          if (!simulated) {
-            globalScene.queueMessage(message);
-          }
-        }
-        messages.push(message!);
-      }
-    }
+    applySingleAbAttrs(pokemon, passive, attrType, applyFunc, args, gainedMidTurn, simulated, showAbilityInstant, messages);
     globalScene.clearPhaseQueueSplice();
+  }
+}
+
+async function applySingleAbAttrs<TAttr extends AbAttr>(
+  pokemon: Pokemon,
+  passive: boolean,
+  attrType: Constructor<TAttr>,
+  applyFunc: AbAttrApplyFunc<TAttr>,
+  args: any[],
+  gainedMidTurn: boolean = false,
+  simulated: boolean = false,
+  showAbilityInstant: boolean = false,
+  messages: string[] = []
+) {
+  const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
+  if (gainedMidTurn && ability.getAttrs(attrType).some(attr => attr instanceof PostSummonAbAttr && !attr.shouldActivateOnGain())) {
+    return;
+  }
+
+  for (const attr of ability.getAttrs(attrType)) {
+    const condition = attr.getCondition();
+    if ((condition && !condition(pokemon))) {
+      continue;
+    }
+
+    globalScene.setPhaseQueueSplice();
+
+    let result = applyFunc(attr, passive);
+    // TODO Remove this when promises get reworked
+    if (result instanceof Promise) {
+      result = await result;
+    }
+    if (result) {
+      if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
+        pokemon.summonData.abilitiesApplied.push(ability.id);
+      }
+      if (pokemon.battleData && !simulated && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
+        pokemon.battleData.abilitiesApplied.push(ability.id);
+      }
+      if (attr.showAbility && !simulated) {
+        if (showAbilityInstant) {
+          globalScene.abilityBar.showAbility(pokemon, passive);
+        } else {
+          queueShowAbility(pokemon, passive);
+        }
+      }
+      const message = attr.getTriggerMessage(pokemon, ability.name, args);
+      if (message) {
+        if (!simulated) {
+          globalScene.queueMessage(message);
+        }
+      }
+      messages.push(message!);
+    }
   }
 }
 
@@ -5308,15 +5325,15 @@ export function applyPostItemLostAbAttrs(attrType: Constructor<PostItemLostAbAtt
  *
  * Ignores passives as they don't change and shouldn't be reapplied when main abilities change
  */
-export function applyOnGainAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostSummonAbAttr>(PostSummonAbAttr, pokemon, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args), args, false, simulated, [], true);
+export function applyOnGainAbAttrs(pokemon: Pokemon, passive: boolean = false, simulated: boolean = false, ...args: any[]): void {
+  applySingleAbAttrs<PostSummonAbAttr>(pokemon, passive, PostSummonAbAttr, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args), args, true, simulated);
 }
 
 /**
  * Clears primal weather during the turn if {@linkcode pokemon}'s ability corresponds to one
  */
-export function applyOnGainClearWeatherAbAttrs(pokemon: Pokemon, simulated: boolean = false, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreLeaveFieldClearWeatherAbAttr>(PreLeaveFieldClearWeatherAbAttr, pokemon, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated, [], true);
+export function applyOnLoseClearWeatherAbAttrs(pokemon: Pokemon, passive: boolean = false, simulated: boolean = false, ...args: any[]): void {
+  applySingleAbAttrs<PreLeaveFieldClearWeatherAbAttr>(pokemon, passive, PreLeaveFieldClearWeatherAbAttr, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated);
 }
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
