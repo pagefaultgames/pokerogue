@@ -41,3 +41,7 @@ coverage
 
 /dependency-graph.svg
 /.vs
+
+
+# Script outputs
+./*.csv
