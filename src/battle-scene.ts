@@ -1523,7 +1523,8 @@ export default class BattleScene extends SceneBase {
         }
     }
 
-    if (species.speciesId === Species.ROTOM // Set Rotom form for Trainers to match specialty type
+    if ( // For Rotom in Trainer battles, set form to match specialty type if applicable
+      species.speciesId === Species.ROTOM
       && this.currentBattle.battleType === BattleType.TRAINER && !isNullOrUndefined(this.currentBattle.trainer)
       && [ Type.FLYING, Type.GHOST, Type.FIRE, Type.GRASS, Type.WATER, Type.ICE ].includes(this.currentBattle.trainer.config.specialtyType)) {
       switch (this.currentBattle.trainer.config.specialtyType) {
