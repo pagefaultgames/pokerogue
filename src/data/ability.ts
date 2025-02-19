@@ -2045,6 +2045,31 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
+  private tagType: ArenaTagType;
+  private turnCount: number;
+  private sourceId: number;
+  private side: ArenaTagSide | undefined;
+  private quiet: boolean | undefined;
+
+
+  constructor(tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
+    super(false);
+    this.tagType = tagType;
+    this.turnCount = turnCount;
+    this.side = side;
+    this.quiet = quiet;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    this.sourceId = pokemon.id;
+    if (!simulated) {
+      globalScene.arena.addTag(this.tagType, this.turnCount, undefined, this.sourceId, this.side, this.quiet);
+    }
+    return true;
+  }
+}
+
 export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   private messageFunc: (pokemon: Pokemon) => string;
 
