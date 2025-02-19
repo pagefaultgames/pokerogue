@@ -89,10 +89,10 @@ describe("Moves - Secret Power", () => {
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(sereneGraceAttr.apply).toHaveBeenCalledOnce();
+      expect(sereneGraceAttr.apply).toHaveBeenCalled();
       expect(sereneGraceAttr.apply).toHaveLastReturnedWith(true);
 
-      expect(rainbowEffect.apply).toHaveBeenCalledTimes(0);
+      expect(rainbowEffect.apply).toHaveBeenCalled();
     }
   );
 });

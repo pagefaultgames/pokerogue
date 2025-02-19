@@ -95,4 +95,5 @@ export enum BattlerTagType {
   ENDURE_TOKEN = "ENDURE_TOKEN",
   POWDER = "POWDER",
   MAGIC_COAT = "MAGIC_COAT",
+  SPLASH = "SPLASH"
 }
