@@ -165,7 +165,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private pokemonFormText: Phaser.GameObjects.Text;
   private pokemonHatchedIcon : Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
-  private pokemonShinyIcon: Phaser.GameObjects.Sprite;
+  private pokemonShinyIcons: Phaser.GameObjects.Sprite[];
 
   private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
   private instructionsContainer: Phaser.GameObjects.Container;
@@ -246,6 +246,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private menuOptions: MenuOptions[];
   protected scale: number = 0.1666666667;
   private menuDescriptions: string[];
+
+  private availableVariants: number;
+  unlockedVariants: boolean[];
 
   constructor() {
     super(Mode.POKEDEX_PAGE);
@@ -383,10 +386,16 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonHatchedIcon.setScale(0.8);
     this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedIcon);
 
-    this.pokemonShinyIcon = globalScene.add.sprite(14, 117, "shiny_icons");
-    this.pokemonShinyIcon.setOrigin(0.15, 0.2);
-    this.pokemonShinyIcon.setScale(1);
-    this.pokemonCaughtHatchedContainer.add(this.pokemonShinyIcon);
+    this.pokemonShinyIcons = [];
+    for (let i = 0; i < 3; i++) {
+      const pokemonShinyIcon = globalScene.add.sprite(153 + i * 13, 160, "shiny_icons");
+      pokemonShinyIcon.setOrigin(0.15, 0.2);
+      pokemonShinyIcon.setScale(1);
+      pokemonShinyIcon.setFrame(getVariantIcon(i as Variant));
+      pokemonShinyIcon.setVisible(false);
+      this.pokemonCaughtHatchedContainer.add(pokemonShinyIcon);
+      this.pokemonShinyIcons.push(pokemonShinyIcon);
+    }
 
     this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.SUMMARY_ALT);
     this.pokemonHatchedCountText.setOrigin(0, 0);
@@ -678,6 +687,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         )
       );
     }
+
+    this.availableVariants = species.getFullUnlocksData() & DexAttr.VARIANT_3 ? 3 : 1;
   }
 
   // Function to ensure that forms appear in the appropriate biome and tod
@@ -801,17 +812,17 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       starterAttributes.variant = 0;
     }
 
-    const unlockedVariants = [
-      hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT,
-      hasShiny && caughtAttr & DexAttr.VARIANT_2,
-      hasShiny && caughtAttr & DexAttr.VARIANT_3
+    this.unlockedVariants = [
+      !!(hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT),
+      !!(hasShiny && caughtAttr & DexAttr.VARIANT_2),
+      !!(hasShiny && caughtAttr & DexAttr.VARIANT_3)
     ];
     if (starterAttributes.variant === undefined || isNaN(starterAttributes.variant) || starterAttributes.variant < 0) {
       starterAttributes.variant = 0;
-    } else if (!unlockedVariants[starterAttributes.variant]) {
+    } else if (!this.unlockedVariants[starterAttributes.variant]) {
       let highestValidIndex = -1;
-      for (let i = 0; i <= starterAttributes.variant && i < unlockedVariants.length; i++) {
-        if (unlockedVariants[i] !== 0n) {
+      for (let i = 0; i <= starterAttributes.variant && i < this.unlockedVariants.length; i++) {
+        if (this.unlockedVariants[i]) {
           highestValidIndex = i;
         }
       }
@@ -1526,11 +1537,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.setSpeciesDetails(this.species, { shiny: true, variant: newVariant });
 
                 globalScene.playSound("se/sparkle");
-                // Set the variant label to the shiny tint
-                const tint = getVariantTint(newVariant);
-                this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant));
-                this.pokemonShinyIcon.setTint(tint);
-                this.pokemonShinyIcon.setVisible(true);
 
                 starterAttributes.shiny = true;
                 this.savedStarterAttributes.shiny = starterAttributes.shiny;
@@ -1557,14 +1563,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 this.savedStarterAttributes.variant = starterAttributes.variant;
                 if (newVariant > props.variant) {
                   this.setSpeciesDetails(this.species, { variant: newVariant as Variant });
-                  // Cycle tint based on current sprite tint
-                  const tint = getVariantTint(newVariant as Variant);
-                  this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
-                  this.pokemonShinyIcon.setTint(tint);
                   success = true;
                 } else {
                   this.setSpeciesDetails(this.species, { shiny: false, variant: 0 });
-                  this.pokemonShinyIcon.setVisible(false);
                   success = true;
 
                   starterAttributes.shiny = false;
@@ -2001,7 +2002,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.type2Icon.setVisible(true);
         this.pokemonLuckLabelText.setVisible(false);
         this.pokemonLuckText.setVisible(false);
-        this.pokemonShinyIcon.setVisible(false);
+        for (const icon of this.pokemonShinyIcons) {
+          icon.setVisible(false);
+        }
         this.pokemonUncaughtText.setVisible(true);
         this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonCandyContainer.setVisible(false);
@@ -2027,7 +2030,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.type2Icon.setVisible(false);
       this.pokemonLuckLabelText.setVisible(false);
       this.pokemonLuckText.setVisible(false);
-      this.pokemonShinyIcon.setVisible(false);
+      for (const icon of this.pokemonShinyIcons) {
+        icon.setVisible(false);
+      }
       this.pokemonUncaughtText.setVisible(!!species);
       this.pokemonCaughtHatchedContainer.setVisible(false);
       this.pokemonCandyContainer.setVisible(false);
@@ -2228,13 +2233,26 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        const variant = defaultProps.variant;
-        const tint = getVariantTint(variant);
-        this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
-        this.pokemonShinyIcon.setTint(tint);
-        this.pokemonShinyIcon.setVisible(defaultProps.shiny);
-        this.pokemonCaughtHatchedContainer.setVisible(true);
 
+        const variant = defaultProps.variant;
+        for (let v = 0; v < 3; v++) {
+          const icon = this.pokemonShinyIcons[v];
+          if (v < this.availableVariants) {
+            if (!this.unlockedVariants[v]) {
+              icon.setTint(0x000000);
+            } else if (shiny && v === variant) {
+              const tint = getVariantTint(v as Variant);
+              icon.setTint(tint);
+            } else {
+              icon.setTint(0x808080);
+            }
+            icon.setVisible(true);
+          } else {
+            icon.setVisible(false);
+          }
+        }
+
+        this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonCaughtHatchedContainer.setY(25);
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
@@ -2242,7 +2260,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCandyContainer.setVisible(true);
 
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
-          this.pokemonShinyIcon.setFrame(getVariantIcon(variant));
           this.pokemonHatchedIcon.setVisible(false);
           this.pokemonHatchedCountText.setVisible(false);
           this.pokemonFormText.setY(36);
@@ -2269,7 +2286,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonUncaughtText.setVisible(true);
         this.pokemonCaughtHatchedContainer.setVisible(false);
         this.pokemonCandyContainer.setVisible(false);
-        this.pokemonShinyIcon.setVisible(false);
+        for (const icon of this.pokemonShinyIcons) {
+          icon.setVisible(false);
+        }
       }
 
       // Setting type icons and form text
