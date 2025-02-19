@@ -170,7 +170,7 @@ input:-internal-autofill-selected {
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleNature,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX_PAGE'], [data-ui-mode='RUN_INFO']) #apadCycleAbility,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX_PAGE']) #apadCycleGender,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX']) #apadCycleVariant {
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX']) #apadCycleTera {
  display: none;
 }
 
