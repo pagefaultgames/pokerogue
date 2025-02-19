@@ -16,7 +16,7 @@ import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
+import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { Type } from "#enums/type";
@@ -246,6 +246,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private menuOptions: MenuOptions[];
   protected scale: number = 0.1666666667;
   private menuDescriptions: string[];
+  filteredIndices: Species[] | null = null;
 
   constructor() {
     super(Mode.POKEDEX_PAGE);
@@ -557,6 +558,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.species = args[0];
       this.formIndex = args[1] ?? 0;
       this.savedStarterAttributes = args[2] ?? { shiny:false, female:true, variant:0, form:0 };
+      this.filteredIndices = args[3] ?? null;
       this.starterSetup();
     }
 
@@ -1432,7 +1434,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                             this.savedStarterAttributes.form = newFormIndex;
                             this.moveInfoOverlay.clear();
                             this.clearText();
-                            ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
+                            ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes, this.filteredIndices);
                             return true;
                           },
                           onHover: () => this.showText(conditionText)
@@ -1747,31 +1749,45 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           case Button.LEFT:
             this.blockInput = true;
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
-              const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
-              const newIndex = index <= 0 ? allSpecies.length - 1 : index - 1;
-              const newSpecies = allSpecies[newIndex];
+              let newSpecies: PokemonSpecies;
+              if (this.filteredIndices) {
+                const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
+                const newIndex = index <= 0 ? this.filteredIndices.length - 1 : index - 1;
+                newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
+              } else {
+                const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
+                const newIndex = index <= 0 ? allSpecies.length - 1 : index - 1;
+                newSpecies = allSpecies[newIndex];
+              }
               const matchingForm = newSpecies?.forms.find(form => form.formKey === this.species?.forms[this.formIndex]?.formKey);
               const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
               this.starterAttributes.form = newFormIndex;
               this.savedStarterAttributes.form = newFormIndex;
               this.moveInfoOverlay.clear();
               this.clearText();
-              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
+              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes, this.filteredIndices);
             });
             this.blockInput = false;
             break;
           case Button.RIGHT:
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
-              const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
-              const newIndex = index >= allSpecies.length - 1 ? 0 : index + 1;
-              const newSpecies = allSpecies[newIndex];
+              let newSpecies: PokemonSpecies;
+              if (this.filteredIndices) {
+                const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
+                const newIndex = index >= this.filteredIndices.length - 1 ? 0 : index + 1;
+                newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
+              } else {
+                const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
+                const newIndex = index >= allSpecies.length - 1 ? 0 : index + 1;
+                newSpecies = allSpecies[newIndex];
+              }
               const matchingForm = newSpecies?.forms.find(form => form.formKey === this.species?.forms[this.formIndex]?.formKey);
               const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
               this.starterAttributes.form = newFormIndex;
               this.savedStarterAttributes.form = newFormIndex;
               this.moveInfoOverlay.clear();
               this.clearText();
-              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
+              ui.setModeForceTransition(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes, this.filteredIndices);
             });
             break;
         }

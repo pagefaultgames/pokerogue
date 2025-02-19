@@ -215,6 +215,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private showFormTrayIconElement: Phaser.GameObjects.Sprite;
   private showFormTrayLabel: Phaser.GameObjects.Text;
   private canShowFormTray: boolean;
+  private filteredIndices: Species[];
 
   constructor() {
     super(Mode.POKEDEX);
@@ -1037,7 +1038,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else if (this.showingTray) {
       if (button === Button.ACTION) {
         const formIndex = this.trayForms[this.trayCursor].formIndex;
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, { form: formIndex });
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, { form: formIndex }, this.filteredIndices);
         success = true;
       } else {
         const numberOfForms = this.trayContainers.length;
@@ -1084,7 +1085,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
     } else {
       if (button === Button.ACTION) {
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, 0);
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, 0, null, this.filteredIndices);
         success = true;
       } else {
         switch (button) {
@@ -1553,6 +1554,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
       return 0;
     });
+
+    this.filteredIndices = this.filteredPokemonContainers.map(c => c.species.speciesId);
 
     this.updateScroll();
   };
