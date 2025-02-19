@@ -1,7 +1,7 @@
 import { initLoggedInUser } from "#app/account";
-import { SESSION_ID_COOKIE } from "#app/constants";
-import { initAbilities } from "#app/data/all-abilities";
-import { allMoves, initMoves } from "#app/data/all-moves";
+import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { initAbilities } from "#app/data/ability";
+import { allMoves, initMoves } from "#app/data/move";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
@@ -12,12 +12,12 @@ import { initAchievements } from "#app/system/achv";
 import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { setCookie } from "#app/utils";
-import { blobToString } from "#test/testUtils/gameManagerUtils";
-import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
-import { mockContext } from "#test/testUtils/mocks/mockContext";
-import { MockFetch } from "#test/testUtils/mocks/mockFetch";
-import { mockLocalStorage } from "#test/testUtils/mocks/mockLocalStorage";
-import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
+import { blobToString } from "#test/utils/gameManagerUtils";
+import { MockConsoleLog } from "#test/utils/mocks/mockConsoleLog";
+import { mockContext } from "#test/utils/mocks/mockContext";
+import { MockFetch } from "#test/utils/mocks/mockFetch";
+import mockLocalStorage from "#test/utils/mocks/mockLocalStorage";
+import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
 import Phaser from "phaser";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { vi } from "vitest";
@@ -53,7 +53,7 @@ export function initTestFile() {
   };
   navigator.getGamepads = () => [];
   global.fetch = vi.fn(MockFetch) as any;
-  setCookie(SESSION_ID_COOKIE, "fake_token");
+  setCookie(SESSION_ID_COOKIE_NAME, "fake_token");
 
   window.matchMedia = () =>
     ({
