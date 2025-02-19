@@ -1,4 +1,6 @@
 import { allMoves } from "#app/data/move";
+import type { EnemyPersistentModifier } from "#app/modifier/modifier";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
@@ -62,6 +64,28 @@ describe("Battle Mechanics - Damage Calculation", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     // Lvl 1 0 Atk Magikarp Tackle vs. 0 HP / 0 Def Aggron: 1-1 (0.3 - 0.3%) -- possibly the worst move ever
+    expect(aggron.hp).toBe(aggron.getMaxHp() - 1);
+  });
+
+  it("Attacks deal 1 damage at minimum even with many tokens", async () => {
+    game.override
+      .startingLevel(1)
+      .enemySpecies(Species.AGGRON)
+      .enemyAbility(Abilities.STURDY)
+      .enemyLevel(10000);
+
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+
+    const dmg_redux_modifier = modifierTypes.ENEMY_DAMAGE_REDUCTION().newModifier() as EnemyPersistentModifier;
+    dmg_redux_modifier.stackCount = 1000;
+    await game.scene.addEnemyModifier(modifierTypes.ENEMY_DAMAGE_REDUCTION().newModifier() as EnemyPersistentModifier);
+
+    const aggron = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.TACKLE);
+
+    await game.phaseInterceptor.to("BerryPhase", false);
+
     expect(aggron.hp).toBe(aggron.getMaxHp() - 1);
   });
 
