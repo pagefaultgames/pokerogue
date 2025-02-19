@@ -8,7 +8,7 @@ import type Pokemon from "#app/field/pokemon";
 import { HitResult, PokemonMove } from "#app/field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import type { BattlerIndex } from "#app/battle";
-import { BlockNonDirectDamageAbAttr, InfiltratorAbAttr, PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, ProtectStatAbAttr, applyAbAttrs, applyOnGainAbAttrs } from "#app/data/ability";
+import { BlockNonDirectDamageAbAttr, InfiltratorAbAttr, PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, ProtectStatAbAttr, applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -1233,6 +1233,12 @@ export class SuppressAbilitiesTag extends ArenaTag {
     const pokemon = this.getSourcePokemon();
     if (pokemon) {
       globalScene.queueMessage(i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+
+      for (const fieldPokemon of globalScene.getField()) {
+        if (fieldPokemon && fieldPokemon.id !== pokemon.id) {
+          [ true, false ].forEach((v) => applyOnLoseAbAttrs(fieldPokemon, v));
+        }
+      }
     }
   }
 
