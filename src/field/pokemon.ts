@@ -3014,8 +3014,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
       const grudgeTag = this.getTag(BattlerTagType.GRUDGE);
 
-      const isOneHitKo = result === HitResult.ONE_HIT_KO;
-
       if (dmg) {
         this.lapseTags(BattlerTagLapseType.HIT);
 
@@ -3032,7 +3030,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, false, true, source);
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, false, true, source);
 
         if (damage > 0) {
           if (source.isPlayer()) {
@@ -3101,7 +3099,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     const surviveDamage = new Utils.BooleanHolder(false);
 
-    if (!preventEndure && this.hp - damage <= 0 && this.turnData?.damageSources?.at(0) !== HitResult.OTHER) {
+    if (!preventEndure && this.hp - damage <= 0) {
       if (this.hp >= 1 && this.getTag(BattlerTagType.ENDURING)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURING);
       } else if (this.hp > 1 && this.getTag(BattlerTagType.STURDY)) {
@@ -3128,7 +3126,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
        * Once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
        */
       globalScene.setPhaseQueueSplice();
-      globalScene.unshiftPhase(new FaintPhase(this.getBattlerIndex()));
+      globalScene.unshiftPhase(new FaintPhase(this.getBattlerIndex(), preventEndure));
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
       this.resetSummonData();
@@ -3146,19 +3144,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
    * @returns integer of damage done
    */
-  damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
-    // When damage is done from any source (Move or Indirect damage, e.g. weather), store latest occurrence in damageSources[0]
+  damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
+    let isIndirectDamage: boolean = true;
     if (result !== undefined) {
-      this.turnData?.damageSources?.unshift(result);
-    } else {
-      this.turnData?.damageSources?.unshift(HitResult.OTHER);
+      if (result === HitResult.OTHER) {
+        isIndirectDamage = true;
+      } else {
+        isIndirectDamage = false;
+      }
     }
     const damagePhase = new DamageAnimPhase(this.getBattlerIndex(), damage, result as DamageResult, critical);
     globalScene.unshiftPhase(damagePhase);
     if (this.switchOutStatus && source) {
       damage = 0;
     }
-    damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
+    damage = this.damage(damage, ignoreSegments, isIndirectDamage, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
     /**
@@ -5464,10 +5464,6 @@ export class PokemonTurnData {
    * forced to act again in the same turn
    */
   public extraTurns: number = 0;
-  /**
-   * Used to track damage sources from HitResult.OTHER
-   */
-  public damageSources: DamageResult[] = [];
 }
 
 export enum AiType {

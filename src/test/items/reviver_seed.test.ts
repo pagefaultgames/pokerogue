@@ -63,7 +63,6 @@ describe("Items - Reviver Seed", () => {
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(reviverSeed.apply).toHaveReturnedWith(true); // Reviver Seed triggers
     expect(player.isFainted()).toBeFalsy();
   });
 
@@ -84,7 +83,6 @@ describe("Items - Reviver Seed", () => {
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(reviverSeed.apply).toHaveReturnedWith(true); // Reviver Seed triggers
     expect(player.isFainted()).toBeFalsy();
   });
 
@@ -136,7 +134,6 @@ describe("Items - Reviver Seed", () => {
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerSeed.apply).toHaveReturnedWith(false); // Reviver Seed triggers
     expect(player.isFainted()).toBeTruthy();
   });
 

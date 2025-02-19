@@ -723,7 +723,7 @@ export class DestinyBondTag extends BattlerTag {
         pokemonNameWithAffix2: getPokemonNameWithAffix(pokemon)
       })
     );
-    pokemon.damageAndUpdate(pokemon.hp, HitResult.OTHER, false, false, true);
+    pokemon.damageAndUpdate(pokemon.hp, HitResult.OTHER, false, true);
     return false;
   }
 }
@@ -1613,7 +1613,7 @@ export class PerishSongTag extends BattlerTag {
         })
       );
     } else {
-      pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, true, true);
+      pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, true);
     }
 
     return ret;

@@ -4659,7 +4659,7 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
         (args[0] as Utils.NumberHolder).value = this.multiplier;
         pokemon.removeTag(this.tagType);
         if (this.recoilDamageFunc) {
-          pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.OTHER, false, false, true, true);
+          pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.OTHER, false, true, true);
         }
       }
       return true;
