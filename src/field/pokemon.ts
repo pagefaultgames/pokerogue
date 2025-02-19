@@ -1499,6 +1499,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Suppresses an ability and calls its onlose attributes
+   */
+  public suppressAbility() {
+    this.summonData.abilitySuppressed = true;
+    [ true, false ].forEach((v) => applyOnLoseAbAttrs(this, v));
+  }
+
+  /**
    * Checks if a pokemon has a passive either from:
    *  - bought with starter candy
    *  - set by override

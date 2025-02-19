@@ -125,7 +125,7 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined(); // No neut gas users are left
   });
 
-  it.todo("should deactivate when suppressed by gastro acid", async () => {
+  it("should deactivate when suppressed by gastro acid", async () => {
     game.override.enemyMoveset(Moves.GASTRO_ACID);
 
     await game.classicMode.startBattle([ Species.FEEBAS ]);
