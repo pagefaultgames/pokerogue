@@ -3848,4 +3848,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       icon.setFrame(species.getIconId(female, formIndex, false, variant));
     }
   }
+
+  /**
+   * Clears this UI's starter preferences.
+   *
+   * This is intended to only be used for unit tests that work with this UI.
+   */
+  clearStarterPreferences() {
+    this.starterPreferences = {};
+  }
 }

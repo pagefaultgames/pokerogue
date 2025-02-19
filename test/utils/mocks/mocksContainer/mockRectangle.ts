@@ -77,4 +77,7 @@ export default class MockRectangle implements MockGameObject {
   setScale(scale) {
     // return this.phaserText.setScale(scale);
   }
+
+  // Prevents a Phaser framework crash from `off` being undefined
+  off() {}
 }

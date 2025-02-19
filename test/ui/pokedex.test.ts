@@ -38,7 +38,7 @@ describe("UI - Pokedex", () => {
   });
 
   it("Bulbasaur - shiny - variant 2 male", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -98,7 +98,7 @@ describe("UI - Pokedex", () => {
   }, 20000);
 
   it("Bulbasaur - shiny - variant 2 female hardy overgrow", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -160,7 +160,7 @@ describe("UI - Pokedex", () => {
   }, 20000);
 
   it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -225,7 +225,7 @@ describe("UI - Pokedex", () => {
   }, 20000);
 
   it("Bulbasaur - shiny - variant 2 female", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -286,7 +286,7 @@ describe("UI - Pokedex", () => {
   }, 20000);
 
   it("Bulbasaur - not shiny", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -346,7 +346,7 @@ describe("UI - Pokedex", () => {
   }, 20000);
 
   it("Bulbasaur - shiny - variant 1", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -408,7 +408,7 @@ describe("UI - Pokedex", () => {
   }, 20000);
 
   it("Bulbasaur - shiny - variant 0", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -469,7 +469,7 @@ describe("UI - Pokedex", () => {
   }, 20000);
 
   it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -533,7 +533,7 @@ describe("UI - Pokedex", () => {
   }, 20000);
 
   it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async() => {
-    await game.importData("src/test/utils/saves/everything.prsv");
+    await game.importData("test/utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter((key) => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;

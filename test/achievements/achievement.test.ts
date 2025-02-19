@@ -4,7 +4,7 @@ import { NumberHolder } from "#app/utils";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 
 describe("check some Achievement related stuff", () => {
   it ("should check Achievement creation", () => {
@@ -68,6 +68,25 @@ describe("Achv", () => {
 });
 
 describe("MoneyAchv", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+  let scene: BattleScene;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    scene = game.scene;
+  });
+
   it("should create an instance of MoneyAchv", () => {
     const moneyAchv = new MoneyAchv("", "Test Money Achievement", 10000, "money_icon", 10);
     expect(moneyAchv).toBeInstanceOf(MoneyAchv);
@@ -76,7 +95,6 @@ describe("MoneyAchv", () => {
 
   it("should validate the achievement based on the money amount", () => {
     const moneyAchv = new MoneyAchv("", "Test Money Achievement", 10000, "money_icon", 10);
-    const scene = new BattleScene();
     scene.money = 5000;
 
     expect(moneyAchv.validate([])).toBe(false);

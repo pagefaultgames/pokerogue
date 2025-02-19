@@ -2376,6 +2376,20 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Clears all phase-related stuff, including all phase queues, the current and standby phases, and a splice index.
+   *
+   * Currently, this is a utility function only used by unit tests.
+   */
+  clearAllPhases(): void {
+    for (const queue of [ this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue ]) {
+      queue.splice(0, queue.length);
+    }
+    this.currentPhase = null;
+    this.standbyPhase = null;
+    this.clearPhaseQueueSplice();
+  }
+
+  /**
    * Used by function unshiftPhase(), sets index to start inserting at current length instead of the end of the array, useful if phaseQueuePrepend gets longer with Phases
    */
   setPhaseQueueSplice(): void {
