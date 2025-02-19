@@ -122,7 +122,11 @@ export abstract class ModalUiHandler extends UiHandler {
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
         if (a < this.buttonBgs.length) {
-          this.buttonBgs[a].on("pointerdown", (_) => config.buttonActions[a]());
+          this.buttonBgs[a].on("pointerdown", (_) => {
+            if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+              config.buttonActions[a]();
+            }
+          });
         }
       }
 

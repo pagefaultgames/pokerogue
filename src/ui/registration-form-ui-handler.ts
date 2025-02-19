@@ -91,43 +91,45 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
 
       const originalRegistrationAction = this.submitAction;
       this.submitAction = (_) => {
-        // Prevent overlapping overrides on action modification
-        this.submitAction = originalRegistrationAction;
-        this.sanitizeInputs();
-        globalScene.ui.setMode(Mode.LOADING, { buttonActions: []});
-        const onFail = error => {
-          globalScene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-          globalScene.ui.playError();
-          const errorMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.errorMessageFontSize;
-          if (errorMessageFontSize) {
-            this.errorMessage.setFontSize(errorMessageFontSize);
-          }
-        };
-        if (!this.inputs[0].text) {
-          return onFail(i18next.t("menu:emptyUsername"));
-        }
-        if (!this.inputs[1].text) {
-          return onFail(this.getReadableErrorMessage("invalid password"));
-        }
-        if (this.inputs[1].text !== this.inputs[2].text) {
-          return onFail(i18next.t("menu:passwordNotMatchingConfirmPassword"));
-        }
-        const [ usernameInput, passwordInput ] = this.inputs;
-        pokerogueApi.account.register({ username: usernameInput.text, password: passwordInput.text })
-          .then(registerError => {
-            if (!registerError) {
-              pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text })
-                .then(loginError => {
-                  if (!loginError) {
-                    originalRegistrationAction && originalRegistrationAction();
-                  } else {
-                    onFail(loginError);
-                  }
-                });
-            } else {
-              onFail(registerError);
+        if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+          // Prevent overlapping overrides on action modification
+          this.submitAction = originalRegistrationAction;
+          this.sanitizeInputs();
+          globalScene.ui.setMode(Mode.LOADING, { buttonActions: []});
+          const onFail = error => {
+            globalScene.ui.setMode(Mode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+            globalScene.ui.playError();
+            const errorMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.errorMessageFontSize;
+            if (errorMessageFontSize) {
+              this.errorMessage.setFontSize(errorMessageFontSize);
             }
-          });
+          };
+          if (!this.inputs[0].text) {
+            return onFail(i18next.t("menu:emptyUsername"));
+          }
+          if (!this.inputs[1].text) {
+            return onFail(this.getReadableErrorMessage("invalid password"));
+          }
+          if (this.inputs[1].text !== this.inputs[2].text) {
+            return onFail(i18next.t("menu:passwordNotMatchingConfirmPassword"));
+          }
+          const [ usernameInput, passwordInput ] = this.inputs;
+          pokerogueApi.account.register({ username: usernameInput.text, password: passwordInput.text })
+            .then(registerError => {
+              if (!registerError) {
+                pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text })
+                  .then(loginError => {
+                    if (!loginError) {
+                      originalRegistrationAction && originalRegistrationAction();
+                    } else {
+                      onFail(loginError);
+                    }
+                  });
+              } else {
+                onFail(registerError);
+              }
+            });
+        }
       };
 
       return true;
