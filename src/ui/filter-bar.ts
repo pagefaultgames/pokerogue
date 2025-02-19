@@ -185,6 +185,11 @@ export class FilterBar extends Phaser.GameObjects.Container {
     return this.getFilter(col).getVals();
   }
 
+  resetSelection(col: DropDownColumn): void {
+    this.dropDowns[col].resetToDefault();
+    this.updateFilterLabels();
+  }
+
   setValsToDefault(): void {
     for (const dropDown of this.dropDowns) {
       dropDown.resetToDefault();
