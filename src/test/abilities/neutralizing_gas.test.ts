@@ -68,7 +68,7 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(0);
   });
 
-  it.todo("should activate other abilities when removed", async () => {
+  it("should activate other abilities when removed", async () => {
     game.override.enemyAbility(Abilities.INTIMIDATE)
       .enemyMoveset(Moves.ENTRAINMENT);
 
