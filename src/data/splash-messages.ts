@@ -52,6 +52,7 @@ const SEASONAL_WEIGHT_MULTIPLIER = 10;
 
 const commonSplashMessages = [
   ...Array(BATTLES_WON_WEIGHT_MULTIPLIER).fill("battlesWon"),
+  "pokemon",
   "joinTheDiscord",
   "infiniteLevels",
   "everythingIsStackable",
@@ -176,6 +177,10 @@ const commonSplashMessages = [
   "timeForYourDeliDelivery",
   "goodFirstImpression",
   "iPreferRarerCandies",
+  "pocketRoguelite",
+  "porygonDidNothingWrong",
+  "critMattered",
+  "pickupNotRequired",
 ];
 
 //#region Seasonal Messages
