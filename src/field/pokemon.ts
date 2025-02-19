@@ -3030,8 +3030,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
       const grudgeTag = this.getTag(BattlerTagType.GRUDGE);
 
-      const isOneHitKo = result === HitResult.ONE_HIT_KO;
-
       if (dmg) {
         this.lapseTags(BattlerTagLapseType.HIT);
 
@@ -3048,7 +3046,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, isOneHitKo, isOneHitKo, true, source);
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, result as DamageResult, isCritical, false, true, source);
 
         if (damage > 0) {
           if (source.isPlayer()) {
@@ -3092,7 +3090,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.isFainted()) {
         // set splice index here, so future scene queues happen before FaintedPhase
         globalScene.setPhaseQueueSplice();
-        globalScene.unshiftPhase(new FaintPhase(this.getBattlerIndex(), isOneHitKo, destinyTag, grudgeTag, source));
+        globalScene.unshiftPhase(new FaintPhase(this.getBattlerIndex(), false, destinyTag, grudgeTag, source));
 
         this.destroySubstitute();
         this.lapseTag(BattlerTagType.COMMANDED);
@@ -3162,13 +3160,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
    * @returns integer of damage done
    */
-  damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
+  damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
+    let isIndirectDamage: boolean = true;
+    if (result !== undefined) {
+      if (result === HitResult.OTHER) {
+        isIndirectDamage = true;
+      } else {
+        isIndirectDamage = false;
+      }
+    }
     const damagePhase = new DamageAnimPhase(this.getBattlerIndex(), damage, result as DamageResult, critical);
     globalScene.unshiftPhase(damagePhase);
     if (this.switchOutStatus && source) {
       damage = 0;
     }
-    damage = this.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
+    damage = this.damage(damage, ignoreSegments, isIndirectDamage, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
     /**
@@ -5501,10 +5507,11 @@ export enum HitResult {
   FAIL,
   MISS,
   OTHER,
-  IMMUNE
+  IMMUNE,
+  CONFUSION
 }
 
-export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.OTHER;
+export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.CONFUSION | HitResult.OTHER;
 
 /** Interface containing the results of a damage calculation for a given move */
 export interface DamageCalculationResult {
