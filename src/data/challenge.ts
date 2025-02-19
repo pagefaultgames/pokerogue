@@ -115,17 +115,17 @@ export enum MoveSourceType {
 export abstract class Challenge {
   public id: Challenges; // The id of the challenge
 
-  public value: integer; // The "strength" of the challenge, all challenges have a numerical value.
-  public maxValue: integer; // The maximum strength of the challenge.
-  public severity: integer; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
-  public maxSeverity: integer; // The maximum severity of the challenge.
+  public value: number; // The "strength" of the challenge, all challenges have a numerical value.
+  public maxValue: number; // The maximum strength of the challenge.
+  public severity: number; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
+  public maxSeverity: number; // The maximum severity of the challenge.
 
   public conditions: ChallengeCondition[];
 
   /**
    * @param id {@link Challenges} The enum value for the challenge
    */
-  constructor(id: Challenges, maxValue: integer = Number.MAX_SAFE_INTEGER) {
+  constructor(id: Challenges, maxValue: number = Number.MAX_SAFE_INTEGER) {
     this.id = id;
 
     this.value = 0;
@@ -180,7 +180,7 @@ export abstract class Challenge {
 
   /**
    * Returns the textual representation of a challenge's current value.
-   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised name for the current value.
    */
   getValue(overrideValue?: number): string {
@@ -190,7 +190,7 @@ export abstract class Challenge {
 
   /**
    * Returns the description of a challenge's current value.
-   * @param overrideValue {@link integer} The value to check for. If undefined, gets the current value.
+   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
    * @returns {@link string} The localised description for the current value.
    */
   getDescription(overrideValue?: number): string {
@@ -257,7 +257,7 @@ export abstract class Challenge {
    * Gets the "difficulty" value of this challenge.
    * @returns {@link integer} The difficulty value.
    */
-  getDifficulty(): integer {
+  getDifficulty(): number {
     return this.value;
   }
 
@@ -265,7 +265,7 @@ export abstract class Challenge {
    * Gets the minimum difficulty added by this challenge.
    * @returns {@link integer} The difficulty value.
    */
-  getMinDifficulty(): integer {
+  getMinDifficulty(): number {
     return 0;
   }
 
@@ -349,23 +349,23 @@ export abstract class Challenge {
 
   /**
    * An apply function for AI_LEVEL challenges. Derived classes should alter this.
-   * @param level {@link Utils.IntegerHolder} The generated level.
+   * @param level {@link Utils.NumberHolder} The generated level.
    * @param levelCap {@link Number} The current level cap.
    * @param isTrainer {@link Boolean} Whether this is a trainer pokemon.
    * @param isBoss {@link Boolean} Whether this is a non-trainer boss pokemon.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyLevelChange(level: Utils.IntegerHolder, levelCap: number, isTrainer: boolean, isBoss: boolean): boolean {
+  applyLevelChange(level: Utils.NumberHolder, levelCap: number, isTrainer: boolean, isBoss: boolean): boolean {
     return false;
   }
 
   /**
    * An apply function for AI_MOVE_SLOTS challenges. Derived classes should alter this.
    * @param pokemon {@link Pokemon} The pokemon that is being considered.
-   * @param moveSlots {@link Utils.IntegerHolder} The amount of move slots.
+   * @param moveSlots {@link Utils.NumberHolder} The amount of move slots.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyMoveSlot(pokemon: Pokemon, moveSlots: Utils.IntegerHolder): boolean {
+  applyMoveSlot(pokemon: Pokemon, moveSlots: Utils.NumberHolder): boolean {
     return false;
   }
 
@@ -393,10 +393,10 @@ export abstract class Challenge {
    * @param pokemon {@link Pokemon} What pokemon would learn the move.
    * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
    * @param move {@link Moves} The move in question.
-   * @param level {@link Utils.IntegerHolder} The level threshold for access.
+   * @param level {@link Utils.NumberHolder} The level threshold for access.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyMoveAccessLevel(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
+  applyMoveAccessLevel(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.NumberHolder): boolean {
     return false;
   }
 
@@ -405,10 +405,10 @@ export abstract class Challenge {
    * @param pokemon {@link Pokemon} What pokemon would learn the move.
    * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
    * @param move {@link Moves} The move in question.
-   * @param weight {@link Utils.IntegerHolder} The base weight of the move
+   * @param weight {@link Utils.NumberHolder} The base weight of the move
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyMoveWeight(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean {
+  applyMoveWeight(pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.NumberHolder): boolean {
     return false;
   }
 
@@ -456,8 +456,8 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   applyPokemonInBattle(pokemon: Pokemon, valid: Utils.BooleanHolder): boolean {
-    const baseGeneration = pokemon.species.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.species.speciesId).generation;
-    const fusionGeneration = pokemon.isFusion() ? pokemon.fusionSpecies?.speciesId === Species.VICTINI ? 5 : getPokemonSpecies(pokemon.fusionSpecies!.speciesId).generation : 0; // TODO: is the bang on fusionSpecies correct?
+    const baseGeneration = getPokemonSpecies(pokemon.species.speciesId).generation;
+    const fusionGeneration = pokemon.isFusion() ? getPokemonSpecies(pokemon.fusionSpecies!.speciesId).generation : 0; // TODO: is the bang on fusionSpecies correct?
     if (pokemon.isPlayer() && (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))) {
       valid.value = false;
       return true;
@@ -643,7 +643,7 @@ export class SingleTypeChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -655,7 +655,7 @@ export class SingleTypeChallenge extends Challenge {
    * @param {value} overrideValue The value to check for. If undefined, gets the current value.
    * @returns {string} The localised description for the current value.
    */
-  getDescription(overrideValue?: integer): string {
+  getDescription(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -793,7 +793,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
   /**
    * @override
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -827,7 +827,7 @@ export class LowerStarterPointsChallenge extends Challenge {
   /**
    * @override
    */
-  getValue(overrideValue?: integer): string {
+  getValue(overrideValue?: number): string {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
@@ -913,22 +913,22 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * Apply all challenges that modify what level AI are.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
- * @param level {@link Utils.IntegerHolder} The generated level of the pokemon.
+ * @param level {@link Utils.NumberHolder} The generated level of the pokemon.
  * @param levelCap {@link Number} The maximum level cap for the current wave.
  * @param isTrainer {@link Boolean} Whether this is a trainer pokemon.
  * @param isBoss {@link Boolean} Whether this is a non-trainer boss pokemon.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.AI_LEVEL, level: Utils.IntegerHolder, levelCap: number, isTrainer: boolean, isBoss: boolean): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.AI_LEVEL, level: Utils.NumberHolder, levelCap: number, isTrainer: boolean, isBoss: boolean): boolean;
 /**
  * Apply all challenges that modify how many move slots the AI has.
  * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_MOVE_SLOTS
  * @param pokemon {@link Pokemon} The pokemon being considered.
- * @param moveSlots {@link Utils.IntegerHolder} The amount of move slots.
+ * @param moveSlots {@link Utils.NumberHolder} The amount of move slots.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.AI_MOVE_SLOTS, pokemon: Pokemon, moveSlots: Utils.IntegerHolder): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.AI_MOVE_SLOTS, pokemon: Pokemon, moveSlots: Utils.NumberHolder): boolean;
 /**
  * Apply all challenges that modify whether a pokemon has its passive.
  * @param gameMode {@link GameMode} The current gameMode
@@ -952,10 +952,10 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
  * @param move {@link Moves} The move in question.
- * @param level {@link Utils.IntegerHolder} The level threshold for access.
+ * @param level {@link Utils.NumberHolder} The level threshold for access.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_ACCESS, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.IntegerHolder): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_ACCESS, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, level: Utils.NumberHolder): boolean;
 /**
  * Apply all challenges that modify what weight a pokemon gives to move generation
  * @param gameMode {@link GameMode} The current gameMode
@@ -963,10 +963,10 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
  * @param move {@link Moves} The move in question.
- * @param weight {@link Utils.IntegerHolder} The weight of the move.
+ * @param weight {@link Utils.NumberHolder} The weight of the move.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_WEIGHT, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, weight: Utils.IntegerHolder): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.MOVE_WEIGHT, pokemon: Pokemon, moveSource: MoveSourceType, move: Moves, weight: Utils.NumberHolder): boolean;
 
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.FLIP_STAT, pokemon: Pokemon, baseStats: number[]): boolean;
 

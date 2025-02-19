@@ -189,4 +189,19 @@ describe("Abilities - SHIELDS DOWN", () => {
     }
   );
 
+  test("should not prevent minior from receiving the fainted status effect in trainer battles", async () => {
+    game.override.enemyMoveset([ Moves.TACKLE ]);
+    game.override.moveset([ Moves.THUNDERBOLT ]);
+    game.override.startingLevel(100);
+    game.override.startingWave(5);
+    game.override.enemySpecies(Species.MINIOR);
+    await game.classicMode.startBattle([ Species.REGIELEKI ]);
+    const minior = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.THUNDERBOLT);
+    await game.toNextTurn();
+    expect(minior.isFainted()).toBe(true);
+    expect(minior.status?.effect).toBe(StatusEffect.FAINT);
+  });
+
 });

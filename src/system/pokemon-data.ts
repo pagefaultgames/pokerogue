@@ -13,49 +13,54 @@ import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import type { Type } from "#app/enums/type";
 
 export default class PokemonData {
-  public id: integer;
+  public id: number;
   public player: boolean;
   public species: Species;
   public nickname: string;
-  public formIndex: integer;
-  public abilityIndex: integer;
+  public formIndex: number;
+  public abilityIndex: number;
   public passive: boolean;
   public shiny: boolean;
   public variant: Variant;
   public pokeball: PokeballType;
-  public level: integer;
-  public exp: integer;
-  public levelExp: integer;
+  public level: number;
+  public exp: number;
+  public levelExp: number;
   public gender: Gender;
-  public hp: integer;
-  public stats: integer[];
-  public ivs: integer[];
+  public hp: number;
+  public stats: number[];
+  public ivs: number[];
   public nature: Nature;
   public moveset: (PokemonMove | null)[];
   public status: Status | null;
-  public friendship: integer;
-  public metLevel: integer;
+  public friendship: number;
+  public metLevel: number;
   public metBiome: Biome | -1;        // -1 for starters
   public metSpecies: Species;
   public metWave: number;            // 0 for unknown (previous saves), -1 for starters
-  public luck: integer;
+  public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public usedTMs: Moves[];
-  public evoCounter: integer;
+  public evoCounter: number;
+  public teraType: Type;
+  public isTerastallized: boolean;
+  public stellarTypesBoosted: Type[];
 
   public fusionSpecies: Species;
-  public fusionFormIndex: integer;
-  public fusionAbilityIndex: integer;
+  public fusionFormIndex: number;
+  public fusionAbilityIndex: number;
   public fusionShiny: boolean;
   public fusionVariant: Variant;
   public fusionGender: Gender;
-  public fusionLuck: integer;
+  public fusionLuck: number;
+  public fusionTeraType: Type;
 
   public boss: boolean;
-  public bossSegments?: integer;
+  public bossSegments?: number;
 
   public summonData: PokemonSummonData;
 
@@ -103,6 +108,9 @@ export default class PokemonData {
       this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
+    this.teraType = source.teraType as Type;
+    this.isTerastallized = source.isTerastallized || false;
+    this.stellarTypesBoosted = source.stellarTypesBoosted || [];
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
@@ -112,6 +120,7 @@ export default class PokemonData {
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
+    this.fusionTeraType = (source.fusionTeraType ?? 0) as Type;
     this.usedTMs = source.usedTMs ?? [];
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
@@ -163,7 +172,7 @@ export default class PokemonData {
     }
   }
 
-  toPokemon(battleType?: BattleType, partyMemberIndex: integer = 0, double: boolean = false): Pokemon {
+  toPokemon(battleType?: BattleType, partyMemberIndex: number = 0, double: boolean = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
       ? globalScene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {

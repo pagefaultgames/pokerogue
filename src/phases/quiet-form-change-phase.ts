@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import { getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
+import { getSpeciesFormChangeMessage, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
 import { getTypeRgb } from "#app/data/type";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
@@ -11,6 +11,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
 import { MovePhase } from "./move-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
+import { applyAbAttrs, PostTeraFormChangeStatChangeAbAttr } from "#app/data/ability";
 
 export class QuietFormChangePhase extends BattlePhase {
   protected pokemon: Pokemon;
@@ -51,7 +52,7 @@ export class QuietFormChangePhase extends BattlePhase {
       } catch (err: unknown) {
         console.error(`Failed to play animation for ${spriteKey}`, err);
       }
-      sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
+      sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()), isTerastallized: this.pokemon.isTerastallized });
       [ "spriteColors", "fusionSpriteColors" ].map(k => {
         if (this.pokemon.summonData?.speciesForm) {
           k += "Base";
@@ -144,6 +145,9 @@ export class QuietFormChangePhase extends BattlePhase {
       if (movePhase) {
         movePhase.cancel();
       }
+    }
+    if (this.formChange.trigger instanceof SpeciesFormChangeTeraTrigger) {
+      applyAbAttrs(PostTeraFormChangeStatChangeAbAttr, this.pokemon, null);
     }
 
     super.end();

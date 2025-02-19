@@ -15,7 +15,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { HealBlockTag } from "#app/data/battler-tags";
 
 export class PokemonHealPhase extends CommonAnimPhase {
-  private hpHealed: integer;
+  private hpHealed: number;
   private message: string | null;
   private showFullHpMessage: boolean;
   private skipAnim: boolean;
@@ -24,7 +24,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private preventFullHeal: boolean;
   private fullRestorePP: boolean;
 
-  constructor(battlerIndex: BattlerIndex, hpHealed: integer, message: string | null, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false, fullRestorePP: boolean = false) {
+  constructor(battlerIndex: BattlerIndex, hpHealed: number, message: string | null, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false, fullRestorePP: boolean = false) {
     super(battlerIndex, undefined, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;
@@ -62,7 +62,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       this.message = null;
       return super.end();
     } else if (healOrDamage) {
-      const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+      const hpRestoreMultiplier = new Utils.NumberHolder(1);
       if (!this.revive) {
         globalScene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       }

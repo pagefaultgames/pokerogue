@@ -351,7 +351,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
 
     const data = sprite.pipelineData;
     const tone = data["tone"] as number[];
-    const teraColor = data["teraColor"] as integer[] ?? [ 0, 0, 0 ];
+    const teraColor = (data["isTerastallized"] as boolean) ? (data["teraColor"] as number[] ?? [ 0, 0, 0 ]) : [ 0, 0, 0 ];
     const hasShadow = data["hasShadow"] as boolean;
     const yShadowOffset = data["yShadowOffset"] as number;
     const ignoreFieldPos = data["ignoreFieldPos"] as boolean;
@@ -389,8 +389,8 @@ export default class SpritePipeline extends FieldSpritePipeline {
       const fusionSpriteColors = ((ignoreOverride && data["fusionSpriteColorsBase"]) || data["fusionSpriteColors"] || []) as number[][];
 
       const emptyColors = [ 0, 0, 0, 0 ];
-      const flatSpriteColors: integer[] = [];
-      const flatFusionSpriteColors: integer[] = [];
+      const flatSpriteColors: number[] = [];
+      const flatFusionSpriteColors: number[] = [];
       for (let c = 0; c < 32; c++) {
         flatSpriteColors.splice(flatSpriteColors.length, 0, ...(c < spriteColors.length ? spriteColors[c] : emptyColors));
         flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, ...(c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors));
@@ -406,14 +406,14 @@ export default class SpritePipeline extends FieldSpritePipeline {
       const sprite = (gameObject as Phaser.GameObjects.Sprite);
       const data = sprite.pipelineData;
 
-      const variant: integer = data.hasOwnProperty("variant")
+      const variant: number = data.hasOwnProperty("variant")
         ? data["variant"]
         : sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.variant
           : 0;
       let variantColors;
 
       const emptyColors = [ 0, 0, 0, 0 ];
-      const flatBaseColors: integer[] = [];
+      const flatBaseColors: number[] = [];
       const flatVariantColors: number[] = [];
 
       if ((sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.shiny : !!data["shiny"])
