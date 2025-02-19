@@ -12,7 +12,7 @@ import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffect
 import { Gender } from "./gender";
 import type Move from "./move";
 import { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
-import type { ArenaTrapTag } from "./arena-tag";
+import type { ArenaTrapTag, SuppressAbilitiesTag } from "./arena-tag";
 import { ArenaTagSide } from "./arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
@@ -2776,6 +2776,23 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
     }
 
     return false;
+  }
+}
+
+export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFieldAbAttr {
+  constructor() {
+    super(false);
+  }
+
+  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+    if (!simulated) {
+      const suppressTag = globalScene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
+      if (suppressTag) {
+        suppressTag.onSourceLeave(globalScene.arena);
+      }
+      return false;
+    }
+    return true;
   }
 }
 
@@ -6247,7 +6264,8 @@ export function initAbilities() {
     new Ability(Abilities.GORILLA_TACTICS, 8)
       .attr(GorillaTacticsAbAttr),
     new Ability(Abilities.NEUTRALIZING_GAS, 8)
-      .attr(SuppressFieldAbilitiesAbAttr)
+      .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.NEUTRALIZING_GAS, 0)
+      .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
