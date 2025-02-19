@@ -1313,8 +1313,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     let success = false;
     let error = false;
 
-    console.log("Test", button);
-
     if (button === Button.SUBMIT) {
       if (this.tryStart(true)) {
         success = true;
