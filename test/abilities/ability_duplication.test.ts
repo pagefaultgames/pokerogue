@@ -6,7 +6,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
 
-describe("Ability Duplication", () => {
+describe.concurrent("Ability Duplication", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

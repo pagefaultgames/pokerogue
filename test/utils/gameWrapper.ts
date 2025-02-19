@@ -23,7 +23,7 @@ import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
-import { version } from "#app/package.json";
+import { version } from "../../package.json";
 import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
 
 Object.defineProperty(window, "localStorage", {

@@ -7,7 +7,7 @@ import { EncounterPhase } from "#app/phases/encounter-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Mode } from "#app/ui/ui";
-import { generateStarter } from "#app/gameManagerUtils";
+import { generateStarter } from "../gameManagerUtils";
 import { GameManagerHelper } from "./gameManagerHelper";
 
 /**
