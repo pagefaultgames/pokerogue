@@ -1,5 +1,5 @@
 import UI from "#app/ui/ui";
-import type { MockGameObject } from "#app/mockGameObject";
+import type { MockGameObject } from "../mockGameObject";
 
 export default class MockText implements MockGameObject {
   private phaserText;

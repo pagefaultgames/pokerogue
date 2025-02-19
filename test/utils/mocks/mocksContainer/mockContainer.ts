@@ -1,5 +1,5 @@
 import type MockTextureManager from "#test/utils/mocks/mockTextureManager";
-import type { MockGameObject } from "#app/mockGameObject";
+import type { MockGameObject } from "../mockGameObject";
 
 export default class MockContainer implements MockGameObject {
   protected x;
