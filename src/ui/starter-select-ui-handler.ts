@@ -127,6 +127,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
+  "ro":{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
 };
 
 const valueReductionMax = 2;
