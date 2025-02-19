@@ -1301,16 +1301,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (this.filterMode && this.filterBar.openDropDown) {
         // CANCEL with a filter menu open > close it
         this.filterBar.toggleDropDown(this.filterBarCursor);
-
-        // if there are possible starters go the first one of the list
-        if (numberOfStarters > 0) {
-          this.setFilterMode(false);
-          this.scrollCursor = 0;
-          this.updateScroll();
-          this.setCursor(0);
-        }
         success = true;
-
+      } else if (this.filterMode && !this.filterBar.getFilter(this.filterBarCursor).hasDefaultValues()) {
+        this.filterBar.resetSelection(this.filterBarCursor);
+        this.updateStarters;
+        success = true;
       } else if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
