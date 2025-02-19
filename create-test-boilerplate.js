@@ -84,19 +84,19 @@ async function runInteractive() {
   let description;
   switch (type) {
     case "move":
-      dir = path.join(__dirname, "src", "test", "moves");
+      dir = path.join(__dirname, "test", "moves");
       description = `Moves - ${formattedName}`;
       break;
     case "ability":
-      dir = path.join(__dirname, "src", "test", "abilities");
+      dir = path.join(__dirname, "test", "abilities");
       description = `Abilities - ${formattedName}`;
       break;
     case "item":
-      dir = path.join(__dirname, "src", "test", "items");
+      dir = path.join(__dirname, "test", "items");
       description = `Items - ${formattedName}`;
       break;
     case "mystery encounter":
-      dir = path.join(__dirname, "src", "test", "mystery-encounter", "encounters");
+      dir = path.join(__dirname, "test", "mystery-encounter", "encounters");
       description = `Mystery Encounter - ${formattedName}`;
       break;
     default:

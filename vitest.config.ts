@@ -5,7 +5,7 @@ export default defineProject(({ mode }) => ({
   ...defaultConfig,
   test: {
     testTimeout: 20000,
-    setupFiles: ["./src/test/fontFace.setup.ts", "./src/test/vitest.setup.ts"],
+    setupFiles: ["./test/fontFace.setup.ts", "./test/vitest.setup.ts"],
     server: {
       deps: {
         inline: ["vitest-canvas-mock"],
@@ -33,8 +33,8 @@ export default defineProject(({ mode }) => ({
       reporters: ["text-summary", "html"],
     },
     name: "main",
-    include: ["./src/test/**/*.{test,spec}.ts"],
-    exclude: ["./src/test/pre.test.ts"],
+    include: ["./test/**/*.{test,spec}.ts"],
+    exclude: ["./test/pre.test.ts"],
   },
   esbuild: {
     pure: mode === "production" ? ["console.log"] : [],

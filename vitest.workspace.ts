@@ -6,7 +6,7 @@ export default defineWorkspace([
     ...defaultConfig,
     test: {
       name: "pre",
-      include: ["src/test/pre.test.ts"],
+      include: ["test/pre.test.ts"],
       environment: "jsdom",
     },
   },
