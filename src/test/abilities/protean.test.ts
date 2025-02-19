@@ -11,7 +11,7 @@ import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 
 describe("Abilities - Protean", () => {
@@ -258,7 +258,7 @@ describe("Abilities - Protean", () => {
       const leadPokemon = game.scene.getPlayerPokemon()!;
       expect(leadPokemon).not.toBe(undefined);
 
-      vi.spyOn(leadPokemon, "isTerastallized").mockReturnValue(true);
+      leadPokemon.isTerastallized = true;
 
       game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to(TurnEndPhase);
