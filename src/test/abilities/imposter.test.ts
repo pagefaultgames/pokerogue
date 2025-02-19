@@ -116,4 +116,15 @@ describe("Abilities - Imposter", () => {
       }
     });
   });
+
+  it("should activate its ability if it copies one that activates on summon", async () => {
+    game.override.enemyAbility(Abilities.INTIMIDATE);
+
+    await game.classicMode.startBattle([ Species.DITTO ]);
+
+    game.move.select(Moves.TACKLE);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
+  });
 });

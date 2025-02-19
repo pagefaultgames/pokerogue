@@ -70,7 +70,7 @@ export const defaultStarterSpecies: Species[] = [
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
-export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
+export function getDataTypeKey(dataType: GameDataType, slotId: number = 0): string {
   switch (dataType) {
     case GameDataType.SYSTEM:
       return "data";
@@ -104,8 +104,8 @@ export function decrypt(data: string, bypassLogin: boolean): string {
 }
 
 export interface SystemSaveData {
-  trainerId: integer;
-  secretId: integer;
+  trainerId: number;
+  secretId: number;
   gender: PlayerGender;
   dexData: DexData;
   starterData: StarterData;
@@ -116,14 +116,14 @@ export interface SystemSaveData {
   voucherCounts: VoucherCounts;
   eggs: EggData[];
   gameVersion: string;
-  timestamp: integer;
-  eggPity: integer[];
-  unlockPity: integer[];
+  timestamp: number;
+  eggPity: number[];
+  unlockPity: number[];
 }
 
 export interface SessionSaveData {
   seed: string;
-  playTime: integer;
+  playTime: number;
   gameMode: GameModes;
   party: PokemonData[];
   enemyParty: PokemonData[];
@@ -131,46 +131,50 @@ export interface SessionSaveData {
   enemyModifiers: PersistentModifierData[];
   arena: ArenaData;
   pokeballCounts: PokeballCounts;
-  money: integer;
-  score: integer;
-  waveIndex: integer;
+  money: number;
+  score: number;
+  waveIndex: number;
   battleType: BattleType;
   trainer: TrainerData;
   gameVersion: string;
-  timestamp: integer;
+  timestamp: number;
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
   mysteryEncounterSaveData: MysteryEncounterSaveData;
+  /**
+   * Counts the amount of pokemon fainted in your party during the current arena encounter.
+   */
+  playerFaints: number;
 }
 
 interface Unlocks {
-  [key: integer]: boolean;
+  [key: number]: boolean;
 }
 
 interface AchvUnlocks {
-  [key: string]: integer
+  [key: string]: number
 }
 
 interface VoucherUnlocks {
-  [key: string]: integer
+  [key: string]: number
 }
 
 export interface VoucherCounts {
-    [type: string]: integer;
+    [type: string]: number;
 }
 
 export interface DexData {
-  [key: integer]: DexEntry
+  [key: number]: DexEntry
 }
 
 export interface DexEntry {
   seenAttr: bigint;
   caughtAttr: bigint;
-  natureAttr: integer,
-  seenCount: integer;
-  caughtCount: integer;
-  hatchedCount: integer;
-  ivs: integer[];
+  natureAttr: number,
+  seenCount: number;
+  caughtCount: number;
+  hatchedCount: number;
+  ivs: number[];
 }
 
 export const DexAttr = {
@@ -188,7 +192,7 @@ export interface DexAttrProps {
   shiny: boolean;
   female: boolean;
   variant: Variant;
-  formIndex: integer;
+  formIndex: number;
 }
 
 export const AbilityAttr = {
@@ -209,18 +213,18 @@ export interface RunEntry {
 export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
 
 export interface StarterFormMoveData {
-  [key: integer]: StarterMoveset
+  [key: number]: StarterMoveset
 }
 
 export interface StarterMoveData {
-  [key: integer]: StarterMoveset | StarterFormMoveData
+  [key: number]: StarterMoveset | StarterFormMoveData
 }
 
 export interface StarterAttributes {
-  nature?: integer;
-  ability?: integer;
-  variant?: integer;
-  form?: integer;
+  nature?: number;
+  ability?: number;
+  variant?: number;
+  form?: number;
   female?: boolean;
   shiny?: boolean;
   favorite?: boolean;
@@ -228,7 +232,7 @@ export interface StarterAttributes {
 }
 
 export interface StarterPreferences {
-  [key: integer]: StarterAttributes;
+  [key: number]: StarterAttributes;
 }
 
 // the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
@@ -263,17 +267,17 @@ export class StarterPrefs {
 
 export interface StarterDataEntry {
   moveset: StarterMoveset | StarterFormMoveData | null;
-  eggMoves: integer;
-  candyCount: integer;
-  friendship: integer;
-  abilityAttr: integer;
-  passiveAttr: integer;
-  valueReduction: integer;
-  classicWinCount: integer;
+  eggMoves: number;
+  candyCount: number;
+  friendship: number;
+  abilityAttr: number;
+  passiveAttr: number;
+  valueReduction: number;
+  classicWinCount: number;
 }
 
 export interface StarterData {
-  [key: integer]: StarterDataEntry
+  [key: number]: StarterDataEntry
 }
 
 export interface TutorialFlags {
@@ -303,8 +307,8 @@ const systemShortKeys = {
 };
 
 export class GameData {
-  public trainerId: integer;
-  public secretId: integer;
+  public trainerId: number;
+  public secretId: number;
 
   public gender: PlayerGender;
 
@@ -323,8 +327,8 @@ export class GameData {
   public voucherUnlocks: VoucherUnlocks;
   public voucherCounts: VoucherCounts;
   public eggs: Egg[];
-  public eggPity: integer[];
-  public unlockPity: integer[];
+  public eggPity: number[];
+  public unlockPity: number[];
 
   constructor() {
     this.loadSettings();
@@ -733,7 +737,7 @@ export class GameData {
    * @param valueIndex index of the setting's option
    * @returns true
    */
-  public saveSetting(setting: string, valueIndex: integer): boolean {
+  public saveSetting(setting: string, valueIndex: number): boolean {
     let settings: object = {};
     if (localStorage.hasOwnProperty("settings")) {
       settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
@@ -816,7 +820,7 @@ export class GameData {
    * to update the specified setting with the new value. Finally, it saves the updated settings back
    * to localStorage and returns `true` to indicate success.
    */
-  public saveControlSetting(device: Device, localStoragePropertyName: string, setting: SettingGamepad|SettingKeyboard, settingDefaults, valueIndex: integer): boolean {
+  public saveControlSetting(device: Device, localStoragePropertyName: string, setting: SettingGamepad|SettingKeyboard, settingDefaults, valueIndex: number): boolean {
     let settingsControls: object = {};  // Initialize an empty object to hold the gamepad settings
 
     if (localStorage.hasOwnProperty(localStoragePropertyName)) {  // Check if 'settingsControls' exists in localStorage
@@ -964,11 +968,12 @@ export class GameData {
       timestamp: new Date().getTime(),
       challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
-      mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData
+      mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,
+      playerFaints: globalScene.arena.playerFaints
     } as SessionSaveData;
   }
 
-  getSession(slotId: integer): Promise<SessionSaveData | null> {
+  getSession(slotId: number): Promise<SessionSaveData | null> {
     return new Promise(async (resolve, reject) => {
       if (slotId < 0) {
         return resolve(null);
@@ -1006,7 +1011,7 @@ export class GameData {
     });
   }
 
-  loadSession(slotId: integer, sessionData?: SessionSaveData): Promise<boolean> {
+  loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
@@ -1056,7 +1061,7 @@ export class GameData {
 
           globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
 
-          globalScene.newArena(sessionData.arena.biome);
+          globalScene.newArena(sessionData.arena.biome, sessionData.playerFaints);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
@@ -1081,6 +1086,8 @@ export class GameData {
 
           globalScene.arena.terrain = sessionData.arena.terrain;
           globalScene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, globalScene.arena.terrain?.terrainType!, globalScene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
+
+          globalScene.arena.playerTerasUsed = sessionData.arena.playerTerasUsed;
 
           globalScene.arena.tags = sessionData.arena.tags;
           if (globalScene.arena.tags) {
@@ -1137,7 +1144,7 @@ export class GameData {
    * @param slotId the slot to clear
    * @returns Promise with result `true` if the session was deleted successfully, `false` otherwise
    */
-  deleteSession(slotId: integer): Promise<boolean> {
+  deleteSession(slotId: number): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
         localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
@@ -1206,7 +1213,7 @@ export class GameData {
    * After session data is removed, attempt to update user info so the menu updates
    * To delete an unfinished run instead, use {@linkcode deleteSession}
    */
-  async tryClearSession(slotId: integer): Promise<[success: boolean, newClear: boolean]> {
+  async tryClearSession(slotId: number): Promise<[success: boolean, newClear: boolean]> {
     let result: [boolean, boolean] = [ false, false ];
 
     if (bypassLogin) {
@@ -1361,7 +1368,7 @@ export class GameData {
     });
   }
 
-  public tryExportData(dataType: GameDataType, slotId: integer = 0): Promise<boolean> {
+  public tryExportData(dataType: GameDataType, slotId: number = 0): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const dataKey: string = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
       const handleData = (dataStr: string) => {
@@ -1407,7 +1414,7 @@ export class GameData {
     });
   }
 
-  public importData(dataType: GameDataType, slotId: integer = 0): void {
+  public importData(dataType: GameDataType, slotId: number = 0): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
 
     let saveFile: any = document.getElementById("saveFile");
@@ -1695,7 +1702,7 @@ export class GameData {
     });
   }
 
-  incrementRibbonCount(species: PokemonSpecies, forStarter: boolean = false): integer {
+  incrementRibbonCount(species: PokemonSpecies, forStarter: boolean = false): number {
     const speciesIdToIncrement: Species = species.getRootSpeciesId(forStarter);
 
     if (!this.starterData[speciesIdToIncrement].classicWinCount) {
@@ -1706,7 +1713,7 @@ export class GameData {
       globalScene.gameData.gameStats.ribbonsOwned++;
     }
 
-    const ribbonsInStats: integer = globalScene.gameData.gameStats.ribbonsOwned;
+    const ribbonsInStats: number = globalScene.gameData.gameStats.ribbonsOwned;
 
     if (ribbonsInStats >= 100) {
       globalScene.validateAchv(achvs._100_RIBBONS);
@@ -1733,7 +1740,7 @@ export class GameData {
    * @param species
    * @param count
    */
-  addStarterCandy(species: PokemonSpecies, count: integer): void {
+  addStarterCandy(species: PokemonSpecies, count: number): void {
     // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
     const speciesRootForm = species.getRootSpeciesId();
     if (globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
@@ -1749,7 +1756,7 @@ export class GameData {
    * @param showMessage Default true. If true, will display message for unlocked egg move
    * @param prependSpeciesToMessage Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
    */
-  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer, showMessage: boolean = true, prependSpeciesToMessage: boolean = false): Promise<boolean> {
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: number, showMessage: boolean = true, prependSpeciesToMessage: boolean = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
       if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
@@ -1808,7 +1815,7 @@ export class GameData {
     _unlockSpeciesNature(species.speciesId);
   }
 
-  updateSpeciesDexIvs(speciesId: Species, ivs: integer[]): void {
+  updateSpeciesDexIvs(speciesId: Species, ivs: number[]): void {
     let dexEntry: DexEntry;
     do {
       dexEntry = globalScene.gameData.dexData[speciesId];
@@ -1824,7 +1831,7 @@ export class GameData {
     } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
   }
 
-  getSpeciesCount(dexEntryPredicate: (entry: DexEntry) => boolean): integer {
+  getSpeciesCount(dexEntryPredicate: (entry: DexEntry) => boolean): number {
     const dexKeys = Object.keys(this.dexData);
     let speciesCount = 0;
     for (const s of dexKeys) {
@@ -1835,7 +1842,7 @@ export class GameData {
     return speciesCount;
   }
 
-  getStarterCount(dexEntryPredicate: (entry: DexEntry) => boolean): integer {
+  getStarterCount(dexEntryPredicate: (entry: DexEntry) => boolean): number {
     const starterKeys = Object.keys(speciesStarterCosts);
     let starterCount = 0;
     for (const s of starterKeys) {
@@ -1906,7 +1913,7 @@ export class GameData {
     };
   }
 
-  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): integer {
+  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): number {
     const abilityAttr = this.starterData[species.speciesId].abilityAttr;
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
@@ -1921,15 +1928,15 @@ export class GameData {
     return 0 as Nature;
   }
 
-  getSpeciesDefaultNatureAttr(species: PokemonSpecies): integer {
+  getSpeciesDefaultNatureAttr(species: PokemonSpecies): number {
     return 1 << (this.getSpeciesDefaultNature(species));
   }
 
-  getDexAttrLuck(dexAttr: bigint): integer {
+  getDexAttrLuck(dexAttr: bigint): number {
     return dexAttr & DexAttr.SHINY ? dexAttr & DexAttr.VARIANT_3 ? 3 : dexAttr & DexAttr.VARIANT_2 ? 2 : 1 : 0;
   }
 
-  getNaturesForAttr(natureAttr: integer = 0): Nature[] {
+  getNaturesForAttr(natureAttr: number = 0): Nature[] {
     const ret: Nature[] = [];
     for (let n = 0; n < 25; n++) {
       if (natureAttr & (1 << (n + 1))) {
@@ -1962,7 +1969,7 @@ export class GameData {
     return cost.value;
   }
 
-  getFormIndex(attr: bigint): integer {
+  getFormIndex(attr: bigint): number {
     if (!attr || attr < DexAttr.DEFAULT_FORM) {
       return 0;
     }
@@ -1973,7 +1980,7 @@ export class GameData {
     return f;
   }
 
-  getFormAttr(formIndex: integer): bigint {
+  getFormAttr(formIndex: number): bigint {
     return BigInt(1) << BigInt(7 + formIndex);
   }
 

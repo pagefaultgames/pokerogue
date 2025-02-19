@@ -59,7 +59,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private runResultContainer: Phaser.GameObjects.Container;
   private runInfoContainer: Phaser.GameObjects.Container;
   private partyContainer: Phaser.GameObjects.Container;
-  private statsBgWidth: integer;
+  private statsBgWidth: number;
 
   private hallofFameContainer: Phaser.GameObjects.Container;
   private endCardContainer: Phaser.GameObjects.Container;
@@ -420,17 +420,6 @@ export default class RunInfoUiHandler extends UiHandler {
   private parseTrainerDefeat(enemyContainer: Phaser.GameObjects.Container) {
     // Loads and adds trainer sprites to the UI
     this.showTrainerSprites(enemyContainer);
-    // Determining which Terastallize Modifier belongs to which Pokemon
-    // Creates a dictionary {PokemonId: TeraShardType}
-    const teraPokemon = {};
-    this.runInfo.enemyModifiers.forEach((m) => {
-      const modifier = m.toModifier(this.modifiersModule[m.className]);
-      if (modifier instanceof Modifier.TerastallizeModifier) {
-        const teraDetails = modifier?.getArgs();
-        const pkmnId = teraDetails[0];
-        teraPokemon[pkmnId] = teraDetails[1];
-      }
-    });
 
     // Creates the Pokemon icons + level information and adds it to enemyContainer
     // 2 Rows x 3 Columns
@@ -444,18 +433,6 @@ export default class RunInfoUiHandler extends UiHandler {
       enemyData["player"] = true;
       const enemy = enemyData.toPokemon();
       const enemyIcon = globalScene.addPokemonIcon(enemy, 0, 0, 0, 0);
-      // Applying Terastallizing Type tint to Pokemon icon
-      // If the Pokemon is a fusion, it has two sprites and so, the tint has to be applied to each icon separately
-      const enemySprite1 = enemyIcon.list[0] as Phaser.GameObjects.Sprite;
-      const enemySprite2 = (enemyIcon.list.length > 1) ? enemyIcon.list[1] as Phaser.GameObjects.Sprite : undefined;
-      if (teraPokemon[enemyData.id]) {
-        const teraTint = getTypeRgb(teraPokemon[enemyData.id]);
-        const teraColor = new Phaser.Display.Color(teraTint[0], teraTint[1], teraTint[2]);
-        enemySprite1.setTint(teraColor.color);
-        if (enemySprite2) {
-          enemySprite2.setTint(teraColor.color);
-        }
-      }
       enemyIcon.setPosition(39 * (e % 3) + 5, (35 * pokemonRowHeight));
       const enemyLevel = addTextObject(43 * (e % 3), (27 * (pokemonRowHeight + 1)), `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY, { fontSize: "54px" });
       enemyLevel.setShadow(0, 0, undefined);
@@ -534,7 +511,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // Luck
     // Uses the parameters windowX and windowY to dynamically position the luck value neatly into the bottom right corner
     const luckText = addBBCodeTextObject(0, 0, "", TextStyle.WINDOW, { fontSize: "55px" });
-    const luckValue = Phaser.Math.Clamp(this.runInfo.party.map(p => p.toPokemon().getLuck()).reduce((total: integer, value: integer) => total += value, 0), 0, 14);
+    const luckValue = Phaser.Math.Clamp(this.runInfo.party.map(p => p.toPokemon().getLuck()).reduce((total: number, value: number) => total += value, 0), 0, 14);
     let luckInfo = i18next.t("runHistory:luck") + ": " + getLuckString(luckValue);
     if (luckValue < 14) {
       luckInfo = "[color=#" + (getLuckTextTint(luckValue)).toString(16) + "]" + luckInfo + "[/color]";
@@ -621,7 +598,7 @@ export default class RunInfoUiHandler extends UiHandler {
     const currentLanguage = i18next.resolvedLanguage ?? "en";
  		const windowHeight = ((globalScene.game.canvas.height / 6) - 23) / 6;
 
- 		party.forEach((p: PokemonData, i: integer) => {
+ 		party.forEach((p: PokemonData, i: number) => {
       const pokemonInfoWindow = new RoundRectangle(globalScene, 0, 14, (this.statsBgWidth * 2) + 10, windowHeight - 2, 3);
 
  			const pokemon = p.toPokemon();

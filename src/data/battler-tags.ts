@@ -18,7 +18,7 @@ import {
   MoveFlags,
   StatusCategoryOnAllyAttr
 } from "#app/data/move";
-import { SpeciesFormChangeManualTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
 import { Type } from "#enums/type";
@@ -42,6 +42,7 @@ import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
+import * as Utils from "../utils";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -137,7 +138,7 @@ export interface TerrainBattlerTag {
  * to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: integer, sourceMove?: Moves, sourceId?: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove?: Moves, sourceId?: number) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
   }
 
@@ -274,9 +275,9 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    const move = pokemon.getLastXMoves()
-      .find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
-    if (move === undefined) {
+    const move = pokemon.getLastXMoves(-1)
+      .find(m => !m.virtual);
+    if (Utils.isNullOrUndefined(move) || move.move === Moves.STRUGGLE || move.move === Moves.NONE) {
       return;
     }
 
@@ -1752,7 +1753,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     super.onAdd(pokemon);
 
     let highestStat: EffectiveStat;
-    EFFECTIVE_STATS.map(s => pokemon.getEffectiveStat(s)).reduce((highestValue: number, value: number, i: number) => {
+    EFFECTIVE_STATS.map(s => pokemon.getEffectiveStat(s, undefined, undefined, undefined, undefined, undefined, undefined, true)).reduce((highestValue: number, value: number, i: number) => {
       if (value > highestValue) {
         highestStat = EFFECTIVE_STATS[i];
         return value;
@@ -1763,15 +1764,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     highestStat = highestStat!; // tell TS compiler it's defined!
     this.stat = highestStat;
 
-    switch (this.stat) {
-      case Stat.SPD:
-        this.multiplier = 1.5;
-        break;
-      default:
-        this.multiplier = 1.3;
-        break;
-    }
-
+    this.multiplier = this.stat === Stat.SPD ? 1.5 : 1.3;
     globalScene.queueMessage(i18next.t("battlerTags:highestStatBoostOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), statName: i18next.t(getStatKey(highestStat)) }), null, false, null, true);
   }
 
@@ -2149,7 +2142,7 @@ export class FormBlockDamageTag extends BattlerTag {
     super.onAdd(pokemon);
 
     if (pokemon.formIndex !== 0) {
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
     }
   }
 
@@ -2161,7 +2154,7 @@ export class FormBlockDamageTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 }
 /** Provides the additional weather-based effects of the Ice Face ability */
@@ -2361,12 +2354,12 @@ export class GulpMissileTag extends BattlerTag {
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger);
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 }
 
@@ -2493,7 +2486,7 @@ export class TarShotTag extends BattlerTag {
    * @returns whether the tag is applied
    */
   override canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isTerastallized();
+    return !pokemon.isTerastallized;
   }
 
   override onAdd(pokemon: Pokemon): void {
@@ -2559,7 +2552,7 @@ export class SubstituteTag extends BattlerTag {
   /** Is the source Pokemon "in focus," i.e. is it fully visible on the field? */
   public sourceInFocus: boolean;
 
-  constructor(sourceMove: Moves, sourceId: integer) {
+  constructor(sourceMove: Moves, sourceId: number) {
     super(BattlerTagType.SUBSTITUTE, [ BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT ], 0, sourceMove, sourceId, true);
   }
 
@@ -2871,7 +2864,7 @@ export class SyrupBombTag extends BattlerTag {
 /**
  * Telekinesis raises the target into the air for three turns and causes all moves used against the target (aside from OHKO moves) to hit the target unless the target is in a semi-invulnerable state from Fly/Dig.
  * The first effect is provided by {@linkcode FloatingTag}, the accuracy-bypass effect is provided by TelekinesisTag
- * The effects of Telekinesis can be baton passed to a teammate. Unlike the mainline games, Telekinesis can be baton-passed to Mega Gengar.
+ * The effects of Telekinesis can be baton passed to a teammate.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
  */
 export class TelekinesisTag extends BattlerTag {
@@ -2980,6 +2973,24 @@ export class PsychoShiftTag extends BattlerTag {
       pokemon.updateInfo();
     }
     return false;
+  }
+}
+
+/**
+ * Tag associated with the move Magic Coat.
+ */
+export class MagicCoatTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MAGIC_COAT, BattlerTagLapseType.TURN_END, 1, Moves.MAGIC_COAT);
+  }
+
+  /**
+   * Queues the "[PokemonName] shrouded itself with Magic Coat" message when the tag is added.
+   * @param pokemon - The target {@linkcode Pokemon}
+   */
+  override onAdd(pokemon: Pokemon) {
+    // "{pokemonNameWithAffix} shrouded itself with Magic Coat!"
+    globalScene.queueMessage(i18next.t("battlerTags:magicCoatOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
   }
 }
 
@@ -3172,6 +3183,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new GrudgeTag();
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
+    case BattlerTagType.MAGIC_COAT:
+      return new MagicCoatTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

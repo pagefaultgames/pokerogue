@@ -1,5 +1,5 @@
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { generateModifierType, handleMysteryEncounterBattleFailed, initBattleWithEnemyConfig, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { handleMysteryEncounterBattleFailed, initBattleWithEnemyConfig, setEncounterRewards, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
@@ -23,7 +23,6 @@ import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Type } from "#enums/type";
 import { getPokeballTintColor } from "#app/data/pokeball";
@@ -387,11 +386,7 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.ADAMANT,
         moveSet: [ Moves.METEOR_MASH, Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH ],
         ivs: [ 31, 31, 31, 31, 31, 31 ],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.TERA_SHARD, [ Type.STEEL ]) as PokemonHeldItemModifierType,
-          }
-        ]
+        tera: Type.STEEL,
       }
     ]
   };
@@ -452,7 +447,7 @@ function getSpeciesFromPool(speciesPool: (Species | BreederSpeciesEvolution)[][]
 }
 
 function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number] {
-  const bst = pokemon.calculateBaseStats().reduce((a, b) => a + b, 0);
+  const bst = pokemon.getSpeciesForm().getBaseStatTotal();
   // 1 point for every 20 points below 680 BST the pokemon is, (max 18, min 1)
   const pointsFromBst = Math.min(Math.max(Math.floor((680 - bst) / 20), 1), 18);
 
@@ -575,7 +570,7 @@ function onGameOver() {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        globalScene.field.remove(pokemon, true);
+        pokemon.leaveField(true, true, true);
       }
     });
   }

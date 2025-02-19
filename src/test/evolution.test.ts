@@ -40,10 +40,10 @@ describe("Evolution", () => {
     eevee.abilityIndex = 2;
     trapinch.abilityIndex = 2;
 
-    eevee.evolve(pokemonEvolutions[Species.EEVEE][6], eevee.getSpeciesForm());
+    await eevee.evolve(pokemonEvolutions[Species.EEVEE][6], eevee.getSpeciesForm());
     expect(eevee.abilityIndex).toBe(2);
 
-    trapinch.evolve(pokemonEvolutions[Species.TRAPINCH][0], trapinch.getSpeciesForm());
+    await trapinch.evolve(pokemonEvolutions[Species.TRAPINCH][0], trapinch.getSpeciesForm());
     expect(trapinch.abilityIndex).toBe(1);
   });
 
@@ -55,10 +55,10 @@ describe("Evolution", () => {
     bulbasaur.abilityIndex = 0;
     charmander.abilityIndex = 1;
 
-    bulbasaur.evolve(pokemonEvolutions[Species.BULBASAUR][0], bulbasaur.getSpeciesForm());
+    await bulbasaur.evolve(pokemonEvolutions[Species.BULBASAUR][0], bulbasaur.getSpeciesForm());
     expect(bulbasaur.abilityIndex).toBe(0);
 
-    charmander.evolve(pokemonEvolutions[Species.CHARMANDER][0], charmander.getSpeciesForm());
+    await charmander.evolve(pokemonEvolutions[Species.CHARMANDER][0], charmander.getSpeciesForm());
     expect(charmander.abilityIndex).toBe(1);
   });
 
@@ -68,7 +68,7 @@ describe("Evolution", () => {
     const squirtle = game.scene.getPlayerPokemon()!;
     squirtle.abilityIndex = 5;
 
-    squirtle.evolve(pokemonEvolutions[Species.SQUIRTLE][0], squirtle.getSpeciesForm());
+    await squirtle.evolve(pokemonEvolutions[Species.SQUIRTLE][0], squirtle.getSpeciesForm());
     expect(squirtle.abilityIndex).toBe(0);
   });
 
@@ -80,7 +80,7 @@ describe("Evolution", () => {
     nincada.metBiome = -1;
     nincada.gender = 1;
 
-    nincada.evolve(pokemonEvolutions[Species.NINCADA][0], nincada.getSpeciesForm());
+    await nincada.evolve(pokemonEvolutions[Species.NINCADA][0], nincada.getSpeciesForm());
     const ninjask = game.scene.getPlayerParty()[0];
     const shedinja = game.scene.getPlayerParty()[1];
     expect(ninjask.abilityIndex).toBe(2);
@@ -174,7 +174,7 @@ describe("Evolution", () => {
     for (let f = 1; f < 4; f++) {
       vi.spyOn(Utils, "randSeedInt").mockReturnValue(f); // setting the random generator to 1, 2 and 3 to force 4 family mausholds
       const fourForm = playerPokemon.getEvolution()!;
-      expect(fourForm.evoFormKey).toBe(null); // meanwhile, according to the pokemon-forms, the evoFormKey for a 4 family maushold is null
+      expect(fourForm.evoFormKey).toBe("four"); // meanwhile, according to the pokemon-forms, the evoFormKey for a 4 family maushold is "four"
     }
   });
 });
