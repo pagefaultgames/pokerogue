@@ -55,8 +55,7 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(1);
   });
 
-  // Note - this passes right now because ability order doesn't consider speed at all
-  it("should activate before other abilities", async () => {
+  it.todo("should activate before other abilities", async () => {
     game.override.enemySpecies(Species.ACCELGOR)
       .enemyLevel(100)
       .enemyAbility(Abilities.INTIMIDATE);

@@ -1221,6 +1221,13 @@ export class FairyLockTag extends ArenaTag {
 
 }
 
+/**
+ * Arena tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Neutralizing_Gas_(Ability) Neutralizing Gas}
+ *
+ * Keeps track of the number of pokemon on the field with Neutralizing Gas - If it drops to zero, the effect is ended and abilities are reactivated
+ *
+ * Additionally ends onLose abilities when it is activated
+ */
 export class SuppressAbilitiesTag extends ArenaTag {
   sourceCount: number;
 

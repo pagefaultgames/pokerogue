@@ -2045,6 +2045,9 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Generic class to add an arena tag upon switching in
+ */
 export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private tagType: ArenaTagType;
   private turnCount: number;
@@ -2779,6 +2782,9 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
   }
 }
 
+/**
+ * Updates the active {@linkcode SuppressAbilitiesTag} when a pokemon with {@linkcode Abilities.NEUTRALIZING_GAS} leaves the field
+ */
 export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFieldAbAttr {
   constructor() {
     super(false);
@@ -2789,10 +2795,10 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
       const suppressTag = globalScene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
       if (suppressTag) {
         suppressTag.onSourceLeave(globalScene.arena);
+        return true;
       }
-      return false;
     }
-    return true;
+    return false;
   }
 }
 
