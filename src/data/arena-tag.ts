@@ -1226,7 +1226,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
   constructor(sourceId: number) {
     super(ArenaTagType.NEUTRALIZING_GAS, 0, undefined, sourceId);
-    this.sourceCount = 0;
+    this.sourceCount = 1;
   }
 
   onAdd(arena: Arena): void {
