@@ -246,7 +246,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private menuOptions: MenuOptions[];
   protected scale: number = 0.1666666667;
   private menuDescriptions: string[];
-  filteredIndices: Species[] | null = null;
+  private filteredIndices: Species[] | null = null;
 
   constructor() {
     super(Mode.POKEDEX_PAGE);
