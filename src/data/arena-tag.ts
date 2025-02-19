@@ -1221,6 +1221,37 @@ export class FairyLockTag extends ArenaTag {
 
 }
 
+export class SuppressAbilitiesTag extends ArenaTag {
+  sourceCount: number;
+
+  constructor(sourceId: number) {
+    super(ArenaTagType.NEUTRALIZING_GAS, 0, undefined, sourceId);
+    this.sourceCount = 0;
+  }
+
+  onAdd(arena: Arena): void {
+    const pokemon = this.getSourcePokemon();
+    if (pokemon) {
+      globalScene.queueMessage(i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+    }
+  }
+
+  onOverlap(arena: Arena): void {
+    this.sourceCount++;
+  }
+
+  onSourceLeave(arena: Arena): void {
+    this.sourceCount--;
+    if (this.sourceCount <= 0) {
+      arena.removeTag(ArenaTagType.NEUTRALIZING_GAS);
+    }
+  }
+
+  shouldApplyToSelf(): boolean {
+    return this.sourceCount > 1;
+  }
+}
+
 // TODO: swap `sourceMove` and `sourceId` and make `sourceMove` an optional parameter
 export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove: Moves | undefined, sourceId: number, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
@@ -1281,6 +1312,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove
       return new GrassWaterPledgeTag(sourceId, side);
     case ArenaTagType.FAIRY_LOCK:
       return new FairyLockTag(turnCount, sourceId);
+    case ArenaTagType.NEUTRALIZING_GAS:
+      return new SuppressAbilitiesTag(sourceId);
     default:
       return null;
   }
