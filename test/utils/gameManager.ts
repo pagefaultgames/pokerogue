@@ -41,13 +41,14 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { Species } from "#enums/species";
 import { generateStarter, waitUntil } from "#test/utils/gameManagerUtils";
-import GameWrapper from "#test/utils/gameWrapper";
+import { GameWrapper } from "#test/utils/gameWrapper";
 import { ChallengeModeHelper } from "#test/utils/helpers/challengeModeHelper";
 import { ClassicModeHelper } from "#test/utils/helpers/classicModeHelper";
 import { DailyModeHelper } from "#test/utils/helpers/dailyModeHelper";
 import { ModifierHelper } from "#test/utils/helpers/modifiersHelper";
 import { MoveHelper } from "#test/utils/helpers/moveHelper";
 import { OverridesHelper } from "#test/utils/helpers/overridesHelper";
+import { FieldHelper } from "#test/utils/helpers/fieldHelper";
 import { ReloadHelper } from "#test/utils/helpers/reloadHelper";
 import { SettingsHelper } from "#test/utils/helpers/settingsHelper";
 import PhaseInterceptor from "#test/utils/phaseInterceptor";
@@ -57,7 +58,7 @@ import fs from "fs";
 import { expect, vi } from "vitest";
 import { globalScene } from "#app/global-scene";
 import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import { MockFetch } from "#test/testUtils/mocks/mockFetch";
+import { MockFetch } from "#test/utils/mocks/mockFetch";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -76,6 +77,7 @@ export default class GameManager {
   public readonly settings: SettingsHelper;
   public readonly reload: ReloadHelper;
   public readonly modifiers: ModifierHelper;
+  public readonly field: FieldHelper;
 
   /**
    * Creates an instance of GameManager.

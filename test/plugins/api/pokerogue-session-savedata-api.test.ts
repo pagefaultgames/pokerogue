@@ -11,7 +11,7 @@ import type { SessionSaveData } from "#app/system/game-data";
 import { getApiBaseUrl } from "#test/utils/testUtils";
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import { initServerForApiTests } from "#test/utils/testFileInitialization";
 
 const apiBase = getApiBaseUrl();
 const sessionSavedataApi = new PokerogueSessionSavedataApi(apiBase);

@@ -9,7 +9,7 @@ import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import * as messages from "#app/messages";
 import { allMoves } from "#app/data/move";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import GameManager from "#test/utils/gameManager";
 
 describe("BattlerTag - SubstituteTag", () => {
   let phaserGame: Phaser.Game;
