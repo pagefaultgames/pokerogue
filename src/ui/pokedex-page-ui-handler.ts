@@ -248,7 +248,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private menuDescriptions: string[];
 
   private availableVariants: number;
-  unlockedVariants: boolean[];
+  private unlockedVariants: boolean[];
 
   constructor() {
     super(Mode.POKEDEX_PAGE);
