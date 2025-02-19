@@ -1822,7 +1822,7 @@ const modifierPool: ModifierPool = {
 
         if (!isHoldingOrb) {
           const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
-          const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
+          const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
 
           // Moves that take advantage of obtaining the actual status effect
           const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
