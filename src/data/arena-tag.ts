@@ -8,7 +8,7 @@ import type Pokemon from "#app/field/pokemon";
 import { HitResult, PokemonMove } from "#app/field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import type { BattlerIndex } from "#app/battle";
-import { BlockNonDirectDamageAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
+import { BlockNonDirectDamageAbAttr, InfiltratorAbAttr, PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, ProtectStatAbAttr, applyAbAttrs, applyOnGainAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -1244,6 +1244,19 @@ export class SuppressAbilitiesTag extends ArenaTag {
     this.sourceCount--;
     if (this.sourceCount <= 0) {
       arena.removeTag(ArenaTagType.NEUTRALIZING_GAS);
+    }
+  }
+
+  onRemove(arena: Arena, quiet: boolean = false) {
+    if (!quiet) {
+      globalScene.queueMessage(i18next.t("abilityTriggers:neutralizingGasEnded"));
+    }
+
+    for (const pokemon of globalScene.getField()) {
+      // There is only one pokemon with this attr on the field on removal, so its abilities are already active
+      if (pokemon && !pokemon.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false)) {
+        [ true, false ].forEach((v) => applyOnGainAbAttrs(pokemon, v));
+      }
     }
   }
 

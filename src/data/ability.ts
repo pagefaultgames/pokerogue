@@ -5357,10 +5357,10 @@ export function applyOnGainAbAttrs(pokemon: Pokemon, passive: boolean = false, s
 }
 
 /**
- * Clears primal weather during the turn if {@linkcode pokemon}'s ability corresponds to one
+ * Clears primal weather/neutralizing gas during the turn if {@linkcode pokemon}'s ability corresponds to one
  */
-export function applyOnLoseClearWeatherAbAttrs(pokemon: Pokemon, passive: boolean = false, simulated: boolean = false, ...args: any[]): void {
-  applySingleAbAttrs<PreLeaveFieldClearWeatherAbAttr>(pokemon, passive, PreLeaveFieldClearWeatherAbAttr, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated);
+export function applyOnLoseAbAttrs(pokemon: Pokemon, passive: boolean = false, simulated: boolean = false, ...args: any[]): void {
+  applySingleAbAttrs<PreLeaveFieldAbAttr>(pokemon, passive, PreLeaveFieldAbAttr, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated);
 }
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
