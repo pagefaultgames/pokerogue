@@ -1051,7 +1051,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       caughtAttr += DexAttr.VARIANT_2;
       caughtAttr += DexAttr.VARIANT_3;
     }
-    caughtAttr += DexAttr.DEFAULT_FORM;
+
+    // Summing successive bigints for each obtainable form
+    caughtAttr += this?.forms?.length > 1 ?
+      this.forms.map((f, index) => f.isUnobtainable ? 0n : 128n * 2n ** BigInt(index)).reduce((acc, val) => acc + val, 0n) :
+      DexAttr.DEFAULT_FORM;
 
     return caughtAttr;
   }
