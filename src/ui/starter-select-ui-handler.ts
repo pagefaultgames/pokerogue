@@ -88,7 +88,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 33,
   },
   "es-ES":{
-    starterInfoTextSize: "56px",
+    starterInfoTextSize: "52px",
     instructionTextSize: "35px",
   },
   "fr":{

@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type TouchControl from "#app/touch-controls";
 import type UI from "#app/ui/ui";
+import i18next from "i18next";
 
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
 export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
@@ -71,7 +72,7 @@ export default class MoveTouchControlsHandler {
     if (this.inConfigurationMode) {
       const orientation = document.querySelector("#touchControls #orientation");
       if (orientation) {
-        orientation.textContent = this.isLandscapeMode ? "Landscape" : "Portrait";
+        orientation.textContent = this.isLandscapeMode ? i18next.t("settings:landscape") : i18next.t("settings:portrait");
       }
     }
     const positions = this.getSavedPositionsOfCurrentOrientation() ?? [];
@@ -90,19 +91,22 @@ export default class MoveTouchControlsHandler {
     const toolbar = document.createElement("div");
     toolbar.id = "configToolbar";
     toolbar.innerHTML = `
-      <div class="column">
-        <div class="button-row">
-          <div id="resetButton" class="button">Reset</div>
-          <div id="saveButton" class="button">Save & close</div>
-          <div id="cancelButton" class="button">Cancel</div>
-        </div>
-        <div class="info-row">
-          <div class="orientation-label"> 
-            Orientation: <span id="orientation">${this.isLandscapeMode ? "Landscape" : "Portrait"}</span>
-          </div>
+    <div class="column">
+      <div class="button-row">
+        <div id="resetButton" class="button">${i18next.t("settings:reset")}</div>
+        <div id="saveButton" class="button">${i18next.t("settings:saveClose")}</div>
+        <div id="cancelButton" class="button">${i18next.t("settings:cancel")}</div>
+      </div>
+      <div class="info-row">
+        <div class="orientation-label"> 
+          ${i18next.t("settings:orientation")}
+          <span id="orientation">
+            ${this.isLandscapeMode ? i18next.t("settings:landscape") : i18next.t("settings:portrait")}
+          </span>
         </div>
       </div>
-    `;
+    </div>
+  `;
     return toolbar;
   }
 

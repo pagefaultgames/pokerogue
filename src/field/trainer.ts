@@ -11,7 +11,8 @@ import {
   TrainerSlot,
   trainerConfigs,
   trainerPartyTemplates,
-  signatureSpecies
+  signatureSpecies,
+  TeraAIMode
 } from "#app/data/trainer-config";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
@@ -36,6 +37,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
   public partyTemplateIndex: number;
   public name: string;
   public partnerName: string;
+  public originalIndexes: { [key: number]: number } = {};
 
   constructor(trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: number, name?: string, partnerName?: string, trainerConfigOverride?: TrainerConfig) {
     super(globalScene, -72, 80);
@@ -546,6 +548,13 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return [];
   }
 
+  genAI(party: EnemyPokemon[]) {
+    if (this.config.genAIFuncs) {
+      this.config.genAIFuncs.forEach(f => f(party));
+    }
+    console.log("Generated AI funcs");
+  }
+
   loadAssets(): Promise<void> {
     return this.config.loadAssets(this.variant);
   }
@@ -666,5 +675,14 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tintSprite.setAlpha(1);
       }
     });
+  }
+
+  shouldTera(pokemon: EnemyPokemon): boolean {
+    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA) {
+      if (!pokemon.isTerastallized && this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
