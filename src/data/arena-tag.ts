@@ -1243,7 +1243,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
       for (const fieldPokemon of globalScene.getField()) {
         if (fieldPokemon && fieldPokemon.id !== pokemon.id) {
-          [ true, false ].forEach((v) => applyOnLoseAbAttrs(fieldPokemon, v));
+          [ true, false ].forEach((passive) => applyOnLoseAbAttrs(fieldPokemon, passive));
         }
       }
     }
@@ -1274,7 +1274,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
     for (const pokemon of globalScene.getField()) {
       // There is only one pokemon with this attr on the field on removal, so its abilities are already active
       if (pokemon && !pokemon.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false)) {
-        [ true, false ].forEach((v) => applyOnGainAbAttrs(pokemon, v));
+        [ true, false ].forEach((passive) => applyOnGainAbAttrs(pokemon, passive));
       }
     }
   }

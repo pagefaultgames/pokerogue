@@ -1503,7 +1503,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public suppressAbility() {
     this.summonData.abilitySuppressed = true;
-    [ true, false ].forEach((v) => applyOnLoseAbAttrs(this, v));
+    [ true, false ].forEach((passive) => applyOnLoseAbAttrs(this, passive));
   }
 
   /**
