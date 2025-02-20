@@ -146,7 +146,8 @@ export class SwitchSummonPhase extends SummonPhase {
         } else {
           switchedInPokemon.resetSummonData();
         }
-        this.lastPokemon.leaveField();
+        // We cannot clear stat changes yet because they are applied after the new mon is summoned
+        this.lastPokemon.leaveField(this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL ? false : true);
         this.summon();
       };
       if (this.player) {
@@ -184,11 +185,13 @@ export class SwitchSummonPhase extends SummonPhase {
 
     if (this.switchType === SwitchType.BATON_PASS && pokemon) {
       pokemon.transferSummon(this.lastPokemon);
+      this.lastPokemon.resetSummonData();
     } else if (this.switchType === SwitchType.SHED_TAIL && pokemon) {
       const subTag = this.lastPokemon.getTag(SubstituteTag);
       if (subTag) {
         pokemon.summonData.tags.push(subTag);
       }
+      this.lastPokemon.resetSummonData();
     }
 
     if (this.switchType !== SwitchType.INITIAL_SWITCH) {
