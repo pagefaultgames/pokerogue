@@ -9,6 +9,8 @@ export class ReturnPhase extends SwitchSummonPhase {
   }
 
   switchAndSummon(): void {
+    const pokemon = this.getPokemon();
+    pokemon.leaveField();
     this.end();
   }
 
