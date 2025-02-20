@@ -2049,11 +2049,11 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
  * Generic class to add an arena tag upon switching in
  */
 export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
-  private tagType: ArenaTagType;
-  private turnCount: number;
+  private readonly tagType: ArenaTagType;
+  private readonly turnCount: number;
+  private readonly side?: ArenaTagSide;
+  private readonly quiet?: boolean;
   private sourceId: number;
-  private side: ArenaTagSide | undefined;
-  private quiet: boolean | undefined;
 
 
   constructor(tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
@@ -2064,7 +2064,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
     this.quiet = quiet;
   }
 
-  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     this.sourceId = pokemon.id;
     if (!simulated) {
       globalScene.arena.addTag(this.tagType, this.turnCount, undefined, this.sourceId, this.side, this.quiet);
@@ -2790,7 +2790,7 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
     super(false);
   }
 
-  applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  public override applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
     if (!simulated) {
       const suppressTag = globalScene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
       if (suppressTag) {
@@ -2798,7 +2798,7 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
         return true;
       }
     }
-    return false;
+    return simulated;
   }
 }
 
