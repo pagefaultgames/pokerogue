@@ -7521,10 +7521,10 @@ export class AbilityChangeAttr extends MoveEffectAttr {
 
     const moveTarget = this.selfTarget ? user : target;
 
-    moveTarget.summonData.ability = this.ability;
-    globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
-
     globalScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name }));
+
+    moveTarget.setTempAbility(allAbilities[this.ability]);
+    globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
 
     return true;
   }
@@ -7548,13 +7548,13 @@ export class AbilityCopyAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.summonData.ability = target.getAbility().id;
-
     globalScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
 
+    user.setTempAbility(target.getAbility());
+
     if (this.copyToPartner && globalScene.currentBattle?.double && user.getAlly().hp) {
-      user.getAlly().summonData.ability = target.getAbility().id;
       globalScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user.getAlly()), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
+      user.getAlly().setTempAbility(target.getAbility());
     }
 
     return true;
@@ -7585,9 +7585,9 @@ export class AbilityGiveAttr extends MoveEffectAttr {
       return false;
     }
 
-    target.summonData.ability = user.getAbility().id;
-
     globalScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix(target), abilityName: allAbilities[user.getAbility().id].name }));
+
+    target.setTempAbility(user.getAbility());
 
     return true;
   }
@@ -7603,15 +7603,14 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
       return false;
     }
 
-    const tempAbilityId = user.getAbility().id;
-    user.summonData.ability = target.getAbility().id;
-    target.summonData.ability = tempAbilityId;
+    const tempAbility = user.getAbility();
 
     globalScene.queueMessage(i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }));
+
+    user.setTempAbility(target.getAbility());
+    target.setTempAbility(tempAbility);
     // Swaps Forecast/Flower Gift from Castform/Cherrim
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
-    // Swaps Forecast/Flower Gift to Castform/Cherrim (edge case)
-    globalScene.arena.triggerWeatherBasedFormChanges();
 
     return true;
   }
@@ -7690,7 +7689,6 @@ export class TransformAttr extends MoveEffectAttr {
 
     const promises: Promise<void>[] = [];
     user.summonData.speciesForm = target.getSpeciesForm();
-    user.summonData.ability = target.getAbility().id;
     user.summonData.gender = target.getGender();
 
     // Power Trick's effect will not preserved after using Transform
@@ -7723,6 +7721,8 @@ export class TransformAttr extends MoveEffectAttr {
     promises.push(user.loadAssets(false).then(() => {
       user.playAnim();
       user.updateInfo();
+      // If the new ability activates immediately, it needs to happen after all the transform animations
+      user.setTempAbility(target.getAbility());
     }));
 
     await Promise.all(promises);
@@ -8034,6 +8034,56 @@ export class AfterYouAttr extends MoveEffectAttr {
     return true;
   }
 }
+
+/**
+ * Move effect to force the target to move last, ignoring priority.
+ * If applied to multiple targets, they move in speed order after all other moves.
+ * @extends MoveEffectAttr
+ */
+export class ForceLastAttr extends MoveEffectAttr {
+  /**
+   * Forces the target of this move to move last.
+   *
+   * @param user {@linkcode Pokemon} that is using the move.
+   * @param target {@linkcode Pokemon} that will be forced to move last.
+   * @param move {@linkcode Move} {@linkcode Moves.QUASH}
+   * @param _args N/A
+   * @returns true
+   */
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    globalScene.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
+
+    const targetMovePhase = globalScene.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      // Finding the phase to insert the move in front of -
+      // Either the end of the turn or in front of another, slower move which has also been forced last
+      const prependPhase = globalScene.findPhase((phase) =>
+        [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
+        || (phase instanceof MovePhase) && phaseForcedSlower(phase, target, !!globalScene.arena.getTag(ArenaTagType.TRICK_ROOM))
+      );
+      if (prependPhase) {
+        globalScene.phaseQueue.splice(
+          globalScene.phaseQueue.indexOf(prependPhase),
+          0,
+          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
+        );
+      }
+    }
+    return true;
+  }
+}
+
+/** Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target} */
+const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
+  let slower: boolean;
+  // quashed pokemon still have speed ties
+  if (phase.pokemon.getEffectiveStat(Stat.SPD) === target.getEffectiveStat(Stat.SPD)) {
+    slower = !!target.randSeedInt(2);
+  } else {
+    slower = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
+  }
+  return phase.isForcedLast() && slower;
+};
 
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !globalScene.arena.getTag(ArenaTagType.GRAVITY);
 
@@ -9914,7 +9964,8 @@ export function initMoves() {
       .attr(RemoveHeldItemAttr, true),
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .condition(failIfSingleBattle)
-      .unimplemented(),
+      .condition((user, target, move) => !target.turnData.acted)
+      .attr(ForceLastAttr),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferable).reduce((v, m) => v + m.stackCount, 0))),
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
