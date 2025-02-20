@@ -123,6 +123,26 @@ describe("Moves - Disable", () => {
     await game.toNextTurn();
 
     expect(enemyMon.isMoveRestricted(Moves.NATURE_POWER)).toBe(true);
-    expect(enemyMon.isMoveRestricted(enemyMon.getLastXMoves(2)[1].move)).toBe(false);
+    expect(enemyMon.isMoveRestricted(enemyMon.getLastXMoves(2)[0].move)).toBe(false);
+  }, 20000);
+
+  it("disables most recent move", async() => {
+    game.override.enemyMoveset([ Moves.SPLASH, Moves.TACKLE ]);
+    await game.classicMode.startBattle();
+
+    const enemyMon = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextTurn();
+
+    game.move.select(Moves.DISABLE);
+    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.toNextTurn();
+
+    expect(enemyMon.isMoveRestricted(Moves.TACKLE)).toBe(true);
+    expect(enemyMon.isMoveRestricted(Moves.SPLASH)).toBe(false);
   }, 20000);
 });

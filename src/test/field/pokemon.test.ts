@@ -150,6 +150,17 @@ describe("Spec - Pokemon", () => {
       expect(types[1]).toBe(Type.DARK);
     });
 
+    it("Fusing mons with two and one types", async () => {
+      game.override.starterSpecies(Species.NUMEL);
+      game.override.starterFusionSpecies(Species.CHARMANDER);
+      await game.classicMode.startBattle();
+      const pokemon = scene.getPlayerParty()[0];
+
+      const types = pokemon.getTypes();
+      expect(types[0]).toBe(Type.FIRE);
+      expect(types[1]).toBe(Type.GROUND);
+    });
+
     it("Fusing two mons with two types", async () => {
       game.override.starterSpecies(Species.NATU);
       game.override.starterFusionSpecies(Species.HOUNDOUR);
