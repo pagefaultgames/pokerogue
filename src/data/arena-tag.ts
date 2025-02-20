@@ -1239,7 +1239,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
   onAdd(arena: Arena): void {
     const pokemon = this.getSourcePokemon();
     if (pokemon) {
-      globalScene.queueMessage(i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+      globalScene.queueMessage(i18next.t("arenaTag:neutralizingGasOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
 
       for (const fieldPokemon of globalScene.getField()) {
         if (fieldPokemon && fieldPokemon.id !== pokemon.id) {
@@ -1262,7 +1262,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
   onRemove(arena: Arena, quiet: boolean = false) {
     if (!quiet) {
-      globalScene.queueMessage(i18next.t("abilityTriggers:neutralizingGasEnded"));
+      globalScene.queueMessage(i18next.t("arenaTag:neutralizingGasOnRemove"));
     }
 
     for (const pokemon of globalScene.getField()) {
