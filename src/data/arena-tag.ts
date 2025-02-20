@@ -1257,6 +1257,12 @@ export class SuppressAbilitiesTag extends ArenaTag {
     this.sourceCount--;
     if (this.sourceCount <= 0) {
       arena.removeTag(ArenaTagType.NEUTRALIZING_GAS);
+    } else if (this.sourceCount === 1) {
+      // With 1 source left, that pokemon's other abilities should reactivate
+      // This may be confusing for players but would be the most accurate gameplay-wise
+      // Could have a custom message that plays when a specific pokemon's NG ends? This entire thing exists due to passives after all
+      const setter = globalScene.getField().filter((p) => p && p.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false))[0];
+      applyOnGainAbAttrs(setter, setter.getAbility().hasAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr));
     }
   }
 
