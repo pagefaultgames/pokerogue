@@ -6122,7 +6122,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randSeedInt(eligibleNewIndices.length)];
           globalScene.prependToPhase(
             new SwitchSummonPhase(
@@ -6135,7 +6134,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
             MoveEndPhase
           );
         } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
           globalScene.prependToPhase(
             new SwitchPhase(
               this.switchType,
@@ -6164,7 +6162,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randSeedInt(eligibleNewIndices.length)];
           globalScene.prependToPhase(
             new SwitchSummonPhase(
@@ -6177,7 +6174,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
             MoveEndPhase
           );
         } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
           globalScene.prependToPhase(
             new SwitchSummonPhase(
               this.switchType,

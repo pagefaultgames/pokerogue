@@ -4921,7 +4921,6 @@ class ForceSwitchOutHelper {
       }
 
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         globalScene.prependToPhase(new SwitchPhase(this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
         return true;
       }
