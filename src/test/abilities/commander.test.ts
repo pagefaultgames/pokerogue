@@ -254,14 +254,24 @@ describe("Abilities - Commander", () => {
     vi.spyOn(game.scene, "getDoubleBattleChance");
     await game.classicMode.startBattle();
 
+    let expected: number = 8;
     game.move.select(Moves.SPLASH);
+    if (game.scene.currentBattle.double) {
+      game.move.select(Moves.SPLASH);
+      expected = 2;
+    }
     await game.doKillOpponents();
     await game.toNextWave();
-    expect(game.scene.getDoubleBattleChance).toHaveLastReturnedWith(8);
+    expect(game.scene.getDoubleBattleChance).toHaveLastReturnedWith(expected);
 
+    expected = 2;
     game.move.select(Moves.SPLASH);
+    if (game.scene.currentBattle.double) {
+      game.move.select(Moves.SPLASH);
+      expected = 1;
+    }
     await game.doKillOpponents();
     await game.toNextWave();
-    expect(game.scene.getDoubleBattleChance).toHaveLastReturnedWith(2);
+    expect(game.scene.getDoubleBattleChance).toHaveLastReturnedWith(expected);
   });
 });
