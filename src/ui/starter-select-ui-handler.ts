@@ -2089,7 +2089,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               } while (newFormIndex !== props.formIndex);
               starterAttributes.form = newFormIndex; // store the selected form
-              this.setSpeciesDetails(this.lastSpecies, { formIndex: newFormIndex });
+              starterAttributes.tera = this.lastSpecies.forms[newFormIndex].type1;
+              this.setSpeciesDetails(this.lastSpecies, { formIndex: newFormIndex, teraType: starterAttributes.tera });
               success = true;
             }
             break;
@@ -2150,12 +2151,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             break;
           case Button.CYCLE_TERA:
             if (this.canCycleTera) {
-              if (this.lastSpecies.type1 === this.teraCursor && !Utils.isNullOrUndefined(this.lastSpecies.type2)) {
-                starterAttributes.tera = this.lastSpecies.type2!;
-                this.setSpeciesDetails(this.lastSpecies, { teraType: this.lastSpecies.type2! });
+              const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterAttributes.form ?? 0);
+              if (speciesForm.type1 === this.teraCursor && !Utils.isNullOrUndefined(speciesForm.type2)) {
+                starterAttributes.tera = speciesForm.type2!;
+                this.setSpeciesDetails(this.lastSpecies, { teraType: speciesForm.type2! });
               } else {
-                starterAttributes.tera = this.lastSpecies.type1;
-                this.setSpeciesDetails(this.lastSpecies, { teraType: this.lastSpecies.type1 });
+                starterAttributes.tera = speciesForm.type1;
+                this.setSpeciesDetails(this.lastSpecies, { teraType: speciesForm.type1 });
               }
               success = true;
             }
@@ -3342,7 +3344,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
-        this.canCycleTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(species.type2);
+        this.canCycleTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
