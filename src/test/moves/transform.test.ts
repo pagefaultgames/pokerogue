@@ -116,4 +116,16 @@ describe("Moves - Transform", () => {
       }
     });
   });
+
+  it("should activate its ability if it copies one that activates on summon", async () => {
+    game.override.enemyAbility(Abilities.INTIMIDATE)
+      .ability(Abilities.BALL_FETCH);
+
+    await game.classicMode.startBattle([ Species.DITTO ]);
+    game.move.select(Moves.TRANSFORM);
+
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
+  });
 });

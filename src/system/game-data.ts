@@ -56,6 +56,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
+import type { Type } from "#enums/type";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -230,6 +231,7 @@ export interface StarterAttributes {
   shiny?: boolean;
   favorite?: boolean;
   nickname?: string;
+  tera?: Type;
 }
 
 export interface StarterPreferences {
@@ -1087,6 +1089,8 @@ export class GameData {
 
           globalScene.arena.terrain = sessionData.arena.terrain;
           globalScene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, globalScene.arena.terrain?.terrainType!, globalScene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
+
+          globalScene.arena.playerTerasUsed = sessionData.arena.playerTerasUsed;
 
           globalScene.arena.tags = sessionData.arena.tags;
           if (globalScene.arena.tags) {
