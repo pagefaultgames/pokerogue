@@ -8035,6 +8035,56 @@ export class AfterYouAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Move effect to force the target to move last, ignoring priority.
+ * If applied to multiple targets, they move in speed order after all other moves.
+ * @extends MoveEffectAttr
+ */
+export class ForceLastAttr extends MoveEffectAttr {
+  /**
+   * Forces the target of this move to move last.
+   *
+   * @param user {@linkcode Pokemon} that is using the move.
+   * @param target {@linkcode Pokemon} that will be forced to move last.
+   * @param move {@linkcode Move} {@linkcode Moves.QUASH}
+   * @param _args N/A
+   * @returns true
+   */
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    globalScene.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
+
+    const targetMovePhase = globalScene.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      // Finding the phase to insert the move in front of -
+      // Either the end of the turn or in front of another, slower move which has also been forced last
+      const prependPhase = globalScene.findPhase((phase) =>
+        [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
+        || (phase instanceof MovePhase) && phaseForcedSlower(phase, target, !!globalScene.arena.getTag(ArenaTagType.TRICK_ROOM))
+      );
+      if (prependPhase) {
+        globalScene.phaseQueue.splice(
+          globalScene.phaseQueue.indexOf(prependPhase),
+          0,
+          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
+        );
+      }
+    }
+    return true;
+  }
+}
+
+/** Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target} */
+const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
+  let slower: boolean;
+  // quashed pokemon still have speed ties
+  if (phase.pokemon.getEffectiveStat(Stat.SPD) === target.getEffectiveStat(Stat.SPD)) {
+    slower = !!target.randSeedInt(2);
+  } else {
+    slower = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
+  }
+  return phase.isForcedLast() && slower;
+};
+
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !globalScene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
@@ -9914,7 +9964,8 @@ export function initMoves() {
       .attr(RemoveHeldItemAttr, true),
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .condition(failIfSingleBattle)
-      .unimplemented(),
+      .condition((user, target, move) => !target.turnData.acted)
+      .attr(ForceLastAttr),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferable).reduce((v, m) => v + m.stackCount, 0))),
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
