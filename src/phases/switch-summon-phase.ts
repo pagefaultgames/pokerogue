@@ -109,7 +109,7 @@ export class SwitchSummonPhase extends SummonPhase {
     const party = this.player ? this.getParty() : globalScene.getEnemyParty();
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
-    console.log(this.lastPokemon.name, this.lastPokemon.isOnField(), this.lastPokemon.canApplyAbility());
+    console.log(this.lastPokemon.name, switchedInPokemon.name);
     if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
       (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
       if (!globalScene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
@@ -195,8 +195,6 @@ export class SwitchSummonPhase extends SummonPhase {
       pokemon.resetTurnData();
       pokemon.turnData.switchedInThisTurn = true;
     }
-
-    this.lastPokemon?.resetSummonData();
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
