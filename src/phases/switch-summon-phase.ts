@@ -52,6 +52,7 @@ export class SwitchSummonPhase extends SummonPhase {
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
       }
     }
+    console.log("a");
 
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])) {
       if (this.player) {
@@ -61,6 +62,7 @@ export class SwitchSummonPhase extends SummonPhase {
         return;
       }
     }
+    console.log("b");
 
     const pokemon = this.getPokemon();
     (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
@@ -77,6 +79,9 @@ export class SwitchSummonPhase extends SummonPhase {
         });
       }
     }
+    console.log("c");
+
+    console.log(pokemon.name, pokemon.isOnField(), pokemon.canApplyAbility());
 
     globalScene.ui.showText(this.player ?
       i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }) :
@@ -95,16 +100,16 @@ export class SwitchSummonPhase extends SummonPhase {
       scale: 0.5,
       onComplete: () => {
         globalScene.time.delayedCall(750, () => this.switchAndSummon());
-        pokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
       }
     });
+    console.log("d");
   }
 
   switchAndSummon() {
     const party = this.player ? this.getParty() : globalScene.getEnemyParty();
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
-    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
+    console.log(this.lastPokemon.name, this.lastPokemon.isOnField(), this.lastPokemon.canApplyAbility());
     if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
       (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
       if (!globalScene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
@@ -116,6 +121,7 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
     if (switchedInPokemon) {
+      applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
       party[this.slotIndex] = this.lastPokemon;
       party[this.fieldIndex] = switchedInPokemon;
       const showTextAndSummon = () => {
@@ -140,6 +146,7 @@ export class SwitchSummonPhase extends SummonPhase {
         } else {
           switchedInPokemon.resetSummonData();
         }
+        this.lastPokemon.leaveField(true, false);
         this.summon();
       };
       if (this.player) {
