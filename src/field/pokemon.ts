@@ -4437,16 +4437,13 @@ export class PlayerPokemon extends Pokemon {
   }
 
   /**
-   * Causes this mon to leave the field (via {@linkcode leaveField}) and then
-   * opens the party switcher UI to switch a new mon in
+   * Opens the party switcher UI to switch a new mon in
    * @param switchType the {@linkcode SwitchType} for this switch-out. If this is
    * `BATON_PASS` or `SHED_TAIL`, this Pokemon's effects are not cleared upon leaving
    * the field.
    */
   switchOut(switchType: SwitchType = SwitchType.SWITCH): Promise<void> {
     return new Promise(resolve => {
-      this.leaveField(switchType === SwitchType.SWITCH);
-
       globalScene.ui.setMode(Mode.PARTY, PartyUiMode.FAINT_SWITCH, this.getFieldIndex(), (slotIndex: number, option: PartyOption) => {
         if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
           globalScene.prependToPhase(new SwitchSummonPhase(switchType, this.getFieldIndex(), slotIndex, false), MoveEndPhase);
