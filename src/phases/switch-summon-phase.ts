@@ -146,7 +146,7 @@ export class SwitchSummonPhase extends SummonPhase {
         } else {
           switchedInPokemon.resetSummonData();
         }
-        this.lastPokemon.leaveField(true, false);
+        this.lastPokemon.leaveField();
         this.summon();
       };
       if (this.player) {
