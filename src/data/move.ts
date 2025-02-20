@@ -791,7 +791,7 @@ export default class Move implements Localizable {
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, null, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
-    if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
       power.value = 60;
     }
 
@@ -908,7 +908,7 @@ export class AttackMove extends Move {
     attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
     if (attackScore) {
       if (this.category === MoveCategory.PHYSICAL) {
-        const atk = new Utils.IntegerHolder(user.getEffectiveStat(Stat.ATK, target));
+        const atk = new Utils.NumberHolder(user.getEffectiveStat(Stat.ATK, target));
         applyMoveAttrs(VariableAtkAttr, user, target, move, atk);
         if (atk.value > user.getEffectiveStat(Stat.SPATK, target)) {
           const statRatio = user.getEffectiveStat(Stat.SPATK, target) / atk.value;
@@ -919,7 +919,7 @@ export class AttackMove extends Move {
           }
         }
       } else {
-        const spAtk = new Utils.IntegerHolder(user.getEffectiveStat(Stat.SPATK, target));
+        const spAtk = new Utils.NumberHolder(user.getEffectiveStat(Stat.SPATK, target));
         applyMoveAttrs(VariableAtkAttr, user, target, move, spAtk);
         if (spAtk.value > user.getEffectiveStat(Stat.ATK, target)) {
           const statRatio = user.getEffectiveStat(Stat.ATK, target) / spAtk.value;
@@ -1337,7 +1337,7 @@ export class IgnoreOpponentStatStagesAttr extends MoveAttr {
 
 export class HighCritAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value++;
+    (args[0] as Utils.NumberHolder).value++;
 
     return true;
   }
@@ -1369,7 +1369,7 @@ export class FixedDamageAttr extends MoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = this.getDamage(user, target, move);
+    (args[0] as Utils.NumberHolder).value = this.getDamage(user, target, move);
 
     return true;
   }
@@ -1385,7 +1385,7 @@ export class UserHpDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = user.hp;
+    (args[0] as Utils.NumberHolder).value = user.hp;
 
     return true;
   }
@@ -1437,7 +1437,7 @@ export class MatchHpAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = target.hp - user.hp;
+    (args[0] as Utils.NumberHolder).value = target.hp - user.hp;
 
     return true;
   }
@@ -1467,7 +1467,7 @@ export class CounterDamageAttr extends FixedDamageAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).reduce((total: number, ar: AttackMoveResult) => total + ar.damage, 0);
-    (args[0] as Utils.IntegerHolder).value = Utils.toDmgValue(damage * this.multiplier);
+    (args[0] as Utils.NumberHolder).value = Utils.toDmgValue(damage * this.multiplier);
 
     return true;
   }
@@ -1499,7 +1499,7 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
 
 export class ModifiedDamageAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const initialDamage = args[0] as Utils.IntegerHolder;
+    const initialDamage = args[0] as Utils.NumberHolder;
     initialDamage.value = this.getModifiedDamage(user, target, move, initialDamage.value);
 
     return true;
@@ -2164,7 +2164,7 @@ export class IncrementMovePriorityAttr extends MoveAttr {
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} being used
-   * @param args [0] {@linkcode Utils.IntegerHolder} for move priority.
+   * @param args [0] {@linkcode Utils.NumberHolder} for move priority.
    * @returns true if function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2172,7 +2172,7 @@ export class IncrementMovePriorityAttr extends MoveAttr {
       return false;
     }
 
-    (args[0] as Utils.IntegerHolder).value += this.increaseAmount;
+    (args[0] as Utils.NumberHolder).value += this.increaseAmount;
     return true;
   }
 }
@@ -2210,7 +2210,7 @@ export class MultiHitAttr extends MoveAttr {
    * @param user {@linkcode Pokemon} that used the attack
    * @param target {@linkcode Pokemon} targeted by the attack
    * @param move {@linkcode Move} being used
-   * @param args [0] {@linkcode Utils.IntegerHolder} storing the hit count of the attack
+   * @param args [0] {@linkcode Utils.NumberHolder} storing the hit count of the attack
    * @returns True
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2277,7 +2277,7 @@ export class ChangeMultiHitTypeAttr extends MoveAttr {
 export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.species.speciesId === Species.GRENINJA && user.hasAbility(Abilities.BATTLE_BOND) && user.formIndex === 2) {
-      (args[0] as Utils.IntegerHolder).value = MultiHitType._3;
+      (args[0] as Utils.NumberHolder).value = MultiHitType._3;
       return true;
     }
     return false;
@@ -4118,7 +4118,7 @@ export class PresentPowerAttr extends VariablePowerAttr {
 export class WaterShurikenPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.species.speciesId === Species.GRENINJA && user.hasAbility(Abilities.BATTLE_BOND) && user.formIndex === 2) {
-      (args[0] as Utils.IntegerHolder).value = 20;
+      (args[0] as Utils.NumberHolder).value = 20;
       return true;
     }
     return false;
@@ -4140,7 +4140,7 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
     const stockpilingTag = user.getTag(StockpilingTag);
 
     if (stockpilingTag && stockpilingTag.stockpiledCount > 0) {
-      const power = args[0] as Utils.IntegerHolder;
+      const power = args[0] as Utils.NumberHolder;
       power.value = this.multiplier * stockpilingTag.stockpiledCount;
       return true;
     }
@@ -4449,7 +4449,7 @@ export class VariableAtkAttr extends MoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    //const atk = args[0] as Utils.IntegerHolder;
+    //const atk = args[0] as Utils.NumberHolder;
     return false;
   }
 }
@@ -4459,7 +4459,7 @@ export class TargetAtkUserAtkAttr extends VariableAtkAttr {
     super();
   }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = target.getEffectiveStat(Stat.ATK, target);
+    (args[0] as Utils.NumberHolder).value = target.getEffectiveStat(Stat.ATK, target);
     return true;
   }
 }
@@ -4470,7 +4470,7 @@ export class DefAtkAttr extends VariableAtkAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = user.getEffectiveStat(Stat.DEF, target);
+    (args[0] as Utils.NumberHolder).value = user.getEffectiveStat(Stat.DEF, target);
     return true;
   }
 }
@@ -4481,7 +4481,7 @@ export class VariableDefAttr extends MoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    //const def = args[0] as Utils.IntegerHolder;
+    //const def = args[0] as Utils.NumberHolder;
     return false;
   }
 }
@@ -4492,7 +4492,7 @@ export class DefDefAttr extends VariableDefAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = target.getEffectiveStat(Stat.DEF, user);
+    (args[0] as Utils.NumberHolder).value = target.getEffectiveStat(Stat.DEF, user);
     return true;
   }
 }
@@ -4634,7 +4634,7 @@ export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
 
-    if (user.isTerastallized() && user.getEffectiveStat(Stat.ATK, target, move, true, true, false, false, true) >
+    if (user.isTerastallized && user.getEffectiveStat(Stat.ATK, target, move, true, true, false, false, true) >
     user.getEffectiveStat(Stat.SPATK, target, move, true, true, false, false, true)) {
       category.value = MoveCategory.PHYSICAL;
       return true;
@@ -4662,7 +4662,7 @@ export class TeraBlastPowerAttr extends VariablePowerAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
-    if (user.isTerastallized() && user.getTeraType() === Type.STELLAR) {
+    if (user.isTerastallized && user.getTeraType() === Type.STELLAR) {
       power.value = 100;
       return true;
     }
@@ -4716,30 +4716,6 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
 
 export class VariableMoveTypeAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return false;
-  }
-}
-
-/**
- * Attribute used for Tera Starstorm that changes the move type to Stellar
- * @extends VariableMoveTypeAttr
- */
-export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
-  /**
-   *
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target n/a
-   * @param move n/a
-   * @param args[0] {@linkcode Utils.NumberHolder} the move type
-   * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
-   */
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.isTerastallized() && (user.hasFusionSpecies(Species.TERAPAGOS) || user.species.speciesId === Species.TERAPAGOS)) {
-      const moveType = args[0] as Utils.NumberHolder;
-
-      moveType.value = Type.STELLAR;
-      return true;
-    }
     return false;
   }
 }
@@ -5009,11 +4985,35 @@ export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if (user.isTerastallized()) {
+    if (user.isTerastallized) {
       moveType.value = user.getTeraType(); // changes move type to tera type
       return true;
     }
 
+    return false;
+  }
+}
+
+/**
+ * Attribute used for Tera Starstorm that changes the move type to Stellar
+ * @extends VariableMoveTypeAttr
+ */
+export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
+  /**
+   *
+   * @param user the {@linkcode Pokemon} using the move
+   * @param target n/a
+   * @param move n/a
+   * @param args[0] {@linkcode Utils.NumberHolder} the move type
+   * @returns `true` if the move type is changed to {@linkcode Type.STELLAR}, `false` otherwise
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.isTerastallized && user.hasSpecies(Species.TERAPAGOS)) {
+      const moveType = args[0] as Utils.NumberHolder;
+
+      moveType.value = Type.STELLAR;
+      return true;
+    }
     return false;
   }
 }
@@ -6345,7 +6345,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (user.isTerastallized() && user.getTeraType() === this.removedType) { // active tera types cannot be removed
+    if (user.isTerastallized && user.getTeraType() === this.removedType) { // active tera types cannot be removed
       return false;
     }
 
@@ -6525,7 +6525,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.isTerastallized() && !target.hasAbility(Abilities.MULTITYPE) && !target.hasAbility(Abilities.RKS_SYSTEM) && !(target.getTypes().length === 1 && target.getTypes()[0] === this.type);
+    return (user, target, move) => !target.isTerastallized && !target.hasAbility(Abilities.MULTITYPE) && !target.hasAbility(Abilities.RKS_SYSTEM) && !(target.getTypes().length === 1 && target.getTypes()[0] === this.type);
   }
 }
 
@@ -6548,7 +6548,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.isTerastallized() && !target.getTypes().includes(this.type);
+    return (user, target, move) => !target.isTerastallized && !target.getTypes().includes(this.type);
   }
 }
 
@@ -7521,10 +7521,10 @@ export class AbilityChangeAttr extends MoveEffectAttr {
 
     const moveTarget = this.selfTarget ? user : target;
 
-    moveTarget.summonData.ability = this.ability;
-    globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
-
     globalScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name }));
+
+    moveTarget.setTempAbility(allAbilities[this.ability]);
+    globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
 
     return true;
   }
@@ -7548,13 +7548,13 @@ export class AbilityCopyAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.summonData.ability = target.getAbility().id;
-
     globalScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
 
+    user.setTempAbility(target.getAbility());
+
     if (this.copyToPartner && globalScene.currentBattle?.double && user.getAlly().hp) {
-      user.getAlly().summonData.ability = target.getAbility().id;
       globalScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user.getAlly()), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
+      user.getAlly().setTempAbility(target.getAbility());
     }
 
     return true;
@@ -7585,9 +7585,9 @@ export class AbilityGiveAttr extends MoveEffectAttr {
       return false;
     }
 
-    target.summonData.ability = user.getAbility().id;
-
     globalScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix(target), abilityName: allAbilities[user.getAbility().id].name }));
+
+    target.setTempAbility(user.getAbility());
 
     return true;
   }
@@ -7603,15 +7603,14 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
       return false;
     }
 
-    const tempAbilityId = user.getAbility().id;
-    user.summonData.ability = target.getAbility().id;
-    target.summonData.ability = tempAbilityId;
+    const tempAbility = user.getAbility();
 
     globalScene.queueMessage(i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }));
+
+    user.setTempAbility(target.getAbility());
+    target.setTempAbility(tempAbility);
     // Swaps Forecast/Flower Gift from Castform/Cherrim
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
-    // Swaps Forecast/Flower Gift to Castform/Cherrim (edge case)
-    globalScene.arena.triggerWeatherBasedFormChanges();
 
     return true;
   }
@@ -7690,7 +7689,6 @@ export class TransformAttr extends MoveEffectAttr {
 
     const promises: Promise<void>[] = [];
     user.summonData.speciesForm = target.getSpeciesForm();
-    user.summonData.ability = target.getAbility().id;
     user.summonData.gender = target.getGender();
 
     // Power Trick's effect will not preserved after using Transform
@@ -7723,6 +7721,8 @@ export class TransformAttr extends MoveEffectAttr {
     promises.push(user.loadAssets(false).then(() => {
       user.playAnim();
       user.updateInfo();
+      // If the new ability activates immediately, it needs to happen after all the transform animations
+      user.setTempAbility(target.getAbility());
     }));
 
     await Promise.all(promises);
@@ -8034,6 +8034,56 @@ export class AfterYouAttr extends MoveEffectAttr {
     return true;
   }
 }
+
+/**
+ * Move effect to force the target to move last, ignoring priority.
+ * If applied to multiple targets, they move in speed order after all other moves.
+ * @extends MoveEffectAttr
+ */
+export class ForceLastAttr extends MoveEffectAttr {
+  /**
+   * Forces the target of this move to move last.
+   *
+   * @param user {@linkcode Pokemon} that is using the move.
+   * @param target {@linkcode Pokemon} that will be forced to move last.
+   * @param move {@linkcode Move} {@linkcode Moves.QUASH}
+   * @param _args N/A
+   * @returns true
+   */
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    globalScene.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
+
+    const targetMovePhase = globalScene.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      // Finding the phase to insert the move in front of -
+      // Either the end of the turn or in front of another, slower move which has also been forced last
+      const prependPhase = globalScene.findPhase((phase) =>
+        [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
+        || (phase instanceof MovePhase) && phaseForcedSlower(phase, target, !!globalScene.arena.getTag(ArenaTagType.TRICK_ROOM))
+      );
+      if (prependPhase) {
+        globalScene.phaseQueue.splice(
+          globalScene.phaseQueue.indexOf(prependPhase),
+          0,
+          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
+        );
+      }
+    }
+    return true;
+  }
+}
+
+/** Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target} */
+const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
+  let slower: boolean;
+  // quashed pokemon still have speed ties
+  if (phase.pokemon.getEffectiveStat(Stat.SPD) === target.getEffectiveStat(Stat.SPD)) {
+    slower = !!target.randSeedInt(2);
+  } else {
+    slower = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
+  }
+  return phase.isForcedLast() && slower;
+};
 
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !globalScene.arena.getTag(ArenaTagType.GRAVITY);
 
@@ -8506,7 +8556,10 @@ export function initMoves() {
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
-      .condition((user, target, move) => target.getMoveHistory().reverse().find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual) !== undefined)
+      .condition((user, target, move) => {
+        const lastRealMove = target.getLastXMoves(-1).find(m => !m.virtual);
+        return !Utils.isNullOrUndefined(lastRealMove) && lastRealMove.move !== Moves.NONE && lastRealMove.move !== Moves.STRUGGLE;
+      })
       .ignoresSubstitute()
       .reflectable(),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
@@ -9911,7 +9964,8 @@ export function initMoves() {
       .attr(RemoveHeldItemAttr, true),
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .condition(failIfSingleBattle)
-      .unimplemented(),
+      .condition((user, target, move) => !target.turnData.acted)
+      .attr(ForceLastAttr),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferable).reduce((v, m) => v + m.stackCount, 0))),
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
@@ -11076,7 +11130,7 @@ export function initMoves() {
       .attr(TeraMoveCategoryAttr)
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, { condition: (user, target, move) => user.isTerastallized() && user.isOfType(Type.STELLAR) }),
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, true, { condition: (user, target, move) => user.isTerastallized && user.isOfType(Type.STELLAR) }),
     new SelfStatusMove(Moves.SILK_TRAP, Type.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP)
       .condition(failIfLastCondition),
@@ -11271,7 +11325,7 @@ export function initMoves() {
     new AttackMove(Moves.TERA_STARSTORM, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraMoveCategoryAttr)
       .attr(TeraStarstormTypeAttr)
-      .attr(VariableTargetAttr, (user, target, move) => (user.hasFusionSpecies(Species.TERAPAGOS) || user.species.speciesId === Species.TERAPAGOS) && user.isTerastallized() ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
+      .attr(VariableTargetAttr, (user, target, move) => user.hasSpecies(Species.TERAPAGOS) && user.isTerastallized ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
       .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
     new AttackMove(Moves.FICKLE_BEAM, Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)

@@ -21,6 +21,7 @@ import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
 import { globalScene } from "#app/global-scene";
+import { TeraPhase } from "./tera-phase";
 
 export class TurnStartPhase extends FieldPhase {
   constructor() {
@@ -138,6 +139,20 @@ export class TurnStartPhase extends FieldPhase {
     const moveOrder = this.getCommandOrder();
 
     let orderIndex = 0;
+
+    for (const o of this.getSpeedOrder()) {
+      const pokemon = field[o];
+      const preTurnCommand = globalScene.currentBattle.preTurnCommands[o];
+
+      if (preTurnCommand?.skip) {
+        continue;
+      }
+
+      switch (preTurnCommand?.command) {
+        case Command.TERA:
+          globalScene.pushPhase(new TeraPhase(pokemon));
+      }
+    }
 
     for (const o of moveOrder) {
 
