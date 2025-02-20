@@ -1229,14 +1229,14 @@ export class FairyLockTag extends ArenaTag {
  * Additionally ends onLose abilities when it is activated
  */
 export class SuppressAbilitiesTag extends ArenaTag {
-  sourceCount: number;
+  private sourceCount: number;
 
   constructor(sourceId: number) {
     super(ArenaTagType.NEUTRALIZING_GAS, 0, undefined, sourceId);
     this.sourceCount = 1;
   }
 
-  onAdd(arena: Arena): void {
+  public override onAdd(arena: Arena): void {
     const pokemon = this.getSourcePokemon();
     if (pokemon) {
       globalScene.queueMessage(i18next.t("arenaTag:neutralizingGasOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
@@ -1249,11 +1249,11 @@ export class SuppressAbilitiesTag extends ArenaTag {
     }
   }
 
-  onOverlap(arena: Arena): void {
+  public override onOverlap(arena: Arena): void {
     this.sourceCount++;
   }
 
-  onSourceLeave(arena: Arena): void {
+  public onSourceLeave(arena: Arena): void {
     this.sourceCount--;
     if (this.sourceCount <= 0) {
       arena.removeTag(ArenaTagType.NEUTRALIZING_GAS);
@@ -1266,7 +1266,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
     }
   }
 
-  onRemove(arena: Arena, quiet: boolean = false) {
+  public override onRemove(arena: Arena, quiet: boolean = false) {
     if (!quiet) {
       globalScene.queueMessage(i18next.t("arenaTag:neutralizingGasOnRemove"));
     }
@@ -1279,7 +1279,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
     }
   }
 
-  shouldApplyToSelf(): boolean {
+  public shouldApplyToSelf(): boolean {
     return this.sourceCount > 1;
   }
 }
