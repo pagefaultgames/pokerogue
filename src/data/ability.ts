@@ -2489,7 +2489,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
    * @param pokemon - The Pokémon that triggered the ability.
    * @param passive - n/a
    * @param args - n/a
-   * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
+   * @returns A boolean that resolves to a boolean indicating the result of the ability application.
    */
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const party = pokemon instanceof PlayerPokemon ? globalScene.getPlayerField() : globalScene.getEnemyField();
@@ -4372,7 +4372,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
     if (!simulated && postBattleLoot.length && args[0]) {
       const randItem = Utils.randSeedItem(postBattleLoot);
       //@ts-ignore - TODO see below
-      if (globalScene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) { // TODO: fix. This is a promise!?
+      if (globalScene.tryTransferHeldItemModifier(randItem, pokemon, true, 1, true, undefined, false)) {
         postBattleLoot.splice(postBattleLoot.indexOf(randItem), 1);
         globalScene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: randItem.type.name }));
         return true;
