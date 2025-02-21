@@ -61,6 +61,7 @@ import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
 import { LoadMoveAnimPhase } from "#app/phases/load-move-anim-phase";
 import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
 import { MoveAnimPhase } from "#app/phases/move-anim-phase";
+import { loggedInUser } from "#app/account";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1536,6 +1537,28 @@ export class SurviveDamageAttr extends ModifiedDamageAttr {
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     return target.hp > 1 ? 0 : -20;
+  }
+}
+
+export class SplashAttr extends MoveEffectAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    globalScene.queueMessage(i18next.t("battlerTags:splashLapse"));
+    return true;
+  }
+}
+
+export class CelebrateAttr extends MoveEffectAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    globalScene.queueMessage(i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username }));
+    return true;
   }
 }
 
@@ -8802,6 +8825,7 @@ export function initMoves() {
     new AttackMove(Moves.PSYWAVE, Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 15, -1, 0, 1)
       .attr(RandomLevelDamageAttr),
     new SelfStatusMove(Moves.SPLASH, Type.NORMAL, -1, 40, -1, 0, 1)
+      .attr(SplashAttr)
       .condition(failOnGravityCondition),
     new SelfStatusMove(Moves.ACID_ARMOR, Type.POISON, -1, 20, -1, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true),
@@ -10244,7 +10268,8 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.DAZZLING_GLEAM, Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 6)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new SelfStatusMove(Moves.CELEBRATE, Type.NORMAL, -1, 40, -1, 0, 6),
+    new SelfStatusMove(Moves.CELEBRATE, Type.NORMAL, -1, 40, -1, 0, 6)
+      .attr(CelebrateAttr),
     new StatusMove(Moves.HOLD_HANDS, Type.NORMAL, -1, 40, -1, 0, 6)
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY),
