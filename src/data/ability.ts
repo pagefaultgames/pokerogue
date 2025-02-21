@@ -5355,7 +5355,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     return this.helper.getFailedText(target);
   }
 }
-async function applyAbAttrsInternal<TAttr extends AbAttr>(
+function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
   pokemon: Pokemon | null,
   applyFunc: AbAttrApplyFunc<TAttr>,
