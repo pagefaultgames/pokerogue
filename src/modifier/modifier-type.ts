@@ -2536,7 +2536,7 @@ export class ModifierTypeOption {
   constructor(type: ModifierType, upgradeCount: number, cost: number = 0) {
     this.type = type;
     this.upgradeCount = upgradeCount;
-    this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
+    this.cost = Math.min(Math.round(cost / 10) * 10, Number.MAX_SAFE_INTEGER);
   }
 }
 
