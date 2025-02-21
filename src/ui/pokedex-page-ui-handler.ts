@@ -983,13 +983,23 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: this.levelMoves.map(m => {
+                      const levelNumber = m[0] > 0 ? String(m[0]) : "";
                       const option: OptionSelectItem = {
-                        label: String(m[0]).padEnd(4, " ") + allMoves[m[1]].name,
+                        label: levelNumber.padEnd(4, " ") + allMoves[m[1]].name,
                         handler: () => {
                           return false;
                         },
                         onHover: () => {
                           this.moveInfoOverlay.show(allMoves[m[1]]);
+                          if (m[0] === 0) {
+                            this.showText(i18next.t("pokedexUiHandler:onlyEvolutionMove"));
+                          } else if (m[0] === -1) {
+                            this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"));
+                          } else if (m[0] <= 5) {
+                            this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"));
+                          } else {
+                            this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"));
+                          }
                         },
                       };
                       return option;
