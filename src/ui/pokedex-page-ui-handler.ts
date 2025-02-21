@@ -45,7 +45,6 @@ import { EggSourceType } from "#enums/egg-source-types";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
 import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, rgbHexToRgba, toReadableString } from "#app/utils";
 import type { Nature } from "#enums/nature";
-import BgmBar from "./bgm-bar";
 import * as Utils from "../utils";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
@@ -242,7 +241,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
   private menuBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: Phaser.GameObjects.Text;
-  public bgmBar: BgmBar;
   private menuOptions: MenuOptions[];
   protected scale: number = 0.1666666667;
   private menuDescriptions: string[];
@@ -480,10 +478,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.menuContainer.setName("menu");
     this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.bgmBar = new BgmBar();
-    this.bgmBar.setup();
-    ui.bgmBar = this.bgmBar;
-    this.menuContainer.add(this.bgmBar);
     this.menuContainer.setVisible(false);
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions);
@@ -983,13 +977,23 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: this.levelMoves.map(m => {
+                      const levelNumber = m[0] > 0 ? String(m[0]) : "";
                       const option: OptionSelectItem = {
-                        label: String(m[0]).padEnd(4, " ") + allMoves[m[1]].name,
+                        label: levelNumber.padEnd(4, " ") + allMoves[m[1]].name,
                         handler: () => {
                           return false;
                         },
                         onHover: () => {
                           this.moveInfoOverlay.show(allMoves[m[1]]);
+                          if (m[0] === 0) {
+                            this.showText(i18next.t("pokedexUiHandler:onlyEvolutionMove"));
+                          } else if (m[0] === -1) {
+                            this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"));
+                          } else if (m[0] <= 5) {
+                            this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"));
+                          } else {
+                            this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"));
+                          }
                         },
                       };
                       return option;
