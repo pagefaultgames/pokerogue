@@ -1324,7 +1324,7 @@ export class PreMoveMessageAttr extends MoveAttr {
  * @extends MoveAttr
  */
 export class PreUseInterruptAttr extends MoveAttr {
-  protected message: string | ((user: Pokemon, target: Pokemon, move: Move) => string) | undefined;
+  protected message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
   protected overridesFailedMessage: boolean;
   protected conditionFunc: MoveConditionFunc;
 
