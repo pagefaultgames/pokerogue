@@ -2397,10 +2397,12 @@ export class MultiHitAttr extends MoveAttr {
     if (ignoreAcc || move.accuracy === -1) {
       return expectedHits;
     }
+    const acc = move.accuracy / 100;
     if (move.hasFlag(MoveFlags.CHECK_ALL_HITS) && !maxMultiHit) {
-      return Math.pow(move.accuracy, expectedHits);
+      // N.B. No moves should be the _2_TO_5 variant have the CHECK_ALL_HITS flag.
+      return acc * (1 - Math.pow(acc, expectedHits)) / (1 - acc);
     }
-    return expectedHits *= move.accuracy / 100;
+    return expectedHits *= acc;
   }
 }
 
