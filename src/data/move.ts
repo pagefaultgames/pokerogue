@@ -24,7 +24,42 @@ import * as Utils from "../utils";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "./arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "./arena-tag";
-import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPostItemLostAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ChangeMovePriorityAbAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, InfiltratorAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, PostDamageForceSwitchAbAttr, PostItemLostAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
+import {
+  allAbilities,
+  AllyMoveCategoryPowerBoostAbAttr,
+  applyAbAttrs,
+  applyPostAttackAbAttrs,
+  applyPostItemLostAbAttrs,
+  applyPreAttackAbAttrs,
+  applyPreDefendAbAttrs,
+  BlockItemTheftAbAttr,
+  BlockNonDirectDamageAbAttr,
+  BlockOneHitKOAbAttr,
+  BlockRecoilDamageAttr,
+  ChangeMovePriorityAbAttr,
+  ConfusionOnStatusEffectAbAttr,
+  FieldMoveTypePowerBoostAbAttr,
+  FieldPreventExplosiveMovesAbAttr,
+  ForceSwitchOutImmunityAbAttr,
+  HealFromBerryUseAbAttr,
+  IgnoreContactAbAttr,
+  IgnoreMoveEffectsAbAttr,
+  IgnoreProtectOnContactAbAttr,
+  InfiltratorAbAttr,
+  MaxMultiHitAbAttr,
+  MoveAbilityBypassAbAttr,
+  MoveEffectChanceMultiplierAbAttr,
+  MoveTypeChangeAbAttr,
+  PostDamageForceSwitchAbAttr,
+  PostItemLostAbAttr,
+  ReverseDrainAbAttr,
+  UncopiableAbilityAbAttr,
+  UnsuppressableAbilityAbAttr,
+  UnswappableAbilityAbAttr,
+  UserFieldMoveTypePowerBoostAbAttr,
+  VariableMovePowerAbAttr,
+  WonderSkinAbAttr,
+} from "./ability";
 import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
 import type { BattlerIndex } from "../battle";
 import { BattleType } from "../battle";
@@ -859,6 +894,46 @@ export default class Move implements Localizable {
     applyAbAttrs(ChangeMovePriorityAbAttr, user, null, simulated, this, priority);
 
     return priority.value;
+  }
+
+  /**
+   * Calculate the [Expected Power](https://en.wikipedia.org/wiki/Expected_value) per turn
+   * of this move, taking into account multi hit moves, accuracy, and the number of turns it
+   * takes to execute.
+   *
+   * Does not (yet) consider the current field effects or the user's abilities.
+   */
+  calculateEffectivePower(): number {
+    let effectivePower: number;
+    // Triple axel and triple kick are easier to special case.
+    if (this.id === Moves.TRIPLE_AXEL) {
+      effectivePower = 94.14;
+    } else if (this.id === Moves.TRIPLE_KICK) {
+      effectivePower = 47.07;
+    } else {
+      const multiHitAttr = this.getAttrs(MultiHitAttr)[0];
+      if (multiHitAttr) {
+        effectivePower = multiHitAttr.calculateExpectedHitCount(this) * this.power;
+      } else {
+        effectivePower = this.power * this.accuracy === -1 ? 1 : this.accuracy / 100;
+      }
+    }
+    /** The number of turns the user must commit to for this move's damage */
+    let numTurns = 1;
+
+    // These are intentionally not else-if statements even though there are no
+    // pokemon moves that have more than one of these attributes. This allows
+    // the function to future proof new moves / custom move behaviors.
+    if (this.hasAttr(DelayedAttackAttr)) {
+      numTurns += 2;
+    }
+    if (this.hasAttr(RechargeAttr)) {
+      numTurns += 1;
+    }
+    if (this.isChargingMove()) {
+      numTurns += 1;
+    }
+    return effectivePower / numTurns;
   }
 
   /**
@@ -2279,6 +2354,44 @@ export class MultiHitAttr extends MoveAttr {
           return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
         }, 0);
     }
+  }
+
+  /**
+   * Calculate the expected number of hits given this attribute's {@linkcode MultiHitType},
+   * the move's accuracy, and a number of situational parameters.
+   *
+   * @param move - The move that this attribtue is applied to
+   * @param partySize - The size of the user's party, used for {@linkcode Moves.BEAT_UP | Beat Up} (default: `1`)
+   * @param maxMultiHit - Whether the move should always hit the maximum number of times, e.g. due to {@linkcode Abilities.SKILL_LINK | Skill Link} (default: `false`)
+   * @param ignoreAcc - `true` if the move should ignore accuracy checks, e.g. due to  {@linkcode Abilities.NO_GUARD | No Guard} (default: `false`)
+   */
+  calculateExpectedHitCount(move: Move, { ignoreAcc = false, maxMultiHit = false, partySize = 1 }: {ignoreAcc?: boolean, maxMultiHit?: boolean, partySize?: number} = {}): number {
+    let expectedHits: number;
+    switch (this.multiHitType) {
+      case MultiHitType._2_TO_5:
+        expectedHits = maxMultiHit ? 5 : 3.1;
+        break;
+      case MultiHitType._2:
+        expectedHits = 2;
+        break;
+      case MultiHitType._3:
+        expectedHits = 3;
+        break;
+      case MultiHitType._10:
+        expectedHits = 10;
+        break;
+      case MultiHitType.BEAT_UP:
+        // Estimate that half of the party can contribute to beat up.
+        expectedHits = Math.max(1, partySize / 2);
+        break;
+    }
+    if (ignoreAcc || move.accuracy === -1) {
+      return expectedHits;
+    }
+    if (move.hasFlag(MoveFlags.CHECK_ALL_HITS) && !maxMultiHit) {
+      return Math.pow(move.accuracy, expectedHits);
+    }
+    return expectedHits *= move.accuracy / 100;
   }
 }
 
