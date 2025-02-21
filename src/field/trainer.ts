@@ -394,6 +394,10 @@ export default class Trainer extends Phaser.GameObjects.Container {
       this.teraIndexes.push(index + 1); // If it's Shedinja and it's set to tera to something other than Bug, set tera index to the next mon
     }
 
+    if (this.config.specialtyType !== Type.UNKNOWN) {
+      ret!.teraType = this.config.specialtyType;
+    }
+
     return ret!; // TODO: is this bang correct?
   }
 
