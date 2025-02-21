@@ -867,7 +867,7 @@ export class TrainerConfig {
      * @param isMale Whether the Gym Leader is Male or Not (for localization of the title).
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
-  initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN, teraSlot?: number, ignoreMinTeraWave: boolean = false): TrainerConfig {
+  initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN, ignoreMinTeraWave: boolean = false, teraSlot?: number): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
       initI18n();
@@ -912,7 +912,9 @@ export class TrainerConfig {
     if (!ignoreMinTeraWave) {
       this.minTeraWave = GYM_LEADER_TERA_WAVE;
     }
-    this.setInstantTera(teraSlot ?? -Utils.randSeedInt(signatureSpecies.length)); // Random tera slot can be any signature species. Yes, this is the best solution for now!
+    if (!Utils.isNullOrUndefined(teraSlot)) {
+      this.setInstantTera(teraSlot);
+    }
 
     return this;
   }
@@ -968,7 +970,9 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setInstantTera(teraSlot ?? Utils.randSeedInt(4, 2)); // Random tera can be any signature species
+    if (!Utils.isNullOrUndefined(teraSlot)) {
+      this.setInstantTera(teraSlot);
+    }
 
     return this;
   }
@@ -1726,14 +1730,14 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.PIERS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["PIERS"], true, Type.DARK).setHasDouble("piers_marnie_double").setDoubleTrainerType(TrainerType.MARNIE).setDoubleTitle("gym_leader_double").setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.MARNIE]: new TrainerConfig(++t).setName("Marnie").initForGymLeader(signatureSpecies["MARNIE"], false, Type.DARK).setHasDouble("marnie_piers_double").setDoubleTrainerType(TrainerType.PIERS).setDoubleTitle("gym_leader_double").setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.RAIHAN]: new TrainerConfig(++t).setName("Raihan").initForGymLeader(signatureSpecies["RAIHAN"], true, Type.DRAGON).setMixedBattleBgm("battle_galar_gym"),
-  [TrainerType.KATY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KATY"], false, Type.BUG, -1, true).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.BRASSIUS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BRASSIUS"], true, Type.GRASS, -1, true).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.IONO]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["IONO"], false, Type.ELECTRIC, -1, true).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.KOFU]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KOFU"], true, Type.WATER, -1, true).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.LARRY]: new TrainerConfig(++t).setName("Larry").initForGymLeader(signatureSpecies["LARRY"], true, Type.NORMAL, -1, true).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.RYME]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["RYME"], false, Type.GHOST, -1, true).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.TULIP]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["TULIP"], false, Type.PSYCHIC, -1, true).setMixedBattleBgm("battle_paldea_gym"),
-  [TrainerType.GRUSHA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GRUSHA"], true, Type.ICE, -1, true).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.KATY]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KATY"], false, Type.BUG, true, -1).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.BRASSIUS]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["BRASSIUS"], true, Type.GRASS, true, -1).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.IONO]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["IONO"], false, Type.ELECTRIC, true, -1).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.KOFU]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["KOFU"], true, Type.WATER, true, -1).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.LARRY]: new TrainerConfig(++t).setName("Larry").initForGymLeader(signatureSpecies["LARRY"], true, Type.NORMAL, true, -1).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.RYME]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["RYME"], false, Type.GHOST, true, -1).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.TULIP]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["TULIP"], false, Type.PSYCHIC, true, -1).setMixedBattleBgm("battle_paldea_gym"),
+  [TrainerType.GRUSHA]: new TrainerConfig(++t).initForGymLeader(signatureSpecies["GRUSHA"], true, Type.ICE, true, -1).setMixedBattleBgm("battle_paldea_gym"),
 
   [TrainerType.LORELEI]: new TrainerConfig((t = TrainerType.LORELEI)).initForEliteFour(signatureSpecies["LORELEI"], false, Type.ICE).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.BRUNO]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["BRUNO"], true, Type.FIGHTING).setBattleBgm("battle_kanto_gym").setMixedBattleBgm("battle_kanto_gym"),
@@ -1748,7 +1752,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.DRAKE]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["DRAKE"], true, Type.DRAGON).setMixedBattleBgm("battle_hoenn_elite"),
   [TrainerType.AARON]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["AARON"], true, Type.BUG).setBattleBgm("battle_sinnoh_gym").setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.BERTHA]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["BERTHA"], false, Type.GROUND).setBattleBgm("battle_sinnoh_gym").setMixedBattleBgm("battle_sinnoh_gym"),
-  [TrainerType.FLINT]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["FLINT"], true, Type.FIRE).setBattleBgm("battle_sinnoh_gym").setMixedBattleBgm("battle_sinnoh_gym"),
+  [TrainerType.FLINT]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["FLINT"], true, Type.FIRE, 3).setBattleBgm("battle_sinnoh_gym").setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.LUCIAN]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["LUCIAN"], true, Type.PSYCHIC).setBattleBgm("battle_sinnoh_gym").setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.SHAUNTAL]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["SHAUNTAL"], false, Type.GHOST).setMixedBattleBgm("battle_unova_elite"),
   [TrainerType.MARSHAL]: new TrainerConfig(++t).initForEliteFour(signatureSpecies["MARSHAL"], true, Type.FIGHTING).setMixedBattleBgm("battle_unova_elite"),

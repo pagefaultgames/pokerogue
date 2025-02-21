@@ -24,6 +24,7 @@ import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { Type } from "#enums/type";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -38,6 +39,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
   public name: string;
   public partnerName: string;
   public originalIndexes: { [key: number]: number } = {};
+  public teraIndexes: number[] = [];
 
   constructor(trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: number, name?: string, partnerName?: string, trainerConfigOverride?: TrainerConfig) {
     super(globalScene, -72, 80);
@@ -65,6 +67,14 @@ export default class Trainer extends Phaser.GameObjects.Container {
         } else {
           this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
         }
+      }
+    }
+
+    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA && globalScene.waveIndex && globalScene.waveIndex >= this.config.minTeraWave) {
+      this.teraIndexes.push(...this.config.trainerAI.instantTeras.map(i => i < 0 ? this.getPartyTemplate().size + i : i));
+      console.log("Tera index %d", this.teraIndexes[0]);
+      if (this.teraIndexes.length === 0) {
+        this.teraIndexes.push(Utils.randSeedInt(this.getPartyTemplate().size));
       }
     }
 
@@ -379,6 +389,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
       ret = globalScene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
     }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : globalScene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8));
 
+    if (ret!.species.speciesId === Species.SHEDINJA && this.teraIndexes.includes(index) && this.config.specialtyType !== Type.BUG) {
+      this.teraIndexes.pop();
+      this.teraIndexes.push(index + 1); // If it's Shedinja and it's set to tera to something other than Bug, set tera index to the next mon
+    }
+
     return ret!; // TODO: is this bang correct?
   }
 
@@ -665,11 +680,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   shouldTera(pokemon: EnemyPokemon): boolean {
-    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA && globalScene.currentBattle.waveIndex >= this.config.minTeraWave) {
-      if (!pokemon.isTerastallized && (this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex) || this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex - globalScene.getEnemyParty().length))) {
-        return true;
-      }
-    }
-    return false;
+    return (
+      this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA
+      && globalScene.currentBattle.waveIndex >= this.config.minTeraWave
+      && !pokemon.isTerastallized
+      && this.teraIndexes.includes(pokemon.initialTeamIndex)
+    );
   }
 }
