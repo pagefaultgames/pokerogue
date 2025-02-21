@@ -57,6 +57,7 @@ export class MovePhase extends BattlePhase {
   protected _targets: BattlerIndex[];
   protected followUp: boolean;
   protected ignorePp: boolean;
+  protected forcedLast: boolean;
   protected failed: boolean = false;
   protected cancelled: boolean = false;
   protected reflected: boolean = false;
@@ -91,7 +92,8 @@ export class MovePhase extends BattlePhase {
    * @param reflected Indicates that the move was reflected by Magic Coat or Magic Bounce.
    *                  Reflected moves cannot be reflected again and will not trigger Dancer.
    */
-  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false, reflected: boolean = false) {
+
+  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, followUp: boolean = false, ignorePp: boolean = false, reflected: boolean = false, forcedLast: boolean = false) {
     super();
 
     this.pokemon = pokemon;
@@ -100,6 +102,7 @@ export class MovePhase extends BattlePhase {
     this.followUp = followUp;
     this.ignorePp = ignorePp;
     this.reflected = reflected;
+    this.forcedLast = forcedLast;
   }
 
   /**
@@ -120,6 +123,15 @@ export class MovePhase extends BattlePhase {
   public cancel(): void {
     this.cancelled = true;
   }
+
+  /**
+   * Shows whether the current move has been forced to the end of the turn
+   * Needed for speed order, see {@linkcode Moves.QUASH}
+   * */
+  public isForcedLast(): boolean {
+    return this.forcedLast;
+  }
+
 
   public start(): void {
     super.start();
@@ -368,7 +380,7 @@ export class MovePhase extends BattlePhase {
       if (failureMessage) {
         failedText = failureMessage;
       } else if (failedDueToTerrain) {
-        failedText = getTerrainBlockMessage(this.pokemon, globalScene.arena.getTerrainType());
+        failedText = getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType());
       }
 
       this.showFailedText(failedText);
