@@ -200,6 +200,10 @@ export abstract class AbAttr {
 }
 
 export class BlockRecoilDamageAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     cancelled.value = true;
   }
@@ -335,6 +339,9 @@ export class BlockItemTheftAbAttr extends AbAttr {
 }
 
 export class StabBoostAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
 
   override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return (args[0] as Utils.NumberHolder).value > 1;
@@ -349,8 +356,8 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
   protected condition: PokemonDefendCondition;
   private damageMultiplier: number;
 
-  constructor(condition: PokemonDefendCondition, damageMultiplier: number) {
-    super();
+  constructor(condition: PokemonDefendCondition, damageMultiplier: number, showAbility: boolean = true) {
+    super(showAbility);
 
     this.condition = condition;
     this.damageMultiplier = damageMultiplier;
@@ -390,7 +397,7 @@ export class AlliedFieldDamageReductionAbAttr extends PreDefendAbAttr {
 
 export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   constructor(moveType: Type, damageMultiplier: number) {
-    super((target, user, move) => user.getMoveType(move) === moveType, damageMultiplier);
+    super((target, user, move) => user.getMoveType(move) === moveType, damageMultiplier, false);
   }
 }
 
@@ -405,7 +412,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private condition: AbAttrCondition | null;
 
   constructor(immuneType: Type | null, condition?: AbAttrCondition) {
-    super();
+    super(true);
 
     this.immuneType = immuneType;
     this.condition = condition ?? null;
@@ -595,8 +602,15 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
 }
 
 export class PostDefendAbAttr extends AbAttr {
-  canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return false;
+  canApplyPostDefend(
+    pokemon: Pokemon,
+    passive: boolean,
+    simulated: boolean,
+    attacker: Pokemon,
+    move: Move,
+    hitResult: HitResult | null,
+    args: any[]): boolean {
+    return true;
   }
 
   applyPostDefend(
@@ -671,6 +685,10 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
  * @extends PreDefendAbAttr
  */
 export class WonderSkinAbAttr extends PreDefendAbAttr {
+
+  constructor() {
+    super(false);
+  }
 
   override canApplyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
     const moveAccuracy = args[0] as Utils.NumberHolder;
@@ -893,7 +911,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   private effects: StatusEffect[];
 
   constructor(chance: number, ...effects: StatusEffect[]) {
-    super();
+    super(true);
 
     this.chance = chance;
     this.effects = effects;
@@ -1189,7 +1207,7 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
   private chanceMultiplier: number;
 
   constructor(chanceMultiplier: number) {
-    super(true);
+    super(false);
     this.chanceMultiplier = chanceMultiplier;
   }
 
@@ -1296,7 +1314,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
     private powerMultiplier: number,
     private condition?: PokemonAttackCondition
   ) {
-    super(true);
+    super(false);
   }
 
   override canApplyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
@@ -1414,7 +1432,7 @@ export class DamageBoostAbAttr extends PreAttackAbAttr {
   private condition: PokemonAttackCondition;
 
   constructor(damageMultiplier: number, condition: PokemonAttackCondition) {
-    super(true);
+    super(false);
     this.damageMultiplier = damageMultiplier;
     this.condition = condition;
   }
@@ -1458,7 +1476,7 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
 
 export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
   constructor(boostedType: Type, powerMultiplier?: number) {
-    super((pokemon, defender, move) => pokemon?.getMoveType(move) === boostedType, powerMultiplier || 1.5);
+    super((pokemon, defender, move) => pokemon?.getMoveType(move) === boostedType, powerMultiplier || 1.5, false);
   }
 }
 
@@ -1782,7 +1800,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
     return false;
   }
 
-  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): void {
+  applyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): void {
     const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
     attacker.trySetStatus(effect, true, pokemon);
   }
@@ -1801,17 +1819,23 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 
 
   constructor(contactRequired: boolean, chance: (user: Pokemon, target: Pokemon, move: Move) =>  number, ...effects: BattlerTagType[]) {
-    super();
+    super(undefined, false);
 
     this.contactRequired = contactRequired;
     this.chance = chance;
     this.effects = effects;
   }
 
-  applyPostAttackAfterMoveTypeCheck(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): void {
+  override canApplyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
     /**Battler tags inflicted by abilities post attacking are also considered additional effects.*/
-    if (!attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon))
-        && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status && !simulated) {
+    return super.canApplyPostAttack(pokemon, passive, simulated, attacker, move, hitResult, args) &&
+      !attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker &&
+      (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) &&
+      pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status;
+  }
+
+  override applyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): void {
+    if (!simulated) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       attacker.addTag(effect);
     }
@@ -2708,8 +2732,8 @@ export class CommanderAbAttr extends AbAttr {
 }
 
 export class PreSwitchOutAbAttr extends AbAttr {
-  constructor() {
-    super(true);
+  constructor(showAbility: boolean = true) {
+    super(showAbility);
   }
 
   canApplyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
@@ -2720,6 +2744,10 @@ export class PreSwitchOutAbAttr extends AbAttr {
 }
 
 export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
+  constructor() {
+    super(false);
+  }
+
   override canApplyPreSwitchOut(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return !Utils.isNullOrUndefined(pokemon.status);
   }
@@ -3137,7 +3165,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   private battlerTag: BattlerTag;
 
   constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
-    super();
+    super(true);
 
     this.immuneTagTypes = Array.isArray(immuneTagTypes) ? immuneTagTypes : [ immuneTagTypes ];
   }
@@ -3174,12 +3202,19 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
 export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
 
 export class BlockCritAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     (args[0] as Utils.BooleanHolder).value = true;
   }
 }
 
 export class BonusCritAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     (args[0] as Utils.BooleanHolder).value = true;
   }
@@ -3189,7 +3224,7 @@ export class MultCritAbAttr extends AbAttr {
   public multAmount: number;
 
   constructor(multAmount: number) {
-    super(true);
+    super(false);
 
     this.multAmount = multAmount;
   }
@@ -3214,7 +3249,7 @@ export class ConditionalCritAbAttr extends AbAttr {
   private condition: PokemonAttackCondition;
 
   constructor(condition: PokemonAttackCondition, checkUser?: Boolean) {
-    super();
+    super(false);
 
     this.condition = condition;
   }
@@ -3237,6 +3272,10 @@ export class ConditionalCritAbAttr extends AbAttr {
 }
 
 export class BlockNonDirectDamageAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     cancelled.value = true;
   }
@@ -3295,7 +3334,7 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
    * @param {number} changeAmount the amount of priority added or subtracted
    */
   constructor(moveFunc: (pokemon: Pokemon, move: Move) => boolean, changeAmount: number) {
-    super(true);
+    super(false);
 
     this.moveFunc = moveFunc;
     this.changeAmount = changeAmount;
@@ -3339,7 +3378,7 @@ export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
   private weatherTypes: WeatherType[];
 
   constructor(...weatherTypes: WeatherType[]) {
-    super();
+    super(false);
 
     this.weatherTypes = weatherTypes;
   }
@@ -3357,7 +3396,7 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
   public affectsImmutable: boolean;
 
   constructor(affectsImmutable?: boolean) {
-    super();
+    super(true);
 
     this.affectsImmutable = !!affectsImmutable;
   }
@@ -4136,7 +4175,7 @@ export class PostItemLostAbAttr extends AbAttr {
 export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
   private tagType: BattlerTagType;
   constructor(tagType: BattlerTagType) {
-    super(true);
+    super(false);
     this.tagType = tagType;
   }
 
@@ -4158,7 +4197,7 @@ export class StatStageChangeMultiplierAbAttr extends AbAttr {
   private multiplier: number;
 
   constructor(multiplier: number) {
-    super(true);
+    super(false);
 
     this.multiplier = multiplier;
   }
@@ -4333,6 +4372,10 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
 }
 
 export class MaxMultiHitAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     (args[0] as Utils.NumberHolder).value = 0;
   }
@@ -4418,7 +4461,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private damageRatio: number;
 
   constructor(damageRatio: number) {
-    super();
+    super(true);
 
     this.damageRatio = damageRatio;
   }
@@ -4514,7 +4557,7 @@ export class ReduceStatusEffectDurationAbAttr extends AbAttr {
   private statusEffect: StatusEffect;
 
   constructor(statusEffect: StatusEffect) {
-    super(true);
+    super(false);
 
     this.statusEffect = statusEffect;
   }
@@ -4591,7 +4634,7 @@ export class WeightMultiplierAbAttr extends AbAttr {
   private multiplier: number;
 
   constructor(multiplier: number) {
-    super();
+    super(false);
 
     this.multiplier = multiplier;
   }
@@ -4654,6 +4697,9 @@ export class IgnoreProtectOnContactAbAttr extends AbAttr { }
  * Allows the source's moves to bypass the effects of opposing Light Screen, Reflect, Aurora Veil, Safeguard, Mist, and Substitute.
  */
 export class InfiltratorAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
 
   override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return args[0] instanceof Utils.BooleanHolder;
@@ -4715,7 +4761,7 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
   private allowedMoveTypes: Type[];
 
   constructor(defenderType: Type, allowedMoveTypes: Type[]) {
-    super(true);
+    super(false);
     this.defenderType = defenderType;
     this.allowedMoveTypes = allowedMoveTypes;
   }
@@ -4737,7 +4783,7 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   private defenderType: Type[];
 
   constructor(statusEffect: StatusEffect[], defenderType: Type[]) {
-    super(true);
+    super(false);
 
     this.statusEffect = statusEffect;
     this.defenderType = defenderType;
