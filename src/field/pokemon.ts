@@ -104,7 +104,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
@@ -4510,43 +4509,6 @@ export class PlayerPokemon extends Pokemon {
       this.friendship = Math.max(this.friendship + friendship, 0);
     }
   }
-  /**
-   * Handles Revival Blessing when used by player.
-   * @returns Promise to revive a pokemon.
-   * @see {@linkcode RevivalBlessingAttr}
-   */
-  revivalBlessing(): Promise<void> {
-    return new Promise(resolve => {
-      globalScene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, this.getFieldIndex(), (slotIndex:number, option: PartyOption) => {
-        if (slotIndex >= 0 && slotIndex < 6) {
-          const pokemon = globalScene.getPlayerParty()[slotIndex];
-          if (!pokemon || !pokemon.isFainted()) {
-            resolve();
-          }
-
-          pokemon.resetTurnData();
-          pokemon.resetStatus();
-          pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-          globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: pokemon.name }), 0, true);
-
-          if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1) {
-            const allyPokemon = this.getAlly();
-            if (slotIndex <= 1) {
-              // Revived ally pokemon
-              globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, true));
-              globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
-            } else if (allyPokemon.isFainted()) {
-              // Revived party pokemon, and ally pokemon is fainted
-              globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, true));
-              globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
-            }
-          }
-
-        }
-        globalScene.ui.setMode(Mode.MESSAGE).then(() => resolve());
-      }, PartyUiHandler.FilterFainted);
-    });
-  }
 
   getPossibleEvolution(evolution: SpeciesFormEvolution | null): Promise<Pokemon> {
     if (!evolution) {
@@ -4728,70 +4690,62 @@ export class PlayerPokemon extends Pokemon {
   }
 
   /**
-  * Returns a Promise to fuse two PlayerPokemon together
-  * @param pokemon The PlayerPokemon to fuse to this one
-  */
-  fuse(pokemon: PlayerPokemon): Promise<void> {
-    return new Promise(resolve => {
-      this.fusionSpecies = pokemon.species;
-      this.fusionFormIndex = pokemon.formIndex;
-      this.fusionAbilityIndex = pokemon.abilityIndex;
-      this.fusionShiny = pokemon.shiny;
-      this.fusionVariant = pokemon.variant;
-      this.fusionGender = pokemon.gender;
-      this.fusionLuck = pokemon.luck;
-      this.fusionCustomPokemonData = pokemon.customPokemonData;
-      if ((pokemon.pauseEvolutions) || (this.pauseEvolutions)) {
-        this.pauseEvolutions = true;
-      }
+   * Returns a Promise to fuse two PlayerPokemon together
+   * @param pokemon The PlayerPokemon to fuse to this one
+   */
+  fuse(pokemon: PlayerPokemon): void {
+    this.fusionSpecies = pokemon.species;
+    this.fusionFormIndex = pokemon.formIndex;
+    this.fusionAbilityIndex = pokemon.abilityIndex;
+    this.fusionShiny = pokemon.shiny;
+    this.fusionVariant = pokemon.variant;
+    this.fusionGender = pokemon.gender;
+    this.fusionLuck = pokemon.luck;
+    this.fusionCustomPokemonData = pokemon.customPokemonData;
+    if (pokemon.pauseEvolutions || this.pauseEvolutions) {
+      this.pauseEvolutions = true;
+    }
 
-      globalScene.validateAchv(achvs.SPLICE);
-      globalScene.gameData.gameStats.pokemonFused++;
+    globalScene.validateAchv(achvs.SPLICE);
+    globalScene.gameData.gameStats.pokemonFused++;
 
-      // Store the average HP% that each Pokemon has
-      const maxHp = this.getMaxHp();
-      const newHpPercent = ((pokemon.hp / pokemon.getMaxHp()) + (this.hp / maxHp)) / 2;
+    // Store the average HP% that each Pokemon has
+    const maxHp = this.getMaxHp();
+    const newHpPercent = (pokemon.hp / pokemon.getMaxHp() + this.hp / maxHp) / 2;
 
-      this.generateName();
-      this.calculateStats();
+    this.generateName();
+    this.calculateStats();
 
-      // Set this Pokemon's HP to the average % of both fusion components
-      this.hp = Math.round(maxHp * newHpPercent);
-      if (!this.isFainted()) {
-        // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
-        this.hp = Math.min(this.hp, maxHp);
-        this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
-      } else if (!pokemon.isFainted()) {
-        // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
-        this.hp = Math.max(this.hp, 1);
-        this.status = pokemon.status; // Inherit the other Pokemon's status
-      }
+    // Set this Pokemon's HP to the average % of both fusion components
+    this.hp = Math.round(maxHp * newHpPercent);
+    if (!this.isFainted()) {
+      // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
+      this.hp = Math.min(this.hp, maxHp);
+      this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
+    } else if (!pokemon.isFainted()) {
+      // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
+      this.hp = Math.max(this.hp, 1);
+      this.status = pokemon.status; // Inherit the other Pokemon's status
+    }
 
-      this.generateCompatibleTms();
-      this.updateInfo(true);
-      const fusedPartyMemberIndex = globalScene.getPlayerParty().indexOf(pokemon);
-      let partyMemberIndex = globalScene.getPlayerParty().indexOf(this);
-      if (partyMemberIndex > fusedPartyMemberIndex) {
-        partyMemberIndex--;
-      }
-      const fusedPartyMemberHeldModifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
-      const transferModifiers: Promise<boolean>[] = [];
-      for (const modifier of fusedPartyMemberHeldModifiers) {
-        transferModifiers.push(globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false));
-      }
-      Promise.allSettled(transferModifiers).then(() => {
-        globalScene.updateModifiers(true, true).then(() => {
-          globalScene.removePartyMemberModifiers(fusedPartyMemberIndex);
-          globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
-          const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);
-          pokemon.getMoveset(true).map((m: PokemonMove) => globalScene.unshiftPhase(new LearnMovePhase(newPartyMemberIndex, m.getMove().id)));
-          pokemon.destroy();
-          this.updateFusionPalette();
-          resolve();
-        });
-      });
-    });
+    this.generateCompatibleTms();
+    this.updateInfo(true);
+    const fusedPartyMemberIndex = globalScene.getPlayerParty().indexOf(pokemon);
+    let partyMemberIndex = globalScene.getPlayerParty().indexOf(this);
+    if (partyMemberIndex > fusedPartyMemberIndex) {
+      partyMemberIndex--;
+    }
+    const fusedPartyMemberHeldModifiers = globalScene.findModifiers((m) => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
+    for (const modifier of fusedPartyMemberHeldModifiers) {
+      globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false);
+    }
+    globalScene.updateModifiers(true, true);
+    globalScene.removePartyMemberModifiers(fusedPartyMemberIndex);
+    globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
+    const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);
+    pokemon.getMoveset(true).map((m: PokemonMove) => globalScene.unshiftPhase(new LearnMovePhase(newPartyMemberIndex, m.getMove().id)));
+    pokemon.destroy();
+    this.updateFusionPalette();
   }
 
   unfuse(): Promise<void> {
