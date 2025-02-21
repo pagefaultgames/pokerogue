@@ -723,7 +723,7 @@ export class DestinyBondTag extends BattlerTag {
         pokemonNameWithAffix2: getPokemonNameWithAffix(pokemon)
       })
     );
-    pokemon.damageAndUpdate(pokemon.hp, HitResult.OTHER, false, true);
+    pokemon.damageAndUpdate(pokemon.hp, HitResult.INDIRECT_KO, false, true);
     return false;
   }
 }
@@ -898,7 +898,7 @@ export class PowderTag extends BattlerTag {
           const cancelDamage = new BooleanHolder(false);
           applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
           if (!cancelDamage.value) {
-            pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), HitResult.OTHER);
+            pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), HitResult.INDIRECT);
           }
 
           // "When the flame touched the powder\non the Pokémon, it exploded!"
@@ -1459,7 +1459,7 @@ export class ContactDamageProtectedTag extends ProtectedTag {
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
         if (!attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-          attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+          attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.INDIRECT);
         }
       }
     }
@@ -1613,7 +1613,7 @@ export class PerishSongTag extends BattlerTag {
         })
       );
     } else {
-      pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, true);
+      pokemon.damageAndUpdate(pokemon.hp, HitResult.INDIRECT_KO, false, true);
     }
 
     return ret;
@@ -2327,7 +2327,7 @@ export class GulpMissileTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
 
       if (!cancelled.value) {
-        attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), HitResult.OTHER);
+        attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), HitResult.INDIRECT);
       }
 
       if (this.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {

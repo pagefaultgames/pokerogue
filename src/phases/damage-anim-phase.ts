@@ -21,7 +21,7 @@ export class DamageAnimPhase extends PokemonPhase {
   start() {
     super.start();
 
-    if (this.damageResult === HitResult.ONE_HIT_KO) {
+    if (this.damageResult === HitResult.ONE_HIT_KO || this.damageResult === HitResult.INDIRECT_KO) {
       if (globalScene.moveAnimations) {
         globalScene.toggleInvert(true);
       }
@@ -46,6 +46,7 @@ export class DamageAnimPhase extends PokemonPhase {
         globalScene.playSound("se/hit");
         break;
       case HitResult.SUPER_EFFECTIVE:
+      case HitResult.INDIRECT_KO:
       case HitResult.ONE_HIT_KO:
         globalScene.playSound("se/hit_strong");
         break;
@@ -58,7 +59,7 @@ export class DamageAnimPhase extends PokemonPhase {
       globalScene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
     }
 
-    if (this.damageResult !== HitResult.OTHER && this.amount > 0) {
+    if (this.damageResult !== HitResult.INDIRECT && this.amount > 0) {
       const flashTimer = globalScene.time.addEvent({
         delay: 100,
         repeat: 5,

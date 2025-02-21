@@ -698,7 +698,7 @@ class SpikesTag extends ArenaTrapTag {
         const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
 
         globalScene.queueMessage(i18next.t("arenaTag:spikesActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-        pokemon.damageAndUpdate(damage, HitResult.OTHER);
+        pokemon.damageAndUpdate(damage, HitResult.INDIRECT);
         if (pokemon.turnData) {
           pokemon.turnData.damageTaken += damage;
         }

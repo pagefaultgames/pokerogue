@@ -3163,7 +3163,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
     let isIndirectDamage: boolean = true;
     if (result !== undefined) {
-      if (result === HitResult.OTHER) {
+      if (result === HitResult.INDIRECT || result === HitResult.INDIRECT_KO) {
         isIndirectDamage = true;
       } else {
         isIndirectDamage = false;
@@ -5506,12 +5506,13 @@ export enum HitResult {
   HEAL,
   FAIL,
   MISS,
-  OTHER,
+  INDIRECT,
   IMMUNE,
-  CONFUSION
+  CONFUSION,
+  INDIRECT_KO
 }
 
-export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.CONFUSION | HitResult.OTHER;
+export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.CONFUSION | HitResult.INDIRECT_KO | HitResult.INDIRECT;
 
 /** Interface containing the results of a damage calculation for a given move */
 export interface DamageCalculationResult {
