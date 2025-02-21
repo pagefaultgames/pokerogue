@@ -1542,7 +1542,7 @@ export class SurviveDamageAttr extends ModifiedDamageAttr {
 
 export class SplashAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    globalScene.queueMessage(i18next.t("battlerTags:splashLapse"));
+    globalScene.queueMessage(i18next.t("moveTriggers:splash"));
     return true;
   }
 }
