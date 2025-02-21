@@ -833,7 +833,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if ( // If evolutions shouldn't happen, add more cases here :)
       !allowEvolving
       || !pokemonEvolutions.hasOwnProperty(this.speciesId)
-      || globalScene.currentBattle.waveIndex === 20 && globalScene.gameMode.isClassic && globalScene.currentBattle.trainer
+      || globalScene.currentBattle?.waveIndex === 20 && globalScene.gameMode.isClassic && globalScene.currentBattle.trainer
     ) {
       return this.speciesId;
     }
