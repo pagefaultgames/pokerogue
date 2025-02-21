@@ -938,7 +938,7 @@ export default class Move implements Localizable {
       if (multiHitAttr) {
         effectivePower = multiHitAttr.calculateExpectedHitCount(this) * this.power;
       } else {
-        effectivePower = this.power * this.accuracy === -1 ? 1 : this.accuracy / 100;
+        effectivePower = this.power * (this.accuracy === -1 ? 1 : this.accuracy / 100);
       }
     }
     /** The number of turns the user must commit to for this move's damage */
