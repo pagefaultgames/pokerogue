@@ -31,11 +31,11 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL activates in battle correctly", async() => {
     game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "LIGHT_BALL" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     // Checking console log to make sure Light Ball is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
@@ -64,41 +64,41 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL held by PIKACHU", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     const atkStat = partyMember.getStat(Stat.ATK);
     const spAtkStat = partyMember.getStat(Stat.SPATK);
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
     const spAtkValue = new Utils.NumberHolder(spAtkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
   }, 20000);
 
   it("LIGHT_BALL held by fused PIKACHU (base)", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.PIKACHU,
       Species.MAROWAK
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const partyMember = game.scene.getPlayerParty()[0];
+    const ally = game.scene.getPlayerParty()[1];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -114,17 +114,17 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
     const spAtkValue = new Utils.NumberHolder(spAtkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
@@ -136,8 +136,8 @@ describe("Items - Light Ball", () => {
       Species.PIKACHU
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const partyMember = game.scene.getPlayerParty()[0];
+    const ally = game.scene.getPlayerParty()[1];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -153,17 +153,17 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
     const spAtkValue = new Utils.NumberHolder(spAtkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
@@ -174,24 +174,24 @@ describe("Items - Light Ball", () => {
       Species.MAROWAK
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     const atkStat = partyMember.getStat(Stat.ATK);
     const spAtkStat = partyMember.getStat(Stat.SPATK);
 
     // Making sure modifier is not applied without holding item
     const atkValue = new Utils.NumberHolder(atkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
     const spAtkValue = new Utils.NumberHolder(spAtkStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "LIGHT_BALL" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);

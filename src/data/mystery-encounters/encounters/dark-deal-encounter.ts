@@ -1,22 +1,26 @@
-import { Type } from "#app/data/type";
+import type { Type } from "#enums/type";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { EnemyPartyConfig, EnemyPokemonConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../utils/encounter-phase-utils";
-import { getRandomPlayerPokemon, getRandomSpeciesByStarterTier } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
+import { initBattleWithEnemyConfig, leaveEncounterWithoutBattle, } from "../utils/encounter-phase-utils";
+import { getRandomPlayerPokemon, getRandomSpeciesByStarterCost } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
-import { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokemonFormChangeItemModifier } from "#app/modifier/modifier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for encounter */
-const namespace = "mysteryEncounter:darkDeal";
+const namespace = "mysteryEncounters/darkDeal";
 
 /** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and Mythicals */
 const excludedBosses = [
@@ -94,7 +98,7 @@ export const DarkDealEncounter: MysteryEncounter =
     .withEncounterTier(MysteryEncounterTier.ROGUE)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "mad_scientist_m",
+        spriteKey: "dark_deal_scientist",
         fileRoot: "mystery-encounters",
         hasShadow: true,
       },
@@ -107,44 +111,46 @@ export const DarkDealEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ])
     .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
-    .withScenePartySizeRequirement(2, 6) // Must have at least 2 pokemon in party
+    .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
     .withCatchAllowed(true)
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .setLocalizationKey(`${namespace}`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withOption(
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
           selected: [
             {
-              speaker: `${namespace}.speaker`,
-              text: `${namespace}.option.1.selected_dialogue`,
+              speaker: `${namespace}:speaker`,
+              text: `${namespace}:option.1.selected_dialogue`,
             },
             {
-              text: `${namespace}.option.1.selected_message`,
+              text: `${namespace}:option.1.selected_message`,
             },
           ],
         })
-        .withPreOptionPhase(async (scene: BattleScene) => {
+        .withPreOptionPhase(async () => {
           // Removes random pokemon (including fainted) from party and adds name to dialogue data tokens
           // Will never return last battle able mon and instead pick fainted/unable to battle
-          const removedPokemon = getRandomPlayerPokemon(scene, false, true);
+          const removedPokemon = getRandomPlayerPokemon(true, false, true);
+
           // Get all the pokemon's held items
           const modifiers = removedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
-          scene.removePokemonFromPlayerParty(removedPokemon);
+          globalScene.removePokemonFromPlayerParty(removedPokemon);
 
-          const encounter = scene.currentBattle.mysteryEncounter!;
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           encounter.setDialogueToken("pokeName", removedPokemon.getNameToRender());
 
           // Store removed pokemon types
@@ -153,25 +159,32 @@ export const DarkDealEncounter: MysteryEncounter =
             modifiers
           };
         })
-        .withOptionPhase(async (scene: BattleScene) => {
+        .withOptionPhase(async () => {
           // Give the player 5 Rogue Balls
-          const encounter = scene.currentBattle.mysteryEncounter!;
-          scene.unshiftPhase(new ModifierRewardPhase(scene, modifierTypes.ROGUE_BALL));
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
+          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.ROGUE_BALL));
 
           // Start encounter with random legendary (7-10 starter strength) that has level additive
-          const bossTypes: Type[] = encounter.misc.removedTypes;
+          // If this is a mono-type challenge, always ensure the required type is filtered for
+          let bossTypes: Type[] = encounter.misc.removedTypes;
+          const singleTypeChallenges = globalScene.gameMode.challenges.filter(c => c.value && c.id === Challenges.SINGLE_TYPE);
+          if (globalScene.gameMode.isChallenge && singleTypeChallenges.length > 0) {
+            bossTypes = singleTypeChallenges.map(c => (c.value - 1) as Type);
+          }
+
           const bossModifiers: PokemonHeldItemModifier[] = encounter.misc.modifiers;
           // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
           const roll = randSeedInt(100);
           const starterTier: number | [number, number] =
-            roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
-          const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterTier(starterTier, excludedBosses, bossTypes));
+            roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [ 9, 10 ];
+          const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes));
           const pokemonConfig: EnemyPokemonConfig = {
             species: bossSpecies,
             isBoss: true,
             modifierConfigs: bossModifiers.map(m => {
               return {
-                modifier: m
+                modifier: m,
+                stackCount: m.getStackCount(),
               };
             })
           };
@@ -179,32 +192,32 @@ export const DarkDealEncounter: MysteryEncounter =
             pokemonConfig.formIndex = 0;
           }
           const config: EnemyPartyConfig = {
-            pokemonConfigs: [pokemonConfig],
+            pokemonConfigs: [ pokemonConfig ],
           };
-          return initBattleWithEnemyConfig(scene, config);
+          await initBattleWithEnemyConfig(config);
         })
         .build()
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.2.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Leave encounter with no rewards or exp
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
         return true;
       }
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`
+        text: `${namespace}:outro`
       }
     ])
     .build();

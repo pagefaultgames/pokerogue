@@ -1,17 +1,16 @@
 import { StatMultiplierAbAttr, allAbilities } from "#app/data/ability";
-import { Stat } from "#enums/stat";
-import { WeatherType } from "#app/data/weather";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
+import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Abilities - Sand Veil", () => {
   let phaserGame: Phaser.Game;
@@ -29,10 +28,10 @@ describe("Abilities - Sand Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([Moves.SPLASH]);
+    game.override.moveset([ Moves.SPLASH ]);
     game.override.enemySpecies(Species.MEOWSCARADA);
     game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
+    game.override.enemyMoveset([ Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER ]);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override
@@ -43,7 +42,7 @@ describe("Abilities - Sand Veil", () => {
   test(
     "ability should increase the evasiveness of the source",
     async () => {
-      await game.startBattle([Species.SNORLAX, Species.BLISSEY]);
+      await game.startBattle([ Species.SNORLAX, Species.BLISSEY ]);
 
       const leadPokemon = game.scene.getPlayerField();
 
@@ -75,6 +74,6 @@ describe("Abilities - Sand Veil", () => {
 
       expect(leadPokemon[0].isFullHp()).toBe(true);
       expect(leadPokemon[1].hp).toBeLessThan(leadPokemon[1].getMaxHp());
-    }, TIMEOUT
+    }
   );
 });

@@ -5,7 +5,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
+import type SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { GameManagerHelper } from "./gameManagerHelper";
 
@@ -21,8 +21,12 @@ export class DailyModeHelper extends GameManagerHelper {
   async runToSummon() {
     await this.game.runToTitle();
 
+    if (this.game.override.disableShinies) {
+      this.game.override.shiny(false).enemyShiny(false);
+    }
+
     this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const titlePhase = new TitlePhase(this.game.scene);
+      const titlePhase = new TitlePhase();
       titlePhase.initDailyRun();
     });
 
@@ -33,7 +37,7 @@ export class DailyModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to(EncounterPhase);
 
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }

@@ -1,23 +1,26 @@
-import { EnemyPartyConfig, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { globalScene } from "#app/global-scene";
+import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { initBattleWithEnemyConfig, leaveEncounterWithoutBattle, setEncounterRewards, transitionMysteryEncounterIntroVisuals, } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs, } from "#app/data/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { randSeedInt } from "#app/utils";
 import i18next from "i18next";
-import { IEggOptions } from "#app/data/egg";
+import type { IEggOptions } from "#app/data/egg";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:aTrainersTest";
+const namespace = "mysteryEncounters/aTrainersTest";
 
 /**
  * A Trainer's Test encounter.
@@ -27,72 +30,72 @@ const namespace = "mysteryEncounter:aTrainersTest";
 export const ATrainersTestEncounter: MysteryEncounter =
   MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.A_TRAINERS_TEST)
     .withEncounterTier(MysteryEncounterTier.ROGUE)
-    .withSceneWaveRangeRequirement(100, 180)
+    .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
     .withIntroSpriteConfigs([]) // These are set in onInit()
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
     ])
     .withAutoHideIntroVisuals(false)
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .withOnInit(() => {
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Randomly pick from 1 of the 5 stat trainers to spawn
       let trainerType: TrainerType;
       let spriteKeys;
       let trainerNameKey: string;
       switch (randSeedInt(5)) {
-      default:
-      case 0:
-        trainerType = TrainerType.BUCK;
-        spriteKeys = getSpriteKeysFromSpecies(Species.CLAYDOL);
-        trainerNameKey = "buck";
-        break;
-      case 1:
-        trainerType = TrainerType.CHERYL;
-        spriteKeys = getSpriteKeysFromSpecies(Species.BLISSEY);
-        trainerNameKey = "cheryl";
-        break;
-      case 2:
-        trainerType = TrainerType.MARLEY;
-        spriteKeys = getSpriteKeysFromSpecies(Species.ARCANINE);
-        trainerNameKey = "marley";
-        break;
-      case 3:
-        trainerType = TrainerType.MIRA;
-        spriteKeys = getSpriteKeysFromSpecies(Species.ALAKAZAM, false, 1);
-        trainerNameKey = "mira";
-        break;
-      case 4:
-        trainerType = TrainerType.RILEY;
-        spriteKeys = getSpriteKeysFromSpecies(Species.LUCARIO, false, 1);
-        trainerNameKey = "riley";
-        break;
+        default:
+        case 0:
+          trainerType = TrainerType.BUCK;
+          spriteKeys = getSpriteKeysFromSpecies(Species.CLAYDOL);
+          trainerNameKey = "buck";
+          break;
+        case 1:
+          trainerType = TrainerType.CHERYL;
+          spriteKeys = getSpriteKeysFromSpecies(Species.BLISSEY);
+          trainerNameKey = "cheryl";
+          break;
+        case 2:
+          trainerType = TrainerType.MARLEY;
+          spriteKeys = getSpriteKeysFromSpecies(Species.ARCANINE);
+          trainerNameKey = "marley";
+          break;
+        case 3:
+          trainerType = TrainerType.MIRA;
+          spriteKeys = getSpriteKeysFromSpecies(Species.ALAKAZAM, false, 1);
+          trainerNameKey = "mira";
+          break;
+        case 4:
+          trainerType = TrainerType.RILEY;
+          spriteKeys = getSpriteKeysFromSpecies(Species.LUCARIO, false, 1);
+          trainerNameKey = "riley";
+          break;
       }
 
       // Dialogue and tokens for trainer
       encounter.dialogue.intro = [
         {
           speaker: `trainerNames:${trainerNameKey}`,
-          text: `${namespace}.${trainerNameKey}.intro_dialogue`
+          text: `${namespace}:${trainerNameKey}.intro_dialogue`
         }
       ];
       encounter.options[0].dialogue!.selected = [
         {
           speaker: `trainerNames:${trainerNameKey}`,
-          text: `${namespace}.${trainerNameKey}.accept`
+          text: `${namespace}:${trainerNameKey}.accept`
         }
       ];
       encounter.options[1].dialogue!.selected = [
         {
           speaker: `trainerNames:${trainerNameKey}`,
-          text: `${namespace}.${trainerNameKey}.decline`
+          text: `${namespace}:${trainerNameKey}.decline`
         }
       ];
 
       encounter.setDialogueToken("statTrainerName", i18next.t(`trainerNames:${trainerNameKey}`));
-      const eggDescription = i18next.t(`${namespace}.title`) + ":\n" + i18next.t(`trainerNames:${trainerNameKey}`);
+      const eggDescription = i18next.t(`${namespace}:title`) + ":\n" + i18next.t(`trainerNames:${trainerNameKey}`);
       encounter.misc = { trainerType, trainerNameKey, trainerEggDescription: eggDescription };
 
       // Trainer config
@@ -127,59 +130,58 @@ export const ATrainersTestEncounter: MysteryEncounter =
 
       return true;
     })
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .setLocalizationKey(`${namespace}`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withIntroDialogue()
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`
       },
-      async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter!;
+      async () => {
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         // Battle the stat trainer for an Egg and great rewards
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
-        await transitionMysteryEncounterIntroVisuals(scene);
+        await transitionMysteryEncounterIntroVisuals();
 
         const eggOptions: IEggOptions = {
-          scene,
           pulled: false,
           sourceType: EggSourceType.EVENT,
           eggDescriptor: encounter.misc.trainerEggDescription,
-          tier: EggTier.ULTRA
+          tier: EggTier.EPIC
         };
-        encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.epic`));
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH], guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA], fillRemaining: true }, [eggOptions]);
-        return initBattleWithEnemyConfig(scene, config);
+        encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
+        setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.SACRED_ASH ], guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ULTRA ], fillRemaining: true }, [ eggOptions ]);
+        await initBattleWithEnemyConfig(config);
       }
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`
       },
-      async (scene: BattleScene) => {
-        const encounter = scene.currentBattle.mysteryEncounter!;
+      async () => {
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
         // Full heal party
-        scene.unshiftPhase(new PartyHealPhase(scene, true));
+        globalScene.unshiftPhase(new PartyHealPhase(true));
 
         const eggOptions: IEggOptions = {
-          scene,
           pulled: false,
           sourceType: EggSourceType.EVENT,
           eggDescriptor: encounter.misc.trainerEggDescription,
-          tier: EggTier.GREAT
+          tier: EggTier.RARE
         };
-        encounter.setDialogueToken("eggType", i18next.t(`${namespace}.eggTypes.rare`));
-        setEncounterRewards(scene, { fillRemaining: false, rerollMultiplier: -1 }, [eggOptions]);
-        leaveEncounterWithoutBattle(scene);
+        encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.rare`));
+        setEncounterRewards({ fillRemaining: false, rerollMultiplier: -1 }, [ eggOptions ]);
+        leaveEncounterWithoutBattle();
       }
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`
+        text: `${namespace}:outro`
       }
     ])
     .build();

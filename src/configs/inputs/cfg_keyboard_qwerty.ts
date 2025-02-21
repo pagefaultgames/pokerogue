@@ -1,5 +1,5 @@
-import {Button} from "#enums/buttons";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { Button } from "#enums/buttons";
+import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 
 const cfg_keyboard_qwerty = {
   padID: "default",
@@ -180,9 +180,9 @@ const cfg_keyboard_qwerty = {
     [SettingKeyboard.Button_Cycle_Gender]: Button.CYCLE_GENDER,
     [SettingKeyboard.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
     [SettingKeyboard.Button_Cycle_Nature]: Button.CYCLE_NATURE,
-    [SettingKeyboard.Button_Cycle_Variant]: Button.V,
     [SettingKeyboard.Button_Speed_Up]: Button.SPEED_UP,
     [SettingKeyboard.Button_Slow_Down]: Button.SLOW_DOWN,
+    [SettingKeyboard.Button_Cycle_Tera]: Button.CYCLE_TERA,
     [SettingKeyboard.Alt_Button_Up]: Button.UP,
     [SettingKeyboard.Alt_Button_Down]: Button.DOWN,
     [SettingKeyboard.Alt_Button_Left]: Button.LEFT,
@@ -197,9 +197,9 @@ const cfg_keyboard_qwerty = {
     [SettingKeyboard.Alt_Button_Cycle_Gender]: Button.CYCLE_GENDER,
     [SettingKeyboard.Alt_Button_Cycle_Ability]: Button.CYCLE_ABILITY,
     [SettingKeyboard.Alt_Button_Cycle_Nature]: Button.CYCLE_NATURE,
-    [SettingKeyboard.Alt_Button_Cycle_Variant]: Button.V,
     [SettingKeyboard.Alt_Button_Speed_Up]: Button.SPEED_UP,
     [SettingKeyboard.Alt_Button_Slow_Down]: Button.SLOW_DOWN,
+    [SettingKeyboard.Alt_Button_Cycle_Tera]: Button.CYCLE_TERA,
   },
   default: {
     KEY_ARROW_UP: SettingKeyboard.Button_Up,
@@ -216,7 +216,7 @@ const cfg_keyboard_qwerty = {
     KEY_G: SettingKeyboard.Button_Cycle_Gender,
     KEY_E: SettingKeyboard.Button_Cycle_Ability,
     KEY_N: SettingKeyboard.Button_Cycle_Nature,
-    KEY_V: SettingKeyboard.Button_Cycle_Variant,
+    KEY_V: SettingKeyboard.Button_Cycle_Tera,
     KEY_PLUS: -1,
     KEY_MINUS: -1,
     KEY_A: SettingKeyboard.Alt_Button_Left,

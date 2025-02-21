@@ -1,8 +1,10 @@
+import type BattleScene from "#app/battle-scene";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import Move, { allMoves } from "#app/data/move";
+import type Move from "#app/data/move";
+import { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils";
 import { Moves } from "#enums/moves";
@@ -11,6 +13,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+let globalScene: BattleScene;
 
 describe("Moves - Reflect", () => {
   let phaserGame: Phaser.Game;
@@ -30,18 +33,19 @@ describe("Moves - Reflect", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    globalScene = game.scene;
     game.override.battleType("single");
     game.override.ability(Abilities.NONE);
-    game.override.moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
+    game.override.moveset([ Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE ]);
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
+    game.override.enemyMoveset([ Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT ]);
     game.override.disableCrits();
   });
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
     const moveToUse = Moves.TACKLE;
-    await game.startBattle([Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
 
@@ -55,7 +59,7 @@ describe("Moves - Reflect", () => {
     game.override.battleType("double");
 
     const moveToUse = Moves.ROCK_SLIDE;
-    await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
@@ -68,7 +72,7 @@ describe("Moves - Reflect", () => {
 
   it("does not affect special attacks", async () => {
     const moveToUse = Moves.ABSORB;
-    await game.startBattle([Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
 
@@ -93,8 +97,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (defender.scene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
-    defender.scene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, move.category, defender.scene.currentBattle.double, multiplierHolder);
+  if (globalScene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
+    globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

@@ -7,7 +7,8 @@ import { Mode } from "#app/ui/ui";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import MockText from "../utils/mocks/mocksContainer/mockText";
+import type MockText from "#test/utils/mocks/mocksContainer/mockText";
+import i18next from "i18next";
 
 describe("UI - Type Hints", () => {
   let phaserGame: Phaser.Game;
@@ -36,10 +37,10 @@ describe("UI - Type Hints", () => {
       .startingWave(1)
       .enemySpecies(Species.FLORGES)
       .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.DRAGON_CLAW]);
+      .moveset([ Moves.DRAGON_CLAW ]);
     game.settings.typeHints(true); //activate type hints
 
-    await game.startBattle([Species.RAYQUAZA]);
+    await game.startBattle([ Species.RAYQUAZA ]);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       const { ui } = game.scene;
@@ -53,7 +54,7 @@ describe("UI - Type Hints", () => {
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const dragonClawText = movesContainer
         .getAll<Phaser.GameObjects.Text>()
-        .find((text) => text.text === "Dragon Claw")! as unknown as MockText;
+        .find((text) => text.text === i18next.t("move:dragonClaw.name"))! as unknown as MockText;
 
       expect.soft(dragonClawText.color).toBe("#929292");
       ui.getHandler().processInput(Button.ACTION);
@@ -62,9 +63,9 @@ describe("UI - Type Hints", () => {
   });
 
   it("check status move color", async () => {
-    game.override.enemySpecies(Species.FLORGES).moveset([Moves.GROWL]);
+    game.override.enemySpecies(Species.FLORGES).moveset([ Moves.GROWL ]);
 
-    await game.startBattle([Species.RAYQUAZA]);
+    await game.startBattle([ Species.RAYQUAZA ]);
 
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       const { ui } = game.scene;
@@ -78,7 +79,7 @@ describe("UI - Type Hints", () => {
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const growlText = movesContainer
         .getAll<Phaser.GameObjects.Text>()
-        .find((text) => text.text === "Growl")! as unknown as MockText;
+        .find((text) => text.text === i18next.t("move:growl.name"))! as unknown as MockText;
 
       expect.soft(growlText.color).toBe(undefined);
       ui.getHandler().processInput(Button.ACTION);

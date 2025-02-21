@@ -29,8 +29,8 @@ describe("Moves - Tackle", () => {
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.startingLevel(1);
     game.override.startingWave(97);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH]);
+    game.override.moveset([ moveToUse ]);
+    game.override.enemyMoveset([ Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH ]);
     game.override.disableCrits();
   });
 
@@ -53,7 +53,7 @@ describe("Moves - Tackle", () => {
       Species.MIGHTYENA,
     ]);
     game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
-    game.scene.getParty()[0].stats[Stat.ATK] = 50;
+    game.scene.getPlayerParty()[0].stats[Stat.ATK] = 50;
 
 
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;

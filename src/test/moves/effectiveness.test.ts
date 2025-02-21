@@ -1,12 +1,11 @@
 import { allMoves } from "#app/data/move";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { Type } from "#app/data/type";
+import { Type } from "#enums/type";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import * as Messages from "#app/messages";
-import { TerastallizeModifier } from "#app/modifier/modifier";
 import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -17,12 +16,13 @@ function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Sp
   vi.spyOn(Messages, "getPokemonNameWithAffix").mockReturnValue("");
   game.override.enemyAbility(targetAbility);
 
-  if (teraType !== undefined) {
-    game.override.enemyHeldItems([{ name:"TERA_SHARD", type: teraType }]);
-  }
-
   const user = game.scene.addPlayerPokemon(getPokemonSpecies(Species.SNORLAX), 5);
   const target = game.scene.addEnemyPokemon(getPokemonSpecies(targetSpecies), 5, TrainerSlot.NONE);
+
+  if (teraType !== undefined) {
+    target.teraType = teraType;
+    target.isTerastallized = true;
+  }
 
   expect(target.getMoveEffectiveness(user, allMoves[move])).toBe(expected);
   user.destroy();
@@ -38,7 +38,6 @@ describe("Moves - Type Effectiveness", () => {
       type: Phaser.HEADLESS,
     });
     game = new GameManager(phaserGame);
-    TerastallizeModifier.prototype.apply = (args) => true;
 
     game.override.ability(Abilities.BALL_FETCH);
   });
@@ -69,6 +68,10 @@ describe("Moves - Type Effectiveness", () => {
 
   it("Electric-type attacks are super-effective against Water-type Pokemon",
     () => testMoveEffectiveness(game, Moves.THUNDERBOLT, Species.BLASTOISE, 2)
+  );
+
+  it("Ghost-type attacks have no effect on Normal-type Pokemon",
+    () => testMoveEffectiveness(game, Moves.SHADOW_BALL, Species.URSALUNA, 0)
   );
 
   it("Electric-type attacks are doubly super-effective against Water/Flying-type Pokemon",

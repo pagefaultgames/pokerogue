@@ -1,7 +1,9 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";
+import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 /**
  * Phase for determining an enemy AI's action for the next turn.
@@ -13,14 +15,14 @@ import { FieldPhase } from "./field-phase";
  * @see {@linkcode EnemyPokemon.getNextMove}
  */
 export class EnemyCommandPhase extends FieldPhase {
-  protected fieldIndex: integer;
+  protected fieldIndex: number;
   protected skipTurn: boolean = false;
 
-  constructor(scene: BattleScene, fieldIndex: integer) {
-    super(scene);
+  constructor(fieldIndex: number) {
+    super();
 
     this.fieldIndex = fieldIndex;
-    if (this.scene.currentBattle.mysteryEncounter?.skipEnemyBattleTurns) {
+    if (globalScene.currentBattle.mysteryEncounter?.skipEnemyBattleTurns) {
       this.skipTurn = true;
     }
   }
@@ -28,11 +30,16 @@ export class EnemyCommandPhase extends FieldPhase {
   start() {
     super.start();
 
-    const enemyPokemon = this.scene.getEnemyField()[this.fieldIndex];
+    const enemyPokemon = globalScene.getEnemyField()[this.fieldIndex];
 
-    const battle = this.scene.currentBattle;
+    const battle = globalScene.currentBattle;
 
     const trainer = battle.trainer;
+
+    if (battle.double && enemyPokemon.hasAbility(Abilities.COMMANDER)
+        && enemyPokemon.getAlly().getTag(BattlerTagType.COMMANDED)) {
+      this.skipTurn = true;
+    }
 
     /**
        * If the enemy has a trainer, decide whether or not the enemy should switch
@@ -61,7 +68,7 @@ export class EnemyCommandPhase extends FieldPhase {
             const index = trainer.getNextSummonIndex(enemyPokemon.trainerSlot, partyMemberScores);
 
             battle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-                { command: Command.POKEMON, cursor: index, args: [false], skip: this.skipTurn };
+                { command: Command.POKEMON, cursor: index, args: [ false ], skip: this.skipTurn };
 
             battle.enemySwitchCounter++;
 
@@ -74,10 +81,14 @@ export class EnemyCommandPhase extends FieldPhase {
     /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
 
-    this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
+    if (trainer && trainer.shouldTera(enemyPokemon)) {
+      globalScene.currentBattle.preTurnCommands[this.fieldIndex + BattlerIndex.ENEMY] = { command: Command.TERA };
+    }
+
+    globalScene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
         { command: Command.FIGHT, move: nextMove, skip: this.skipTurn };
 
-    this.scene.currentBattle.enemySwitchCounter = Math.max(this.scene.currentBattle.enemySwitchCounter - 1, 0);
+    globalScene.currentBattle.enemySwitchCounter = Math.max(globalScene.currentBattle.enemySwitchCounter - 1, 0);
 
     this.end();
   }

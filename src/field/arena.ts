@@ -1,38 +1,55 @@
-import BattleScene from "../battle-scene";
-import { biomePokemonPools, BiomePoolTier, BiomeTierTrainerPools, biomeTrainerPools, PokemonPools } from "../data/biomes";
-import { Constructor } from "#app/utils";
-import * as Utils from "../utils";
-import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
-import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather, WeatherType } from "../data/weather";
-import { CommonAnim } from "../data/battle-anims";
-import { Type } from "../data/type";
-import Move from "../data/move";
-import { ArenaTag, ArenaTagSide, ArenaTrapTag, getArenaTag } from "../data/arena-tag";
-import { BattlerIndex } from "../battle";
-import { Terrain, TerrainType } from "../data/terrain";
-import { applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs, PostTerrainChangeAbAttr, PostWeatherChangeAbAttr } from "../data/ability";
-import Pokemon from "./pokemon";
+import { globalScene } from "#app/global-scene";
+import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biomes";
+import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
+import type { Constructor } from "#app/utils";
+import * as Utils from "#app/utils";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather } from "#app/data/weather";
+import { CommonAnim } from "#app/data/battle-anims";
+import type { Type } from "#enums/type";
+import type Move from "#app/data/move";
+import type { ArenaTag } from "#app/data/arena-tag";
+import { ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
+import type { BattlerIndex } from "#app/battle";
+import { Terrain, TerrainType } from "#app/data/terrain";
+import {
+  applyAbAttrs,
+  applyPostTerrainChangeAbAttrs,
+  applyPostWeatherChangeAbAttrs,
+  PostTerrainChangeAbAttr,
+  PostWeatherChangeAbAttr,
+  TerrainEventTypeChangeAbAttr
+} from "#app/data/ability";
+import type Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
-import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "../events/arena";
-import { ArenaTagType } from "#enums/arena-tag-type";
+import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+import type { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
-import { Moves } from "#enums/moves";
+import type { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { Abilities } from "#app/enums/abilities";
+import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { WeatherType } from "#enums/weather-type";
 
 export class Arena {
-  public scene: BattleScene;
   public biomeType: Biome;
   public weather: Weather | null;
   public terrain: Terrain | null;
   public tags: ArenaTag[];
   public bgm: string;
   public ignoreAbilities: boolean;
+  public ignoringEffectSource: BattlerIndex | null;
+  public playerTerasUsed: number;
+  /**
+   * Saves the number of times a party pokemon faints during a arena encounter.
+   * {@linkcode globalScene.currentBattle.enemyFaints} is the corresponding faint counter for the enemy (this resets every wave).
+   */
+  public playerFaints: number;
 
   private lastTimeOfDay: TimeOfDay;
 
@@ -41,24 +58,25 @@ export class Arena {
 
   public readonly eventTarget: EventTarget = new EventTarget();
 
-  constructor(scene: BattleScene, biome: Biome, bgm: string) {
-    this.scene = scene;
+  constructor(biome: Biome, bgm: string, playerFaints: number = 0) {
     this.biomeType = biome;
     this.tags = [];
     this.bgm = bgm;
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
+    this.playerTerasUsed = 0;
+    this.playerFaints = playerFaints;
   }
 
   init() {
     const biomeKey = getBiomeKey(this.biomeType);
 
-    this.scene.arenaPlayer.setBiome(this.biomeType);
-    this.scene.arenaPlayerTransition.setBiome(this.biomeType);
-    this.scene.arenaEnemy.setBiome(this.biomeType);
-    this.scene.arenaNextEnemy.setBiome(this.biomeType);
-    this.scene.arenaBg.setTexture(`${biomeKey}_bg`);
-    this.scene.arenaBgTransition.setTexture(`${biomeKey}_bg`);
+    globalScene.arenaPlayer.setBiome(this.biomeType);
+    globalScene.arenaPlayerTransition.setBiome(this.biomeType);
+    globalScene.arenaEnemy.setBiome(this.biomeType);
+    globalScene.arenaNextEnemy.setBiome(this.biomeType);
+    globalScene.arenaBg.setTexture(`${biomeKey}_bg`);
+    globalScene.arenaBgTransition.setTexture(`${biomeKey}_bg`);
 
     // Redo this on initialize because during save/load the current wave isn't always
     // set correctly during construction
@@ -76,13 +94,13 @@ export class Arena {
     }
   }
 
-  randomSpecies(waveIndex: integer, level: integer, attempt?: integer, luckValue?: integer, isBoss?: boolean): PokemonSpecies {
-    const overrideSpecies = this.scene.gameMode.getOverrideSpecies(waveIndex);
+  randomSpecies(waveIndex: number, level: number, attempt?: number, luckValue?: number, isBoss?: boolean): PokemonSpecies {
+    const overrideSpecies = globalScene.gameMode.getOverrideSpecies(waveIndex);
     if (overrideSpecies) {
       return overrideSpecies;
     }
-    const isBossSpecies = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
-      && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
+    const isBossSpecies = !!globalScene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
+      && (this.biomeType !== Biome.END || globalScene.gameMode.isClassic || globalScene.gameMode.isWaveFinal(waveIndex));
     const randVal = isBossSpecies ? 64 : 512;
     // luck influences encounter rarity
     let luckModifier = 0;
@@ -102,7 +120,7 @@ export class Arena {
     let ret: PokemonSpecies;
     let regen = false;
     if (!tierPool.length) {
-      ret = this.scene.randomSpecies(waveIndex, level);
+      ret = globalScene.randomSpecies(waveIndex, level);
     } else {
       const entry = tierPool[Utils.randSeedInt(tierPool.length)];
       let species: Species;
@@ -128,18 +146,18 @@ export class Arena {
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
         switch (true) {
-        case (ret.baseTotal >= 720):
-          regen = level < 90;
-          break;
-        case (ret.baseTotal >= 670):
-          regen = level < 70;
-          break;
-        case (ret.baseTotal >= 580):
-          regen = level < 50;
-          break;
-        default:
-          regen = level < 30;
-          break;
+          case (ret.baseTotal >= 720):
+            regen = level < 90;
+            break;
+          case (ret.baseTotal >= 670):
+            regen = level < 70;
+            break;
+          case (ret.baseTotal >= 580):
+            regen = level < 50;
+            break;
+          default:
+            regen = level < 30;
+            break;
         }
       }
     }
@@ -149,7 +167,7 @@ export class Arena {
       return this.randomSpecies(waveIndex, level, (attempt || 0) + 1);
     }
 
-    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, this.scene.gameMode);
+    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, globalScene.gameMode);
     if (newSpeciesId !== ret.speciesId) {
       console.log("Replaced", Species[ret.speciesId], "with", Species[newSpeciesId]);
       ret = getPokemonSpecies(newSpeciesId);
@@ -157,9 +175,9 @@ export class Arena {
     return ret;
   }
 
-  randomTrainerType(waveIndex: integer, isBoss: boolean = false): TrainerType {
+  randomTrainerType(waveIndex: number, isBoss: boolean = false): TrainerType {
     const isTrainerBoss = !!this.trainerPool[BiomePoolTier.BOSS].length
-      && (this.scene.gameMode.isTrainerBoss(waveIndex, this.biomeType, this.scene.offsetGym) || isBoss);
+      && (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
     const tierValue = Utils.randSeedInt(!isTrainerBoss ? 512 : 64);
     let tier = !isTrainerBoss
@@ -174,114 +192,54 @@ export class Arena {
     return !tierPool.length ? TrainerType.BREEDER : tierPool[Utils.randSeedInt(tierPool.length)];
   }
 
-  getSpeciesFormIndex(species: PokemonSpecies): integer {
+  getSpeciesFormIndex(species: PokemonSpecies): number {
     switch (species.speciesId) {
-    case Species.BURMY:
-    case Species.WORMADAM:
-      switch (this.biomeType) {
-      case Biome.BEACH:
-        return 1;
-      case Biome.SLUM:
-        return 2;
-      }
-      break;
-    case Species.ROTOM:
-      switch (this.biomeType) {
-      case Biome.VOLCANO:
-        return 1;
-      case Biome.SEA:
-        return 2;
-      case Biome.ICE_CAVE:
-        return 3;
-      case Biome.MOUNTAIN:
-        return 4;
-      case Biome.TALL_GRASS:
-        return 5;
-      }
-      break;
-    case Species.LYCANROC:
-      const timeOfDay = this.getTimeOfDay();
-      switch (timeOfDay) {
-      case TimeOfDay.DAY:
-      case TimeOfDay.DAWN:
-        return 0;
-      case TimeOfDay.DUSK:
-        return 2;
-      case TimeOfDay.NIGHT:
-        return 1;
-      }
-      break;
+      case Species.BURMY:
+      case Species.WORMADAM:
+        switch (this.biomeType) {
+          case Biome.BEACH:
+            return 1;
+          case Biome.SLUM:
+            return 2;
+        }
+        break;
+      case Species.ROTOM:
+        switch (this.biomeType) {
+          case Biome.VOLCANO:
+            return 1;
+          case Biome.SEA:
+            return 2;
+          case Biome.ICE_CAVE:
+            return 3;
+          case Biome.MOUNTAIN:
+            return 4;
+          case Biome.TALL_GRASS:
+            return 5;
+        }
+        break;
+      case Species.LYCANROC:
+        const timeOfDay = this.getTimeOfDay();
+        switch (timeOfDay) {
+          case TimeOfDay.DAY:
+          case TimeOfDay.DAWN:
+            return 0;
+          case TimeOfDay.DUSK:
+            return 2;
+          case TimeOfDay.NIGHT:
+            return 1;
+        }
+        break;
     }
 
     return 0;
   }
 
-  getTypeForBiome() {
-    switch (this.biomeType) {
-    case Biome.TOWN:
-    case Biome.PLAINS:
-    case Biome.METROPOLIS:
-      return Type.NORMAL;
-    case Biome.GRASS:
-    case Biome.TALL_GRASS:
-      return Type.GRASS;
-    case Biome.FOREST:
-    case Biome.JUNGLE:
-      return Type.BUG;
-    case Biome.SLUM:
-    case Biome.SWAMP:
-      return Type.POISON;
-    case Biome.SEA:
-    case Biome.BEACH:
-    case Biome.LAKE:
-    case Biome.SEABED:
-      return Type.WATER;
-    case Biome.MOUNTAIN:
-      return Type.FLYING;
-    case Biome.BADLANDS:
-      return Type.GROUND;
-    case Biome.CAVE:
-    case Biome.DESERT:
-      return Type.ROCK;
-    case Biome.ICE_CAVE:
-    case Biome.SNOWY_FOREST:
-      return Type.ICE;
-    case Biome.MEADOW:
-    case Biome.FAIRY_CAVE:
-    case Biome.ISLAND:
-      return Type.FAIRY;
-    case Biome.POWER_PLANT:
-      return Type.ELECTRIC;
-    case Biome.VOLCANO:
-      return Type.FIRE;
-    case Biome.GRAVEYARD:
-    case Biome.TEMPLE:
-      return Type.GHOST;
-    case Biome.DOJO:
-    case Biome.CONSTRUCTION_SITE:
-      return Type.FIGHTING;
-    case Biome.FACTORY:
-    case Biome.LABORATORY:
-      return Type.STEEL;
-    case Biome.RUINS:
-    case Biome.SPACE:
-      return Type.PSYCHIC;
-    case Biome.WASTELAND:
-    case Biome.END:
-      return Type.DRAGON;
-    case Biome.ABYSS:
-      return Type.DARK;
-    default:
-      return Type.UNKNOWN;
-    }
-  }
-
   getBgTerrainColorRatioForBiome(): number {
     switch (this.biomeType) {
-    case Biome.SPACE:
-      return 1;
-    case Biome.END:
-      return 0;
+      case Biome.SPACE:
+        return 1;
+      case Biome.END:
+        return 0;
     }
 
     return 131 / 180;
@@ -294,8 +252,8 @@ export class Arena {
    */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
-    this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
-    this.scene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+    globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
+    globalScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     return true;
   }
 
@@ -320,13 +278,13 @@ export class Arena {
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!)); // TODO: is this bang correct?
 
     if (this.weather) {
-      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1), true));
-      this.scene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+      globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1), true));
+      globalScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     } else {
-      this.scene.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
+      globalScene.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
-    this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
+    globalScene.getField(true).filter(p => p.isOnField()).map(pokemon => {
       pokemon.findAndRemoveTags(t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
       applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
     });
@@ -338,13 +296,13 @@ export class Arena {
    * Function to trigger all weather based form changes
    */
   triggerWeatherBasedFormChanges(): void {
-    this.scene.getField(true).forEach( p => {
+    globalScene.getField(true).forEach( p => {
       const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM);
       const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM);
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
-        this.scene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
+        new ShowAbilityPhase(p.getBattlerIndex());
+        globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
     });
   }
@@ -353,13 +311,13 @@ export class Arena {
    * Function to trigger all weather based form changes back into their normal forms
    */
   triggerWeatherBasedFormChangesToNormal(): void {
-    this.scene.getField(true).forEach( p => {
+    globalScene.getField(true).forEach( p => {
       const isCastformWithForecast = (p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM);
       const isCherrimWithFlowerGift = (p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM);
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        new ShowAbilityPhase(this.scene, p.getBattlerIndex());
-        return this.scene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
+        new ShowAbilityPhase(p.getBattlerIndex());
+        return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
     });
   }
@@ -376,36 +334,37 @@ export class Arena {
 
     if (this.terrain) {
       if (!ignoreAnim) {
-        this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
+        globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
       }
-      this.scene.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
+      globalScene.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
     } else {
-      this.scene.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
+      globalScene.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
     }
 
-    this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
+    globalScene.getField(true).filter(p => p.isOnField()).map(pokemon => {
       pokemon.findAndRemoveTags(t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
       applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
+      applyAbAttrs(TerrainEventTypeChangeAbAttr, pokemon, null, false);
     });
 
     return true;
   }
 
-  isMoveWeatherCancelled(user: Pokemon, move: Move) {
-    return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(user, move);
+  public isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
+    return !!this.weather && !this.weather.isEffectSuppressed() && this.weather.isMoveWeatherCancelled(user, move);
   }
 
-  isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move) {
-    return this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+  public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
+    return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
-  getTerrainType() : TerrainType {
-    return this.terrain?.terrainType || TerrainType.NONE;
+  public getTerrainType(): TerrainType {
+    return this.terrain?.terrainType ?? TerrainType.NONE;
   }
 
   getAttackTypeMultiplier(attackType: Type, grounded: boolean): number {
     let weatherMultiplier = 1;
-    if (this.weather && !this.weather.isEffectSuppressed(this.scene)) {
+    if (this.weather && !this.weather.isEffectSuppressed()) {
       weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
     }
 
@@ -421,57 +380,57 @@ export class Arena {
    * Gets the denominator for the chance for a trainer spawn
    * @returns n where 1/n is the chance of a trainer battle
    */
-  getTrainerChance(): integer {
+  getTrainerChance(): number {
     switch (this.biomeType) {
-    case Biome.METROPOLIS:
-      return 2;
-    case Biome.SLUM:
-    case Biome.BEACH:
-    case Biome.DOJO:
-    case Biome.CONSTRUCTION_SITE:
-      return 4;
-    case Biome.PLAINS:
-    case Biome.GRASS:
-    case Biome.LAKE:
-    case Biome.CAVE:
-      return 6;
-    case Biome.TALL_GRASS:
-    case Biome.FOREST:
-    case Biome.SEA:
-    case Biome.SWAMP:
-    case Biome.MOUNTAIN:
-    case Biome.BADLANDS:
-    case Biome.DESERT:
-    case Biome.MEADOW:
-    case Biome.POWER_PLANT:
-    case Biome.GRAVEYARD:
-    case Biome.FACTORY:
-    case Biome.SNOWY_FOREST:
-      return 8;
-    case Biome.ICE_CAVE:
-    case Biome.VOLCANO:
-    case Biome.RUINS:
-    case Biome.WASTELAND:
-    case Biome.JUNGLE:
-    case Biome.FAIRY_CAVE:
-      return 12;
-    case Biome.SEABED:
-    case Biome.ABYSS:
-    case Biome.SPACE:
-    case Biome.TEMPLE:
-      return 16;
-    default:
-      return 0;
+      case Biome.METROPOLIS:
+        return 2;
+      case Biome.SLUM:
+      case Biome.BEACH:
+      case Biome.DOJO:
+      case Biome.CONSTRUCTION_SITE:
+        return 4;
+      case Biome.PLAINS:
+      case Biome.GRASS:
+      case Biome.LAKE:
+      case Biome.CAVE:
+        return 6;
+      case Biome.TALL_GRASS:
+      case Biome.FOREST:
+      case Biome.SEA:
+      case Biome.SWAMP:
+      case Biome.MOUNTAIN:
+      case Biome.BADLANDS:
+      case Biome.DESERT:
+      case Biome.MEADOW:
+      case Biome.POWER_PLANT:
+      case Biome.GRAVEYARD:
+      case Biome.FACTORY:
+      case Biome.SNOWY_FOREST:
+        return 8;
+      case Biome.ICE_CAVE:
+      case Biome.VOLCANO:
+      case Biome.RUINS:
+      case Biome.WASTELAND:
+      case Biome.JUNGLE:
+      case Biome.FAIRY_CAVE:
+        return 12;
+      case Biome.SEABED:
+      case Biome.ABYSS:
+      case Biome.SPACE:
+      case Biome.TEMPLE:
+        return 16;
+      default:
+        return 0;
     }
   }
 
   getTimeOfDay(): TimeOfDay {
     switch (this.biomeType) {
-    case Biome.ABYSS:
-      return TimeOfDay.NIGHT;
+      case Biome.ABYSS:
+        return TimeOfDay.NIGHT;
     }
 
-    const waveCycle = ((this.scene.currentBattle?.waveIndex || 0) + this.scene.waveCycleOffset) % 40;
+    const waveCycle = ((globalScene.currentBattle?.waveIndex || 0) + globalScene.waveCycleOffset) % 40;
 
     if (waveCycle < 15) {
       return TimeOfDay.DAY;
@@ -490,51 +449,51 @@ export class Arena {
 
   isOutside(): boolean {
     switch (this.biomeType) {
-    case Biome.SEABED:
-    case Biome.CAVE:
-    case Biome.ICE_CAVE:
-    case Biome.POWER_PLANT:
-    case Biome.DOJO:
-    case Biome.FACTORY:
-    case Biome.ABYSS:
-    case Biome.FAIRY_CAVE:
-    case Biome.TEMPLE:
-    case Biome.LABORATORY:
-      return false;
-    default:
-      return true;
+      case Biome.SEABED:
+      case Biome.CAVE:
+      case Biome.ICE_CAVE:
+      case Biome.POWER_PLANT:
+      case Biome.DOJO:
+      case Biome.FACTORY:
+      case Biome.ABYSS:
+      case Biome.FAIRY_CAVE:
+      case Biome.TEMPLE:
+      case Biome.LABORATORY:
+        return false;
+      default:
+        return true;
     }
   }
 
-  overrideTint(): [integer, integer, integer] {
+  overrideTint(): [number, number, number] {
     switch (Overrides.ARENA_TINT_OVERRIDE) {
-    case TimeOfDay.DUSK:
-      return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [integer, integer, integer];
-      break;
-    case (TimeOfDay.NIGHT):
-      return [ 64, 64, 64 ];
-      break;
-    case TimeOfDay.DAWN:
-    case TimeOfDay.DAY:
-    default:
-      return [ 128, 128, 128 ];
-      break;
+      case TimeOfDay.DUSK:
+        return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [number, number, number];
+        break;
+      case (TimeOfDay.NIGHT):
+        return [ 64, 64, 64 ];
+        break;
+      case TimeOfDay.DAWN:
+      case TimeOfDay.DAY:
+      default:
+        return [ 128, 128, 128 ];
+        break;
     }
   }
 
-  getDayTint(): [integer, integer, integer] {
+  getDayTint(): [number, number, number] {
     if (Overrides.ARENA_TINT_OVERRIDE !== null) {
       return this.overrideTint();
     }
     switch (this.biomeType) {
-    case Biome.ABYSS:
-      return [ 64, 64, 64 ];
-    default:
-      return [ 128, 128, 128 ];
+      case Biome.ABYSS:
+        return [ 64, 64, 64 ];
+      default:
+        return [ 128, 128, 128 ];
     }
   }
 
-  getDuskTint(): [integer, integer, integer] {
+  getDuskTint(): [number, number, number] {
     if (Overrides.ARENA_TINT_OVERRIDE) {
       return this.overrideTint();
     }
@@ -543,20 +502,20 @@ export class Arena {
     }
 
     switch (this.biomeType) {
-    default:
-      return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [integer, integer, integer];
+      default:
+        return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [number, number, number];
     }
   }
 
-  getNightTint(): [integer, integer, integer] {
+  getNightTint(): [number, number, number] {
     if (Overrides.ARENA_TINT_OVERRIDE) {
       return this.overrideTint();
     }
     switch (this.biomeType) {
-    case Biome.ABYSS:
-    case Biome.SPACE:
-    case Biome.END:
-      return this.getDayTint();
+      case Biome.ABYSS:
+      case Biome.SPACE:
+      case Biome.END:
+        return this.getDayTint();
     }
 
     if (!this.isOutside()) {
@@ -564,39 +523,42 @@ export class Arena {
     }
 
     switch (this.biomeType) {
-    default:
-      return [ 48, 48, 98 ];
+      default:
+        return [ 48, 48, 98 ];
     }
   }
 
-  setIgnoreAbilities(ignoreAbilities: boolean = true): void {
+  setIgnoreAbilities(ignoreAbilities: boolean, ignoringEffectSource: BattlerIndex | null = null): void {
     this.ignoreAbilities = ignoreAbilities;
+    this.ignoringEffectSource = ignoreAbilities ? ignoringEffectSource : null;
   }
 
   /**
    * Applies each `ArenaTag` in this Arena, based on which side (self, enemy, or both) is passed in as a parameter
    * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
    * @param side {@linkcode ArenaTagSide} which side's arena tags to apply
+   * @param simulated if `true`, this applies arena tags without changing game state
    * @param args array of parameters that the called upon tags may need
    */
-  applyTagsForSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide, ...args: unknown[]): void {
+  applyTagsForSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide, simulated: boolean, ...args: unknown[]): void {
     let tags = typeof tagType === "string"
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
     if (side !== ArenaTagSide.BOTH) {
       tags = tags.filter(t => t.side === side);
     }
-    tags.forEach(t => t.apply(this, args));
+    tags.forEach(t => t.apply(this, simulated, ...args));
   }
 
   /**
    * Applies the specified tag to both sides (ie: both user and trainer's tag that match the Tag specified)
    * by calling {@linkcode applyTagsForSide()}
    * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
+   * @param simulated if `true`, this applies arena tags without changing game state
    * @param args array of parameters that the called upon tags may need
    */
-  applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, ...args: unknown[]): void {
-    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
+  applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, simulated: boolean, ...args: unknown[]): void {
+    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, simulated, ...args);
   }
 
   /**
@@ -734,87 +696,95 @@ export class Arena {
       this.trySetWeather(WeatherType.NONE, false);
     }
     this.trySetTerrain(TerrainType.NONE, false, true);
+    this.resetPlayerFaintCount();
     this.removeAllTags();
   }
 
   preloadBgm(): void {
-    this.scene.loadBgm(this.bgm);
+    globalScene.loadBgm(this.bgm);
   }
 
+  /** The loop point of any given biome track, read as seconds and milliseconds. */
   getBgmLoopPoint(): number {
     switch (this.biomeType) {
-    case Biome.TOWN:
-      return 7.288;
-    case Biome.PLAINS:
-      return 17.485;
-    case Biome.GRASS:
-      return 1.995;
-    case Biome.TALL_GRASS:
-      return 9.608;
-    case Biome.METROPOLIS:
-      return 141.470;
-    case Biome.FOREST:
-      return 4.294;
-    case Biome.SEA:
-      return 0.024;
-    case Biome.SWAMP:
-      return 4.461;
-    case Biome.BEACH:
-      return 3.462;
-    case Biome.LAKE:
-      return 7.215;
-    case Biome.SEABED:
-      return 2.600;
-    case Biome.MOUNTAIN:
-      return 4.018;
-    case Biome.BADLANDS:
-      return 17.790;
-    case Biome.CAVE:
-      return 14.240;
-    case Biome.DESERT:
-      return 1.143;
-    case Biome.ICE_CAVE:
-      return 0.000;
-    case Biome.MEADOW:
-      return 3.891;
-    case Biome.POWER_PLANT:
-      return 9.447;
-    case Biome.VOLCANO:
-      return 17.637;
-    case Biome.GRAVEYARD:
-      return 3.232;
-    case Biome.DOJO:
-      return 6.205;
-    case Biome.FACTORY:
-      return 4.985;
-    case Biome.RUINS:
-      return 0.000;
-    case Biome.WASTELAND:
-      return 6.336;
-    case Biome.ABYSS:
-      return 5.130;
-    case Biome.SPACE:
-      return 20.036;
-    case Biome.CONSTRUCTION_SITE:
-      return 1.222;
-    case Biome.JUNGLE:
-      return 0.000;
-    case Biome.FAIRY_CAVE:
-      return 4.542;
-    case Biome.TEMPLE:
-      return 2.547;
-    case Biome.ISLAND:
-      return 2.751;
-    case Biome.LABORATORY:
-      return 114.862;
-    case Biome.SLUM:
-      return 0.000;
-    case Biome.SNOWY_FOREST:
-      return 3.047;
-    default:
-      console.warn(`missing bgm loop-point for biome "${Biome[this.biomeType]}" (=${this.biomeType})`);
-      return 0;
+      case Biome.TOWN:
+        return 7.288;
+      case Biome.PLAINS:
+        return 17.485;
+      case Biome.GRASS:
+        return 1.995;
+      case Biome.TALL_GRASS:
+        return 9.608;
+      case Biome.METROPOLIS:
+        return 141.470;
+      case Biome.FOREST:
+        return 0.341;
+      case Biome.SEA:
+        return 0.024;
+      case Biome.SWAMP:
+        return 4.461;
+      case Biome.BEACH:
+        return 3.462;
+      case Biome.LAKE:
+        return 7.215;
+      case Biome.SEABED:
+        return 2.600;
+      case Biome.MOUNTAIN:
+        return 4.018;
+      case Biome.BADLANDS:
+        return 17.790;
+      case Biome.CAVE:
+        return 14.240;
+      case Biome.DESERT:
+        return 1.143;
+      case Biome.ICE_CAVE:
+        return 0.000;
+      case Biome.MEADOW:
+        return 3.891;
+      case Biome.POWER_PLANT:
+        return 9.447;
+      case Biome.VOLCANO:
+        return 17.637;
+      case Biome.GRAVEYARD:
+        return 13.711;
+      case Biome.DOJO:
+        return 6.205;
+      case Biome.FACTORY:
+        return 4.985;
+      case Biome.RUINS:
+        return 0.000;
+      case Biome.WASTELAND:
+        return 6.336;
+      case Biome.ABYSS:
+        return 5.130;
+      case Biome.SPACE:
+        return 20.036;
+      case Biome.CONSTRUCTION_SITE:
+        return 1.222;
+      case Biome.JUNGLE:
+        return 0.000;
+      case Biome.FAIRY_CAVE:
+        return 4.542;
+      case Biome.TEMPLE:
+        return 2.547;
+      case Biome.ISLAND:
+        return 2.751;
+      case Biome.LABORATORY:
+        return 114.862;
+      case Biome.SLUM:
+        return 0.000;
+      case Biome.SNOWY_FOREST:
+        return 3.047;
+      case Biome.END:
+        return 17.153;
+      default:
+        console.warn(`missing bgm loop-point for biome "${Biome[this.biomeType]}" (=${this.biomeType})`);
+        return 0;
     }
+  }
+
+  resetPlayerFaintCount(): void {
+    this.playerFaints = 0;
   }
 }
 
@@ -824,32 +794,32 @@ export function getBiomeKey(biome: Biome): string {
 
 export function getBiomeHasProps(biomeType: Biome): boolean {
   switch (biomeType) {
-  case Biome.METROPOLIS:
-  case Biome.BEACH:
-  case Biome.LAKE:
-  case Biome.SEABED:
-  case Biome.MOUNTAIN:
-  case Biome.BADLANDS:
-  case Biome.CAVE:
-  case Biome.DESERT:
-  case Biome.ICE_CAVE:
-  case Biome.MEADOW:
-  case Biome.POWER_PLANT:
-  case Biome.VOLCANO:
-  case Biome.GRAVEYARD:
-  case Biome.FACTORY:
-  case Biome.RUINS:
-  case Biome.WASTELAND:
-  case Biome.ABYSS:
-  case Biome.CONSTRUCTION_SITE:
-  case Biome.JUNGLE:
-  case Biome.FAIRY_CAVE:
-  case Biome.TEMPLE:
-  case Biome.SNOWY_FOREST:
-  case Biome.ISLAND:
-  case Biome.LABORATORY:
-  case Biome.END:
-    return true;
+    case Biome.METROPOLIS:
+    case Biome.BEACH:
+    case Biome.LAKE:
+    case Biome.SEABED:
+    case Biome.MOUNTAIN:
+    case Biome.BADLANDS:
+    case Biome.CAVE:
+    case Biome.DESERT:
+    case Biome.ICE_CAVE:
+    case Biome.MEADOW:
+    case Biome.POWER_PLANT:
+    case Biome.VOLCANO:
+    case Biome.GRAVEYARD:
+    case Biome.FACTORY:
+    case Biome.RUINS:
+    case Biome.WASTELAND:
+    case Biome.ABYSS:
+    case Biome.CONSTRUCTION_SITE:
+    case Biome.JUNGLE:
+    case Biome.FAIRY_CAVE:
+    case Biome.TEMPLE:
+    case Biome.SNOWY_FOREST:
+    case Biome.ISLAND:
+    case Biome.LABORATORY:
+    case Biome.END:
+      return true;
   }
 
   return false;
@@ -858,28 +828,28 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
 export class ArenaBase extends Phaser.GameObjects.Container {
   public player: boolean;
   public biome: Biome;
-  public propValue: integer;
+  public propValue: number;
   public base: Phaser.GameObjects.Sprite;
   public props: Phaser.GameObjects.Sprite[];
 
-  constructor(scene: BattleScene, player: boolean) {
-    super(scene, 0, 0);
+  constructor(player: boolean) {
+    super(globalScene, 0, 0);
 
     this.player = player;
 
-    this.base = scene.addFieldSprite(0, 0, "plains_a", undefined, 1);
+    this.base = globalScene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = scene.addFieldSprite(0, 0, "plains_b", undefined, 1);
+        const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;
       }) : [];
   }
 
-  setBiome(biome: Biome, propValue?: integer): void {
+  setBiome(biome: Biome, propValue?: number): void {
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
     const baseKey = `${biomeKey}_${this.player ? "a" : "b"}`;
@@ -888,9 +858,9 @@ export class ArenaBase extends Phaser.GameObjects.Container {
       this.base.setTexture(baseKey);
 
       if (this.base.texture.frameTotal > 1) {
-        const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
-        if (!(this.scene.anims.exists(baseKey))) {
-          this.scene.anims.create({
+        const baseFrameNames = globalScene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
+        if (!(globalScene.anims.exists(baseKey))) {
+          globalScene.anims.create({
             key: baseKey,
             frames: baseFrameNames,
             frameRate: 12,
@@ -906,7 +876,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     }
 
     if (!this.player) {
-      (this.scene as BattleScene).executeWithSeedOffset(() => {
+      globalScene.executeWithSeedOffset(() => {
         this.propValue = propValue === undefined
           ? hasProps ? Utils.randSeedInt(8) : 0
           : propValue;
@@ -915,9 +885,9 @@ export class ArenaBase extends Phaser.GameObjects.Container {
           prop.setTexture(propKey);
 
           if (hasProps && prop.texture.frameTotal > 1) {
-            const propFrameNames = this.scene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
-            if (!(this.scene.anims.exists(propKey))) {
-              this.scene.anims.create({
+            const propFrameNames = globalScene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
+            if (!(globalScene.anims.exists(propKey))) {
+              globalScene.anims.create({
                 key: propKey,
                 frames: propFrameNames,
                 frameRate: 12,
@@ -932,7 +902,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
           prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
           this.add(prop);
         });
-      }, (this.scene as BattleScene).currentBattle?.waveIndex || 0, (this.scene as BattleScene).waveSeed);
+      }, globalScene.currentBattle?.waveIndex || 0, globalScene.waveSeed);
     }
   }
 }

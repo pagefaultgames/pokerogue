@@ -1,18 +1,19 @@
-import { Button } from "#app/enums/buttons";
-import { MysteryEncounterBattlePhase, MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
-import MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
-import { Mode } from "#app/ui/ui";
-import GameManager from "../utils/gameManager";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { Status, StatusEffect } from "#app/data/status-effect";
-import { expect, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
-import { isNullOrUndefined } from "#app/utils";
+import { Status } from "#app/data/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
-import { VictoryPhase } from "#app/phases/victory-phase";
 import { MessagePhase } from "#app/phases/message-phase";
+import { MysteryEncounterBattlePhase, MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
+import { VictoryPhase } from "#app/phases/victory-phase";
+import type MessageUiHandler from "#app/ui/message-ui-handler";
+import type MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
+import type PartyUiHandler from "#app/ui/party-ui-handler";
+import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
+import { Mode } from "#app/ui/ui";
+import { isNullOrUndefined } from "#app/utils";
+import { Button } from "#enums/buttons";
+import { StatusEffect } from "#enums/status-effect";
+import type GameManager from "#test/utils/gameManager";
+import { expect, vi } from "vitest";
 
 /**
  * Runs a {@linkcode MysteryEncounter} to either the start of a battle, or to the {@linkcode MysteryEncounterRewardsPhase}, depending on the option selected
@@ -32,7 +33,7 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
   }, () => game.isCurrentPhase(MysteryEncounterBattlePhase) || game.isCurrentPhase(MysteryEncounterRewardsPhase));
 
   if (isBattle) {
-    game.onNextPrompt("DamagePhase", Mode.MESSAGE, () => {
+    game.onNextPrompt("DamageAnimPhase", Mode.MESSAGE, () => {
       game.setMode(Mode.MESSAGE);
       game.endPhase();
     }, () => game.isCurrentPhase(CommandPhase));
@@ -51,7 +52,7 @@ export async function runMysteryEncounterToEnd(game: GameManager, optionNo: numb
     game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
       game.scene.clearPhaseQueue();
       game.scene.clearPhaseQueueSplice();
-      game.scene.unshiftPhase(new VictoryPhase(game.scene, 0));
+      game.scene.unshiftPhase(new VictoryPhase(0));
       game.endPhase();
     });
 
@@ -97,24 +98,24 @@ export async function runSelectMysteryEncounterOption(game: GameManager, optionN
   uiHandler.unblockInput(); // input are blocked by 1s to prevent accidental input. Tests need to handle that
 
   switch (optionNo) {
-  default:
-  case 1:
+    default:
+    case 1:
     // no movement needed. Default cursor position
-    break;
-  case 2:
-    uiHandler.processInput(Button.RIGHT);
-    break;
-  case 3:
-    uiHandler.processInput(Button.DOWN);
-    break;
-  case 4:
-    uiHandler.processInput(Button.RIGHT);
-    uiHandler.processInput(Button.DOWN);
-    break;
+      break;
+    case 2:
+      uiHandler.processInput(Button.RIGHT);
+      break;
+    case 3:
+      uiHandler.processInput(Button.DOWN);
+      break;
+    case 4:
+      uiHandler.processInput(Button.RIGHT);
+      uiHandler.processInput(Button.DOWN);
+      break;
   }
 
   if (!isNullOrUndefined(secondaryOptionSelect?.pokemonNo)) {
-    await handleSecondaryOptionSelect(game, secondaryOptionSelect!.pokemonNo, secondaryOptionSelect!.optionNo);
+    await handleSecondaryOptionSelect(game, secondaryOptionSelect.pokemonNo, secondaryOptionSelect.optionNo);
   } else {
     uiHandler.processInput(Button.ACTION);
   }
@@ -169,7 +170,7 @@ export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManage
     p.status = new Status(StatusEffect.FAINT);
     game.scene.field.remove(p);
   });
-  game.scene.pushPhase(new VictoryPhase(game.scene, 0));
+  game.scene.pushPhase(new VictoryPhase(0));
   game.phaseInterceptor.superEndPhase();
   game.setMode(Mode.MESSAGE);
   await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, runRewardsPhase);

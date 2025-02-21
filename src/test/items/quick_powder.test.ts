@@ -31,11 +31,11 @@ describe("Items - Quick Powder", () => {
   it("QUICK_POWDER activates in battle correctly", async() => {
     game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.DITTO
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     // Checking console log to make sure Quick Powder is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
@@ -64,35 +64,35 @@ describe("Items - Quick Powder", () => {
   });
 
   it("QUICK_POWDER held by DITTO", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.DITTO
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     const spdStat = partyMember.getStat(Stat.SPD);
 
     // Making sure modifier is not applied without holding item
     const spdValue = new Utils.NumberHolder(spdStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(2);
-  }, 20000);
+  });
 
   it("QUICK_POWDER held by fused DITTO (base)", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.DITTO,
       Species.MAROWAK
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const partyMember = game.scene.getPlayerParty()[0];
+    const ally = game.scene.getPlayerParty()[1];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -107,25 +107,25 @@ describe("Items - Quick Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const spdValue = new Utils.NumberHolder(spdStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(2);
-  }, 20000);
+  });
 
   it("QUICK_POWDER held by fused DITTO (part)", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAROWAK,
       Species.DITTO
     ]);
 
-    const partyMember = game.scene.getParty()[0];
-    const ally = game.scene.getParty()[1];
+    const partyMember = game.scene.getPlayerParty()[0];
+    const ally = game.scene.getPlayerParty()[1];
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -140,36 +140,36 @@ describe("Items - Quick Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const spdValue = new Utils.NumberHolder(spdStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(2);
-  }, 20000);
+  });
 
   it("QUICK_POWDER not held by DITTO", async() => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAROWAK
     ]);
 
-    const partyMember = game.scene.getParty()[0];
+    const partyMember = game.scene.getPlayerParty()[0];
 
     const spdStat = partyMember.getStat(Stat.SPD);
 
     // Making sure modifier is not applied without holding item
     const spdValue = new Utils.NumberHolder(spdStat);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    partyMember.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember), true);
-    partyMember.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    await game.scene.addModifier(modifierTypes.SPECIES_STAT_BOOSTER().generateType([], [ "QUICK_POWDER" ])!.newModifier(partyMember), true);
+    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
 
     expect(spdValue.value / spdStat).toBe(1);
-  }, 20000);
+  });
 });

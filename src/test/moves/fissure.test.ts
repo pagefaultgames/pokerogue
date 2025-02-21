@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { Species } from "#app/enums/species";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { DamagePhase } from "#app/phases/damage-phase";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -32,7 +32,7 @@ describe("Moves - Fissure", () => {
     game.override.disableCrits();
 
     game.override.starterSpecies(Species.SNORLAX);
-    game.override.moveset([Moves.FISSURE]);
+    game.override.moveset([ Moves.FISSURE ]);
     game.override.passiveAbility(Abilities.BALL_FETCH);
     game.override.startingLevel(100);
 
@@ -41,14 +41,10 @@ describe("Moves - Fissure", () => {
     game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
     game.override.enemyLevel(100);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
-    partyPokemon = game.scene.getParty()[0];
+    partyPokemon = game.scene.getPlayerParty()[0];
     enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    // remove berries
-    game.scene.removePartyMemberModifiers(0);
-    game.scene.clearEnemyHeldItemModifiers();
   });
 
   it("ignores damage modification from abilities, for example FUR_COAT", async () => {
@@ -56,7 +52,7 @@ describe("Moves - Fissure", () => {
     game.override.enemyAbility(Abilities.FUR_COAT);
 
     game.move.select(Moves.FISSURE);
-    await game.phaseInterceptor.to(DamagePhase, true);
+    await game.phaseInterceptor.to(DamageAnimPhase, true);
 
     expect(enemyPokemon.isFainted()).toBe(true);
   });

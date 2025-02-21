@@ -34,7 +34,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("increases the user's Attack stat by 50%", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const atk = pikachu.stats[Stat.ATK];
 
@@ -42,13 +42,13 @@ describe("Abilities - Hustle", () => {
 
     game.move.select(Moves.TACKLE);
     await game.move.forceHit();
-    await game.phaseInterceptor.to("DamagePhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(pikachu.getEffectiveStat).toHaveReturnedWith(Math.floor(atk * 1.5));
   });
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     const pikachu = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
@@ -60,7 +60,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("does not affect non-physical moves", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const spatk = pikachu.stats[Stat.SPATK];
 
@@ -68,7 +68,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
     game.move.select(Moves.GIGA_DRAIN);
-    await game.phaseInterceptor.to("DamagePhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(pikachu.getEffectiveStat).toHaveReturnedWith(spatk);
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(1);
@@ -78,7 +78,7 @@ describe("Abilities - Hustle", () => {
     game.override.startingLevel(100);
     game.override.enemyLevel(30);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
     const pikachu = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -86,7 +86,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(allMoves[Moves.FISSURE], "calculateBattleAccuracy");
 
     game.move.select(Moves.FISSURE);
-    await game.phaseInterceptor.to("DamagePhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(enemyPokemon.turnData.damageTaken).toBe(enemyPokemon.getMaxHp());
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(1);

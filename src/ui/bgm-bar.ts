@@ -1,7 +1,7 @@
-import BattleScene from "../battle-scene";
-import {addTextObject, TextStyle} from "./text";
+import { addTextObject, TextStyle } from "./text";
 import i18next from "i18next";
 import * as Utils from "#app/utils";
+import { globalScene } from "#app/global-scene";
 
 const hiddenX = -150;
 const shownX = 0;
@@ -16,20 +16,20 @@ export default class BgmBar extends Phaser.GameObjects.Container {
 
   public shown: boolean;
 
-  constructor(scene: BattleScene) {
-    super(scene, hiddenX, baseY);
+  constructor() {
+    super(globalScene, hiddenX, baseY);
   }
 
   setup(): void {
     this.defaultWidth = 230;
     this.defaultHeight = 100;
 
-    this.bg = this.scene.add.nineslice(-5, -5, "bgm_bar", undefined, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
+    this.bg = globalScene.add.nineslice(-5, -5, "bgm_bar", undefined, this.defaultWidth, this.defaultHeight, 0, 0, 10, 10);
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);
 
-    this.musicText = addTextObject(this.scene, 5, 5, "", TextStyle.BGM_BAR);
+    this.musicText = addTextObject(5, 5, "", TextStyle.BGM_BAR);
     this.musicText.setOrigin(0, 0);
     this.musicText.setWordWrapWidth(650, true);
 
@@ -52,7 +52,7 @@ export default class BgmBar extends Phaser.GameObjects.Container {
     this.bg.width = Math.min(this.defaultWidth, this.musicText.displayWidth + 23);
     this.bg.height = Math.min(this.defaultHeight, this.musicText.displayHeight + 20);
 
-    (this.scene as BattleScene).fieldUI.bringToTop(this);
+    globalScene.fieldUI.bringToTop(this);
 
     this.y = baseY;
   }
@@ -72,11 +72,11 @@ export default class BgmBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    if (!(this.scene as BattleScene).showBgmBar) {
+    if (!globalScene.showBgmBar) {
       this.setVisible(false);
       return;
     }
-    this.scene.tweens.add({
+    globalScene.tweens.add({
       targets: this,
       x: visible ? shownX : hiddenX,
       duration: 500,
@@ -88,6 +88,6 @@ export default class BgmBar extends Phaser.GameObjects.Container {
   }
 
   getRealBgmName(bgmName: string): string {
-    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {name: Utils.formatText(bgmName)});
+    return i18next.t([ `bgmName:${bgmName}`, "bgmName:missing_entries" ], { name: Utils.formatText(bgmName) });
   }
 }

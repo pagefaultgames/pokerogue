@@ -10,7 +10,7 @@ import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounte
 import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
 import { SlumberingSnorlaxEncounter } from "./encounters/slumbering-snorlax-encounter";
 import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
-import MysteryEncounter from "./mystery-encounter";
+import type MysteryEncounter from "./mystery-encounter";
 import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
 import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
@@ -32,6 +32,7 @@ import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fu
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
+import { getBiomeName } from "#app/data/balance/biomes";
 
 /**
  * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT
@@ -176,7 +177,7 @@ export const allMysteryEncounters: { [encounterType: number]: MysteryEncounter }
 const extremeBiomeEncounters: MysteryEncounterType[] = [];
 
 const nonExtremeBiomeEncounters: MysteryEncounterType[] = [
-  MysteryEncounterType.FIELD_TRIP,
+  // MysteryEncounterType.FIELD_TRIP, Disabled
   MysteryEncounterType.DANCING_LESSONS, // Is also in BADLANDS, DESERT, VOLCANO, WASTELAND, ABYSS
 ];
 
@@ -184,7 +185,7 @@ const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
   MysteryEncounterType.SHADY_VITAMIN_DEALER,
   MysteryEncounterType.THE_POKEMON_SALESMAN,
-  MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE,
+  // MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, Disabled
   MysteryEncounterType.THE_WINSTRATE_CHALLENGE,
   MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER
 ];
@@ -223,72 +224,72 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
  * that biome groups do not cover
  */
 export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
-  [Biome.TOWN, []],
-  [Biome.PLAINS, [
+  [ Biome.TOWN, []],
+  [ Biome.PLAINS, [
     MysteryEncounterType.SLUMBERING_SNORLAX,
     MysteryEncounterType.ABSOLUTE_AVARICE
   ]],
-  [Biome.GRASS, [
+  [ Biome.GRASS, [
     MysteryEncounterType.SLUMBERING_SNORLAX,
     MysteryEncounterType.ABSOLUTE_AVARICE
   ]],
-  [Biome.TALL_GRASS, [
+  [ Biome.TALL_GRASS, [
     MysteryEncounterType.ABSOLUTE_AVARICE
   ]],
-  [Biome.METROPOLIS, []],
-  [Biome.FOREST, [
+  [ Biome.METROPOLIS, []],
+  [ Biome.FOREST, [
     MysteryEncounterType.SAFARI_ZONE,
     MysteryEncounterType.ABSOLUTE_AVARICE
   ]],
-  [Biome.SEA, [
+  [ Biome.SEA, [
     MysteryEncounterType.LOST_AT_SEA
   ]],
-  [Biome.SWAMP, [
+  [ Biome.SWAMP, [
     MysteryEncounterType.SAFARI_ZONE
   ]],
-  [Biome.BEACH, []],
-  [Biome.LAKE, []],
-  [Biome.SEABED, []],
-  [Biome.MOUNTAIN, []],
-  [Biome.BADLANDS, [
+  [ Biome.BEACH, []],
+  [ Biome.LAKE, []],
+  [ Biome.SEABED, []],
+  [ Biome.MOUNTAIN, []],
+  [ Biome.BADLANDS, [
     MysteryEncounterType.DANCING_LESSONS
   ]],
-  [Biome.CAVE, [
+  [ Biome.CAVE, [
     MysteryEncounterType.THE_STRONG_STUFF
   ]],
-  [Biome.DESERT, [
+  [ Biome.DESERT, [
     MysteryEncounterType.DANCING_LESSONS
   ]],
-  [Biome.ICE_CAVE, []],
-  [Biome.MEADOW, []],
-  [Biome.POWER_PLANT, []],
-  [Biome.VOLCANO, [
+  [ Biome.ICE_CAVE, []],
+  [ Biome.MEADOW, []],
+  [ Biome.POWER_PLANT, []],
+  [ Biome.VOLCANO, [
     MysteryEncounterType.FIERY_FALLOUT,
     MysteryEncounterType.DANCING_LESSONS
   ]],
-  [Biome.GRAVEYARD, []],
-  [Biome.DOJO, []],
-  [Biome.FACTORY, []],
-  [Biome.RUINS, []],
-  [Biome.WASTELAND, [
+  [ Biome.GRAVEYARD, []],
+  [ Biome.DOJO, []],
+  [ Biome.FACTORY, []],
+  [ Biome.RUINS, []],
+  [ Biome.WASTELAND, [
     MysteryEncounterType.DANCING_LESSONS
   ]],
-  [Biome.ABYSS, [
+  [ Biome.ABYSS, [
     MysteryEncounterType.DANCING_LESSONS
   ]],
-  [Biome.SPACE, [
+  [ Biome.SPACE, [
     MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER
   ]],
-  [Biome.CONSTRUCTION_SITE, []],
-  [Biome.JUNGLE, [
+  [ Biome.CONSTRUCTION_SITE, []],
+  [ Biome.JUNGLE, [
     MysteryEncounterType.SAFARI_ZONE
   ]],
-  [Biome.FAIRY_CAVE, []],
-  [Biome.TEMPLE, []],
-  [Biome.SLUM, []],
-  [Biome.SNOWY_FOREST, []],
-  [Biome.ISLAND, []],
-  [Biome.LABORATORY, []]
+  [ Biome.FAIRY_CAVE, []],
+  [ Biome.TEMPLE, []],
+  [ Biome.SLUM, []],
+  [ Biome.SNOWY_FOREST, []],
+  [ Biome.ISLAND, []],
+  [ Biome.LABORATORY, []]
 ]);
 
 export function initMysteryEncounters() {
@@ -362,11 +363,17 @@ export function initMysteryEncounters() {
   });
 
   // Add ANY biome encounters to biome map
-  mysteryEncountersByBiome.forEach(biomeEncounters => {
+  // eslint-disable-next-line
+  let encounterBiomeTableLog = "";
+  mysteryEncountersByBiome.forEach((biomeEncounters, biome) => {
     anyBiomeEncounters.forEach(encounter => {
       if (!biomeEncounters.includes(encounter)) {
         biomeEncounters.push(encounter);
       }
     });
+
+    encounterBiomeTableLog += `${getBiomeName(biome).toUpperCase()}: [${biomeEncounters.map(type => MysteryEncounterType[type].toString().toLowerCase()).sort().join(", ")}]\n`;
   });
+
+  //console.debug("All Mystery Encounters by Biome:\n" + encounterBiomeTableLog);
 }

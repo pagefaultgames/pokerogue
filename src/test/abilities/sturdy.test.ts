@@ -1,5 +1,5 @@
-import { EnemyPokemon } from "#app/field/pokemon";
-import { DamagePhase } from "#app/phases/damage-phase";
+import type { EnemyPokemon } from "#app/field/pokemon";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -8,7 +8,6 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const TIMEOUT = 20 * 1000;
 
 describe("Abilities - Sturdy", () => {
   let phaserGame: Phaser.Game;
@@ -30,7 +29,7 @@ describe("Abilities - Sturdy", () => {
 
     game.override.starterSpecies(Species.LUCARIO);
     game.override.startingLevel(100);
-    game.override.moveset([Moves.CLOSE_COMBAT, Moves.FISSURE]);
+    game.override.moveset([ Moves.CLOSE_COMBAT, Moves.FISSURE ]);
 
     game.override.enemySpecies(Species.ARON);
     game.override.enemyLevel(5);
@@ -45,7 +44,6 @@ describe("Abilities - Sturdy", () => {
       await game.phaseInterceptor.to(MoveEndPhase);
       expect(game.scene.getEnemyParty()[0].hp).toBe(1);
     },
-    TIMEOUT
   );
 
   test(
@@ -57,12 +55,11 @@ describe("Abilities - Sturdy", () => {
       enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
 
       game.move.select(Moves.CLOSE_COMBAT);
-      await game.phaseInterceptor.to(DamagePhase);
+      await game.phaseInterceptor.to(DamageAnimPhase);
 
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
     },
-    TIMEOUT
   );
 
   test(
@@ -75,7 +72,6 @@ describe("Abilities - Sturdy", () => {
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       expect(enemyPokemon.isFullHp()).toBe(true);
     },
-    TIMEOUT
   );
 
   test(
@@ -85,13 +81,12 @@ describe("Abilities - Sturdy", () => {
 
       await game.startBattle();
       game.move.select(Moves.CLOSE_COMBAT);
-      await game.phaseInterceptor.to(DamagePhase);
+      await game.phaseInterceptor.to(DamageAnimPhase);
 
       const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
       expect(enemyPokemon.hp).toBe(0);
       expect(enemyPokemon.isFainted()).toBe(true);
     },
-    TIMEOUT
   );
 
 });

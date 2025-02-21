@@ -1,8 +1,10 @@
+import type BattleScene from "#app/battle-scene";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import Move, { allMoves } from "#app/data/move";
+import type Move from "#app/data/move";
+import { allMoves } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import Pokemon from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils";
 import { Moves } from "#enums/moves";
@@ -11,6 +13,7 @@ import GameManager from "#test/utils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+let globalScene: BattleScene;
 
 describe("Moves - Light Screen", () => {
   let phaserGame: Phaser.Game;
@@ -30,18 +33,19 @@ describe("Moves - Light Screen", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    globalScene = game.scene;
     game.override.battleType("single");
     game.override.ability(Abilities.NONE);
-    game.override.moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE]);
+    game.override.moveset([ Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE ]);
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
+    game.override.enemyMoveset([ Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN ]);
     game.override.disableCrits();
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {
     const moveToUse = Moves.ABSORB;
-    await game.startBattle([Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
 
@@ -56,7 +60,7 @@ describe("Moves - Light Screen", () => {
     game.override.battleType("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
-    await game.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
@@ -69,7 +73,7 @@ describe("Moves - Light Screen", () => {
 
   it("does not affect physical attacks", async () => {
     const moveToUse = Moves.TACKLE;
-    await game.startBattle([Species.SHUCKLE]);
+    await game.startBattle([ Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
 
@@ -93,8 +97,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (defender.scene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side)) {
-    defender.scene.arena.applyTagsForSide(ArenaTagType.LIGHT_SCREEN, side, move.category, defender.scene.currentBattle.double, multiplierHolder);
+  if (globalScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side)) {
+    globalScene.arena.applyTagsForSide(ArenaTagType.LIGHT_SCREEN, side, false, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

@@ -2,15 +2,16 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { globalScene } from "#app/global-scene";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { leaveEncounterWithoutBattle, setEncounterExp } from "../utils/encounter-phase-utils";
 import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
-import {PokemonMove} from "#app/field/pokemon";
+import { PokemonMove } from "#app/field/pokemon";
 
 const OPTION_1_REQUIRED_MOVE = Moves.SURF;
 const OPTION_2_REQUIRED_MOVE = Moves.FLY;
@@ -21,7 +22,7 @@ const OPTION_2_REQUIRED_MOVE = Moves.FLY;
  */
 const DAMAGE_PERCENTAGE: number = 25;
 /** The i18n namespace for the encounter */
-const namespace = "mysteryEncounter:lostAtSea";
+const namespace = "mysteryEncounters/lostAtSea";
 
 /**
  * Lost at sea encounter.
@@ -33,16 +34,16 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withIntroSpriteConfigs([
     {
-      spriteKey: "buoy",
+      spriteKey: "lost_at_sea_buoy",
       fileRoot: "mystery-encounters",
       hasShadow: false,
       x: 20,
       y: 3,
     },
   ])
-  .withIntroDialogue([{ text: `${namespace}.intro` }])
-  .withOnInit((scene: BattleScene) => {
-    const encounter = scene.currentBattle.mysteryEncounter!;
+  .withIntroDialogue([{ text: `${namespace}:intro` }])
+  .withOnInit(() => {
+    const encounter = globalScene.currentBattle.mysteryEncounter!;
 
     encounter.setDialogueToken("damagePercentage", String(DAMAGE_PERCENTAGE));
     encounter.setDialogueToken("option1RequiredMove", new PokemonMove(OPTION_1_REQUIRED_MOVE).getName());
@@ -50,26 +51,27 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
     return true;
   })
-  .withTitle(`${namespace}.title`)
-  .withDescription(`${namespace}.description`)
-  .withQuery(`${namespace}.query`)
+  .setLocalizationKey(`${namespace}`)
+  .withTitle(`${namespace}:title`)
+  .withDescription(`${namespace}:description`)
+  .withQuery(`${namespace}:query`)
   .withOption(
     // Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back/
     MysteryEncounterOptionBuilder
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .withDialogue({
-        buttonLabel: `${namespace}.option.1.label`,
-        disabledButtonLabel: `${namespace}.option.1.label_disabled`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.1.tooltip_disabled`,
+        buttonLabel: `${namespace}:option.1.label`,
+        disabledButtonLabel: `${namespace}:option.1.label_disabled`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.1.tooltip_disabled`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => handlePokemonGuidingYouPhase(scene))
+      .withOptionPhase(async () => handlePokemonGuidingYouPhase())
       .build()
   )
   .withOption(
@@ -78,66 +80,64 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .withDialogue({
-        buttonLabel: `${namespace}.option.2.label`,
-        disabledButtonLabel: `${namespace}.option.2.label_disabled`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.tooltip_disabled`,
+        buttonLabel: `${namespace}:option.2.label`,
+        disabledButtonLabel: `${namespace}:option.2.label_disabled`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       })
-      .withOptionPhase(async (scene: BattleScene) => handlePokemonGuidingYouPhase(scene))
+      .withOptionPhase(async () => handlePokemonGuidingYouPhase())
       .build()
   )
   .withSimpleOption(
     // Option 3: Wander aimlessly
     {
-      buttonLabel: `${namespace}.option.3.label`,
-      buttonTooltip: `${namespace}.option.3.tooltip`,
+      buttonLabel: `${namespace}:option.3.label`,
+      buttonTooltip: `${namespace}:option.3.tooltip`,
       selected: [
         {
-          text: `${namespace}.option.3.selected`,
+          text: `${namespace}:option.3.selected`,
         },
       ],
     },
-    async (scene: BattleScene) => {
-      const allowedPokemon = scene.getParty().filter((p) => p.isAllowedInBattle());
+    async () => {
+      const allowedPokemon = globalScene.getPlayerParty().filter((p) => p.isAllowedInBattle());
 
       for (const pkm of allowedPokemon) {
         const percentage = DAMAGE_PERCENTAGE / 100;
         const damage = Math.floor(pkm.getMaxHp() * percentage);
-        applyDamageToPokemon(scene, pkm, damage);
+        applyDamageToPokemon(pkm, damage);
       }
 
-      leaveEncounterWithoutBattle(scene);
+      leaveEncounterWithoutBattle();
 
       return true;
     }
   )
   .withOutroDialogue([
     {
-      text: `${namespace}.outro`,
+      text: `${namespace}:outro`,
     },
   ])
   .build();
 
 /**
  * Generic handler for using a guiding pokemon to guide you back.
- *
- * @param scene Battle scene
  */
-async function handlePokemonGuidingYouPhase(scene: BattleScene) {
+function handlePokemonGuidingYouPhase() {
   const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
-  const { mysteryEncounter } = scene.currentBattle;
+  const { mysteryEncounter } = globalScene.currentBattle;
 
   if (mysteryEncounter?.selectedOption?.primaryPokemon?.id) {
-    setEncounterExp(scene, mysteryEncounter.selectedOption.primaryPokemon.id, laprasSpecies.baseExp, true);
+    setEncounterExp(mysteryEncounter.selectedOption.primaryPokemon.id, laprasSpecies.baseExp, true);
   } else {
     console.warn("Lost at sea: No guide pokemon found but pokemon guides player. huh!?");
   }
 
-  leaveEncounterWithoutBattle(scene);
+  leaveEncounterWithoutBattle();
   return true;
 }

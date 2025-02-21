@@ -1,6 +1,7 @@
 import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
-import { MoveResult, TurnMove } from "#app/field/pokemon";
+import type { TurnMove } from "#app/field/pokemon";
+import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
@@ -33,12 +34,12 @@ describe("Moves - Stockpile", () => {
       game.override.enemyAbility(Abilities.NONE);
 
       game.override.startingLevel(2000);
-      game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
+      game.override.moveset([ Moves.STOCKPILE, Moves.SPLASH ]);
       game.override.ability(Abilities.NONE);
     });
 
-    it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+    it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", async () => {
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const user = game.scene.getPlayerPokemon()!;
 
@@ -71,13 +72,13 @@ describe("Moves - Stockpile", () => {
           expect(user.getStatStage(Stat.SPDEF)).toBe(3);
           expect(stockpilingTag).toBeDefined();
           expect(stockpilingTag.stockpiledCount).toBe(3);
-          expect(user.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ result: MoveResult.FAIL, move: Moves.STOCKPILE });
+          expect(user.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ result: MoveResult.FAIL, move: Moves.STOCKPILE, targets: [ user.getBattlerIndex() ]});
         }
       }
     });
 
-    it("gains a stockpile stack even if user's DEF and SPDEF stat stages are at +6", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+    it("gains a stockpile stack even if user's DEF and SPDEF stat stages are at +6", async () => {
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const user = game.scene.getPlayerPokemon()!;
 

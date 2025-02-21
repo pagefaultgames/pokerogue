@@ -1,5 +1,5 @@
-import Move from "../data/move";
-import { BerryModifier } from "../modifier/modifier";
+import type Move from "../data/move";
+import type { BerryModifier } from "../modifier/modifier";
 
 /** Alias for all {@linkcode BattleScene} events */
 export enum BattleSceneEventType {

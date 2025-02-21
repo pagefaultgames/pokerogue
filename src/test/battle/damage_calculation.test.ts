@@ -1,4 +1,6 @@
 import { allMoves } from "#app/data/move";
+import type { EnemyPersistentModifier } from "#app/modifier/modifier";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
@@ -31,11 +33,11 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .startingLevel(100)
       .enemyLevel(100)
       .disableCrits()
-      .moveset([Moves.TACKLE, Moves.DRAGON_RAGE, Moves.FISSURE, Moves.JUMP_KICK]);
+      .moveset([ Moves.TACKLE, Moves.DRAGON_RAGE, Moves.FISSURE, Moves.JUMP_KICK ]);
   });
 
   it("Tackle deals expected base damage", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(playerPokemon, "getEffectiveStat").mockReturnValue(80);
@@ -53,7 +55,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .startingLevel(1)
       .enemySpecies(Species.AGGRON);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const aggron = game.scene.getEnemyPokemon()!;
 
@@ -65,12 +67,34 @@ describe("Battle Mechanics - Damage Calculation", () => {
     expect(aggron.hp).toBe(aggron.getMaxHp() - 1);
   });
 
+  it("Attacks deal 1 damage at minimum even with many tokens", async () => {
+    game.override
+      .startingLevel(1)
+      .enemySpecies(Species.AGGRON)
+      .enemyAbility(Abilities.STURDY)
+      .enemyLevel(10000);
+
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+
+    const dmg_redux_modifier = modifierTypes.ENEMY_DAMAGE_REDUCTION().newModifier() as EnemyPersistentModifier;
+    dmg_redux_modifier.stackCount = 1000;
+    await game.scene.addEnemyModifier(modifierTypes.ENEMY_DAMAGE_REDUCTION().newModifier() as EnemyPersistentModifier);
+
+    const aggron = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.TACKLE);
+
+    await game.phaseInterceptor.to("BerryPhase", false);
+
+    expect(aggron.hp).toBe(aggron.getMaxHp() - 1);
+  });
+
   it("Fixed-damage moves ignore damage multipliers", async () => {
     game.override
       .enemySpecies(Species.DRAGONITE)
       .enemyAbility(Abilities.MULTISCALE);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const magikarp = game.scene.getPlayerPokemon()!;
     const dragonite = game.scene.getEnemyPokemon()!;
@@ -83,7 +107,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .enemySpecies(Species.AGGRON)
       .enemyAbility(Abilities.MULTISCALE);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
 
     const magikarp = game.scene.getPlayerPokemon()!;
     const aggron = game.scene.getEnemyPokemon()!;
@@ -96,13 +120,13 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .enemySpecies(Species.GASTLY)
       .ability(Abilities.WONDER_GUARD);
 
-    await game.classicMode.startBattle([Species.SHEDINJA]);
+    await game.classicMode.startBattle([ Species.SHEDINJA ]);
 
     const shedinja = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.JUMP_KICK);
 
-    await game.phaseInterceptor.to("DamagePhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(shedinja.hp).toBe(shedinja.getMaxHp() - 1);
   });
@@ -115,7 +139,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .enemySpecies(Species.CHARIZARD)
       .enemyAbility(Abilities.BLAZE);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([ Species.PIKACHU ]);
 
     const charizard = game.scene.getEnemyPokemon()!;
 

@@ -1,5 +1,5 @@
 import { BattleStyle } from "#app/enums/battle-style";
-import { Species } from "#app/enums/species";
+import type { Species } from "#app/enums/species";
 import { GameModes, getGameMode } from "#app/game-mode";
 import overrides from "#app/overrides";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -20,19 +20,23 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @param species - Optional array of species to summon.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  async runToSummon(species?: Species[]) {
+  async runToSummon(species?: Species[]): Promise<void> {
     await this.game.runToTitle();
+
+    if (this.game.override.disableShinies) {
+      this.game.override.shiny(false).enemyShiny(false);
+    }
 
     this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
       this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(this.game.scene, species);
-      const selectStarterPhase = new SelectStarterPhase(this.game.scene);
-      this.game.scene.pushPhase(new EncounterPhase(this.game.scene, false));
+      const selectStarterPhase = new SelectStarterPhase();
+      this.game.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.game.phaseInterceptor.run(EncounterPhase);
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+    await this.game.phaseInterceptor.to(EncounterPhase);
+    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }
@@ -42,7 +46,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species?: Species[]) {
+  async startBattle(species?: Species[]): Promise<void> {
     await this.runToSummon(species);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

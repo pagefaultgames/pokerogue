@@ -1,5 +1,5 @@
-import {SettingGamepad} from "../../system/settings/settings-gamepad";
-import {Button} from "#enums/buttons";
+import { SettingGamepad } from "../../system/settings/settings-gamepad";
+import { Button } from "#enums/buttons";
 
 /**
  * 081f-e401 - UnlicensedSNES
@@ -43,7 +43,7 @@ const pad_unlicensedSNES = {
     [SettingGamepad.Button_Action]: Button.ACTION,
     [SettingGamepad.Button_Cancel]: Button.CANCEL,
     [SettingGamepad.Button_Cycle_Nature]: Button.CYCLE_NATURE,
-    [SettingGamepad.Button_Cycle_Variant]: Button.V,
+    [SettingGamepad.Button_Cycle_Tera]: Button.CYCLE_TERA,
     [SettingGamepad.Button_Menu]: Button.MENU,
     [SettingGamepad.Button_Stats]: Button.STATS,
     [SettingGamepad.Button_Cycle_Form]:  Button.CYCLE_FORM,
@@ -61,7 +61,7 @@ const pad_unlicensedSNES = {
     RC_S: SettingGamepad.Button_Action,
     RC_E: SettingGamepad.Button_Cancel,
     RC_W: SettingGamepad.Button_Cycle_Nature,
-    RC_N: SettingGamepad.Button_Cycle_Variant,
+    RC_N: SettingGamepad.Button_Cycle_Tera,
     START: SettingGamepad.Button_Menu,
     SELECT: SettingGamepad.Button_Stats,
     LB: SettingGamepad.Button_Cycle_Form,

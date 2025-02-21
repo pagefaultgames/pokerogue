@@ -1,9 +1,8 @@
-import BattleScene from "../battle-scene";
 import i18next from "i18next";
 import { AchvTier, achvs, getAchievementDescription } from "./achv";
-import { PlayerGender } from "#enums/player-gender";
+import type { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
-import { ConditionFn } from "#app/@types/common";
+import type { ConditionFn } from "#app/@types/common";
 import { trainerConfigs } from "#app/data/trainer-config";
 
 export enum VoucherType {
@@ -26,8 +25,8 @@ export class Voucher {
     this.conditionFunc = conditionFunc;
   }
 
-  validate(scene: BattleScene, args?: any[]): boolean {
-    return !this.conditionFunc || this.conditionFunc(scene, args);
+  validate(args?: any[]): boolean {
+    return !this.conditionFunc || this.conditionFunc(args);
   }
 
   /**
@@ -45,41 +44,41 @@ export class Voucher {
 
   getTier(): AchvTier {
     switch (this.voucherType) {
-    case VoucherType.REGULAR:
-      return AchvTier.COMMON;
-    case VoucherType.PLUS:
-      return AchvTier.GREAT;
-    case VoucherType.PREMIUM:
-      return AchvTier.ULTRA;
-    case VoucherType.GOLDEN:
-      return AchvTier.ROGUE;
+      case VoucherType.REGULAR:
+        return AchvTier.COMMON;
+      case VoucherType.PLUS:
+        return AchvTier.GREAT;
+      case VoucherType.PREMIUM:
+        return AchvTier.ULTRA;
+      case VoucherType.GOLDEN:
+        return AchvTier.ROGUE;
     }
   }
 }
 
 export function getVoucherTypeName(voucherType: VoucherType): string {
   switch (voucherType) {
-  case VoucherType.REGULAR:
-    return i18next.t("voucher:eggVoucher");
-  case VoucherType.PLUS:
-    return i18next.t("voucher:eggVoucherPlus");
-  case VoucherType.PREMIUM:
-    return i18next.t("voucher:eggVoucherPremium");
-  case VoucherType.GOLDEN:
-    return i18next.t("voucher:eggVoucherGold");
+    case VoucherType.REGULAR:
+      return i18next.t("voucher:eggVoucher");
+    case VoucherType.PLUS:
+      return i18next.t("voucher:eggVoucherPlus");
+    case VoucherType.PREMIUM:
+      return i18next.t("voucher:eggVoucherPremium");
+    case VoucherType.GOLDEN:
+      return i18next.t("voucher:eggVoucherGold");
   }
 }
 
 export function getVoucherTypeIcon(voucherType: VoucherType): string {
   switch (voucherType) {
-  case VoucherType.REGULAR:
-    return "coupon";
-  case VoucherType.PLUS:
-    return "pair_of_tickets";
-  case VoucherType.PREMIUM:
-    return "mystic_ticket";
-  case VoucherType.GOLDEN:
-    return "golden_mystic_ticket";
+    case VoucherType.REGULAR:
+      return "coupon";
+    case VoucherType.PLUS:
+      return "pair_of_tickets";
+    case VoucherType.PREMIUM:
+      return "mystic_ticket";
+    case VoucherType.GOLDEN:
+      return "golden_mystic_ticket";
   }
 }
 
@@ -90,7 +89,7 @@ export interface Vouchers {
 export const vouchers: Vouchers = {};
 
 export function initVouchers() {
-  for (const achv of [achvs.CLASSIC_VICTORY]) {
+  for (const achv of [ achvs.CLASSIC_VICTORY ]) {
     const voucherType = achv.score >= 150
       ? VoucherType.GOLDEN
       : achv.score >= 100

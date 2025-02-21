@@ -1,7 +1,9 @@
-import { GameMode, GameModes, getGameMode } from "#app/game-mode";
+import type { GameMode } from "#app/game-mode";
+import { GameModes, getGameMode } from "#app/game-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as Utils from "../utils";
 import GameManager from "./utils/gameManager";
+
 describe("game-mode", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -12,6 +14,7 @@ describe("game-mode", () => {
   });
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
+    vi.clearAllMocks();
     vi.resetAllMocks();
   });
   beforeEach(() => {

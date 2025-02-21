@@ -1,4 +1,4 @@
-import { DamagePhase } from "#app/phases/damage-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -27,15 +27,15 @@ describe("Items - Leftovers", () => {
     game.override.battleType("single");
     game.override.startingLevel(2000);
     game.override.ability(Abilities.UNNERVE);
-    game.override.moveset([Moves.SPLASH]);
+    game.override.moveset([ Moves.SPLASH ]);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.UNNERVE);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
     game.override.startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
   });
 
   it("leftovers works", async () => {
-    await game.startBattle([Species.ARCANINE]);
+    await game.startBattle([ Species.ARCANINE ]);
 
     // Make sure leftovers are there
     expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");
@@ -48,7 +48,7 @@ describe("Items - Leftovers", () => {
     game.move.select(Moves.SPLASH);
 
     // We should have less hp after the attack
-    await game.phaseInterceptor.to(DamagePhase, false);
+    await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
     const leadHpAfterDamage = leadPokemon.hp;

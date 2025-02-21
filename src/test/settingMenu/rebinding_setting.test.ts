@@ -1,6 +1,6 @@
 import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
 import { getKeyWithKeycode, getKeyWithSettingName } from "#app/configs/inputs/configHandler";
-import { InterfaceConfig } from "#app/inputs-controller";
+import type { InterfaceConfig } from "#app/inputs-controller";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { deepCopy } from "#app/utils";
 import { Button } from "#enums/buttons";
@@ -22,7 +22,7 @@ describe("Test Rebinding", () => {
 
   beforeEach(() => {
     config = deepCopy(cfg_keyboard_qwerty);
-    config.custom = {...config.default};
+    config.custom = { ...config.default };
     configs["default"] = config;
     inGame = new InGameManip(configs, config, selectedDevice);
     inTheSettingMenu = new MenuManip(config);
@@ -406,9 +406,9 @@ describe("Test Rebinding", () => {
   });
 
   it("check to delete all the binds of an action", () => {
-    inGame.whenWePressOnKeyboard("V").weShouldTriggerTheButton("Button_Cycle_Variant");
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Cycle_Variant").thereShouldBeNoIcon().weWantThisBindInstead("K").confirm();
-    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Cycle_Variant").iconDisplayedIs("KEY_K").whenWeDelete().thereShouldBeNoIconAnymore();
-    inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Variant").iconDisplayedIs("KEY_V").whenWeDelete().thereShouldBeNoIconAnymore();
+    inGame.whenWePressOnKeyboard("V").weShouldTriggerTheButton("Button_Cycle_Tera");
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Cycle_Tera").thereShouldBeNoIcon().weWantThisBindInstead("K").confirm();
+    inTheSettingMenu.whenCursorIsOnSetting("Alt_Button_Cycle_Tera").iconDisplayedIs("KEY_K").whenWeDelete().thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenCursorIsOnSetting("Button_Cycle_Tera").iconDisplayedIs("KEY_V").whenWeDelete().thereShouldBeNoIconAnymore();
   });
 });

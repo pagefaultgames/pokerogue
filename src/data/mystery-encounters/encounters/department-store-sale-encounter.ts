@@ -2,19 +2,20 @@ import {
   leaveEncounterWithoutBattle,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { ModifierTypeFunc, modifierTypes } from "#app/modifier/modifier-type";
+import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import BattleScene from "#app/battle-scene";
-import MysteryEncounter, {
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import {
   MysteryEncounterBuilder,
 } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 
 /** i18n namespace for encounter */
-const namespace = "mysteryEncounter:departmentStoreSale";
+const namespace = "mysteryEncounters/departmentStoreSale";
 
 /**
  * Department Store Sale encounter.
@@ -27,7 +28,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
     .withSceneWaveRangeRequirement(CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[0], 100)
     .withIntroSpriteConfigs([
       {
-        spriteKey: "b2w2_lady",
+        spriteKey: "department_store_sale_lady",
         fileRoot: "mystery-encounters",
         hasShadow: true,
         x: -20,
@@ -43,27 +44,28 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        text: `${namespace}.intro_dialogue`,
-        speaker: `${namespace}.speaker`,
+        text: `${namespace}:intro_dialogue`,
+        speaker: `${namespace}:speaker`,
       },
     ])
     .withAutoHideIntroVisuals(false)
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
+    .setLocalizationKey(`${namespace}`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Choose TMs
         const modifiers: ModifierTypeFunc[] = [];
         let i = 0;
-        while (i < 4) {
+        while (i < 5) {
           // 2/2/1 weight on TM rarity
           const roll = randSeedInt(5);
           if (roll < 2) {
@@ -76,16 +78,16 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
           i++;
         }
 
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
-        leaveEncounterWithoutBattle(scene);
+        setEncounterRewards({ guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
+        leaveEncounterWithoutBattle();
       }
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Choose Vitamins
         const modifiers: ModifierTypeFunc[] = [];
         let i = 0;
@@ -100,16 +102,16 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
           i++;
         }
 
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
-        leaveEncounterWithoutBattle(scene);
+        setEncounterRewards({ guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
+        leaveEncounterWithoutBattle();
       }
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Choose X Items
         const modifiers: ModifierTypeFunc[] = [];
         let i = 0;
@@ -124,16 +126,16 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
           i++;
         }
 
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
-        leaveEncounterWithoutBattle(scene);
+        setEncounterRewards({ guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
+        leaveEncounterWithoutBattle();
       }
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.4.label`,
-        buttonTooltip: `${namespace}.option.4.tooltip`,
+        buttonLabel: `${namespace}:option.4.label`,
+        buttonTooltip: `${namespace}:option.4.tooltip`,
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Choose Pokeballs
         const modifiers: ModifierTypeFunc[] = [];
         let i = 0;
@@ -152,13 +154,13 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter =
           i++;
         }
 
-        setEncounterRewards(scene, { guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
-        leaveEncounterWithoutBattle(scene);
+        setEncounterRewards({ guaranteedModifierTypeFuncs: modifiers, fillRemaining: false, });
+        leaveEncounterWithoutBattle();
       }
     )
     .withOutroDialogue([
       {
-        text: `${namespace}.outro`,
+        text: `${namespace}:outro`,
       }
     ])
     .build();

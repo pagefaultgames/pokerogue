@@ -18,6 +18,14 @@ export function mockI18next() {
  * @param end end number e.g. 10
  * @returns an array of numbers
  */
-export function arrayOfRange(start: integer, end: integer) {
+export function arrayOfRange(start: number, end: number) {
   return Array.from({ length: end - start }, (_v, k) => k + start);
+}
+
+/**
+ * Utility to get the API base URL from the environment variable (or the default/fallback).
+ * @returns the API base URL
+ */
+export function getApiBaseUrl() {
+  return import.meta.env.VITE_SERVER_URL ?? "http://localhost:8001";
 }

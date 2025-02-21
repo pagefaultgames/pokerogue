@@ -28,13 +28,13 @@ describe("EXP Modifier Items", () => {
   });
 
   it("EXP booster items stack multiplicatively", async() => {
-    game.override.startingHeldItems([{name: "LUCKY_EGG", count: 3}, {name: "GOLDEN_EGG"}]);
+    game.override.startingHeldItems([{ name: "LUCKY_EGG", count: 3 }, { name: "GOLDEN_EGG" }]);
     await game.startBattle();
 
     const partyMember = game.scene.getPlayerPokemon()!;
     partyMember.exp = 100;
     const expHolder = new Utils.NumberHolder(partyMember.exp);
-    partyMember.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, expHolder);
+    game.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, expHolder);
     expect(expHolder.value).toBe(440);
   }, 20000);
 });

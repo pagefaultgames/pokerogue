@@ -1,23 +1,23 @@
 import Phaser from "phaser";
 import * as Utils from "./utils";
-import {deepCopy} from "./utils";
+import { deepCopy } from "./utils";
 import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
 import pad_dualshock from "./configs/inputs/pad_dualshock";
 import pad_procon from "./configs/inputs/pad_procon";
-import {Mode} from "./ui/ui";
-import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
-import SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
+import { Mode } from "./ui/ui";
+import type SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
+import type SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_qwerty from "./configs/inputs/cfg_keyboard_qwerty";
 import {
   assign,
   getButtonWithKeycode,
   getIconForLatestInput, swap,
 } from "#app/configs/inputs/configHandler";
-import BattleScene from "./battle-scene";
-import {SettingGamepad} from "#app/system/settings/settings-gamepad";
-import {SettingKeyboard} from "#app/system/settings/settings-keyboard";
+import { globalScene } from "#app/global-scene";
+import type { SettingGamepad } from "#app/system/settings/settings-gamepad";
+import type { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import TouchControl from "#app/touch-controls";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
@@ -75,7 +75,6 @@ const repeatInputDelayMillis = 250;
  */
 export class InputsController {
   private gamepads: Array<Phaser.Input.Gamepad.Gamepad> = new Array();
-  private scene: BattleScene;
   public events: Phaser.Events.EventEmitter;
 
   private buttonLock: Button[] = new Array();
@@ -96,17 +95,13 @@ export class InputsController {
   /**
      * Initializes a new instance of the game control system, setting up initial state and configurations.
      *
-     * @param scene - The Phaser scene associated with this instance.
-     *
      * @remarks
      * This constructor initializes the game control system with necessary setups for handling inputs.
      * It prepares an interactions array indexed by button identifiers and configures default states for each button.
      * Specific buttons like MENU and STATS are set not to repeat their actions.
      * It concludes by calling the `init` method to complete the setup.
      */
-
-  constructor(scene: BattleScene) {
-    this.scene = scene;
+  constructor() {
     this.selectedDevice = {
       [Device.GAMEPAD]: null,
       [Device.KEYBOARD]: "default"
@@ -134,14 +129,14 @@ export class InputsController {
      * Additionally, it manages the game's behavior when it loses focus to prevent unwanted game actions during this state.
      */
   init(): void {
-    this.events = this.scene.game.events;
+    this.events = globalScene.game.events;
 
-    this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
+    globalScene.game.events.on(Phaser.Core.Events.BLUR, () => {
       this.loseFocus();
     });
 
-    if (typeof this.scene.input.gamepad !== "undefined") {
-      this.scene.input.gamepad?.on("connected", function (thisGamepad) {
+    if (typeof globalScene.input.gamepad !== "undefined") {
+      globalScene.input.gamepad?.on("connected", function (thisGamepad) {
         if (!thisGamepad) {
           return;
         }
@@ -150,25 +145,25 @@ export class InputsController {
         this.onReconnect(thisGamepad);
       }, this);
 
-      this.scene.input.gamepad?.on("disconnected", function (thisGamepad) {
+      globalScene.input.gamepad?.on("disconnected", function (thisGamepad) {
         this.onDisconnect(thisGamepad); // when a gamepad is disconnected
       }, this);
 
       // Check to see if the gamepad has already been setup by the browser
-      this.scene.input.gamepad?.refreshPads();
-      if (this.scene.input.gamepad?.total) {
+      globalScene.input.gamepad?.refreshPads();
+      if (globalScene.input.gamepad?.total) {
         this.refreshGamepads();
         for (const thisGamepad of this.gamepads) {
-          this.scene.input.gamepad.emit("connected", thisGamepad);
+          globalScene.input.gamepad.emit("connected", thisGamepad);
         }
       }
 
-      this.scene.input.gamepad?.on("down", this.gamepadButtonDown, this);
-      this.scene.input.gamepad?.on("up", this.gamepadButtonUp, this);
-      this.scene.input.keyboard?.on("keydown", this.keyboardKeyDown, this);
-      this.scene.input.keyboard?.on("keyup", this.keyboardKeyUp, this);
+      globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
+      globalScene.input.gamepad?.on("up", this.gamepadButtonUp, this);
+      globalScene.input.keyboard?.on("keydown", this.keyboardKeyDown, this);
+      globalScene.input.keyboard?.on("keyup", this.keyboardKeyUp, this);
     }
-    this.touchControls = new TouchControl(this.scene);
+    this.touchControls = new TouchControl();
     this.moveTouchControlsHandler = new MoveTouchControlsHandler(this.touchControls);
   }
 
@@ -238,7 +233,7 @@ export class InputsController {
     if (gamepadName) {
       this.selectedDevice[Device.GAMEPAD] = gamepadName.toLowerCase();
     }
-    const handler = this.scene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
+    const handler = globalScene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
     handler && handler.updateChosenGamepadDisplay();
   }
 
@@ -251,7 +246,7 @@ export class InputsController {
     if (layoutKeyboard) {
       this.selectedDevice[Device.KEYBOARD] = layoutKeyboard.toLowerCase();
     }
-    const handler = this.scene.ui?.handlers[Mode.SETTINGS_KEYBOARD] as SettingsKeyboardUiHandler;
+    const handler = globalScene.ui?.handlers[Mode.SETTINGS_KEYBOARD] as SettingsKeyboardUiHandler;
     handler && handler.updateChosenKeyboardDisplay();
   }
 
@@ -294,12 +289,12 @@ export class InputsController {
         this.setChosenGamepad(gamepadID);
       }
       const config = deepCopy(this.getConfig(gamepadID)) as InterfaceConfig;
-      config.custom = this.configs[gamepadID]?.custom || {...config.default};
+      config.custom = this.configs[gamepadID]?.custom || { ...config.default };
       this.configs[gamepadID] = config;
-      this.scene.gameData?.saveMappingConfigs(gamepadID, this.configs[gamepadID]);
+      globalScene.gameData?.saveMappingConfigs(gamepadID, this.configs[gamepadID]);
     }
     this.lastSource = "gamepad";
-    const handler = this.scene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
+    const handler = globalScene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
     handler && handler.updateChosenGamepadDisplay();
   }
 
@@ -307,11 +302,11 @@ export class InputsController {
      * Initializes or updates configurations for connected keyboards.
      */
   setupKeyboard(): void {
-    for (const layout of ["default"]) {
+    for (const layout of [ "default" ]) {
       const config = deepCopy(this.getConfigKeyboard(layout)) as InterfaceConfig;
-      config.custom = this.configs[layout]?.custom || {...config.default};
+      config.custom = this.configs[layout]?.custom || { ...config.default };
       this.configs[layout] = config;
-      this.scene.gameData?.saveMappingConfigs(this.selectedDevice[Device.KEYBOARD], this.configs[layout]);
+      globalScene.gameData?.saveMappingConfigs(this.selectedDevice[Device.KEYBOARD], this.configs[layout]);
     }
     this.initChosenLayoutKeyboard(this.selectedDevice[Device.KEYBOARD]);
   }
@@ -326,11 +321,11 @@ export class InputsController {
      */
   refreshGamepads(): void {
     // Sometimes, gamepads are undefined. For some reason.
-    this.gamepads = this.scene.input.gamepad?.gamepads.filter(function (el) {
+    this.gamepads = globalScene.input.gamepad?.gamepads.filter(function (el) {
       return el !== null;
     }) ?? [];
 
-    for (const [index, thisGamepad] of this.gamepads.entries()) {
+    for (const [ index, thisGamepad ] of this.gamepads.entries()) {
       thisGamepad.index = index; // Overwrite the gamepad index, in case we had undefined gamepads earlier
     }
   }
@@ -409,7 +404,7 @@ export class InputsController {
       return;
     }
     this.lastSource = "gamepad";
-    if (!this.selectedDevice[Device.GAMEPAD] || (this.scene.ui.getMode() !== Mode.GAMEPAD_BINDING && this.selectedDevice[Device.GAMEPAD] !== pad.id.toLowerCase())) {
+    if (!this.selectedDevice[Device.GAMEPAD] || (globalScene.ui.getMode() !== Mode.GAMEPAD_BINDING && this.selectedDevice[Device.GAMEPAD] !== pad.id.toLowerCase())) {
       this.setChosenGamepad(pad.id);
     }
     if (!this.gamepadSupport || pad.id.toLowerCase() !== this.selectedDevice[Device.GAMEPAD].toLowerCase()) {

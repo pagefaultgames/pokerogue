@@ -1,6 +1,6 @@
-import BattleScene from "#app/battle-scene";
-import { PlayerPokemon } from "#app/field/pokemon";
-import { DexEntry, StarterDataEntry } from "#app/system/game-data";
+import { globalScene } from "#app/global-scene";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type { DexEntry, StarterDataEntry } from "#app/system/game-data";
 
 /**
  * Stores data associated with a specific egg and the hatched pokemon
@@ -17,11 +17,8 @@ export class EggHatchData {
   public dexEntryBeforeUpdate: DexEntry;
   /** stored copy of the hatched pokemon's starter entry before it was updated due to hatch */
   public starterDataEntryBeforeUpdate: StarterDataEntry;
-  /** reference to the battle scene to get gamedata and update dex */
-  private scene: BattleScene;
 
-  constructor(scene: BattleScene, pokemon: PlayerPokemon, eggMoveIndex: number) {
-    this.scene = scene;
+  constructor(pokemon: PlayerPokemon, eggMoveIndex: number) {
     this.pokemon = pokemon;
     this.eggMoveIndex = eggMoveIndex;
   }
@@ -39,8 +36,8 @@ export class EggHatchData {
      * Used before updating the dex, so comparing the pokemon to these entries will show the new attributes
      */
   setDex() {
-    const currDexEntry = this.scene.gameData.dexData[this.pokemon.species.speciesId];
-    const currStarterDataEntry = this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
+    const currDexEntry = globalScene.gameData.dexData[this.pokemon.species.speciesId];
+    const currStarterDataEntry = globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
     this.dexEntryBeforeUpdate = {
       seenAttr: currDexEntry.seenAttr,
       caughtAttr: currDexEntry.caughtAttr,
@@ -48,7 +45,7 @@ export class EggHatchData {
       seenCount: currDexEntry.seenCount,
       caughtCount: currDexEntry.caughtCount,
       hatchedCount: currDexEntry.hatchedCount,
-      ivs: [...currDexEntry.ivs]
+      ivs: [ ...currDexEntry.ivs ]
     };
     this.starterDataEntryBeforeUpdate = {
       moveset: currStarterDataEntry.moveset,
@@ -86,9 +83,9 @@ export class EggHatchData {
      */
   updatePokemon(showMessage : boolean = false) {
     return new Promise<void>(resolve => {
-      this.scene.gameData.setPokemonCaught(this.pokemon, true, true, showMessage).then(() => {
-        this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-        this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then((value) => {
+      globalScene.gameData.setPokemonCaught(this.pokemon, true, true, showMessage).then(() => {
+        globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+        globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then((value) => {
           this.setEggMoveUnlocked(value);
           resolve();
         });

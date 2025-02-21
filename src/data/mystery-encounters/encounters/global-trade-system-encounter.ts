@@ -1,43 +1,57 @@
 import { leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { TrainerSlot, } from "#app/data/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { getPlayerModifierTypeOptions, ModifierPoolType, ModifierTypeOption, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { MusicPreference } from "#app/system/settings/settings";
+import type { ModifierTypeOption } from "#app/modifier/modifier-type";
+import { getPlayerModifierTypeOptions, ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
-import MysteryEncounter, { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
+import { globalScene } from "#app/global-scene";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { Species } from "#enums/species";
-import PokemonSpecies, { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { IntegerHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, PokemonHeldItemModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
-import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { NumberHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier, ShinyRateBoosterModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
+import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
 import { Gender, getGenderSymbol } from "#app/data/gender";
 import { getNatureName } from "#app/data/nature";
-import { getPokeballAtlasKey, getPokeballTintColor, PokeballType } from "#app/data/pokeball";
+import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import type { PokeballType } from "#enums/pokeball";
+import { doShinySparkleAnim } from "#app/field/anims";
 
 /** the i18n namespace for the encounter */
-const namespace = "mysteryEncounter:globalTradeSystem";
+const namespace = "mysteryEncounters/globalTradeSystem";
+
+/** Base shiny chance of 512/65536 -> 1/128 odds, affected by events and Shiny Charms. Cannot exceed 1/16 odds. */
+const WONDER_TRADE_SHINY_CHANCE = 512;
+/** Max shiny chance of 4096/65536 -> 1/16 odds. */
+const MAX_WONDER_TRADE_SHINY_CHANCE = 4096;
 
 const LEGENDARY_TRADE_POOLS = {
-  1: [Species.RATTATA, Species.PIDGEY, Species.WEEDLE],
-  2: [Species.SENTRET, Species.HOOTHOOT, Species.LEDYBA],
-  3: [Species.POOCHYENA, Species.ZIGZAGOON, Species.TAILLOW],
-  4: [Species.BIDOOF, Species.STARLY, Species.KRICKETOT],
-  5: [Species.PATRAT, Species.PURRLOIN, Species.PIDOVE],
-  6: [Species.BUNNELBY, Species.LITLEO, Species.SCATTERBUG],
-  7: [Species.PIKIPEK, Species.YUNGOOS, Species.ROCKRUFF],
-  8: [Species.SKWOVET, Species.WOOLOO, Species.ROOKIDEE],
-  9: [Species.LECHONK, Species.FIDOUGH, Species.TAROUNTULA]
+  1: [ Species.RATTATA, Species.PIDGEY, Species.WEEDLE ],
+  2: [ Species.SENTRET, Species.HOOTHOOT, Species.LEDYBA ],
+  3: [ Species.POOCHYENA, Species.ZIGZAGOON, Species.TAILLOW ],
+  4: [ Species.BIDOOF, Species.STARLY, Species.KRICKETOT ],
+  5: [ Species.PATRAT, Species.PURRLOIN, Species.PIDOVE ],
+  6: [ Species.BUNNELBY, Species.LITLEO, Species.SCATTERBUG ],
+  7: [ Species.PIKIPEK, Species.YUNGOOS, Species.ROCKRUFF ],
+  8: [ Species.SKWOVET, Species.WOOLOO, Species.ROOKIDEE ],
+  9: [ Species.LECHONK, Species.FIDOUGH, Species.TAROUNTULA ]
 };
 
 /** Exclude Paradox mons as they aren't considered legendary/mythical */
@@ -87,30 +101,31 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
     ])
     .withIntroDialogue([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       }
     ])
-    .withTitle(`${namespace}.title`)
-    .withDescription(`${namespace}.description`)
-    .withQuery(`${namespace}.query`)
-    .withOnInit((scene: BattleScene) => {
-      const encounter = scene.currentBattle.mysteryEncounter!;
+    .setLocalizationKey(`${namespace}`)
+    .withTitle(`${namespace}:title`)
+    .withDescription(`${namespace}:description`)
+    .withQuery(`${namespace}:query`)
+    .withOnInit(() => {
+      const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       // Load bgm
       let bgmKey: string;
-      if (scene.musicPreference === 0) {
+      if (globalScene.musicPreference === MusicPreference.GENFIVE) {
         bgmKey = "mystery_encounter_gen_5_gts";
-        scene.loadBgm(bgmKey, `${bgmKey}.mp3`);
+        globalScene.loadBgm(bgmKey, `${bgmKey}.mp3`);
       } else {
         // Mixed option
         bgmKey = "mystery_encounter_gen_6_gts";
-        scene.loadBgm(bgmKey, `${bgmKey}.mp3`);
+        globalScene.loadBgm(bgmKey, `${bgmKey}.mp3`);
       }
 
       // Load possible trade options
       // Maps current party member's id to 3 EnemyPokemon objects
       // None of the trade options can be the same species
-      const tradeOptionsMap: Map<number, EnemyPokemon[]> = getPokemonTradeOptions(scene);
+      const tradeOptionsMap: Map<number, EnemyPokemon[]> = getPokemonTradeOptions();
       encounter.misc = {
         tradeOptionsMap,
         bgmKey
@@ -118,8 +133,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
 
       return true;
     })
-    .withOnVisualsStart((scene: BattleScene) => {
-      scene.fadeAndSwitchBgm(scene.currentBattle.mysteryEncounter!.misc.bgmKey);
+    .withOnVisualsStart(() => {
+      globalScene.fadeAndSwitchBgm(globalScene.currentBattle.mysteryEncounter!.misc.bgmKey);
       return true;
     })
     .withOption(
@@ -127,12 +142,12 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
-          buttonLabel: `${namespace}.option.1.label`,
-          buttonTooltip: `${namespace}.option.1.tooltip`,
-          secondOptionPrompt: `${namespace}.option.1.trade_options_prompt`,
+          buttonLabel: `${namespace}:option.1.label`,
+          buttonTooltip: `${namespace}:option.1.tooltip`,
+          secondOptionPrompt: `${namespace}:option.1.trade_options_prompt`,
         })
-        .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withPreOptionPhase(async (): Promise<boolean> => {
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Get the trade species options for the selected pokemon
             const tradeOptionsMap: Map<number, EnemyPokemon[]> = encounter.misc.tradeOptionsMap;
@@ -153,20 +168,20 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
                   return true;
                 },
                 onHover: () => {
-                  const formName = tradePokemon.species.forms?.[pokemon.formIndex]?.formName;
+                  const formName = tradePokemon.species.forms && tradePokemon.species.forms.length > tradePokemon.formIndex ? tradePokemon.species.forms[tradePokemon.formIndex].formName : null;
                   const line1 = i18next.t("pokemonInfoContainer:ability") + " " + tradePokemon.getAbility().name + (tradePokemon.getGender() !== Gender.GENDERLESS ? "     |     " + i18next.t("pokemonInfoContainer:gender") + " " + getGenderSymbol(tradePokemon.getGender()) : "");
                   const line2 = i18next.t("pokemonInfoContainer:nature") + " " + getNatureName(tradePokemon.getNature()) + (formName ? "     |     " + i18next.t("pokemonInfoContainer:form") + " " + formName : "");
-                  showEncounterText(scene, `${line1}\n${line2}`, 0, 0, false);
+                  showEncounterText(`${line1}\n${line2}`, 0, 0, false);
                 },
               };
               return option;
             });
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected);
+          return selectPokemonForOption(onPokemonSelected);
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withOptionPhase(async () => {
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const tradedPokemon: PlayerPokemon = encounter.misc.tradedPokemon;
           const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
           const modifiers = tradedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier) && !(m instanceof SpeciesStatBoosterModifier));
@@ -176,32 +191,32 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           encounter.setDialogueToken("tradeTrainerName", traderName.trim());
 
           // Remove the original party member from party
-          scene.removePokemonFromPlayerParty(tradedPokemon, false);
+          globalScene.removePokemonFromPlayerParty(tradedPokemon, false);
 
           // Set data properly, then generate the new Pokemon's assets
           receivedPokemonData.passive = tradedPokemon.passive;
           // Pokeball to Ultra ball, randomly
           receivedPokemonData.pokeball = randInt(4) as PokeballType;
           const dataSource = new PokemonData(receivedPokemonData);
-          const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
-          scene.getParty().push(newPlayerPokemon);
+          const newPlayerPokemon = globalScene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
+          globalScene.getPlayerParty().push(newPlayerPokemon);
           await newPlayerPokemon.loadAssets();
 
           for (const mod of modifiers) {
             mod.pokemonId = newPlayerPokemon.id;
-            scene.addModifier(mod, true, false, false, true);
+            globalScene.addModifier(mod, true, false, false, true);
           }
 
           // Show the trade animation
-          await showTradeBackground(scene);
-          await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
-          await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
-          scene.playBgm(encounter.misc.bgmKey);
-          await addPokemonDataToDexAndValidateAchievements(scene, newPlayerPokemon);
-          await hideTradeBackground(scene);
+          await showTradeBackground();
+          await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
+          await showEncounterText(`${namespace}:trade_received`, null, 0, true, 4000);
+          globalScene.playBgm(encounter.misc.bgmKey);
+          await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
+          await hideTradeBackground();
           tradedPokemon.destroy();
 
-          leaveEncounterWithoutBattle(scene, true);
+          leaveEncounterWithoutBattle(true);
         })
         .build()
     )
@@ -210,32 +225,58 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withHasDexProgress(true)
         .withDialogue({
-          buttonLabel: `${namespace}.option.2.label`,
-          buttonTooltip: `${namespace}.option.2.tooltip`,
+          buttonLabel: `${namespace}:option.2.label`,
+          buttonTooltip: `${namespace}:option.2.tooltip`,
         })
-        .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withPreOptionPhase(async (): Promise<boolean> => {
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Randomly generate a Wonder Trade pokemon
-            const randomTradeOption = generateTradeOption(scene.getParty().map(p => p.species));
-            const tradePokemon = new EnemyPokemon(scene, randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
+            const randomTradeOption = generateTradeOption(globalScene.getPlayerParty().map(p => p.species));
+            const tradePokemon = new EnemyPokemon(randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
             // Extra shiny roll at 1/128 odds (boosted by events and charms)
             if (!tradePokemon.shiny) {
-              // 512/65536 -> 1/128
-              tradePokemon.trySetShinySeed(512, true);
+              const shinyThreshold = new NumberHolder(WONDER_TRADE_SHINY_CHANCE);
+              if (globalScene.eventManager.isEventActive()) {
+                shinyThreshold.value *= globalScene.eventManager.getShinyMultiplier();
+              }
+              globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+
+              // Base shiny chance of 512/65536 -> 1/128, affected by events and Shiny Charms
+              // Maximum shiny chance of 4096/65536 -> 1/16, cannot improve further after that
+              const shinyChance = Math.min(shinyThreshold.value, MAX_WONDER_TRADE_SHINY_CHANCE);
+
+              tradePokemon.trySetShinySeed(shinyChance, false);
             }
 
             // Extra HA roll at base 1/64 odds (boosted by events and charms)
-            if (pokemon.species.abilityHidden) {
-              const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
-              if (pokemon.abilityIndex < hiddenIndex) {
-                const hiddenAbilityChance = new IntegerHolder(64);
-                scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+            const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
+            if (tradePokemon.species.abilityHidden) {
+              if (tradePokemon.abilityIndex < hiddenIndex) {
+                const hiddenAbilityChance = new NumberHolder(64);
+                globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
                 const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
                 if (hasHiddenAbility) {
-                  pokemon.abilityIndex = hiddenIndex;
+                  tradePokemon.abilityIndex = hiddenIndex;
+                }
+              }
+            }
+
+            // If Pokemon is still not shiny or with HA, give the Pokemon a random Common egg move in its moveset
+            if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
+              const eggMoves = tradePokemon.getEggMoves();
+              if (eggMoves) {
+                // Cannot gen the rare egg move, only 1 of the first 3 common moves
+                const eggMove = eggMoves[randSeedInt(3)];
+                if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
+                  if (tradePokemon.moveset.length < 4) {
+                    tradePokemon.moveset.push(new PokemonMove(eggMove));
+                  } else {
+                    const eggMoveIndex = randSeedInt(4);
+                    tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
+                  }
                 }
               }
             }
@@ -246,10 +287,10 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             encounter.misc.receivedPokemon = tradePokemon;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected);
+          return selectPokemonForOption(onPokemonSelected);
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withOptionPhase(async () => {
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const tradedPokemon: PlayerPokemon = encounter.misc.tradedPokemon;
           const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
           const modifiers = tradedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier) && !(m instanceof SpeciesStatBoosterModifier));
@@ -259,31 +300,31 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
           encounter.setDialogueToken("tradeTrainerName", traderName.trim());
 
           // Remove the original party member from party
-          scene.removePokemonFromPlayerParty(tradedPokemon, false);
+          globalScene.removePokemonFromPlayerParty(tradedPokemon, false);
 
           // Set data properly, then generate the new Pokemon's assets
           receivedPokemonData.passive = tradedPokemon.passive;
           receivedPokemonData.pokeball = randInt(4) as PokeballType;
           const dataSource = new PokemonData(receivedPokemonData);
-          const newPlayerPokemon = scene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
-          scene.getParty().push(newPlayerPokemon);
+          const newPlayerPokemon = globalScene.addPlayerPokemon(receivedPokemonData.species, receivedPokemonData.level, dataSource.abilityIndex, dataSource.formIndex, dataSource.gender, dataSource.shiny, dataSource.variant, dataSource.ivs, dataSource.nature, dataSource);
+          globalScene.getPlayerParty().push(newPlayerPokemon);
           await newPlayerPokemon.loadAssets();
 
           for (const mod of modifiers) {
             mod.pokemonId = newPlayerPokemon.id;
-            scene.addModifier(mod, true, false, false, true);
+            globalScene.addModifier(mod, true, false, false, true);
           }
 
           // Show the trade animation
-          await showTradeBackground(scene);
-          await doPokemonTradeSequence(scene, tradedPokemon, newPlayerPokemon);
-          await showEncounterText(scene, `${namespace}.trade_received`, null, 0, true, 4000);
-          scene.playBgm(encounter.misc.bgmKey);
-          await addPokemonDataToDexAndValidateAchievements(scene, newPlayerPokemon);
-          await hideTradeBackground(scene);
+          await showTradeBackground();
+          await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
+          await showEncounterText(`${namespace}:trade_received`, null, 0, true, 4000);
+          globalScene.playBgm(encounter.misc.bgmKey);
+          await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
+          await hideTradeBackground();
           tradedPokemon.destroy();
 
-          leaveEncounterWithoutBattle(scene, true);
+          leaveEncounterWithoutBattle(true);
         })
         .build()
     )
@@ -291,12 +332,12 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
       MysteryEncounterOptionBuilder
         .newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
         .withDialogue({
-          buttonLabel: `${namespace}.option.3.label`,
-          buttonTooltip: `${namespace}.option.3.tooltip`,
-          secondOptionPrompt: `${namespace}.option.3.trade_options_prompt`,
+          buttonLabel: `${namespace}:option.3.label`,
+          buttonTooltip: `${namespace}:option.3.tooltip`,
+          secondOptionPrompt: `${namespace}:option.3.trade_options_prompt`,
         })
-        .withPreOptionPhase(async (scene: BattleScene): Promise<boolean> => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
+        .withPreOptionPhase(async (): Promise<boolean> => {
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
           const onPokemonSelected = (pokemon: PlayerPokemon) => {
             // Get Pokemon held items and filter for valid ones
             const validItems = pokemon.getHeldItems().filter((it) => {
@@ -310,6 +351,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
                   // Pokemon and item selected
                   encounter.setDialogueToken("chosenItem", modifier.type.name);
                   encounter.misc.chosenModifier = modifier;
+                  encounter.misc.chosenPokemon = pokemon;
                   return true;
                 },
               };
@@ -317,27 +359,28 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             });
           };
 
-          // Only Pokemon that can gain benefits are above 1/3rd HP with no status
           const selectableFilter = (pokemon: Pokemon) => {
             // If pokemon has items to trade
             const meetsReqs = pokemon.getHeldItems().filter((it) => {
               return it.isTransferable;
             }).length > 0;
             if (!meetsReqs) {
-              return getEncounterText(scene, `${namespace}.option.3.invalid_selection`) ?? null;
+              return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
             }
 
             return null;
           };
 
-          return selectPokemonForOption(scene, onPokemonSelected, undefined, selectableFilter);
+          return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
         })
-        .withOptionPhase(async (scene: BattleScene) => {
-          const encounter = scene.currentBattle.mysteryEncounter!;
-          const modifier = encounter.misc.chosenModifier;
+        .withOptionPhase(async () => {
+          const encounter = globalScene.currentBattle.mysteryEncounter!;
+          const modifier = encounter.misc.chosenModifier as PokemonHeldItemModifier;
+          const party = globalScene.getPlayerParty();
+          const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
           // Check tier of the traded item, the received item will be one tier up
-          const type = modifier.type.withTierFromPool();
+          const type = modifier.type.withTierFromPool(ModifierPoolType.PLAYER, party);
           let tier = type.tier ?? ModifierTier.GREAT;
           // Eggs and White Herb are not in the pool
           if (type.id === "WHITE_HERB") {
@@ -352,65 +395,61 @@ export const GlobalTradeSystemEncounter: MysteryEncounter =
             tier++;
           }
 
-          regenerateModifierPoolThresholds(scene.getParty(), ModifierPoolType.PLAYER, 0);
+          regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, 0);
           let item: ModifierTypeOption | null = null;
           // TMs excluded from possible rewards
           while (!item || item.type.id.includes("TM_")) {
-            item = getPlayerModifierTypeOptions(1, scene.getParty(), [], { guaranteedModifierTiers: [tier], allowLuckUpgrades: false })[0];
+            item = getPlayerModifierTypeOptions(1, party, [], { guaranteedModifierTiers: [ tier ], allowLuckUpgrades: false })[0];
           }
 
           encounter.setDialogueToken("itemName", item.type.name);
-          setEncounterRewards(scene, { guaranteedModifierTypeOptions: [item], fillRemaining: false });
+          setEncounterRewards({ guaranteedModifierTypeOptions: [ item ], fillRemaining: false });
 
-          // Remove the chosen modifier if its stacks go to 0
-          modifier.stackCount -= 1;
-          if (modifier.stackCount === 0) {
-            scene.removeModifier(modifier);
-          }
-          scene.updateModifiers(true, true);
+          chosenPokemon.loseHeldItem(modifier, false);
+          await globalScene.updateModifiers(true, true);
 
           // Generate a trainer name
           const traderName = generateRandomTraderName();
           encounter.setDialogueToken("tradeTrainerName", traderName.trim());
-          await showEncounterText(scene, `${namespace}.item_trade_selected`);
-          leaveEncounterWithoutBattle(scene);
+          await showEncounterText(`${namespace}:item_trade_selected`);
+          leaveEncounterWithoutBattle();
         })
         .build()
     )
     .withSimpleOption(
       {
-        buttonLabel: `${namespace}.option.4.label`,
-        buttonTooltip: `${namespace}.option.4.tooltip`,
+        buttonLabel: `${namespace}:option.4.label`,
+        buttonTooltip: `${namespace}:option.4.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.4.selected`,
+            text: `${namespace}:option.4.selected`,
           },
         ],
       },
-      async (scene: BattleScene) => {
+      async () => {
         // Leave encounter with no rewards or exp
-        leaveEncounterWithoutBattle(scene, true);
+        leaveEncounterWithoutBattle(true);
         return true;
       }
     )
     .build();
 
-function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]> {
+function getPokemonTradeOptions(): Map<number, EnemyPokemon[]> {
   const tradeOptionsMap: Map<number, EnemyPokemon[]> = new Map<number, EnemyPokemon[]>();
   // Starts by filtering out any current party members as valid resulting species
-  const alreadyUsedSpecies: PokemonSpecies[] = scene.getParty().map(p => p.species);
+  const alreadyUsedSpecies: PokemonSpecies[] = globalScene.getPlayerParty().map(p => p.species);
 
-  scene.getParty().forEach(pokemon => {
+  globalScene.getPlayerParty().forEach(pokemon => {
     // If the party member is legendary/mythical, the only trade options available are always pulled from generation-specific legendary trade pools
     if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
       const generation = pokemon.species.generation;
       const tradeOptions: EnemyPokemon[] = LEGENDARY_TRADE_POOLS[generation].map(s => {
         const pokemonSpecies = getPokemonSpecies(s);
-        return new EnemyPokemon(scene, pokemonSpecies, 5, TrainerSlot.NONE, false);
+        return new EnemyPokemon(pokemonSpecies, 5, TrainerSlot.NONE, false);
       });
       tradeOptionsMap.set(pokemon.id, tradeOptions);
     } else {
-      const originalBst = pokemon.calculateBaseStats().reduce((a, b) => a + b, 0);
+      const originalBst = pokemon.getSpeciesForm().getBaseStatTotal();
 
       const tradeOptions: PokemonSpecies[] = [];
       for (let i = 0; i < 3; i++) {
@@ -421,7 +460,7 @@ function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]>
 
       // Add trade options to map
       tradeOptionsMap.set(pokemon.id, tradeOptions.map(s => {
-        return new EnemyPokemon(scene, s, pokemon.level, TrainerSlot.NONE, false);
+        return new EnemyPokemon(s, pokemon.level, TrainerSlot.NONE, false);
       }));
     }
   });
@@ -431,14 +470,13 @@ function getPokemonTradeOptions(scene: BattleScene): Map<number, EnemyPokemon[]>
 
 function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?: number): PokemonSpecies {
   let newSpecies: PokemonSpecies | undefined;
+  let bstCap = 9999;
+  let bstMin = 0;
+  if (originalBst) {
+    bstCap = originalBst + 100;
+    bstMin = originalBst - 100;
+  }
   while (isNullOrUndefined(newSpecies)) {
-    let bstCap = 9999;
-    let bstMin = 0;
-    if (originalBst) {
-      bstCap = originalBst + 100;
-      bstMin = originalBst - 100;
-    }
-
     // Get all non-legendary species that fall within the Bst range requirements
     let validSpecies = allSpecies
       .filter(s => {
@@ -452,7 +490,7 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
     if (validSpecies?.length > 20) {
       validSpecies = randSeedShuffle(validSpecies);
       newSpecies = validSpecies.pop();
-      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies!)) {
+      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies)) {
         newSpecies = validSpecies.pop();
       }
     } else {
@@ -465,28 +503,28 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
   return newSpecies!;
 }
 
-function showTradeBackground(scene: BattleScene) {
+function showTradeBackground() {
   return new Promise<void>(resolve => {
-    const tradeContainer = scene.add.container(0, -scene.game.canvas.height / 6);
+    const tradeContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
     tradeContainer.setName("Trade Background");
 
-    const flyByStaticBg = scene.add.rectangle(0, 0, scene.game.canvas.width / 6, scene.game.canvas.height / 6, 0);
+    const flyByStaticBg = globalScene.add.rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6, 0);
     flyByStaticBg.setName("Black Background");
     flyByStaticBg.setOrigin(0, 0);
     flyByStaticBg.setVisible(false);
     tradeContainer.add(flyByStaticBg);
 
-    const tradeBaseBg = scene.add.image(0, 0, "default_bg");
+    const tradeBaseBg = globalScene.add.image(0, 0, "default_bg");
     tradeBaseBg.setName("Trade Background Image");
     tradeBaseBg.setOrigin(0, 0);
     tradeContainer.add(tradeBaseBg);
 
-    scene.fieldUI.add(tradeContainer);
-    scene.fieldUI.bringToTop(tradeContainer);
+    globalScene.fieldUI.add(tradeContainer);
+    globalScene.fieldUI.bringToTop(tradeContainer);
     tradeContainer.setVisible(true);
     tradeContainer.alpha = 0;
 
-    scene.tweens.add({
+    globalScene.tweens.add({
       targets: tradeContainer,
       alpha: 1,
       duration: 500,
@@ -498,17 +536,17 @@ function showTradeBackground(scene: BattleScene) {
   });
 }
 
-function hideTradeBackground(scene: BattleScene) {
+function hideTradeBackground() {
   return new Promise<void>(resolve => {
-    const transformationContainer = scene.fieldUI.getByName("Trade Background");
+    const transformationContainer = globalScene.fieldUI.getByName("Trade Background");
 
-    scene.tweens.add({
+    globalScene.tweens.add({
       targets: transformationContainer,
       alpha: 0,
       duration: 1000,
       ease: "Sine.easeInOut",
       onComplete: () => {
-        scene.fieldUI.remove(transformationContainer, true);
+        globalScene.fieldUI.remove(transformationContainer, true);
         resolve();
       }
     });
@@ -517,13 +555,12 @@ function hideTradeBackground(scene: BattleScene) {
 
 /**
  * Initiates an "evolution-like" animation to transform a previousPokemon (presumably from the player's party) into a new one, not necessarily an evolution species.
- * @param scene
  * @param tradedPokemon
  * @param receivedPokemon
  */
-function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon, receivedPokemon: PlayerPokemon) {
+function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: PlayerPokemon) {
   return new Promise<void>(resolve => {
-    const tradeContainer = scene.fieldUI.getByName("Trade Background") as Phaser.GameObjects.Container;
+    const tradeContainer = globalScene.fieldUI.getByName("Trade Background") as Phaser.GameObjects.Container;
     const tradeBaseBg = tradeContainer.getByName("Trade Background Image") as Phaser.GameObjects.Image;
 
     let tradedPokemonSprite: Phaser.GameObjects.Sprite;
@@ -532,8 +569,8 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
     let receivedPokemonTintSprite: Phaser.GameObjects.Sprite;
 
     const getPokemonSprite = () => {
-      const ret = scene.addPokemonSprite(tradedPokemon, tradeBaseBg.displayWidth / 2, tradeBaseBg.displayHeight / 2, "pkmn__sub");
-      ret.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
+      const ret = globalScene.addPokemonSprite(tradedPokemon, tradeBaseBg.displayWidth / 2, tradeBaseBg.displayHeight / 2, "pkmn__sub");
+      ret.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
       return ret;
     };
 
@@ -550,8 +587,14 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
     receivedPokemonTintSprite.setTintFill(getPokeballTintColor(receivedPokemon.pokeball));
 
     [ tradedPokemonSprite, tradedPokemonTintSprite ].map(sprite => {
-      sprite.play(tradedPokemon.getSpriteKey(true));
-      sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(tradedPokemon.getTeraType()) });
+      const spriteKey = tradedPokemon.getSpriteKey(true);
+      try {
+        sprite.play(spriteKey);
+      } catch (err: unknown) {
+        console.error(`Failed to play animation for ${spriteKey}`, err);
+      }
+
+      sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(tradedPokemon.getTeraType()), isTerastallized: tradedPokemon.isTerastallized });
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", tradedPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", tradedPokemon.shiny);
@@ -565,8 +608,14 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
     });
 
     [ receivedPokemonSprite, receivedPokemonTintSprite ].map(sprite => {
-      sprite.play(receivedPokemon.getSpriteKey(true));
-      sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(tradedPokemon.getTeraType()) });
+      const spriteKey = receivedPokemon.getSpriteKey(true);
+      try {
+        sprite.play(spriteKey);
+      } catch (err: unknown) {
+        console.error(`Failed to play animation for ${spriteKey}`, err);
+      }
+
+      sprite.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(tradedPokemon.getTeraType()), isTerastallized: tradedPokemon.isTerastallized });
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", receivedPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", receivedPokemon.shiny);
@@ -581,46 +630,46 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
 
     // Traded pokemon pokeball
     const tradedPbAtlasKey = getPokeballAtlasKey(tradedPokemon.pokeball);
-    const tradedPokeball: Phaser.GameObjects.Sprite = scene.add.sprite(tradeBaseBg.displayWidth / 2, tradeBaseBg.displayHeight / 2, "pb", tradedPbAtlasKey);
+    const tradedPokeball: Phaser.GameObjects.Sprite = globalScene.add.sprite(tradeBaseBg.displayWidth / 2, tradeBaseBg.displayHeight / 2, "pb", tradedPbAtlasKey);
     tradedPokeball.setVisible(false);
     tradeContainer.add(tradedPokeball);
 
     // Received pokemon pokeball
     const receivedPbAtlasKey = getPokeballAtlasKey(receivedPokemon.pokeball);
-    const receivedPokeball: Phaser.GameObjects.Sprite = scene.add.sprite(tradeBaseBg.displayWidth / 2, tradeBaseBg.displayHeight / 2, "pb", receivedPbAtlasKey);
+    const receivedPokeball: Phaser.GameObjects.Sprite = globalScene.add.sprite(tradeBaseBg.displayWidth / 2, tradeBaseBg.displayHeight / 2, "pb", receivedPbAtlasKey);
     receivedPokeball.setVisible(false);
     tradeContainer.add(receivedPokeball);
 
-    scene.tweens.add({
+    globalScene.tweens.add({
       targets: tradedPokemonSprite,
       alpha: 1,
       ease: "Cubic.easeInOut",
       duration: 500,
       onComplete: async () => {
-        scene.fadeOutBgm(1000, false);
-        await showEncounterText(scene, `${namespace}.pokemon_trade_selected`);
+        globalScene.fadeOutBgm(1000, false);
+        await showEncounterText(`${namespace}:pokemon_trade_selected`);
         tradedPokemon.cry();
-        scene.playBgm("evolution");
-        await showEncounterText(scene, `${namespace}.pokemon_trade_goodbye`);
+        globalScene.playBgm("evolution");
+        await showEncounterText(`${namespace}:pokemon_trade_goodbye`);
 
         tradedPokeball.setAlpha(0);
         tradedPokeball.setVisible(true);
-        scene.tweens.add({
+        globalScene.tweens.add({
           targets: tradedPokeball,
           alpha: 1,
           ease: "Cubic.easeInOut",
           duration: 250,
           onComplete: () => {
             tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}_opening`);
-            scene.time.delayedCall(17, () => tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}_open`));
-            scene.playSound("se/pb_rel");
+            globalScene.time.delayedCall(17, () => tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}_open`));
+            globalScene.playSound("se/pb_rel");
             tradedPokemonTintSprite.setVisible(true);
 
             // TODO: need to add particles to fieldUI instead of field
-            // addPokeballOpenParticles(scene, tradedPokemon.x, tradedPokemon.y, tradedPokemon.pokeball);
+            // addPokeballOpenParticles(tradedPokemon.x, tradedPokemon.y, tradedPokemon.pokeball);
 
-            scene.tweens.add({
-              targets: [tradedPokemonTintSprite, tradedPokemonSprite],
+            globalScene.tweens.add({
+              targets: [ tradedPokemonTintSprite, tradedPokemonSprite ],
               duration: 500,
               ease: "Sine.easeIn",
               scale: 0.25,
@@ -628,30 +677,30 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
                 tradedPokemonSprite.setVisible(false);
                 tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}_opening`);
                 tradedPokemonTintSprite.setVisible(false);
-                scene.playSound("se/pb_catch");
-                scene.time.delayedCall(17, () => tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}`));
+                globalScene.playSound("se/pb_catch");
+                globalScene.time.delayedCall(17, () => tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}`));
 
-                scene.tweens.add({
+                globalScene.tweens.add({
                   targets: tradedPokeball,
                   y: "+=10",
                   duration: 200,
                   delay: 250,
                   ease: "Cubic.easeIn",
                   onComplete: () => {
-                    scene.playSound("se/pb_bounce_1");
+                    globalScene.playSound("se/pb_bounce_1");
 
-                    scene.tweens.add({
+                    globalScene.tweens.add({
                       targets: tradedPokeball,
                       y: "-=100",
                       duration: 200,
                       delay: 1000,
                       ease: "Cubic.easeInOut",
                       onStart: () => {
-                        scene.playSound("se/pb_throw");
+                        globalScene.playSound("se/pb_throw");
                       },
                       onComplete: async () => {
-                        await doPokemonTradeFlyBySequence(scene, tradedPokemonSprite, receivedPokemonSprite);
-                        await doTradeReceivedSequence(scene, receivedPokemon, receivedPokemonSprite, receivedPokemonTintSprite, receivedPokeball, receivedPbAtlasKey);
+                        await doPokemonTradeFlyBySequence(tradedPokemonSprite, receivedPokemonSprite);
+                        await doTradeReceivedSequence(receivedPokemon, receivedPokemonSprite, receivedPokemonTintSprite, receivedPokeball, receivedPbAtlasKey);
                         resolve();
                       }
                     });
@@ -666,9 +715,9 @@ function doPokemonTradeSequence(scene: BattleScene, tradedPokemon: PlayerPokemon
   });
 }
 
-function doPokemonTradeFlyBySequence(scene: BattleScene, tradedPokemonSprite: Phaser.GameObjects.Sprite, receivedPokemonSprite: Phaser.GameObjects.Sprite) {
+function doPokemonTradeFlyBySequence(tradedPokemonSprite: Phaser.GameObjects.Sprite, receivedPokemonSprite: Phaser.GameObjects.Sprite) {
   return new Promise<void>(resolve => {
-    const tradeContainer = scene.fieldUI.getByName("Trade Background") as Phaser.GameObjects.Container;
+    const tradeContainer = globalScene.fieldUI.getByName("Trade Background") as Phaser.GameObjects.Container;
     const tradeBaseBg = tradeContainer.getByName("Trade Background Image") as Phaser.GameObjects.Image;
     const flyByStaticBg = tradeContainer.getByName("Black Background") as Phaser.GameObjects.Rectangle;
     flyByStaticBg.setVisible(true);
@@ -689,47 +738,47 @@ function doPokemonTradeFlyBySequence(scene: BattleScene, tradedPokemonSprite: Ph
     const BASE_ANIM_DURATION = 1000;
 
     // Fade out trade background
-    scene.tweens.add({
+    globalScene.tweens.add({
       targets: tradeBaseBg,
       alpha: 0,
       ease: "Cubic.easeInOut",
       duration: FADE_DELAY,
       onComplete: () => {
-        scene.tweens.add({
-          targets: [receivedPokemonSprite, tradedPokemonSprite],
+        globalScene.tweens.add({
+          targets: [ receivedPokemonSprite, tradedPokemonSprite ],
           y: tradeBaseBg.displayWidth / 2 - 100,
           ease: "Cubic.easeInOut",
           duration: BASE_ANIM_DURATION * 3,
           onComplete: () => {
-            scene.tweens.add({
+            globalScene.tweens.add({
               targets: receivedPokemonSprite,
               x: tradeBaseBg.displayWidth / 4,
               ease: "Cubic.easeInOut",
               duration: BASE_ANIM_DURATION / 2,
               delay: ANIM_DELAY
             });
-            scene.tweens.add({
+            globalScene.tweens.add({
               targets: tradedPokemonSprite,
               x: tradeBaseBg.displayWidth * 3 / 4,
               ease: "Cubic.easeInOut",
               duration: BASE_ANIM_DURATION / 2,
               delay: ANIM_DELAY,
               onComplete: () => {
-                scene.tweens.add({
+                globalScene.tweens.add({
                   targets: receivedPokemonSprite,
                   y: "+=200",
                   ease: "Cubic.easeInOut",
                   duration: BASE_ANIM_DURATION * 2,
                   delay: ANIM_DELAY,
                 });
-                scene.tweens.add({
+                globalScene.tweens.add({
                   targets: tradedPokemonSprite,
                   y: "-=200",
                   ease: "Cubic.easeInOut",
                   duration: BASE_ANIM_DURATION * 2,
                   delay: ANIM_DELAY,
                   onComplete: () => {
-                    scene.tweens.add({
+                    globalScene.tweens.add({
                       targets: tradeBaseBg,
                       alpha: 1,
                       ease: "Cubic.easeInOut",
@@ -749,9 +798,9 @@ function doPokemonTradeFlyBySequence(scene: BattleScene, tradedPokemonSprite: Ph
   });
 }
 
-function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPokemon, receivedPokemonSprite: Phaser.GameObjects.Sprite, receivedPokemonTintSprite: Phaser.GameObjects.Sprite, receivedPokeballSprite: Phaser.GameObjects.Sprite, receivedPbAtlasKey: string) {
+function doTradeReceivedSequence(receivedPokemon: PlayerPokemon, receivedPokemonSprite: Phaser.GameObjects.Sprite, receivedPokemonTintSprite: Phaser.GameObjects.Sprite, receivedPokeballSprite: Phaser.GameObjects.Sprite, receivedPbAtlasKey: string) {
   return new Promise<void>(resolve => {
-    const tradeContainer = scene.fieldUI.getByName("Trade Background") as Phaser.GameObjects.Container;
+    const tradeContainer = globalScene.fieldUI.getByName("Trade Background") as Phaser.GameObjects.Container;
     const tradeBaseBg = tradeContainer.getByName("Trade Background Image") as Phaser.GameObjects.Image;
 
     receivedPokemonSprite.setVisible(false);
@@ -765,22 +814,30 @@ function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPoke
     receivedPokeballSprite.x = tradeBaseBg.displayWidth / 2;
     receivedPokeballSprite.y = tradeBaseBg.displayHeight / 2 - 100;
 
+    // Received pokemon sparkles
+    let pokemonShinySparkle: Phaser.GameObjects.Sprite;
+    if (receivedPokemon.shiny) {
+      pokemonShinySparkle = globalScene.add.sprite(receivedPokemonSprite.x, receivedPokemonSprite.y, "shiny");
+      pokemonShinySparkle.setVisible(false);
+      tradeContainer.add(pokemonShinySparkle);
+    }
+
     const BASE_ANIM_DURATION = 1000;
 
     // Pokeball falls to the screen
-    scene.playSound("se/pb_throw");
-    scene.tweens.add({
+    globalScene.playSound("se/pb_throw");
+    globalScene.tweens.add({
       targets: receivedPokeballSprite,
       y: "+=100",
       ease: "Cubic.easeInOut",
       duration: BASE_ANIM_DURATION,
       onComplete: () => {
-        scene.playSound("se/pb_bounce_1");
-        scene.time.delayedCall(100, () => scene.playSound("se/pb_bounce_1"));
+        globalScene.playSound("se/pb_bounce_1");
+        globalScene.time.delayedCall(100, () => globalScene.playSound("se/pb_bounce_1"));
 
-        scene.time.delayedCall(2000, () => {
-          scene.playSound("se/pb_rel");
-          scene.fadeOutBgm(500, false);
+        globalScene.time.delayedCall(2000, () => {
+          globalScene.playSound("se/pb_rel");
+          globalScene.fadeOutBgm(500, false);
           receivedPokemon.cry();
           receivedPokemonTintSprite.scale = 0.25;
           receivedPokemonTintSprite.alpha = 1;
@@ -789,22 +846,27 @@ function doTradeReceivedSequence(scene: BattleScene, receivedPokemon: PlayerPoke
           receivedPokemonTintSprite.alpha = 1;
           receivedPokemonTintSprite.setVisible(true);
           receivedPokeballSprite.setTexture("pb", `${receivedPbAtlasKey}_opening`);
-          scene.time.delayedCall(17, () => receivedPokeballSprite.setTexture("pb", `${receivedPbAtlasKey}_open`));
-          scene.tweens.add({
+          globalScene.time.delayedCall(17, () => receivedPokeballSprite.setTexture("pb", `${receivedPbAtlasKey}_open`));
+          globalScene.tweens.add({
             targets: receivedPokemonSprite,
             duration: 250,
             ease: "Sine.easeOut",
             scale: 1
           });
-          scene.tweens.add({
+          globalScene.tweens.add({
             targets: receivedPokemonTintSprite,
             duration: 250,
             ease: "Sine.easeOut",
             scale: 1,
             alpha: 0,
             onComplete: () => {
+              if (receivedPokemon.shiny) {
+                globalScene.time.delayedCall(500, () => {
+                  doShinySparkleAnim(pokemonShinySparkle, receivedPokemon.variant);
+                });
+              }
               receivedPokeballSprite.destroy();
-              scene.time.delayedCall(2000, () => resolve());
+              globalScene.time.delayedCall(2000, () => resolve());
             }
           });
         });

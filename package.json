@@ -1,7 +1,7 @@
 {
 	"name": "pokemon-rogue-battle",
 	"private": true,
-	"version": "1.0.4",
+	"version": "1.7.0",
 	"type": "module",
 	"scripts": {
 		"start": "vite",
@@ -19,7 +19,11 @@
 		"docs": "typedoc",
 		"depcruise": "depcruise src",
 		"depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg",
-		"create-test": "node ./create-test-boilerplate.js"
+		"create-test": "node ./create-test-boilerplate.js",
+		"postinstall": "npx lefthook install && npx lefthook run post-merge",
+		"update-version:patch": "npm version patch --force --no-git-tag-version",
+		"update-version:minor": "npm version minor --force --no-git-tag-version",
+		"update-locales:remote": "git submodule update --progress --init --recursive --force --remote"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
@@ -29,19 +33,21 @@
 		"@types/node": "^20.12.13",
 		"@typescript-eslint/eslint-plugin": "^8.0.0-alpha.54",
 		"@typescript-eslint/parser": "^8.0.0-alpha.54",
-		"@vitest/coverage-istanbul": "^2.0.4",
+		"@vitest/coverage-istanbul": "^2.1.9",
 		"dependency-cruiser": "^16.3.10",
 		"eslint": "^9.7.0",
 		"eslint-plugin-import-x": "^4.2.1",
+		"inquirer": "^11.0.2",
 		"jsdom": "^24.0.0",
 		"lefthook": "^1.6.12",
+		"msw": "^2.4.9",
 		"phaser3spectorjs": "^0.0.8",
 		"typedoc": "^0.26.4",
 		"typescript": "^5.5.3",
 		"typescript-eslint": "^8.0.0-alpha.54",
-		"vite": "^5.3.5",
+		"vite": "^5.4.14",
 		"vite-tsconfig-paths": "^4.3.2",
-		"vitest": "^2.0.4",
+		"vitest": "^2.1.9",
 		"vitest-canvas-mock": "^0.3.3"
 	},
 	"dependencies": {
@@ -49,18 +55,14 @@
 		"crypto-js": "^4.2.0",
 		"i18next": "^23.11.1",
 		"i18next-browser-languagedetector": "^7.2.1",
+		"i18next-http-backend": "^2.6.1",
 		"i18next-korean-postposition-processor": "^1.0.0",
 		"json-stable-stringify": "^1.1.0",
+		"jszip": "^3.10.1",
 		"phaser": "^3.70.0",
 		"phaser3-rex-plugins": "^1.1.84"
 	},
 	"engines": {
 		"node": ">=20.0.0"
-	},
-	"imports": {
-		"#enums/*": "./enums/*",
-		"#app": "./src/main.js",
-		"#app/*": "./src/*",
-		"#test/*": "./src/test/*"
 	}
 }

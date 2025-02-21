@@ -1,66 +1,77 @@
 import { BattleType } from "../battle";
-import BattleScene from "../battle-scene";
-import { Gender } from "../data/gender";
-import { Nature } from "../data/nature";
-import { PokeballType } from "../data/pokeball";
+import { globalScene } from "#app/global-scene";
+import type { Gender } from "../data/gender";
+import type { Nature } from "#enums/nature";
+import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "../data/trainer-config";
-import { Variant } from "#app/data/variant";
+import type { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
-import { Biome } from "#enums/biome";
+import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import { MysteryEncounterPokemonData } from "#app/data/mystery-encounters/mystery-encounter-pokemon-data";
+import type { Species } from "#enums/species";
+import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import type { Type } from "#app/enums/type";
 
 export default class PokemonData {
-  public id: integer;
+  public id: number;
   public player: boolean;
   public species: Species;
   public nickname: string;
-  public formIndex: integer;
-  public abilityIndex: integer;
+  public formIndex: number;
+  public abilityIndex: number;
   public passive: boolean;
   public shiny: boolean;
   public variant: Variant;
   public pokeball: PokeballType;
-  public level: integer;
-  public exp: integer;
-  public levelExp: integer;
+  public level: number;
+  public exp: number;
+  public levelExp: number;
   public gender: Gender;
-  public hp: integer;
-  public stats: integer[];
-  public ivs: integer[];
+  public hp: number;
+  public stats: number[];
+  public ivs: number[];
   public nature: Nature;
-  public natureOverride: Nature | -1;
   public moveset: (PokemonMove | null)[];
   public status: Status | null;
-  public friendship: integer;
-  public metLevel: integer;
+  public friendship: number;
+  public metLevel: number;
   public metBiome: Biome | -1;        // -1 for starters
   public metSpecies: Species;
   public metWave: number;            // 0 for unknown (previous saves), -1 for starters
-  public luck: integer;
+  public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public usedTMs: Moves[];
-  public evoCounter: integer;
+  public evoCounter: number;
+  public teraType: Type;
+  public isTerastallized: boolean;
+  public stellarTypesBoosted: Type[];
 
   public fusionSpecies: Species;
-  public fusionFormIndex: integer;
-  public fusionAbilityIndex: integer;
+  public fusionFormIndex: number;
+  public fusionAbilityIndex: number;
   public fusionShiny: boolean;
   public fusionVariant: Variant;
   public fusionGender: Gender;
-  public fusionLuck: integer;
+  public fusionLuck: number;
+  public fusionTeraType: Type;
 
   public boss: boolean;
-  public bossSegments?: integer;
+  public bossSegments?: number;
 
   public summonData: PokemonSummonData;
+
   /** Data that can customize a Pokemon in non-standard ways from its Species */
-  public mysteryEncounterPokemonData: MysteryEncounterPokemonData;
+  public customPokemonData: CustomPokemonData;
+  public fusionCustomPokemonData: CustomPokemonData;
+
+  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments)
+  public natureOverride: Nature | -1;
+  public mysteryEncounterPokemonData: CustomPokemonData | null;
+  public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
   constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
@@ -86,7 +97,6 @@ export default class PokemonData {
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
-    this.natureOverride = source.natureOverride !== undefined ? source.natureOverride : -1;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
@@ -98,6 +108,9 @@ export default class PokemonData {
       this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
+    this.teraType = source.teraType as Type;
+    this.isTerastallized = source.isTerastallized || false;
+    this.stellarTypesBoosted = source.stellarTypesBoosted || [];
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
@@ -106,9 +119,16 @@ export default class PokemonData {
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
+    this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
+    this.fusionTeraType = (source.fusionTeraType ?? 0) as Type;
     this.usedTMs = source.usedTMs ?? [];
 
-    this.mysteryEncounterPokemonData = new MysteryEncounterPokemonData(source.mysteryEncounterPokemonData);
+    this.customPokemonData = new CustomPokemonData(source.customPokemonData);
+
+    // Deprecated, but needed for session data migration
+    this.natureOverride = source.natureOverride;
+    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData ? new CustomPokemonData(source.mysteryEncounterPokemonData) : null;
+    this.fusionMysteryEncounterPokemonData = source.fusionMysteryEncounterPokemonData ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData) : null;
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -124,10 +144,10 @@ export default class PokemonData {
         }
       }
     } else {
-      this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+      this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
       if (!forHistory) {
         this.status = source.status
-          ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
+          ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
           : null;
       }
 
@@ -152,15 +172,15 @@ export default class PokemonData {
     }
   }
 
-  toPokemon(scene: BattleScene, battleType?: BattleType, partyMemberIndex: integer = 0, double: boolean = false): Pokemon {
+  toPokemon(battleType?: BattleType, partyMemberIndex: number = 0, double: boolean = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
-      ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
+      ? globalScene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
         if (this.nickname) {
           playerPokemon.nickname = this.nickname;
         }
       })
-      : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
+      : globalScene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, false, this);
     if (this.summonData) {
       ret.primeSummonData(this.summonData);
     }

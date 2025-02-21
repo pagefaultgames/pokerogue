@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import { Species } from "#enums/species";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 
 describe("Mystery Encounters", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +29,7 @@ describe("Mystery Encounters", () => {
   });
 
   it("Spawns a mystery encounter", async () => {
-    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [Species.CHARIZARD, Species.VOLCARONA]);
+    await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [ Species.CHARIZARD, Species.VOLCARONA ]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);

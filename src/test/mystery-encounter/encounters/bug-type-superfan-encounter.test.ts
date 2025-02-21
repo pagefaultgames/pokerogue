@@ -6,7 +6,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -21,8 +21,8 @@ import * as encounterPhaseUtils from "#app/data/mystery-encounters/utils/encount
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 
-const namespace = "mysteryEncounter:bugTypeSuperfan";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.WEEDLE];
+const namespace = "mysteryEncounters/bugTypeSuperfan";
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.WEEDLE ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 24;
 
@@ -169,7 +169,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.BUG_TYPE_SUPERFAN]],
+        [ Biome.CAVE, [ MysteryEncounterType.BUG_TYPE_SUPERFAN ]],
       ])
     );
   });
@@ -188,16 +188,16 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     expect(BugTypeSuperfanEncounter.dialogue).toBeDefined();
     expect(BugTypeSuperfanEncounter.dialogue.intro).toStrictEqual([
       {
-        text: `${namespace}.intro`,
+        text: `${namespace}:intro`,
       },
       {
-        speaker: `${namespace}.speaker`,
-        text: `${namespace}.intro_dialogue`,
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue`,
       },
     ]);
-    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(BugTypeSuperfanEncounter.options.length).toBe(3);
   });
 
@@ -209,8 +209,8 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
     expect(BugTypeSuperfanEncounter.onInit).toBeDefined();
 
-    BugTypeSuperfanEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    BugTypeSuperfanEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
     const config = BugTypeSuperfanEncounter.enemyPartyConfigs[0];
 
     expect(config).toBeDefined();
@@ -226,12 +226,12 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.1.selected`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -384,7 +384,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await game.phaseInterceptor.run(MysteryEncounterRewardsPhase);
 
       expect(selectOptionSpy).toHaveBeenCalledTimes(1);
-      const optionData = selectOptionSpy.mock.calls[0][1];
+      const optionData = selectOptionSpy.mock.calls[0][0];
       expect(PHYSICAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[0].label)).toBe(true);
       expect(SPECIAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[1].label)).toBe(true);
       expect(STATUS_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[2].label)).toBe(true);
@@ -398,14 +398,14 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`
       });
     });
 
     it("should NOT be selectable if the player doesn't have any Bug types", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.ABRA]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.ABRA ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -438,7 +438,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should proceed to rewards screen with 2-3 Bug Types reward options", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE, Species.BEEDRILL]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE, Species.BEEDRILL ]);
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
@@ -453,7 +453,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should proceed to rewards screen with 4-5 Bug Types reward options", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE, Species.BEEDRILL, Species.GALVANTULA, Species.VOLCARONA]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE, Species.BEEDRILL, Species.GALVANTULA, Species.VOLCARONA ]);
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
@@ -468,7 +468,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should proceed to rewards screen with 6 Bug Types reward options (including form change item)", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE, Species.BEEDRILL, Species.GALVANTULA, Species.VOLCARONA, Species.ANORITH, Species.GENESECT]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE, Species.BEEDRILL, Species.GALVANTULA, Species.VOLCARONA, Species.ANORITH, Species.GENESECT ]);
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
@@ -476,10 +476,11 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(3);
+      expect(modifierSelectHandler.options.length).toEqual(4);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MASTER_BALL");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toBe("MAX_LURE");
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toBe("FORM_CHANGE_ITEM");
+      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toBe("MEGA_BRACELET");
+      expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toBe("DYNAMAX_BAND");
+      expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toBe("FORM_CHANGE_ITEM");
     });
 
     it("should leave encounter without battle", async () => {
@@ -498,19 +499,19 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.3.label`,
-        buttonTooltip: `${namespace}.option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.3.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.3.selected`,
+            text: `${namespace}:option.3.selected`,
           },
           {
-            speaker: `${namespace}.speaker`,
-            text: `${namespace}.option.3.selected_dialogue`,
+            speaker: `${namespace}:speaker`,
+            text: `${namespace}:option.3.selected_dialogue`,
           },
         ],
-        secondOptionPrompt: `${namespace}.option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
       });
     });
 
@@ -536,8 +537,8 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should remove the gifted item and proceed to rewards screen", async () => {
-      game.override.startingHeldItems([{name: "GRIP_CLAW", count: 1}]);
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE]);
+      game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE ]);
 
       const gripClawCountBefore = scene.findModifier(m => m instanceof ContactHeldItemTransferChanceModifier)?.stackCount ?? 0;
 
@@ -557,10 +558,10 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should leave encounter without battle", async () => {
-      game.override.startingHeldItems([{name: "GRIP_CLAW", count: 1}]);
+      game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(encounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [ Species.BUTTERFREE ]);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

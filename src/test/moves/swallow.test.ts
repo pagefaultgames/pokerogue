@@ -1,7 +1,8 @@
 import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { MoveResult, TurnMove } from "#app/field/pokemon";
+import type { TurnMove } from "#app/field/pokemon";
+import { MoveResult } from "#app/field/pokemon";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { Abilities } from "#enums/abilities";
@@ -33,16 +34,16 @@ describe("Moves - Swallow", () => {
     game.override.enemyAbility(Abilities.NONE);
     game.override.enemyLevel(2000);
 
-    game.override.moveset([Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW]);
+    game.override.moveset([ Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW ]);
     game.override.ability(Abilities.NONE);
   });
 
   describe("consumes all stockpile stacks to heal (scaling with stacks)", () => {
-    it("1 stack -> 25% heal", { timeout: 10000 }, async () => {
+    it("1 stack -> 25% heal", async () => {
       const stacksToSetup = 1;
       const expectedHeal = 25;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -65,11 +66,11 @@ describe("Moves - Swallow", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("2 stacks -> 50% heal", { timeout: 10000 }, async () => {
+    it("2 stacks -> 50% heal", async () => {
       const stacksToSetup = 2;
       const expectedHeal = 50;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -93,11 +94,11 @@ describe("Moves - Swallow", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("3 stacks -> 100% heal", { timeout: 10000 }, async () => {
+    it("3 stacks -> 100% heal", async () => {
       const stacksToSetup = 3;
       const expectedHeal = 100;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -123,8 +124,8 @@ describe("Moves - Swallow", () => {
     });
   });
 
-  it("fails without stacks", { timeout: 10000 }, async () => {
-    await game.startBattle([Species.ABOMASNOW]);
+  it("fails without stacks", async () => {
+    await game.startBattle([ Species.ABOMASNOW ]);
 
     const pokemon = game.scene.getPlayerPokemon()!;
 
@@ -134,12 +135,12 @@ describe("Moves - Swallow", () => {
     game.move.select(Moves.SWALLOW);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SWALLOW, result: MoveResult.FAIL });
+    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SWALLOW, result: MoveResult.FAIL, targets: [ pokemon.getBattlerIndex() ]});
   });
 
   describe("restores stat stage boosts granted by stacks", () => {
-    it("decreases stats based on stored values (both boosts equal)", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+    it("decreases stats based on stored values (both boosts equal)", async () => {
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -155,7 +156,7 @@ describe("Moves - Swallow", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SWALLOW, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SWALLOW, result: MoveResult.SUCCESS, targets: [ pokemon.getBattlerIndex() ]});
 
       expect(pokemon.getStatStage(Stat.DEF)).toBe(0);
       expect(pokemon.getStatStage(Stat.SPDEF)).toBe(0);
@@ -163,8 +164,8 @@ describe("Moves - Swallow", () => {
       expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
-    it("lower stat stages based on stored values (different boosts)", { timeout: 10000 }, async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+    it("lower stat stages based on stored values (different boosts)", async () => {
+      await game.startBattle([ Species.ABOMASNOW ]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -182,7 +183,7 @@ describe("Moves - Swallow", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SWALLOW, result: MoveResult.SUCCESS });
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SWALLOW, result: MoveResult.SUCCESS, targets: [ pokemon.getBattlerIndex() ]});
 
       expect(pokemon.getStatStage(Stat.DEF)).toBe(1);
       expect(pokemon.getStatStage(Stat.SPDEF)).toBe(-2);

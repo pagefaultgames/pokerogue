@@ -1,14 +1,14 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { trainerConfigs } from "#app/data/trainer-config";
-import { TrainerType } from "#app/enums/trainer-type";
+import type { TrainerType } from "#app/enums/trainer-type";
 import { BattlePhase } from "./battle-phase";
 import { TestMessagePhase } from "./test-message-phase";
 
 export class TrainerMessageTestPhase extends BattlePhase {
   private trainerTypes: TrainerType[];
 
-  constructor(scene: BattleScene, ...trainerTypes: TrainerType[]) {
-    super(scene);
+  constructor(...trainerTypes: TrainerType[]) {
+    super();
 
     this.trainerTypes = trainerTypes;
   }
@@ -24,7 +24,7 @@ export class TrainerMessageTestPhase extends BattlePhase {
         continue;
       }
       const config = trainerConfigs[type];
-      [config.encounterMessages, config.femaleEncounterMessages, config.victoryMessages, config.femaleVictoryMessages, config.defeatMessages, config.femaleDefeatMessages]
+      [ config.encounterMessages, config.femaleEncounterMessages, config.victoryMessages, config.femaleVictoryMessages, config.defeatMessages, config.femaleDefeatMessages ]
         .map(messages => {
           if (messages?.length) {
             testMessages.push(...messages);
@@ -33,7 +33,7 @@ export class TrainerMessageTestPhase extends BattlePhase {
     }
 
     for (const message of testMessages) {
-      this.scene.pushPhase(new TestMessagePhase(this.scene, message));
+      globalScene.pushPhase(new TestMessagePhase(message));
     }
 
     this.end();

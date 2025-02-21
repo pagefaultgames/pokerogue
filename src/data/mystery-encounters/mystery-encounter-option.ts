@@ -1,15 +1,17 @@
-import { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
-import { Moves } from "#app/enums/moves";
-import Pokemon, { PlayerPokemon } from "#app/field/pokemon";
-import BattleScene from "#app/battle-scene";
-import { Type } from "../type";
+import type { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
+import type { Moves } from "#app/enums/moves";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
+import type { Type } from "#enums/type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { CanLearnMoveRequirement, CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
+import type { CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
+import { CanLearnMoveRequirement } from "./requirements/can-learn-move-requirement";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 
-export type OptionPhaseCallback = (scene: BattleScene) => Promise<void | boolean>;
+export type OptionPhaseCallback = () => Promise<void | boolean>;
 
 /**
  * Used by {@linkcode MysteryEncounterOptionBuilder} class to define required/optional properties on the {@linkcode MysteryEncounterOption} class when building.
@@ -74,21 +76,19 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
 
   /**
    * Returns true if all {@linkcode EncounterRequirement}s for the option are met
-   * @param scene
    */
-  meetsRequirements(scene: BattleScene): boolean {
-    return !this.requirements.some(requirement => !requirement.meetsRequirement(scene))
-      && this.meetsSupportingRequirementAndSupportingPokemonSelected(scene)
-      && this.meetsPrimaryRequirementAndPrimaryPokemonSelected(scene);
+  meetsRequirements(): boolean {
+    return !this.requirements.some(requirement => !requirement.meetsRequirement())
+      && this.meetsSupportingRequirementAndSupportingPokemonSelected()
+      && this.meetsPrimaryRequirementAndPrimaryPokemonSelected();
   }
 
   /**
    * Returns true if all PRIMARY {@linkcode EncounterRequirement}s for the option are met
-   * @param scene
    * @param pokemon
    */
-  pokemonMeetsPrimaryRequirements(scene: BattleScene, pokemon: Pokemon): boolean {
-    return !this.primaryPokemonRequirements.some(req => !req.queryParty(scene.getParty()).map(p => p.id).includes(pokemon.id));
+  pokemonMeetsPrimaryRequirements(pokemon: Pokemon): boolean {
+    return !this.primaryPokemonRequirements.some(req => !req.queryParty(globalScene.getPlayerParty()).map(p => p.id).includes(pokemon.id));
   }
 
   /**
@@ -96,16 +96,15 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
    * AND there is a valid Pokemon assigned to {@linkcode primaryPokemon}.
    * If both {@linkcode primaryPokemonRequirements} and {@linkcode secondaryPokemonRequirements} are defined,
    * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
-   * @param scene
    */
-  meetsPrimaryRequirementAndPrimaryPokemonSelected(scene: BattleScene): boolean {
+  meetsPrimaryRequirementAndPrimaryPokemonSelected(): boolean {
     if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
       return true;
     }
-    let qualified: PlayerPokemon[] = scene.getParty();
+    let qualified: PlayerPokemon[] = globalScene.getPlayerParty();
     for (const req of this.primaryPokemonRequirements) {
-      if (req.meetsRequirement(scene)) {
-        const queryParty = req.queryParty(scene.getParty());
+      if (req.meetsRequirement()) {
+        const queryParty = req.queryParty(globalScene.getPlayerParty());
         qualified = qualified.filter(pkmn => queryParty.includes(pkmn));
       } else {
         this.primaryPokemon = undefined;
@@ -154,18 +153,17 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
    * AND there is a valid Pokemon assigned to {@linkcode secondaryPokemon} (if applicable).
    * If both {@linkcode primaryPokemonRequirements} and {@linkcode secondaryPokemonRequirements} are defined,
    * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
-   * @param scene
    */
-  meetsSupportingRequirementAndSupportingPokemonSelected(scene: BattleScene): boolean {
+  meetsSupportingRequirementAndSupportingPokemonSelected(): boolean {
     if (!this.secondaryPokemonRequirements || this.secondaryPokemonRequirements.length === 0) {
       this.secondaryPokemon = [];
       return true;
     }
 
-    let qualified: PlayerPokemon[] = scene.getParty();
+    let qualified: PlayerPokemon[] = globalScene.getPlayerParty();
     for (const req of this.secondaryPokemonRequirements) {
-      if (req.meetsRequirement(scene)) {
-        const queryParty = req.queryParty(scene.getParty());
+      if (req.meetsRequirement()) {
+        const queryParty = req.queryParty(globalScene.getPlayerParty());
         qualified = qualified.filter(pkmn => queryParty.includes(pkmn));
       } else {
         this.secondaryPokemon = [];
@@ -208,7 +206,7 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
     return Object.assign(this, { requirements: this.requirements });
   }
 
-  withSceneMoneyRequirement(requiredMoney?: number, scalingMultiplier?: number) {
+  withSceneMoneyRequirement(requiredMoney: number, scalingMultiplier?: number) {
     return this.withSceneRequirement(new MoneyRequirement(requiredMoney, scalingMultiplier));
   }
 

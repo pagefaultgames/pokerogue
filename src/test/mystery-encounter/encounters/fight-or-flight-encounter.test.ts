@@ -6,7 +6,7 @@ import GameManager from "#app/test/utils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -19,8 +19,8 @@ import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
-const namespace = "mysteryEncounter:fightOrFlight";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const namespace = "mysteryEncounters/fightOrFlight";
+const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -43,7 +43,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+        [ Biome.CAVE, [ MysteryEncounterType.FIGHT_OR_FLIGHT ]],
       ])
     );
   });
@@ -60,10 +60,10 @@ describe("Fight or Flight - Mystery Encounter", () => {
     expect(FightOrFlightEncounter.encounterType).toBe(MysteryEncounterType.FIGHT_OR_FLIGHT);
     expect(FightOrFlightEncounter.encounterTier).toBe(MysteryEncounterTier.COMMON);
     expect(FightOrFlightEncounter.dialogue).toBeDefined();
-    expect(FightOrFlightEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}.intro` }]);
-    expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}.title`);
-    expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}.description`);
-    expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}.query`);
+    expect(FightOrFlightEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
+    expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
+    expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(FightOrFlightEncounter.options.length).toBe(3);
   });
 
@@ -75,8 +75,8 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     expect(FightOrFlightEncounter.onInit).toBeDefined();
 
-    FightOrFlightEncounter.populateDialogueTokensFromRequirements(scene);
-    const onInitResult = onInit!(scene);
+    FightOrFlightEncounter.populateDialogueTokensFromRequirements();
+    const onInitResult = onInit!();
 
     const config = FightOrFlightEncounter.enemyPartyConfigs[0];
     expect(config).toBeDefined();
@@ -90,11 +90,11 @@ describe("Fight or Flight - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.1.label`,
-        buttonTooltip: `${namespace}.option.1.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}.option.1.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       });
@@ -138,12 +138,12 @@ describe("Fight or Flight - Mystery Encounter", () => {
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}.option.2.label`,
-        buttonTooltip: `${namespace}.option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}.option.2.disabled_tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}.option.2.selected`,
+            text: `${namespace}:option.2.selected`,
           }
         ],
       });
@@ -151,7 +151,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
     it("should NOT be selectable if the player doesn't have a Stealing move", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
-      scene.getParty().forEach(p => p.moveset = []);
+      scene.getPlayerParty().forEach(p => p.moveset = []);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -175,7 +175,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
       // Mock moveset
-      scene.getParty()[0].moveset = [new PokemonMove(Moves.KNOCK_OFF)];
+      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.KNOCK_OFF) ];
       const item = game.scene.currentBattle.mysteryEncounter!.misc;
 
       await runMysteryEncounterToEnd(game, 2);

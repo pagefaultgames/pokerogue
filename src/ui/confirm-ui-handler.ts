@@ -1,22 +1,23 @@
-import BattleScene from "../battle-scene";
-import AbstractOptionSelectUiHandler, { OptionSelectConfig } from "./abstact-option-select-ui-handler";
+import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
+import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
 import i18next from "i18next";
-import {Button} from "#enums/buttons";
+import { Button } from "#enums/buttons";
+import { globalScene } from "#app/global-scene";
 
 
 export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
 
-  public static readonly windowWidth: integer = 48;
+  public static readonly windowWidth: number = 48;
 
   private switchCheck: boolean;
-  private switchCheckCursor: integer;
+  private switchCheckCursor: number;
 
-  constructor(scene: BattleScene) {
-    super(scene, Mode.CONFIRM);
+  constructor() {
+    super(Mode.CONFIRM);
   }
 
-  getWindowWidth(): integer {
+  getWindowWidth(): number {
     return ConfirmUiHandler.windowWidth;
   }
 
@@ -44,7 +45,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
             }
           }
         ],
-        delay: args.length >= 8 && args[7] !== null ? args[7] as integer : 0
+        delay: args.length >= 8 && args[7] !== null ? args[7] as number : 0
       };
 
       super.show([ config ]);
@@ -54,7 +55,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
       const xOffset = (args.length >= 6 && args[5] !== null ? args[5] as number : 0);
       const yOffset = (args.length >= 7 && args[6] !== null ? args[6] as number : 0);
 
-      this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 + xOffset, -48 + yOffset);
+      this.optionSelectContainer.setPosition((globalScene.game.canvas.width / 6) - 1 + xOffset, -48 + yOffset);
 
       this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
       return true;
@@ -76,7 +77,8 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
             }
           }
         ],
-        delay: args.length >= 6 && args[5] !== null ? args[5] as integer : 0
+        delay: args.length >= 6 && args[5] !== null ? args[5] as number : 0,
+        noCancel: args.length >= 7 && args[6] !== null ? args[6] as boolean : false,
       };
 
       super.show([ config ]);
@@ -86,7 +88,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
       const xOffset = (args.length >= 4 && args[3] !== null ? args[3] as number : 0);
       const yOffset = (args.length >= 5 && args[4] !== null ? args[4] as number : 0);
 
-      this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 + xOffset, -48 + yOffset);
+      this.optionSelectContainer.setPosition((globalScene.game.canvas.width / 6) - 1 + xOffset, -48 + yOffset);
 
       this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
 
@@ -96,14 +98,14 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   }
 
   processInput(button: Button): boolean {
-    if (button === Button.CANCEL && this.blockInput) {
+    if (button === Button.CANCEL && this.blockInput && !this.config?.noCancel) {
       this.unblockInput();
     }
 
     return super.processInput(button);
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
 
     if (ret && this.switchCheck) {

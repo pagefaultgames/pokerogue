@@ -41,7 +41,7 @@ export class SceneBase extends Phaser.Scene {
     }
   }
 
-  loadSpritesheet(key: string, folder: string, size: integer, filename?: string) {
+  loadSpritesheet(key: string, folder: string, size: number, filename?: string) {
     if (!filename) {
       filename = `${key}.png`;
     }
@@ -81,7 +81,7 @@ export class SceneBase extends Phaser.Scene {
       filenames = [ filenames ];
     }
     for (const f of filenames as string[]) {
-      this.load.audio(folder+key, this.getCachedUrl(`audio/${folder}${f}`));
+      this.load.audio(folder + key, this.getCachedUrl(`audio/${folder}${f}`));
     }
   }
 

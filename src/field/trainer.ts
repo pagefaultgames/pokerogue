@@ -1,22 +1,25 @@
-import BattleScene from "../battle-scene";
-import {pokemonPrevolutions} from "../data/pokemon-evolutions";
-import PokemonSpecies, {getPokemonSpecies} from "../data/pokemon-species";
-import {
+import { globalScene } from "#app/global-scene";
+import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import type {
   TrainerConfig,
+  TrainerPartyTemplate } from "#app/data/trainer-config";
+import {
   TrainerPartyCompoundTemplate,
-  TrainerPartyTemplate,
   TrainerPoolTier,
   TrainerSlot,
   trainerConfigs,
   trainerPartyTemplates,
-  signatureSpecies
-} from "../data/trainer-config";
-import {EnemyPokemon} from "./pokemon";
-import * as Utils from "../utils";
-import {PersistentModifier} from "../modifier/modifier";
-import {trainerNamePools} from "../data/trainer-names";
-import {ArenaTagSide, ArenaTrapTag} from "#app/data/arena-tag";
-import {getIsInitialized, initI18n} from "#app/plugins/i18n";
+  signatureSpecies,
+  TeraAIMode
+} from "#app/data/trainer-config";
+import type { EnemyPokemon } from "#app/field/pokemon";
+import * as Utils from "#app/utils";
+import type { PersistentModifier } from "#app/modifier/modifier";
+import { trainerNamePools } from "#app/data/trainer-names";
+import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
@@ -31,12 +34,13 @@ export enum TrainerVariant {
 export default class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
   public variant: TrainerVariant;
-  public partyTemplateIndex: integer;
+  public partyTemplateIndex: number;
   public name: string;
   public partnerName: string;
+  public originalIndexes: { [key: number]: number } = {};
 
-  constructor(scene: BattleScene, trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: integer, name?: string, partnerName?: string, trainerConfigOverride?: TrainerConfig) {
-    super(scene, -72, 80);
+  constructor(trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: number, name?: string, partnerName?: string, trainerConfigOverride?: TrainerConfig) {
+    super(globalScene, -72, 80);
     this.config = trainerConfigs.hasOwnProperty(trainerType)
       ? trainerConfigs[trainerType]
       : trainerConfigs[TrainerType.ACE_TRAINER];
@@ -56,7 +60,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
           if (partnerName) {
             this.partnerName = partnerName;
           } else {
-            [this.name, this.partnerName] = this.name.split(" & ");
+            [ this.name, this.partnerName ] = this.name.split(" & ");
           }
         } else {
           this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
@@ -65,24 +69,24 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
 
     switch (this.variant) {
-    case TrainerVariant.FEMALE:
-      if (!this.config.hasGenders) {
-        variant = TrainerVariant.DEFAULT;
-      }
-      break;
-    case TrainerVariant.DOUBLE:
-      if (!this.config.hasDouble) {
-        variant = TrainerVariant.DEFAULT;
-      }
-      break;
+      case TrainerVariant.FEMALE:
+        if (!this.config.hasGenders) {
+          variant = TrainerVariant.DEFAULT;
+        }
+        break;
+      case TrainerVariant.DOUBLE:
+        if (!this.config.hasDouble) {
+          variant = TrainerVariant.DEFAULT;
+        }
+        break;
     }
 
     console.log(Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())]);
 
     const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
-      const ret = this.scene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()));
+      const ret = globalScene.addFieldSprite(0, 0, this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()));
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(this.scene.spritePipeline, {tone: [0.0, 0.0, 0.0, 0.0], hasShadow: !!hasShadow});
+      ret.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow });
       return ret;
     };
 
@@ -126,7 +130,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     // Determine the title to include based on the configuration and includeTitle flag.
     let title = includeTitle && this.config.title ? this.config.title : null;
-    const evilTeamTitles = ["grunt"];
+    const evilTeamTitles = [ "grunt" ];
     if (this.name === "" && evilTeamTitles.some(t => name.toLocaleLowerCase().includes(t))) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
       title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
@@ -207,16 +211,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   getPartyTemplate(): TrainerPartyTemplate {
     if (this.config.partyTemplateFunc) {
-      return this.config.partyTemplateFunc(this.scene);
+      return this.config.partyTemplateFunc();
     }
     return this.config.partyTemplates[this.partyTemplateIndex];
   }
 
-  getPartyLevels(waveIndex: integer): integer[] {
+  getPartyLevels(waveIndex: number): number[] {
     const ret: number[] = [];
     const partyTemplate = this.getPartyTemplate();
 
-    const difficultyWaveIndex = this.scene.gameMode.getWaveForDifficulty(waveIndex);
+    const difficultyWaveIndex = globalScene.gameMode.getWaveForDifficulty(waveIndex);
     const baseLevel = 1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2);
 
     if (this.isDouble() && partyTemplate.size < 2) {
@@ -229,21 +233,21 @@ export default class Trainer extends Phaser.GameObjects.Container {
       const strength = partyTemplate.getStrength(i);
 
       switch (strength) {
-      case PartyMemberStrength.WEAKER:
-        multiplier = 0.95;
-        break;
-      case PartyMemberStrength.WEAK:
-        multiplier = 1.0;
-        break;
-      case PartyMemberStrength.AVERAGE:
-        multiplier = 1.1;
-        break;
-      case PartyMemberStrength.STRONG:
-        multiplier = 1.2;
-        break;
-      case PartyMemberStrength.STRONGER:
-        multiplier = 1.25;
-        break;
+        case PartyMemberStrength.WEAKER:
+          multiplier = 0.95;
+          break;
+        case PartyMemberStrength.WEAK:
+          multiplier = 1.0;
+          break;
+        case PartyMemberStrength.AVERAGE:
+          multiplier = 1.1;
+          break;
+        case PartyMemberStrength.STRONG:
+          multiplier = 1.2;
+          break;
+        case PartyMemberStrength.STRONGER:
+          multiplier = 1.25;
+          break;
       }
 
       let levelOffset = 0;
@@ -260,13 +264,13 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return ret;
   }
 
-  genPartyMember(index: integer): EnemyPokemon {
-    const battle = this.scene.currentBattle;
+  genPartyMember(index: number): EnemyPokemon {
+    const battle = globalScene.currentBattle;
     const level = battle.enemyLevels?.[index]!; // TODO: is this bang correct?
 
     let ret: EnemyPokemon;
 
-    this.scene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       const template = this.getPartyTemplate();
       const strength: PartyMemberStrength = template.getStrength(index);
 
@@ -275,11 +279,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
       if (!(this.config.trainerTypeDouble && this.isDouble() && !this.config.doubleOnly)) {
 
         if (this.config.partyMemberFuncs.hasOwnProperty(index)) {
-          ret = this.config.partyMemberFuncs[index](this.scene, level, strength);
+          ret = this.config.partyMemberFuncs[index](level, strength);
           return;
         }
         if (this.config.partyMemberFuncs.hasOwnProperty(index - template.size)) {
-          ret = this.config.partyMemberFuncs[index - template.size](this.scene, level, template.getStrength(index));
+          ret = this.config.partyMemberFuncs[index - template.size](level, template.getStrength(index));
           return;
         }
       }
@@ -336,9 +340,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
         if (!(index % 2)) {
           // Since the only currently allowed double battle with named trainers is Tate & Liza, we need to make sure that Solrock is the first pokemon in the party for Tate and Lunatone for Liza
           if (index === 0 && (TrainerType[this.config.trainerType] === TrainerType[TrainerType.TATE])) {
-            newSpeciesPool = [Species.SOLROCK];
+            newSpeciesPool = [ Species.SOLROCK ];
           } else if (index === 0 && (TrainerType[this.config.trainerType] === TrainerType[TrainerType.LIZA])) {
-            newSpeciesPool = [Species.LUNATONE];
+            newSpeciesPool = [ Species.LUNATONE ];
           } else {
             newSpeciesPool = speciesPoolFiltered;
           }
@@ -346,9 +350,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
           // If the index is odd, use the species pool for the partner trainer (that way he only uses his own pokemon in battle)
           // Since the only currently allowed double battle with named trainers is Tate & Liza, we need to make sure that Solrock is the first pokemon in the party for Tate and Lunatone for Liza
           if (index === 1 && (TrainerType[this.config.trainerTypeDouble] === TrainerType[TrainerType.TATE])) {
-            newSpeciesPool = [Species.SOLROCK];
+            newSpeciesPool = [ Species.SOLROCK ];
           } else if (index === 1 && (TrainerType[this.config.trainerTypeDouble] === TrainerType[TrainerType.LIZA])) {
-            newSpeciesPool = [Species.LUNATONE];
+            newSpeciesPool = [ Species.LUNATONE ];
           } else {
             newSpeciesPool = speciesPoolPartnerFiltered;
           }
@@ -364,26 +368,26 @@ export default class Trainer extends Phaser.GameObjects.Container {
       let species = useNewSpeciesPool
         ? getPokemonSpecies(newSpeciesPool[Math.floor(Utils.randSeedInt(newSpeciesPool.length))])
         : template.isSameSpecies(index) && index > offset
-          ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset), this.scene.currentBattle.waveIndex))
+          ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset), globalScene.currentBattle.waveIndex))
           : this.genNewPartyMemberSpecies(level, strength);
 
       // If the species is from newSpeciesPool, we need to adjust it based on the level and strength
       if (newSpeciesPool) {
-        species = getPokemonSpecies(species.getSpeciesForLevel(level, true, true, strength, this.scene.currentBattle.waveIndex));
+        species = getPokemonSpecies(species.getSpeciesForLevel(level, true, true, strength, globalScene.currentBattle.waveIndex));
       }
 
-      ret = this.scene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
-    }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8));
+      ret = globalScene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
+    }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : globalScene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8));
 
     return ret!; // TODO: is this bang correct?
   }
 
 
-  genNewPartyMemberSpecies(level: integer, strength: PartyMemberStrength, attempt?: integer): PokemonSpecies {
-    const battle = this.scene.currentBattle;
+  genNewPartyMemberSpecies(level: number, strength: PartyMemberStrength, attempt?: number): PokemonSpecies {
+    const battle = globalScene.currentBattle;
     const template = this.getPartyTemplate();
 
-    let species: PokemonSpecies;
+    let baseSpecies: PokemonSpecies;
     if (this.config.speciesPools) {
       const tierValue = Utils.randSeedInt(512);
       let tier = tierValue >= 156 ? TrainerPoolTier.COMMON : tierValue >= 32 ? TrainerPoolTier.UNCOMMON : tierValue >= 6 ? TrainerPoolTier.RARE : tierValue >= 1 ? TrainerPoolTier.SUPER_RARE : TrainerPoolTier.ULTRA_RARE;
@@ -393,17 +397,17 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      species = getPokemonSpecies(Utils.randSeedItem(tierPool));
+      baseSpecies = getPokemonSpecies(Utils.randSeedItem(tierPool));
     } else {
-      species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
+      baseSpecies = globalScene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
 
-    let ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength, this.scene.currentBattle.waveIndex));
+    let ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex));
     let retry = false;
 
     console.log(ret.getName());
 
-    if (pokemonPrevolutions.hasOwnProperty(species.speciesId) && ret.speciesId !== species.speciesId) {
+    if (pokemonPrevolutions.hasOwnProperty(baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
       retry = true;
     } else if (template.isBalanced(battle.enemyParty.length)) {
       const partyMemberTypes = battle.enemyParty.map(p => p.getTypes(true)).flat();
@@ -417,7 +421,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       console.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
-        ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength, this.scene.currentBattle.waveIndex));
+        ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex));
         console.log(ret.name);
         if (this.config.specialtyTypes.find(t => ret.isOfType(t))) {
           retry = false;
@@ -425,23 +429,50 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    if (retry && (attempt || 0) < 10) {
+    // Prompts reroll of party member species if species already present in the enemy party
+    if (this.checkDuplicateSpecies(baseSpecies.speciesId)) {
+      console.log("Duplicate species detected, prompting reroll...");
+      retry = true;
+    }
+
+    if (retry && (attempt ?? 0) < 10) {
       console.log("Rerolling party member...");
-      ret = this.genNewPartyMemberSpecies(level, strength, (attempt || 0) + 1);
+      ret = this.genNewPartyMemberSpecies(level, strength, (attempt ?? 0) + 1);
     }
 
     return ret;
   }
 
-  getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [integer, integer][] {
+  /**
+   * Checks if the enemy trainer already has the Pokemon species in their party
+   * @param baseSpecies - The base {@linkcode Species} of the current Pokemon
+   * @returns `true` if the species is already present in the party
+   */
+  checkDuplicateSpecies(baseSpecies: Species): boolean {
+    const staticSpecies = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1).map(s => {
+      let root = s;
+      while (pokemonPrevolutions.hasOwnProperty(root)) {
+        root = pokemonPrevolutions[root];
+      }
+      return root;
+    });
+
+    const currentSpecies = globalScene.getEnemyParty().map(p => {
+      return p.species.getRootSpeciesId();
+    });
+
+    return currentSpecies.includes(baseSpecies) || staticSpecies.includes(baseSpecies);
+  }
+
+  getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [number, number][] {
     if (trainerSlot && !this.isDouble()) {
       trainerSlot = TrainerSlot.NONE;
     }
 
-    const party = this.scene.getEnemyParty();
-    const nonFaintedLegalPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => p.isAllowedInBattle()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
+    const party = globalScene.getEnemyParty();
+    const nonFaintedLegalPartyMembers = party.slice(globalScene.currentBattle.getBattlerCount()).filter(p => p.isAllowedInBattle()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
     const partyMemberScores = nonFaintedLegalPartyMembers.map(p => {
-      const playerField = this.scene.getPlayerField().filter(p => p.isAllowedInBattle());
+      const playerField = globalScene.getPlayerField().filter(p => p.isAllowedInBattle());
       let score = 0;
 
       if (playerField.length > 0) {
@@ -453,17 +484,17 @@ export default class Trainer extends Phaser.GameObjects.Container {
         }
         score /= playerField.length;
         if (forSwitch && !p.isOnField()) {
-          this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
+          globalScene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
         }
       }
 
-      return [party.indexOf(p), score];
-    }) as [integer, integer][];
+      return [ party.indexOf(p), score ];
+    }) as [number, number][];
 
     return partyMemberScores;
   }
 
-  getSortedPartyMemberMatchupScores(partyMemberScores: [integer, integer][] = this.getPartyMemberMatchupScores()) {
+  getSortedPartyMemberMatchupScores(partyMemberScores: [number, number][] = this.getPartyMemberMatchupScores()) {
     const sortedPartyMemberScores = partyMemberScores.slice(0);
     sortedPartyMemberScores.sort((a, b) => {
       const scoreA = a[1];
@@ -474,7 +505,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return sortedPartyMemberScores;
   }
 
-  getNextSummonIndex(trainerSlot: TrainerSlot = TrainerSlot.NONE, partyMemberScores: [integer, integer][] = this.getPartyMemberMatchupScores(trainerSlot)): integer {
+  getNextSummonIndex(trainerSlot: TrainerSlot = TrainerSlot.NONE, partyMemberScores: [number, number][] = this.getPartyMemberMatchupScores(trainerSlot)): number {
     if (trainerSlot && !this.isDouble()) {
       trainerSlot = TrainerSlot.NONE;
     }
@@ -484,29 +515,29 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const maxScorePartyMemberIndexes = partyMemberScores.filter(pms => pms[1] === sortedPartyMemberScores[0][1]).map(pms => pms[0]);
 
     if (maxScorePartyMemberIndexes.length > 1) {
-      let rand: integer;
-      this.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(maxScorePartyMemberIndexes.length), this.scene.currentBattle.turn << 2);
+      let rand: number;
+      globalScene.executeWithSeedOffset(() => rand = Utils.randSeedInt(maxScorePartyMemberIndexes.length), globalScene.currentBattle.turn << 2);
       return maxScorePartyMemberIndexes[rand!];
     }
 
     return maxScorePartyMemberIndexes[0];
   }
 
-  getPartyMemberModifierChanceMultiplier(index: integer): number {
+  getPartyMemberModifierChanceMultiplier(index: number): number {
     switch (this.getPartyTemplate().getStrength(index)) {
-    case PartyMemberStrength.WEAKER:
-      return 0.75;
-    case PartyMemberStrength.WEAK:
-      return 0.675;
-    case PartyMemberStrength.AVERAGE:
-      return 0.5625;
-    case PartyMemberStrength.STRONG:
-      return 0.45;
-    case PartyMemberStrength.STRONGER:
-      return 0.375;
-    default:
-      console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
-      return 0;
+      case PartyMemberStrength.WEAKER:
+        return 0.75;
+      case PartyMemberStrength.WEAK:
+        return 0.675;
+      case PartyMemberStrength.AVERAGE:
+        return 0.5625;
+      case PartyMemberStrength.STRONG:
+        return 0.45;
+      case PartyMemberStrength.STRONGER:
+        return 0.375;
+      default:
+        console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
+        return 0;
     }
   }
 
@@ -517,8 +548,15 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return [];
   }
 
+  genAI(party: EnemyPokemon[]) {
+    if (this.config.genAIFuncs) {
+      this.config.genAIFuncs.forEach(f => f(party));
+    }
+    console.log("Generated AI funcs");
+  }
+
   loadAssets(): Promise<void> {
-    return this.config.loadAssets(this.scene, this.variant);
+    return this.config.loadAssets(this.variant);
   }
 
   initSprite(): void {
@@ -597,7 +635,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return ret;
   }
 
-  tint(color: number, alpha?: number, duration?: integer, ease?: string): void {
+  tint(color: number, alpha?: number, duration?: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.map(tintSprite => {
       tintSprite.setTintFill(color);
@@ -606,7 +644,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       if (duration) {
         tintSprite.setAlpha(0);
 
-        this.scene.tweens.add({
+        globalScene.tweens.add({
           targets: tintSprite,
           alpha: alpha || 1,
           duration: duration,
@@ -618,11 +656,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
     });
   }
 
-  untint(duration: integer, ease?: string): void {
+  untint(duration: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.map(tintSprite => {
       if (duration) {
-        this.scene.tweens.add({
+        globalScene.tweens.add({
           targets: tintSprite,
           alpha: 0,
           duration: duration,
@@ -638,8 +676,13 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     });
   }
-}
 
-export default interface Trainer {
-    scene: BattleScene
+  shouldTera(pokemon: EnemyPokemon): boolean {
+    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA) {
+      if (!pokemon.isTerastallized && this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

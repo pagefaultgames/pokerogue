@@ -31,12 +31,12 @@ describe("Abilities - Sand Spit", () => {
 
     game.override.starterSpecies(Species.SILICOBRA);
     game.override.ability(Abilities.SAND_SPIT);
-    game.override.moveset([Moves.SPLASH, Moves.COIL]);
+    game.override.moveset([ Moves.SPLASH, Moves.COIL ]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
-    await game.startBattle();
+    game.override.enemyMoveset([ Moves.TACKLE ]);
+    await game.classicMode.startBattle();
 
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
@@ -44,9 +44,22 @@ describe("Abilities - Sand Spit", () => {
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
   }, 20000);
 
+  it("should trigger even when fainting", async () => {
+    game.override.enemyMoveset([ Moves.TACKLE ])
+      .enemyLevel(100)
+      .startingLevel(1);
+    await game.classicMode.startBattle([ Species.SILICOBRA, Species.MAGIKARP ]);
+
+    game.move.select(Moves.SPLASH);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
+  });
+
   it("should not trigger when targetted with status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
-    await game.startBattle();
+    game.override.enemyMoveset([ Moves.GROWL ]);
+    await game.classicMode.startBattle();
 
     game.move.select(Moves.COIL);
     await game.toNextTurn();
