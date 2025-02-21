@@ -6122,7 +6122,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randSeedInt(eligibleNewIndices.length)];
           globalScene.prependToPhase(
             new SwitchSummonPhase(
@@ -6135,7 +6134,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
             MoveEndPhase
           );
         } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
           globalScene.prependToPhase(
             new SwitchPhase(
               this.switchType,
@@ -6164,7 +6162,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randSeedInt(eligibleNewIndices.length)];
           globalScene.prependToPhase(
             new SwitchSummonPhase(
@@ -6177,7 +6174,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
             MoveEndPhase
           );
         } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
           globalScene.prependToPhase(
             new SwitchSummonPhase(
               this.switchType,
@@ -6213,7 +6209,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(false);
+        switchOutTarget.leaveField();
         globalScene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
 
         // in double battles redirect potential moves off fled pokemon

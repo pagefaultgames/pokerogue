@@ -95,7 +95,6 @@ export class SwitchSummonPhase extends SummonPhase {
       scale: 0.5,
       onComplete: () => {
         globalScene.time.delayedCall(750, () => this.switchAndSummon());
-        pokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
       }
     });
   }
@@ -104,7 +103,6 @@ export class SwitchSummonPhase extends SummonPhase {
     const party = this.player ? this.getParty() : globalScene.getEnemyParty();
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
-    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
       (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id));
       if (!globalScene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id)) {
@@ -116,6 +114,7 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
     if (switchedInPokemon) {
+      applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
       party[this.slotIndex] = this.lastPokemon;
       party[this.fieldIndex] = switchedInPokemon;
       const showTextAndSummon = () => {
@@ -140,6 +139,8 @@ export class SwitchSummonPhase extends SummonPhase {
         } else {
           switchedInPokemon.resetSummonData();
         }
+        // We cannot clear stat changes yet because they are applied after the new mon is summoned
+        this.lastPokemon.leaveField(this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL ? false : true);
         this.summon();
       };
       if (this.player) {
@@ -177,19 +178,19 @@ export class SwitchSummonPhase extends SummonPhase {
 
     if (this.switchType === SwitchType.BATON_PASS && pokemon) {
       pokemon.transferSummon(this.lastPokemon);
+      this.lastPokemon.resetSummonData();
     } else if (this.switchType === SwitchType.SHED_TAIL && pokemon) {
       const subTag = this.lastPokemon.getTag(SubstituteTag);
       if (subTag) {
         pokemon.summonData.tags.push(subTag);
       }
+      this.lastPokemon.resetSummonData();
     }
 
     if (this.switchType !== SwitchType.INITIAL_SWITCH) {
       pokemon.resetTurnData();
       pokemon.turnData.switchedInThisTurn = true;
     }
-
-    this.lastPokemon?.resetSummonData();
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
