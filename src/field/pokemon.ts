@@ -2365,14 +2365,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       weightMultiplier += 0.4;
     }
     const baseWeights: [Moves, number][] = movePool.map(m => [ m[0], Math.ceil(Math.pow(m[1], weightMultiplier) * 100) ]);
-    const checkTera = this.getTeraType() !== Type.UNKNOWN && !this.isOfType(this.getTeraType()); // Whether the mon has an off-type Tera. If so, moves matching Tera type (and Tera Blast) are considered STAB and boosted slightly
 
     // Trainers and bosses always force a stab move
     if (this.hasTrainer() || this.isBoss()) {
-      const stabMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS && (this.isOfType(allMoves[m[0]].type) || (checkTera && (m[0] === Moves.TERA_BLAST || this.getTeraType() === allMoves[m[0]].type)))).map(m => [
-        m[0],
-        Math.round(m[1] * ((checkTera && (m[0] === Moves.TERA_BLAST || this.getTeraType() === allMoves[m[0]].type)) ? 1.5 : 1))
-      ]);
+      const stabMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS && this.isOfType(allMoves[m[0]].type));
 
       if (stabMovePool.length) {
         const totalWeight = stabMovePool.reduce((v, m) => v + m[1], 0);
@@ -2406,7 +2402,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type)) {
             ret = Math.ceil(Math.sqrt(m[1]));
           } else if (allMoves[m[0]].category !== MoveCategory.STATUS) {
-            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) || (checkTera && (m[0] === Moves.TERA_BLAST || this.getTeraType() === allMoves[m[0]].type)) ? 2 : 1));
+            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1));
           } else {
             ret = m[1];
           }
@@ -4815,9 +4811,6 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (!dataSource) {
-      if (this.hasTrainer() && globalScene.currentBattle.trainer && globalScene.currentBattle.trainer.config.specialtyType > Type.UNKNOWN) {
-        this.teraType = globalScene.currentBattle.trainer.config.specialtyType;
-      }
       this.generateAndPopulateMoveset();
 
       if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
@@ -4852,7 +4845,6 @@ export class EnemyPokemon extends Pokemon {
     }
 
     this.aiType = boss || this.hasTrainer() ? AiType.SMART : AiType.SMART_RANDOM;
-
   }
 
   initBattleInfo(): void {
