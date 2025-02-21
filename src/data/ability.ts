@@ -3292,7 +3292,7 @@ export class UserFieldStatusEffectImmunityAbAttr extends PreSetStatusEffectImmun
 export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldStatusEffectImmunityAbAttr {
   protected condition: (target: Pokemon, source: Pokemon | null) => boolean;
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (cancelled.value || !this.condition(pokemon, args[1] as Pokemon)) {
       return false;
     }
@@ -3377,7 +3377,7 @@ export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunit
 export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattlerTagImmunityAbAttr {
   private condition: (target: Pokemon, source: Pokemon | null) => boolean;
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (cancelled.value || !this.condition(pokemon, args[1] as Pokemon)) {
       return false;
     }
