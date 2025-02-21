@@ -4846,6 +4846,10 @@ export class EnemyPokemon extends Pokemon {
     }
 
     this.aiType = boss || this.hasTrainer() ? AiType.SMART : AiType.SMART_RANDOM;
+
+    if (this.hasTrainer() && globalScene.currentBattle.trainer && globalScene.currentBattle.trainer.config.specialtyType > Type.UNKNOWN) {
+      this.teraType = globalScene.currentBattle.trainer.config.specialtyType;
+    }
   }
 
   initBattleInfo(): void {
