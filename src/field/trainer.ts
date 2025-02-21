@@ -665,8 +665,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   shouldTera(pokemon: EnemyPokemon): boolean {
-    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA) {
-      if (!pokemon.isTerastallized && this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)) {
+    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA && globalScene.currentBattle.waveIndex >= this.config.minTeraWave) {
+      if (!pokemon.isTerastallized && (this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex) || this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex - globalScene.getEnemyParty().length))) {
         return true;
       }
     }
