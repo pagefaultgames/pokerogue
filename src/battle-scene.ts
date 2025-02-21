@@ -2576,7 +2576,7 @@ export default class BattleScene extends SceneBase {
   }
 
   getWaveMoneyAmount(moneyMultiplier: number): number {
-    const moneyValue = (this.currentBattle.waveIndex / 10 + 1.75) * 170 * moneyMultiplier;
+    const moneyValue = (this.currentBattle.waveIndex + 17.5) * 17 * moneyMultiplier;
     return Math.floor(moneyValue / 10) * 10;
   }
 
