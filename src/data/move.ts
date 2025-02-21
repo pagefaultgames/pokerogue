@@ -1541,10 +1541,6 @@ export class SurviveDamageAttr extends ModifiedDamageAttr {
 }
 
 export class SplashAttr extends MoveEffectAttr {
-  constructor() {
-    super();
-  }
-
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     globalScene.queueMessage(i18next.t("battlerTags:splashLapse"));
     return true;
@@ -1552,10 +1548,6 @@ export class SplashAttr extends MoveEffectAttr {
 }
 
 export class CelebrateAttr extends MoveEffectAttr {
-  constructor() {
-    super();
-  }
-
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     globalScene.queueMessage(i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username }));
     return true;
