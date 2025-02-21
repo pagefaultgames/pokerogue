@@ -131,7 +131,7 @@ describe("Moves - Focus Punch", () => {
       expect(game.scene.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
     }
   );
-  it("should replace the 'but it failed' text when it the user gets hit", async () => {
+  it("should replace the 'but it failed' text when the user gets hit", async () => {
     game.override.enemyMoveset([ Moves.TACKLE ]);
     await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
