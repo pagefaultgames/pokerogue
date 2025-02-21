@@ -1342,7 +1342,7 @@ export const signatureSpecies: SignatureSpecies = {
   KOFU: [ Species.CRABRAWLER, Species.VELUZA, Species.WIGLETT, Species.WINGULL ], // Tera Crabrawler
   LARRY: [ Species.STARLY, Species.DUNSPARCE, Species.LECHONK, Species.KOMALA ],  // Tera Starly
   RYME: [ Species.TOXEL, Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU ],    // Tera Toxel
-  TULIP: [ Species.FLABEBE, Species.GIRAFARIG, Species.FLITTLE, Species.RALTS ],  // Tera Flabebe
+  TULIP: [ Species.FLABEBE, Species.FLITTLE, Species.RALTS, Species.GIRAFARIG ],  // Tera Flabebe
   GRUSHA: [ Species.SWABLU, Species.CETODDLE, Species.CUBCHOO, Species.ALOLA_VULPIX ],  // Tera Swablu
   LORELEI: [ Species.JYNX, [ Species.SLOWBRO, Species.GALAR_SLOWBRO ], Species.LAPRAS, [ Species.ALOLA_SANDSLASH, Species.CLOYSTER ]],
   BRUNO: [ Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [ Species.ALOLA_GOLEM, Species.GOLEM ]],
@@ -1383,7 +1383,7 @@ export const signatureSpecies: SignatureSpecies = {
   HASSEL: [ Species.BAXCALIBUR, [ Species.FLAPPLE, Species.APPLETUN ], Species.DRAGALGE, Species.NOIVERN ],     // Tera Baxcalibur
   CRISPIN: [ Species.BLAZIKEN, Species.MAGMORTAR, [ Species.CAMERUPT, Species.TALONFLAME ], Species.ROTOM ], // Tera Blaziken, Heat Rotom
   AMARYS: [ Species.METAGROSS, Species.SCIZOR, Species.EMPOLEON, Species.SKARMORY ], // Tera Metagross
-  LACEY: [ Species.EXCADRILL, Species.PRIMARINA, [ Species.ALCREMIE, Species.GRANBULL ], Species.WHIMSICOTT ], // Tera Excadrill
+  LACEY: [ Species.EXCADRILL, Species.PRIMARINA, [ Species.ALCREMIE, Species.WHIMSICOTT ], Species.GRANBULL ], // Tera Excadrill
   DRAYTON: [ Species.ARCHALUDON, Species.DRAGONITE, Species.HAXORUS, Species.SCEPTILE ], // Tera Archaludon
 };
 
