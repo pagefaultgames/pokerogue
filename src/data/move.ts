@@ -14,8 +14,18 @@ import {
 import { getPokemonNameWithAffix } from "../messages";
 import type { AttackMoveResult, TurnMove } from "../field/pokemon";
 import type Pokemon from "../field/pokemon";
-import { EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "./status-effect";
+import {
+  EnemyPokemon,
+  HitResult,
+  MoveResult,
+  PlayerPokemon,
+  PokemonMove,
+} from "../field/pokemon";
+import {
+  getNonVolatileStatusEffects,
+  getStatusEffectHealText,
+  isNonVolatileStatusEffect,
+} from "./status-effect";
 import { getTypeDamageMultiplier } from "./type";
 import { Type } from "#enums/type";
 import type { Constructor } from "#app/utils";
@@ -60,7 +70,14 @@ import {
   VariableMovePowerAbAttr,
   WonderSkinAbAttr,
 } from "./ability";
-import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
+import {
+  AttackTypeBoosterModifier,
+  BerryModifier,
+  PokemonHeldItemModifier,
+  PokemonMoveAccuracyBoosterModifier,
+  PokemonMultiHitModifier,
+  PreserveBerryModifier,
+} from "../modifier/modifier";
 import type { BattlerIndex } from "../battle";
 import { BattleType } from "../battle";
 import { TerrainType } from "./terrain";
@@ -76,7 +93,13 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene";
-import { BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat } from "#app/enums/stat";
+import {
+  BATTLE_STATS,
+  type BattleStat,
+  type EffectiveStat,
+  getStatKey,
+  Stat,
+} from "#app/enums/stat";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -989,47 +1012,33 @@ export class AttackMove extends Move {
     }
   }
 
+  /**
+   * Compute the benefit score of this move based on the offensive stat used and the move's power.
+   * @param user The Pokemon using the move
+   * @param target The Pokemon targeted by the move
+   * @param move The move being used
+   * @returns The benefit score of using this move
+   */
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    let ret = super.getTargetBenefitScore(user, target, move);
-
+    // TODO: Properly handle foul play, body press, and opponent stat stages.
+    const ret = super.getTargetBenefitScore(user, target, move);
     let attackScore = 0;
 
     const effectiveness = target.getAttackTypeEffectiveness(this.type, user, undefined, undefined, this);
     attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
-    if (attackScore) {
-      if (this.category === MoveCategory.PHYSICAL) {
-        const atk = new Utils.NumberHolder(user.getEffectiveStat(Stat.ATK, target));
-        applyMoveAttrs(VariableAtkAttr, user, target, move, atk);
-        if (atk.value > user.getEffectiveStat(Stat.SPATK, target)) {
-          const statRatio = user.getEffectiveStat(Stat.SPATK, target) / atk.value;
-          if (statRatio <= 0.75) {
-            attackScore *= 2;
-          } else if (statRatio <= 0.875) {
-            attackScore *= 1.5;
-          }
-        }
-      } else {
-        const spAtk = new Utils.NumberHolder(user.getEffectiveStat(Stat.SPATK, target));
-        applyMoveAttrs(VariableAtkAttr, user, target, move, spAtk);
-        if (spAtk.value > user.getEffectiveStat(Stat.ATK, target)) {
-          const statRatio = user.getEffectiveStat(Stat.ATK, target) / spAtk.value;
-          if (statRatio <= 0.75) {
-            attackScore *= 2;
-          } else if (statRatio <= 0.875) {
-            attackScore *= 1.5;
-          }
-        }
-      }
+    const [ thisStat, offStat ]: EffectiveStat[] = this.category === MoveCategory.PHYSICAL ? [ Stat.ATK, Stat.SPATK ] : [ Stat.SPATK, Stat.ATK ];
+    const statHolder = new Utils.NumberHolder(user.getEffectiveStat(thisStat, target));
+    const offStatValue = user.getEffectiveStat(offStat, target);
+    applyMoveAttrs(VariableAtkAttr, user, target, move, statHolder);
+    const statRatio = statHolder.value / offStatValue;
+    attackScore *= statRatio <= 0.75 ? 2 : statRatio <= 0.875 ? 1.5 : 1;
 
-      const power = new Utils.NumberHolder(this.power);
-      applyMoveAttrs(VariablePowerAttr, user, target, move, power);
+    const power = new Utils.NumberHolder(this.calculateEffectivePower());
+    applyMoveAttrs(VariablePowerAttr, user, target, move, power);
 
-      attackScore += Math.floor(power.value / 5);
-    }
+    attackScore += Math.floor(power.value / 5);
 
-    ret -= attackScore;
-
-    return ret;
+    return ret - attackScore;
   }
 }
 
