@@ -32,7 +32,6 @@ import { Species } from "#enums/species";
 import { Stat, type BattleStat, type EffectiveStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { globalScene } from "#app/global-scene";
 import { SwitchType } from "#app/enums/switch-type";
@@ -45,7 +44,6 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
-import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -1250,7 +1248,7 @@ export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
 
 export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   override canApplyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): boolean {
-    return false;
+    return true;
   }
 }
 
@@ -2692,7 +2690,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
     if (!simulated) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
-      queueShowAbility(pokemon, passive);
+      globalScene.queueAbilityDisplay(pokemon, passive, true);
     }
   }
 }
@@ -5104,7 +5102,7 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
     globalScene.setPhaseQueueSplice();
 
     if (attr.showAbility && !simulated) {
-      queueShowAbility(pokemon, passive);
+      globalScene.queueAbilityDisplay(pokemon, passive, true);
       abShown = true;
     }
     const message = attr.getTriggerMessage(pokemon, ability.name, args);
@@ -5118,7 +5116,7 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
     applyFunc(attr, passive);
 
     if (abShown) {
-      queueHideAbility(pokemon, passive);
+      globalScene.queueAbilityDisplay(pokemon, passive, false);
     }
 
     if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
@@ -5950,15 +5948,6 @@ export function applyOnLoseClearWeatherAbAttrs(
     true,
     simulated,
   );
-}
-function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
-  globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
-  globalScene.clearPhaseQueueSplice();
-}
-
-function queueHideAbility(pokemon: Pokemon, passive: boolean): void {
-  globalScene.unshiftPhase(new HideAbilityPhase(pokemon.id, passive));
-  globalScene.clearPhaseQueueSplice();
 }
 
 /**

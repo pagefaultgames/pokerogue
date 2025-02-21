@@ -175,6 +175,8 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 import { StatusEffect } from "#enums/status-effect";
 import { initGlobalScene } from "#app/global-scene";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -3136,6 +3138,17 @@ export default class BattleScene extends SceneBase {
       //remember that pushPhase adds it to nextCommandPhaseQueue
       this.pushPhase(phase);
     }
+  }
+
+  /**
+   * Queues an ability bar flyout phase
+   * @param pokemon The pokemon who has the ability
+   * @param passive Whether the ability is a passive
+   * @param show Whether to show or hide the bar
+   */
+  public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
+    this.unshiftPhase((show) ? new ShowAbilityPhase(pokemon.id, passive) : new HideAbilityPhase(pokemon.id, passive));
+    this.clearPhaseQueueSplice();
   }
 
   /**
