@@ -3389,7 +3389,7 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
    * @returns always `true`
    */
   override apply(multiplier: NumberHolder): boolean {
-    multiplier.value = Math.floor(multiplier.value * Math.pow(this.damageMultiplier, this.getStackCount()));
+    multiplier.value = toDmgValue(multiplier.value * Math.pow(this.damageMultiplier, this.getStackCount()));
 
     return true;
   }
