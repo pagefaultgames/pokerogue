@@ -67,6 +67,8 @@ export class PokemonTransformPhase extends PokemonPhase {
       user.loadAssets(false).then(() => {
         user.playAnim();
         user.updateInfo();
+        // If the new ability activates immediately, it needs to happen after all the transform animations
+        user.setTempAbility(target.getAbility());
       }),
     );
 
