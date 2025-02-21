@@ -197,7 +197,7 @@ export class MoveEffectPhase extends PokemonPhase {
       && (targets[0]?.getAbility()?.getAttrs(TypeImmunityAbAttr)?.[0]?.getImmuneType() === user.getMoveType(move))
       && !targets[0]?.getTag(SemiInvulnerableTag);
 
-      const mayBounce = move.hasFlag(MoveFlags.REFLECTABLE) && !this.reflected && targets.some(t => t.hasAbilityWithAttr(ReflectStatusMoveAbAttr) || !!t.getTag(BattlerTagType.MAGIC_COAT));
+    const mayBounce = move.hasFlag(MoveFlags.REFLECTABLE) && !this.reflected && targets.some(t => t.hasAbilityWithAttr(ReflectStatusMoveAbAttr) || !!t.getTag(BattlerTagType.MAGIC_COAT));
 
     /**
      * If no targets are left for the move to hit (FAIL), or the invoked move is non-reflectable, single-target
