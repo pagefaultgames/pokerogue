@@ -3147,7 +3147,7 @@ export default class BattleScene extends SceneBase {
    * @param show Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
-    this.unshiftPhase((show) ? new ShowAbilityPhase(pokemon.id, passive) : new HideAbilityPhase(pokemon.id, passive));
+    this.unshiftPhase((show) ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase(pokemon.getBattlerIndex(), passive));
     this.clearPhaseQueueSplice();
   }
 
