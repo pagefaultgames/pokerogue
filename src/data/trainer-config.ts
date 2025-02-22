@@ -1344,20 +1344,20 @@ export const signatureSpecies: SignatureSpecies = {
   RYME: [ Species.TOXEL, Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU ],    // Tera Toxel
   TULIP: [ Species.FLABEBE, Species.FLITTLE, Species.RALTS, Species.GIRAFARIG ],  // Tera Flabebe
   GRUSHA: [ Species.SWABLU, Species.CETODDLE, Species.CUBCHOO, Species.ALOLA_VULPIX ],  // Tera Swablu
-  LORELEI: [ Species.JYNX, [ Species.SLOWBRO, Species.GALAR_SLOWBRO ], Species.LAPRAS, [ Species.ALOLA_SANDSLASH, Species.CLOYSTER ]],
-  BRUNO: [ Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [ Species.ALOLA_GOLEM, Species.GOLEM ]],
+  LORELEI: [ Species.JYNX, [ Species.SLOWBRO, Species.GALAR_SLOWBRO ], Species.LAPRAS, [ Species.CLOYSTER, Species.ALOLA_SANDSLASH ]],
+  BRUNO: [ Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [ Species.GOLEM, Species.ALOLA_GOLEM ]],
   AGATHA: [ Species.GENGAR, [ Species.ARBOK, Species.WEEZING ], Species.CROBAT, Species.ALOLA_MAROWAK ],
   LANCE: [ Species.DRAGONITE, Species.GYARADOS, Species.AERODACTYL, Species.ALOLA_EXEGGUTOR ],
   WILL: [ Species.XATU, Species.JYNX, [ Species.SLOWBRO, Species.SLOWKING ], Species.EXEGGUTOR ],
-  KOGA: [[ Species.WEEZING, Species.MUK ], [ Species.VENOMOTH, Species.ARIADOS ], Species.CROBAT, Species.TENTACRUEL ],
+  KOGA: [[ Species.MUK, Species.WEEZING ], [ Species.VENOMOTH, Species.ARIADOS ], Species.CROBAT, Species.TENTACRUEL ],
   KAREN: [ Species.UMBREON, Species.HONCHKROW, Species.HOUNDOOM, Species.WEAVILE ],
   SIDNEY: [[ Species.SHIFTRY, Species.CACTURNE ], [ Species.SHARPEDO, Species.CRAWDAUNT ], Species.ABSOL, Species.MIGHTYENA ],
-  PHOEBE: [ Species.SABLEYE, Species.DUSKNOIR, Species.BANETTE, [ Species.MISMAGIUS, Species.DRIFBLIM ]],
+  PHOEBE: [ Species.SABLEYE, Species.DUSKNOIR, Species.BANETTE, [ Species.DRIFBLIM, Species.MISMAGIUS ]],
   GLACIA: [ Species.GLALIE, Species.WALREIN, Species.FROSLASS, Species.ABOMASNOW ],
   DRAKE: [ Species.ALTARIA, Species.SALAMENCE, Species.FLYGON, Species.KINGDRA ],
   AARON: [[ Species.SCIZOR, Species.KLEAVOR ], Species.HERACROSS, [ Species.VESPIQUEN, Species.YANMEGA ], Species.DRAPION ],
   BERTHA: [ Species.WHISCASH, Species.HIPPOWDON, Species.GLISCOR, Species.RHYPERIOR ],
-  FLINT: [[ Species.FLAREON, Species.RAPIDASH ], Species.MAGMORTAR, [ Species.STEELIX, Species.LOPUNNY ], Species.INFERNAPE ],
+  FLINT: [[ Species.RAPIDASH, Species.FLAREON ], Species.MAGMORTAR, [ Species.STEELIX, Species.LOPUNNY ], Species.INFERNAPE ],
   LUCIAN: [ Species.MR_MIME, Species.GALLADE, Species.BRONZONG, [ Species.ALAKAZAM, Species.ESPEON ]],
   SHAUNTAL: [ Species.COFAGRIGUS, Species.CHANDELURE, Species.GOLURK, Species.JELLICENT ],
   MARSHAL: [ Species.CONKELDURR, Species.MIENSHAO, Species.THROH, Species.SAWK ],
@@ -1373,17 +1373,17 @@ export const signatureSpecies: SignatureSpecies = {
   ACEROLA: [[ Species.BANETTE, Species.DRIFBLIM ], Species.MIMIKYU, Species.DHELMISE, Species.PALOSSAND ],
   KAHILI: [[ Species.BRAVIARY, Species.MANDIBUZZ ], Species.HAWLUCHA, Species.ORICORIO, Species.TOUCANNON ],
   MARNIE_ELITE: [ Species.MORPEKO, Species.LIEPARD, [ Species.TOXICROAK, Species.SCRAFTY ], Species.GRIMMSNARL ],
-  NESSA_ELITE: [ Species.GOLISOPOD, [ Species.PELIPPER, Species.QUAGSIRE ], Species.TOXAPEX, Species.DREDNAW ],
+  NESSA_ELITE: [ Species.GOLISOPOD, [ Species.QUAGSIRE, Species.PELIPPER ], Species.TOXAPEX, Species.DREDNAW ],
   BEA_ELITE: [ Species.HAWLUCHA, [ Species.GRAPPLOCT, Species.SIRFETCHD ], Species.FALINKS, Species.MACHAMP ],
   ALLISTER_ELITE: [ Species.DUSKNOIR, [ Species.POLTEAGEIST, Species.RUNERIGUS ], Species.CURSOLA, Species.GENGAR ],
   RAIHAN_ELITE: [ Species.GOODRA, [ Species.TORKOAL, Species.TURTONATOR ], Species.FLYGON, Species.ARCHALUDON ],
-  RIKA: [ Species.CLODSIRE, [ Species.DONPHAN, Species.DUGTRIO ], Species.CAMERUPT, Species.WHISCASH ], // Tera Clodsire
+  RIKA: [ Species.CLODSIRE, [ Species.DUGTRIO, Species.DONPHAN ], Species.CAMERUPT, Species.WHISCASH ], // Tera Clodsire
   POPPY: [ Species.TINKATON, Species.BRONZONG, Species.CORVIKNIGHT, Species.COPPERAJAH ],   // Tera Tinkaton
-  LARRY_ELITE: [ Species.FLAMIGO, Species.STARAPTOR, [ Species.ALTARIA, Species.TROPIUS ], Species.ORICORIO ],  // Tera Flamigo
+  LARRY_ELITE: [ Species.FLAMIGO, Species.STARAPTOR, [ Species.ALTARIA, Species.TROPIUS ], Species.ORICORIO ],  // Tera Flamigo, random Oricorio
   HASSEL: [ Species.BAXCALIBUR, [ Species.FLAPPLE, Species.APPLETUN ], Species.DRAGALGE, Species.NOIVERN ],     // Tera Baxcalibur
   CRISPIN: [ Species.BLAZIKEN, Species.MAGMORTAR, [ Species.CAMERUPT, Species.TALONFLAME ], Species.ROTOM ], // Tera Blaziken, Heat Rotom
   AMARYS: [ Species.METAGROSS, Species.SCIZOR, Species.EMPOLEON, Species.SKARMORY ], // Tera Metagross
-  LACEY: [ Species.EXCADRILL, Species.PRIMARINA, [ Species.ALCREMIE, Species.WHIMSICOTT ], Species.GRANBULL ], // Tera Excadrill
+  LACEY: [ Species.EXCADRILL, Species.PRIMARINA, [ Species.WHIMSICOTT, Species.ALCREMIE ], Species.GRANBULL ], // Tera Excadrill
   DRAYTON: [ Species.ARCHALUDON, Species.DRAGONITE, Species.HAXORUS, Species.SCEPTILE ], // Tera Archaludon
 };
 
