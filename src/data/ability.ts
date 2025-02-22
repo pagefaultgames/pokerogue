@@ -1408,7 +1408,6 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): void {
     const hitCount = args[0] as Utils.NumberHolder;
     const multiplier = args[1] as Utils.NumberHolder;
-    this.showAbility = !!hitCount?.value;
     if (hitCount?.value) {
       hitCount.value += 1;
     }
