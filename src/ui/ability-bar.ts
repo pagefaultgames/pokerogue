@@ -2,30 +2,44 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
 
-const hiddenX = -118;
-const shownX = 0;
+const barWidth = 118;
+const screenLeft = 0;
 const baseY = -116;
 
 export default class AbilityBar extends Phaser.GameObjects.Container {
-  private bg: Phaser.GameObjects.Image;
+  private abilityBars: Phaser.GameObjects.Image[];
   private abilityBarText: Phaser.GameObjects.Text;
+  private player: boolean;
+  private screenRight: number; // hold screenRight in case size changes between show and hide
 
   constructor() {
-    super(globalScene, hiddenX, baseY);
+    super(globalScene, barWidth, baseY);
+    this.abilityBars = [];
+    this.player = true;
   }
 
   setup(): void {
-    this.bg = globalScene.add.image(0, 0, "ability_bar_left");
-    this.bg.setOrigin(0, 0);
-
-    this.add(this.bg);
+    for (const key of [ "ability_bar_right", "ability_bar_left" ]) {
+      const bar = globalScene.add.image(0, 0, key);
+      bar.setOrigin(0, 0);
+      bar.setVisible(false);
+      this.add(bar);
+      this.abilityBars.push(bar);
+    }
 
     this.abilityBarText = addTextObject(15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
     this.abilityBarText.setOrigin(0, 0);
     this.abilityBarText.setWordWrapWidth(600, true);
     this.add(this.abilityBarText);
+    this.bringToTop(this.abilityBarText);
 
     this.setVisible(false);
+    this.setX(-barWidth); // start hidden (right edge of bar at x=0)
+  }
+
+  public override setVisible(value: boolean): this {
+    this.abilityBars[+this.player].setVisible(value);
+    return this;
   }
 
   public async startTween(config: any, text?: string): Promise<void> {
@@ -46,15 +60,28 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     });
   }
 
-  public async showAbility(pokemonName: string, abilityName: string, passive: boolean = false): Promise<void> {
+  public async showAbility(pokemonName: string, abilityName: string, passive: boolean = false, player: boolean = true): Promise<void> {
     const text = (`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: abilityName })}`);
-
+    this.screenRight = globalScene.scaledCanvas.width;
+    if (player !== this.player) {
+      // Move the bar if it has changed from the player to enemy side (or vice versa)
+      this.setX(player ? -barWidth : this.screenRight);
+      this.player = player;
+    }
     globalScene.fieldUI.bringToTop(this);
 
-    this.y = baseY + (globalScene.currentBattle.double ? 14 : 0);
+    let y = baseY;
+    if (this.player) {
+      y += (globalScene.currentBattle.double ? 14 : 0);
+    } else {
+      y -= globalScene.currentBattle.double ? 28 : 14;
+    }
+
+    this.setY(y);
+
     return this.startTween({
       targets: this,
-      x: shownX,
+      x: this.player ? screenLeft : this.screenRight - barWidth,
       duration: 500,
       ease: "Sine.easeOut",
       hold: 1000,
@@ -64,7 +91,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   public async hide(): Promise<void> {
     return this.startTween({
       targets: this,
-      x: -91,
+      x: this.player ? -barWidth : this.screenRight,
       duration: 200,
       ease: "Sine.easeIn",
       onComplete: () => {
