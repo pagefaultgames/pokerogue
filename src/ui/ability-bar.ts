@@ -28,7 +28,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     this.setVisible(false);
   }
 
-  startTween(config: any, text?: string): Promise<void> {
+  public async startTween(config: any, text?: string): Promise<void> {
     this.setVisible(true);
     if (text) {
       this.abilityBarText.setText(text);
@@ -46,7 +46,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     });
   }
 
-  showAbility(pokemonName: string, abilityName: string, passive: boolean = false): Promise<void> {
+  public async showAbility(pokemonName: string, abilityName: string, passive: boolean = false): Promise<void> {
     const text = (`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: abilityName })}`);
 
     globalScene.fieldUI.bringToTop(this);
@@ -61,7 +61,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     }, text);
   }
 
-  hide(): Promise<void> {
+  public async hide(): Promise<void> {
     return this.startTween({
       targets: this,
       x: -91,

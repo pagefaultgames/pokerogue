@@ -3439,9 +3439,9 @@ export default class BattleScene extends SceneBase {
 
     const matchingModifier = this.findModifier(
       (m) =>
-        m instanceof PokemonHeldItemModifier &&
-        m.matchType(mod) &&
-        m.pokemonId === target.id,
+        m instanceof PokemonHeldItemModifier
+        && m.matchType(mod)
+        && m.pokemonId === target.id,
       target.isPlayer(),
     ) as PokemonHeldItemModifier;
 
@@ -3463,7 +3463,7 @@ export default class BattleScene extends SceneBase {
 
     const removeOld = mod.stackCount === 0;
 
-    return !removeOld || !source || this.canRemoveModifier(itemModifier, !source.isPlayer());
+    return !removeOld || !source || this.hasModifier(itemModifier, !source.isPlayer());
   }
 
   removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
@@ -3654,7 +3654,7 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  canRemoveModifier(modifier: PersistentModifier, enemy: boolean = false): boolean {
+  hasModifier(modifier: PersistentModifier, enemy: boolean = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
     return modifiers.indexOf(modifier) > -1;
   }

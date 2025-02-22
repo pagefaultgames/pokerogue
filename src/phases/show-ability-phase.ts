@@ -14,7 +14,7 @@ export class ShowAbilityPhase extends PokemonPhase {
     this.passive = passive;
     // Set these now as the pokemon object may change before the queued phase is run
     this.pokemonName = getPokemonNameWithAffix(this.getPokemon());
-    this.abilityName = passive ? this.getPokemon().getPassiveAbility().name : this.getPokemon().getAbility().name;
+    this.abilityName = (passive ? this.getPokemon().getPassiveAbility() : this.getPokemon().getAbility()).name;
   }
 
   start() {

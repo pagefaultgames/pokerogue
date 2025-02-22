@@ -1,9 +1,7 @@
 import { globalScene } from "#app/global-scene";
 
 export class Phase {
-  start() {
-
-  }
+  start() {}
 
   end() {
     globalScene.shiftPhase();
