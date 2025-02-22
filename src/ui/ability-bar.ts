@@ -10,8 +10,6 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.Image;
   private abilityBarText: Phaser.GameObjects.Text;
 
-  public shown: boolean;
-
   constructor() {
     super(globalScene, hiddenX, baseY);
   }
@@ -28,12 +26,6 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     this.add(this.abilityBarText);
 
     this.setVisible(false);
-  }
-
-  override setVisible(shown: boolean): this {
-    this.shown = shown;
-    super.setVisible(shown);
-    return this;
   }
 
   startTween(config: any, text?: string): Promise<void> {
