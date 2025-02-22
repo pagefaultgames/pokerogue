@@ -421,7 +421,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       baseSpecies = globalScene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
 
-    let ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex, this.config.specialtyType));
+    let ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex));
     let retry = false;
 
     console.log(ret.getName());
@@ -432,6 +432,21 @@ export default class Trainer extends Phaser.GameObjects.Container {
       const partyMemberTypes = battle.enemyParty.map(p => p.getTypes(true)).flat();
       if (partyMemberTypes.indexOf(ret.type1) > -1 || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1)) {
         retry = true;
+      }
+    }
+
+    // Prompts reroll of party member species if doesn't fit specialty type.
+    // Can be removed by adding a type parameter to getTrainerSpeciesForLevel and filtering the list of evolutions for that type.
+    if (!retry && this.config.specialtyType > Type.UNKNOWN && !ret.isOfType(this.config.specialtyType)) {
+      retry = true;
+      console.log("Attempting reroll of species evolution to fit specialty type...");
+      let evoAttempt = 0;
+      while (retry && evoAttempt++ < 10) {
+        ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex));
+        console.log(ret.name);
+        if (!ret.isOfType(this.config.specialtyType)) {
+          retry = false;
+        }
       }
     }
 

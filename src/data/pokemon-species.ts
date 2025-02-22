@@ -779,8 +779,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.getSpeciesForLevel(level, allowEvolving, false, (isBoss ? PartyMemberStrength.WEAKER : PartyMemberStrength.AVERAGE) + (gameMode?.isEndless ? 1 : 0));
   }
 
-  getTrainerSpeciesForLevel(level: number, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number = 0, type: Type = Type.UNKNOWN): Species {
-    return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave, type);
+  getTrainerSpeciesForLevel(level: number, allowEvolving: boolean = false, strength: PartyMemberStrength, currentWave: number = 0): Species {
+    return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
   }
 
   /**
@@ -818,7 +818,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     }
   }
 
-  getSpeciesForLevel(level: number, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER, currentWave: number = 0, type: Type = Type.UNKNOWN): Species {
+  getSpeciesForLevel(level: number, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER, currentWave: number = 0): Species {
     const prevolutionLevels = this.getPrevolutionLevels();
 
     if (prevolutionLevels.length) {
@@ -834,9 +834,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       return this.speciesId;
     }
 
-    const evolutions = forTrainer && type !== Type.UNKNOWN && pokemonEvolutions[this.speciesId].some(e => getPokemonSpecies(e.speciesId).isOfType(type)) // If this is for a trainer with specialty type and an evo exists with that type
-      ? pokemonEvolutions[this.speciesId].filter(e => getPokemonSpecies(e.speciesId).isOfType(type)) // Filter out mistyped evos
-      : pokemonEvolutions[this.speciesId];
+    const evolutions = pokemonEvolutions[this.speciesId];
 
     const easeInFunc = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn");
     const easeOutFunc = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut");
@@ -912,7 +910,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
-        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength, currentWave, type);
+        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength, currentWave);
       }
     }
 
