@@ -354,7 +354,7 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
   protected condition: PokemonDefendCondition;
   private damageMultiplier: number;
 
-  constructor(condition: PokemonDefendCondition, damageMultiplier: number, showAbility: boolean = true) {
+  constructor(condition: PokemonDefendCondition, damageMultiplier: number, showAbility: boolean = false) {
     super(showAbility);
 
     this.condition = condition;
@@ -1456,7 +1456,7 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
 
-  constructor(condition: PokemonAttackCondition, powerMultiplier: number, showAbility: boolean = true) {
+  constructor(condition: PokemonAttackCondition, powerMultiplier: number, showAbility: boolean = false) {
     super(showAbility);
     this.condition = condition;
     this.powerMultiplier = powerMultiplier;
