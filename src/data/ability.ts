@@ -245,7 +245,7 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
   private formFunc: (p: Pokemon) => number;
 
   constructor(formFunc: ((p: Pokemon) => number)) {
-    super(true);
+    super(false);
 
     this.formFunc = formFunc;
   }
