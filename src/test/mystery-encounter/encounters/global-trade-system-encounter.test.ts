@@ -224,7 +224,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
       const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 2;
-      await scene.addModifier(modifier, true, false, false, true);
+      scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
@@ -249,7 +249,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
       const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
-      await scene.addModifier(modifier, true, false, false, true);
+      scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
