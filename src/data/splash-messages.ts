@@ -45,6 +45,8 @@ interface Season {
 
 /** The weight multiplier for the battles-won splash message */
 const BATTLES_WON_WEIGHT_MULTIPLIER = 10;
+/** The weight multiplier for the Pokémon names splash message */
+const POKEMON_NAMES_WEIGHT_MULTIPLIER = 5;
 /** The weight multiplier for the seasonal splash messages */
 const SEASONAL_WEIGHT_MULTIPLIER = 10;
 
@@ -52,7 +54,7 @@ const SEASONAL_WEIGHT_MULTIPLIER = 10;
 
 const commonSplashMessages = [
   ...Array(BATTLES_WON_WEIGHT_MULTIPLIER).fill("battlesWon"),
-  "pokemon",
+  ...Array(POKEMON_NAMES_WEIGHT_MULTIPLIER).fill("pokemon"),
   "joinTheDiscord",
   "infiniteLevels",
   "everythingIsStackable",
