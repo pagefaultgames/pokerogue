@@ -5,6 +5,8 @@ import { EFFECTIVE_STATS, BATTLE_STATS } from "#enums/stat";
 import { PokemonMove } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { PokemonPhase } from "./pokemon-phase";
+import { getPokemonNameWithAffix } from "#app/messages";
+import i18next from "i18next";
 
 /**
  * Transforms a Pokemon into another Pokemon on the field.
@@ -62,6 +64,13 @@ export class PokemonTransformPhase extends PokemonPhase {
     if (this.playSound) {
       globalScene.playSound("battle_anims/PRSFX- Transform");
     }
+
+    globalScene.queueMessage(
+      i18next.t("abilityTriggers:postSummonTransform", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(user),
+        targetName: target.name,
+      }),
+    );
 
     promises.push(
       user.loadAssets(false).then(() => {

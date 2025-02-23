@@ -1219,9 +1219,6 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
    *             [1]: {@linkcode Moves } Move used by the ability user.
    */
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
-    // Disable showAbility during getTargetBenefitScore
-    this.showAbility = args[4];
-
     (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier;
     (args[0] as Utils.NumberHolder).value = Math.min((args[0] as Utils.NumberHolder).value, 100);
   }
@@ -2450,10 +2447,6 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   private target: Pokemon;
   private targetAbilityName: string;
 
-  constructor() {
-    super(false); // Displaying ability changes should be handled by ab swap function
-  }
-
   override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
     if (!targets.length) {
@@ -2624,12 +2617,6 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 
     globalScene.unshiftPhase(new PokemonTransformPhase(pokemon.getBattlerIndex(), target.getBattlerIndex(), true));
 
-    globalScene.queueMessage(
-      i18next.t("abilityTriggers:postSummonTransform", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        targetName: target.name,
-      }),
-    );
   }
 }
 

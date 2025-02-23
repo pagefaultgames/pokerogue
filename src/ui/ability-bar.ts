@@ -11,11 +11,13 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   private abilityBarText: Phaser.GameObjects.Text;
   private player: boolean;
   private screenRight: number; // hold screenRight in case size changes between show and hide
+  private shown: boolean;
 
   constructor() {
     super(globalScene, barWidth, baseY);
     this.abilityBars = [];
     this.player = true;
+    this.shown = false;
   }
 
   setup(): void {
@@ -39,6 +41,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
   public override setVisible(value: boolean): this {
     this.abilityBars[+this.player].setVisible(value);
+    this.shown = value;
     return this;
   }
 
@@ -98,5 +101,9 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
         this.setVisible(false);
       }
     });
+  }
+
+  public isVisible(): boolean {
+    return this.shown;
   }
 }
