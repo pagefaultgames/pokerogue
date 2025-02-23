@@ -46,6 +46,7 @@ import type { Variant } from "#app/data/variant";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { Type } from "#app/enums/type";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -98,6 +99,7 @@ export interface EnemyPokemonConfig {
   modifierConfigs?: HeldModifierConfig[];
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
+  tera?: Type;
   aiType?: AiType;
 }
 
@@ -327,6 +329,14 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       if (config.tags && config.tags.length > 0) {
         const tags = config.tags;
         tags.forEach(tag => enemyPokemon.addTag(tag));
+      }
+
+      // Set tera
+      if (config.tera && config.tera !== Type.UNKNOWN) {
+        enemyPokemon.teraType = config.tera;
+        if (battle.trainer) {
+          battle.trainer.config.setInstantTera(e);
+        }
       }
 
       // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
