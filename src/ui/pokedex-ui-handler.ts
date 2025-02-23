@@ -1246,7 +1246,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.filterBar.updateFilterLabels();
     this.filterText.updateFilterLabels();
 
-    // filter
     this.filteredPokemonData = [];
 
     this.allSpecies.forEach(species => {
@@ -1348,10 +1347,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
 
       // Gen filter
-      const fitsGen =   this.filterBar.getVals(DropDownColumn.GEN).includes(species.generation);
+      const fitsGen = this.filterBar.getVals(DropDownColumn.GEN).includes(species.generation);
 
       // Type filter
-      const fitsType =  this.filterBar.getVals(DropDownColumn.TYPES).some(type => species.isOfType((type as number) - 1));
+      const fitsType = this.filterBar.getVals(DropDownColumn.TYPES).some(type => species.isOfType((type as number) - 1));
 
       // Biome filter
       const indexToBiome = new Map(
