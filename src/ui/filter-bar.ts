@@ -87,6 +87,15 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Get the DropDownColumn associated to a given index
+   * @param index the index of the column to retrieve
+   * @returns the associated DropDownColumn if it exists, undefined otherwise
+   */
+  getColumn(index: number) : DropDownColumn {
+    return this.columns[index];
+  }
+
+  /**
    * Highlight the labels of the FilterBar if the filters are different from their default values
    */
   updateFilterLabels(): void {
