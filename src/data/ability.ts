@@ -5381,7 +5381,6 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(
     }
 
     applySingleAbAttrs(pokemon, passive, attrType, applyFunc, successFunc, args, gainedMidTurn, simulated, messages);
-    globalScene.clearPhaseQueueSplice();
   }
 }
 
