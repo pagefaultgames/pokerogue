@@ -1059,9 +1059,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
    * Set the selections for all filters to their default starting value
    */
   resetFilters() : void {
+    this.filterBar.setValsToDefault();
+    this.resetCaughtDropdown();
+  }
+
+  /**
+   * Set default value for the caught dropdown, which only shows caught mons
+   */
+  resetCaughtDropdown(): void {
     const caughtDropDown: DropDown = this.filterBar.getFilter(DropDownColumn.CAUGHT);
 
-    this.filterBar.setValsToDefault();
+    caughtDropDown.resetToDefault();
 
     // initial setting, in caught filter, select the options excluding the uncaught option
     for (let i = 0; i < caughtDropDown.options.length; i++) {
@@ -1302,8 +1310,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         // CANCEL with a filter menu open > close it
         this.filterBar.toggleDropDown(this.filterBarCursor);
         success = true;
-      } else if (this.filterMode && !this.filterBar.getFilter(this.filterBarCursor).hasDefaultValues()) {
-        this.filterBar.resetSelection(this.filterBarCursor);
+      } else if (this.filterMode && !this.filterBar.getFilter(this.filterBar.getColumn(this.filterBarCursor)).hasDefaultValues()) {
+        if (this.filterBar.getColumn(this.filterBarCursor) === DropDownColumn.CAUGHT) {
+          this.resetCaughtDropdown();
+        } else {
+          this.filterBar.resetSelection(this.filterBarCursor);
+        }
         this.updateStarters;
         success = true;
       } else if (this.statsMode) {
