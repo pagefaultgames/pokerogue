@@ -21,7 +21,7 @@ export enum SettingGamepad {
     Button_Cycle_Gender = "BUTTON_CYCLE_GENDER",
     Button_Cycle_Ability = "BUTTON_CYCLE_ABILITY",
     Button_Cycle_Nature = "BUTTON_CYCLE_NATURE",
-    Button_Cycle_Variant = "BUTTON_CYCLE_VARIANT",
+    Button_Cycle_Tera = "BUTTON_CYCLE_TERA",
     Button_Speed_Up = "BUTTON_SPEED_UP",
     Button_Slow_Down = "BUTTON_SLOW_DOWN",
     Button_Submit = "BUTTON_SUBMIT",
@@ -45,7 +45,7 @@ export const settingGamepadOptions = {
   [SettingGamepad.Button_Cycle_Gender]: [ `KEY ${Button.CYCLE_GENDER.toString()}`, pressAction ],
   [SettingGamepad.Button_Cycle_Ability]: [ `KEY ${Button.CYCLE_ABILITY.toString()}`, pressAction ],
   [SettingGamepad.Button_Cycle_Nature]: [ `KEY ${Button.CYCLE_NATURE.toString()}`, pressAction ],
-  [SettingGamepad.Button_Cycle_Variant]: [ `KEY ${Button.V.toString()}`, pressAction ],
+  [SettingGamepad.Button_Cycle_Tera]: [ `KEY ${Button.CYCLE_TERA.toString()}`, pressAction ],
   [SettingGamepad.Button_Speed_Up]: [ `KEY ${Button.SPEED_UP.toString()}`, pressAction ],
   [SettingGamepad.Button_Slow_Down]: [ `KEY ${Button.SLOW_DOWN.toString()}`, pressAction ],
   [SettingGamepad.Button_Submit]: [ `KEY ${Button.SUBMIT.toString()}`, pressAction ],
@@ -67,7 +67,7 @@ export const settingGamepadDefaults = {
   [SettingGamepad.Button_Cycle_Gender]: 0,
   [SettingGamepad.Button_Cycle_Ability]: 0,
   [SettingGamepad.Button_Cycle_Nature]: 0,
-  [SettingGamepad.Button_Cycle_Variant]: 0,
+  [SettingGamepad.Button_Cycle_Tera]: 0,
   [SettingGamepad.Button_Speed_Up]: 0,
   [SettingGamepad.Button_Slow_Down]: 0,
   [SettingGamepad.Button_Submit]: 0,
@@ -80,7 +80,7 @@ export const settingGamepadBlackList = [
   SettingKeyboard.Button_Right,
 ];
 
-export function setSettingGamepad(setting: SettingGamepad, value: integer): boolean {
+export function setSettingGamepad(setting: SettingGamepad, value: number): boolean {
   switch (setting) {
     case SettingGamepad.Gamepad_Support:
     // if we change the value of the gamepad support, we call a method in the inputController to
@@ -96,7 +96,7 @@ export function setSettingGamepad(setting: SettingGamepad, value: integer): bool
     case SettingGamepad.Button_Cycle_Gender:
     case SettingGamepad.Button_Cycle_Ability:
     case SettingGamepad.Button_Cycle_Nature:
-    case SettingGamepad.Button_Cycle_Variant:
+    case SettingGamepad.Button_Cycle_Tera:
     case SettingGamepad.Button_Speed_Up:
     case SettingGamepad.Button_Slow_Down:
     case SettingGamepad.Button_Submit:

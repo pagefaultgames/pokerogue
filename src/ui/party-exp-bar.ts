@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
+import i18next from "i18next";
 
 export default class PartyExpBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;
@@ -29,7 +30,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showPokemonExp(pokemon: Pokemon, expValue: integer, showOnlyLevelUp: boolean, newLevel: number): Promise<void> {
+  showPokemonExp(pokemon: Pokemon, expValue: number, showOnlyLevelUp: boolean, newLevel: number): Promise<void> {
     return new Promise<void>(resolve => {
       if (this.shown) {
         return resolve();
@@ -43,9 +44,9 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
       // if we want to only display the level in the small frame
       if (showOnlyLevelUp) {
         if (newLevel > 200) { // if the level is greater than 200, we only display Lv. UP
-          this.expText.setText("Lv. UP");
+          this.expText.setText(i18next.t("battleScene:levelUp"));
         } else { // otherwise we display Lv. Up and the new level
-          this.expText.setText(`Lv. UP: ${newLevel.toString()}`);
+          this.expText.setText(i18next.t("battleScene:levelUpWithLevel", { level: newLevel }));
         }
       } else {
         // if we want to display the exp

@@ -12,6 +12,7 @@ import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import type { Species } from "#enums/species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import * as Utils from "../utils";
 
 export class SelectStarterPhase extends Phase {
 
@@ -26,7 +27,7 @@ export class SelectStarterPhase extends Phase {
 
     globalScene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
-      globalScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+      globalScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
         if (slotId === -1) {
           globalScene.clearPhaseQueue();
           globalScene.pushPhase(new TitlePhase());
@@ -45,7 +46,7 @@ export class SelectStarterPhase extends Phase {
   initBattle(starters: Starter[]) {
     const party = globalScene.getPlayerParty();
     const loadPokemonAssets: Promise<void>[] = [];
-    starters.forEach((starter: Starter, i: integer) => {
+    starters.forEach((starter: Starter, i: number) => {
       if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
         starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
       }
@@ -77,6 +78,12 @@ export class SelectStarterPhase extends Phase {
 
       if (starter.nickname) {
         starterPokemon.nickname = starter.nickname;
+      }
+
+      if (!Utils.isNullOrUndefined(starter.teraType)) {
+        starterPokemon.teraType = starter.teraType;
+      } else {
+        starterPokemon.teraType = starterPokemon.species.type1;
       }
 
       if (globalScene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {

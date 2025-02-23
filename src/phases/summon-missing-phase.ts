@@ -4,7 +4,7 @@ import { SummonPhase } from "./summon-phase";
 import { globalScene } from "#app/global-scene";
 
 export class SummonMissingPhase extends SummonPhase {
-  constructor(fieldIndex: integer) {
+  constructor(fieldIndex: number) {
     super(fieldIndex);
   }
 

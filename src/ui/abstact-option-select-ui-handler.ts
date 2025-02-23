@@ -1,18 +1,19 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
+import { TextStyle, addBBCodeTextObject, getTextColor, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
+import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 export interface OptionSelectConfig {
   xOffset?: number;
   yOffset?: number;
   options: OptionSelectItem[];
-  maxOptions?: integer;
-  delay?: integer;
+  maxOptions?: number;
+  delay?: number;
   noCancel?: boolean;
   supportHover?: boolean;
 }
@@ -21,8 +22,10 @@ export interface OptionSelectItem {
   label: string;
   handler: () => boolean;
   onHover?: () => void;
+  skip?: boolean;
   keepOpen?: boolean;
   overrideSound?: boolean;
+  style?: TextStyle;
   item?: string;
   itemArgs?: any[];
 }
@@ -32,27 +35,35 @@ const scrollDownLabel = "↓";
 
 export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
+  protected optionSelectTextContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
-  protected optionSelectText: Phaser.GameObjects.Text;
+  protected optionSelectText: BBCodeText;
   protected optionSelectIcons: Phaser.GameObjects.Sprite[];
 
   protected config: OptionSelectConfig | null;
 
   protected blockInput: boolean;
 
-  protected scrollCursor: integer = 0;
+  protected scrollCursor: number = 0;
+  protected fullCursor: number = 0;
 
   protected scale: number = 0.1666666667;
 
   private cursorObj: Phaser.GameObjects.Image | null;
 
+  protected unskippedIndices: number[] = [];
+
+  protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
+  protected textContent: string;
+
+
   constructor(mode: Mode | null) {
     super(mode);
   }
 
-  abstract getWindowWidth(): integer;
+  abstract getWindowWidth(): number;
 
-  getWindowHeight(): integer {
+  getWindowHeight(): number {
     return (Math.min((this.config?.options || []).length, this.config?.maxOptions || 99) + 1) * 96 * this.scale;
   }
 
@@ -69,6 +80,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 
+    this.optionSelectTextContainer = globalScene.add.container(0, 0);
+    this.optionSelectContainer.add(this.optionSelectTextContainer);
+
     this.optionSelectIcons = [];
 
     this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
@@ -79,46 +93,55 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected setupOptions() {
     const configOptions = this.config?.options ?? [];
 
-    let options: OptionSelectItem[];
+    const options: OptionSelectItem[] = configOptions;
 
-    // for performance reasons, this limits how many options we can see at once. Without this, it would try to make text options for every single options
-    // which makes the performance take a hit. If there's not enough options to do this (set to 10 at the moment) and the ui mode !== Mode.AUTO_COMPLETE,
-    // this is ignored and the original code is untouched, with the options array being all the options from the config
-    if (configOptions.length >= 10 && globalScene.ui.getMode() === Mode.AUTO_COMPLETE) {
-      const optionsScrollTotal = configOptions.length;
-      const optionStartIndex = this.scrollCursor;
-      const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config?.maxOptions! - 1) >= optionsScrollTotal ? this.config?.maxOptions! - 1 : this.config?.maxOptions! - 2));
-      options = configOptions.slice(optionStartIndex, optionEndIndex + 2);
-    } else {
-      options = configOptions;
-    }
+    this.unskippedIndices = this.getUnskippedIndices(configOptions);
 
     if (this.optionSelectText) {
-      this.optionSelectText.destroy();
+      if (this.optionSelectText instanceof BBCodeText) {
+        try {
+          this.optionSelectText.destroy();
+        } catch (error) {
+          console.error("Error while destroying optionSelectText:", error);
+        }
+      } else {
+        console.warn("optionSelectText is not an instance of BBCodeText.");
+      }
     }
+
     if (this.optionSelectIcons?.length) {
       this.optionSelectIcons.map(i => i.destroy());
       this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
     }
 
-    this.optionSelectText = addTextObject(0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join("\n"), TextStyle.WINDOW, { maxLines: options.length });
-    this.optionSelectText.setLineSpacing(this.scale * 72);
+    const optionsWithScroll = (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) ? this.getOptionsWithScroll() : options;
+
+    // Setting the initial text to establish the width of the select object. We consider all options, even ones that are not displayed,
+    // Except in the case of autocomplete, where we don't want to set up a text element with potentially hundreds of lines.
+    const optionsForWidth = globalScene.ui.getMode() === Mode.AUTO_COMPLETE ? optionsWithScroll : options;
+    this.optionSelectText = addBBCodeTextObject(
+      0, 0, optionsForWidth.map(o => o.item
+        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
+        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`
+      ).join("\n"),
+      TextStyle.WINDOW, { maxLines: options.length, lineSpacing: 12 }
+    );
+    this.optionSelectText.setOrigin(0, 0);
     this.optionSelectText.setName("text-option-select");
-    this.optionSelectText.setLineSpacing(12);
-    this.optionSelectContainer.add(this.optionSelectText);
+    this.optionSelectTextContainer.add(this.optionSelectText);
     this.optionSelectContainer.setPosition((globalScene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
-
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
-
-    if (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) { // TODO: is this bang correct?
-      this.optionSelectText.setText(this.getOptionsWithScroll().map(o => o.label).join("\n"));
-    }
-
     this.optionSelectBg.height = this.getWindowHeight();
+    this.optionSelectTextContainer.setPosition(this.optionSelectBg.x - this.optionSelectBg.width + 12 + 24 * this.scale, this.optionSelectBg.y - this.optionSelectBg.height + 2 + 42 * this.scale);
 
-    this.optionSelectText.setPositionRelative(this.optionSelectBg, 12 + 24 * this.scale, 2 + 42 * this.scale);
+    // Now that the container and background widths are established, we can set up the proper text restricted to visible options
+    this.textContent = optionsWithScroll.map(o => o.item
+      ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
+      : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`
+    ).join("\n");
+    this.optionSelectText.setText(this.textContent);
 
-    options.forEach((option: OptionSelectItem, i: integer) => {
+    options.forEach((option: OptionSelectItem, i: number) => {
       if (option.item) {
         const itemIcon = globalScene.add.sprite(0, 0, "items", option.item);
         itemIcon.setScale(3 * this.scale);
@@ -160,13 +183,19 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectContainer.setVisible(true);
     this.scrollCursor = 0;
+    this.fullCursor = 0;
     this.setCursor(0);
 
     if (this.config.delay) {
       this.blockInput = true;
-      this.optionSelectText.setAlpha(0.5);
+      this.optionSelectTextContainer.setAlpha(0.5);
       this.cursorObj?.setAlpha(0.8);
       globalScene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
+    }
+
+    if (this.config?.supportHover) {
+      // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
+      this.config?.options[this.unskippedIndices[this.fullCursor]]?.onHover?.();
     }
 
     return true;
@@ -176,8 +205,6 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const ui = this.getUi();
 
     let success = false;
-
-    const options = this.getOptionsWithScroll();
 
     let playSound = true;
 
@@ -190,15 +217,14 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       success = true;
       if (button === Button.CANCEL) {
         if (this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
-          this.scrollCursor = (this.config.options.length - this.config.maxOptions) + 1;
-          this.cursor = options.length - 1;
+          this.setCursor(this.unskippedIndices.length - 1);
         } else if (!this.config?.noCancel) {
-          this.setCursor(options.length - 1);
+          this.setCursor(this.unskippedIndices.length - 1);
         } else {
           return false;
         }
       }
-      const option = this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
+      const option = this.config?.options[this.unskippedIndices[this.fullCursor]];
       if (option?.handler()) {
         if (!option.keepOpen) {
           this.clear();
@@ -211,7 +237,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       // this is here to differentiate between a Button.SUBMIT vs Button.ACTION within the autocomplete handler
       // this is here because Button.ACTION is picked up as z on the keyboard, meaning if you're typing and hit z, it'll select the option you've chosen
       success = true;
-      const option = this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
+      const option = this.config?.options[this.unskippedIndices[this.fullCursor]];
       if (option?.handler()) {
         if (!option.keepOpen) {
           this.clear();
@@ -223,15 +249,15 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     } else {
       switch (button) {
         case Button.UP:
-          if (this.cursor) {
-            success = this.setCursor(this.cursor - 1);
-          } else if (this.cursor === 0) {
-            success = this.setCursor(options.length - 1);
+          if (this.fullCursor === 0) {
+            success = this.setCursor(this.unskippedIndices.length - 1);
+          } else if (this.fullCursor) {
+            success = this.setCursor(this.fullCursor - 1);
           }
           break;
         case Button.DOWN:
-          if (this.cursor < options.length - 1) {
-            success = this.setCursor(this.cursor + 1);
+          if (this.fullCursor < this.unskippedIndices.length - 1) {
+            success = this.setCursor(this.fullCursor + 1);
           } else {
             success = this.setCursor(0);
           }
@@ -239,7 +265,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       }
       if (this.config?.supportHover) {
         // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
-        this.config?.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))]?.onHover?.();
+        this.config?.options[this.unskippedIndices[this.fullCursor]]?.onHover?.();
       }
     }
 
@@ -256,7 +282,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.blockInput = false;
-    this.optionSelectText.setAlpha(1);
+    this.optionSelectTextContainer.setAlpha(1);
     this.cursorObj?.setAlpha(1);
   }
 
@@ -273,7 +299,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     const optionsScrollTotal = options.length;
     const optionStartIndex = this.scrollCursor;
-    const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal ? this.config.maxOptions - 1 : this.config.maxOptions - 2));
+    const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex +
+      (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal ? this.config.maxOptions - 1 : this.config.maxOptions - 2)
+    );
 
     if (this.config?.maxOptions && options.length > this.config.maxOptions) {
       options.splice(optionEndIndex, optionsScrollTotal);
@@ -281,13 +309,15 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       if (optionStartIndex) {
         options.unshift({
           label: scrollUpLabel,
-          handler: () => true
+          handler: () => true,
+          style: this.defaultTextStyle
         });
       }
       if (optionEndIndex < optionsScrollTotal) {
         options.push({
           label: scrollDownLabel,
-          handler: () => true
+          handler: () => true,
+          style: this.defaultTextStyle
         });
       }
     }
@@ -295,41 +325,63 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     return options;
   }
 
-  setCursor(cursor: integer): boolean {
-    const changed = this.cursor !== cursor;
+  getUnskippedIndices(options: OptionSelectItem[]) {
+    const unskippedIndices = options
+      .map((option, index) => (option.skip ? null : index)) // Map to index or null if skipped
+      .filter(index => index !== null) as number[];
+    return unskippedIndices;
+  }
 
-    let isScroll = false;
-    const options = this.getOptionsWithScroll();
+  setCursor(fullCursor: number): boolean {
+    const changed = this.fullCursor !== fullCursor;
+
     if (changed && this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
-      if (Math.abs(cursor - this.cursor) === options.length - 1) {
-        // Wrap around the list
-        const optionsScrollTotal = this.config.options.length;
-        this.scrollCursor = cursor ? optionsScrollTotal - (this.config.maxOptions - 1) : 0;
-        this.setupOptions();
+
+      // If the fullCursor is the last possible value, we go to the bottom
+      if (fullCursor === this.unskippedIndices.length - 1) {
+        this.fullCursor = fullCursor;
+        this.cursor = this.config.maxOptions - (this.config.options.length - this.unskippedIndices[fullCursor]);
+        this.scrollCursor = this.config.options.length - this.config.maxOptions + 1;
+      // If the fullCursor is the first possible value, we go to the top
+      } else if (fullCursor === 0) {
+        this.fullCursor = fullCursor;
+        this.cursor = this.unskippedIndices[fullCursor];
+        this.scrollCursor = 0;
       } else {
-        // Move the cursor up or down by 1
-        const isDown = cursor && cursor > this.cursor;
+        const isDown = fullCursor && fullCursor > this.fullCursor;
+
         if (isDown) {
-          if (options[cursor].label === scrollDownLabel) {
-            isScroll = true;
-            this.scrollCursor++;
+          // If there are skipped options under the next selection, we show them
+          const jumpFromCurrent = this.unskippedIndices[fullCursor] - this.unskippedIndices[this.fullCursor];
+          const skipsFromNext = this.unskippedIndices[fullCursor + 1] - this.unskippedIndices[fullCursor] - 1;
+
+          if (this.cursor + jumpFromCurrent + skipsFromNext >= this.config.maxOptions - 1) {
+            this.fullCursor = fullCursor;
+            this.cursor = this.config.maxOptions - 2 - skipsFromNext;
+            this.scrollCursor = this.unskippedIndices[this.fullCursor] - this.cursor + 1;
+          } else {
+            this.fullCursor = fullCursor;
+            this.cursor = this.unskippedIndices[fullCursor] - this.scrollCursor + (this.scrollCursor ? 1 : 0);
           }
         } else {
-          if (!cursor && this.scrollCursor) {
-            isScroll = true;
-            this.scrollCursor--;
+          const jumpFromPrevious = this.unskippedIndices[fullCursor] - this.unskippedIndices[fullCursor - 1];
+
+          if (this.cursor - jumpFromPrevious < 1) {
+            this.fullCursor = fullCursor;
+            this.cursor = 1;
+            this.scrollCursor = this.unskippedIndices[this.fullCursor] - this.cursor + 1;
+          } else {
+            this.fullCursor = fullCursor;
+            this.cursor = this.unskippedIndices[fullCursor] - this.scrollCursor + (this.scrollCursor ? 1 : 0);
           }
         }
-        if (isScroll && this.scrollCursor === 1) {
-          this.scrollCursor += isDown ? 1 : -1;
-        }
       }
-    }
-    if (isScroll) {
-      this.setupOptions();
     } else {
-      this.cursor = cursor;
+      this.fullCursor = fullCursor;
+      this.cursor = this.unskippedIndices[fullCursor];
     }
+
+    this.setupOptions();
 
     if (!this.cursorObj) {
       this.cursorObj = globalScene.add.image(0, 0, "cursor");
@@ -346,6 +398,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     super.clear();
     this.config = null;
     this.optionSelectContainer.setVisible(false);
+    this.fullCursor = 0;
     this.scrollCursor = 0;
     this.eraseCursor();
   }

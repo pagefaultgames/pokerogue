@@ -5,7 +5,7 @@ import { SceneBase } from "#app/scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
 import * as Utils from "#app/utils";
-import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonForms } from "#app/data/pokemon-forms";
@@ -103,6 +103,9 @@ export class LoadingScene extends SceneBase {
     this.loadImage("icon_tera", "ui");
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
+    this.loadAtlas("button_tera", "ui");
+    this.loadImage("mystery_egg", "ui");
+    this.loadImage("normal_memory", "ui");
 
     this.loadImage("dawn_icon_fg", "ui");
     this.loadImage("dawn_icon_mg", "ui");
@@ -154,6 +157,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("scroll_bar_handle", "ui");
     this.loadImage("starter_container_bg", "ui");
     this.loadImage("starter_select_bg", "ui");
+    this.loadImage("pokedex_summary_bg", "ui");
     this.loadImage("select_cursor", "ui");
     this.loadImage("select_cursor_highlight", "ui");
     this.loadImage("select_cursor_highlight_thick", "ui");
@@ -246,9 +250,9 @@ export class LoadingScene extends SceneBase {
     }
     const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("yearofthesnakeevent-" + lang, "events");
+      this.loadImage("valentines2025event-" + lang, "events");
     } else {
-      this.loadImage("yearofthesnakeevent-en", "events");
+      this.loadImage("valentines2025event-en", "events");
     }
 
     this.loadAtlas("statuses", "");
@@ -354,6 +358,7 @@ export class LoadingScene extends SceneBase {
     initVouchers();
     initStatsKeys();
     initPokemonPrevolutions();
+    initPokemonStarters();
     initBiomes();
     initEggMoves();
     initPokemonForms();

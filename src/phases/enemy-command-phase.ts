@@ -15,10 +15,10 @@ import { BattlerTagType } from "#enums/battler-tag-type";
  * @see {@linkcode EnemyPokemon.getNextMove}
  */
 export class EnemyCommandPhase extends FieldPhase {
-  protected fieldIndex: integer;
+  protected fieldIndex: number;
   protected skipTurn: boolean = false;
 
-  constructor(fieldIndex: integer) {
+  constructor(fieldIndex: number) {
     super();
 
     this.fieldIndex = fieldIndex;
@@ -80,6 +80,10 @@ export class EnemyCommandPhase extends FieldPhase {
 
     /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
+
+    if (trainer && trainer.shouldTera(enemyPokemon)) {
+      globalScene.currentBattle.preTurnCommands[this.fieldIndex + BattlerIndex.ENEMY] = { command: Command.TERA };
+    }
 
     globalScene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
         { command: Command.FIGHT, move: nextMove, skip: this.skipTurn };

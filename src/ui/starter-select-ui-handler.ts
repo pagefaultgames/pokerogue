@@ -53,28 +53,31 @@ import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { Abilities } from "#enums/abilities";
 import { getPassiveCandyCount, getValueReductionCandyCounts, getSameSpeciesEggCandyCounts } from "#app/data/balance/starters";
-import { BooleanHolder, capitalizeString, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
+import { BooleanHolder, fixedInt, getLocalizedSpriteKey, isNullOrUndefined, NumberHolder, padInt, randIntRange, rgbHexToRgba, toReadableString } from "#app/utils";
 import type { Nature } from "#enums/nature";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { achvs } from "#app/system/achv";
+import * as Utils from "../utils";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
 export interface Starter {
   species: PokemonSpecies;
   dexAttr: bigint;
-  abilityIndex: integer,
+  abilityIndex: number,
   passive: boolean;
   nature: Nature;
   moveset?: StarterMoveset;
   pokerus: boolean;
   nickname?: string;
+  teraType?: Type;
 }
 
 interface LanguageSetting {
   starterInfoTextSize: string,
   instructionTextSize: string,
-  starterInfoXPos?: integer,
-  starterInfoYOffset?: integer
+  starterInfoXPos?: number,
+  starterInfoYOffset?: number
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
@@ -88,7 +91,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 33,
   },
   "es-ES":{
-    starterInfoTextSize: "56px",
+    starterInfoTextSize: "52px",
     instructionTextSize: "35px",
   },
   "fr":{
@@ -206,12 +209,13 @@ function findClosestStarterRow(index: number, numberOfRows: number) {
 
 interface SpeciesDetails {
   shiny?: boolean,
-  formIndex?: integer
+  formIndex?: number
   female?: boolean,
   variant?: Variant,
-  abilityIndex?: integer,
-  natureIndex?: integer,
+  abilityIndex?: number,
+  natureIndex?: number,
   forSeen?: boolean, // default = false
+  teraType?: Type,
 }
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
@@ -262,6 +266,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonShinyIcon: Phaser.GameObjects.Sprite;
   private pokemonPassiveDisabledIcon: Phaser.GameObjects.Sprite;
   private pokemonPassiveLockedIcon: Phaser.GameObjects.Sprite;
+  private teraIcon: Phaser.GameObjects.Sprite;
 
   private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
   private instructionsContainer: Phaser.GameObjects.Container;
@@ -271,12 +276,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private abilityIconElement: Phaser.GameObjects.Sprite;
   private genderIconElement: Phaser.GameObjects.Sprite;
   private natureIconElement: Phaser.GameObjects.Sprite;
+  private teraIconElement: Phaser.GameObjects.Sprite;
   private goFilterIconElement: Phaser.GameObjects.Sprite;
   private shinyLabel: Phaser.GameObjects.Text;
   private formLabel: Phaser.GameObjects.Text;
   private genderLabel: Phaser.GameObjects.Text;
   private abilityLabel: Phaser.GameObjects.Text;
   private natureLabel: Phaser.GameObjects.Text;
+  private teraLabel: Phaser.GameObjects.Text;
   private goFilterLabel: Phaser.GameObjects.Text;
 
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
@@ -292,7 +299,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private dexAttrCursor: bigint = 0n;
   private abilityCursor: number = -1;
   private natureCursor: number = -1;
-  private filterBarCursor: integer = 0;
+  private teraCursor: Type = Type.UNKNOWN;
+  private filterBarCursor: number = 0;
   private starterMoveset: StarterMoveset | null;
   private scrollCursor: number;
 
@@ -302,8 +310,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   public starterSpecies: PokemonSpecies[] = [];
   private pokerusSpecies: PokemonSpecies[] = [];
   private starterAttr: bigint[] = [];
-  private starterAbilityIndexes: integer[] = [];
+  private starterAbilityIndexes: number[] = [];
   private starterNatures: Nature[] = [];
+  private starterTeras: Type[] = [];
   private starterMovesets: StarterMoveset[] = [];
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: Moves[];
@@ -312,6 +321,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private canCycleGender: boolean;
   private canCycleAbility: boolean;
   private canCycleNature: boolean;
+  private canCycleTera: boolean;
 
   private assetLoadCancelled: BooleanHolder | null;
   public cursorObj: Phaser.GameObjects.Image;
@@ -823,6 +833,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
+    this.teraIcon = globalScene.add.sprite(85, 63, "button_tera");
+    this.teraIcon.setName("terrastallize-icon");
+    this.teraIcon.setFrame("fire");
+    this.starterSelectContainer.add(this.teraIcon);
+
     // The font size should be set per language
     const instructionTextSize = textSettings.instructionTextSize;
 
@@ -866,6 +881,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.natureIconElement.setOrigin(0.0, 0.0);
     this.natureLabel = addTextObject(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleNature"), TextStyle.PARTY, { fontSize: instructionTextSize });
     this.natureLabel.setName("text-nature-label");
+
+    this.teraIconElement = new Phaser.GameObjects.Sprite(globalScene, this.instructionRowX, this.instructionRowY, "keyboard", "V.png");
+    this.teraIconElement.setName("sprite-tera-icon-element");
+    this.teraIconElement.setScale(0.675);
+    this.teraIconElement.setOrigin(0.0, 0.0);
+    this.teraLabel = addTextObject(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY, i18next.t("starterSelectUiHandler:cycleTera"), TextStyle.PARTY, { fontSize: instructionTextSize });
+    this.teraLabel.setName("text-tera-label");
 
     this.goFilterIconElement = new Phaser.GameObjects.Sprite(globalScene, this.filterInstructionRowX, this.filterInstructionRowY, "keyboard", "C.png");
     this.goFilterIconElement.setName("sprite-goFilter-icon-element");
@@ -1072,7 +1094,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, moveToTop?: boolean) {
+  showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number, moveToTop?: boolean) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
     const singleLine = text?.indexOf("\n") === -1;
@@ -1497,6 +1519,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const props = globalScene.gameData.getSpeciesDexAttrProps(randomSpecies, dexAttr);
           const abilityIndex = this.abilityCursor;
           const nature = this.natureCursor as unknown as Nature;
+          const teraType = this.teraCursor;
           const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
           const starterCost = globalScene.gameData.getSpeciesStarterValue(randomSpecies.speciesId);
           const speciesForm = getPokemonSpeciesForm(randomSpecies.speciesId, props.formIndex);
@@ -1505,7 +1528,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             .loadAssets(props.female, props.formIndex, props.shiny, props.variant, true)
             .then(() => {
               if (this.tryUpdateValue(starterCost, true)) {
-                this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, true);
+                this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, teraType, true);
                 ui.playSelect();
               }
             });
@@ -1585,7 +1608,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     const cursorObj = this.starterCursorObjs[this.starterSpecies.length];
                     cursorObj.setVisible(true);
                     cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-                    this.addToParty(this.lastSpecies, this.dexAttrCursor, this.abilityCursor, this.natureCursor as unknown as Nature, this.starterMoveset?.slice(0) as StarterMoveset);
+                    this.addToParty(this.lastSpecies, this.dexAttrCursor, this.abilityCursor, this.natureCursor as unknown as Nature, this.starterMoveset?.slice(0) as StarterMoveset, this.teraCursor);
                     ui.playSelect();
                   } else {
                     ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
@@ -1961,6 +1984,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               yOffset: 47
             });
           };
+          options.push({
+            label: i18next.t("menuUiHandler:POKEDEX"),
+            handler: () => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => {
+                const attributes = {
+                  shiny: starterAttributes.shiny,
+                  variant: starterAttributes.variant,
+                  form: starterAttributes.form,
+                  female: starterAttributes.female
+                };
+                ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, starterAttributes.form, attributes);
+              });
+              return true;
+            }
+          });
           if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
             options.push({
               label: i18next.t("starterSelectUiHandler:useCandies"),
@@ -2051,7 +2089,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 }
               } while (newFormIndex !== props.formIndex);
               starterAttributes.form = newFormIndex; // store the selected form
-              this.setSpeciesDetails(this.lastSpecies, { formIndex: newFormIndex });
+              starterAttributes.tera = this.lastSpecies.forms[newFormIndex].type1;
+              this.setSpeciesDetails(this.lastSpecies, { formIndex: newFormIndex, teraType: starterAttributes.tera });
               success = true;
             }
             break;
@@ -2105,8 +2144,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               const natureIndex = natures.indexOf(this.natureCursor);
               const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
               // store cycled nature as default
-              starterAttributes.nature = newNature as unknown as integer;
+              starterAttributes.nature = newNature as unknown as number;
               this.setSpeciesDetails(this.lastSpecies, { natureIndex: newNature });
+              success = true;
+            }
+            break;
+          case Button.CYCLE_TERA:
+            if (this.canCycleTera) {
+              const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterAttributes.form ?? 0);
+              if (speciesForm.type1 === this.teraCursor && !Utils.isNullOrUndefined(speciesForm.type2)) {
+                starterAttributes.tera = speciesForm.type2!;
+                this.setSpeciesDetails(this.lastSpecies, { teraType: speciesForm.type2! });
+              } else {
+                starterAttributes.tera = speciesForm.type1;
+                this.setSpeciesDetails(this.lastSpecies, { teraType: speciesForm.type1 });
+              }
               success = true;
             }
             break;
@@ -2274,7 +2326,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return [ isDupe, removeIndex ];
   }
 
-  addToParty(species: PokemonSpecies, dexAttr: bigint, abilityIndex: integer, nature: Nature, moveset: StarterMoveset, randomSelection: boolean = false) {
+  addToParty(species: PokemonSpecies, dexAttr: bigint, abilityIndex: number, nature: Nature, moveset: StarterMoveset, teraType: Type, randomSelection: boolean = false) {
     const props = globalScene.gameData.getSpeciesDexAttrProps(species, dexAttr);
     this.starterIcons[this.starterSpecies.length].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
     this.starterIcons[this.starterSpecies.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
@@ -2284,6 +2336,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterAttr.push(dexAttr);
     this.starterAbilityIndexes.push(abilityIndex);
     this.starterNatures.push(nature);
+    this.starterTeras.push(teraType);
     this.starterMovesets.push(moveset);
     if (this.speciesLoaded.get(species.speciesId) || randomSelection ) {
       getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
@@ -2364,6 +2417,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         case SettingKeyboard.Button_Cycle_Nature:
           iconPath = "N.png";
           break;
+        case SettingKeyboard.Button_Cycle_Tera:
+          iconPath = "V.png";
+          break;
         case SettingKeyboard.Button_Stats:
           iconPath = "C.png";
           break;
@@ -2443,6 +2499,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
       if (this.canCycleNature) {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Nature, gamepadType, this.natureIconElement, this.natureLabel);
+      }
+      if (this.canCycleTera) {
+        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Tera, gamepadType, this.teraIconElement, this.teraLabel);
       }
     }
 
@@ -2783,7 +2842,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
   };
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     let changed = false;
 
     if (this.filterMode) {
@@ -2861,6 +2920,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = species ? this.getCurrentDexProps(species.speciesId) : 0n;
     this.abilityCursor = species ? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? globalScene.gameData.getSpeciesDefaultNature(species) : 0;
+    this.teraCursor = species ? species.type1 : Type.UNKNOWN;
 
     if (!species && globalScene.ui.getTooltip().visible) {
       globalScene.ui.hideTooltip();
@@ -2878,6 +2938,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (starterAttributes?.ability && !isNaN(starterAttributes.ability)) {
       // load default ability from stater save data, if set
       this.abilityCursor = starterAttributes.ability;
+    }
+    if (starterAttributes?.tera) {
+      // load default tera from starter save data, if set
+      this.teraCursor = starterAttributes.tera;
     }
 
     if (this.statsMode) {
@@ -3020,7 +3084,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             female: props.female,
             variant: props.variant,
             abilityIndex: this.starterAbilityIndexes[starterIndex],
-            natureIndex: this.starterNatures[starterIndex]
+            natureIndex: this.starterNatures[starterIndex],
+            teraType: this.starterTeras[starterIndex]
           });
         } else {
           const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -3068,6 +3133,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(false);
         this.pokemonCandyContainer.setVisible(false);
         this.pokemonFormText.setVisible(false);
+        this.teraIcon.setVisible(false);
 
         const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, true, true);
         const defaultAbilityIndex = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -3102,6 +3168,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonCaughtHatchedContainer.setVisible(false);
       this.pokemonCandyContainer.setVisible(false);
       this.pokemonFormText.setVisible(false);
+      this.teraIcon.setVisible(false);
 
       this.setSpeciesDetails(species!, { // TODO: is this bang correct?
         shiny: false,
@@ -3116,7 +3183,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
-    let { shiny, formIndex, female, variant, abilityIndex, natureIndex } = options;
+    let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
     const forSeen: boolean = options.forSeen ?? false;
     const oldProps = species ? globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
     const oldAbilityIndex = this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -3124,6 +3191,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
+    this.teraCursor = Type.UNKNOWN;
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite = (species?.genderDiffs && !isNullOrUndefined(female))
@@ -3153,6 +3221,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.dexAttrCursor |= globalScene.gameData.getFormAttr(formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex)); // TODO: is this bang correct?
       this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
       this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
+      this.teraCursor = !Utils.isNullOrUndefined(teraType) ? teraType : (teraType = species.type1);
       const [ isInParty, partyIndex ]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
       if (isInParty) {
         this.updatePartyIcon(species, partyIndex);
@@ -3164,6 +3233,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonPassiveText.setVisible(false);
     this.pokemonPassiveDisabledIcon.setVisible(false);
     this.pokemonPassiveLockedIcon.setVisible(false);
+    this.teraIcon.setVisible(false);
 
     if (this.assetLoadCancelled) {
       this.assetLoadCancelled.value = true;
@@ -3215,6 +3285,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterAttr[starterIndex] = this.dexAttrCursor;
           this.starterAbilityIndexes[starterIndex] = this.abilityCursor;
           this.starterNatures[starterIndex] = this.natureCursor;
+          this.starterTeras[starterIndex] = this.teraCursor;
         }
 
         const assetLoadCancelled = new BooleanHolder(false);
@@ -3273,7 +3344,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
-
+        this.canCycleTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -3379,7 +3450,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             ? speciesMoveData
             : speciesMoveData[formIndex!] // TODO: is this bang correct?
           : null;
-        const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves.hasOwnProperty(species.speciesId) ? speciesEggMoves[species.speciesId].filter((_, em: integer) => globalScene.gameData.starterData[species.speciesId].eggMoves & (1 << em)) : []);
+        const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves.hasOwnProperty(species.speciesId) ? speciesEggMoves[species.speciesId].filter((_, em: number) => globalScene.gameData.starterData[species.speciesId].eggMoves & (1 << em)) : []);
         this.starterMoveset = (moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset)).filter(m => availableStarterMoves.find(sm => sm === m)) as StarterMoveset;
         // Consolidate move data if it contains an incompatible move
         if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length) {
@@ -3393,21 +3464,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           }) as StarterMoveset;
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
-        const formText = capitalizeString(species?.forms[formIndex!]?.formKey, "-", false, false); // TODO: is the bang correct?
-
-        const speciesName = capitalizeString(Species[species.speciesId], "_", true, false);
-
-        if (species.speciesId === Species.ARCEUS) {
-          this.pokemonFormText.setText(i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`));
-        } else {
-          this.pokemonFormText.setText(formText ? i18next.t(`pokemonForm:${speciesName}${formText}`) : "");
-        }
+        const formText = species.getFormNameToDisplay(formIndex);
+        this.pokemonFormText.setText(formText);
 
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
+
+        this.teraIcon.setFrame(Type[this.teraCursor].toLowerCase());
+        this.teraIcon.setVisible(!this.statsMode && globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id));
       } else {
         this.pokemonAbilityText.setText("");
         this.pokemonPassiveText.setText("");
         this.pokemonNatureText.setText("");
+        this.teraIcon.setVisible(false);
         this.setTypeIcons(null, null);
       }
     } else {
@@ -3418,6 +3486,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonAbilityText.setText("");
       this.pokemonPassiveText.setText("");
       this.pokemonNatureText.setText("");
+      this.teraIcon.setVisible(false);
       this.setTypeIcons(null, null);
     }
 
@@ -3471,6 +3540,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterAttr.splice(index, 1);
     this.starterAbilityIndexes.splice(index, 1);
     this.starterNatures.splice(index, 1);
+    this.starterTeras.splice(index, 1);
     this.starterMovesets.splice(index, 1);
 
     for (let s = 0; s < this.starterSpecies.length; s++) {
@@ -3548,8 +3618,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  tryUpdateValue(add?: integer, addingToParty?: boolean): boolean {
-    const value = this.starterSpecies.map(s => s.generation).reduce((total: integer, _gen: integer, i: integer) => total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
+  tryUpdateValue(add?: number, addingToParty?: boolean): boolean {
+    const value = this.starterSpecies.map(s => s.generation).reduce((total: number, _gen: number, i: number) => total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId), 0);
     const newValue = value + (add || 0);
     const valueLimit = this.getValueLimit();
     const overLimit = newValue > valueLimit;
@@ -3682,6 +3752,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 abilityIndex: thisObj.starterAbilityIndexes[i],
                 passive: !(globalScene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
                 nature: thisObj.starterNatures[i] as Nature,
+                teraType: thisObj.starterTeras[i] as Type,
                 moveset: thisObj.starterMovesets[i],
                 pokerus: thisObj.pokerusSpecies.includes(starterSpecies),
                 nickname: thisObj.starterPreferences[starterSpecies.speciesId]?.nickname,
@@ -3808,6 +3879,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityLabel.setVisible(false);
     this.natureIconElement.setVisible(false);
     this.natureLabel.setVisible(false);
+    this.teraIconElement.setVisible(false);
+    this.teraLabel.setVisible(false);
     this.goFilterIconElement.setVisible(false);
     this.goFilterLabel.setVisible(false);
   }

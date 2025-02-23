@@ -27,6 +27,7 @@ interface EventBanner {
 interface EventEncounter {
   species: Species;
   blockEvolution?: boolean;
+  formIndex?: number;
 }
 
 interface EventMysteryEncounterTier {
@@ -49,6 +50,7 @@ interface TimedEvent extends EventBanner {
   weather?: WeatherPoolEntry[];
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
   luckBoostedSpecies?: Species[];
+  boostFusions?: boolean; //MODIFIER REWORK PLEASE
 }
 
 const timedEvents: TimedEvent[] = [
@@ -144,6 +146,40 @@ const timedEvents: TimedEvent[] = [
       Species.ROARING_MOON,
       Species.BLOODMOON_URSALUNA
     ]
+  },
+  {
+    name: "Valentine",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 1, 10)),
+    endDate: new Date(Date.UTC(2025, 1, 21)),
+    boostFusions: true,
+    shinyMultiplier: 2,
+    bannerKey: "valentines2025event-",
+    scale: 0.21,
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    eventEncounters: [
+      { species: Species.NIDORAN_F },
+      { species: Species.NIDORAN_M },
+      { species: Species.IGGLYBUFF },
+      { species: Species.SMOOCHUM },
+      { species: Species.VOLBEAT },
+      { species: Species.ILLUMISE },
+      { species: Species.ROSELIA },
+      { species: Species.LUVDISC },
+      { species: Species.WOOBAT },
+      { species: Species.FRILLISH },
+      { species: Species.ALOMOMOLA },
+      { species: Species.FURFROU, formIndex: 1 }, // Heart trim
+      { species: Species.ESPURR },
+      { species: Species.SPRITZEE },
+      { species: Species.SWIRLIX },
+      { species: Species.APPLIN },
+      { species: Species.MILCERY },
+      { species: Species.INDEEDEE },
+      { species: Species.TANDEMAUS },
+      { species: Species.ENAMORUS }
+    ],
+    luckBoostedSpecies: [ Species.LUVDISC ]
   }
 ];
 
@@ -296,6 +332,10 @@ export class TimedEventManager {
       }
     });
     return ret;
+  }
+
+  areFusionsBoosted(): boolean {
+    return timedEvents.some((te) => this.isActive(te) && te.boostFusions);
   }
 }
 

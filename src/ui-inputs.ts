@@ -12,6 +12,8 @@ import { globalScene } from "#app/global-scene";
 import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
 import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
 import RunInfoUiHandler from "./ui/run-info-ui-handler";
+import PokedexUiHandler from "./ui/pokedex-ui-handler";
+import PokedexPageUiHandler from "./ui/pokedex-page-ui-handler";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -84,7 +86,7 @@ export class UiInputs {
       [Button.CYCLE_GENDER]:    () => this.buttonCycleOption(Button.CYCLE_GENDER),
       [Button.CYCLE_ABILITY]:   () => this.buttonCycleOption(Button.CYCLE_ABILITY),
       [Button.CYCLE_NATURE]:    () => this.buttonCycleOption(Button.CYCLE_NATURE),
-      [Button.V]:               () => this.buttonCycleOption(Button.V),
+      [Button.CYCLE_TERA]:      () => this.buttonCycleOption(Button.CYCLE_TERA),
       [Button.SPEED_UP]:        () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]:       () => this.buttonSpeedChange(false),
     };
@@ -107,7 +109,7 @@ export class UiInputs {
       [Button.CYCLE_GENDER]:    () => undefined,
       [Button.CYCLE_ABILITY]:   () => undefined,
       [Button.CYCLE_NATURE]:    () => undefined,
-      [Button.V]:               () => this.buttonInfo(false),
+      [Button.CYCLE_TERA]:      () => undefined,
       [Button.SPEED_UP]:        () => undefined,
       [Button.SLOW_DOWN]:       () => undefined,
     };
@@ -140,7 +142,7 @@ export class UiInputs {
   }
 
   buttonGoToFilter(button: Button): void {
-    const whitelist = [ StarterSelectUiHandler ];
+    const whitelist = [ StarterSelectUiHandler, PokedexUiHandler, PokedexPageUiHandler ];
     const uiHandler = globalScene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       globalScene.ui.processInput(button);
@@ -178,6 +180,7 @@ export class UiInputs {
         globalScene.ui.setOverlayMode(Mode.MENU);
         break;
       case Mode.STARTER_SELECT:
+      case Mode.POKEDEX_PAGE:
         this.buttonTouch();
         break;
       case Mode.MENU:
@@ -190,11 +193,11 @@ export class UiInputs {
   }
 
   buttonCycleOption(button: Button): void {
-    const whitelist = [ StarterSelectUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler ];
+    const whitelist = [ StarterSelectUiHandler, PokedexUiHandler, PokedexPageUiHandler, SettingsUiHandler, RunInfoUiHandler, SettingsDisplayUiHandler, SettingsAudioUiHandler, SettingsGamepadUiHandler, SettingsKeyboardUiHandler ];
     const uiHandler = globalScene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
       globalScene.ui.processInput(button);
-    } else if (button === Button.V) {
+    } else if (button === Button.CYCLE_TERA) {
       this.buttonInfo(true);
     }
   }

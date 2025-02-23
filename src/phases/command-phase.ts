@@ -25,9 +25,9 @@ import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export class CommandPhase extends FieldPhase {
-  protected fieldIndex: integer;
+  protected fieldIndex: number;
 
-  constructor(fieldIndex: integer) {
+  constructor(fieldIndex: number) {
     super();
 
     this.fieldIndex = fieldIndex;
@@ -113,11 +113,12 @@ export class CommandPhase extends FieldPhase {
     }
   }
 
-  handleCommand(command: Command, cursor: integer, ...args: any[]): boolean {
+  handleCommand(command: Command, cursor: number, ...args: any[]): boolean {
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
     let success: boolean = false;
 
     switch (command) {
+      case Command.TERA:
       case Command.FIGHT:
         let useStruggle = false;
         const turnMove: TurnMove | undefined = (args.length === 2 ? (args[1] as TurnMove) : undefined);
@@ -137,6 +138,7 @@ export class CommandPhase extends FieldPhase {
           }
 
           const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
+          const preTurnCommand: TurnCommand = { command: command, targets: [ this.fieldIndex ], skip: command === Command.FIGHT };
           const moveTargets: MoveTargetSet = turnMove === undefined ? getMoveTargets(playerPokemon, moveId) : { targets: turnMove.targets, multiple: turnMove.targets.length > 1 };
           if (!moveId) {
             turnCommand.targets = [ this.fieldIndex ];
@@ -152,6 +154,7 @@ export class CommandPhase extends FieldPhase {
           } else {
             globalScene.unshiftPhase(new SelectTargetPhase(this.fieldIndex));
           }
+          globalScene.currentBattle.preTurnCommands[this.fieldIndex] = preTurnCommand;
           globalScene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
           success = true;
         } else if (cursor < playerPokemon.getMoveset().length) {
@@ -319,7 +322,7 @@ export class CommandPhase extends FieldPhase {
     }
   }
 
-  getFieldIndex(): integer {
+  getFieldIndex(): number {
     return this.fieldIndex;
   }
 
