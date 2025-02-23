@@ -3,7 +3,7 @@ import { Type } from "#enums/type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Abilities } from "#enums/abilities";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

@@ -1,5 +1,5 @@
 import { Phase } from "#app/phase";
-import ErrorInterceptor from "#test/utils/errorInterceptor";
+import ErrorInterceptor from "#test/testUtils/errorInterceptor";
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { BerryPhase } from "#app/phases/berry-phase";

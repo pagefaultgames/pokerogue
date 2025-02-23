@@ -3,7 +3,7 @@ import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { SessionSaveData } from "#app/system/game-data";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as account from "#app/account";

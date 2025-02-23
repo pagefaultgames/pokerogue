@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";

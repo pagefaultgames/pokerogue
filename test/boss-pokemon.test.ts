@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "./utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#app/enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#app/enums/abilities";

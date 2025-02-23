@@ -1,5 +1,5 @@
 import { BATTLE_STATS, Stat } from "#enums/stat";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

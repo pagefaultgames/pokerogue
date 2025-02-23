@@ -7,7 +7,7 @@ import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import { MoveResult } from "#app/field/pokemon";
 import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 
 describe("Moves - Dig", () => {
   let phaserGame: Phaser.Game;

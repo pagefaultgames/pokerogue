@@ -8,7 +8,7 @@ import type {
 } from "#app/@types/PokerogueSessionSavedataApi";
 import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-savedata-api";
 import type { SessionSaveData } from "#app/system/game-data";
-import { getApiBaseUrl } from "#test/utils/testUtils";
+import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 

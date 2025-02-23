@@ -2,13 +2,13 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import { Biome } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
+import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { getSafariSpeciesSpawn, SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";

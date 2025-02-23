@@ -2,7 +2,7 @@ import { Egg } from "#app/data/egg";
 import { EggSourceType } from "#app/enums/egg-source-types";
 import { EggTier } from "#app/enums/egg-type";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -25,7 +25,7 @@ describe("Manaphy Eggs", () => {
   });
 
   beforeEach(async () => {
-    await game.importData("./test/utils/saves/everything.prsv");
+    await game.importData("./test/testUtils/saves/everything.prsv");
 
     /**
      * In our tests, we will perform an "RNG sweep" by letting rngSweepProgress

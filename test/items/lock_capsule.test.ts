@@ -3,7 +3,7 @@ import { Moves } from "#app/enums/moves";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { Mode } from "#app/ui/ui";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

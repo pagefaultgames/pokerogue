@@ -4,10 +4,10 @@ import { Species } from "#app/enums/species";
 import { CommandPhase } from "#app/phases/command-phase";
 import FightUiHandler from "#app/ui/fight-ui-handler";
 import { Mode } from "#app/ui/ui";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import type MockText from "#test/utils/mocks/mocksContainer/mockText";
+import type MockText from "#test/testUtils/mocks/mocksContainer/mockText";
 import i18next from "i18next";
 
 describe("UI - Type Hints", () => {

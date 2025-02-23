@@ -3,7 +3,7 @@ import { LoginPhase } from "#app/phases/login-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { UnavailablePhase } from "#app/phases/unavailable-phase";
 import { Mode } from "#app/ui/ui";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

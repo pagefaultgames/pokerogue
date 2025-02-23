@@ -2,7 +2,7 @@ import { StatBoosterModifier } from "#app/modifier/modifier";
 import { NumberHolder, randItem } from "#app/utils";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

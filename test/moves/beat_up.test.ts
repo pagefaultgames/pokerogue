@@ -3,7 +3,7 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { StatusEffect } from "#app/enums/status-effect";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

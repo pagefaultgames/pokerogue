@@ -1,4 +1,4 @@
-import type MockTextureManager from "#test/utils/mocks/mockTextureManager";
+import type MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
 import type { MockGameObject } from "../mockGameObject";
 
 

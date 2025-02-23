@@ -2,7 +2,7 @@ import { Biome } from "#app/enums/biome";
 import { Species } from "#app/enums/species";
 import { GameModes } from "#app/game-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "./utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 
 const EndlessBossWave = {
   Minor: 250,

@@ -7,7 +7,7 @@ import { VariantTier } from "#app/enums/variant-tier";
 import EggData from "#app/system/egg-data";
 import * as Utils from "#app/utils";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -29,7 +29,7 @@ describe("Egg Generation Tests", () => {
   });
 
   beforeEach(async () => {
-    await game.importData("./test/utils/saves/everything.prsv");
+    await game.importData("./test/testUtils/saves/everything.prsv");
   });
 
   it("should return Kyogre for the 10th of June", () => {

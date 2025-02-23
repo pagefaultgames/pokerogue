@@ -4,7 +4,7 @@ import { Species } from "#enums/species";
 import { TerrainType } from "#app/data/terrain";
 import { Type } from "#enums/type";
 import { BattlerIndex } from "#app/battle";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

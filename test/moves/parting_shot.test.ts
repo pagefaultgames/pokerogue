@@ -3,7 +3,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
-import GameManager from "../utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import { Stat } from "#enums/stat";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { FaintPhase } from "#app/phases/faint-phase";

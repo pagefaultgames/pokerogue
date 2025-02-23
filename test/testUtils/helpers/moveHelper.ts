@@ -9,8 +9,8 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
 import { Moves } from "#enums/moves";
-import { getMovePosition } from "#test/utils/gameManagerUtils";
-import { GameManagerHelper } from "#test/utils/helpers/gameManagerHelper";
+import { getMovePosition } from "#test/testUtils/gameManagerUtils";
+import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
 
 /**

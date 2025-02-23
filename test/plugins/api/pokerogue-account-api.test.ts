@@ -1,7 +1,7 @@
 import type { AccountInfoResponse } from "#app/@types/PokerogueAccountApi";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { PokerogueAccountApi } from "#app/plugins/api/pokerogue-account-api";
-import { getApiBaseUrl } from "#test/utils/testUtils";
+import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import * as Utils from "#app/utils";
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

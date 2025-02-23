@@ -2,7 +2,7 @@ import type BattleScene from "#app/battle-scene";
 import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
 import type { InputsController } from "#app/inputs-controller";
 import TouchControl from "#app/touch-controls";
-import { holdOn } from "#test/utils/gameManagerUtils";
+import { holdOn } from "#test/testUtils/gameManagerUtils";
 import fs from "fs";
 import { JSDOM } from "jsdom";
 import Phaser from "phaser";
@@ -90,7 +90,7 @@ class Fakepad extends Phaser.Input.Gamepad.Gamepad {
 
 class FakeMobile {
   constructor() {
-    const fakeMobilePage = fs.readFileSync("././test/utils/fakeMobile.html", { encoding: "utf8", flag: "r" });
+    const fakeMobilePage = fs.readFileSync("././test/testUtils/fakeMobile.html", { encoding: "utf8", flag: "r" });
     const dom = new JSDOM(fakeMobilePage);
     Object.defineProperty(window, "document", {
       value: dom.window.document,

@@ -1,11 +1,11 @@
-import MockContainer from "#test/utils/mocks/mocksContainer/mockContainer";
-import MockImage from "#test/utils/mocks/mocksContainer/mockImage";
-import MockNineslice from "#test/utils/mocks/mocksContainer/mockNineslice";
-import MockPolygon from "#test/utils/mocks/mocksContainer/mockPolygon";
-import MockRectangle from "#test/utils/mocks/mocksContainer/mockRectangle";
-import MockSprite from "#test/utils/mocks/mocksContainer/mockSprite";
-import MockText from "#test/utils/mocks/mocksContainer/mockText";
-import MockTexture from "#test/utils/mocks/mocksContainer/mockTexture";
+import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
+import MockImage from "#test/testUtils/mocks/mocksContainer/mockImage";
+import MockNineslice from "#test/testUtils/mocks/mocksContainer/mockNineslice";
+import MockPolygon from "#test/testUtils/mocks/mocksContainer/mockPolygon";
+import MockRectangle from "#test/testUtils/mocks/mocksContainer/mockRectangle";
+import MockSprite from "#test/testUtils/mocks/mocksContainer/mockSprite";
+import MockText from "#test/testUtils/mocks/mocksContainer/mockText";
+import MockTexture from "#test/testUtils/mocks/mocksContainer/mockTexture";
 import type { MockGameObject } from "./mockGameObject";
 import { MockVideoGameObject } from "./mockVideoGameObject";
 

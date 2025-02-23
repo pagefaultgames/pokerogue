@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/move";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";

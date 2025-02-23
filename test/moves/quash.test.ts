@@ -4,7 +4,7 @@ import { Abilities } from "#app/enums/abilities";
 import { BattlerIndex } from "#app/battle";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
 

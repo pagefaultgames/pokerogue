@@ -1,7 +1,7 @@
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { DoubleBattleChanceBoosterModifier } from "#app/modifier/modifier";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";

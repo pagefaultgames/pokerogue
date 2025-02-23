@@ -6,8 +6,8 @@ import { Biome } from "#enums/biome";
 import { Button } from "#enums/buttons";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
-import type { MockClock } from "#test/utils/mocks/mockClock";
+import GameManager from "#test/testUtils/gameManager";
+import type { MockClock } from "#test/testUtils/mocks/mockClock";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Reload", () => {

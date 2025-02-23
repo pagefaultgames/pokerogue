@@ -12,7 +12,7 @@ import { Mode } from "#app/ui/ui";
 import { isNullOrUndefined } from "#app/utils";
 import { Button } from "#enums/buttons";
 import { StatusEffect } from "#enums/status-effect";
-import type GameManager from "#test/utils/gameManager";
+import type GameManager from "#test/testUtils/gameManager";
 import { expect, vi } from "vitest";
 
 /**

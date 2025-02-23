@@ -6,10 +6,10 @@ import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPla
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Type } from "#enums/type";
 import { MessagePhase } from "#app/phases/message-phase";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
-import { initSceneWithoutEncounterPhase } from "#test/utils/gameManagerUtils";
+import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
