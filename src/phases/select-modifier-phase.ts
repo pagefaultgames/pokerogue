@@ -45,7 +45,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (!this.isCopy) {
       regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
     }
-    const modifierCount = new Utils.IntegerHolder(3);
+    const modifierCount = new Utils.NumberHolder(3);
     if (this.isPlayer()) {
       globalScene.applyModifiers(ExtraModifierModifier, true, modifierCount);
       globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCount);
@@ -171,30 +171,21 @@ export class SelectModifierPhase extends BattlePhase {
         }
 
         if (cost && !(modifier.type instanceof RememberMoveModifierType)) {
-          result.then(success => {
-            if (success) {
-              if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-                globalScene.money -= cost;
-                globalScene.updateMoneyText();
-                globalScene.animateMoneyChanged(false);
-              }
-              globalScene.playSound("se/buy");
-              (globalScene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
-            } else {
-              globalScene.ui.playError();
+          if (result) {
+            if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+              globalScene.money -= cost;
+              globalScene.updateMoneyText();
+              globalScene.animateMoneyChanged(false);
             }
-          });
-        } else {
-          const doEnd = () => {
-            globalScene.ui.clearText();
-            globalScene.ui.setMode(Mode.MESSAGE);
-            super.end();
-          };
-          if (result instanceof Promise) {
-            result.then(() => doEnd());
+            globalScene.playSound("se/buy");
+            (globalScene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
           } else {
-            doEnd();
+            globalScene.ui.playError();
           }
+        } else {
+          globalScene.ui.clearText();
+          globalScene.ui.setMode(Mode.MESSAGE);
+          super.end();
         }
       };
 
@@ -304,7 +295,7 @@ export class SelectModifierPhase extends BattlePhase {
     );
   }
 
-  addModifier(modifier: Modifier): Promise<boolean> {
+  addModifier(modifier: Modifier): boolean {
     return globalScene.addModifier(modifier, false, true);
   }
 }
