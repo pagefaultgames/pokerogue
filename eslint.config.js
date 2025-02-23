@@ -52,7 +52,7 @@ export default [
     },
     {
         name: "eslint-tests",
-        files: ["src/test/**/**.test.ts"],
+        files: ["./test/**/**.test.ts"],
         languageOptions: {
             parser: parser,
             parserOptions: {
