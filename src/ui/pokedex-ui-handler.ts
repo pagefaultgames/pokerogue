@@ -1207,7 +1207,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       shiny: false,
       female: props.female,
       variant: 0,
-      formIndex: 0,
+      formIndex: props.formIndex,
     };
     return sanitizedProps;
   }
@@ -1906,7 +1906,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)].caughtAttr & species.getFullUnlocksData();
 
-      if (!caughtAttr) {
+      if (caughtAttr) {
         const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)));
 
         if (shiny === undefined) {
