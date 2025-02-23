@@ -15,6 +15,7 @@ import MockTextureManager from "#test/utils/mocks/mockTextureManager";
 import fs from "fs";
 import Phaser from "phaser";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { vi } from "vitest";
 import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 import InputManager = Phaser.Input.InputManager;
@@ -33,7 +34,8 @@ Object.defineProperty(window, "console", {
   value: mockConsoleLog(false),
 });
 
-
+BBCodeText.prototype.destroy = () => null;
+BBCodeText.prototype.resize = () => null;
 InputText.prototype.setElement = () => null;
 InputText.prototype.resize = () => null;
 Phaser.GameObjects.Image = MockImage;
@@ -91,6 +93,7 @@ export default class GameWrapper {
     Pokemon.prototype.updateFusionPalette = () => null;
     Pokemon.prototype.cry = () => null;
     Pokemon.prototype.faintCry = (cb) => { if (cb) cb(); };
+    BattleScene.prototype.addPokemonIcon = () => new Phaser.GameObjects.Container(this.scene);
   }
 
   setScene(scene: BattleScene) {

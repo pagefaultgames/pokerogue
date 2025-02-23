@@ -60,6 +60,7 @@ import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-ph
 import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
 import { UnlockPhase } from "#app/phases/unlock-phase";
 import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
+import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -126,7 +127,8 @@ type PhaseClass =
   | typeof EncounterPhase
   | typeof GameOverPhase
   | typeof UnlockPhase
-  | typeof PostGameOverPhase;
+  | typeof PostGameOverPhase
+  | typeof RevivalBlessingPhase;
 
 type PhaseString =
   | "LoginPhase"
@@ -185,7 +187,8 @@ type PhaseString =
   | "EncounterPhase"
   | "GameOverPhase"
   | "UnlockPhase"
-  | "PostGameOverPhase";
+  | "PostGameOverPhase"
+  | "RevivalBlessingPhase";
 
 type PhaseInterceptorPhase = PhaseClass | PhaseString;
 
@@ -269,6 +272,7 @@ export default class PhaseInterceptor {
     [ GameOverPhase, this.startPhase ],
     [ UnlockPhase, this.startPhase ],
     [ PostGameOverPhase, this.startPhase ],
+    [ RevivalBlessingPhase, this.startPhase ],
   ];
 
   private endBySetMode = [
@@ -511,11 +515,11 @@ export default class PhaseInterceptor {
         if (expireFn) {
           this.prompts.shift();
         } else if (
-          currentMode === actionForNextPrompt.mode
-          && currentPhase === actionForNextPrompt.phaseTarget
-          && currentHandler.active
-          && (!actionForNextPrompt.awaitingActionInput
-            || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))
+          currentMode === actionForNextPrompt.mode &&
+          currentPhase === actionForNextPrompt.phaseTarget &&
+          currentHandler.active &&
+          (!actionForNextPrompt.awaitingActionInput ||
+            (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))
         ) {
           const prompt = this.prompts.shift();
           if (prompt?.callback) {

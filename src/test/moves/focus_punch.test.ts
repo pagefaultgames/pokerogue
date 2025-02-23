@@ -7,8 +7,9 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/utils/gameManager";
+import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 
 describe("Moves - Focus Punch", () => {
@@ -41,7 +42,7 @@ describe("Moves - Focus Punch", () => {
   it(
     "should deal damage at the end of turn if uninterrupted",
     async () => {
-      await game.startBattle([ Species.CHARIZARD ]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -68,7 +69,7 @@ describe("Moves - Focus Punch", () => {
     async () => {
       game.override.enemyMoveset([ Moves.TACKLE ]);
 
-      await game.startBattle([ Species.CHARIZARD ]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -95,7 +96,7 @@ describe("Moves - Focus Punch", () => {
     async () => {
       game.override.enemyMoveset([ Moves.SPORE ]);
 
-      await game.startBattle([ Species.CHARIZARD ]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       const leadPokemon = game.scene.getPlayerPokemon()!;
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -119,7 +120,7 @@ describe("Moves - Focus Punch", () => {
       /** Guarantee a Trainer battle with multiple enemy Pokemon */
       game.override.startingWave(25);
 
-      await game.startBattle([ Species.CHARIZARD ]);
+      await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
       game.forceEnemyToSwitch();
       game.move.select(Moves.FOCUS_PUNCH);
@@ -130,4 +131,15 @@ describe("Moves - Focus Punch", () => {
       expect(game.scene.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
     }
   );
+  it("should replace the 'but it failed' text when the user gets hit", async () => {
+    game.override.enemyMoveset([ Moves.TACKLE ]);
+    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+
+    game.move.select(Moves.FOCUS_PUNCH);
+    await game.phaseInterceptor.to("MoveEndPhase", true);
+    await game.phaseInterceptor.to("MessagePhase", false);
+    const consoleSpy = vi.spyOn(console, "log");
+    await game.phaseInterceptor.to("MoveEndPhase", true);
+    expect(consoleSpy).nthCalledWith(1, i18next.t("moveTriggers:lostFocus"));
+  });
 });
