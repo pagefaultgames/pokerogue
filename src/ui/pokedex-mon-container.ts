@@ -201,7 +201,6 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.icon.setOrigin(0, 0);
     this.icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
     this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
-    this.icon.setTint(0);
     this.add(this.icon);
   }
 
