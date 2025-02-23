@@ -2403,6 +2403,37 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonHealStatusAbAttr extends PostSummonAbAttr {
+  private immuneEffects: StatusEffect[];
+  private statusHealed: StatusEffect;
+
+  /**
+   * @param immuneEffects - The status effects to which the Pokémon is immune.
+   */
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+    this.immuneEffects = immuneEffects;
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const status = pokemon.status?.effect;
+    if (status && (this.immuneEffects.length < 1 || this.immuneEffects.includes(status))) {
+      this.statusHealed = status;
+      pokemon.resetStatus(false);
+      pokemon.updateInfo();
+      return true;
+    }
+    return false;
+  }
+
+  public override getTriggerMessage(_pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
+    if (this.statusHealed) {
+      return getStatusEffectHealText(this.statusHealed, getPokemonNameWithAffix(_pokemon));
+    }
+    return null;
+  }
+}
+
 export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
   private formFunc: (p: Pokemon) => number;
 
@@ -5954,6 +5985,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
     new Ability(Abilities.SAND_VEIL, 3)
       .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
@@ -5990,6 +6022,7 @@ export function initAbilities() {
       .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.FLASH_FIRE, 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1)
@@ -6065,9 +6098,11 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MAGMA_ARMOR, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.WATER_VEIL, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
       .attr(ArenaTrapAbAttr, (user, target) => {
@@ -6159,6 +6194,7 @@ export function initAbilities() {
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.WHITE_SMOKE, 3)
@@ -6254,6 +6290,7 @@ export function initAbilities() {
       }, 1.5),
     new Ability(Abilities.LEAF_GUARD, 4)
       .attr(StatusEffectImmunityAbAttr)
+      .attr(PostSummonHealStatusAbAttr)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN))
       .ignorable(),
     new Ability(Abilities.KLUTZ, 4)
@@ -6484,6 +6521,7 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL && !move.hasAttr(VariableMoveTypeAttr)),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.SLEEP)
       .attr(UserFieldBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
       .partial(), // Mold Breaker ally should not be affected by Sweet Veil
@@ -6555,6 +6593,7 @@ export function initAbilities() {
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .conditionalAttr(p => p.formIndex !== 7, StatusEffectImmunityAbAttr)
+      .conditionalAttr(p => p.formIndex !== 7, PostSummonHealStatusAbAttr)
       .conditionalAttr(p => p.formIndex !== 7, BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -6568,6 +6607,7 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
@@ -6639,6 +6679,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(StatusEffectImmunityAbAttr, ...getNonVolatileStatusEffects())
+      .attr(PostSummonHealStatusAbAttr, ...getNonVolatileStatusEffects())
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY),
     new Ability(Abilities.QUEENLY_MAJESTY, 7)
       .attr(FieldPriorityMoveImmunityAbAttr)
@@ -6847,6 +6888,7 @@ export function initAbilities() {
     new Ability(Abilities.THERMAL_EXCHANGE, 9)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.FIRE && move.category !== MoveCategory.STATUS, Stat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)
@@ -6854,6 +6896,7 @@ export function initAbilities() {
       .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.PURIFYING_SALT, 9)
       .attr(StatusEffectImmunityAbAttr)
+      .attr(PostSummonHealStatusAbAttr)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.GHOST, 0.5)
       .ignorable(),
     new Ability(Abilities.WELL_BAKED_BODY, 9)
