@@ -12,7 +12,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
-import { IntegerHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
+import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -406,7 +406,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     // Copy old items to new pokemon
     for (const item of transformation.heldItems) {
       item.pokemonId = newPokemon.id;
-      await globalScene.addModifier(item, false, false, false, true);
+      globalScene.addModifier(item, false, false, false, true);
     }
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
@@ -416,7 +416,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
         ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
       const modifier = modType?.newModifier(newPokemon);
       if (modifier) {
-        await globalScene.addModifier(modifier, false, false, false, true);
+        globalScene.addModifier(modifier, false, false, false, true);
       }
     }
 
@@ -452,7 +452,7 @@ async function postProcessTransformedPokemon(previousPokemon: PlayerPokemon, new
   if (newPokemon.species.abilityHidden) {
     const hiddenIndex = newPokemon.species.ability2 ? 2 : 1;
     if (newPokemon.abilityIndex < hiddenIndex) {
-      const hiddenAbilityChance = new IntegerHolder(256);
+      const hiddenAbilityChance = new NumberHolder(256);
       globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
       const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);

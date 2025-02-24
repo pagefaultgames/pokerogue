@@ -13,6 +13,7 @@ import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import type { Type } from "#app/enums/type";
 
 export default class PokemonData {
   public id: number;
@@ -45,6 +46,9 @@ export default class PokemonData {
   public pokerus: boolean;
   public usedTMs: Moves[];
   public evoCounter: number;
+  public teraType: Type;
+  public isTerastallized: boolean;
+  public stellarTypesBoosted: Type[];
 
   public fusionSpecies: Species;
   public fusionFormIndex: number;
@@ -53,6 +57,7 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: number;
+  public fusionTeraType: Type;
 
   public boss: boolean;
   public bossSegments?: number;
@@ -103,6 +108,9 @@ export default class PokemonData {
       this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
+    this.teraType = source.teraType as Type;
+    this.isTerastallized = source.isTerastallized || false;
+    this.stellarTypesBoosted = source.stellarTypesBoosted || [];
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
@@ -112,6 +120,7 @@ export default class PokemonData {
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
+    this.fusionTeraType = (source.fusionTeraType ?? 0) as Type;
     this.usedTMs = source.usedTMs ?? [];
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);

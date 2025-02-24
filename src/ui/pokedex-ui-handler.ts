@@ -336,6 +336,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const costReductionLabels = [
       new DropDownLabel(i18next.t("filterBar:costReduction"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:costReductionUnlocked"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedOne"), undefined, DropDownState.ONE),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedTwo"), undefined, DropDownState.TWO),
       new DropDownLabel(i18next.t("filterBar:costReductionUnlockable"), undefined, DropDownState.UNLOCKABLE),
       new DropDownLabel(i18next.t("filterBar:costReductionLocked"), undefined, DropDownState.EXCLUDE),
     ];
@@ -917,7 +919,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       } else {
         error = true;
       }
-    }  else if (button === Button.V) {
+    }  else if (button === Button.CYCLE_TERA) {
       if (!this.filterTextMode && !this.showingTray) {
         this.cursorObj.setVisible(false);
         this.setSpecies(null);
@@ -1167,9 +1169,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       switch (iconSetting) {
         case SettingKeyboard.Button_Cycle_Shiny:
           iconPath = "R.png";
-          break;
-        case SettingKeyboard.Button_Cycle_Variant:
-          iconPath = "V.png";
           break;
         case SettingKeyboard.Button_Cycle_Form:
           iconPath = "F.png";
