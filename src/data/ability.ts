@@ -6593,7 +6593,6 @@ export function initAbilities() {
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .conditionalAttr(p => p.formIndex !== 7, StatusEffectImmunityAbAttr)
-      .conditionalAttr(p => p.formIndex !== 7, PostSummonHealStatusAbAttr)
       .conditionalAttr(p => p.formIndex !== 7, BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
