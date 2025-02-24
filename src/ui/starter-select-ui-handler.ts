@@ -1080,7 +1080,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Set the selections for all filters to their default starting value
    */
-  resetFilters() : void {
+  public resetFilters(): void {
     this.filterBar.setValsToDefault();
     this.resetCaughtDropdown();
   }
