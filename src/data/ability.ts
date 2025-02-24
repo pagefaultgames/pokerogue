@@ -2208,6 +2208,29 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonRemoveBattlerTagAbAttr extends PostSummonAbAttr {
+  private immuneTags: BattlerTagType[];
+  private tagRemoved: BattlerTagType;
+
+  /**
+   * @param immuneEffects - The status effects to which the Pokémon is immune.
+   */
+  constructor(...immuneTags: BattlerTagType[]) {
+    super();
+    this.immuneTags = immuneTags;
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    let removed = false;
+    for (const tag of this.immuneTags) {
+      if (pokemon.removeTag(tag)) {
+        removed = true;
+      }
+    }
+    return removed;
+  }
+}
+
 export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private stats: BattleStat[];
   private stages: number;
@@ -6003,6 +6026,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT ])
+      .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.INFATUATED, BattlerTagType.TAUNT)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
@@ -6033,6 +6057,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
+      .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, 3)
