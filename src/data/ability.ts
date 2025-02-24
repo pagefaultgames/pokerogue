@@ -2210,7 +2210,6 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
 
 export class PostSummonRemoveBattlerTagAbAttr extends PostSummonAbAttr {
   private immuneTags: BattlerTagType[];
-  private tagRemoved: BattlerTagType;
 
   /**
    * @param immuneEffects - The status effects to which the Pokémon is immune.
