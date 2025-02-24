@@ -14,7 +14,7 @@ import * as Utils from "./../utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { IntegerHolder } from "./../utils";
+import { NumberHolder } from "./../utils";
 import Phaser from "phaser";
 import type { PokeballType } from "#enums/pokeball";
 
@@ -191,7 +191,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const typeOptions = args[1] as ModifierTypeOption[];
     const removeHealShop = globalScene.gameMode.hasNoShop;
-    const baseShopCost = new IntegerHolder(globalScene.getWaveMoneyAmount(1));
+    const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);
     const shopTypeOptions = !removeHealShop
       ? getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)

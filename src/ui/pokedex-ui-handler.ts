@@ -914,7 +914,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       } else {
         error = true;
       }
-    }  else if (button === Button.V) {
+    }  else if (button === Button.CYCLE_TERA) {
       if (!this.filterTextMode && !this.showingTray) {
         this.cursorObj.setVisible(false);
         this.setSpecies(null);
@@ -1164,9 +1164,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       switch (iconSetting) {
         case SettingKeyboard.Button_Cycle_Shiny:
           iconPath = "R.png";
-          break;
-        case SettingKeyboard.Button_Cycle_Variant:
-          iconPath = "V.png";
           break;
         case SettingKeyboard.Button_Cycle_Form:
           iconPath = "F.png";
