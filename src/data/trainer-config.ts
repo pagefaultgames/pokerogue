@@ -1799,7 +1799,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.gender = Gender.MALE;
     }))
-    .setInstantTera(3), // Tera Rhyperior/ Electivire/ Magmortar
+    .setInstantTera(3), // Tera Rock Rhyperior / Electric Electivire / Fire Magmortar
   [TrainerType.RED]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion").setHasDouble("red_blue_double").setDoubleTrainerType(TrainerType.BLUE).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PIKACHU ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 8; // G-Max Pikachu
@@ -1823,7 +1823,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.gender = Gender.MALE;
     }))
-    .setInstantTera(3), // Tera Johto starter
+    .setInstantTera(3), // Tera Grass Meganium / Fire Typhlosion / Water Feraligatr
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).setName("Lance").initForChampion(true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GYARADOS, Species.KINGDRA ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.AERODACTYL ]))
@@ -1835,14 +1835,14 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.CHARIZARD ]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.TYRANITAR, Species.GARCHOMP, Species.KOMMO_O ], TrainerSlot.TRAINER, true, p => {
       p.teraType = Type.DRAGON;
-      p.abilityIndex = p.species.speciesId === Species.KOMMO_O ? 1 : 2; // Soundproof Kommo-o, Rough Skin Garchomp, Unnerve Tyranitar
+      p.abilityIndex = p.species.speciesId === Species.KOMMO_O ? 1 : 2; // Soundproof Kommo-o, Unnerve Tyranitar, Rough Skin Garchomp
     }))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.DRAGONITE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
       p.gender = Gender.MALE;
       p.setBoss(true, 2);
     }))
-    .setInstantTera(4), // Tera Dragon Tyranitar, Garchomp or Kommo-o
+    .setInstantTera(4), // Tera Dragon Tyranitar / Garchomp / Kommo-o
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("steven_wallace_double").setDoubleTrainerType(TrainerType.WALLACE).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SKARMORY ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.CRADILY, Species.ARMALDO ]))
@@ -1860,7 +1860,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.generateName();
     }))
-    .setInstantTera(4), // Tera Regi
+    .setInstantTera(4), // Tera Rock Regirock / Ice Regice / Steel Registeel
   [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_hoenn_champion_g5").setMixedBattleBgm("battle_hoenn_champion_g6").setHasDouble("wallace_steven_double").setDoubleTrainerType(TrainerType.STEVEN).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PELIPPER ], TrainerSlot.TRAINER, true, p => {
       p.abilityIndex = 1; // Drizzle
@@ -1883,7 +1883,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.gender = Gender.FEMALE;
       p.setBoss(true, 2);
     }))
-    .setInstantTera(4), // Tera Regi
+    .setInstantTera(4), // Tera Electric Regieleki / Dragon Regidrago
   [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(false).setBattleBgm("battle_sinnoh_champion").setMixedBattleBgm("battle_sinnoh_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SPIRITOMB ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -1906,7 +1906,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.gender = Gender.FEMALE;
     }))
-    .setInstantTera(3), // Tera Milotic, Roserade or Hisuian Arcanine to Water/Grass/Fire
+    .setInstantTera(3), // Tera Water Milotic / Grass Roserade / Fire Hisui-Arcanine
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder").setMixedBattleBgm("battle_champion_alder")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BOUFFALANT, Species.BRAVIARY ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HISUI_LILLIGANT, Species.HISUI_ZOROARK, Species.BASCULEGION ], TrainerSlot.TRAINER, true, p => {
@@ -1929,7 +1929,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.gender = Gender.MALE;
       p.setBoss(true, 2);
     }))
-    .setInstantTera(4), // Tera E4 mons to E4 type
+    .setInstantTera(4), // Tera Ghost Chandelure / Dark Krookodile / Psychic Reuniclus / Fighting Conkeldurr
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(false).setBattleBgm("battle_champion_iris").setMixedBattleBgm("battle_champion_iris").setHasDouble("iris_alder_double").setDoubleTrainerType(TrainerType.ALDER).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.DRUDDIGON ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.ARCHEOPS ]))
@@ -1951,7 +1951,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.gender = Gender.FEMALE;
       p.setBoss(true, 2);
     }))
-    .setInstantTera(3), // Tera Dragon Salamence/ Hydreigon/ Archaludon
+    .setInstantTera(3), // Tera Dragon Salamence / Hydreigon / Archaludon
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion(false).setMixedBattleBgm("battle_kalos_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.HAWLUCHA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -1976,7 +1976,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.gender = Gender.FEMALE;
     }))
-    .setInstantTera(3), // Tera Fossil mon to secondary type
+    .setInstantTera(3), // Tera Dragon Tyrantrum / Ice Aurorus
   [TrainerType.KUKUI]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_champion_kukui")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.LYCANROC ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -2002,7 +2002,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.gender = Gender.MALE;
       p.teraType = p.species.type2!;
     }))
-    .setInstantTera(5), // Tera starter to secondary type
+    .setInstantTera(5), // Tera Dark Incineroar / Fighting Hisui-Decidueye
   [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_alola_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ALOLA_RAICHU ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -2027,7 +2027,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.setBoss(true, 2);
       p.gender = p.species.speciesId === Species.PRIMARINA ? Gender.FEMALE : Gender.MALE;
     }))
-    .setInstantTera(3), // Tera Tapu to primary type
+    .setInstantTera(3), // Tera Psychic Tapu Lele / Grass Tapu Bulu
   [TrainerType.LEON]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_galar_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.AEGISLASH ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -2079,7 +2079,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.gender = Gender.MALE;
       p.pokeball = PokeballType.ULTRA_BALL;
     }))
-    .setInstantTera(2), // Tera G-Slow to Psychic
+    .setInstantTera(2), // Tera Psychic Galar-Slowbro / Galar-Slowking
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion(false).setMixedBattleBgm("battle_champion_geeta")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GLIMMORA ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -2118,7 +2118,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.gender = Gender.MALE;
       p.setBoss(true, 2);
     }))
-    .setInstantTera(4), // Tera Armarouge/Ceruledge to secondary type
+    .setInstantTera(4), // Tera Psychic Armarouge / Ghost Ceruledge
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_champion_kieran")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.POLIWRATH, Species.POLITOED ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -2719,7 +2719,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.generateName();
     }))
-    .setInstantTera(4), // Tera Fairy SYlveon
+    .setInstantTera(4), // Tera Fairy Sylveon
   [TrainerType.PENNY_2]: new TrainerConfig(++t).setName("Cassiopeia").initForEvilTeamLeader("Star Boss", [], true).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SYLVEON ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
