@@ -892,7 +892,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         success = true;
       } else if (this.filterMode && !this.filterBar.getFilter(this.filterBarCursor).hasDefaultValues()) {
         this.filterBar.resetSelection(this.filterBarCursor);
-        this.updateStarters;
+        this.updateStarters();
         success = true;
       } else if (this.filterTextMode && !(this.filterText.getValue(this.filterTextCursor) === this.filterText.defaultText)) {
         this.filterText.resetSelection(this.filterTextCursor);

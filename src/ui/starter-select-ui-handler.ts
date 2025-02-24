@@ -1088,7 +1088,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Set default value for the caught dropdown, which only shows caught mons
    */
-  resetCaughtDropdown(): void {
+  public resetCaughtDropdown(): void {
     const caughtDropDown: DropDown = this.filterBar.getFilter(DropDownColumn.CAUGHT);
 
     caughtDropDown.resetToDefault();
@@ -1338,7 +1338,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else {
           this.filterBar.resetSelection(this.filterBarCursor);
         }
-        this.updateStarters;
+        this.updateStarters();
         success = true;
       } else if (this.statsMode) {
         this.toggleStatsMode(false);

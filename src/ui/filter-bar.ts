@@ -91,7 +91,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * @param index the index of the column to retrieve
    * @returns the associated DropDownColumn if it exists, undefined otherwise
    */
-  getColumn(index: number) : DropDownColumn {
+  public getColumn(index: number): DropDownColumn {
     return this.columns[index];
   }
 
@@ -194,7 +194,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
     return this.getFilter(col).getVals();
   }
 
-  resetSelection(col: DropDownColumn): void {
+  public resetSelection(col: DropDownColumn): void {
     this.dropDowns[col].resetToDefault();
     this.updateFilterLabels();
   }
