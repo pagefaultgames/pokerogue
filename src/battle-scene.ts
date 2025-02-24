@@ -388,7 +388,6 @@ export default class BattleScene extends SceneBase {
 
   public inputMethod: string;
   private infoToggles: InfoToggle[] = [];
-  public waveIndex: number | null;
 
   public eventManager: TimedEventManager;
 
@@ -1555,7 +1554,6 @@ export default class BattleScene extends SceneBase {
     this.resetSeed(newWaveIndex);
 
     const playerField = this.getPlayerField();
-    this.waveIndex = newWaveIndex; // temporary wave index so it can be accessed by trainer constructor
 
     if (
       this.gameMode.isFixedBattle(newWaveIndex) &&

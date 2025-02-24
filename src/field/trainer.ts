@@ -70,7 +70,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA && globalScene.waveIndex && globalScene.waveIndex >= this.config.minTeraWave) {
+    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA) {
       this.teraIndexes.push(...this.config.trainerAI.instantTeras.map(i => i < 0 ? this.getPartyTemplate().size + i : i));
       console.log("Tera index %d", this.teraIndexes[0]);
       if (this.teraIndexes.length === 0) {
@@ -444,7 +444,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       while (retry && evoAttempt++ < 10) {
         ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex));
         console.log(ret.name);
-        if (!ret.isOfType(this.config.specialtyType)) {
+        if (ret.isOfType(this.config.specialtyType)) {
           retry = false;
         }
       }
