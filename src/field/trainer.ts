@@ -70,9 +70,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA) {
-      this.teraIndexes.push(...this.config.trainerAI.instantTeras.map(i => i < 0 ? this.getPartyTemplate().size + i : i));
-      console.log("Tera index %d", this.teraIndexes[0]);
+    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA) { // For INSTANT_TERA Trainers, set the mons to Tera. Get a random index if none are specified.
+      this.teraIndexes.push(...this.config.trainerAI.instantTeras.map(i => i < 0 ? this.getPartyTemplate().size + i : i)); // Tera index of (-n) means nth-to-last party member
       if (this.teraIndexes.length === 0) {
         this.teraIndexes.push(Utils.randSeedInt(this.getPartyTemplate().size));
       }
@@ -698,6 +697,11 @@ export default class Trainer extends Phaser.GameObjects.Container {
     });
   }
 
+  /**
+   * Determines whether a Trainer should Terastallize their Pokemon
+   * @param pokemon {@linkcode EnemyPokemon} Trainer Pokemon in question
+   * @returns boolean Whether the EnemyPokemon should Terastalize this turn
+   */
   shouldTera(pokemon: EnemyPokemon): boolean {
     return (
       this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA

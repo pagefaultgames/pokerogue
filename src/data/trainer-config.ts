@@ -214,8 +214,8 @@ export class TrainerAI {
   }
 
   /**
-   * Sets a pokemon on this AI to just instantly tera on first move used
-   * @param index The index of the pokemon to instantly tera
+   * Sets a pokemon on this AI to just instantly Tera on first move used
+   * @param index The index of the pokemon to instantly tera. Negative value sets the nth-to-last party member to tera.
    */
   public setInstantTera(index: number) {
     this.teraMode = TeraAIMode.INSTANT_TERA;
@@ -598,8 +598,8 @@ export class TrainerConfig {
   }
 
   /**
-   * Sets a specific pokemon to instant tera
-   * @param index The index within the team to have instant tera
+   * Sets a specific pokemon to instantly Tera
+   * @param index The index within the team to have instant Tera. Negative value sets nth-to-last party member.
    * @returns this
    */
   setInstantTera(index: number): TrainerConfig {
@@ -862,9 +862,11 @@ export class TrainerConfig {
 
   /**
      * Initializes the trainer configuration for a Gym Leader.
-     * @param {Species | Species[]} signatureSpecies The signature species for the Gym Leader.
-     * @param {Type} specialtyType The specialty type for the Gym Leader.
+     * @param {Species | Species[]} signatureSpecies The signature species for the Gym Leader. Added to party in reverse order.
      * @param isMale Whether the Gym Leader is Male or Not (for localization of the title).
+     * @param {Type} specialtyType The specialty type for the Gym Leader.
+     * @param ignoreMinTeraWave Whether the Gym Leader always uses Tera (true), or only Teras after {@linkcode GYM_LEADER_TERA_WAVE} (false). Defaults to false.
+     * @param teraSlot Optional, sets the party member in this slot to Terastallize. Negative value means the nth-to-last party member Teras.
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
   initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN, ignoreMinTeraWave: boolean = false, teraSlot?: number): TrainerConfig {
@@ -922,8 +924,9 @@ export class TrainerConfig {
   /**
      * Initializes the trainer configuration for an Elite Four member.
      * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
-     * @param {Type} The specialty type for the Elite Four member.
      * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
+     * @param {Type} The specialty type for the Elite Four member.
+     * @param teraSlot Optional, sets the party member in this slot to Terastallize. Negative value means the nth-to-last party member Teras.
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      **/
   initForEliteFour(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN, teraSlot?: number): TrainerConfig {
@@ -1336,14 +1339,14 @@ export const signatureSpecies: SignatureSpecies = {
   PIERS: [ Species.GALAR_ZIGZAGOON, Species.SCRAGGY, Species.INKAY ],
   MARNIE: [ Species.IMPIDIMP, Species.PURRLOIN, Species.MORPEKO ],
   RAIHAN: [ Species.DURALUDON, Species.TURTONATOR, Species.GOOMY ],
-  KATY: [ Species.TEDDIURSA, Species.NYMBLE, Species.TAROUNTULA ],    // Tera Teddiursa
-  BRASSIUS: [ Species.SUDOWOODO, Species.BRAMBLIN, Species.SMOLIV ],  // Tera Sudowoodo
-  IONO: [ Species.MISDREAVUS, Species.TADBULB, Species.WATTREL ],     // Tera Misdreavus
-  KOFU: [ Species.CRABRAWLER, Species.VELUZA, Species.WIGLETT, Species.WINGULL ], // Tera Crabrawler
-  LARRY: [ Species.STARLY, Species.DUNSPARCE, Species.LECHONK, Species.KOMALA ],  // Tera Starly
-  RYME: [ Species.TOXEL, Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU ],    // Tera Toxel
-  TULIP: [ Species.FLABEBE, Species.FLITTLE, Species.RALTS, Species.GIRAFARIG ],  // Tera Flabebe
-  GRUSHA: [ Species.SWABLU, Species.CETODDLE, Species.CUBCHOO, Species.ALOLA_VULPIX ],  // Tera Swablu
+  KATY: [ Species.TEDDIURSA, Species.NYMBLE, Species.TAROUNTULA ],    // Tera Bug Teddiursa
+  BRASSIUS: [ Species.SUDOWOODO, Species.BRAMBLIN, Species.SMOLIV ],  // Tera Grass Sudowoodo
+  IONO: [ Species.MISDREAVUS, Species.TADBULB, Species.WATTREL ],     // Tera Ghost Misdreavus
+  KOFU: [ Species.CRABRAWLER, Species.VELUZA, Species.WIGLETT, Species.WINGULL ], // Tera Water Crabrawler
+  LARRY: [ Species.STARLY, Species.DUNSPARCE, Species.LECHONK, Species.KOMALA ],  // Tera Normal Starly
+  RYME: [ Species.TOXEL, Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU ],    // Tera Ghost Toxel
+  TULIP: [ Species.FLABEBE, Species.FLITTLE, Species.RALTS, Species.GIRAFARIG ],  // Tera Psychic Flabebe
+  GRUSHA: [ Species.SWABLU, Species.CETODDLE, Species.CUBCHOO, Species.ALOLA_VULPIX ],  // Tera Ice Swablu
   LORELEI: [ Species.JYNX, [ Species.SLOWBRO, Species.GALAR_SLOWBRO ], Species.LAPRAS, [ Species.CLOYSTER, Species.ALOLA_SANDSLASH ]],
   BRUNO: [ Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [ Species.GOLEM, Species.ALOLA_GOLEM ]],
   AGATHA: [ Species.GENGAR, [ Species.ARBOK, Species.WEEZING ], Species.CROBAT, Species.ALOLA_MAROWAK ],
@@ -1357,7 +1360,7 @@ export const signatureSpecies: SignatureSpecies = {
   DRAKE: [ Species.ALTARIA, Species.SALAMENCE, Species.FLYGON, Species.KINGDRA ],
   AARON: [[ Species.SCIZOR, Species.KLEAVOR ], Species.HERACROSS, [ Species.VESPIQUEN, Species.YANMEGA ], Species.DRAPION ],
   BERTHA: [ Species.WHISCASH, Species.HIPPOWDON, Species.GLISCOR, Species.RHYPERIOR ],
-  FLINT: [[ Species.RAPIDASH, Species.FLAREON ], Species.MAGMORTAR, [ Species.STEELIX, Species.LOPUNNY ], Species.INFERNAPE ],
+  FLINT: [[ Species.RAPIDASH, Species.FLAREON ], Species.MAGMORTAR, [ Species.STEELIX, Species.LOPUNNY ], Species.INFERNAPE ], // Tera Fire Steelix or Lopunny
   LUCIAN: [ Species.MR_MIME, Species.GALLADE, Species.BRONZONG, [ Species.ALAKAZAM, Species.ESPEON ]],
   SHAUNTAL: [ Species.COFAGRIGUS, Species.CHANDELURE, Species.GOLURK, Species.JELLICENT ],
   MARSHAL: [ Species.CONKELDURR, Species.MIENSHAO, Species.THROH, Species.SAWK ],
@@ -1377,14 +1380,14 @@ export const signatureSpecies: SignatureSpecies = {
   BEA_ELITE: [ Species.HAWLUCHA, [ Species.GRAPPLOCT, Species.SIRFETCHD ], Species.FALINKS, Species.MACHAMP ],
   ALLISTER_ELITE: [ Species.DUSKNOIR, [ Species.POLTEAGEIST, Species.RUNERIGUS ], Species.CURSOLA, Species.GENGAR ],
   RAIHAN_ELITE: [ Species.GOODRA, [ Species.TORKOAL, Species.TURTONATOR ], Species.FLYGON, Species.ARCHALUDON ],
-  RIKA: [ Species.CLODSIRE, [ Species.DUGTRIO, Species.DONPHAN ], Species.CAMERUPT, Species.WHISCASH ], // Tera Clodsire
-  POPPY: [ Species.TINKATON, Species.BRONZONG, Species.CORVIKNIGHT, Species.COPPERAJAH ],   // Tera Tinkaton
-  LARRY_ELITE: [ Species.FLAMIGO, Species.STARAPTOR, [ Species.ALTARIA, Species.TROPIUS ], Species.ORICORIO ],  // Tera Flamigo, random Oricorio
-  HASSEL: [ Species.BAXCALIBUR, [ Species.FLAPPLE, Species.APPLETUN ], Species.DRAGALGE, Species.NOIVERN ],     // Tera Baxcalibur
-  CRISPIN: [ Species.BLAZIKEN, Species.MAGMORTAR, [ Species.CAMERUPT, Species.TALONFLAME ], Species.ROTOM ], // Tera Blaziken, Heat Rotom
-  AMARYS: [ Species.METAGROSS, Species.SCIZOR, Species.EMPOLEON, Species.SKARMORY ], // Tera Metagross
-  LACEY: [ Species.EXCADRILL, Species.PRIMARINA, [ Species.WHIMSICOTT, Species.ALCREMIE ], Species.GRANBULL ], // Tera Excadrill
-  DRAYTON: [ Species.ARCHALUDON, Species.DRAGONITE, Species.HAXORUS, Species.SCEPTILE ], // Tera Archaludon
+  RIKA: [ Species.CLODSIRE, [ Species.DUGTRIO, Species.DONPHAN ], Species.CAMERUPT, Species.WHISCASH ], // Tera Ground Clodsire
+  POPPY: [ Species.TINKATON, Species.BRONZONG, Species.CORVIKNIGHT, Species.COPPERAJAH ],   // Tera Steel Tinkaton
+  LARRY_ELITE: [ Species.FLAMIGO, Species.STARAPTOR, [ Species.ALTARIA, Species.TROPIUS ], Species.ORICORIO ],  // Tera Flying Flamigo; random Oricorio
+  HASSEL: [ Species.BAXCALIBUR, [ Species.FLAPPLE, Species.APPLETUN ], Species.DRAGALGE, Species.NOIVERN ],     // Tera Dragon Baxcalibur
+  CRISPIN: [ Species.BLAZIKEN, Species.MAGMORTAR, [ Species.CAMERUPT, Species.TALONFLAME ], Species.ROTOM ], // Tera Fire Blaziken; Heat Rotom
+  AMARYS: [ Species.METAGROSS, Species.SCIZOR, Species.EMPOLEON, Species.SKARMORY ], // Tera Steel Metagross
+  LACEY: [ Species.EXCADRILL, Species.PRIMARINA, [ Species.WHIMSICOTT, Species.ALCREMIE ], Species.GRANBULL ], // Tera Fairy Excadrill
+  DRAYTON: [ Species.ARCHALUDON, Species.DRAGONITE, Species.HAXORUS, Species.SCEPTILE ], // Tera Dragon Archaludon
 };
 
 export const trainerConfigs: TrainerConfigs = {
@@ -2179,7 +2182,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT, Species.TALONFLAME, Species.TOUCANNON, Species.CORVIKNIGHT, Species.KILOWATTREL ], TrainerSlot.TRAINER, true))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540)
-    .setInstantTera(0),
+    .setInstantTera(0), // Tera starter to primary type
   [TrainerType.RIVAL_5]: new TrainerConfig(++t).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setBoss().setStaticParty().setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.RIVAL).setBattleBgm("battle_rival_3").setMixedBattleBgm("battle_rival_3").setPartyTemplates(trainerPartyTemplates.RIVAL_5)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON, Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL ], TrainerSlot.TRAINER, true,
       p => {
@@ -2196,7 +2199,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.shiny = true;
       p.variant = 1;
     }))
-    .setInstantTera(0),
+    .setInstantTera(0), // Tera starter to primary type
   [TrainerType.RIVAL_6]: new TrainerConfig(++t).setName("Finn").setHasGenders("Ivy").setHasCharSprite().setTitle("Rival").setBoss().setStaticParty().setMoneyMultiplier(3).setEncounterBgm("final").setBattleBgm("battle_rival_3").setMixedBattleBgm("battle_rival_3").setPartyTemplates(trainerPartyTemplates.RIVAL_6)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON, Species.MEOWSCARADA, Species.SKELEDIRGE, Species.QUAQUAVAL ], TrainerSlot.TRAINER, true,
       p => {
@@ -2221,7 +2224,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = 1; // Mega Rayquaza
       p.generateName();
     }))
-    .setInstantTera(0),
+    .setInstantTera(0), // Tera starter to primary type
 
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: new TrainerConfig(t = TrainerType.ROCKET_BOSS_GIOVANNI_1).setName("Giovanni").initForEvilTeamLeader("Rocket Boss", []).setMixedBattleBgm("battle_rocket_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PERSIAN ], TrainerSlot.TRAINER, true, p => {
@@ -2719,7 +2722,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.ULTRA_BALL;
       p.generateName();
     }))
-    .setInstantTera(4),
+    .setInstantTera(4), // Tera Fairy SYlveon
   [TrainerType.PENNY_2]: new TrainerConfig(++t).setName("Cassiopeia").initForEvilTeamLeader("Star Boss", [], true).setMixedBattleBgm("battle_star_boss").setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.SYLVEON ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 2);
@@ -2757,7 +2760,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.MASTER_BALL;
     }))
-    .setInstantTera(0),
+    .setInstantTera(0), // Tera Fairy Sylveon
   [TrainerType.BUCK]: new TrainerConfig(++t).setName("Buck").initForStatTrainer(true)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.CLAYDOL ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
