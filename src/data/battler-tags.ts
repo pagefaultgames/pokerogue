@@ -2752,6 +2752,12 @@ export class TauntTag extends MoveRestrictionBattlerTag {
     globalScene.queueMessage(i18next.t("battlerTags:tauntOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
+  public override onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    globalScene.queueMessage(i18next.t("battlerTags:tauntOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
   /**
    * Checks if a move is a status move and determines its restriction status on that basis
    * @param {Moves} move the move under investigation
