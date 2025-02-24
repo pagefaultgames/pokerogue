@@ -38,7 +38,7 @@ import { Species } from "#enums/species";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
-import { Nature } from "#enums/nature";
+import { getNatureName } from "#app/data/nature";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -167,18 +167,18 @@ export class EncounterPhase extends BattlePhase {
       ];
       const moveset: string[] = [];
       enemyPokemon.getMoveset().forEach((move) => {
-        moveset.push(move!.getName());
+        moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
       });
 
       console.log(
         `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
         `| Species ID: ${enemyPokemon.species.speciesId}`,
-        `| Nature: ${Nature[enemyPokemon.getNature()]}`,
+        `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
       );
       console.log(`Stats (IVs): ${stats}`);
       console.log(
         `Ability: ${enemyPokemon.getAbility().name}`,
-        `| Passive Ability${enemyPokemon.isBoss() ? "" : " (inactive)"}: ${enemyPokemon.getPassiveAbility().name}`,
+        `| Passive Ability${enemyPokemon.hasPassive() ? "" : " (inactive)"}: ${enemyPokemon.getPassiveAbility().name}`,
         `${enemyPokemon.isBoss() ? `| Boss Bars: ${enemyPokemon.bossSegments}` : ""}`
       );
       console.log("Moveset:", moveset);

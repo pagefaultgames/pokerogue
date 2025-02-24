@@ -21,6 +21,7 @@ import { SelectChallengePhase } from "./select-challenge-phase";
 import { SelectStarterPhase } from "./select-starter-phase";
 import { SummonPhase } from "./summon-phase";
 import { globalScene } from "#app/global-scene";
+import Overrides from "#app/overrides";
 
 
 export class TitlePhase extends Phase {
@@ -256,7 +257,11 @@ export class TitlePhase extends Phase {
           console.error("Failed to load daily run:\n", err);
         });
       } else {
-        generateDaily(btoa(new Date().toISOString().substring(0, 10)));
+        let seed: string = btoa(new Date().toISOString().substring(0, 10));
+        if (!Utils.isNullOrUndefined(Overrides.DAILY_RUN_SEED_OVERRIDE)) {
+          seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
+        }
+        generateDaily(seed);
       }
     });
   }
