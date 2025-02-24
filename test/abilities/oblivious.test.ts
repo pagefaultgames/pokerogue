@@ -4,7 +4,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Oblivious", () => {
   let phaserGame: Phaser.Game;
@@ -57,6 +57,7 @@ describe("Abilities - Oblivious", () => {
 
     await game.classicMode.startBattle([ Species.FEEBAS ]);
     const enemy = game.scene.getEnemyPokemon();
+    vi.spyOn(enemy!, "isOppositeGender").mockReturnValue(true);
     enemy?.addTag(BattlerTagType.INFATUATED, 5, Moves.JUDGMENT, game.scene.getPlayerPokemon()?.id); // sourceID needs to be defined
     expect(enemy?.getTag(BattlerTagType.INFATUATED)).toBeTruthy();
 
