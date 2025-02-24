@@ -2212,7 +2212,7 @@ export class PostSummonRemoveBattlerTagAbAttr extends PostSummonAbAttr {
   private immuneTags: BattlerTagType[];
 
   /**
-   * @param immuneEffects - The status effects to which the Pokémon is immune.
+   * @param immuneTags - The {@linkcode BattlerTagType | battler tags} the Pokémon is immune to.
    */
   constructor(...immuneTags: BattlerTagType[]) {
     super();
@@ -2430,7 +2430,7 @@ export class PostSummonHealStatusAbAttr extends PostSummonAbAttr {
   private statusHealed: StatusEffect;
 
   /**
-   * @param immuneEffects - The status effects to which the Pokémon is immune.
+   * @param immuneEffects - The {@linkcode StatusEffect}s the Pokémon is immune to.
    */
   constructor(...immuneEffects: StatusEffect[]) {
     super();
