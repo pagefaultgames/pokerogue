@@ -6291,7 +6291,6 @@ export function initAbilities() {
       }, 1.5),
     new Ability(Abilities.LEAF_GUARD, 4)
       .attr(StatusEffectImmunityAbAttr)
-      .attr(PostSummonHealStatusAbAttr)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN))
       .ignorable(),
     new Ability(Abilities.KLUTZ, 4)
