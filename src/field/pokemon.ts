@@ -104,7 +104,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
@@ -2348,12 +2347,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
     movePool = movePool.map(m => [ m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power / maxPower, 1), 0.5)) ]);
 
-    // Weight damaging moves against the lower stat
+    // Weight damaging moves against the lower stat. This uses a non-linear relationship.
+    // If the higher stat is 1 - 1.09x higher, no change. At higher stat ~1.38x lower stat, off-stat moves have half weight.
+    // One third weight at ~1.58x higher, one quarter weight at ~1.73x higher, one fifth at ~1.87x, and one tenth at ~2.35x higher.
     const atk = this.getStat(Stat.ATK);
     const spAtk = this.getStat(Stat.SPATK);
     const worseCategory: MoveCategory = atk > spAtk ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
     const statRatio = worseCategory === MoveCategory.PHYSICAL ? atk / spAtk : spAtk / atk;
-    movePool = movePool.map(m => [ m[0], m[1] * (allMoves[m[0]].category === worseCategory ? statRatio : 1) ]);
+    movePool = movePool.map(m => [ m[0], m[1] * (allMoves[m[0]].category === worseCategory ? Math.min(Math.pow(statRatio, 3) * 1.3, 1) : 1) ]);
 
     /** The higher this is the more the game weights towards higher level moves. At `0` all moves are equal weight. */
     let weightMultiplier = 0.9;
@@ -2394,14 +2395,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {
       if (this.hasTrainer()) {
         // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
-        // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
+        // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights get 20x if STAB.
         // Status moves remain unchanged on weight, this encourages 1-2
         movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId)).map((m) => {
           let ret: number;
           if (this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type)) {
             ret = Math.ceil(Math.sqrt(m[1]));
           } else if (allMoves[m[0]].category !== MoveCategory.STATUS) {
-            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1));
+            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 20 : 1));
           } else {
             ret = m[1];
           }
@@ -2847,7 +2848,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       stabMultiplier.value += 0.5;
     }
 
-    if (source.isTerastallized && source.teraType === Type.STELLAR && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(Species.TERAPAGOS))) {
+    if (source.isTerastallized && source.getTeraType() === Type.STELLAR && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(Species.TERAPAGOS))) {
       if (matchesSourceType) {
         stabMultiplier.value += 0.5;
       } else {
@@ -4508,43 +4509,6 @@ export class PlayerPokemon extends Pokemon {
       this.friendship = Math.max(this.friendship + friendship, 0);
     }
   }
-  /**
-   * Handles Revival Blessing when used by player.
-   * @returns Promise to revive a pokemon.
-   * @see {@linkcode RevivalBlessingAttr}
-   */
-  revivalBlessing(): Promise<void> {
-    return new Promise(resolve => {
-      globalScene.ui.setMode(Mode.PARTY, PartyUiMode.REVIVAL_BLESSING, this.getFieldIndex(), (slotIndex:number, option: PartyOption) => {
-        if (slotIndex >= 0 && slotIndex < 6) {
-          const pokemon = globalScene.getPlayerParty()[slotIndex];
-          if (!pokemon || !pokemon.isFainted()) {
-            resolve();
-          }
-
-          pokemon.resetTurnData();
-          pokemon.resetStatus();
-          pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-          globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: pokemon.name }), 0, true);
-
-          if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1) {
-            const allyPokemon = this.getAlly();
-            if (slotIndex <= 1) {
-              // Revived ally pokemon
-              globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, true));
-              globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
-            } else if (allyPokemon.isFainted()) {
-              // Revived party pokemon, and ally pokemon is fainted
-              globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, true));
-              globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
-            }
-          }
-
-        }
-        globalScene.ui.setMode(Mode.MESSAGE).then(() => resolve());
-      }, PartyUiHandler.FilterFainted);
-    });
-  }
 
   getPossibleEvolution(evolution: SpeciesFormEvolution | null): Promise<Pokemon> {
     if (!evolution) {
@@ -4668,7 +4632,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
         newPokemon.fusionLuck = this.fusionLuck;
-        newPokemon.fusionTeraType = this.teraType;
+        newPokemon.fusionTeraType = this.fusionTeraType;
         newPokemon.usedTMs = this.usedTMs;
 
         globalScene.getPlayerParty().push(newPokemon);
@@ -4726,70 +4690,62 @@ export class PlayerPokemon extends Pokemon {
   }
 
   /**
-  * Returns a Promise to fuse two PlayerPokemon together
-  * @param pokemon The PlayerPokemon to fuse to this one
-  */
-  fuse(pokemon: PlayerPokemon): Promise<void> {
-    return new Promise(resolve => {
-      this.fusionSpecies = pokemon.species;
-      this.fusionFormIndex = pokemon.formIndex;
-      this.fusionAbilityIndex = pokemon.abilityIndex;
-      this.fusionShiny = pokemon.shiny;
-      this.fusionVariant = pokemon.variant;
-      this.fusionGender = pokemon.gender;
-      this.fusionLuck = pokemon.luck;
-      this.fusionCustomPokemonData = pokemon.customPokemonData;
-      if ((pokemon.pauseEvolutions) || (this.pauseEvolutions)) {
-        this.pauseEvolutions = true;
-      }
+   * Returns a Promise to fuse two PlayerPokemon together
+   * @param pokemon The PlayerPokemon to fuse to this one
+   */
+  fuse(pokemon: PlayerPokemon): void {
+    this.fusionSpecies = pokemon.species;
+    this.fusionFormIndex = pokemon.formIndex;
+    this.fusionAbilityIndex = pokemon.abilityIndex;
+    this.fusionShiny = pokemon.shiny;
+    this.fusionVariant = pokemon.variant;
+    this.fusionGender = pokemon.gender;
+    this.fusionLuck = pokemon.luck;
+    this.fusionCustomPokemonData = pokemon.customPokemonData;
+    if (pokemon.pauseEvolutions || this.pauseEvolutions) {
+      this.pauseEvolutions = true;
+    }
 
-      globalScene.validateAchv(achvs.SPLICE);
-      globalScene.gameData.gameStats.pokemonFused++;
+    globalScene.validateAchv(achvs.SPLICE);
+    globalScene.gameData.gameStats.pokemonFused++;
 
-      // Store the average HP% that each Pokemon has
-      const maxHp = this.getMaxHp();
-      const newHpPercent = ((pokemon.hp / pokemon.getMaxHp()) + (this.hp / maxHp)) / 2;
+    // Store the average HP% that each Pokemon has
+    const maxHp = this.getMaxHp();
+    const newHpPercent = (pokemon.hp / pokemon.getMaxHp() + this.hp / maxHp) / 2;
 
-      this.generateName();
-      this.calculateStats();
+    this.generateName();
+    this.calculateStats();
 
-      // Set this Pokemon's HP to the average % of both fusion components
-      this.hp = Math.round(maxHp * newHpPercent);
-      if (!this.isFainted()) {
-        // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
-        this.hp = Math.min(this.hp, maxHp);
-        this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
-      } else if (!pokemon.isFainted()) {
-        // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
-        this.hp = Math.max(this.hp, 1);
-        this.status = pokemon.status; // Inherit the other Pokemon's status
-      }
+    // Set this Pokemon's HP to the average % of both fusion components
+    this.hp = Math.round(maxHp * newHpPercent);
+    if (!this.isFainted()) {
+      // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
+      this.hp = Math.min(this.hp, maxHp);
+      this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
+    } else if (!pokemon.isFainted()) {
+      // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
+      this.hp = Math.max(this.hp, 1);
+      this.status = pokemon.status; // Inherit the other Pokemon's status
+    }
 
-      this.generateCompatibleTms();
-      this.updateInfo(true);
-      const fusedPartyMemberIndex = globalScene.getPlayerParty().indexOf(pokemon);
-      let partyMemberIndex = globalScene.getPlayerParty().indexOf(this);
-      if (partyMemberIndex > fusedPartyMemberIndex) {
-        partyMemberIndex--;
-      }
-      const fusedPartyMemberHeldModifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
-      const transferModifiers: Promise<boolean>[] = [];
-      for (const modifier of fusedPartyMemberHeldModifiers) {
-        transferModifiers.push(globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false));
-      }
-      Promise.allSettled(transferModifiers).then(() => {
-        globalScene.updateModifiers(true, true).then(() => {
-          globalScene.removePartyMemberModifiers(fusedPartyMemberIndex);
-          globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
-          const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);
-          pokemon.getMoveset(true).map((m: PokemonMove) => globalScene.unshiftPhase(new LearnMovePhase(newPartyMemberIndex, m.getMove().id)));
-          pokemon.destroy();
-          this.updateFusionPalette();
-          resolve();
-        });
-      });
-    });
+    this.generateCompatibleTms();
+    this.updateInfo(true);
+    const fusedPartyMemberIndex = globalScene.getPlayerParty().indexOf(pokemon);
+    let partyMemberIndex = globalScene.getPlayerParty().indexOf(this);
+    if (partyMemberIndex > fusedPartyMemberIndex) {
+      partyMemberIndex--;
+    }
+    const fusedPartyMemberHeldModifiers = globalScene.findModifiers((m) => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
+    for (const modifier of fusedPartyMemberHeldModifiers) {
+      globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false);
+    }
+    globalScene.updateModifiers(true, true);
+    globalScene.removePartyMemberModifiers(fusedPartyMemberIndex);
+    globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
+    const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);
+    pokemon.getMoveset(true).map((m: PokemonMove) => globalScene.unshiftPhase(new LearnMovePhase(newPartyMemberIndex, m.getMove().id)));
+    pokemon.destroy();
+    this.updateFusionPalette();
   }
 
   unfuse(): Promise<void> {

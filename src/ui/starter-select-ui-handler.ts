@@ -1984,15 +1984,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               yOffset: 47
             });
           };
-          if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
-            options.push({
-              label: i18next.t("starterSelectUiHandler:useCandies"),
-              handler: () => {
-                ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
-                return true;
-              }
-            });
-          }
           options.push({
             label: i18next.t("menuUiHandler:POKEDEX"),
             handler: () => {
@@ -2008,6 +1999,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               return true;
             }
           });
+          if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+            options.push({
+              label: i18next.t("starterSelectUiHandler:useCandies"),
+              handler: () => {
+                ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
+                return true;
+              }
+            });
+          }
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
