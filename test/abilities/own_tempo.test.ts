@@ -46,6 +46,6 @@ describe("Abilities - Own Tempo", () => {
     game.move.select(Moves.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy?.status).toBeFalsy();
+    expect(enemy?.getTag(BattlerTagType.CONFUSED)).toBeFalsy();
   });
 });

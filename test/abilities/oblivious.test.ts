@@ -40,13 +40,13 @@ describe("Abilities - Oblivious", () => {
 
     await game.classicMode.startBattle([ Species.FEEBAS ]);
     const enemy = game.scene.getEnemyPokemon();
-    enemy?.addTag(BattlerTagType.TAUNT); // sourceID needs to be defined
+    enemy?.addTag(BattlerTagType.TAUNT);
     expect(enemy?.getTag(BattlerTagType.TAUNT)).toBeTruthy();
 
     game.move.select(Moves.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy?.status).toBeFalsy();
+    expect(enemy?.getTag(BattlerTagType.TAUNT)).toBeFalsy();
   });
 
   it("should remove infatuation when gained", async () => {
@@ -64,6 +64,6 @@ describe("Abilities - Oblivious", () => {
     game.move.select(Moves.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy?.status).toBeFalsy();
+    expect(enemy?.getTag(BattlerTagType.INFATUATED)).toBeFalsy();
   });
 });
