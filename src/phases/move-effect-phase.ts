@@ -268,7 +268,7 @@ export class MoveEffectPhase extends PokemonPhase {
           const isReflecting = !!target.getTag(BattlerTagType.MAGIC_COAT);
 
           /** Is the target's magic bounce ability not ignored and able to reflect this move? */
-          const canMagicBounce = !isReflecting && !move.doesFlagEffectApply({flag: MoveFlags.IGNORE_ABILITIES, user, target}) && target.hasAbilityWithAttr(ReflectStatusMoveAbAttr);
+          const canMagicBounce = !isReflecting && !move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target }) && target.hasAbilityWithAttr(ReflectStatusMoveAbAttr);
 
           const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
 
