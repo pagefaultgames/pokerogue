@@ -933,7 +933,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_gym");
     this.setVictoryBgm("victory_gym");
-    this.setRandomTeraModifiers(() => (ignoreMinTeraWave || globalScene.currentBattle.waveIndex > GYM_LEADER_TERA_WAVE) ? 1 : 0, teraSlot);
+    this.setRandomTeraModifiers(() => (ignoreMinTeraWave || globalScene.currentBattle.waveIndex >= GYM_LEADER_TERA_WAVE) ? 1 : 0, teraSlot);
 
     return this;
   }
