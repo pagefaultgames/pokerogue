@@ -1031,7 +1031,11 @@ export class AttackMove extends Move {
     const offStatValue = user.getEffectiveStat(offStat, target);
     applyMoveAttrs(VariableAtkAttr, user, target, move, statHolder);
     const statRatio = offStatValue / statHolder.value;
-    attackScore *= statRatio <= 0.75 ? 2 : statRatio <= 0.875 ? 1.5 : 1;
+    if (statRatio <= 0.75) {
+      attackScore *= 2;
+    } else if (statRatio <= 0.875) {
+      attackScore *= 1.5;
+    }
 
     const power = new Utils.NumberHolder(this.calculateEffectivePower());
     applyMoveAttrs(VariablePowerAttr, user, target, move, power);
