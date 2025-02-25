@@ -6,6 +6,8 @@ import { StatusEffect } from "#app/enums/status-effect";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
+import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms";
+import { applyPostSetStatusAbAttrs, PostSetStatusAbAttr } from "#app/data/ability";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect?: StatusEffect;
@@ -32,6 +34,12 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(false, () => {
           globalScene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
+          if (this.statusEffect && this.statusEffect !== StatusEffect.FAINT) {
+            globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);
+            // If mold breaker etc was used to set this status, it shouldn't apply to abilities activated afterwards
+            globalScene.arena.setIgnoreAbilities(false);
+            applyPostSetStatusAbAttrs(PostSetStatusAbAttr, pokemon, this.statusEffect, this.sourcePokemon);
+          }
           this.end();
         });
         return;
