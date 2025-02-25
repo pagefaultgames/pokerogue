@@ -3275,6 +3275,38 @@ export class MultCritAbAttr extends AbAttr {
   }
 }
 
+export class PostApplyBattlerTagAbAttr extends AbAttr {
+  public applyPostApplyBattlerTag(
+    pokemon: Pokemon,
+    passive: boolean,
+    simulated: boolean,
+    tag: BattlerTag,
+    args: any[],
+  ): boolean {
+    return false;
+  }
+}
+
+/**
+ * Tag for the case that a battler tag immunity ability is suppressed i.e. Mold Breaker and the tag is applied
+ * In that case, the tag is applied but is then immediately removed
+ */
+export class PostApplyBattlerTagRemoveTagAbAttr extends PostApplyBattlerTagAbAttr {
+  private immuneTags: BattlerTagType[];
+
+  /**
+   * @param immuneTags - The {@linkcode BattlerTagType | battler tags} the Pokémon is immune to.
+   */
+  constructor(...immuneTags: BattlerTagType[]) {
+    super();
+    this.immuneTags = immuneTags;
+  }
+
+  public override applyPostApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, args: any[]): boolean {
+    return pokemon.removeTag(tag.tagType);
+  }
+}
+
 /**
  * Guarantees a critical hit according to the given condition, except if target prevents critical hits. ie. Merciless
  * @extends AbAttr
@@ -5974,6 +6006,21 @@ export function applyPostItemLostAbAttrs(
   );
 }
 
+export function applyPostApplyBattlerTagAbAttrs(
+  attrType: Constructor<PostApplyBattlerTagAbAttr>,
+  pokemon: Pokemon,
+  tag: BattlerTag,
+  simulated: boolean = false,
+  ...args: any[]
+): void  {
+  applyAbAttrsInternal<PostApplyBattlerTagAbAttr>(
+    attrType,
+    pokemon,
+    (attr, passive) => attr.applyPostApplyBattlerTag(pokemon, passive, simulated, tag, args),
+    args,
+  );
+}
+
 /**
  * Applies abilities when they become active mid-turn (ability switch)
  *
@@ -6058,6 +6105,7 @@ export function initAbilities() {
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT ])
       .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.INFATUATED, BattlerTagType.TAUNT)
+      .attr(PostApplyBattlerTagRemoveTagAbAttr, BattlerTagType.INFATUATED, BattlerTagType.TAUNT)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
@@ -6091,6 +6139,7 @@ export function initAbilities() {
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
       .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.CONFUSED)
+      .attr(PostApplyBattlerTagRemoveTagAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, 3)
