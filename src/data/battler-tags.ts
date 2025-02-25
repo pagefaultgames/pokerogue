@@ -42,6 +42,7 @@ import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
+import * as Utils from "../utils";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -274,9 +275,9 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    const move = pokemon.getLastXMoves()
-      .find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
-    if (move === undefined) {
+    const move = pokemon.getLastXMoves(-1)
+      .find(m => !m.virtual);
+    if (Utils.isNullOrUndefined(move) || move.move === Moves.STRUGGLE || move.move === Moves.NONE) {
       return;
     }
 
@@ -2485,7 +2486,7 @@ export class TarShotTag extends BattlerTag {
    * @returns whether the tag is applied
    */
   override canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isTerastallized();
+    return !pokemon.isTerastallized;
   }
 
   override onAdd(pokemon: Pokemon): void {
@@ -2751,6 +2752,12 @@ export class TauntTag extends MoveRestrictionBattlerTag {
     globalScene.queueMessage(i18next.t("battlerTags:tauntOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), 1500);
   }
 
+  public override onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    globalScene.queueMessage(i18next.t("battlerTags:tauntOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+
   /**
    * Checks if a move is a status move and determines its restriction status on that basis
    * @param {Moves} move the move under investigation
@@ -2976,6 +2983,24 @@ export class PsychoShiftTag extends BattlerTag {
 }
 
 /**
+ * Tag associated with the move Magic Coat.
+ */
+export class MagicCoatTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.MAGIC_COAT, BattlerTagLapseType.TURN_END, 1, Moves.MAGIC_COAT);
+  }
+
+  /**
+   * Queues the "[PokemonName] shrouded itself with Magic Coat" message when the tag is added.
+   * @param pokemon - The target {@linkcode Pokemon}
+   */
+  override onAdd(pokemon: Pokemon) {
+    // "{pokemonNameWithAffix} shrouded itself with Magic Coat!"
+    globalScene.queueMessage(i18next.t("battlerTags:magicCoatOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
  * @returns The corresponding {@linkcode BattlerTag} object.
@@ -3164,6 +3189,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
       return new GrudgeTag();
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
+    case BattlerTagType.MAGIC_COAT:
+      return new MagicCoatTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

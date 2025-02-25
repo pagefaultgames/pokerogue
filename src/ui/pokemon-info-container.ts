@@ -13,7 +13,6 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
-import { Species } from "#enums/species";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -218,23 +217,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
       }
 
-      const formKey = (pokemon.species?.forms?.[pokemon.formIndex!]?.formKey);
-      const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
-      const speciesName = Utils.capitalizeString(Species[pokemon.species.speciesId], "_", true, false);
-
-      let formName = "";
-      if (pokemon.species.speciesId === Species.ARCEUS) {
-        formName = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
-      } else {
-        const i18key = `pokemonForm:${speciesName}${formText}`;
-        if (i18next.exists(i18key)) {
-          formName = i18next.t(i18key);
-        } else {
-          const rootSpeciesName = Utils.capitalizeString(Species[pokemon.species.getRootSpeciesId()], "_", true, false);
-          const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
-          formName = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
-        }
-      }
+      const formName = pokemon.species.getFormNameToDisplay(pokemon.formIndex);
 
       if (formName) {
         this.pokemonFormLabelText.setVisible(true);

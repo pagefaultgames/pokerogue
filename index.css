@@ -164,13 +164,13 @@ input:-internal-autofill-selected {
 }
 
 /* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadOpenFilters,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleForm,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleShiny,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX'], [data-ui-mode='POKEDEX_PAGE']) #apadOpenFilters,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX'], [data-ui-mode='POKEDEX_PAGE'], [data-ui-mode='RUN_INFO']) #apadCycleForm,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX'], [data-ui-mode='POKEDEX_PAGE'], [data-ui-mode='RUN_INFO']) #apadCycleShiny,
 #touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleNature,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='RUN_INFO']) #apadCycleAbility,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleGender,
-#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT']) #apadCycleVariant {
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX_PAGE'], [data-ui-mode='RUN_INFO']) #apadCycleAbility,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX_PAGE']) #apadCycleGender,
+#touchControls:not(.config-mode):not([data-ui-mode='STARTER_SELECT'], [data-ui-mode='POKEDEX']) #apadCycleTera {
  display: none;
 }
 
