@@ -1932,42 +1932,6 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
   }
 }
 
-/**
- * Remove the status condition of a pokemon that just gained it, if the pokemon is immune to that status by ability
- *
- * Occurs when, for example, Mold breaker is used to paralyze a pokemon with Limber
- */
-export class PostSetStatusHealStatusAbAttr extends PostSetStatusAbAttr {
-  private immuneEffects: StatusEffect[];
-  private statusHealed: StatusEffect;
-
-  /**
-   * @param immuneEffects - The {@linkcode StatusEffect}s the Pokémon is immune to.
-   */
-  constructor(...immuneEffects: StatusEffect[]) {
-    super();
-    this.immuneEffects = immuneEffects;
-  }
-
-  public override applyPostSetStatus(pokemon: Pokemon, sourcePokemon: (Pokemon | null) | undefined, passive: boolean, effect: StatusEffect, simulated: boolean, args: any[]): boolean {
-    const status = pokemon.status?.effect;
-    if (status && (this.immuneEffects.length < 1 || this.immuneEffects.includes(status))) {
-      this.statusHealed = status;
-      pokemon.resetStatus(false);
-      pokemon.updateInfo();
-      return true;
-    }
-    return false;
-  }
-
-  public override getTriggerMessage(_pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
-    if (this.statusHealed) {
-      return getStatusEffectHealText(this.statusHealed, getPokemonNameWithAffix(_pokemon));
-    }
-    return null;
-  }
-}
-
 export class PostVictoryAbAttr extends AbAttr {
   applyPostVictory(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return false;
@@ -2163,6 +2127,11 @@ export class PostSummonAbAttr extends AbAttr {
 }
 
 /**
+ * Base class for ability attributes which remove an effect on summon
+ */
+export class PostSummonRemoveEffectAbAttr extends PostSummonAbAttr {}
+
+/**
  * Removes specified arena tags when a Pokemon is summoned.
  */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
@@ -2249,7 +2218,7 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
  *
  * This should realistically only ever activate on gain rather than on summon
  */
-export class PostSummonRemoveBattlerTagAbAttr extends PostSummonAbAttr {
+export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAttr {
   private immuneTags: BattlerTagType[];
 
   /**
@@ -2469,7 +2438,7 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
 /**
  * Heals a status effect if the Pokemon is afflicted with it upon switch in (or gain)
  */
-export class PostSummonHealStatusAbAttr extends PostSummonAbAttr {
+export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
   private immuneEffects: StatusEffect[];
   private statusHealed: StatusEffect;
 
@@ -3282,46 +3251,6 @@ export class MultCritAbAttr extends AbAttr {
     if (critMult.value > 1) {
       critMult.value *= this.multAmount;
       return true;
-    }
-
-    return false;
-  }
-}
-
-/**
- * Base class for ability attributes which activate when a {@linkcode BattlerTag} is added to the Pokemon
- */
-export class PostApplyBattlerTagAbAttr extends AbAttr {
-  public applyPostApplyBattlerTag(
-    pokemon: Pokemon,
-    passive: boolean,
-    simulated: boolean,
-    tag: BattlerTag,
-    args: any[],
-  ): boolean {
-    return false;
-  }
-}
-
-/**
- * Removes a tag immediately after it was applied
- *
- * Occurs when a Pokemon immune to a tag is affected with it anyway (through mold breaker, etc.)
- */
-export class PostApplyBattlerTagRemoveTagAbAttr extends PostApplyBattlerTagAbAttr {
-  private immuneTags: BattlerTagType[];
-
-  /**
-   * @param immuneTags - The {@linkcode BattlerTagType | battler tags} the Pokémon is immune to.
-   */
-  constructor(...immuneTags: BattlerTagType[]) {
-    super();
-    this.immuneTags = immuneTags;
-  }
-
-  public override applyPostApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, args: any[]): boolean {
-    if (this.immuneTags.includes(tag.tagType)) {
-      return pokemon.removeTag(tag.tagType);
     }
 
     return false;
@@ -6027,21 +5956,6 @@ export function applyPostItemLostAbAttrs(
   );
 }
 
-export function applyPostApplyBattlerTagAbAttrs(
-  attrType: Constructor<PostApplyBattlerTagAbAttr>,
-  pokemon: Pokemon,
-  tag: BattlerTag,
-  simulated: boolean = false,
-  ...args: any[]
-): void  {
-  applyAbAttrsInternal<PostApplyBattlerTagAbAttr>(
-    attrType,
-    pokemon,
-    (attr, passive) => attr.applyPostApplyBattlerTag(pokemon, passive, simulated, tag, args),
-    args,
-  );
-}
-
 /**
  * Applies abilities when they become active mid-turn (ability switch)
  *
@@ -6107,7 +6021,6 @@ export function initAbilities() {
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.PARALYSIS)
-      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
     new Ability(Abilities.SAND_VEIL, 3)
       .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
@@ -6126,7 +6039,6 @@ export function initAbilities() {
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT ])
       .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.INFATUATED, BattlerTagType.TAUNT)
-      .attr(PostApplyBattlerTagRemoveTagAbAttr, BattlerTagType.INFATUATED, BattlerTagType.TAUNT)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
@@ -6140,7 +6052,6 @@ export function initAbilities() {
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
-      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, 3)
@@ -6149,7 +6060,6 @@ export function initAbilities() {
     new Ability(Abilities.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
-      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.FLASH_FIRE, 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1)
@@ -6160,7 +6070,6 @@ export function initAbilities() {
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
       .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.CONFUSED)
-      .attr(PostApplyBattlerTagRemoveTagAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, 3)
@@ -6228,12 +6137,10 @@ export function initAbilities() {
     new Ability(Abilities.MAGMA_ARMOR, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.FREEZE)
-      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.WATER_VEIL, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
-      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
       .attr(ArenaTrapAbAttr, (user, target) => {
@@ -6326,7 +6233,6 @@ export function initAbilities() {
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
-      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.WHITE_SMOKE, 3)
@@ -6738,7 +6644,6 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
-      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
@@ -7019,7 +6924,6 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.FIRE && move.category !== MoveCategory.STATUS, Stat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
-      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)
