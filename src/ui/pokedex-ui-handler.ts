@@ -1538,7 +1538,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       return 0;
     });
 
-    this.filteredIndices = this.filteredPokemonContainers.map(c => c.species.speciesId);
+    this.filteredIndices = this.filteredPokemonData.map(c => c.species.speciesId);
 
     this.updateScroll();
   };
