@@ -215,7 +215,7 @@ export class TrainerAI {
 
   /**
    * Sets a pokemon on this AI to just instantly Tera on first move used
-   * @param index The index of the pokemon to instantly tera. Negative value sets the nth-to-last party member to tera.
+   * @param index The index of the pokemon to instantly tera. Wraps based on party size.
    */
   public setInstantTera(index: number) {
     this.teraMode = TeraAIMode.INSTANT_TERA;
@@ -257,7 +257,6 @@ export class TrainerConfig {
   public specialtyType: Type = Type.UNKNOWN;
   public hasVoucher: boolean = false;
   public trainerAI: TrainerAI;
-  public minTeraWave: number = 0;
 
   public encounterMessages: string[] = [];
   public victoryMessages: string[] = [];
@@ -598,8 +597,31 @@ export class TrainerConfig {
   }
 
   /**
+   * Sets random pokemon from the trainers team to instant tera. Also sets Tera type to specialty type and checks for Shedinja as appropriate.
+   * @param minWave The minimum wave to start using tera
+   * @param slot Optional, a specified slot that should be terastallized.
+   * @returns this
+   */
+  setRandomTeraModifiers(minWave: number = 0, slot?: number): TrainerConfig {
+    this.genAIFuncs.push((party: EnemyPokemon[]) => {
+      if (minWave > globalScene.currentBattle.waveIndex) {
+        return;
+      }
+      let randomIndex = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length - 1) : Utils.randSeedInt(party.length); // Tera the last slot if first slot... yeah...
+      if (this.specialtyType > Type.UNKNOWN) {
+        if (party[randomIndex].species.speciesId === Species.SHEDINJA && this.specialtyType !== Type.BUG) {
+          randomIndex = Phaser.Math.Wrap(randomIndex - 1, 0, party.length - 1); // Shedinja can only Tera Bug, so choose an earlier party slot
+        }
+        party[randomIndex].teraType = this.specialtyType;
+      }
+      this.trainerAI.setInstantTera(randomIndex);
+    });
+    return this;
+  }
+
+  /**
    * Sets a specific pokemon to instantly Tera
-   * @param index The index within the team to have instant Tera. Negative value sets nth-to-last party member.
+   * @param index The index within the team to have instant Tera.
    * @returns this
    */
   setInstantTera(index: number): TrainerConfig {
@@ -866,7 +888,7 @@ export class TrainerConfig {
      * @param isMale Whether the Gym Leader is Male or Not (for localization of the title).
      * @param {Type} specialtyType The specialty type for the Gym Leader.
      * @param ignoreMinTeraWave Whether the Gym Leader always uses Tera (true), or only Teras after {@linkcode GYM_LEADER_TERA_WAVE} (false). Defaults to false.
-     * @param teraSlot Optional, sets the party member in this slot to Terastallize. Negative value means the nth-to-last party member Teras.
+     * @param teraSlot Optional, sets the party member in this slot to Terastallize. Wraps based on party size.
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
   initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN, ignoreMinTeraWave: boolean = false, teraSlot?: number): TrainerConfig {
@@ -911,12 +933,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_gym");
     this.setVictoryBgm("victory_gym");
-    if (!ignoreMinTeraWave) {
-      this.minTeraWave = GYM_LEADER_TERA_WAVE;
-    }
-    if (!Utils.isNullOrUndefined(teraSlot)) {
-      this.setInstantTera(teraSlot);
-    }
+    this.setRandomTeraModifiers(ignoreMinTeraWave ? 0 : GYM_LEADER_TERA_WAVE, teraSlot);
 
     return this;
   }
@@ -926,7 +943,7 @@ export class TrainerConfig {
      * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
      * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
      * @param {Type} The specialty type for the Elite Four member.
-     * @param teraSlot Optional, sets the party member in this slot to Terastallize. Negative value means the nth-to-last party member Teras.
+     * @param teraSlot Optional, sets the party member in this slot to Terastallize.
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      **/
   initForEliteFour(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN, teraSlot?: number): TrainerConfig {
@@ -973,9 +990,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    if (!Utils.isNullOrUndefined(teraSlot)) {
-      this.setInstantTera(teraSlot);
-    }
+    this.setRandomTeraModifiers(0, teraSlot);
 
     return this;
   }
@@ -1799,7 +1814,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.gender = Gender.MALE;
     }))
-    .setInstantTera(3), // Tera Rock Rhyperior / Electric Electivire / Fire Magmortar
+    .setInstantTera(3), // Tera Ground or Rock Rhyperior / Electric Electivire / Fire Magmortar
   [TrainerType.RED]: new TrainerConfig(++t).initForChampion(true).setBattleBgm("battle_johto_champion").setMixedBattleBgm("battle_johto_champion").setHasDouble("red_blue_double").setDoubleTrainerType(TrainerType.BLUE).setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.PIKACHU ], TrainerSlot.TRAINER, true, p => {
       p.formIndex = 8; // G-Max Pikachu
@@ -1906,7 +1921,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.generateName();
       p.gender = Gender.FEMALE;
     }))
-    .setInstantTera(3), // Tera Water Milotic / Grass Roserade / Fire Hisui-Arcanine
+    .setInstantTera(3), // Tera Water Milotic / Grass Roserade / Fire Hisuian Arcanine
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(true).setHasDouble("alder_iris_double").setDoubleTrainerType(TrainerType.IRIS).setDoubleTitle("champion_double").setBattleBgm("battle_champion_alder").setMixedBattleBgm("battle_champion_alder")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BOUFFALANT, Species.BRAVIARY ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.HISUI_LILLIGANT, Species.HISUI_ZOROARK, Species.BASCULEGION ], TrainerSlot.TRAINER, true, p => {
@@ -1984,7 +1999,7 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.MAGNEZONE, Species.ALOLA_NINETALES ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.TORNADUS, Species.THUNDURUS, Species.LANDORUS ], TrainerSlot.TRAINER, true, p => {
-      p.formIndex = 1; // Therian Forms
+      p.formIndex = 1; // Therian Formes
       p.generateAndPopulateMoveset();
       p.pokeball = PokeballType.ULTRA_BALL;
     }))
@@ -2002,7 +2017,7 @@ export const trainerConfigs: TrainerConfigs = {
       p.gender = Gender.MALE;
       p.teraType = p.species.type2!;
     }))
-    .setInstantTera(5), // Tera Dark Incineroar / Fighting Hisui-Decidueye
+    .setInstantTera(5), // Tera Dark Incineroar / Fighting Hisuian Decidueye
   [TrainerType.HAU]: new TrainerConfig(++t).initForChampion(true).setMixedBattleBgm("battle_alola_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.ALOLA_RAICHU ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
@@ -2619,7 +2634,7 @@ export const trainerConfigs: TrainerConfigs = {
     }))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.CRAWDAUNT, Species.HISUI_SAMUROTT ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
-      p.abilityIndex = 2; // Sharpness Hisui Samurott, Adaptability Crawdaunt
+      p.abilityIndex = 2; // Sharpness Hisuian Samurott, Adaptability Crawdaunt
     }))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.XURKITREE ], TrainerSlot.TRAINER, true, p => {
       p.generateAndPopulateMoveset();
