@@ -3303,7 +3303,11 @@ export class PostApplyBattlerTagRemoveTagAbAttr extends PostApplyBattlerTagAbAtt
   }
 
   public override applyPostApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, args: any[]): boolean {
-    return pokemon.removeTag(tag.tagType);
+    if (this.immuneTags.includes(tag.tagType)) {
+      return pokemon.removeTag(tag.tagType);
+    }
+
+    return false;
   }
 }
 
