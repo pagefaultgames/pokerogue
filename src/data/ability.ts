@@ -2216,7 +2216,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
     this.quiet = quiet;
   }
 
-  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     this.sourceId = pokemon.id;
     if (!simulated) {
       globalScene.arena.addTag(this.tagType, this.turnCount, undefined, this.sourceId, this.side, this.quiet);
@@ -2977,7 +2977,7 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
     super(false);
   }
 
-  public override applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean | Promise<boolean> {
+  public override applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     if (!simulated) {
       const suppressTag = globalScene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
       if (suppressTag) {
