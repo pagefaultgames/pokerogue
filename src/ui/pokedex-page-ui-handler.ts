@@ -2260,7 +2260,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setY(25);
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-        this.pokemonCandyCountText.setText(`x${globalScene.gameData.starterData[this.starterId].candyCount}`);
+        this.pokemonCandyCountText.setText(`x${species.speciesId === Species.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`);
         this.pokemonCandyContainer.setVisible(true);
 
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
