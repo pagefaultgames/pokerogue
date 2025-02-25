@@ -55,6 +55,7 @@ import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-e
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { ArenaTrapTag } from "#app/data/arena-tag";
+import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { Type } from "#enums/type";
 
 export const defaultStarterSpecies: Species[] = [
@@ -1629,10 +1630,28 @@ export class GameData {
       const caughtAttr = dexEntry.caughtAttr;
       const formIndex = pokemon.formIndex;
       const dexAttr = pokemon.getDexAttr();
-      pokemon.formIndex = formIndex;
 
       // Mark as caught
       dexEntry.caughtAttr |= dexAttr;
+
+      // If the caught form is a battleform, we want to also mark the base form as caught.
+      // This snippet assumes that the base form has formIndex equal to 0, which should be
+      // always true except for the case of Urshifu.
+      const formKey = pokemon.getFormKey();
+      if (formIndex > 0) {
+        if (pokemon.species.speciesId === Species.URSHIFU) {
+          if (formIndex === 2) {
+            dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(0);
+          } else if (formIndex === 3) {
+            dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(1);
+          }
+        }
+        const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId) ? pokemonFormChanges[species.speciesId] : [];
+        const toCurrentFormChanges = allFormChanges.filter(f => (f.formKey === formKey));
+        if (toCurrentFormChanges.length > 0) {
+          dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(0);
+        }
+      }
 
       // Unlock ability
       if (speciesStarterCosts.hasOwnProperty(species.speciesId)) {
