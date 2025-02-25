@@ -2399,7 +2399,7 @@ export class MultiHitAttr extends MoveAttr {
     }
     const acc = move.accuracy / 100;
     if (move.hasFlag(MoveFlags.CHECK_ALL_HITS) && !maxMultiHit) {
-      // N.B. No moves should be the _2_TO_5 variant have the CHECK_ALL_HITS flag.
+      // N.B. No moves should be the _2_TO_5 variant and have the CHECK_ALL_HITS flag.
       return acc * (1 - Math.pow(acc, expectedHits)) / (1 - acc);
     }
     return expectedHits *= acc;
