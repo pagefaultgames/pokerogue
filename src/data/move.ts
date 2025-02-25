@@ -14,8 +14,18 @@ import {
 import { getPokemonNameWithAffix } from "../messages";
 import type { AttackMoveResult, TurnMove } from "../field/pokemon";
 import type Pokemon from "../field/pokemon";
-import { EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
-import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "./status-effect";
+import {
+  EnemyPokemon,
+  HitResult,
+  MoveResult,
+  PlayerPokemon,
+  PokemonMove,
+} from "../field/pokemon";
+import {
+  getNonVolatileStatusEffects,
+  getStatusEffectHealText,
+  isNonVolatileStatusEffect,
+} from "./status-effect";
 import { getTypeDamageMultiplier } from "./type";
 import { Type } from "#enums/type";
 import type { Constructor } from "#app/utils";
@@ -24,8 +34,50 @@ import * as Utils from "../utils";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "./arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "./arena-tag";
-import { allAbilities, AllyMoveCategoryPowerBoostAbAttr, applyAbAttrs, applyPostAttackAbAttrs, applyPostItemLostAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, BlockItemTheftAbAttr, BlockNonDirectDamageAbAttr, BlockOneHitKOAbAttr, BlockRecoilDamageAttr, ChangeMovePriorityAbAttr, ConfusionOnStatusEffectAbAttr, FieldMoveTypePowerBoostAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr, HealFromBerryUseAbAttr, IgnoreContactAbAttr, IgnoreMoveEffectsAbAttr, IgnoreProtectOnContactAbAttr, InfiltratorAbAttr, MaxMultiHitAbAttr, MoveAbilityBypassAbAttr, MoveEffectChanceMultiplierAbAttr, MoveTypeChangeAbAttr, PostDamageForceSwitchAbAttr, PostItemLostAbAttr, ReverseDrainAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, UnswappableAbilityAbAttr, UserFieldMoveTypePowerBoostAbAttr, VariableMovePowerAbAttr, WonderSkinAbAttr } from "./ability";
-import { AttackTypeBoosterModifier, BerryModifier, PokemonHeldItemModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PreserveBerryModifier } from "../modifier/modifier";
+import {
+  allAbilities,
+  AllyMoveCategoryPowerBoostAbAttr,
+  applyAbAttrs,
+  applyPostAttackAbAttrs,
+  applyPostItemLostAbAttrs,
+  applyPreAttackAbAttrs,
+  applyPreDefendAbAttrs,
+  BlockItemTheftAbAttr,
+  BlockNonDirectDamageAbAttr,
+  BlockOneHitKOAbAttr,
+  BlockRecoilDamageAttr,
+  ChangeMovePriorityAbAttr,
+  ConfusionOnStatusEffectAbAttr,
+  FieldMoveTypePowerBoostAbAttr,
+  FieldPreventExplosiveMovesAbAttr,
+  ForceSwitchOutImmunityAbAttr,
+  HealFromBerryUseAbAttr,
+  IgnoreContactAbAttr,
+  IgnoreMoveEffectsAbAttr,
+  IgnoreProtectOnContactAbAttr,
+  InfiltratorAbAttr,
+  MaxMultiHitAbAttr,
+  MoveAbilityBypassAbAttr,
+  MoveEffectChanceMultiplierAbAttr,
+  MoveTypeChangeAbAttr,
+  PostDamageForceSwitchAbAttr,
+  PostItemLostAbAttr,
+  ReverseDrainAbAttr,
+  UncopiableAbilityAbAttr,
+  UnsuppressableAbilityAbAttr,
+  UnswappableAbilityAbAttr,
+  UserFieldMoveTypePowerBoostAbAttr,
+  VariableMovePowerAbAttr,
+  WonderSkinAbAttr,
+} from "./ability";
+import {
+  AttackTypeBoosterModifier,
+  BerryModifier,
+  PokemonHeldItemModifier,
+  PokemonMoveAccuracyBoosterModifier,
+  PokemonMultiHitModifier,
+  PreserveBerryModifier,
+} from "../modifier/modifier";
 import type { BattlerIndex } from "../battle";
 import { BattleType } from "../battle";
 import { TerrainType } from "./terrain";
@@ -41,7 +93,13 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene";
-import { BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat } from "#app/enums/stat";
+import {
+  BATTLE_STATS,
+  type BattleStat,
+  type EffectiveStat,
+  getStatKey,
+  Stat,
+} from "#app/enums/stat";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -861,6 +919,46 @@ export default class Move implements Localizable {
   }
 
   /**
+   * Calculate the [Expected Power](https://en.wikipedia.org/wiki/Expected_value) per turn
+   * of this move, taking into account multi hit moves, accuracy, and the number of turns it
+   * takes to execute.
+   *
+   * Does not (yet) consider the current field effects or the user's abilities.
+   */
+  calculateEffectivePower(): number {
+    let effectivePower: number;
+    // Triple axel and triple kick are easier to special case.
+    if (this.id === Moves.TRIPLE_AXEL) {
+      effectivePower = 94.14;
+    } else if (this.id === Moves.TRIPLE_KICK) {
+      effectivePower = 47.07;
+    } else {
+      const multiHitAttr = this.getAttrs(MultiHitAttr)[0];
+      if (multiHitAttr) {
+        effectivePower = multiHitAttr.calculateExpectedHitCount(this) * this.power;
+      } else {
+        effectivePower = this.power * (this.accuracy === -1 ? 1 : this.accuracy / 100);
+      }
+    }
+    /** The number of turns the user must commit to for this move's damage */
+    let numTurns = 1;
+
+    // These are intentionally not else-if statements even though there are no
+    // pokemon moves that have more than one of these attributes. This allows
+    // the function to future proof new moves / custom move behaviors.
+    if (this.hasAttr(DelayedAttackAttr)) {
+      numTurns += 2;
+    }
+    if (this.hasAttr(RechargeAttr)) {
+      numTurns += 1;
+    }
+    if (this.isChargingMove()) {
+      numTurns += 1;
+    }
+    return effectivePower / numTurns;
+  }
+
+  /**
    * Returns `true` if this move can be given additional strikes
    * by enhancing effects.
    * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
@@ -913,47 +1011,37 @@ export class AttackMove extends Move {
     }
   }
 
+  /**
+   * Compute the benefit score of this move based on the offensive stat used and the move's power.
+   * @param user The Pokemon using the move
+   * @param target The Pokemon targeted by the move
+   * @param move The move being used
+   * @returns The benefit score of using this move
+   */
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    let ret = super.getTargetBenefitScore(user, target, move);
-
+    // TODO: Properly handle foul play, body press, and opponent stat stages.
+    const ret = super.getTargetBenefitScore(user, target, move);
     let attackScore = 0;
 
     const effectiveness = target.getAttackTypeEffectiveness(this.type, user, undefined, undefined, this);
-    attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
-    if (attackScore) {
-      if (this.category === MoveCategory.PHYSICAL) {
-        const atk = new Utils.NumberHolder(user.getEffectiveStat(Stat.ATK, target));
-        applyMoveAttrs(VariableAtkAttr, user, target, move, atk);
-        if (atk.value > user.getEffectiveStat(Stat.SPATK, target)) {
-          const statRatio = user.getEffectiveStat(Stat.SPATK, target) / atk.value;
-          if (statRatio <= 0.75) {
-            attackScore *= 2;
-          } else if (statRatio <= 0.875) {
-            attackScore *= 1.5;
-          }
-        }
-      } else {
-        const spAtk = new Utils.NumberHolder(user.getEffectiveStat(Stat.SPATK, target));
-        applyMoveAttrs(VariableAtkAttr, user, target, move, spAtk);
-        if (spAtk.value > user.getEffectiveStat(Stat.ATK, target)) {
-          const statRatio = user.getEffectiveStat(Stat.ATK, target) / spAtk.value;
-          if (statRatio <= 0.75) {
-            attackScore *= 2;
-          } else if (statRatio <= 0.875) {
-            attackScore *= 1.5;
-          }
-        }
-      }
-
-      const power = new Utils.NumberHolder(this.power);
-      applyMoveAttrs(VariablePowerAttr, user, target, move, power);
-
-      attackScore += Math.floor(power.value / 5);
+    attackScore = Math.pow(effectiveness - 1, 2) * (effectiveness < 1 ? -2 : 2);
+    const [ thisStat, offStat ]: EffectiveStat[] = this.category === MoveCategory.PHYSICAL ? [ Stat.ATK, Stat.SPATK ] : [ Stat.SPATK, Stat.ATK ];
+    const statHolder = new Utils.NumberHolder(user.getEffectiveStat(thisStat, target));
+    const offStatValue = user.getEffectiveStat(offStat, target);
+    applyMoveAttrs(VariableAtkAttr, user, target, move, statHolder);
+    const statRatio = offStatValue / statHolder.value;
+    if (statRatio <= 0.75) {
+      attackScore *= 2;
+    } else if (statRatio <= 0.875) {
+      attackScore *= 1.5;
     }
 
-    ret -= attackScore;
+    const power = new Utils.NumberHolder(this.calculateEffectivePower());
+    applyMoveAttrs(VariablePowerAttr, user, target, move, power);
 
-    return ret;
+    attackScore += Math.floor(power.value / 5);
+
+    return ret - attackScore;
   }
 }
 
@@ -2342,6 +2430,46 @@ export class MultiHitAttr extends MoveAttr {
           return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
         }, 0);
     }
+  }
+
+  /**
+   * Calculate the expected number of hits given this attribute's {@linkcode MultiHitType},
+   * the move's accuracy, and a number of situational parameters.
+   *
+   * @param move - The move that this attribtue is applied to
+   * @param partySize - The size of the user's party, used for {@linkcode Moves.BEAT_UP | Beat Up} (default: `1`)
+   * @param maxMultiHit - Whether the move should always hit the maximum number of times, e.g. due to {@linkcode Abilities.SKILL_LINK | Skill Link} (default: `false`)
+   * @param ignoreAcc - `true` if the move should ignore accuracy checks, e.g. due to  {@linkcode Abilities.NO_GUARD | No Guard} (default: `false`)
+   */
+  calculateExpectedHitCount(move: Move, { ignoreAcc = false, maxMultiHit = false, partySize = 1 }: {ignoreAcc?: boolean, maxMultiHit?: boolean, partySize?: number} = {}): number {
+    let expectedHits: number;
+    switch (this.multiHitType) {
+      case MultiHitType._2_TO_5:
+        expectedHits = maxMultiHit ? 5 : 3.1;
+        break;
+      case MultiHitType._2:
+        expectedHits = 2;
+        break;
+      case MultiHitType._3:
+        expectedHits = 3;
+        break;
+      case MultiHitType._10:
+        expectedHits = 10;
+        break;
+      case MultiHitType.BEAT_UP:
+        // Estimate that half of the party can contribute to beat up.
+        expectedHits = Math.max(1, partySize / 2);
+        break;
+    }
+    if (ignoreAcc || move.accuracy === -1) {
+      return expectedHits;
+    }
+    const acc = move.accuracy / 100;
+    if (move.hasFlag(MoveFlags.CHECK_ALL_HITS) && !maxMultiHit) {
+      // N.B. No moves should be the _2_TO_5 variant and have the CHECK_ALL_HITS flag.
+      return acc * (1 - Math.pow(acc, expectedHits)) / (1 - acc);
+    }
+    return expectedHits *= acc;
   }
 }
 
@@ -7683,10 +7811,11 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
       return false;
     }
 
-    target.summonData.abilitySuppressed = true;
-    globalScene.arena.triggerWeatherBasedFormChangesToNormal();
-
     globalScene.queueMessage(i18next.t("moveTriggers:suppressAbilities", { pokemonName: getPokemonNameWithAffix(target) }));
+
+    target.suppressAbility();
+
+    globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
   }
