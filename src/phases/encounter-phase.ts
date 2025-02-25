@@ -38,6 +38,7 @@ import { Species } from "#enums/species";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { getNatureName } from "#app/data/nature";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -156,7 +157,31 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-      console.log(`Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
+      const stats: string[] = [
+        `HP: ${enemyPokemon.stats[0]} (${enemyPokemon.ivs[0]})`,
+        ` Atk: ${enemyPokemon.stats[1]} (${enemyPokemon.ivs[1]})`,
+        ` Def: ${enemyPokemon.stats[2]} (${enemyPokemon.ivs[2]})`,
+        ` Spatk: ${enemyPokemon.stats[3]} (${enemyPokemon.ivs[3]})`,
+        ` Spdef: ${enemyPokemon.stats[4]} (${enemyPokemon.ivs[4]})`,
+        ` Spd: ${enemyPokemon.stats[5]} (${enemyPokemon.ivs[5]})`,
+      ];
+      const moveset: string[] = [];
+      enemyPokemon.getMoveset().forEach((move) => {
+        moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
+      });
+
+      console.log(
+        `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
+        `| Species ID: ${enemyPokemon.species.speciesId}`,
+        `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
+      );
+      console.log(`Stats (IVs): ${stats}`);
+      console.log(
+        `Ability: ${enemyPokemon.getAbility().name}`,
+        `| Passive Ability${enemyPokemon.hasPassive() ? "" : " (inactive)"}: ${enemyPokemon.getPassiveAbility().name}`,
+        `${enemyPokemon.isBoss() ? `| Boss Bars: ${enemyPokemon.bossSegments}` : ""}`
+      );
+      console.log("Moveset:", moveset);
       return true;
     });
 
