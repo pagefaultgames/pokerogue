@@ -2344,8 +2344,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Weight towards higher power moves, by reducing the power of moves below the highest power.
     // Caps max power at 90 to avoid something like hyper beam ruining the stats.
     // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
-    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
-    movePool = movePool.map(m => [ m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power / maxPower, 1), 0.5)) ]);
+    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].calculateEffectivePower(), v), 40), 90);
+    movePool = movePool.map(m => [ m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].calculateEffectivePower() / maxPower, 1), 0.5)) ]);
 
     // Weight damaging moves against the lower stat. This uses a non-linear relationship.
     // If the higher stat is 1 - 1.09x higher, no change. At higher stat ~1.38x lower stat, off-stat moves have half weight.
@@ -2395,14 +2395,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {
       if (this.hasTrainer()) {
         // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
-        // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
+        // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights get 20x if STAB.
         // Status moves remain unchanged on weight, this encourages 1-2
         movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId)).map((m) => {
           let ret: number;
           if (this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type)) {
             ret = Math.ceil(Math.sqrt(m[1]));
           } else if (allMoves[m[0]].category !== MoveCategory.STATUS) {
-            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1));
+            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 20 : 1));
           } else {
             ret = m[1];
           }
@@ -2848,7 +2848,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       stabMultiplier.value += 0.5;
     }
 
-    if (source.isTerastallized && source.teraType === Type.STELLAR && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(Species.TERAPAGOS))) {
+    if (source.isTerastallized && source.getTeraType() === Type.STELLAR && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(Species.TERAPAGOS))) {
       if (matchesSourceType) {
         stabMultiplier.value += 0.5;
       } else {
@@ -4632,8 +4632,9 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
         newPokemon.fusionLuck = this.fusionLuck;
-        newPokemon.fusionTeraType = this.teraType;
+        newPokemon.fusionTeraType = this.fusionTeraType;
         newPokemon.usedTMs = this.usedTMs;
+        newPokemon.evoCounter = this.evoCounter;
 
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve((!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution)), evoSpecies);
@@ -4702,6 +4703,7 @@ export class PlayerPokemon extends Pokemon {
     this.fusionGender = pokemon.gender;
     this.fusionLuck = pokemon.luck;
     this.fusionCustomPokemonData = pokemon.customPokemonData;
+    this.evoCounter = Math.max(pokemon.evoCounter, this.evoCounter);
     if (pokemon.pauseEvolutions || this.pauseEvolutions) {
       this.pauseEvolutions = true;
     }
