@@ -1,4 +1,4 @@
-import { ChargeAnim, initMoveAnim, loadMoveAnimAssets, MoveChargeAnim } from "../battle-anims";
+import { ChargeAnim, MoveChargeAnim } from "../battle-anims";
 import {
   CommandedTag,
   EncoreTag,
