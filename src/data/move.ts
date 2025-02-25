@@ -1025,7 +1025,7 @@ export class AttackMove extends Move {
     let attackScore = 0;
 
     const effectiveness = target.getAttackTypeEffectiveness(this.type, user, undefined, undefined, this);
-    attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
+    attackScore = Math.pow(effectiveness - 1, 2) * (effectiveness < 1 ? -2 : 2);
     const [ thisStat, offStat ]: EffectiveStat[] = this.category === MoveCategory.PHYSICAL ? [ Stat.ATK, Stat.SPATK ] : [ Stat.SPATK, Stat.ATK ];
     const statHolder = new Utils.NumberHolder(user.getEffectiveStat(thisStat, target));
     const offStatValue = user.getEffectiveStat(offStat, target);
