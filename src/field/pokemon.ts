@@ -3810,21 +3810,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
     }
-    this.status = null;
-    if (lastStatus === StatusEffect.SLEEP) {
-      this.setFrameRate(10);
-      if (this.getTag(BattlerTagType.NIGHTMARE)) {
-        this.lapseTag(BattlerTagType.NIGHTMARE);
-      }
-    }
-    if (confusion) {
-      if (this.getTag(BattlerTagType.CONFUSED)) {
-        this.lapseTag(BattlerTagType.CONFUSED);
-      }
-    }
-    if (reloadAssets) {
-      this.loadAssets(false).then(() => this.playAnim());
-    }
+    globalScene.unshiftPhase(new ResetStatusPhase(this, confusion, reloadAssets));
   }
 
   /**
