@@ -215,7 +215,7 @@ export class TrainerAI {
 
   /**
    * Sets a pokemon on this AI to just instantly Tera on first move used
-   * @param index The index of the pokemon to instantly tera. Wraps based on party size.
+   * @param index The index of the pokemon to instantly tera.
    */
   public setInstantTera(index: number) {
     this.teraMode = TeraAIMode.INSTANT_TERA;
@@ -597,24 +597,24 @@ export class TrainerConfig {
   }
 
   /**
-   * Sets random pokemon from the trainers team to instant tera. Also sets Tera type to specialty type and checks for Shedinja as appropriate.
-   * @param minWave The minimum wave to start using tera
-   * @param slot Optional, a specified slot that should be terastallized.
+   * Sets random pokemon from the trainer's team to instant tera. Also sets Tera type to specialty type and checks for Shedinja as appropriate.
+   * @param count A callback (yucky) to see how many teras should be used
+   * @param slot Optional, a specified slot that should be terastallized. Wraps to match party size (-1 will get the last slot and so on).
    * @returns this
    */
-  setRandomTeraModifiers(minWave: number = 0, slot?: number): TrainerConfig {
+  setRandomTeraModifiers(count: () => number, slot?: number): TrainerConfig {
     this.genAIFuncs.push((party: EnemyPokemon[]) => {
-      if (minWave > globalScene.currentBattle.waveIndex) {
-        return;
-      }
-      let randomIndex = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length - 1) : Utils.randSeedInt(party.length); // Tera the last slot if first slot... yeah...
-      if (this.specialtyType > Type.UNKNOWN) {
-        if (party[randomIndex].species.speciesId === Species.SHEDINJA && this.specialtyType !== Type.BUG) {
-          randomIndex = Phaser.Math.Wrap(randomIndex - 1, 0, party.length - 1); // Shedinja can only Tera Bug, so choose an earlier party slot
+      const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i)
+        .filter(i => [ Type.UNKNOWN, Type.BUG ].includes(this.specialtyType) || party[i].species.speciesId !== Species.SHEDINJA); // Shedinja can only Tera on Bug specialty type (or no specialty type)
+      const setPartySlot = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length - 1) : -1; // If we have a tera slot defined, wrap it to party size.
+      for (let t = 0; t < Math.min(count(), party.length); t++) {
+        const randomIndex = partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : Utils.randSeedItem(partyMemberIndexes);
+        partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
+        if (this.specialtyType > Type.UNKNOWN) {
+          party[randomIndex].teraType = this.specialtyType;
         }
-        party[randomIndex].teraType = this.specialtyType;
+        this.trainerAI.setInstantTera(randomIndex);
       }
-      this.trainerAI.setInstantTera(randomIndex);
     });
     return this;
   }
@@ -933,7 +933,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_gym");
     this.setVictoryBgm("victory_gym");
-    this.setRandomTeraModifiers(ignoreMinTeraWave ? 0 : GYM_LEADER_TERA_WAVE, teraSlot);
+    this.setRandomTeraModifiers(() => (ignoreMinTeraWave || globalScene.currentBattle.waveIndex > GYM_LEADER_TERA_WAVE) ? 1 : 0, teraSlot);
 
     return this;
   }
@@ -990,7 +990,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setRandomTeraModifiers(0, teraSlot);
+    this.setRandomTeraModifiers(() => 1, teraSlot);
 
     return this;
   }
@@ -1182,9 +1182,7 @@ export class TrainerConfig {
 
     clone = this.speciesPools ? clone.setSpeciesPools(this.speciesPools) : clone;
     clone = this.speciesFilter ? clone.setSpeciesFilter(this.speciesFilter) : clone;
-    if (this.specialtyType) {
-      clone.specialtyType = this.specialtyType;
-    }
+    clone.specialtyType = this.specialtyType;
 
     clone.encounterMessages = this.encounterMessages?.slice(0);
     clone.victoryMessages = this.victoryMessages?.slice(0);
