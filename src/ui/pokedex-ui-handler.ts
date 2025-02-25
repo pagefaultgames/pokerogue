@@ -215,6 +215,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private showFormTrayIconElement: Phaser.GameObjects.Sprite;
   private showFormTrayLabel: Phaser.GameObjects.Text;
   private canShowFormTray: boolean;
+  private filteredIndices: Species[];
 
   constructor() {
     super(Mode.POKEDEX);
@@ -1037,7 +1038,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else if (this.showingTray) {
       if (button === Button.ACTION) {
         const formIndex = this.trayForms[this.trayCursor].formIndex;
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, { form: formIndex });
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, { form: formIndex }, this.filteredIndices);
         success = true;
       } else {
         const numberOfForms = this.trayContainers.length;
@@ -1084,7 +1085,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
     } else {
       if (button === Button.ACTION) {
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, 0);
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, 0, null, this.filteredIndices);
         success = true;
       } else {
         switch (button) {
@@ -1207,7 +1208,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       shiny: false,
       female: props.female,
       variant: 0,
-      formIndex: 0,
+      formIndex: props.formIndex,
     };
     return sanitizedProps;
   }
@@ -1534,8 +1535,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
         case SortCriteria.COST:
           return (a.cost - b.cost) * -sort.dir;
         case SortCriteria.CANDY:
-          const candyCountA = globalScene.gameData.starterData[a.species.speciesId].candyCount;
-          const candyCountB = globalScene.gameData.starterData[b.species.speciesId].candyCount;
+          const candyCountA = globalScene.gameData.starterData[this.getStarterSpeciesId(a.species.speciesId)].candyCount;
+          const candyCountB = globalScene.gameData.starterData[this.getStarterSpeciesId(b.species.speciesId)].candyCount;
           return (candyCountA - candyCountB) * -sort.dir;
         case SortCriteria.IV:
           const avgIVsA = globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) / globalScene.gameData.dexData[a.species.speciesId].ivs.length;
@@ -1550,6 +1551,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
       return 0;
     });
+
+    this.filteredIndices = this.filteredPokemonContainers.map(c => c.species.speciesId);
 
     this.updateScroll();
   };
@@ -1906,7 +1909,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr & globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)].caughtAttr & species.getFullUnlocksData();
 
-      if (!caughtAttr) {
+      if (caughtAttr) {
         const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)));
 
         if (shiny === undefined) {
