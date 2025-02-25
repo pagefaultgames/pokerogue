@@ -550,7 +550,7 @@ export const speciesEggMoves = {
   [Species.FLUTTER_MANE]: [ Moves.MOONLIGHT, Moves.NASTY_PLOT, Moves.EARTH_POWER, Moves.MOONGEIST_BEAM ],
   [Species.SLITHER_WING]: [ Moves.MIGHTY_CLEAVE, Moves.THUNDEROUS_KICK, Moves.FIRE_LASH, Moves.VICTORY_DANCE ],
   [Species.SANDY_SHOCKS]: [ Moves.MORNING_SUN, Moves.ICE_BEAM, Moves.NASTY_PLOT, Moves.THUNDERCLAP ],
-  [Species.IRON_TREADS]: [ Moves.FUSION_BOLT, Moves.BULK_UP, Moves.SHORE_UP, Moves.SUNSTEEL_STRIKE ],
+  [Species.IRON_TREADS]: [ Moves.FUSION_BOLT, Moves.SHIFT_GEAR, Moves.SHORE_UP, Moves.SUNSTEEL_STRIKE ],
   [Species.IRON_BUNDLE]: [ Moves.EARTH_POWER, Moves.SPLISHY_SPLASH, Moves.VOLT_SWITCH, Moves.NASTY_PLOT ],
   [Species.IRON_HANDS]: [ Moves.DRAIN_PUNCH, Moves.BULK_UP, Moves.PLASMA_FISTS, Moves.ICE_HAMMER ],
   [Species.IRON_JUGULIS]: [ Moves.FIERY_WRATH, Moves.ROOST, Moves.NASTY_PLOT, Moves.OBLIVION_WING ],
