@@ -1932,6 +1932,37 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
   }
 }
 
+export class PostSetStatusHealStatusAbAttr extends PostSetStatusAbAttr {
+  private immuneEffects: StatusEffect[];
+  private statusHealed: StatusEffect;
+
+  /**
+   * @param immuneEffects - The {@linkcode StatusEffect}s the Pokémon is immune to.
+   */
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+    this.immuneEffects = immuneEffects;
+  }
+
+  public override applyPostSetStatus(pokemon: Pokemon, sourcePokemon: (Pokemon | null) | undefined, passive: boolean, effect: StatusEffect, simulated: boolean, args: any[]): boolean {
+    const status = pokemon.status?.effect;
+    if (status && (this.immuneEffects.length < 1 || this.immuneEffects.includes(status))) {
+      this.statusHealed = status;
+      pokemon.resetStatus(false);
+      pokemon.updateInfo();
+      return true;
+    }
+    return false;
+  }
+
+  public override getTriggerMessage(_pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
+    if (this.statusHealed) {
+      return getStatusEffectHealText(this.statusHealed, getPokemonNameWithAffix(_pokemon));
+    }
+    return null;
+  }
+}
+
 export class PostVictoryAbAttr extends AbAttr {
   applyPostVictory(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return false;
@@ -6008,6 +6039,7 @@ export function initAbilities() {
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.PARALYSIS)
+      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
     new Ability(Abilities.SAND_VEIL, 3)
       .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
@@ -6039,6 +6071,7 @@ export function initAbilities() {
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
+      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, 3)
@@ -6047,6 +6080,7 @@ export function initAbilities() {
     new Ability(Abilities.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.FLASH_FIRE, 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1)
@@ -6124,10 +6158,12 @@ export function initAbilities() {
     new Ability(Abilities.MAGMA_ARMOR, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.FREEZE)
+      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.WATER_VEIL, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
+      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
       .attr(ArenaTrapAbAttr, (user, target) => {
@@ -6220,6 +6256,7 @@ export function initAbilities() {
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
+      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.WHITE_SMOKE, 3)
@@ -6631,6 +6668,7 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
+      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
@@ -6911,6 +6949,7 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.FIRE && move.category !== MoveCategory.STATUS, Stat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
+      .attr(PostSetStatusHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)
