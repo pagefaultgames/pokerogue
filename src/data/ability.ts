@@ -1932,6 +1932,11 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
   }
 }
 
+/**
+ * Remove the status condition of a pokemon that just gained it, if the pokemon is immune to that status by ability
+ *
+ * Occurs when, for example, Mold breaker is used to paralyze a pokemon with Limber
+ */
 export class PostSetStatusHealStatusAbAttr extends PostSetStatusAbAttr {
   private immuneEffects: StatusEffect[];
   private statusHealed: StatusEffect;
@@ -2239,6 +2244,11 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Removes Specific battler tags when a Pokemon is summoned
+ *
+ * This should realistically only ever activate on gain rather than on summon
+ */
 export class PostSummonRemoveBattlerTagAbAttr extends PostSummonAbAttr {
   private immuneTags: BattlerTagType[];
 
@@ -2456,6 +2466,9 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Heals a status effect if the Pokemon is afflicted with it upon switch in (or gain)
+ */
 export class PostSummonHealStatusAbAttr extends PostSummonAbAttr {
   private immuneEffects: StatusEffect[];
   private statusHealed: StatusEffect;
@@ -3275,6 +3288,9 @@ export class MultCritAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Base class for ability attributes which activate when a {@linkcode BattlerTag} is added to the Pokemon
+ */
 export class PostApplyBattlerTagAbAttr extends AbAttr {
   public applyPostApplyBattlerTag(
     pokemon: Pokemon,
@@ -3288,8 +3304,9 @@ export class PostApplyBattlerTagAbAttr extends AbAttr {
 }
 
 /**
- * Tag for the case that a battler tag immunity ability is suppressed i.e. Mold Breaker and the tag is applied
- * In that case, the tag is applied but is then immediately removed
+ * Removes a tag immediately after it was applied
+ *
+ * Occurs when a Pokemon immune to a tag is affected with it anyway (through mold breaker, etc.)
  */
 export class PostApplyBattlerTagRemoveTagAbAttr extends PostApplyBattlerTagAbAttr {
   private immuneTags: BattlerTagType[];

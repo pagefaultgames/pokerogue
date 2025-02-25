@@ -3,6 +3,11 @@ import { BattlePhase } from "#app/phases/battle-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatusEffect } from "#enums/status-effect";
 
+/**
+ * Phase which handles resetting a Pokemon's status to none
+ *
+ * This is necessary to perform in a phase primarly to ensure that the status icon disappears at the correct time in the battle
+ */
 export class ResetStatusPhase extends BattlePhase {
   private pokemon: Pokemon;
   private affectConfusion: boolean;
