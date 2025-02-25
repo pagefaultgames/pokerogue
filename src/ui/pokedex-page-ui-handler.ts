@@ -244,6 +244,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private menuOptions: MenuOptions[];
   protected scale: number = 0.1666666667;
   private menuDescriptions: string[];
+  private isFormGender: boolean;
   private filteredIndices: Species[] | null = null;
 
   private availableVariants: number;
@@ -632,6 +633,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
     this.tmMoves = speciesTmMoves[species.speciesId]?.filter(m => Array.isArray(m) ? (m[0] === formKey ? true : false ) : true)
       .map(m => Array.isArray(m) ? m[1] : m).sort((a, b) => allMoves[a].name > allMoves[b].name ? 1 : -1) ?? [];
+
+    this.isFormGender = formKey === "male" || formKey === "female";
 
     const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId) ? species.speciesId :
       starterPassiveAbilities.hasOwnProperty(this.starterId) ? this.starterId : pokemonPrevolutions[this.starterId];
@@ -1593,8 +1596,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               starterAttributes.form = newFormIndex; // store the selected form
               this.savedStarterAttributes.form = starterAttributes.form;
               this.formIndex = newFormIndex;
+              // Some forms are tied to the gender and should change accordingly
+              let newFemale = props.female;
+              if (this.isFormGender) {
+                newFemale = !props.female;
+              }
+              starterAttributes.female = newFemale;
+              this.savedStarterAttributes.female = starterAttributes.female;
               this.starterSetup();
-              this.setSpeciesDetails(this.species, { formIndex: newFormIndex });
+              this.setSpeciesDetails(this.species, { formIndex: newFormIndex, female: newFemale });
               success = this.setCursor(this.cursor);
             }
             break;
@@ -1602,7 +1612,16 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             if (this.canCycleGender) {
               starterAttributes.female = !props.female;
               this.savedStarterAttributes.female = starterAttributes.female;
-              this.setSpeciesDetails(this.species, { female: !props.female });
+              let newFormIndex = this.formIndex;
+              // Some forms are tied to the gender and should change accordingly
+              if (this.isFormGender) {
+                newFormIndex = this.formIndex === 0 ? 1 : 0;
+              }
+              starterAttributes.form = newFormIndex; // store the selected form
+              this.savedStarterAttributes.form = starterAttributes.form;
+              this.formIndex = newFormIndex;
+              this.starterSetup();
+              this.setSpeciesDetails(this.species, { female: !props.female, formIndex: newFormIndex });
               success = true;
             }
             break;
