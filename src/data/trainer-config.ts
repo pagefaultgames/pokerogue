@@ -610,7 +610,7 @@ export class TrainerConfig {
       for (let t = 0; t < Math.min(count(), party.length); t++) {
         const randomIndex = partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : Utils.randSeedItem(partyMemberIndexes);
         partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-        if (this.specialtyType > Type.UNKNOWN) {
+        if (this.specialtyType !== Type.UNKNOWN) {
           party[randomIndex].teraType = this.specialtyType;
         }
         this.trainerAI.setInstantTera(randomIndex);
@@ -865,7 +865,7 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
-    if (specialtyType > Type.UNKNOWN) {
+    if (specialtyType !== Type.UNKNOWN) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
       this.setSpecialtyType(specialtyType);
     }
@@ -911,7 +911,7 @@ export class TrainerConfig {
     });
 
     // If specialty type is provided, set species filter and specialty type.
-    if (specialtyType > Type.UNKNOWN) {
+    if (specialtyType !== Type.UNKNOWN) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
       this.setSpecialtyType(specialtyType);
     }
@@ -966,7 +966,7 @@ export class TrainerConfig {
     });
 
     // Set species filter and specialty type if provided, otherwise filter by base total.
-    if (specialtyType > Type.UNKNOWN) {
+    if (specialtyType !== Type.UNKNOWN) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
       this.setSpecialtyType(specialtyType);
     } else {
