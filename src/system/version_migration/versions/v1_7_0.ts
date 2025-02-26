@@ -2,7 +2,6 @@ import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-spec
 import { globalScene } from "#app/global-scene";
 import { DexAttr, type SessionSaveData, type SystemSaveData } from "#app/system/game-data";
 import * as Utils from "#app/utils";
-import { Species } from "#enums/species";
 
 export const systemMigrators = [
   /**
@@ -14,7 +13,7 @@ export const systemMigrators = [
     if (data.starterData && data.dexData) {
       Object.keys(data.starterData).forEach(sd => {
         const caughtAttr = data.dexData[sd]?.caughtAttr;
-        const species = getPokemonSpecies(Species[sd]);
+        const species = getPokemonSpecies(Number(sd));
         if (caughtAttr && species.forms?.length > 1) {
           const selectableForms = species.forms.filter((form, formIndex) => form.isStarterSelectable && (caughtAttr & globalScene.gameData.getFormAttr(formIndex)));
           if (selectableForms.length === 0) {
