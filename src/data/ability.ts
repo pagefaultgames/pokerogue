@@ -5152,6 +5152,10 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   showAbilityInstant: boolean = false,
   messages: string[] = []
 ) {
+  if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
+    return;
+  }
+
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
   if (gainedMidTurn && ability.getAttrs(attrType).some(attr => attr instanceof PostSummonAbAttr && !attr.shouldActivateOnGain())) {
     return;
@@ -5445,12 +5449,10 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(
   gainedMidTurn: boolean = false
 ) {
   for (const passive of [ false, true ]) {
-    if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
-      continue;
+    if (pokemon) {
+      applySingleAbAttrs(pokemon, passive, attrType, applyFunc, args, gainedMidTurn, simulated, showAbilityInstant, messages);
+      globalScene.clearPhaseQueueSplice();
     }
-
-    applySingleAbAttrs(pokemon, passive, attrType, applyFunc, args, gainedMidTurn, simulated, showAbilityInstant, messages);
-    globalScene.clearPhaseQueueSplice();
   }
 }
 
