@@ -1,8 +1,30 @@
-import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import type { SessionSaveData } from "#app/system/game-data";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { globalScene } from "#app/global-scene";
+import { DexAttr, type SessionSaveData, type SystemSaveData } from "#app/system/game-data";
 import * as Utils from "#app/utils";
+import { Species } from "#enums/species";
 
-export const systemMigrators = [] as const;
+export const systemMigrators = [
+  /**
+   * If a starter is caught, but the only forms registered as caught are not starterSelectable,
+   * unlock the default form.
+   * @param data {@linkcode SystemSaveData}
+   */
+  function migrateUnselectableForms(data: SystemSaveData) {
+    if (data.starterData && data.dexData) {
+      Object.keys(data.starterData).forEach(sd => {
+        const caughtAttr = data.dexData[sd]?.caughtAttr;
+        const species = getPokemonSpecies(Species[sd]);
+        if (caughtAttr && species.forms?.length > 1) {
+          const selectableForms = species.forms.filter((form, formIndex) => form.isStarterSelectable && (caughtAttr & globalScene.gameData.getFormAttr(formIndex)));
+          if (selectableForms.length === 0) {
+            data.dexData[sd].caughtAttr += DexAttr.DEFAULT_FORM;
+          }
+        }
+      });
+    }
+  },
+] as const;
 
 export const settingsMigrators = [] as const;
 
