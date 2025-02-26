@@ -290,7 +290,7 @@ export const speciesStarterCosts = {
   [Species.SHAYMIN]: 6,
   [Species.ARCEUS]: 9,
 
-  [Species.VICTINI]: 7,
+  [Species.VICTINI]: 6,
   [Species.SNIVY]: 3,
   [Species.TEPIG]: 3,
   [Species.OSHAWOTT]: 3,
@@ -611,7 +611,7 @@ export const speciesStarterCosts = {
   [Species.RAGING_BOLT]: 7,
   [Species.IRON_BOULDER]: 7,
   [Species.IRON_CROWN]: 7,
-  [Species.TERAPAGOS]: 8,
+  [Species.TERAPAGOS]: 9,
   [Species.PECHARUNT]: 6,
   [Species.PALDEA_TAUROS]: 5,
   [Species.PALDEA_WOOPER]: 3,

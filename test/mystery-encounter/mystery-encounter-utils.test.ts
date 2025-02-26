@@ -223,14 +223,14 @@ describe("Mystery Encounter Utils", () => {
     });
 
     it("excludes species from search", () => {
-      // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
-      const result = getRandomSpeciesByStarterCost(9, [ Species.KORAIDON, Species.MIRAIDON, Species.ARCEUS, Species.RAYQUAZA, Species.KYOGRE, Species.GROUDON ]);
+      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      const result = getRandomSpeciesByStarterCost(9, [ Species.KYOGRE, Species.GROUDON, Species.RAYQUAZA, Species.ARCEUS, Species.KORAIDON, Species.MIRAIDON, Species.TERAPAGOS ]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.ZACIAN);
     });
 
     it("gets species of specified types", () => {
-      // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
+      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
       const result = getRandomSpeciesByStarterCost(9, undefined, [ Type.GROUND ]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.GROUDON);

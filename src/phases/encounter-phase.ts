@@ -253,7 +253,10 @@ export class EncounterPhase extends BattlePhase {
         globalScene.getEnemyField().forEach(enemy => {
           overrideHeldItems(enemy, false);
         });
+      }
 
+      if (battle.battleType === BattleType.TRAINER) {
+        globalScene.currentBattle.trainer!.genAI(globalScene.getEnemyParty());
       }
 
       globalScene.ui.setMode(Mode.MESSAGE).then(() => {
