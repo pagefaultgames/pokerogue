@@ -8,7 +8,7 @@ import type Pokemon from "#app/field/pokemon";
 import { HitResult, PokemonMove } from "#app/field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import type { BattlerIndex } from "#app/battle";
-import { BlockNonDirectDamageAbAttr, InfiltratorAbAttr, ProtectStatAbAttr, applyAbAttrs } from "#app/data/ability";
+import { BlockNonDirectDamageAbAttr, InfiltratorAbAttr, PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, ProtectStatAbAttr, applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#app/data/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -1221,6 +1221,69 @@ export class FairyLockTag extends ArenaTag {
 
 }
 
+/**
+ * Arena tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Neutralizing_Gas_(Ability) Neutralizing Gas}
+ *
+ * Keeps track of the number of pokemon on the field with Neutralizing Gas - If it drops to zero, the effect is ended and abilities are reactivated
+ *
+ * Additionally ends onLose abilities when it is activated
+ */
+export class SuppressAbilitiesTag extends ArenaTag {
+  private sourceCount: number;
+
+  constructor(sourceId: number) {
+    super(ArenaTagType.NEUTRALIZING_GAS, 0, undefined, sourceId);
+    this.sourceCount = 1;
+  }
+
+  public override onAdd(arena: Arena): void {
+    const pokemon = this.getSourcePokemon();
+    if (pokemon) {
+      globalScene.queueMessage(i18next.t("arenaTag:neutralizingGasOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+
+      for (const fieldPokemon of globalScene.getField()) {
+        if (fieldPokemon && fieldPokemon.id !== pokemon.id) {
+          [ true, false ].forEach((passive) => applyOnLoseAbAttrs(fieldPokemon, passive));
+        }
+      }
+    }
+  }
+
+  public override onOverlap(arena: Arena): void {
+    this.sourceCount++;
+  }
+
+  public onSourceLeave(arena: Arena): void {
+    this.sourceCount--;
+    if (this.sourceCount <= 0) {
+      arena.removeTag(ArenaTagType.NEUTRALIZING_GAS);
+    } else if (this.sourceCount === 1) {
+      // With 1 source left, that pokemon's other abilities should reactivate
+      // This may be confusing for players but would be the most accurate gameplay-wise
+      // Could have a custom message that plays when a specific pokemon's NG ends? This entire thing exists due to passives after all
+      const setter = globalScene.getField().filter((p) => p && p.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false))[0];
+      applyOnGainAbAttrs(setter, setter.getAbility().hasAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr));
+    }
+  }
+
+  public override onRemove(arena: Arena, quiet: boolean = false) {
+    if (!quiet) {
+      globalScene.queueMessage(i18next.t("arenaTag:neutralizingGasOnRemove"));
+    }
+
+    for (const pokemon of globalScene.getField()) {
+      // There is only one pokemon with this attr on the field on removal, so its abilities are already active
+      if (pokemon && !pokemon.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false)) {
+        [ true, false ].forEach((passive) => applyOnGainAbAttrs(pokemon, passive));
+      }
+    }
+  }
+
+  public shouldApplyToSelf(): boolean {
+    return this.sourceCount > 1;
+  }
+}
+
 // TODO: swap `sourceMove` and `sourceId` and make `sourceMove` an optional parameter
 export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove: Moves | undefined, sourceId: number, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag | null {
   switch (tagType) {
@@ -1281,6 +1344,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: number, sourceMove
       return new GrassWaterPledgeTag(sourceId, side);
     case ArenaTagType.FAIRY_LOCK:
       return new FairyLockTag(turnCount, sourceId);
+    case ArenaTagType.NEUTRALIZING_GAS:
+      return new SuppressAbilitiesTag(sourceId);
     default:
       return null;
   }
