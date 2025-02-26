@@ -3448,8 +3448,6 @@ export default class BattleScene extends SceneBase {
         for (const modifier of modifiers) {
           this.addEnemyModifier(modifier, true, true);
         }
-
-        this.currentBattle.trainer.genAI(party);
       }
 
       party.forEach((enemyPokemon: EnemyPokemon, i: number) => {
