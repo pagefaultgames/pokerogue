@@ -2,6 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
+import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -135,4 +136,30 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
   });
 
+  it("should deactivate when the pokemon faints", async () => {
+    game.override.ability(Abilities.BALL_FETCH)
+      .enemyAbility(Abilities.NEUTRALIZING_GAS);
+
+    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    game.move.select(Moves.SPLASH);
+    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
+    await game.doKillOpponents();
+
+    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+  });
+
+  it("should deactivate upon catching a wild pokemon", async () => {
+    game.override
+      .battleType("single")
+      .enemyAbility(Abilities.NEUTRALIZING_GAS)
+      .ability(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
+
+    game.scene.pokeballCounts[PokeballType.MASTER_BALL] = 1;
+    game.doThrowPokeball(PokeballType.MASTER_BALL);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+  });
 });
