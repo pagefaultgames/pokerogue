@@ -167,7 +167,7 @@ export class EncounterPhase extends BattlePhase {
       ];
       const moveset: string[] = [];
       enemyPokemon.getMoveset().forEach((move) => {
-        moveset.push(move!.getName());
+        moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
       });
 
       console.log(
@@ -253,7 +253,10 @@ export class EncounterPhase extends BattlePhase {
         globalScene.getEnemyField().forEach(enemy => {
           overrideHeldItems(enemy, false);
         });
+      }
 
+      if (battle.battleType === BattleType.TRAINER) {
+        globalScene.currentBattle.trainer!.genAI(globalScene.getEnemyParty());
       }
 
       globalScene.ui.setMode(Mode.MESSAGE).then(() => {
