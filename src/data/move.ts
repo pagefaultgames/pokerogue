@@ -7811,10 +7811,11 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
       return false;
     }
 
-    target.summonData.abilitySuppressed = true;
-    globalScene.arena.triggerWeatherBasedFormChangesToNormal();
-
     globalScene.queueMessage(i18next.t("moveTriggers:suppressAbilities", { pokemonName: getPokemonNameWithAffix(target) }));
+
+    target.suppressAbility();
+
+    globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
   }
