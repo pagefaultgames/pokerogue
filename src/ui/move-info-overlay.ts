@@ -4,7 +4,7 @@ import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import type Move from "../data/moves/move";
-import { MoveCategory } from "../data/moves/move";
+import { MoveCategory } from "#enums/MoveCategory";
 import { PokemonType } from "#enums/type";
 import i18next from "i18next";
 

@@ -10,7 +10,7 @@ import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
 import type Move from "#app/data/moves/move";
-import { MoveCategory } from "#app/data/moves/move";
+import { MoveCategory } from "#enums/MoveCategory";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";

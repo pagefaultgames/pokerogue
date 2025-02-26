@@ -15,7 +15,6 @@ import {
   FixedDamageAttr,
   VariableAtkAttr,
   allMoves,
-  MoveCategory,
   TypelessAttr,
   CritOnlyAttr,
   getMoveTargets,
@@ -36,11 +35,12 @@ import {
   SacrificialAttrOnHit,
   OneHitKOAccuracyAttr,
   RespectAttackTypeImmunityAttr,
-  MoveTarget,
   CombinedPledgeStabBoostAttr,
   VariableMoveTypeChartAttr,
   HpSplitAttr
 } from "#app/data/moves/move";
+import { MoveTarget } from "#enums/MoveTarget";
+import { MoveCategory } from "#enums/MoveCategory";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import { default as PokemonSpecies, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";

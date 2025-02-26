@@ -23,10 +23,10 @@ import {
   DelayedAttackAttr,
   frenzyMissFunc,
   HealStatusEffectAttr,
-  MoveFlags,
   PreMoveMessageAttr,
   PreUseInterruptAttr,
 } from "#app/data/moves/move";
+import { MoveFlags } from "#enums/MoveFlags";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { PokemonType } from "#enums/type";

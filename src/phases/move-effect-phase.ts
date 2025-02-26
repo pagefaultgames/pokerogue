@@ -35,11 +35,7 @@ import {
   getMoveTargets,
   HitsTagAttr,
   MissEffectAttr,
-  MoveCategory,
   MoveEffectAttr,
-  MoveEffectTrigger,
-  MoveFlags,
-  MoveTarget,
   MultiHitAttr,
   NoEffectAttr,
   OneHitKOAttr,
@@ -47,6 +43,10 @@ import {
   ToxicAccuracyAttr,
   VariableTargetAttr,
 } from "#app/data/moves/move";
+import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
+import { MoveFlags } from "#enums/MoveFlags";
+import { MoveTarget } from "#enums/MoveTarget";
+import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { PokemonType } from "#enums/type";
 import { PokemonMove } from "#app/field/pokemon";

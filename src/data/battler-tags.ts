@@ -14,10 +14,10 @@ import {
   applyMoveAttrs,
   ConsecutiveUseDoublePowerAttr,
   HealOnAllyAttr,
-  MoveCategory,
-  MoveFlags,
   StatusCategoryOnAllyAttr
 } from "#app/data/moves/move";
+import { MoveFlags } from "#enums/MoveFlags";
+import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";

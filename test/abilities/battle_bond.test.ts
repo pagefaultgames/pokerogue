@@ -1,4 +1,5 @@
-import { allMoves, MultiHitAttr, MultiHitType } from "#app/data/moves/move";
+import { allMoves, MultiHitAttr } from "#app/data/moves/move";
+import { MultiHitType } from "#enums/MultiHitType";
 import { Status } from "#app/data/status-effect";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
