@@ -7,7 +7,7 @@ import { isNullOrUndefined } from "#app/utils";
 import { Mode } from "./ui";
 import { FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/ability";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { allSpecies } from "#app/data/pokemon-species";
 import i18next from "i18next";
 

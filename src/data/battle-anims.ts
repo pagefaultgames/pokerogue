@@ -6,7 +6,7 @@ import {
   MoveFlags,
   SelfStatusMove,
   allMoves,
-} from "./move";
+} from "./moves/move";
 import type Pokemon from "../field/pokemon";
 import {
   type nil,

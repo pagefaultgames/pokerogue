@@ -1,7 +1,7 @@
 import { PokemonFormChangeItemModifier } from "../modifier/modifier";
 import type Pokemon from "../field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
-import { MoveCategory, allMoves } from "./move";
+import { MoveCategory, allMoves } from "./moves/move";
 import type { Constructor, nil } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";

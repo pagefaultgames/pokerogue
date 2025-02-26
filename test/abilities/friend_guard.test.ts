@@ -6,7 +6,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/ability";
-import { allMoves, MoveCategory } from "#app/data/move";
+import { allMoves, MoveCategory } from "#app/data/moves/move";
 
 describe("Moves - Friend Guard", () => {
   let phaserGame: Phaser.Game;

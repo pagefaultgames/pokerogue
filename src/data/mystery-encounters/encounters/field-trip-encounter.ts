@@ -1,4 +1,4 @@
-import { MoveCategory } from "#app/data/move";
+import { MoveCategory } from "#app/data/moves/move";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { generateModifierTypeOption, leaveEncounterWithoutBattle, selectPokemonForOption, setEncounterExp, setEncounterRewards } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";

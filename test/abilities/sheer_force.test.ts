@@ -7,7 +7,7 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { allMoves, FlinchAttr } from "#app/data/move";
+import { allMoves, FlinchAttr } from "#app/data/moves/move";
 
 describe("Abilities - Sheer Force", () => {
   let phaserGame: Phaser.Game;

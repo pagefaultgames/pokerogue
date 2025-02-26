@@ -35,7 +35,7 @@ import { FilterText, FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/ability";
 import type { PassiveAbilities } from "#app/data/balance/passives";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { Biome } from "#enums/biome";

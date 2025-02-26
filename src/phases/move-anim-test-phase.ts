@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { initMoveAnim, loadMoveAnimAssets, MoveAnim } from "#app/data/battle-anims";
-import { allMoves, SelfStatusMove } from "#app/data/move";
+import { allMoves, SelfStatusMove } from "#app/data/moves/move";
 import { Moves } from "#app/enums/moves";
 import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";

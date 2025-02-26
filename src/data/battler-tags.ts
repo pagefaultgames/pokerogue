@@ -8,7 +8,7 @@ import {
   ReverseDrainAbAttr
 } from "#app/data/ability";
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
-import type Move from "#app/data/move";
+import type Move from "#app/data/moves/move";
 import {
   allMoves,
   applyMoveAttrs,
@@ -17,7 +17,7 @@ import {
   MoveCategory,
   MoveFlags,
   StatusCategoryOnAllyAttr
-} from "#app/data/move";
+} from "#app/data/moves/move";
 import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";

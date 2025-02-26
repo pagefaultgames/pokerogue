@@ -7,7 +7,7 @@ import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { MoveCategory } from "#app/data/move";
+import { MoveCategory } from "#app/data/moves/move";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import type { PokemonMove } from "#app/field/pokemon";

@@ -4,9 +4,9 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { FlinchAttr } from "#app/data/move";
+import { FlinchAttr } from "#app/data/moves/move";
 
 describe("Abilities - Serene Grace", () => {
   let phaserGame: Phaser.Game;

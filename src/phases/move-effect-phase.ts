@@ -25,7 +25,7 @@ import {
   SubstituteTag,
 } from "#app/data/battler-tags";
 import type {
-  MoveAttr } from "#app/data/move";
+  MoveAttr } from "#app/data/moves/move";
 import {
   applyFilteredMoveAttrs,
   applyMoveAttrs,
@@ -46,7 +46,7 @@ import {
   OverrideMoveEffectAttr,
   ToxicAccuracyAttr,
   VariableTargetAttr,
-} from "#app/data/move";
+} from "#app/data/moves/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { Type } from "#enums/type";
 import { PokemonMove } from "#app/field/pokemon";
