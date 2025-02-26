@@ -36,26 +36,7 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
   constructor(species: PokemonSpecies, options: SpeciesDetails = {}) {
     super(globalScene, 0, 0);
 
-    this.species = species;
-
-    const { shiny, formIndex, female, variant } = options;
-
-    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-    const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-
-    if (!isNullOrUndefined(formIndex)) {
-      defaultProps.formIndex = formIndex;
-    }
-    if (!isNullOrUndefined(shiny)) {
-      defaultProps.shiny = shiny;
-    }
-    if (!isNullOrUndefined(variant)) {
-      defaultProps.variant = variant;
-    }
-    if (!isNullOrUndefined(female)) {
-      defaultProps.female = female;
-    }
-
+    this.setSpecies(species, options);
 
     // starter passive bg
     const starterPassiveBg = globalScene.add.image(2, 5, "passive_bg");
@@ -64,15 +45,6 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     starterPassiveBg.setVisible(false);
     this.add(starterPassiveBg);
     this.starterPassiveBgs = starterPassiveBg;
-
-    // icon
-    this.icon = globalScene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
-    this.icon.setScale(0.5);
-    this.icon.setOrigin(0, 0);
-    this.icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
-    this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
-    this.icon.setTint(0);
-    this.add(this.icon);
 
     // shiny icons
     for (let i = 0; i < 3; i++) {
@@ -194,6 +166,42 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     passive2OverlayIcon.setVisible(false);
     this.add(passive2OverlayIcon);
     this.passive2OverlayIcon = passive2OverlayIcon;
+  }
+
+  setSpecies(species: PokemonSpecies, options: SpeciesDetails = {}) {
+
+    this.species = species;
+
+    const { shiny, formIndex, female, variant } = options;
+
+    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+    const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+
+    if (!isNullOrUndefined(formIndex)) {
+      defaultProps.formIndex = formIndex;
+    }
+    if (!isNullOrUndefined(shiny)) {
+      defaultProps.shiny = shiny;
+    }
+    if (!isNullOrUndefined(variant)) {
+      defaultProps.variant = variant;
+    }
+    if (!isNullOrUndefined(female)) {
+      defaultProps.female = female;
+    }
+
+    if (this.icon) {
+      this.remove(this.icon);
+      this.icon.destroy(); // Properly removes the sprite from memory
+    }
+
+    // icon
+    this.icon = globalScene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+    this.icon.setScale(0.5);
+    this.icon.setOrigin(0, 0);
+    this.icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+    this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
+    this.add(this.icon);
   }
 
   checkIconId(female, formIndex, shiny, variant) {
