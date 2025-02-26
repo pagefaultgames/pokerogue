@@ -56,7 +56,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
-import type { Type } from "#enums/type";
+import type { PokemonType } from "#enums/type";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -231,7 +231,7 @@ export interface StarterAttributes {
   shiny?: boolean;
   favorite?: boolean;
   nickname?: string;
-  tera?: Type;
+  tera?: PokemonType;
 }
 
 export interface StarterPreferences {

@@ -11,7 +11,7 @@ import { AbilityRequirement, CombinationPokemonRequirement, TypeRequirement } fr
 import { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Gender } from "#app/data/gender";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { BattlerIndex } from "#app/battle";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
@@ -188,7 +188,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
       async () => {
         // Damage non-fire types and burn 1 random non-fire type member + give it Heatproof
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const nonFireTypes = globalScene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(Type.FIRE));
+        const nonFireTypes = globalScene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.getTypes().includes(PokemonType.FIRE));
 
         for (const pkm of nonFireTypes) {
           const percentage = DAMAGE_PERCENTAGE / 100;
@@ -221,7 +221,7 @@ export const FieryFalloutEncounter: MysteryEncounter =
         .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         .withPrimaryPokemonRequirement(
           CombinationPokemonRequirement.Some(
-            new TypeRequirement(Type.FIRE, true, 1),
+            new TypeRequirement(PokemonType.FIRE, true, 1),
             new AbilityRequirement(FIRE_RESISTANT_ABILITIES, true)
           )
         ) // Will set option3PrimaryName dialogue token automatically
@@ -266,7 +266,7 @@ function giveLeadPokemonAttackTypeBoostItem() {
     // Generate type booster held item, default to Charcoal if item fails to generate
     let boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
     if (!boosterModifierType) {
-      boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.FIRE ]) as AttackTypeBoosterModifierType;
+      boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [ PokemonType.FIRE ]) as AttackTypeBoosterModifierType;
     }
     applyModifierTypeToPlayerPokemon(leadPokemon, boosterModifierType);
 

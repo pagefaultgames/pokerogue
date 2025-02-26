@@ -21,7 +21,7 @@ import {
 import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -514,7 +514,7 @@ export class TrappedTag extends BattlerTag {
     const source = globalScene.getPokemonById(this.sourceId!)!;
     const move = allMoves[this.sourceMove];
 
-    const isGhost = pokemon.isOfType(Type.GHOST);
+    const isGhost = pokemon.isOfType(PokemonType.GHOST);
     const isTrapped = pokemon.getTag(TrappedTag);
     const hasSubstitute = move.hitsSubstitute(source, pokemon);
 
@@ -819,7 +819,7 @@ export class SeedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(Type.GRASS);
+    return !pokemon.isOfType(PokemonType.GRASS);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -889,7 +889,7 @@ export class PowderTag extends BattlerTag {
       if (movePhase instanceof MovePhase) {
         const move = movePhase.move.getMove();
         const weather = globalScene.arena.weather;
-        if (pokemon.getMoveType(move) === Type.FIRE && !(weather && weather.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed())) {
+        if (pokemon.getMoveType(move) === PokemonType.FIRE && !(weather && weather.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed())) {
           movePhase.fail();
           movePhase.showMoveText();
 
@@ -1832,9 +1832,9 @@ export class SemiInvulnerableTag extends BattlerTag {
 }
 
 export class TypeImmuneTag extends BattlerTag {
-  public immuneType: Type;
+  public immuneType: PokemonType;
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number = 1) {
+  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: PokemonType, length: number = 1) {
     super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove, undefined, true);
 
     this.immuneType = immuneType;
@@ -1846,7 +1846,7 @@ export class TypeImmuneTag extends BattlerTag {
   */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.immuneType = source.immuneType as Type;
+    this.immuneType = source.immuneType as PokemonType;
   }
 }
 
@@ -1857,7 +1857,7 @@ export class TypeImmuneTag extends BattlerTag {
  */
 export class FloatingTag extends TypeImmuneTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves, turnCount: number) {
-    super(tagType, sourceMove, Type.GROUND, turnCount);
+    super(tagType, sourceMove, PokemonType.GROUND, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1878,11 +1878,11 @@ export class FloatingTag extends TypeImmuneTag {
 }
 
 export class TypeBoostTag extends BattlerTag {
-  public boostedType: Type;
+  public boostedType: PokemonType;
   public boostValue: number;
   public oneUse: boolean;
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, boostedType: Type, boostValue: number, oneUse: boolean) {
+  constructor(tagType: BattlerTagType, sourceMove: Moves, boostedType: PokemonType, boostValue: number, oneUse: boolean) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
 
     this.boostedType = boostedType;
@@ -1896,7 +1896,7 @@ export class TypeBoostTag extends BattlerTag {
   */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.boostedType = source.boostedType as Type;
+    this.boostedType = source.boostedType as PokemonType;
     this.boostValue = source.boostValue;
     this.oneUse = source.oneUse;
   }
@@ -1934,7 +1934,7 @@ export class CritBoostTag extends BattlerTag {
  */
 export class DragonCheerTag extends CritBoostTag {
   /** The types of the user's ally when the tag is added */
-  public typesOnAdd: Type[];
+  public typesOnAdd: PokemonType[];
 
   constructor() {
     super(BattlerTagType.CRIT_BOOST, Moves.DRAGON_CHEER);
@@ -1980,7 +1980,7 @@ export class SaltCuredTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        const pokemonSteelOrWater = pokemon.isOfType(Type.STEEL) || pokemon.isOfType(Type.WATER);
+        const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
         pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8));
 
         globalScene.queueMessage(
@@ -2071,21 +2071,21 @@ export class RoostedTag extends BattlerTag {
     const currentTypes = pokemon.getTypes();
     const baseTypes = pokemon.getTypes(false, false, true);
 
-    const forestsCurseApplied: boolean = currentTypes.includes(Type.GRASS) && !baseTypes.includes(Type.GRASS);
-    const trickOrTreatApplied: boolean = currentTypes.includes(Type.GHOST) && !baseTypes.includes(Type.GHOST);
+    const forestsCurseApplied: boolean = currentTypes.includes(PokemonType.GRASS) && !baseTypes.includes(PokemonType.GRASS);
+    const trickOrTreatApplied: boolean = currentTypes.includes(PokemonType.GHOST) && !baseTypes.includes(PokemonType.GHOST);
 
     if (this.isBaseFlying) {
-      let modifiedTypes: Type[] = [];
+      let modifiedTypes: PokemonType[] = [];
       if (this.isBasePureFlying) {
         if (forestsCurseApplied || trickOrTreatApplied) {
-          modifiedTypes = currentTypes.filter(type => type !== Type.NORMAL);
-          modifiedTypes.push(Type.FLYING);
+          modifiedTypes = currentTypes.filter(type => type !== PokemonType.NORMAL);
+          modifiedTypes.push(PokemonType.FLYING);
         } else {
-          modifiedTypes = [ Type.FLYING ];
+          modifiedTypes = [ PokemonType.FLYING ];
         }
       } else {
         modifiedTypes = [ ...currentTypes ];
-        modifiedTypes.push(Type.FLYING);
+        modifiedTypes.push(PokemonType.FLYING);
       }
       pokemon.summonData.types = modifiedTypes;
       pokemon.updateInfo();
@@ -2098,18 +2098,18 @@ export class RoostedTag extends BattlerTag {
 
     const isOriginallyDualType = baseTypes.length === 2;
     const isCurrentlyDualType = currentTypes.length === 2;
-    this.isBaseFlying = baseTypes.includes(Type.FLYING);
-    this.isBasePureFlying = baseTypes[0] === Type.FLYING && baseTypes.length === 1;
+    this.isBaseFlying = baseTypes.includes(PokemonType.FLYING);
+    this.isBasePureFlying = baseTypes[0] === PokemonType.FLYING && baseTypes.length === 1;
 
     if (this.isBaseFlying) {
-      let modifiedTypes: Type[];
+      let modifiedTypes: PokemonType[];
       if (this.isBasePureFlying && !isCurrentlyDualType) {
-        modifiedTypes = [ Type.NORMAL ];
+        modifiedTypes = [ PokemonType.NORMAL ];
       } else {
         if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
-          modifiedTypes = [ Type.UNKNOWN ];
+          modifiedTypes = [ PokemonType.UNKNOWN ];
         } else {
-          modifiedTypes = currentTypes.filter(type => type !== Type.FLYING);
+          modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
         }
       }
       pokemon.summonData.types = modifiedTypes;
@@ -2374,10 +2374,10 @@ export class GulpMissileTag extends BattlerTag {
  * @see {@linkcode ignoreImmunity}
  */
 export class ExposedTag extends BattlerTag {
-  private defenderType: Type;
-  private allowedTypes: Type[];
+  private defenderType: PokemonType;
+  private allowedTypes: PokemonType[];
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, defenderType: Type, allowedTypes: Type[]) {
+  constructor(tagType: BattlerTagType, sourceMove: Moves, defenderType: PokemonType, allowedTypes: PokemonType[]) {
     super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
     this.defenderType = defenderType;
     this.allowedTypes = allowedTypes;
@@ -2389,16 +2389,16 @@ export class ExposedTag extends BattlerTag {
   */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.defenderType = source.defenderType as Type;
-    this.allowedTypes = source.allowedTypes as Type[];
+    this.defenderType = source.defenderType as PokemonType;
+    this.allowedTypes = source.allowedTypes as PokemonType[];
   }
 
   /**
-   * @param types {@linkcode Type} of the defending Pokemon
-   * @param moveType {@linkcode Type} of the move targetting it
+   * @param types {@linkcode PokemonType} of the defending Pokemon
+   * @param moveType {@linkcode PokemonType} of the move targetting it
    * @returns `true` if the move should be allowed to target the defender.
    */
-  ignoreImmunity(type: Type, moveType: Type): boolean {
+  ignoreImmunity(type: PokemonType, moveType: PokemonType): boolean {
     return type === this.defenderType && this.allowedTypes.includes(moveType);
   }
 }
@@ -3103,7 +3103,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.HIDDEN:
       return new SemiInvulnerableTag(tagType, turnCount, sourceMove);
     case BattlerTagType.FIRE_BOOST:
-      return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
+      return new TypeBoostTag(tagType, sourceMove, PokemonType.FIRE, 1.5, false);
     case BattlerTagType.CRIT_BOOST:
       return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.DRAGON_CHEER:
@@ -3129,7 +3129,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.CURSED:
       return new CursedTag(sourceId);
     case BattlerTagType.CHARGED:
-      return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
+      return new TypeBoostTag(tagType, sourceMove, PokemonType.ELECTRIC, 2, true);
     case BattlerTagType.FLOATING:
       return new FloatingTag(tagType, sourceMove, turnCount);
     case BattlerTagType.MINIMIZED:
@@ -3149,9 +3149,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: number, source
     case BattlerTagType.DISABLED:
       return new DisabledTag(sourceId);
     case BattlerTagType.IGNORE_GHOST:
-      return new ExposedTag(tagType, sourceMove, Type.GHOST, [ Type.NORMAL, Type.FIGHTING ]);
+      return new ExposedTag(tagType, sourceMove, PokemonType.GHOST, [ PokemonType.NORMAL, PokemonType.FIGHTING ]);
     case BattlerTagType.IGNORE_DARK:
-      return new ExposedTag(tagType, sourceMove, Type.DARK, [ Type.PSYCHIC ]);
+      return new ExposedTag(tagType, sourceMove, PokemonType.DARK, [ PokemonType.PSYCHIC ]);
     case BattlerTagType.GULP_MISSILE_ARROKUDA:
     case BattlerTagType.GULP_MISSILE_PIKACHU:
       return new GulpMissileTag(tagType, sourceMove);

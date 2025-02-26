@@ -29,7 +29,7 @@ import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -350,15 +350,15 @@ describe("Clowning Around - Mystery Encounter", () => {
       const thirdTypesAfter = scene.getPlayerParty()[2].getTypes();
 
       expect(leadTypesAfter.length).toBe(2);
-      expect(leadTypesAfter[0]).toBe(Type.WATER);
-      expect([ Type.WATER, Type.ICE ].includes(leadTypesAfter[1])).toBeFalsy();
+      expect(leadTypesAfter[0]).toBe(PokemonType.WATER);
+      expect([ PokemonType.WATER, PokemonType.ICE ].includes(leadTypesAfter[1])).toBeFalsy();
       expect(secondaryTypesAfter.length).toBe(2);
-      expect(secondaryTypesAfter[0]).toBe(Type.GHOST);
-      expect([ Type.GHOST, Type.POISON ].includes(secondaryTypesAfter[1])).toBeFalsy();
-      expect([ Type.GRASS, Type.ELECTRIC ].includes(secondaryTypesAfter[1])).toBeTruthy();
+      expect(secondaryTypesAfter[0]).toBe(PokemonType.GHOST);
+      expect([ PokemonType.GHOST, PokemonType.POISON ].includes(secondaryTypesAfter[1])).toBeFalsy();
+      expect([ PokemonType.GRASS, PokemonType.ELECTRIC ].includes(secondaryTypesAfter[1])).toBeTruthy();
       expect(thirdTypesAfter.length).toBe(2);
-      expect(thirdTypesAfter[0]).toBe(Type.PSYCHIC);
-      expect(secondaryTypesAfter[1]).not.toBe(Type.PSYCHIC);
+      expect(thirdTypesAfter[0]).toBe(PokemonType.PSYCHIC);
+      expect(secondaryTypesAfter[1]).not.toBe(PokemonType.PSYCHIC);
     });
 
     it("should leave encounter without battle", async () => {

@@ -105,7 +105,7 @@ import {
 } from "#app/data/pokemon-forms";
 import { FormChangePhase } from "#app/phases/form-change-phase";
 import { getTypeRgb } from "#app/data/type";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import PokemonSpriteSparkleHandler from "#app/field/pokemon-sprite-sparkle-handler";
 import CharSprite from "#app/ui/char-sprite";
 import DamageNumberHandler from "#app/field/damage-number-handler";
@@ -3948,8 +3948,8 @@ export default class BattleScene extends SceneBase {
           return {
             name: p.name,
             form: p.getFormKey(),
-            types: p.getTypes().map((type) => Type[type]),
-            teraType: Type[p.getTeraType()],
+            types: p.getTypes().map((type) => PokemonType[type]),
+            teraType: PokemonType[p.getTeraType()],
             isTerastallized: p.isTerastallized,
             level: p.level,
             currentHP: p.hp,

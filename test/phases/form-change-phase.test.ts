@@ -4,7 +4,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 
@@ -40,7 +40,7 @@ describe("Form Change Phase", () => {
     // Before the form change: Should be Hero form
     const zacian = game.scene.getPlayerParty()[0];
     expect(zacian.getFormKey()).toBe("hero-of-many-battles");
-    expect(zacian.getTypes()).toStrictEqual([ Type.FAIRY ]);
+    expect(zacian.getTypes()).toStrictEqual([ PokemonType.FAIRY ]);
     expect(zacian.calculateBaseStats()).toStrictEqual([ 92, 120, 115, 80, 115, 138 ]);
 
     // Give Zacian a Rusted Sword
@@ -54,7 +54,7 @@ describe("Form Change Phase", () => {
     // After the form change: Should be Crowned form
     expect(game.phaseInterceptor.log.includes("FormChangePhase")).toBe(true);
     expect(zacian.getFormKey()).toBe("crowned");
-    expect(zacian.getTypes()).toStrictEqual([ Type.FAIRY, Type.STEEL ]);
+    expect(zacian.getTypes()).toStrictEqual([ PokemonType.FAIRY, PokemonType.STEEL ]);
     expect(zacian.calculateBaseStats()).toStrictEqual([ 92, 150, 115, 80, 115, 148 ]);
   });
 });

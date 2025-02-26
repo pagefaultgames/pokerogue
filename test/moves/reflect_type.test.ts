@@ -1,7 +1,7 @@
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -47,13 +47,13 @@ describe("Moves - Reflect Type", () => {
     game.move.select(Moves.FORESTS_CURSE);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
-    expect(enemyPokemon?.getTypes().includes(Type.UNKNOWN)).toBe(true);
-    expect(enemyPokemon?.getTypes().includes(Type.GRASS)).toBe(true);
+    expect(enemyPokemon?.getTypes().includes(PokemonType.UNKNOWN)).toBe(true);
+    expect(enemyPokemon?.getTypes().includes(PokemonType.GRASS)).toBe(true);
 
     game.move.select(Moves.REFLECT_TYPE);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon?.getTypes()[0]).toBe(Type.NORMAL);
-    expect(playerPokemon?.getTypes().includes(Type.GRASS)).toBe(true);
+    expect(playerPokemon?.getTypes()[0]).toBe(PokemonType.NORMAL);
+    expect(playerPokemon?.getTypes().includes(PokemonType.GRASS)).toBe(true);
   });
 });

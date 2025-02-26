@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { Challenges } from "#enums/challenges";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -121,7 +121,7 @@ describe("Moves - Freeze-Dry", () => {
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.teraType = Type.WATER;
+    enemy.teraType = PokemonType.WATER;
     enemy.isTerastallized = true;
     vi.spyOn(enemy, "getMoveEffectiveness");
 
@@ -137,7 +137,7 @@ describe("Moves - Freeze-Dry", () => {
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.teraType = Type.FIRE;
+    enemy.teraType = PokemonType.FIRE;
     enemy.isTerastallized = true;
     vi.spyOn(enemy, "getMoveEffectiveness");
 

@@ -1,266 +1,266 @@
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
-export function getTypeDamageMultiplier(attackType: Type, defType: Type): TypeDamageMultiplier {
-  if (attackType === Type.UNKNOWN || defType === Type.UNKNOWN) {
+export function getTypeDamageMultiplier(attackType: PokemonType, defType: PokemonType): TypeDamageMultiplier {
+  if (attackType === PokemonType.UNKNOWN || defType === PokemonType.UNKNOWN) {
     return 1;
   }
 
   switch (defType) {
-    case Type.NORMAL:
+    case PokemonType.NORMAL:
       switch (attackType) {
-        case Type.FIGHTING:
+        case PokemonType.FIGHTING:
           return 2;
-        case Type.GHOST:
+        case PokemonType.GHOST:
           return 0;
         default:
           return 1;
       }
-    case Type.FIGHTING:
+    case PokemonType.FIGHTING:
       switch (attackType) {
-        case Type.FLYING:
-        case Type.PSYCHIC:
-        case Type.FAIRY:
+        case PokemonType.FLYING:
+        case PokemonType.PSYCHIC:
+        case PokemonType.FAIRY:
           return 2;
-        case Type.ROCK:
-        case Type.BUG:
-        case Type.DARK:
+        case PokemonType.ROCK:
+        case PokemonType.BUG:
+        case PokemonType.DARK:
           return 0.5;
         default:
           return 1;
       }
-    case Type.FLYING:
+    case PokemonType.FLYING:
       switch (attackType) {
-        case Type.ROCK:
-        case Type.ELECTRIC:
-        case Type.ICE:
+        case PokemonType.ROCK:
+        case PokemonType.ELECTRIC:
+        case PokemonType.ICE:
           return 2;
-        case Type.FIGHTING:
-        case Type.BUG:
-        case Type.GRASS:
+        case PokemonType.FIGHTING:
+        case PokemonType.BUG:
+        case PokemonType.GRASS:
           return 0.5;
-        case Type.GROUND:
+        case PokemonType.GROUND:
           return 0;
         default:
           return 1;
       }
-    case Type.POISON:
+    case PokemonType.POISON:
       switch (attackType) {
-        case Type.GROUND:
-        case Type.PSYCHIC:
+        case PokemonType.GROUND:
+        case PokemonType.PSYCHIC:
           return 2;
-        case Type.FIGHTING:
-        case Type.POISON:
-        case Type.BUG:
-        case Type.GRASS:
-        case Type.FAIRY:
+        case PokemonType.FIGHTING:
+        case PokemonType.POISON:
+        case PokemonType.BUG:
+        case PokemonType.GRASS:
+        case PokemonType.FAIRY:
           return 0.5;
         default:
           return 1;
       }
-    case Type.GROUND:
+    case PokemonType.GROUND:
       switch (attackType) {
-        case Type.WATER:
-        case Type.GRASS:
-        case Type.ICE:
+        case PokemonType.WATER:
+        case PokemonType.GRASS:
+        case PokemonType.ICE:
           return 2;
-        case Type.POISON:
-        case Type.ROCK:
+        case PokemonType.POISON:
+        case PokemonType.ROCK:
           return 0.5;
-        case Type.ELECTRIC:
+        case PokemonType.ELECTRIC:
           return 0;
         default:
           return 1;
       }
-    case Type.ROCK:
+    case PokemonType.ROCK:
       switch (attackType) {
-        case Type.FIGHTING:
-        case Type.GROUND:
-        case Type.STEEL:
-        case Type.WATER:
-        case Type.GRASS:
+        case PokemonType.FIGHTING:
+        case PokemonType.GROUND:
+        case PokemonType.STEEL:
+        case PokemonType.WATER:
+        case PokemonType.GRASS:
           return 2;
-        case Type.NORMAL:
-        case Type.FLYING:
-        case Type.POISON:
-        case Type.FIRE:
+        case PokemonType.NORMAL:
+        case PokemonType.FLYING:
+        case PokemonType.POISON:
+        case PokemonType.FIRE:
           return 0.5;
         default:
           return 1;
       }
-    case Type.BUG:
+    case PokemonType.BUG:
       switch (attackType) {
-        case Type.FLYING:
-        case Type.ROCK:
-        case Type.FIRE:
+        case PokemonType.FLYING:
+        case PokemonType.ROCK:
+        case PokemonType.FIRE:
           return 2;
-        case Type.FIGHTING:
-        case Type.GROUND:
-        case Type.GRASS:
+        case PokemonType.FIGHTING:
+        case PokemonType.GROUND:
+        case PokemonType.GRASS:
           return 0.5;
         default:
           return 1;
       }
-    case Type.GHOST:
+    case PokemonType.GHOST:
       switch (attackType) {
-        case Type.GHOST:
-        case Type.DARK:
+        case PokemonType.GHOST:
+        case PokemonType.DARK:
           return 2;
-        case Type.POISON:
-        case Type.BUG:
+        case PokemonType.POISON:
+        case PokemonType.BUG:
           return 0.5;
-        case Type.NORMAL:
-        case Type.FIGHTING:
+        case PokemonType.NORMAL:
+        case PokemonType.FIGHTING:
           return 0;
         default:
           return 1;
       }
-    case Type.STEEL:
+    case PokemonType.STEEL:
       switch (attackType) {
-        case Type.FIGHTING:
-        case Type.GROUND:
-        case Type.FIRE:
+        case PokemonType.FIGHTING:
+        case PokemonType.GROUND:
+        case PokemonType.FIRE:
           return 2;
-        case Type.NORMAL:
-        case Type.FLYING:
-        case Type.ROCK:
-        case Type.BUG:
-        case Type.STEEL:
-        case Type.GRASS:
-        case Type.PSYCHIC:
-        case Type.ICE:
-        case Type.DRAGON:
-        case Type.FAIRY:
+        case PokemonType.NORMAL:
+        case PokemonType.FLYING:
+        case PokemonType.ROCK:
+        case PokemonType.BUG:
+        case PokemonType.STEEL:
+        case PokemonType.GRASS:
+        case PokemonType.PSYCHIC:
+        case PokemonType.ICE:
+        case PokemonType.DRAGON:
+        case PokemonType.FAIRY:
           return 0.5;
-        case Type.POISON:
+        case PokemonType.POISON:
           return 0;
         default:
           return 1;
       }
-    case Type.FIRE:
+    case PokemonType.FIRE:
       switch (attackType) {
-        case Type.GROUND:
-        case Type.ROCK:
-        case Type.WATER:
+        case PokemonType.GROUND:
+        case PokemonType.ROCK:
+        case PokemonType.WATER:
           return 2;
-        case Type.BUG:
-        case Type.STEEL:
-        case Type.FIRE:
-        case Type.GRASS:
-        case Type.ICE:
-        case Type.FAIRY:
+        case PokemonType.BUG:
+        case PokemonType.STEEL:
+        case PokemonType.FIRE:
+        case PokemonType.GRASS:
+        case PokemonType.ICE:
+        case PokemonType.FAIRY:
           return 0.5;
         default:
           return 1;
       }
-    case Type.WATER:
+    case PokemonType.WATER:
       switch (attackType) {
-        case Type.GRASS:
-        case Type.ELECTRIC:
+        case PokemonType.GRASS:
+        case PokemonType.ELECTRIC:
           return 2;
-        case Type.STEEL:
-        case Type.FIRE:
-        case Type.WATER:
-        case Type.ICE:
+        case PokemonType.STEEL:
+        case PokemonType.FIRE:
+        case PokemonType.WATER:
+        case PokemonType.ICE:
           return 0.5;
         default:
           return 1;
       }
-    case Type.GRASS:
+    case PokemonType.GRASS:
       switch (attackType) {
-        case Type.FLYING:
-        case Type.POISON:
-        case Type.BUG:
-        case Type.FIRE:
-        case Type.ICE:
+        case PokemonType.FLYING:
+        case PokemonType.POISON:
+        case PokemonType.BUG:
+        case PokemonType.FIRE:
+        case PokemonType.ICE:
           return 2;
-        case Type.GROUND:
-        case Type.WATER:
-        case Type.GRASS:
-        case Type.ELECTRIC:
+        case PokemonType.GROUND:
+        case PokemonType.WATER:
+        case PokemonType.GRASS:
+        case PokemonType.ELECTRIC:
           return 0.5;
         default:
           return 1;
       }
-    case Type.ELECTRIC:
+    case PokemonType.ELECTRIC:
       switch (attackType) {
-        case Type.GROUND:
+        case PokemonType.GROUND:
           return 2;
-        case Type.FLYING:
-        case Type.STEEL:
-        case Type.ELECTRIC:
+        case PokemonType.FLYING:
+        case PokemonType.STEEL:
+        case PokemonType.ELECTRIC:
           return 0.5;
         default:
           return 1;
       }
-    case Type.PSYCHIC:
+    case PokemonType.PSYCHIC:
       switch (attackType) {
-        case Type.BUG:
-        case Type.GHOST:
-        case Type.DARK:
+        case PokemonType.BUG:
+        case PokemonType.GHOST:
+        case PokemonType.DARK:
           return 2;
-        case Type.FIGHTING:
-        case Type.PSYCHIC:
+        case PokemonType.FIGHTING:
+        case PokemonType.PSYCHIC:
           return 0.5;
         default:
           return 1;
       }
-    case Type.ICE:
+    case PokemonType.ICE:
       switch (attackType) {
-        case Type.FIGHTING:
-        case Type.ROCK:
-        case Type.STEEL:
-        case Type.FIRE:
+        case PokemonType.FIGHTING:
+        case PokemonType.ROCK:
+        case PokemonType.STEEL:
+        case PokemonType.FIRE:
           return 2;
-        case Type.ICE:
+        case PokemonType.ICE:
           return 0.5;
         default:
           return 1;
       }
-    case Type.DRAGON:
+    case PokemonType.DRAGON:
       switch (attackType) {
-        case Type.ICE:
-        case Type.DRAGON:
-        case Type.FAIRY:
+        case PokemonType.ICE:
+        case PokemonType.DRAGON:
+        case PokemonType.FAIRY:
           return 2;
-        case Type.FIRE:
-        case Type.WATER:
-        case Type.GRASS:
-        case Type.ELECTRIC:
+        case PokemonType.FIRE:
+        case PokemonType.WATER:
+        case PokemonType.GRASS:
+        case PokemonType.ELECTRIC:
           return 0.5;
         default:
           return 1;
       }
-    case Type.DARK:
+    case PokemonType.DARK:
       switch (attackType) {
-        case Type.FIGHTING:
-        case Type.BUG:
-        case Type.FAIRY:
+        case PokemonType.FIGHTING:
+        case PokemonType.BUG:
+        case PokemonType.FAIRY:
           return 2;
-        case Type.GHOST:
-        case Type.DARK:
+        case PokemonType.GHOST:
+        case PokemonType.DARK:
           return 0.5;
-        case Type.PSYCHIC:
+        case PokemonType.PSYCHIC:
           return 0;
         default:
           return 1;
       }
-    case Type.FAIRY:
+    case PokemonType.FAIRY:
       switch (attackType) {
-        case Type.POISON:
-        case Type.STEEL:
+        case PokemonType.POISON:
+        case PokemonType.STEEL:
           return 2;
-        case Type.FIGHTING:
-        case Type.BUG:
-        case Type.DARK:
+        case PokemonType.FIGHTING:
+        case PokemonType.BUG:
+        case PokemonType.DARK:
           return 0.5;
-        case Type.DRAGON:
+        case PokemonType.DRAGON:
           return 0;
         default:
           return 1;
       }
-    case Type.STELLAR:
+    case PokemonType.STELLAR:
       return 1;
   }
 
@@ -313,45 +313,45 @@ export function getTypeDamageMultiplierColor(multiplier: TypeDamageMultiplier, s
   }
 }
 
-export function getTypeRgb(type: Type): [ number, number, number ] {
+export function getTypeRgb(type: PokemonType): [ number, number, number ] {
   switch (type) {
-    case Type.NORMAL:
+    case PokemonType.NORMAL:
       return [ 168, 168, 120 ];
-    case Type.FIGHTING:
+    case PokemonType.FIGHTING:
       return [ 192, 48, 40 ];
-    case Type.FLYING:
+    case PokemonType.FLYING:
       return [ 168, 144, 240 ];
-    case Type.POISON:
+    case PokemonType.POISON:
       return [ 160, 64, 160 ];
-    case Type.GROUND:
+    case PokemonType.GROUND:
       return [ 224, 192, 104 ];
-    case Type.ROCK:
+    case PokemonType.ROCK:
       return [ 184, 160, 56 ];
-    case Type.BUG:
+    case PokemonType.BUG:
       return [ 168, 184, 32 ];
-    case Type.GHOST:
+    case PokemonType.GHOST:
       return [ 112, 88, 152 ];
-    case Type.STEEL:
+    case PokemonType.STEEL:
       return [ 184, 184, 208 ];
-    case Type.FIRE:
+    case PokemonType.FIRE:
       return [ 240, 128, 48 ];
-    case Type.WATER:
+    case PokemonType.WATER:
       return [ 104, 144, 240 ];
-    case Type.GRASS:
+    case PokemonType.GRASS:
       return [ 120, 200, 80 ];
-    case Type.ELECTRIC:
+    case PokemonType.ELECTRIC:
       return [ 248, 208, 48 ];
-    case Type.PSYCHIC:
+    case PokemonType.PSYCHIC:
       return [ 248, 88, 136 ];
-    case Type.ICE:
+    case PokemonType.ICE:
       return [ 152, 216, 216 ];
-    case Type.DRAGON:
+    case PokemonType.DRAGON:
       return [ 112, 56, 248 ];
-    case Type.DARK:
+    case PokemonType.DARK:
       return [ 112, 88, 72 ];
-    case Type.FAIRY:
+    case PokemonType.FAIRY:
       return [ 232, 136, 200 ];
-    case Type.STELLAR:
+    case PokemonType.STELLAR:
       return [ 255, 255, 255 ];
     default:
       return [ 0, 0, 0 ];

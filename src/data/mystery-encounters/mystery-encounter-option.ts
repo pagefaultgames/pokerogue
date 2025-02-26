@@ -3,7 +3,7 @@ import type { Moves } from "#app/enums/moves";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import type { Type } from "#enums/type";
+import type { PokemonType } from "#enums/type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import type { CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 import { CanLearnMoveRequirement } from "./requirements/can-learn-move-requirement";
@@ -254,7 +254,7 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
    * @param invertQuery
    * @returns
    */
-  withPokemonTypeRequirement(type: Type | Type[], excludeFainted?: boolean, minNumberOfPokemon?: number, invertQuery?: boolean) {
+  withPokemonTypeRequirement(type: PokemonType | PokemonType[], excludeFainted?: boolean, minNumberOfPokemon?: number, invertQuery?: boolean) {
     return this.withPrimaryPokemonRequirement(new TypeRequirement(type, excludeFainted, minNumberOfPokemon, invertQuery));
   }
 

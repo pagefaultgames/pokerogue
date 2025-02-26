@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { Biome } from "#app/enums/biome";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
@@ -56,7 +56,7 @@ describe("Moves - Flower Shield", () => {
     await game.startBattle([ Species.CHERRIM, Species.MAGIKARP ]);
     const field = game.scene.getField(true);
 
-    const grassPokemons = field.filter(p => p.getTypes().includes(Type.GRASS));
+    const grassPokemons = field.filter(p => p.getTypes().includes(PokemonType.GRASS));
     const nonGrassPokemons = field.filter(pokemon => !grassPokemons.includes(pokemon));
 
     grassPokemons.forEach(p => expect(p.getStatStage(Stat.DEF)).toBe(0));

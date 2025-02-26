@@ -10,7 +10,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { catchableSpecies } from "#app/data/balance/biomes";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
 import { AbilityAttr, DexAttr, StarterPrefs } from "#app/system/game-data";
 import MessageUiHandler from "#app/ui/message-ui-handler";
@@ -287,7 +287,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.filterBar.addFilter(DropDownColumn.GEN, i18next.t("filterBar:genFilter"), genDropDown);
 
     // type filter
-    const typeKeys = Object.keys(Type).filter(v => isNaN(Number(v)));
+    const typeKeys = Object.keys(PokemonType).filter(v => isNaN(Number(v)));
     const typeOptions: DropDownOption[] = [];
     typeKeys.forEach((type, index) => {
       if (index === 0 || index === 19) {
@@ -2032,16 +2032,16 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   }
 
-  setTypeIcons(type1: Type | null, type2: Type | null): void {
+  setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
     if (type1 !== null) {
       this.type1Icon.setVisible(true);
-      this.type1Icon.setFrame(Type[type1].toLowerCase());
+      this.type1Icon.setFrame(PokemonType[type1].toLowerCase());
     } else {
       this.type1Icon.setVisible(false);
     }
     if (type2 !== null) {
       this.type2Icon.setVisible(true);
-      this.type2Icon.setFrame(Type[type2].toLowerCase());
+      this.type2Icon.setFrame(PokemonType[type2].toLowerCase());
     } else {
       this.type2Icon.setVisible(false);
     }

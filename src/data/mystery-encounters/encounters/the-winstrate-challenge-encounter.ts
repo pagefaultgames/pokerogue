@@ -13,7 +13,7 @@ import { Abilities } from "#enums/abilities";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { Nature } from "#enums/nature";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
@@ -303,12 +303,12 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
         moveSet: [ Moves.PSYSHOCK, Moves.MOONBLAST, Moves.SHADOW_BALL, Moves.WILL_O_WISP ],
         modifierConfigs: [
           {
-            modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.PSYCHIC ]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [ PokemonType.PSYCHIC ]) as PokemonHeldItemModifierType,
             stackCount: 1,
             isTransferable: false
           },
           {
-            modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.FAIRY ]) as PokemonHeldItemModifierType,
+            modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [ PokemonType.FAIRY ]) as PokemonHeldItemModifierType,
             stackCount: 1,
             isTransferable: false
           }

@@ -1,4 +1,4 @@
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
@@ -265,11 +265,11 @@ describe("Abilities - Parental Bond", () => {
 
       expect(leadPokemon.turnData.hitCount).toBe(2);
       expect(enemyPokemon.hp).toBeGreaterThan(0);
-      expect(leadPokemon.isOfType(Type.FIRE)).toBe(true);
+      expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(true);
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(leadPokemon.isOfType(Type.FIRE)).toBe(false);
+      expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(false);
     }
   );
 

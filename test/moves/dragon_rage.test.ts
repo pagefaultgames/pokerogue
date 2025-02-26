@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { Species } from "#app/enums/species";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -53,7 +53,7 @@ describe("Moves - Dragon Rage", () => {
 
   it("ignores weaknesses", async () => {
     game.override.disableCrits();
-    vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([ Type.DRAGON ]);
+    vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([ PokemonType.DRAGON ]);
 
     game.move.select(Moves.DRAGON_RAGE);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -63,7 +63,7 @@ describe("Moves - Dragon Rage", () => {
 
   it("ignores resistances", async () => {
     game.override.disableCrits();
-    vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([ Type.STEEL ]);
+    vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([ PokemonType.STEEL ]);
 
     game.move.select(Moves.DRAGON_RAGE);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -83,7 +83,7 @@ describe("Moves - Dragon Rage", () => {
 
   it("ignores stab", async () => {
     game.override.disableCrits();
-    vi.spyOn(partyPokemon, "getTypes").mockReturnValue([ Type.DRAGON ]);
+    vi.spyOn(partyPokemon, "getTypes").mockReturnValue([ PokemonType.DRAGON ]);
 
     game.move.select(Moves.DRAGON_RAGE);
     await game.phaseInterceptor.to(TurnEndPhase);

@@ -24,7 +24,7 @@ import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 
@@ -386,7 +386,7 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.ADAMANT,
         moveSet: [ Moves.METEOR_MASH, Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH ],
         ivs: [ 31, 31, 31, 31, 31, 31 ],
-        tera: Type.STEEL,
+        tera: PokemonType.STEEL,
       }
     ]
   };

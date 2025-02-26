@@ -48,7 +48,7 @@ import {
   VariableTargetAttr,
 } from "#app/data/moves/move";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, MoveResult } from "#app/field/pokemon";
@@ -671,7 +671,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
       return true;
     }
-    if ((this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(Type.POISON))) {
+    if ((this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON))) {
       return true;
     }
     // TODO: Fix lock on / mind reader check.

@@ -15,7 +15,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { Biome } from "#enums/biome";
 import { getBiomeKey } from "#app/field/arena";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";
 import { TrainerSlot } from "#app/data/trainer-config";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -30,7 +30,7 @@ const namespace = "mysteryEncounters/teleportingHijinks";
 
 const MONEY_COST_MULTIPLIER = 1.75;
 const BIOME_CANDIDATES = [ Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND, Biome.WASTELAND, Biome.DOJO ];
-const MACHINE_INTERFACING_TYPES = [ Type.ELECTRIC, Type.STEEL ];
+const MACHINE_INTERFACING_TYPES = [ PokemonType.ELECTRIC, PokemonType.STEEL ];
 
 /**
  * Teleporting Hijinks encounter.
@@ -149,8 +149,8 @@ export const TeleportingHijinksEncounter: MysteryEncounter =
           }],
         };
 
-        const magnet = generateModifierTypeOption(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.STEEL ])!;
-        const metalCoat = generateModifierTypeOption(modifierTypes.ATTACK_TYPE_BOOSTER, [ Type.ELECTRIC ])!;
+        const magnet = generateModifierTypeOption(modifierTypes.ATTACK_TYPE_BOOSTER, [ PokemonType.STEEL ])!;
+        const metalCoat = generateModifierTypeOption(modifierTypes.ATTACK_TYPE_BOOSTER, [ PokemonType.ELECTRIC ])!;
         setEncounterRewards({ guaranteedModifierTypeOptions: [ magnet, metalCoat ], fillRemaining: true });
         await transitionMysteryEncounterIntroVisuals(true, true);
         await initBattleWithEnemyConfig(config);

@@ -2,7 +2,7 @@ import { Biome } from "#enums/biome";
 import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
 import type Pokemon from "../field/pokemon";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import type Move from "./moves/move";
 import { AttackMove } from "./moves/move";
 import * as Utils from "../utils";
@@ -53,34 +53,34 @@ export class Weather {
     return false;
   }
 
-  isTypeDamageImmune(type: Type): boolean {
+  isTypeDamageImmune(type: PokemonType): boolean {
     switch (this.weatherType) {
       case WeatherType.SANDSTORM:
-        return type === Type.GROUND || type === Type.ROCK || type === Type.STEEL;
+        return type === PokemonType.GROUND || type === PokemonType.ROCK || type === PokemonType.STEEL;
       case WeatherType.HAIL:
-        return type === Type.ICE;
+        return type === PokemonType.ICE;
     }
 
     return false;
   }
 
-  getAttackTypeMultiplier(attackType: Type): number {
+  getAttackTypeMultiplier(attackType: PokemonType): number {
     switch (this.weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
-        if (attackType === Type.FIRE) {
+        if (attackType === PokemonType.FIRE) {
           return 1.5;
         }
-        if (attackType === Type.WATER) {
+        if (attackType === PokemonType.WATER) {
           return 0.5;
         }
         break;
       case WeatherType.RAIN:
       case WeatherType.HEAVY_RAIN:
-        if (attackType === Type.FIRE) {
+        if (attackType === PokemonType.FIRE) {
           return 0.5;
         }
-        if (attackType === Type.WATER) {
+        if (attackType === PokemonType.WATER) {
           return 1.5;
         }
         break;
@@ -94,9 +94,9 @@ export class Weather {
 
     switch (this.weatherType) {
       case WeatherType.HARSH_SUN:
-        return move instanceof AttackMove && moveType === Type.WATER;
+        return move instanceof AttackMove && moveType === PokemonType.WATER;
       case WeatherType.HEAVY_RAIN:
-        return move instanceof AttackMove && moveType === Type.FIRE;
+        return move instanceof AttackMove && moveType === PokemonType.FIRE;
     }
 
     return false;

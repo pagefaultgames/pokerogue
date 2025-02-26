@@ -8,7 +8,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
-import { Type } from "#app/enums/type";
+import { PokemonType } from "#app/enums/type";
 import { getTypeRgb } from "#app/data/type";
 import { Species } from "#enums/species";
 
@@ -51,7 +51,7 @@ export default class CommandUiHandler extends UiHandler {
     this.teraButton.setName("terrastallize-button");
     this.teraButton.setScale(1.3);
     this.teraButton.setFrame("fire");
-    this.teraButton.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true, teraColor: getTypeRgb(Type.FIRE), isTerastallized: false });
+    this.teraButton.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true, teraColor: getTypeRgb(PokemonType.FIRE), isTerastallized: false });
     this.commandsContainer.add(this.teraButton);
 
     for (let c = 0; c < commands.length; c++) {
@@ -78,7 +78,7 @@ export default class CommandUiHandler extends UiHandler {
 
     if (this.canTera()) {
       this.teraButton.setVisible(true);
-      this.teraButton.setFrame(Type[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
+      this.teraButton.setFrame(PokemonType[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
     } else {
       this.teraButton.setVisible(false);
       if (this.cursor === Command.TERA) {

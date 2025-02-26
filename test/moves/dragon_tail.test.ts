@@ -3,7 +3,7 @@ import { allMoves } from "#app/data/moves/move";
 import { Status } from "#app/data/status-effect";
 import { Challenges } from "#enums/challenges";
 import { StatusEffect } from "#enums/status-effect";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -237,7 +237,7 @@ describe("Moves - Dragon Tail", () => {
       .startingLevel(100)
       .enemyLevel(1);
     // Mono-Water challenge, Eevee is ineligible
-    game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, Type.WATER + 1, 0);
+    game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.WATER + 1, 0);
     await game.challengeMode.startBattle([ Species.LAPRAS, Species.EEVEE, Species.TOXAPEX, Species.PRIMARINA ]);
 
     const [ lapras, eevee, toxapex, primarina ] = game.scene.getPlayerParty();

@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -44,7 +44,7 @@ describe("Moves - Tera Starstorm", () => {
     game.move.select(Moves.TERA_STARSTORM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(terapagos.getMoveType).toHaveReturnedWith(Type.STELLAR);
+    expect(terapagos.getMoveType).toHaveReturnedWith(PokemonType.STELLAR);
   });
 
   it("targets both opponents in a double battle when used by Terapagos in its Stellar Form", async () => {
@@ -95,7 +95,7 @@ describe("Moves - Tera Starstorm", () => {
     // Fusion and terastallized
     expect(fusionedMon.isFusion()).toBe(true);
     // Move effects should be applied
-    expect(fusionedMon.getMoveType).toHaveReturnedWith(Type.STELLAR);
+    expect(fusionedMon.getMoveType).toHaveReturnedWith(PokemonType.STELLAR);
     expect(game.scene.getEnemyField().every(pokemon => pokemon.isFullHp())).toBe(false);
   });
 });
