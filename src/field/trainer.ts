@@ -11,7 +11,8 @@ import {
   TrainerSlot,
   trainerConfigs,
   trainerPartyTemplates,
-  signatureSpecies
+  signatureSpecies,
+  TeraAIMode
 } from "#app/data/trainer-config";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
@@ -36,6 +37,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
   public partyTemplateIndex: number;
   public name: string;
   public partnerName: string;
+  public originalIndexes: { [key: number]: number } = {};
 
   constructor(trainerType: TrainerType, variant: TrainerVariant, partyTemplateIndex?: number, name?: string, partnerName?: string, trainerConfigOverride?: TrainerConfig) {
     super(globalScene, -72, 80);
@@ -414,14 +416,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    if (!retry && this.config.specialtyTypes.length && !this.config.specialtyTypes.find(t => ret.isOfType(t))) {
+    // Prompts reroll of party member species if doesn't fit specialty type.
+    // Can be removed by adding a type parameter to getTrainerSpeciesForLevel and filtering the list of evolutions for that type.
+    if (!retry && this.config.hasSpecialtyType() && !ret.isOfType(this.config.specialtyType)) {
       retry = true;
       console.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
         ret = getPokemonSpecies(baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex));
         console.log(ret.name);
-        if (this.config.specialtyTypes.find(t => ret.isOfType(t))) {
+        if (ret.isOfType(this.config.specialtyType)) {
           retry = false;
         }
       }
@@ -546,6 +550,13 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return [];
   }
 
+  genAI(party: EnemyPokemon[]) {
+    if (this.config.genAIFuncs) {
+      this.config.genAIFuncs.forEach(f => f(party));
+    }
+    console.log("Generated AI funcs");
+  }
+
   loadAssets(): Promise<void> {
     return this.config.loadAssets(this.variant);
   }
@@ -666,5 +677,19 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tintSprite.setAlpha(1);
       }
     });
+  }
+
+  /**
+   * Determines whether a Trainer should Terastallize their Pokemon
+   * @param pokemon {@linkcode EnemyPokemon} Trainer Pokemon in question
+   * @returns boolean Whether the EnemyPokemon should Terastalize this turn
+   */
+  shouldTera(pokemon: EnemyPokemon): boolean {
+    if (this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA) {
+      if (!pokemon.isTerastallized && this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
