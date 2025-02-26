@@ -254,7 +254,7 @@ export class TrainerConfig {
   public partyMemberFuncs: PartyMemberFuncs = {};
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
-  public specialtyType: Type = Type.UNKNOWN;
+  public specialtyType: Type;
   public hasVoucher: boolean = false;
   public trainerAI: TrainerAI;
 
@@ -604,13 +604,14 @@ export class TrainerConfig {
    */
   setRandomTeraModifiers(count: () => number, slot?: number): TrainerConfig {
     this.genAIFuncs.push((party: EnemyPokemon[]) => {
+      const shedinjaCanTera = !this.hasSpecialtyType() || this.specialtyType === Type.BUG; // Better to check one time than 6
       const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i)
-        .filter(i => [ Type.UNKNOWN, Type.BUG ].includes(this.specialtyType) || party[i].species.speciesId !== Species.SHEDINJA); // Shedinja can only Tera on Bug specialty type (or no specialty type)
+        .filter(i => shedinjaCanTera || party[i].species.speciesId !== Species.SHEDINJA); // Shedinja can only Tera on Bug specialty type (or no specialty type)
       const setPartySlot = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length - 1) : -1; // If we have a tera slot defined, wrap it to party size.
       for (let t = 0; t < Math.min(count(), party.length); t++) {
         const randomIndex = partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : Utils.randSeedItem(partyMemberIndexes);
         partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-        if (this.specialtyType !== Type.UNKNOWN) {
+        if (this.hasSpecialtyType()) {
           party[randomIndex].teraType = this.specialtyType;
         }
         this.trainerAI.setInstantTera(randomIndex);
@@ -788,11 +789,15 @@ export class TrainerConfig {
      * @param specialtyType The specialty Type of the admin, if they have one
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
-  initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[], specialtyType: Type = Type.UNKNOWN): TrainerConfig {
+  initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[], specialtyType?: Type): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
-    this.setSpecialtyType(specialtyType);
+
+    if (!Utils.isNullOrUndefined(specialtyType)) {
+      this.setSpecialtyType(specialtyType);
+    }
+
     this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
 
     // Set the species pools for the evil team admin.
@@ -850,7 +855,7 @@ export class TrainerConfig {
      * @param boolean Whether or not this is the rematch fight
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
-  initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch: boolean = false, specialtyType: Type = Type.UNKNOWN): TrainerConfig {
+  initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch: boolean = false, specialtyType?: Type): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
@@ -865,7 +870,7 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
-    if (specialtyType !== Type.UNKNOWN) {
+    if (!Utils.isNullOrUndefined(specialtyType)) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
       this.setSpecialtyType(specialtyType);
     }
@@ -891,7 +896,7 @@ export class TrainerConfig {
      * @param teraSlot Optional, sets the party member in this slot to Terastallize. Wraps based on party size.
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      * **/
-  initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN, ignoreMinTeraWave: boolean = false, teraSlot?: number): TrainerConfig {
+  initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type, ignoreMinTeraWave: boolean = false, teraSlot?: number): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
       initI18n();
@@ -911,10 +916,8 @@ export class TrainerConfig {
     });
 
     // If specialty type is provided, set species filter and specialty type.
-    if (specialtyType !== Type.UNKNOWN) {
-      this.setSpeciesFilter(p => p.isOfType(specialtyType));
-      this.setSpecialtyType(specialtyType);
-    }
+    this.setSpeciesFilter(p => p.isOfType(specialtyType));
+    this.setSpecialtyType(specialtyType);
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
@@ -942,11 +945,11 @@ export class TrainerConfig {
      * Initializes the trainer configuration for an Elite Four member.
      * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
      * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
-     * @param {Type} The specialty type for the Elite Four member.
+     * @param specialtyType {Type} The specialty type for the Elite Four member.
      * @param teraSlot Optional, sets the party member in this slot to Terastallize.
      * @returns {TrainerConfig} The updated TrainerConfig instance.
      **/
-  initForEliteFour(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType: Type = Type.UNKNOWN, teraSlot?: number): TrainerConfig {
+  initForEliteFour(signatureSpecies: (Species | Species[])[], isMale: boolean, specialtyType?: Type, teraSlot?: number): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
       initI18n();
@@ -966,7 +969,7 @@ export class TrainerConfig {
     });
 
     // Set species filter and specialty type if provided, otherwise filter by base total.
-    if (specialtyType !== Type.UNKNOWN) {
+    if (!Utils.isNullOrUndefined(specialtyType)) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
       this.setSpecialtyType(specialtyType);
     } else {
@@ -1139,6 +1142,14 @@ export class TrainerConfig {
         globalScene.load.start();
       }
     });
+  }
+
+  /**
+   * Helper function to check if a specialty type is set
+   * @returns true if specialtyType is defined and not Type.UNKNOWN
+   */
+  hasSpecialtyType(): boolean {
+    return !Utils.isNullOrUndefined(this.specialtyType) && this.specialtyType !== Type.UNKNOWN;
   }
 
   /**

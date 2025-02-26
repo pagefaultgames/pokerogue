@@ -24,7 +24,6 @@ import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
-import { Type } from "#enums/type";
 
 export enum TrainerVariant {
     DEFAULT,
@@ -419,7 +418,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     // Prompts reroll of party member species if doesn't fit specialty type.
     // Can be removed by adding a type parameter to getTrainerSpeciesForLevel and filtering the list of evolutions for that type.
-    if (!retry && this.config.specialtyType !== Type.UNKNOWN && !ret.isOfType(this.config.specialtyType)) {
+    if (!retry && this.config.hasSpecialtyType() && !ret.isOfType(this.config.specialtyType)) {
       retry = true;
       console.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
