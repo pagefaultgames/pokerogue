@@ -180,8 +180,25 @@ const timedEvents: TimedEvent[] = [
       { species: Species.ENAMORUS }
     ],
     luckBoostedSpecies: [ Species.LUVDISC ]
+    ]
+  },
+  {
+    name: "PKMNDAY2025",
+    eventType: EventType.NO_TIMER_DISPLAY,
+    startDate: new Date(Date.UTC(2025, 1, 27)),
+    endDate: new Date(Date.UTC(2025, 2, 4)),
+    classicFriendshipMultiplier: 4,
+    eventEncounters: [
+      { species: Species.PIKACHU, formIndex: 1, blockEvolution: true },
+      { species: Species.EEVEE, formIndex: 1, blockEvolution: true }
+    ],
+    luckBoostedSpecies: [
+      Species.PICHU, Species.PIKACHU, Species.RAICHU, Species.ALOLA_RAICHU,
+      Species.EEVEE, Species.FLAREON, Species.JOLTEON, Species.VAPOREON, Species.ESPEON, Species.UMBREON, Species.LEAFEON, Species.GLACEON, Species.SYLVEON,
+      Species.ZYGARDE
   }
 ];
+
 
 export class TimedEventManager {
   constructor() {}
