@@ -180,7 +180,6 @@ const timedEvents: TimedEvent[] = [
       { species: Species.ENAMORUS }
     ],
     luckBoostedSpecies: [ Species.LUVDISC ]
-    ]
   },
   {
     name: "PKMNDAY2025",
@@ -210,7 +209,6 @@ const timedEvents: TimedEvent[] = [
     ]
   }
 ];
-
 
 export class TimedEventManager {
   constructor() {}
