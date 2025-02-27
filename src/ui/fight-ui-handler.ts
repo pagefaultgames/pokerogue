@@ -15,7 +15,6 @@ import type Pokemon from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
 import { BattleType } from "#app/battle";
-import { UiTheme } from "#enums/ui-theme";
 
 export default class FightUiHandler extends UiHandler implements InfoToggle {
   public static readonly MOVES_CONTAINER_NAME = "moves";
@@ -228,11 +227,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     if (!this.cursorObj) {
       const isTera = this.fromCommand === Command.TERA;
-      if (globalScene.uiTheme === UiTheme.LEGACY) {
-        this.cursorObj = globalScene.add.image(0, 0, isTera ? "icon_tera_dark" : "cursor");
-      } else {
-        this.cursorObj = globalScene.add.image(0, 0, isTera ? "icon_tera" : "cursor");
-      }
+      this.cursorObj = globalScene.add.image(0, 0, isTera ? "cursor_tera" : "cursor");
       this.cursorObj.setScale(isTera ? 0.7 : 1);
       ui.add(this.cursorObj);
     }
