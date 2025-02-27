@@ -207,6 +207,7 @@ const timedEvents: TimedEvent[] = [
       Species.TEPIG, Species.PIGNITE, Species.EMBOAR,
       Species.ZYGARDE,
       Species.ETERNAL_FLOETTE
+    ]
   }
 ];
 
