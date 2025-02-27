@@ -250,9 +250,9 @@ export class LoadingScene extends SceneBase {
     }
     const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("valentines2025event-" + lang, "events");
+      this.loadImage("pkmnday2025event-" + lang, "events");
     } else {
-      this.loadImage("valentines2025event-en", "events");
+      this.loadImage("pkmnday2025event-en", "events");
     }
 
     this.loadAtlas("statuses", "");
