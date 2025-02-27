@@ -100,9 +100,11 @@ export class FaintPhase extends PokemonPhase {
     if (pokemon.isPlayer()) {
       globalScene.arena.playerFaints += 1;
       globalScene.currentBattle.playerFaintsHistory.push({ pokemon: pokemon, turn: globalScene.currentBattle.turn });
+      globalScene.totalPlayerFaints++;
     } else {
       globalScene.currentBattle.enemyFaints += 1;
       globalScene.currentBattle.enemyFaintsHistory.push({ pokemon: pokemon, turn: globalScene.currentBattle.turn });
+      globalScene.totalEnemyFaints++;
     }
 
     globalScene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);

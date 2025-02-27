@@ -339,6 +339,8 @@ export default class BattleScene extends SceneBase {
   public currentBattle: Battle;
   public pokeballCounts: PokeballCounts;
   public money: number;
+  public totalPlayerFaints: number;
+  public totalEnemyFaints: number;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
   /** Session save data that pertains to Mystery Encounters */
@@ -1401,6 +1403,8 @@ export default class BattleScene extends SceneBase {
 
     this.score = 0;
     this.money = 0;
+    this.totalPlayerFaints = 0;
+    this.totalEnemyFaints = 0;
 
     this.lockModifierTiers = false;
 
@@ -1794,8 +1798,8 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: Biome, playerFaints?: number): Arena {
-    this.arena = new Arena(biome, Biome[biome].toLowerCase(), playerFaints);
+  newArena(biome: Biome): Arena {
+    this.arena = new Arena(biome, Biome[biome].toLowerCase());
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {
