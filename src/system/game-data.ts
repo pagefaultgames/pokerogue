@@ -1087,6 +1087,8 @@ export class GameData {
 
           globalScene.arena.playerTerasUsed = sessionData.arena.playerTerasUsed;
 
+          globalScene.arena.playerFaints = sessionData.arena.playerFaints;
+
           globalScene.arena.tags = sessionData.arena.tags;
           if (globalScene.arena.tags) {
             for (const tag of globalScene.arena.tags) {
