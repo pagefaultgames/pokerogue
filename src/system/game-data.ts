@@ -143,10 +143,6 @@ export interface SessionSaveData {
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
   mysteryEncounterSaveData: MysteryEncounterSaveData;
-  /**
-   * Counts the amount of pokemon fainted in your party during the current arena encounter.
-   */
-  playerFaints: number;
 }
 
 interface Unlocks {
@@ -971,8 +967,7 @@ export class GameData {
       timestamp: new Date().getTime(),
       challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
-      mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,
-      playerFaints: globalScene.arena.playerFaints
+      mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData
     } as SessionSaveData;
   }
 
@@ -1064,7 +1059,7 @@ export class GameData {
 
           globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
 
-          globalScene.newArena(sessionData.arena.biome, sessionData.playerFaints);
+          globalScene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
