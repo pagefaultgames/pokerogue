@@ -28,6 +28,7 @@ import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 import { Nature } from "#enums/nature";
+import { achvs } from "#app/system/achv";
 
 enum Page {
   PROFILE,
@@ -225,7 +226,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryContainer.add(this.championRibbon);
     this.championRibbon.setVisible(false);
 
-    this.levelText = addTextObject(36, -17, "", TextStyle.SUMMARY_ALT);
+    this.levelText = addTextObject(24, -17, "", TextStyle.SUMMARY_ALT);
     this.levelText.setOrigin(0, 1);
     this.summaryContainer.add(this.levelText);
 
@@ -334,6 +335,7 @@ export default class SummaryUiHandler extends UiHandler {
       console.error(`Failed to play animation for ${spriteKey}`, err);
     }
     this.pokemonSprite.setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()));
+    this.pokemonSprite.setPipelineData("isTerastallized", this.pokemon.isTerastallized);
     this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
     this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
     this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
@@ -412,7 +414,7 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
-    this.levelText.setText(this.pokemon.level.toString());
+    this.levelText.setText(`${i18next.t("pokemonSummary:lv")}${this.pokemon.level.toString()}`);
     this.genderText.setText(getGenderSymbol(this.pokemon.getGender(true)));
     this.genderText.setColor(getGenderColor(this.pokemon.getGender(true)));
     this.genderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
@@ -755,7 +757,7 @@ export default class SummaryUiHandler extends UiHandler {
         trainerText.setOrigin(0, 0);
         profileContainer.add(trainerText);
 
-        const trainerIdText = addTextObject(174, 12, globalScene.gameData.trainerId.toString(), TextStyle.SUMMARY_ALT);
+        const trainerIdText = addTextObject(141, 12, `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`, TextStyle.SUMMARY_ALT);
         trainerIdText.setOrigin(0, 0);
         profileContainer.add(trainerIdText);
 
@@ -782,9 +784,6 @@ export default class SummaryUiHandler extends UiHandler {
         if (types.length > 1) {
           profileContainer.add(getTypeIcon(1, types[1]));
         }
-        if (this.pokemon?.isTerastallized()) {
-          profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
-        }
 
         if (this.pokemon?.getLuck()) {
           const luckLabelText = addTextObject(141, 28, i18next.t("common:luckIndicator"), TextStyle.SUMMARY_ALT);
@@ -795,6 +794,13 @@ export default class SummaryUiHandler extends UiHandler {
           luckText.setOrigin(0, 0);
           luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
           profileContainer.add(luckText);
+        }
+
+        if (globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(this.pokemon)) {
+          const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
+          teraIcon.setName("terrastallize-icon");
+          teraIcon.setFrame(Type[this.pokemon.getTeraType()].toLowerCase());
+          profileContainer.add(teraIcon);
         }
 
         this.abilityContainer = {
