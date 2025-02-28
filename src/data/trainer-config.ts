@@ -607,7 +607,7 @@ export class TrainerConfig {
       const shedinjaCanTera = !this.hasSpecialtyType() || this.specialtyType === Type.BUG; // Better to check one time than 6
       const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i)
         .filter(i => shedinjaCanTera || party[i].species.speciesId !== Species.SHEDINJA); // Shedinja can only Tera on Bug specialty type (or no specialty type)
-      const setPartySlot = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length - 1) : -1; // If we have a tera slot defined, wrap it to party size.
+      const setPartySlot = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length) : -1; // If we have a tera slot defined, wrap it to party size.
       for (let t = 0; t < Math.min(count(), party.length); t++) {
         const randomIndex = partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : Utils.randSeedItem(partyMemberIndexes);
         partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
