@@ -558,7 +558,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   show(args: any[]): boolean {
 
-    this.canUseCandies = false;
+    // Allow the use of candies if we are in one of the whitelisted phases
+    this.canUseCandies = [ "TitlePhase", "SelectStarterPhase", "CommandPhase" ].includes(globalScene.getCurrentPhase()?.constructor.name ?? "");
 
     if (args.length >= 1 && args[0] === "refresh") {
       return false;
