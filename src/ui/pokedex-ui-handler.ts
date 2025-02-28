@@ -986,7 +986,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             this.updateScroll();
             const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
             const targetCol = Math.min(8, proportion < 0.5 ? Math.floor(proportion * 8) : Math.ceil(proportion * 8));
-            this.setCursor(Math.min(targetCol, numberOfStarters));
+            this.setCursor(Math.min(targetCol, numberOfStarters - 1));
             success = true;
           }
           break;
