@@ -250,6 +250,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private availableVariants: number;
   private unlockedVariants: boolean[];
 
+  private canUseCandies: boolean;
+
   constructor() {
     super(Mode.POKEDEX_PAGE);
   }
@@ -555,6 +557,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
+
+    this.canUseCandies = false;
 
     if (args.length >= 1 && args[0] === "refresh") {
       return false;
@@ -1626,7 +1630,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.STATS:
-            if (!isCaught || !isFormCaught) {
+            if (!isCaught || !isFormCaught || !this.canUseCandies) {
               error = true;
             } else {
               const ui = this.getUi();
@@ -1888,7 +1892,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     if (this.isCaught()) {
       if (isFormCaught) {
-        this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
+        if (this.canUseCandies) {
+          this.updateButtonIcon(SettingKeyboard.Button_Stats, gamepadType, this.candyUpgradeIconElement, this.candyUpgradeLabel);
+        }
         if (this.canCycleShiny) {
           this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
         }
