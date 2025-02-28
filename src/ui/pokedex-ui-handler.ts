@@ -1577,6 +1577,37 @@ export default class PokedexUiHandler extends MessageUiHandler {
           container.icon.setTint(0);
         }
 
+        if (data.eggMove1) {
+          container.eggMove1Icon.setVisible(true);
+        } else {
+          container.eggMove1Icon.setVisible(false);
+        }
+        if (data.eggMove2) {
+          container.eggMove2Icon.setVisible(true);
+        } else {
+          container.eggMove2Icon.setVisible(false);
+        }
+        if (data.tmMove1) {
+          container.tmMove1Icon.setVisible(true);
+        } else {
+          container.tmMove1Icon.setVisible(false);
+        }
+        if (data.tmMove2) {
+          container.tmMove2Icon.setVisible(true);
+        } else {
+          container.tmMove2Icon.setVisible(false);
+        }
+        if (data.passive1) {
+          container.passive1Icon.setVisible(true);
+        } else {
+          container.passive1Icon.setVisible(false);
+        }
+        if (data.passive2) {
+          container.passive2Icon.setVisible(true);
+        } else {
+          container.passive2Icon.setVisible(false);
+        }
+
         if (this.showDecorations) {
 
           if (this.pokerusSpecies.includes(data.species)) {
