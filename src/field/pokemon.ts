@@ -3168,15 +3168,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
    * @returns integer of damage done
    */
-  damageAndUpdate(damage: number, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
-    let isIndirectDamage: boolean = true;
-    if (result !== undefined) {
-      if (result === HitResult.INDIRECT || result === HitResult.INDIRECT_KO) {
-        isIndirectDamage = true;
-      } else {
-        isIndirectDamage = false;
-      }
-    }
+  damageAndUpdate(damage: number, result: DamageResult = HitResult.EFFECTIVE, critical: boolean = false, ignoreSegments: boolean = false, ignoreFaintPhase: boolean = false, source?: Pokemon): number {
+    const isIndirectDamage = [ HitResult.INDIRECT, HitResult.INDIRECT_KO ].includes(result);
     const damagePhase = new DamageAnimPhase(this.getBattlerIndex(), damage, result as DamageResult, critical);
     globalScene.unshiftPhase(damagePhase);
     if (this.switchOutStatus && source) {
