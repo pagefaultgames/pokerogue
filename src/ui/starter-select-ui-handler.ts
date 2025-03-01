@@ -1300,6 +1300,22 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
   }
 
+  checkValidForChallenge(species: PokemonSpecies, soft: boolean) {
+    const isValidForChallenge = new BooleanHolder(true);
+    Challenge.applyChallenges(
+      globalScene.gameMode,
+      Challenge.ChallengeType.STARTER_CHOICE,
+      species,
+      isValidForChallenge,
+      globalScene.gameData.getSpeciesDexAttrProps(
+        species,
+        this.getCurrentDexProps(species.speciesId)
+      ),
+      this.isPartyValid()
+    );
+    return isValidForChallenge.value;
+  }
+
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
