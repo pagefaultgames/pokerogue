@@ -784,6 +784,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const formIndex = otherFormIndex !== undefined ? otherFormIndex : this.formIndex;
     const caughtAttr = this.isCaught(species);
 
+    if (caughtAttr && (!species.forms.length || species.forms.length === 1)) {
+      return true;
+    }
+
     const isFormCaught = (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
     return isFormCaught;
   }
