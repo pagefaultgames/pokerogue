@@ -2068,20 +2068,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   }
                 } while (newVariant !== props.variant);
                 starterAttributes.variant = newVariant; // store the selected variant
-                // If going to a higher variant, display that
-                if (newVariant > props.variant) {
+                if ((this.speciesStarterDexEntry!.caughtAttr & DexAttr.NON_SHINY) && (newVariant <= props.variant)) {
+                  // If we have run out of variants, go back to non shiny
+                  this.setSpeciesDetails(this.lastSpecies, { shiny: false, variant: 0 });
+                  this.pokemonShinyIcon.setVisible(false);
+                  success = true;
+                  starterAttributes.shiny = false;
+                } else {
+                  // If going to a higher variant, or only shiny forms are caught, go to next variant
                   this.setSpeciesDetails(this.lastSpecies, { variant: newVariant as Variant });
                   // Cycle tint based on current sprite tint
                   const tint = getVariantTint(newVariant as Variant);
                   this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant));
                   this.pokemonShinyIcon.setTint(tint);
                   success = true;
-                // If we have run out of variants, go back to non shiny
-                } else {
-                  this.setSpeciesDetails(this.lastSpecies, { shiny: false, variant: 0 });
-                  this.pokemonShinyIcon.setVisible(false);
-                  success = true;
-                  starterAttributes.shiny = false;
                 }
               }
             }
@@ -3328,7 +3328,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
         const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
 
-        this.canCycleShiny = isNonShinyCaught && isShinyCaught;
+        const caughtVariants = [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => caughtAttr & v);
+        this.canCycleShiny = (isNonShinyCaught && isShinyCaught) || (isShinyCaught && caughtVariants.length > 1);
 
         const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
         const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);

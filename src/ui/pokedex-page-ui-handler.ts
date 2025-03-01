@@ -1580,15 +1580,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                 starterAttributes.variant = newVariant; // store the selected variant
                 this.savedStarterAttributes.variant = starterAttributes.variant;
-                if (newVariant > props.variant) {
-                  this.setSpeciesDetails(this.species, { variant: newVariant as Variant });
-                  success = true;
-                } else {
+                if ((this.isCaught() & DexAttr.NON_SHINY) && (newVariant <= props.variant)) {
                   this.setSpeciesDetails(this.species, { shiny: false, variant: 0 });
                   success = true;
-
                   starterAttributes.shiny = false;
                   this.savedStarterAttributes.shiny = starterAttributes.shiny;
+                } else {
+                  this.setSpeciesDetails(this.species, { variant: newVariant as Variant });
+                  success = true;
                 }
               }
             }
@@ -2201,7 +2200,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
       const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
 
-      this.canCycleShiny = isNonShinyCaught && isShinyCaught;
+      const caughtVariants = [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => caughtAttr & v);
+      this.canCycleShiny = (isNonShinyCaught && isShinyCaught) || (isShinyCaught && caughtVariants.length > 1);
 
       const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
       const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
