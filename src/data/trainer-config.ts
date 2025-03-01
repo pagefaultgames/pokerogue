@@ -607,7 +607,7 @@ export class TrainerConfig {
       const shedinjaCanTera = !this.hasSpecialtyType() || this.specialtyType === Type.BUG; // Better to check one time than 6
       const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i)
         .filter(i => shedinjaCanTera || party[i].species.speciesId !== Species.SHEDINJA); // Shedinja can only Tera on Bug specialty type (or no specialty type)
-      const setPartySlot = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length - 1) : -1; // If we have a tera slot defined, wrap it to party size.
+      const setPartySlot = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length) : -1; // If we have a tera slot defined, wrap it to party size.
       for (let t = 0; t < Math.min(count(), party.length); t++) {
         const randomIndex = partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : Utils.randSeedItem(partyMemberIndexes);
         partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
@@ -2775,11 +2775,6 @@ export const trainerConfigs: TrainerConfigs = {
       p.formIndex = 2;
       p.generateName();
       p.pokeball = PokeballType.ULTRA_BALL;
-    }))
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.ZAMAZENTA ], TrainerSlot.TRAINER, true, p => {
-      p.setBoss(true, 2);
-      p.generateAndPopulateMoveset();
-      p.pokeball = PokeballType.MASTER_BALL;
     }))
     .setInstantTera(0), // Tera Fairy Sylveon
   [TrainerType.BUCK]: new TrainerConfig(++t).setName("Buck").initForStatTrainer(true)
