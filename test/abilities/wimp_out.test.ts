@@ -259,7 +259,7 @@ describe("Abilities - Wimp Out", () => {
 
       const wimpod = game.scene.getPlayerPokemon()!;
 
-      wimpod.damageAndUpdate(toDmgValue(wimpod.getMaxHp() * 0.4));
+      wimpod.damageAndUpdate(toDmgValue(wimpod.getMaxHp() * 0.4), {});
 
       game.move.select(Moves.DOUBLE_EDGE);
       game.doSelectPartyPokemon(1);

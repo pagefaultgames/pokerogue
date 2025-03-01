@@ -1036,7 +1036,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): boolean {
     if (!simulated && move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)
       && !attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !move.hitsSubstitute(attacker, pokemon)) {
-      attacker.damageAndUpdate(Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.INDIRECT);
+      attacker.damageAndUpdate(Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), { result: HitResult.INDIRECT });
       attacker.turnData.damageTaken += Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
     }
@@ -3738,7 +3738,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
     if (!simulated) {
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       globalScene.queueMessage(i18next.t("abilityTriggers:postWeatherLapseDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }));
-      pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.INDIRECT);
+      pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / (16 / this.damageFactor)), { result: HitResult.INDIRECT });
     }
 
     return true;
@@ -4050,7 +4050,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
     for (const opp of pokemon.getOpponents()) {
       if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus) {
         if (!simulated) {
-          opp.damageAndUpdate(Utils.toDmgValue(opp.getMaxHp() / 8), HitResult.INDIRECT);
+          opp.damageAndUpdate(Utils.toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
           globalScene.queueMessage(i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }));
         }
         hadEffect = true;
@@ -4532,7 +4532,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
         return false;
       }
       if (!simulated) {
-        attacker.damageAndUpdate(Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.INDIRECT);
+        attacker.damageAndUpdate(Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), { result: HitResult.INDIRECT });
         attacker.turnData.damageTaken += Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio));
       }
       return true;
@@ -4557,7 +4557,7 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
     if (move !== undefined && attacker !== undefined && !simulated) { //If the mon didn't die to indirect damage
       const damage = pokemon.turnData.attacksReceived[0].damage;
-      attacker.damageAndUpdate((damage), HitResult.INDIRECT);
+      attacker.damageAndUpdate((damage), { result: HitResult.INDIRECT });
       attacker.turnData.damageTaken += damage;
     }
     return true;
@@ -4956,7 +4956,7 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
         (args[0] as Utils.NumberHolder).value = this.multiplier;
         pokemon.removeTag(this.tagType);
         if (this.recoilDamageFunc) {
-          pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.INDIRECT, false, true, true);
+          pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), { result: HitResult.INDIRECT, ignoreSegments: true, ignoreFaintPhase: true });
         }
       }
       return true;
