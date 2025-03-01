@@ -602,6 +602,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.battleForms = [];
 
     const species = this.species;
+
+    let formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
+    this.isFormGender = formKey === "male" || formKey === "female";
+    if (this.isFormGender && ((this.savedStarterAttributes.female === true && formKey === "male") || (this.savedStarterAttributes.female === false && formKey === "female"))) {
+      this.formIndex = (this.formIndex + 1) % 2;
+      formKey = this.species.forms[this.formIndex].formKey;
+    }
+
     const formIndex = this.formIndex ?? 0;
 
     this.starterId = this.getStarterSpeciesId(this.species.speciesId);
@@ -635,11 +643,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.eggMoves = speciesEggMoves[this.starterId] ?? [];
     this.hasEggMoves = Array.from({ length: 4 }, (_, em) => (globalScene.gameData.starterData[this.starterId].eggMoves & (1 << em)) !== 0);
 
-    const formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
     this.tmMoves = speciesTmMoves[species.speciesId]?.filter(m => Array.isArray(m) ? (m[0] === formKey ? true : false ) : true)
       .map(m => Array.isArray(m) ? m[1] : m).sort((a, b) => allMoves[a].name > allMoves[b].name ? 1 : -1) ?? [];
-
-    this.isFormGender = formKey === "male" || formKey === "female";
 
     const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId) ? species.speciesId :
       starterPassiveAbilities.hasOwnProperty(this.starterId) ? this.starterId : pokemonPrevolutions[this.starterId];
