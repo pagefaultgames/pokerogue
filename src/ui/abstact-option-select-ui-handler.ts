@@ -147,7 +147,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         itemIcon.setScale(3 * this.scale);
         this.optionSelectIcons.push(itemIcon);
 
-        this.optionSelectContainer.add(itemIcon);
+        this.optionSelectTextContainer.add(itemIcon);
 
         itemIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
@@ -156,7 +156,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           itemOverlayIcon.setScale(3 * this.scale);
           this.optionSelectIcons.push(itemOverlayIcon);
 
-          this.optionSelectContainer.add(itemOverlayIcon);
+          this.optionSelectTextContainer.add(itemOverlayIcon);
 
           itemOverlayIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
