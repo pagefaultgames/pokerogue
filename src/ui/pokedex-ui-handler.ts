@@ -986,7 +986,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             this.updateScroll();
             const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
             const targetCol = Math.min(8, proportion < 0.5 ? Math.floor(proportion * 8) : Math.ceil(proportion * 8));
-            this.setCursor(Math.min(targetCol, numberOfStarters));
+            this.setCursor(Math.min(targetCol, numberOfStarters - 1));
             success = true;
           }
           break;
@@ -1108,7 +1108,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             }
             break;
           case Button.DOWN:
-            if (currentRow < numOfRows - 1) { // not last row
+            if ((currentRow < numOfRows - 1) && (this.cursor + 9 < this.filteredPokemonData.length)) { // not last row
               if (currentRow - this.scrollCursor === 8) { // last row of visible pokemon
                 this.scrollCursor++;
                 this.updateScroll();
