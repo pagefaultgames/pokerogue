@@ -193,43 +193,43 @@ const seasonalSplashMessages: Season[] = [
     start: "10-15",
     end: "10-31",
     messages: [
-    "halloween.pumpkabooAbout",
-    "halloween.mayContainSpiders", 
-    "halloween.spookyScarySkeledirge", 
-    "halloween.gourgeistUsedTrickOrTreat",
-    "halloween.letsSnuggleForever",
-    "halloween.boo"
-],
+      "halloween.pumpkabooAbout",
+      "halloween.mayContainSpiders", 
+      "halloween.spookyScarySkeledirge", 
+      "halloween.gourgeistUsedTrickOrTreat",
+      "halloween.letsSnuggleForever",
+      "halloween.boo"
+    ],
   },
   {
     name: "Winter Holiday",
     start: "12-01",
     end: "12-31",
     messages: [
-    "winterHoliday.happyHolidays",
-    "winterHoliday.unaffilicatedWithDelibirdServices",
-    "winterHoliday.delibirdSeason",
-    "winterHoliday.diamondsFromTheSky",
-    "winterHoliday.holidayStylePikachuNotIncluded",
-    "winterHoliday.haveAnIceDay",
-    "winterHoliday.spinTheClaydol",
-    "winterHoliday.beGoodForGoodnessSake",
-    "winterHoliday.moomooMilkAndLavaCookies",
-    "winterHoliday.iNeedAYacheBerry",
-    "winterHoliday.getJolly",
-    "winterHoliday.deckTheHalls",
-    "winterHoliday.saveScummingGetsYouOnTheNaughtyList",
-    "winterHoliday.stockingsFullOfRolycoly"
-],
+      "winterHoliday.happyHolidays",
+      "winterHoliday.unaffilicatedWithDelibirdServices",
+      "winterHoliday.delibirdSeason",
+      "winterHoliday.diamondsFromTheSky",
+      "winterHoliday.holidayStylePikachuNotIncluded",
+      "winterHoliday.haveAnIceDay",
+      "winterHoliday.spinTheClaydol",
+      "winterHoliday.beGoodForGoodnessSake",
+      "winterHoliday.moomooMilkAndLavaCookies",
+      "winterHoliday.iNeedAYacheBerry",
+      "winterHoliday.getJolly",
+      "winterHoliday.deckTheHalls",
+      "winterHoliday.saveScummingGetsYouOnTheNaughtyList",
+      "winterHoliday.stockingsFullOfRolycoly"
+    ],
   },
   {
     name: "New Year's",
     start: "01-01",
     end: "01-15",
     messages: [
-    "newYears.happyNewYear",
-    "newYears.andAHappyNewYear"
-],
+      "newYears.happyNewYear",
+      "newYears.andAHappyNewYear"
+    ],
   },
 ];
 
