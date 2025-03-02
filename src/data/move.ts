@@ -5236,7 +5236,7 @@ export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const combinedPledgeMove = user.turnData.combiningPledge;
+    const combinedPledgeMove = user?.turnData?.combiningPledge;
     if (!combinedPledgeMove) {
       return false;
     }
