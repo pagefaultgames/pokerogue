@@ -17,3 +17,6 @@
 *.wav @pagefaultgames/composer-team
 *.ogg @pagefaultgames/composer-team
 /public/audio @pagefaultgames/composer-team
+
+# Balance Files; contain actual code logic and must also be owned by dev team
+/src/data/balance @pagefaultgames/balance-team @pagefaultgames/junior-dev-team
