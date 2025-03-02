@@ -1301,16 +1301,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   checkValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
-    const isValidForChallenge = new BooleanHolder(true);
-    Challenge.applyChallenges(
-      globalScene.gameMode,
-      Challenge.ChallengeType.STARTER_CHOICE,
-      species,
-      isValidForChallenge,
-      props
-    );
-    const allValidities: boolean[] = [];
-    if (soft) {
+    if (!soft) {
+      const isValidForChallenge = new BooleanHolder(true);
+      Challenge.applyChallenges(
+        globalScene.gameMode,
+        Challenge.ChallengeType.STARTER_CHOICE,
+        species,
+        isValidForChallenge,
+        props
+      );
+      return isValidForChallenge.value;
+    } else {
+      // We check the validity of every evolution and battle form separately,
+      // and require that at least one is valid
+      const allValidities: boolean[] = [];
       const speciesToCheck = [ species.speciesId ];
       while (speciesToCheck.length) {
         const checking = speciesToCheck.pop();
@@ -1349,8 +1353,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           });
         }
       }
+      return allValidities.filter(v => v).length > 0;
     }
-    return isValidForChallenge.value || (soft && allValidities.filter(v => v).length > 0);
   }
 
   processInput(button: Button): boolean {
