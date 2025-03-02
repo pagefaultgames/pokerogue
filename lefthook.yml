@@ -3,7 +3,7 @@ pre-commit:
   commands:
     eslint:
       glob: "*.{js,jsx,ts,tsx}"
-      run: npx eslint --fix {staged_files}
+      run: npx @biomejs/biome lint --write {staged_files}
       stage_fixed: true
       skip:
         - merge
@@ -13,7 +13,7 @@ pre-push:
   commands:
     eslint:
       glob: "*.{js,ts,jsx,tsx}"
-      run: npx eslint --fix {push_files}
+      run: npx @biomejs/biome lint --write {push_files}
       
 post-merge:
   commands:
