@@ -26,6 +26,7 @@
 		"update-locales:remote": "git submodule update --progress --init --recursive --force --remote"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
 		"@eslint/js": "^9.3.0",
 		"@hpcc-js/wasm": "^2.18.0",
 		"@stylistic/eslint-plugin-ts": "^2.6.0-beta.0",

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "beta"
+  },
+  "formatter": {
+	"enabled": false
+  },
+  "files": { "ignoreUnknown": false, "ignore": [] },
+  "organizeImports": { "enabled": false },
+  "linter": { "enabled": true, "rules": { "recommended": false } },
+  "javascript": { "formatter": { "quoteStyle": "double" } },
+  "overrides": [
+    {
+      "ignore": [
+        "dist/*",
+        "build/*",
+        "coverage/*",
+        "public/*",
+        ".github/*",
+        "node_modules/*",
+        ".vscode/*"
+      ],
+      "include": ["src/**/*.{ts,tsx,js,jsx}", "test/**/*.{ts,tsx,js,jsx}"],
+      "javascript": { "globals": [] },
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUndeclaredVariables": "off",
+            "noUnusedVariables": "error"
+          },
+          "style": {
+            "noVar": "error",
+            "useBlockStatements": "error",
+            "useConst": "error",
+            "useImportType": "error"
+          },
+          "suspicious": { "noDoubleEquals": "error" },
+		  "complexity": { "noExcessiveCognitiveComplexity": "warn"}
+        }
+      }
+    },
+    {
+      "include": ["test/**/*.test.ts"],
+      "javascript": { "globals": [] },
+      "linter": { "rules": {} }
+    }
+  ]
+}
