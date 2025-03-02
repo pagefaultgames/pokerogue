@@ -140,6 +140,6 @@ describe("Moves - Focus Punch", () => {
     await game.phaseInterceptor.to("MessagePhase", false);
     const consoleSpy = vi.spyOn(console, "log");
     await game.phaseInterceptor.to("MoveEndPhase", true);
-    expect(consoleSpy).nthCalledWith(1, i18next.t("moveTriggers:lostFocus"));
+    expect(consoleSpy).nthCalledWith(1, i18next.t("moveTriggers:lostFocus", { pokemonName: "Charizard" }));
   });
 });

@@ -602,6 +602,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.battleForms = [];
 
     const species = this.species;
+
+    let formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
+    this.isFormGender = formKey === "male" || formKey === "female";
+    if (this.isFormGender && ((this.savedStarterAttributes.female === true && formKey === "male") || (this.savedStarterAttributes.female === false && formKey === "female"))) {
+      this.formIndex = (this.formIndex + 1) % 2;
+      formKey = this.species.forms[this.formIndex].formKey;
+    }
+
     const formIndex = this.formIndex ?? 0;
 
     this.starterId = this.getStarterSpeciesId(this.species.speciesId);
@@ -635,11 +643,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.eggMoves = speciesEggMoves[this.starterId] ?? [];
     this.hasEggMoves = Array.from({ length: 4 }, (_, em) => (globalScene.gameData.starterData[this.starterId].eggMoves & (1 << em)) !== 0);
 
-    const formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
     this.tmMoves = speciesTmMoves[species.speciesId]?.filter(m => Array.isArray(m) ? (m[0] === formKey ? true : false ) : true)
       .map(m => Array.isArray(m) ? m[1] : m).sort((a, b) => allMoves[a].name > allMoves[b].name ? 1 : -1) ?? [];
-
-    this.isFormGender = formKey === "male" || formKey === "female";
 
     const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId) ? species.speciesId :
       starterPassiveAbilities.hasOwnProperty(this.starterId) ? this.starterId : pokemonPrevolutions[this.starterId];
@@ -783,6 +788,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const species = otherSpecies ? otherSpecies : this.species;
     const formIndex = otherFormIndex !== undefined ? otherFormIndex : this.formIndex;
     const caughtAttr = this.isCaught(species);
+
+    if (caughtAttr && (!species.forms.length || species.forms.length === 1)) {
+      return true;
+    }
 
     const isFormCaught = (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
     return isFormCaught;
@@ -1575,15 +1584,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
                 starterAttributes.variant = newVariant; // store the selected variant
                 this.savedStarterAttributes.variant = starterAttributes.variant;
-                if (newVariant > props.variant) {
-                  this.setSpeciesDetails(this.species, { variant: newVariant as Variant });
-                  success = true;
-                } else {
+                if ((this.isCaught() & DexAttr.NON_SHINY) && (newVariant <= props.variant)) {
                   this.setSpeciesDetails(this.species, { shiny: false, variant: 0 });
                   success = true;
-
                   starterAttributes.shiny = false;
                   this.savedStarterAttributes.shiny = starterAttributes.shiny;
+                } else {
+                  this.setSpeciesDetails(this.species, { variant: newVariant as Variant });
+                  success = true;
                 }
               }
             }
@@ -2196,7 +2204,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
       const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
 
-      this.canCycleShiny = isNonShinyCaught && isShinyCaught;
+      const caughtVariants = [ DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3 ].filter(v => caughtAttr & v);
+      this.canCycleShiny = (isNonShinyCaught && isShinyCaught) || (isShinyCaught && caughtVariants.length > 1);
 
       const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
       const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);

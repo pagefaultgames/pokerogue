@@ -1645,11 +1645,19 @@ export class GameData {
           } else if (formIndex === 3) {
             dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(1);
           }
-        }
-        const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId) ? pokemonFormChanges[species.speciesId] : [];
-        const toCurrentFormChanges = allFormChanges.filter(f => (f.formKey === formKey));
-        if (toCurrentFormChanges.length > 0) {
-          dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(0);
+        } else if (pokemon.species.speciesId === Species.ZYGARDE) {
+          if (formIndex === 4) {
+            dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(2);
+          } else if (formIndex === 5) {
+            dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(3);
+          }
+        } else {
+          const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId) ? pokemonFormChanges[species.speciesId] : [];
+          const toCurrentFormChanges = allFormChanges.filter(f => (f.formKey === formKey));
+          if (toCurrentFormChanges.length > 0) {
+            // Needs to do this or Castform can unlock the wrong form, etc.
+            dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(0);
+          }
         }
       }
 
