@@ -4573,14 +4573,15 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
 
 /**
  * Redirects a move to the pokemon with this ability if it meets the conditions
- *
- * @param pokemon - The Pokemon with the redirection ability
- * @param args - The args passed to the `AbAttr`:
-   * - `[0]` - The id of the {@linkcode Move} used
-   * - `[1]` - The target's battler index (before redirection)
-   * - `[2]` - The Pokemon that used the move being redirected
  */
 export class RedirectMoveAbAttr extends AbAttr {
+  /**
+   * @param pokemon - The Pokemon with the redirection ability
+   * @param args - The args passed to the `AbAttr`:
+   *  - `[0]` - The id of the {@linkcode Move} used
+   *  - `[1]` - The target's battler index (before redirection)
+   *  - `[2]` - The Pokemon that used the move being redirected
+   */
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.canRedirect(args[0] as Moves, args[2] as Pokemon)) {
       const target = args[1] as Utils.NumberHolder;
