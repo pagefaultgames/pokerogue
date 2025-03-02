@@ -94,4 +94,22 @@ describe("Abilities - Lightningrod", () => {
 
     expect(enemy1.isFullHp()).toBe(false);
   });
+
+  it("should redirect moves changed to electric type via ability", async () => {
+    game.override.ability(Abilities.GALVANIZE)
+      .moveset(Moves.TACKLE);
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+
+    const enemy1 = game.scene.getEnemyField()[0];
+    const enemy2 = game.scene.getEnemyField()[1];
+
+    enemy2.summonData.ability = Abilities.LIGHTNING_ROD;
+
+    game.move.select(Moves.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(enemy1.isFullHp()).toBe(true);
+    expect(enemy2.getStatStage(Stat.SPATK)).toBe(1);
+  });
 });
