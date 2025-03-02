@@ -36,7 +36,11 @@
 				"useBlockStatements": "error",
 				"useConst": "error",
 				"useImportType": "error",
-				"useNamingConvention": "warn"
+				"useNamingConvention": {
+					"options": {},
+					"fix": "none",
+					"level": "info"
+				}
 			},
 			"suspicious": { "noDoubleEquals": "error" },
 			"complexity": {
