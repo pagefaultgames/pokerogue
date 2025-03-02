@@ -1300,6 +1300,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
   }
 
+  /**
+   * Apply all challenges to the given species (and form) to check its validity.
+   * @param species {@link PokemonSpecies} The species to check the validity of.
+   * @param dexAttr {@link DexAttrProps} The dex attributes of the species, including its form index.
+   * @param soft {@link boolean} If true, allow it if it could become valid through evolution or form change.
+   * @returns True if the species is considered valid.
+   */
   checkValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
     if (!soft) {
       const isValidForChallenge = new BooleanHolder(true);
