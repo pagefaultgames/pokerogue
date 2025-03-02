@@ -997,8 +997,8 @@ export default class BattleScene extends SceneBase {
         pokemon.variant = pokemon.getVariant();
         pokemon.name = pokemon.getNameToRender();
         if (pokemon.isFusion()) {
-          pokemon.fusionVariant = pokemon.battleData?.illusion.basePokemon!.fusionVariant ?? pokemon.fusionVariant;
-          pokemon.fusionShiny = pokemon.battleData?.illusion.basePokemon!.fusionShiny ?? pokemon.fusionShiny;
+          pokemon.fusionVariant = pokemon.battleData?.illusion.basePokemon?.fusionVariant ?? pokemon.fusionVariant;
+          pokemon.fusionShiny = pokemon.battleData?.illusion.basePokemon?.fusionShiny ?? pokemon.fusionShiny;
         }
       });
     }
