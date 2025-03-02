@@ -54,7 +54,7 @@ const SEASONAL_WEIGHT_MULTIPLIER = 10;
 
 const commonSplashMessages = [
   ...Array(BATTLES_WON_WEIGHT_MULTIPLIER).fill("battlesWon"),
-  ...Array(POKEMON_NAMES_WEIGHT_MULTIPLIER).fill("pokemon"),
+  ...Array(POKEMON_NAMES_WEIGHT_MULTIPLIER).fill("underratedPokemon"),
   "joinTheDiscord",
   "infiniteLevels",
   "everythingIsStackable",
@@ -81,7 +81,7 @@ const commonSplashMessages = [
   "mostlyConsistentSeeds",
   "achievementPointsDontDoAnything",
   "nothingBeatsAJellyFilledDonut",
-  "dontTalkAboutTheTinkatonIncident",
+  "dontTalkAboutThePokemonIncident",
   "alsoTryPokengine",
   "alsoTryEmeraldRogue",
   "alsoTryRadicalRed",
@@ -183,11 +183,78 @@ const commonSplashMessages = [
   "porygonDidNothingWrong",
   "critMattered",
   "pickupNotRequired",
+  "stayHydrated",
+  "alsoTryCobblemon",
+  "alsoTryPokeDoku",
+  "mySleepStyleIsDoesnt",
+  "makeYourOwnWorldChampDifference",
+  "yoChampInTheMaking",
+  "notLiableForDecisionAnxiety",
+  "theAirIsTastyHere",
+  "continue",
+  "startANewRunToday",
+  "neverGiveUp",
+  "theresAlwaysNextTime",
+  "oneTwoThreeAndPoof",
+  "yourPokemonOnlyGoToLevelOneHundred",
+  "theBattlesWillBeLegendary",
+  "levelCurveBetterThanJohto",
+  "alsoTryShowering",
+  "wellStillBeHere",
+  "weHopeToSeeYouAgain",
+  "aHealthyTeamCanMeanGreaterRewards",
+  "aWildPokemonAppeared",
+  "isThisThingOn"
 ];
 
 //#region Seasonal Messages
 
 const seasonalSplashMessages: Season[] = [
+  {
+    name: "New Year's",
+    start: "01-01",
+    end: "01-15",
+    messages: [
+      "newYears.happyNewYear",
+      "newYears.andAHappyNewYear"
+    ],
+  },
+  {
+    name: "Valentines",
+    start: "2-7",
+    end: "2-21",
+    messages: [
+      "valentines.fullOfLove",
+      "valentines.applinForYou",
+      "valentines.thePowerOfLoveIsThreeThirtyBST",
+      "valentines.haveAHeartScale",
+      "valentines.i<3You"
+    ],
+  },
+  {
+    name: "April Fools",
+    start: "04-01",
+    end: "04-02",
+    messages: [
+      "aprilFools.gotcha",
+      "aprilFools.alsoTryPokerogueTwo",
+      "aprilFools.nowWithSameScumCountermeasures",
+      "aprilFools.neverGonnaGiveYouGoodRolls",
+      "aprilFools.youBumblingBuffoon",
+      "aprilFools.doubleShinyOddsForTrainersOnly",
+      "aprilFools.nowWithZMoves",
+      "aprilFools.newLightType",
+      "aprilFools.removedMegas",
+      "aprilFools.nerfedYourFavorites",
+      "aprilFools.removedPokemon",
+      "aprilFools.grrr",
+      "aprilFools.enabledEternatusPassiveGoodLuck",
+      "aprilFools.theDarkestDaySoundsLikeAFutureProblem",
+      "aprilFools.tmShopWhen",
+      "aprilFools.whoIsFinn",
+      "aprilFools.helloKyleAmber"
+    ],
+  },
   {
     name: "Halloween",
     start: "10-15",
@@ -211,24 +278,17 @@ const seasonalSplashMessages: Season[] = [
       "winterHoliday.delibirdSeason",
       "winterHoliday.diamondsFromTheSky",
       "winterHoliday.holidayStylePikachuNotIncluded",
+      "winterHoliday.delibirdDirectlyToYourHouse",
       "winterHoliday.haveAnIceDay",
       "winterHoliday.spinTheClaydol",
       "winterHoliday.beGoodForGoodnessSake",
       "winterHoliday.moomooMilkAndLavaCookies",
       "winterHoliday.iNeedAYacheBerry",
       "winterHoliday.getJolly",
+      "winterHoliday.tisTheSeasonToBeSpeSpa",
       "winterHoliday.deckTheHalls",
       "winterHoliday.saveScummingGetsYouOnTheNaughtyList",
-      "winterHoliday.stockingsFullOfRolycoly"
-    ],
-  },
-  {
-    name: "New Year's",
-    start: "01-01",
-    end: "01-15",
-    messages: [
-      "newYears.happyNewYear",
-      "newYears.andAHappyNewYear"
+      "winterHoliday.badTrainersGetRolycoly"
     ],
   },
 ];
