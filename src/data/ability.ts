@@ -5798,12 +5798,12 @@ export function applyPostSummonAbAttrs(
 
 export function applyPreSummonAbAttrs(
   attrType: Constructor<PreSummonAbAttr>,
-  pokemon: Pokemon, 
+  pokemon: Pokemon,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PreSummonAbAttr>(
-    attrType, 
-    pokemon, 
+    attrType,
+    pokemon,
     (attr, passive) => attr.applyPreSummon(pokemon, passive, args), args
   );
 }
