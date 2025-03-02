@@ -455,7 +455,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         fusionGender: lastPokemon.fusionGender
       };
 
-      console.log("GENERATE ILLUSION  ", this.battleData.illusion.basePokemon!.name)
+      console.log("GENERATE ILLUSION  ", this.battleData.illusion.basePokemon!.name);
 
       this.name = lastPokemon.name;
       this.nickname = lastPokemon.nickname;
@@ -509,7 +509,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.shiny) {
       this.initShinySparkle();
     }
-    if(!toSave){
+    if (!toSave) {
       this.loadAssets(false).then(() => this.playAnim());
       this.updateInfo(true);
     }
@@ -3966,12 +3966,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetBattleData(): void {
-    console.log("RESETBATTLEDATA : ", this.getNameToRender(false))
+    console.log("RESETBATTLEDATA : ", this.getNameToRender(false));
     const illusionActive: boolean = this.battleData?.illusion.active;
     this.breakIllusion();
     this.battleData = new PokemonBattleData();
-    if(illusionActive){
-      this.generateIllusion()
+    if (illusionActive) {
+      this.generateIllusion();
     }
   }
 

@@ -11,7 +11,7 @@ import { TrainerSlot } from "#app/data/trainer-config";
 import { getRandomWeatherType } from "#app/data/weather";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
-import { FieldPosition, PlayerPokemon } from "#app/field/pokemon";
+import { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
@@ -203,7 +203,7 @@ export class EncounterPhase extends BattlePhase {
         }
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
-            for(const pokemon of globalScene.getPlayerField()){
+            for (const pokemon of globalScene.getPlayerField()) {
               applyPreSummonAbAttrs(PreSummonAbAttr, pokemon, []);
             }
             applyPreSummonAbAttrs(PreSummonAbAttr, enemyPokemon, []);

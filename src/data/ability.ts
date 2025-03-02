@@ -4778,7 +4778,7 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
    * @returns {boolean} - Whether the illusion was applied.
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated:boolean, args: any[]): boolean {
-    console.log("POSTBATTLE")
+    console.log("POSTBATTLE");
     pokemon.breakIllusion();
     pokemon.battleData.illusion.available = true;
     return true;
