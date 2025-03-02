@@ -4,7 +4,6 @@ import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils";
 import type { BattlerIndex } from "../battle";
-import type { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
 import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils";
