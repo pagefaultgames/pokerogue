@@ -3204,6 +3204,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return maxForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!));
   }
 
+  isMega(): boolean {
+    const megaForms = [ SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.PRIMAL ] as string[];
+    return megaForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!));
+  }
+
   canAddTag(tagType: BattlerTagType): boolean {
     if (this.getTag(tagType)) {
       return false;
