@@ -221,8 +221,8 @@ const seasonalSplashMessages: Season[] = [
   },
   {
     name: "Valentines",
-    start: "2-7",
-    end: "2-21",
+    start: "02-07",
+    end: "02-21",
     messages: [
       "valentines.fullOfLove",
       "valentines.applinForYou",
