@@ -94,4 +94,22 @@ describe("Abilities - Storm Drain", () => {
 
     expect(enemy1.isFullHp()).toBe(false);
   });
+
+  it("should redirect moves changed to water type via ability", async () => {
+    game.override.ability(Abilities.LIQUID_VOICE)
+      .moveset(Moves.PSYCHIC_NOISE);
+    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+
+    const enemy1 = game.scene.getEnemyField()[0];
+    const enemy2 = game.scene.getEnemyField()[1];
+
+    enemy2.summonData.ability = Abilities.STORM_DRAIN;
+
+    game.move.select(Moves.PSYCHIC_NOISE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(enemy1.isFullHp()).toBe(true);
+    expect(enemy2.getStatStage(Stat.SPATK)).toBe(1);
+  });
 });
