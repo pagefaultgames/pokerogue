@@ -35,7 +35,6 @@ jobs:
       
       - name: eslint  # Step to run linters
         run: npm run eslint-ci
-        
 
-      - name: biome-lint  # Step to run linters
+      - name: Fix with Biome  # Step to run linters and auto-format the code
         run: npm run biome-ci
