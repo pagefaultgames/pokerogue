@@ -4778,24 +4778,9 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
    * @returns {boolean} - Whether the illusion was applied.
    */
   applyPostBattle(pokemon: Pokemon, passive: boolean, simulated:boolean, args: any[]): boolean {
+    console.log("POSTBATTLE")
     pokemon.breakIllusion();
     pokemon.battleData.illusion.available = true;
-    return true;
-  }
-}
-
-export class IllusionDisableAbAttr extends PostSummonAbAttr {
-  /**
-   * Illusion will be disabled if the pokemon is summoned with an illusion.
-   * So the pokemon can use 1 illusion per battle.
-   *
-   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - N/A
-   * @param {...any} args - N/A
-   * @returns {boolean}
-   */
-  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    pokemon.battleData.illusion.available = false;
     return true;
   }
 }
@@ -5905,8 +5890,6 @@ export function initAbilities() {
       .conditionalAttr((pokemon) => pokemon.battleData.illusion.active, IllusionBreakAbAttr, true)
       //Illusion is available again after a battle
       .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
-      //Illusion is not available after summon
-      .attr(IllusionDisableAbAttr, false)
       .bypassFaint(),
     new Ability(Abilities.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)

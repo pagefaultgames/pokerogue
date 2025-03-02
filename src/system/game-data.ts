@@ -949,7 +949,7 @@ export class GameData {
       seed: globalScene.seed,
       playTime: globalScene.sessionPlayTime,
       gameMode: globalScene.gameMode.modeId,
-      party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
+      party: globalScene.getPlayerParty(false).map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
       enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
