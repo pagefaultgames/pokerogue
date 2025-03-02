@@ -1,52 +1,58 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "vcs": {
-    "enabled": false,
-    "clientKind": "git",
-    "useIgnoreFile": true,
-    "defaultBranch": "beta"
-  },
-  "formatter": {
-	"enabled": false
-  },
-  "files": { "ignoreUnknown": false, "ignore": [] },
-  "organizeImports": { "enabled": false },
-  "linter": { "enabled": true, "rules": { "recommended": false } },
-  "javascript": { "formatter": { "quoteStyle": "double" } },
-  "overrides": [
-    {
-      "ignore": [
-        "dist/*",
-        "build/*",
-        "coverage/*",
-        "public/*",
-        ".github/*",
-        "node_modules/*",
-        ".vscode/*"
-      ],
-      "include": ["src/**/*.{ts,tsx,js,jsx}", "test/**/*.{ts,tsx,js,jsx}"],
-      "javascript": { "globals": [] },
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noUndeclaredVariables": "off",
-            "noUnusedVariables": "error"
-          },
-          "style": {
-            "noVar": "error",
-            "useBlockStatements": "error",
-            "useConst": "error",
-            "useImportType": "error"
-          },
-          "suspicious": { "noDoubleEquals": "error" },
-		  "complexity": { "noExcessiveCognitiveComplexity": "warn"}
-        }
-      }
-    },
-    {
-      "include": ["test/**/*.test.ts"],
-      "javascript": { "globals": [] },
-      "linter": { "rules": {} }
-    }
-  ]
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"vcs": {
+		"enabled": false,
+		"clientKind": "git",
+		"useIgnoreFile": true,
+		"defaultBranch": "beta"
+	},
+	"formatter": {
+		"enabled": true,
+		"useEditorconfig": true
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"ignore": [
+			"dist/*",
+			"build/*",
+			"coverage/*",
+			"public/*",
+			".github/*",
+			"node_modules/*",
+			".vscode/*"
+		]
+	},
+	"organizeImports": { "enabled": false },
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"correctness": {
+				"noUndeclaredVariables": "off",
+				"noUnusedVariables": "error"
+			},
+			"style": {
+				"noVar": "error",
+				"useBlockStatements": "error",
+				"useConst": "error",
+				"useImportType": "error",
+				"useNamingConvention": "warn"
+			},
+			"suspicious": { "noDoubleEquals": "error" },
+			"complexity": {
+				"noExcessiveCognitiveComplexity": "warn",
+				"useSimplifiedLogicExpression": "warn"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": { "quoteStyle": "double", "arrowParentheses": "asNeeded" }
+	},
+	"overrides": [
+		{
+			"include": ["test/**/*.test.ts"],
+			"javascript": { "globals": [] },
+			"linter": { "rules": {} }
+		}
+	]
 }
