@@ -27,6 +27,7 @@ interface EventBanner {
 interface EventEncounter {
   species: Species;
   blockEvolution?: boolean;
+  formIndex?: number;
 }
 
 interface EventMysteryEncounterTier {
@@ -49,6 +50,7 @@ interface TimedEvent extends EventBanner {
   weather?: WeatherPoolEntry[];
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
   luckBoostedSpecies?: Species[];
+  boostFusions?: boolean; //MODIFIER REWORK PLEASE
 }
 
 const timedEvents: TimedEvent[] = [
@@ -102,7 +104,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 1, 3, 0)),
     bannerKey: "yearofthesnakeevent-",
     scale: 0.21,
-    availableLangs: [],
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
     eventEncounters: [
       { species: Species.EKANS },
       { species: Species.ONIX },
@@ -143,6 +145,67 @@ const timedEvents: TimedEvent[] = [
       Species.SILICOBRA, Species.SANDACONDA,
       Species.ROARING_MOON,
       Species.BLOODMOON_URSALUNA
+    ]
+  },
+  {
+    name: "Valentine",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 1, 10)),
+    endDate: new Date(Date.UTC(2025, 1, 21)),
+    boostFusions: true,
+    shinyMultiplier: 2,
+    bannerKey: "valentines2025event-",
+    scale: 0.21,
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    eventEncounters: [
+      { species: Species.NIDORAN_F },
+      { species: Species.NIDORAN_M },
+      { species: Species.IGGLYBUFF },
+      { species: Species.SMOOCHUM },
+      { species: Species.VOLBEAT },
+      { species: Species.ILLUMISE },
+      { species: Species.ROSELIA },
+      { species: Species.LUVDISC },
+      { species: Species.WOOBAT },
+      { species: Species.FRILLISH },
+      { species: Species.ALOMOMOLA },
+      { species: Species.FURFROU, formIndex: 1 }, // Heart Trim
+      { species: Species.ESPURR },
+      { species: Species.SPRITZEE },
+      { species: Species.SWIRLIX },
+      { species: Species.APPLIN },
+      { species: Species.MILCERY },
+      { species: Species.INDEEDEE },
+      { species: Species.TANDEMAUS },
+      { species: Species.ENAMORUS }
+    ],
+    luckBoostedSpecies: [ Species.LUVDISC ]
+  },
+  {
+    name: "PKMNDAY2025",
+    eventType: EventType.LUCK,
+    startDate: new Date(Date.UTC(2025, 1, 27)),
+    endDate: new Date(Date.UTC(2025, 2, 4)),
+    classicFriendshipMultiplier: 4,
+    bannerKey: "pkmnday2025event-",
+    scale: 0.21,
+    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    eventEncounters: [
+      { species: Species.PIKACHU, formIndex: 1, blockEvolution: true }, // Partner Form
+      { species: Species.EEVEE, formIndex: 1, blockEvolution: true }, // Partner Form
+      { species: Species.CHIKORITA },
+      { species: Species.TOTODILE },
+      { species: Species.TEPIG }
+    ],
+    luckBoostedSpecies: [
+      Species.PICHU, Species.PIKACHU, Species.RAICHU, Species.ALOLA_RAICHU,
+      Species.PSYDUCK, Species.GOLDUCK,
+      Species.EEVEE, Species.FLAREON, Species.JOLTEON, Species.VAPOREON, Species.ESPEON, Species.UMBREON, Species.LEAFEON, Species.GLACEON, Species.SYLVEON,
+      Species.CHIKORITA, Species.BAYLEEF, Species.MEGANIUM,
+      Species.TOTODILE, Species.CROCONAW, Species.FERALIGATR,
+      Species.TEPIG, Species.PIGNITE, Species.EMBOAR,
+      Species.ZYGARDE,
+      Species.ETERNAL_FLOETTE
     ]
   }
 ];
@@ -296,6 +359,10 @@ export class TimedEventManager {
       }
     });
     return ret;
+  }
+
+  areFusionsBoosted(): boolean {
+    return timedEvents.some((te) => this.isActive(te) && te.boostFusions);
   }
 }
 

@@ -8,7 +8,7 @@ import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "#app/modifier/modifier";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
-import { getGenderColor, getGenderSymbol } from "#app/data/gender";
+import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
@@ -109,6 +109,7 @@ export enum PartyOption {
   TEACH,
   TRANSFER,
   SUMMARY,
+  POKEDEX,
   UNPAUSE_EVOLUTION,
   SPLICE,
   UNSPLICE,
@@ -125,16 +126,16 @@ export enum PartyOption {
   ALL = 4000,
 }
 
-export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
-export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, itemQuantity?: integer, toCursor?: integer) => void;
-export type PartyModifierSpliceSelectCallback = (fromCursor: integer, toCursor?: integer) => void;
+export type PartySelectCallback = (cursor: number, option: PartyOption) => void;
+export type PartyModifierTransferSelectCallback = (fromCursor: number, index: number, itemQuantity?: number, toCursor?: number) => void;
+export type PartyModifierSpliceSelectCallback = (fromCursor: number, toCursor?: number) => void;
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string | null;
 export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;
 
 export default class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
-  private fieldIndex: integer;
+  private fieldIndex: number;
 
   private partyBg: Phaser.GameObjects.Image;
   private partyContainer: Phaser.GameObjects.Container;
@@ -146,26 +147,26 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   private optionsMode: boolean;
   private optionsScroll: boolean;
-  private optionsCursor: integer = 0;
-  private optionsScrollCursor: integer = 0;
-  private optionsScrollTotal: integer = 0;
+  private optionsCursor: number = 0;
+  private optionsScrollCursor: number = 0;
+  private optionsScrollTotal: number = 0;
   /** This is only public for test/ui/transfer-item.test.ts */
   public optionsContainer: Phaser.GameObjects.Container;
   private optionsBg: Phaser.GameObjects.NineSlice;
   private optionsCursorObj: Phaser.GameObjects.Image | null;
-  private options: integer[];
+  private options: number[];
 
   private transferMode: boolean;
-  private transferOptionCursor: integer;
-  private transferCursor: integer;
+  private transferOptionCursor: number;
+  private transferCursor: number;
   /** Current quantity selection for every item held by the pokemon selected for the transfer */
-  private transferQuantities: integer[];
+  private transferQuantities: number[];
   /** Stack size of every item that the selected pokemon is holding */
-  private transferQuantitiesMax: integer[];
+  private transferQuantitiesMax: number[];
   /** Whether to transfer all items */
   private transferAll: boolean;
 
-  private lastCursor: integer = 0;
+  private lastCursor: number = 0;
   private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback | null;
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
@@ -218,7 +219,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
 
-  private localizedOptions = [ PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME, PartyOption.SELECT ];
+  private localizedOptions = [ PartyOption.SEND_OUT, PartyOption.SUMMARY, PartyOption.POKEDEX, PartyOption.CANCEL, PartyOption.APPLY, PartyOption.RELEASE, PartyOption.TEACH, PartyOption.SPLICE, PartyOption.UNSPLICE, PartyOption.REVIVE, PartyOption.TRANSFER, PartyOption.UNPAUSE_EVOLUTION, PartyOption.PASS_BATON, PartyOption.RENAME, PartyOption.SELECT ];
 
   constructor() {
     super(Mode.PARTY);
@@ -304,7 +305,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.partyUiMode = args[0] as PartyUiMode;
 
-    this.fieldIndex = args.length > 1 ? args[1] as integer : -1;
+    this.fieldIndex = args.length > 1 ? args[1] as number : -1;
 
     this.selectCallback = args.length > 2 && args[2] instanceof Function ? args[2] : undefined;
     this.selectFilter = args.length > 3 && args[3] instanceof Function
@@ -397,7 +398,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL && option !== PartyOption.RENAME)
+        } else if ((![ PartyOption.SUMMARY, PartyOption.POKEDEX, PartyOption.UNPAUSE_EVOLUTION, PartyOption.UNSPLICE, PartyOption.RELEASE, PartyOption.CANCEL, PartyOption.RENAME ].includes(option))
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string | null;
           const getTransferrableItemsFromPokemon = (pokemon: PlayerPokemon) =>
@@ -421,7 +422,10 @@ export default class PartyUiHandler extends MessageUiHandler {
               if (option === PartyOption.TRANSFER) {
                 if (this.transferCursor !== this.cursor) {
                   if (this.transferAll) {
-                    getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor));
+                    getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach((_, i, array) => {
+                      const invertedIndex = array.length - 1 - i;
+                      (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, invertedIndex, this.transferQuantitiesMax[invertedIndex], this.cursor);
+                    });
                   } else {
                     (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.transferQuantities[this.transferOptionCursor], this.cursor);
                   }
@@ -465,6 +469,16 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.SUMMARY) {
           ui.playSelect();
           ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
+          return true;
+        } else if (option === PartyOption.POKEDEX) {
+          ui.playSelect();
+          const attributes = {
+            shiny: pokemon.shiny,
+            variant: pokemon.variant,
+            form: pokemon.formIndex,
+            female: pokemon.gender === Gender.FEMALE ? true : false
+          };
+          ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, pokemon.formIndex, attributes).then(() =>  this.clearOptions());
           return true;
         } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
           this.clearOptions();
@@ -689,7 +703,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     let changed: boolean;
 
     if (this.optionsMode) {
@@ -749,7 +763,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  showText(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     if (text.length === 0) {
       text = defaultMessage;
     }
@@ -892,6 +906,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       this.options.push(PartyOption.SUMMARY);
+      this.options.push(PartyOption.POKEDEX);
       this.options.push(PartyOption.RENAME);
 
       if ((pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) || (pokemon.isFusion() && pokemon.fusionSpecies && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId)))) {
@@ -1060,7 +1075,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
   }
 
-  doRelease(slotIndex: integer): void {
+  doRelease(slotIndex: number): void {
     this.showText(this.getReleaseMessage(getPokemonNameWithAffix(globalScene.getPlayerParty()[slotIndex], false)), null, () => {
       this.clearPartySlots();
       globalScene.removePartyMemberModifiers(slotIndex);
@@ -1121,7 +1136,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return formChangeItemModifiers;
   }
 
-  getOptionsCursorWithScroll(): integer {
+  getOptionsCursorWithScroll(): number {
     return this.optionsCursor + this.optionsScrollCursor + (this.options && this.options[0] === PartyOption.SCROLL_UP ? -1 : 0);
   }
 
@@ -1164,7 +1179,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 class PartySlot extends Phaser.GameObjects.Container {
   private selected: boolean;
   private transfer: boolean;
-  private slotIndex: integer;
+  private slotIndex: number;
   private pokemon: PlayerPokemon;
 
   private slotBg: Phaser.GameObjects.Image;
@@ -1175,11 +1190,10 @@ class PartySlot extends Phaser.GameObjects.Container {
   public slotHpText: Phaser.GameObjects.Text;
   public slotDescriptionLabel: Phaser.GameObjects.Text; // this is used to show text instead of the HP bar i.e. for showing "Able"/"Not Able" for TMs when you try to learn them
 
-
   private pokemonIcon: Phaser.GameObjects.Container;
   private iconAnimHandler: PokemonIconAnimHandler;
 
-  constructor(slotIndex: integer, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves) {
+  constructor(slotIndex: number, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves) {
     super(globalScene, slotIndex >= globalScene.currentBattle.getBattlerCount() ? 230.5 : 64,
       slotIndex >= globalScene.currentBattle.getBattlerCount() ? -184 + (globalScene.currentBattle.double ? -40 : 0)
       + (28 + (globalScene.currentBattle.double ? 8 : 0)) * slotIndex : -124 + (globalScene.currentBattle.double ? -8 : 0) + slotIndex * 64);
@@ -1196,6 +1210,10 @@ class PartySlot extends Phaser.GameObjects.Container {
   }
 
   setup(partyUiMode: PartyUiMode, tmMoveId: Moves) {
+
+    const currentLanguage = i18next.resolvedLanguage ?? "en";
+    const offsetJa = currentLanguage === "ja";
+
     const battlerCount = globalScene.currentBattle.getBattlerCount();
 
     const slotKey = `party_slot${this.slotIndex >= battlerCount ? "" : "_main"}`;
@@ -1234,15 +1252,15 @@ class PartySlot extends Phaser.GameObjects.Container {
     nameSizeTest.destroy();
 
     this.slotName = addTextObject(0, 0, displayName, TextStyle.PARTY);
-    this.slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 2 : 10);
+    this.slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, (this.slotIndex >= battlerCount ? 2 : 10) + (offsetJa ? 2 : 0));
     this.slotName.setOrigin(0, 0);
 
     const slotLevelLabel = globalScene.add.image(0, 0, "party_slot_overlay_lv");
-    slotLevelLabel.setPositionRelative(this.slotName, 8, 12);
+    slotLevelLabel.setPositionRelative(slotBg, (this.slotIndex >= battlerCount ? 21 : 24) + 8, (this.slotIndex >= battlerCount ? 2 : 10) + 12);
     slotLevelLabel.setOrigin(0, 0);
 
     const slotLevelText = addTextObject(0, 0, this.pokemon.level.toString(), this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED);
-    slotLevelText.setPositionRelative(slotLevelLabel, 9, 0);
+    slotLevelText.setPositionRelative(slotLevelLabel, 9, offsetJa ? 1.5 : 0);
     slotLevelText.setOrigin(0, 0.25);
 
     slotInfoContainer.add([ this.slotName, slotLevelLabel, slotLevelText ]);
@@ -1319,7 +1337,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotHpOverlay.setVisible(false);
 
     this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
-    this.slotHpText.setPositionRelative(this.slotHpBar, this.slotHpBar.width - 3, this.slotHpBar.height - 2);
+    this.slotHpText.setPositionRelative(this.slotHpBar, this.slotHpBar.width - 3, this.slotHpBar.height - 2 + (offsetJa ? 2 : 0));
     this.slotHpText.setOrigin(1, 0);
     this.slotHpText.setVisible(false);
 

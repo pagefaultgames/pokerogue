@@ -156,7 +156,7 @@ module.exports = {
         path: '^(src)',
         pathNot: [
           '[.](?:spec|test|setup|script)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$',
-          'src/test'
+          './test'
         ]
       },
       to: {

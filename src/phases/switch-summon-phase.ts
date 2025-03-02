@@ -16,7 +16,7 @@ import { SwitchType } from "#enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
   private readonly switchType: SwitchType;
-  private readonly slotIndex: integer;
+  private readonly slotIndex: number;
   private readonly doReturn: boolean;
 
   private lastPokemon: Pokemon;
@@ -29,7 +29,7 @@ export class SwitchSummonPhase extends SummonPhase {
      * @param doReturn boolean whether to render "comeback" dialogue
      * @param player boolean if the switch is from the player
      */
-  constructor(switchType: SwitchType, fieldIndex: integer, slotIndex: integer, doReturn: boolean, player?: boolean) {
+  constructor(switchType: SwitchType, fieldIndex: number, slotIndex: number, doReturn: boolean, player?: boolean) {
     super(fieldIndex, player !== undefined ? player : true);
 
     this.switchType = switchType;
@@ -64,6 +64,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
     (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+
     if (this.switchType === SwitchType.SWITCH || this.switchType === SwitchType.INITIAL_SWITCH) {
       const substitute = pokemon.getTag(SubstituteTag);
       if (substitute) {
@@ -93,8 +94,8 @@ export class SwitchSummonPhase extends SummonPhase {
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
-        pokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
         globalScene.time.delayedCall(750, () => this.switchAndSummon());
+        pokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
       }
     });
   }

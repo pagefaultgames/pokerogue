@@ -5,7 +5,8 @@ import importX from 'eslint-plugin-import-x';
 
 export default [ 
     {
-        files: ["src/**/*.{ts,tsx,js,jsx}"],
+        name: "eslint-config",
+        files: ["src/**/*.{ts,tsx,js,jsx}", "test/**/*.{ts,tsx,js,jsx}"],
         ignores: ["dist/*", "build/*", "coverage/*", "public/*", ".github/*", "node_modules/*", ".vscode/*"],
         languageOptions: {
             parser: parser
@@ -47,6 +48,23 @@ export default [
             "space-infix-ops": ["error", { "int32Hint": false }], // Enforces spacing around infix operators
             "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 1, "maxBOF": 0 }], // Disallows multiple empty lines
             "@typescript-eslint/consistent-type-imports": "error", // Enforces type-only imports wherever possible
+        }
+    },
+    {
+        name: "eslint-tests",
+        files: ["test/**/**.test.ts"],
+        languageOptions: {
+            parser: parser,
+            parserOptions: {
+                "project": ["./tsconfig.json"]
+            }
+        },
+        plugins: {
+            "@typescript-eslint": tseslint
+        },
+        rules: {
+            "@typescript-eslint/no-floating-promises": "error", // Require Promise-like statements to be handled appropriately. - https://typescript-eslint.io/rules/no-floating-promises/
+            "@typescript-eslint/no-misused-promises": "error", // Disallow Promises in places not designed to handle them. - https://typescript-eslint.io/rules/no-misused-promises/
         }
     }
 ]

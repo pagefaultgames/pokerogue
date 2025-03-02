@@ -326,7 +326,7 @@ export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: numb
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
-    await globalScene.addModifier(modifier, false, false, false, true);
+    globalScene.addModifier(modifier, false, false, false, true);
     pokemon.calculateStats();
   }
 }
@@ -359,7 +359,7 @@ export async function applyModifierTypeToPlayerPokemon(pokemon: PlayerPokemon, m
     return applyModifierTypeToPlayerPokemon(pokemon, fallbackModifierType);
   }
 
-  await globalScene.addModifier(modifier, false, false, false, true);
+  globalScene.addModifier(modifier, false, false, false, true);
 }
 
 /**
@@ -592,7 +592,7 @@ export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameO
       };
       const removePokemon = () => {
         if (pokemon) {
-          globalScene.field.remove(pokemon, true);
+          pokemon.leaveField(false, true, true);
         }
       };
       const addToParty = (slotIndex?: number) => {
@@ -624,7 +624,7 @@ export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameO
                   });
                 }, false);
               }, () => {
-                globalScene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: integer, _option: PartyOption) => {
+                globalScene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: number, _option: PartyOption) => {
                   globalScene.ui.setMode(Mode.MESSAGE).then(() => {
                     if (slotIndex < 6) {
                       addToParty(slotIndex);
@@ -695,7 +695,7 @@ export async function doPokemonFlee(pokemon: EnemyPokemon): Promise<void> {
       scale: pokemon.getSpriteScale(),
       onComplete: () => {
         pokemon.setVisible(false);
-        globalScene.field.remove(pokemon, true);
+        pokemon.leaveField(true, true, true);
         showEncounterText(i18next.t("battle:pokemonFled", { pokemonName: pokemon.getNameToRender() }), null, 600, false)
           .then(() => {
             resolve();
@@ -723,7 +723,7 @@ export function doPlayerFlee(pokemon: EnemyPokemon): Promise<void> {
       scale: pokemon.getSpriteScale(),
       onComplete: () => {
         pokemon.setVisible(false);
-        globalScene.field.remove(pokemon, true);
+        pokemon.leaveField(true, true, true);
         showEncounterText(i18next.t("battle:playerFled", { pokemonName: pokemon.getNameToRender() }), null, 600, false)
           .then(() => {
             resolve();

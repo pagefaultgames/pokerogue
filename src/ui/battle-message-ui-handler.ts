@@ -6,7 +6,6 @@ import { addWindow } from "./ui-theme";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
-import type { Stat } from "#app/enums/stat";
 import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
@@ -154,19 +153,19 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     super.clear();
   }
 
-  showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null) {
+  showText(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
     this.hideNameText();
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+  showDialogue(text: string, name?: string, delay?: number | null, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number) {
     if (name) {
       this.showNameText(name);
     }
     super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean): Promise<void> {
+  promptLevelUpStats(partyMemberIndex: number, prevStats: number[], showTotals: boolean): Promise<void> {
     return new Promise(resolve => {
       if (!globalScene.showLevelUpStats) {
         return resolve();
@@ -191,13 +190,12 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
-  promptIvs(pokemonId: integer, ivs: integer[], shownIvsCount: integer): Promise<void> {
+  promptIvs(pokemonId: number, ivs: number[]): Promise<void> {
     return new Promise(resolve => {
       globalScene.executeWithSeedOffset(() => {
         let levelUpStatsValuesText = "";
-        const shownStats = this.getTopIvs(ivs, shownIvsCount);
         for (const s of PERMANENT_STATS) {
-          levelUpStatsValuesText += `${shownStats.includes(s) ? this.getIvDescriptor(ivs[s], s, pokemonId) : "???"}\n`;
+          levelUpStatsValuesText += `${this.getIvDescriptor(ivs[s], s, pokemonId)}\n`;
         }
         this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
         this.levelUpStatsIncrContent.setVisible(false);
@@ -211,22 +209,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
-  getTopIvs(ivs: integer[], shownIvsCount: integer): Stat[] {
-    let shownStats: Stat[] = [];
-    if (shownIvsCount < 6) {
-      const statsPool = PERMANENT_STATS.slice();
-      // Sort the stats from highest to lowest iv
-      statsPool.sort((s1, s2) => ivs[s2] - ivs[s1]);
-      for (let i = 0; i < shownIvsCount; i++) {
-        shownStats.push(statsPool[i]);
-      }
-    } else {
-      shownStats = PERMANENT_STATS.slice();
-    }
-    return shownStats;
-  }
-
-  getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string {
+  getIvDescriptor(value: number, typeIv: number, pokemonId: number): string {
     const starterSpecies = globalScene.getPokemonById(pokemonId)!.species.getRootSpeciesId(); // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
     const starterIvs: number[] = globalScene.gameData.dexData[starterSpecies].ivs;
     const uiTheme = globalScene.uiTheme; // Assuming uiTheme is accessible

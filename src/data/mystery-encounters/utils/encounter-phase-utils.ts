@@ -46,6 +46,9 @@ import type { Variant } from "#app/data/variant";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { Type } from "#app/enums/type";
+import { getNatureName } from "#app/data/nature";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -98,6 +101,7 @@ export interface EnemyPokemonConfig {
   modifierConfigs?: HeldModifierConfig[];
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
+  tera?: Type;
   aiType?: AiType;
 }
 
@@ -164,7 +168,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   }
 
   globalScene.getEnemyParty().forEach(enemyPokemon => {
-    globalScene.field.remove(enemyPokemon, true);
+    enemyPokemon.leaveField(true, true, true);
   });
   battle.enemyParty = [];
   battle.double = doubleBattle;
@@ -329,6 +333,14 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         tags.forEach(tag => enemyPokemon.addTag(tag));
       }
 
+      // Set tera
+      if (config.tera && config.tera !== Type.UNKNOWN) {
+        enemyPokemon.teraType = config.tera;
+        if (battle.trainer) {
+          battle.trainer.config.setInstantTera(e);
+        }
+      }
+
       // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
       if (config.mysteryEncounterBattleEffects) {
         enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
@@ -347,7 +359,31 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-    console.log(`Pokemon: ${enemyPokemon.name}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
+    const stats: string[] = [
+      `HP: ${enemyPokemon.stats[0]} (${enemyPokemon.ivs[0]})`,
+      ` Atk: ${enemyPokemon.stats[1]} (${enemyPokemon.ivs[1]})`,
+      ` Def: ${enemyPokemon.stats[2]} (${enemyPokemon.ivs[2]})`,
+      ` Spatk: ${enemyPokemon.stats[3]} (${enemyPokemon.ivs[3]})`,
+      ` Spdef: ${enemyPokemon.stats[4]} (${enemyPokemon.ivs[4]})`,
+      ` Spd: ${enemyPokemon.stats[5]} (${enemyPokemon.ivs[5]})`,
+    ];
+    const moveset: string[] = [];
+    enemyPokemon.getMoveset().forEach((move) => {
+      moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
+    });
+
+    console.log(
+      `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
+      `| Species ID: ${enemyPokemon.species.speciesId}`,
+      `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
+    );
+    console.log(`Stats (IVs): ${stats}`);
+    console.log(
+      `Ability: ${enemyPokemon.getAbility().name}`,
+      `| Passive Ability${enemyPokemon.hasPassive() ? "" : " (inactive)"}: ${enemyPokemon.getPassiveAbility().name}`,
+      `${enemyPokemon.isBoss() ? `| Boss Bars: ${enemyPokemon.bossSegments}` : ""}`
+    );
+    console.log("Moveset:", moveset);
   });
 
   globalScene.pushPhase(new MysteryEncounterBattlePhase(partyConfig.disableSwitch));
@@ -810,7 +846,7 @@ export function transitionMysteryEncounterIntroVisuals(hide: boolean = true, des
             globalScene.field.remove(introVisuals, true);
 
             enemyPokemon.forEach(pokemon => {
-              globalScene.field.remove(pokemon, true);
+              pokemon.leaveField(true, true, true);
             });
 
             globalScene.currentBattle.mysteryEncounter!.introVisuals = undefined;
@@ -887,16 +923,21 @@ export function getRandomEncounterSpecies(level: number, isBoss: boolean = false
   let bossSpecies: PokemonSpecies;
   let isEventEncounter = false;
   const eventEncounters = globalScene.eventManager.getEventEncounters();
+  let formIndex;
 
   if (eventEncounters.length > 0 && randSeedInt(2) === 1) {
     const eventEncounter = randSeedItem(eventEncounters);
-    const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, !isNullOrUndefined(eventEncounter.blockEvolution), isBoss, globalScene.gameMode);
+    const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(level, !eventEncounter.blockEvolution, isBoss, globalScene.gameMode);
     isEventEncounter = true;
     bossSpecies = getPokemonSpecies(levelSpecies);
+    formIndex = eventEncounter.formIndex;
   } else {
     bossSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, level, 0, getPartyLuckValue(globalScene.getPlayerParty()), isBoss);
   }
   const ret = new EnemyPokemon(bossSpecies, level, TrainerSlot.NONE, isBoss);
+  if (formIndex) {
+    ret.formIndex = formIndex;
+  }
 
   //Reroll shiny for event encounters
   if (isEventEncounter && !ret.shiny) {
