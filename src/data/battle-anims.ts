@@ -69,6 +69,7 @@ export enum ChargeAnim {
 export enum CommonAnim {
     USE_ITEM = 2000,
     HEALTH_UP,
+    TERASTALLIZE,
     POISON = 2010,
     TOXIC,
     PARALYSIS,
