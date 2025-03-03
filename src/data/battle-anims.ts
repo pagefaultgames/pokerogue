@@ -1,7 +1,20 @@
 import { globalScene } from "#app/global-scene";
-import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
+import {
+  AttackMove,
+  BeakBlastHeaderAttr,
+  DelayedAttackAttr,
+  MoveFlags,
+  SelfStatusMove,
+  allMoves,
+} from "./move";
 import type Pokemon from "../field/pokemon";
-import * as Utils from "../utils";
+import {
+  type nil,
+  getFrameMs,
+  getEnumKeys,
+  getEnumValues,
+  animationFileName,
+} from "../utils";
 import type { BattlerIndex } from "../battle";
 import type { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
@@ -56,6 +69,7 @@ export enum ChargeAnim {
 export enum CommonAnim {
     USE_ITEM = 2000,
     HEALTH_UP,
+    TERASTALLIZE,
     POISON = 2010,
     TOXIC,
     PARALYSIS,
@@ -400,7 +414,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
     if (Object.keys(tweenProps).length) {
       globalScene.tweens.add(Object.assign({
         targets: moveAnim.bgSprite,
-        duration: Utils.getFrameMs(this.duration * 3)
+        duration: getFrameMs(this.duration * 3)
       }, tweenProps));
     }
     return this.duration * 2;
@@ -436,7 +450,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
 
     globalScene.tweens.add({
       targets: moveAnim.bgSprite,
-      duration: Utils.getFrameMs(this.duration * 3)
+      duration: getFrameMs(this.duration * 3)
     });
 
     return this.duration * 2;
@@ -454,8 +468,8 @@ export const encounterAnims = new Map<EncounterAnim, AnimConfig>();
 
 export function initCommonAnims(): Promise<void> {
   return new Promise(resolve => {
-    const commonAnimNames = Utils.getEnumKeys(CommonAnim);
-    const commonAnimIds = Utils.getEnumValues(CommonAnim);
+    const commonAnimNames = getEnumKeys(CommonAnim);
+    const commonAnimIds = getEnumValues(CommonAnim);
     const commonAnimFetches: Promise<Map<CommonAnim, AnimConfig>>[] = [];
     for (let ca = 0; ca < commonAnimIds.length; ca++) {
       const commonAnimId = commonAnimIds[ca];
@@ -492,7 +506,7 @@ export function initMoveAnim(move: Moves): Promise<void> {
       const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
 
       const fetchAnimAndResolve = (move: Moves) => {
-        globalScene.cachedFetch(`./battle-anims/${Utils.animationFileName(move)}.json`)
+        globalScene.cachedFetch(`./battle-anims/${animationFileName(move)}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
@@ -549,7 +563,7 @@ function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
  * @remarks use {@linkcode useDefaultAnim} to use a default animation
  */
 function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
-  const moveName = Utils.animationFileName(move);
+  const moveName = animationFileName(move);
   console.warn(`Could not load animation file for move '${moveName}'`, ...optionalParams);
 }
 
@@ -559,7 +573,7 @@ function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
  */
 export async function initEncounterAnims(encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
   const anims = Array.isArray(encounterAnim) ? encounterAnim : [ encounterAnim ];
-  const encounterAnimNames = Utils.getEnumKeys(EncounterAnim);
+  const encounterAnimNames = getEnumKeys(EncounterAnim);
   const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
     if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
@@ -921,7 +935,7 @@ export abstract class BattleAnim {
       let f = 0;
 
       globalScene.tweens.addCounter({
-        duration: Utils.getFrameMs(3),
+        duration: getFrameMs(3),
         repeat: anim?.frames.length ?? 0,
         onRepeat: () => {
           if (!f) {
@@ -993,47 +1007,39 @@ export abstract class BattleAnim {
               const moveSprite = sprites[graphicIndex];
               if (spritePriorities[graphicIndex] !== frame.priority) {
                 spritePriorities[graphicIndex] = frame.priority;
+                /** Move the position that the moveSprite is rendered in based on the priority.
+                 * @param priority The priority level to draw the sprite.
+                 * - 0: Draw the sprite in front of the pokemon on the field.
+                 * - 1: Draw the sprite in front of the user pokemon.
+                 * - 2: Draw the sprite in front of its `bgSprite` (if it has one), or its
+                 * `AnimFocus` (if that is user/target), otherwise behind everything.
+                 * - 3: Draw the sprite behind its `AnimFocus` (if that is user/target), otherwise in front of everything.
+                */
                 const setSpritePriority = (priority: number) => {
-                  switch (priority) {
-                    case 0:
-                      globalScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, globalScene.getEnemyPokemon(false) ?? globalScene.getPlayerPokemon(false)!); // TODO: is this bang correct?
-                      break;
-                    case 1:
-                      globalScene.field.moveTo(moveSprite, globalScene.field.getAll().length - 1);
-                      break;
-                    case 2:
-                      switch (frame.focus) {
-                        case AnimFocus.USER:
-                          if (this.bgSprite) {
-                            globalScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.bgSprite);
-                          } else {
-                            globalScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
-                          }
-                          break;
-                        case AnimFocus.TARGET:
-                          globalScene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
-                          break;
-                        default:
-                          setSpritePriority(1);
-                          break;
-                      }
-                      break;
-                    case 3:
-                      switch (frame.focus) {
-                        case AnimFocus.USER:
-                          globalScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.user!); // TODO: is this bang correct?
-                          break;
-                        case AnimFocus.TARGET:
-                          globalScene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.target!); // TODO: is this bang correct?
-                          break;
-                        default:
-                          setSpritePriority(1);
-                          break;
-                      }
-                      break;
-                    default:
-                      setSpritePriority(1);
+                  /** The sprite we are moving the moveSprite in relation to */
+                  let targetSprite: Phaser.GameObjects.GameObject | nil;
+                  /** The method that is being used to move the sprite.*/
+                  let moveFunc: ((sprite: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) => void) |
+                              ((sprite: Phaser.GameObjects.GameObject) => void) = globalScene.field.bringToTop;
+
+                  if (priority === 0) { // Place the sprite in front of the pokemon on the field.
+                    targetSprite = globalScene.getEnemyField().find(p => p) ?? globalScene.getPlayerField().find(p => p);
+                    console.log(typeof targetSprite);
+                    moveFunc = globalScene.field.moveBelow;
+                  } else if (priority === 2 && this.bgSprite) {
+                    moveFunc = globalScene.field.moveAbove;
+                    targetSprite = this.bgSprite;
+                  } else if (priority === 2 || priority === 3) {
+                    moveFunc = priority === 2 ? globalScene.field.moveBelow : globalScene.field.moveAbove;
+                    if (frame.focus === AnimFocus.USER) {
+                      targetSprite = this.user;
+                    } else if (frame.focus === AnimFocus.TARGET) {
+                      targetSprite = this.target;
+                    }
                   }
+                  // If target sprite is not undefined and exists in the field container, then move the sprite using the moveFunc.
+                  // Otherwise, default to just bringing it to the top.
+                  targetSprite && globalScene.field.exists(targetSprite) ? moveFunc.bind(globalScene.field)(moveSprite as Phaser.GameObjects.GameObject, targetSprite) : globalScene.field.bringToTop(moveSprite as Phaser.GameObjects.GameObject);
                 };
                 setSpritePriority(frame.priority);
               }
@@ -1051,11 +1057,13 @@ export abstract class BattleAnim {
             }
           }
           if (anim?.frameTimedEvents.has(f)) {
-            for (const event of anim.frameTimedEvents.get(f)!) { // TODO: is this bang correct?
-              r = Math.max((anim.frames.length - f) + event.execute(this), r);
+            const base = anim.frames.length - f;
+            // Bang is correct due to `has` check above, which cannot return true for an undefined / null `f`
+            for (const event of anim.frameTimedEvents.get(f)!) {
+              r = Math.max(base + event.execute(this), r);
             }
           }
-          const targets = Utils.getEnumValues(AnimFrameTarget);
+          const targets = getEnumValues(AnimFrameTarget);
           for (const i of targets) {
             const count = i === AnimFrameTarget.GRAPHIC ? g : i === AnimFrameTarget.USER ? u : t;
             if (count < spriteCache[i].length) {
@@ -1083,7 +1091,7 @@ export abstract class BattleAnim {
           }
           if (r) {
             globalScene.tweens.addCounter({
-              duration: Utils.getFrameMs(r),
+              duration: getFrameMs(r),
               onComplete: () => cleanUpAndComplete()
             });
           } else {
@@ -1165,7 +1173,7 @@ export abstract class BattleAnim {
       let existingFieldSprites = globalScene.field.getAll().slice(0);
 
       globalScene.tweens.addCounter({
-        duration: Utils.getFrameMs(3) * frameTimeMult,
+        duration: getFrameMs(3) * frameTimeMult,
         repeat: anim!.frames.length,
         onRepeat: () => {
           existingFieldSprites = globalScene.field.getAll().slice(0);
@@ -1214,11 +1222,12 @@ export abstract class BattleAnim {
             }
           }
           if (anim?.frameTimedEvents.get(frameCount)) {
+            const base = anim.frames.length - frameCount;
             for (const event of anim.frameTimedEvents.get(frameCount)!) {
-              totalFrames = Math.max((anim.frames.length - frameCount) + event.execute(this, frameTimedEventPriority), totalFrames);
+              totalFrames = Math.max(base + event.execute(this, frameTimedEventPriority), totalFrames);
             }
           }
-          const targets = Utils.getEnumValues(AnimFrameTarget);
+          const targets = getEnumValues(AnimFrameTarget);
           for (const i of targets) {
             const count = graphicFrameCount;
             if (count < spriteCache[i].length) {
@@ -1243,7 +1252,7 @@ export abstract class BattleAnim {
           }
           if (totalFrames) {
             globalScene.tweens.addCounter({
-              duration: Utils.getFrameMs(totalFrames),
+              duration: getFrameMs(totalFrames),
               onComplete: () => cleanUpAndComplete()
             });
           } else {
@@ -1341,15 +1350,15 @@ export class EncounterBattleAnim extends BattleAnim {
 }
 
 export async function populateAnims() {
-  const commonAnimNames = Utils.getEnumKeys(CommonAnim).map(k => k.toLowerCase());
+  const commonAnimNames = getEnumKeys(CommonAnim).map(k => k.toLowerCase());
   const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/\_/g, ""));
-  const commonAnimIds = Utils.getEnumValues(CommonAnim) as CommonAnim[];
-  const chargeAnimNames = Utils.getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
+  const commonAnimIds = getEnumValues(CommonAnim) as CommonAnim[];
+  const chargeAnimNames = getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
   const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/\_/g, " "));
-  const chargeAnimIds = Utils.getEnumValues(ChargeAnim) as ChargeAnim[];
+  const chargeAnimIds = getEnumValues(ChargeAnim) as ChargeAnim[];
   const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
   const moveNameToId = {};
-  for (const move of Utils.getEnumValues(Moves).slice(1)) {
+  for (const move of getEnumValues(Moves).slice(1)) {
     const moveName = Moves[move].toUpperCase().replace(/\_/g, "");
     moveNameToId[moveName] = move;
   }
