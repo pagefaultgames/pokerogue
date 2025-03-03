@@ -10,6 +10,7 @@ import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
 import { Type } from "#app/enums/type";
 import { getTypeRgb } from "#app/data/type";
+import { Species } from "#enums/species";
 
 export enum Command {
   FIGHT = 0,
@@ -180,7 +181,8 @@ export default class CommandUiHandler extends UiHandler {
 
   canTera(): boolean {
     const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
-    const isBlockedForm = globalScene.getField()[this.fieldIndex].isMega() || globalScene.getField()[this.fieldIndex].isMax();
+    const activePokemon = globalScene.getField()[this.fieldIndex];
+    const isBlockedForm = activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(Species.NECROZMA, "ultra");
     const currentTeras = globalScene.arena.playerTerasUsed;
     const plannedTera = globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;
     return hasTeraMod && !isBlockedForm && (currentTeras + plannedTera) < 1;
