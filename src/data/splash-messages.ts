@@ -252,7 +252,9 @@ const seasonalSplashMessages: Season[] = [
       "aprilFools.theDarkestDaySoundsLikeAFutureProblem",
       "aprilFools.tmShopWhen",
       "aprilFools.whoIsFinn",
-      "aprilFools.helloKyleAmber"
+      "aprilFools.helloKyleAmber",
+      "aprilFools.watchOutForShadowPokemon",
+      "aprilFools.nowWithDarkTypeLuxray"
     ],
   },
   {
