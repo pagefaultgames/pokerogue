@@ -84,6 +84,7 @@ describe("Moves - Light Screen", () => {
   });
 
   it("does not affect critical hits", async () => {
+    game.override.moveset([ Moves.FROST_BREATH ]);
     const moveToUse = Moves.FROST_BREATH;
     vi.spyOn(allMoves[Moves.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle([ Species.SHUCKLE ]);
