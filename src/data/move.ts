@@ -5235,7 +5235,7 @@ export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const combinedPledgeMove = user.turnData.combiningPledge;
+    const combinedPledgeMove = user?.turnData?.combiningPledge;
     if (!combinedPledgeMove) {
       return false;
     }
@@ -9383,7 +9383,7 @@ export function initMoves() {
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .attr(MessageHeaderAttr, (user, move) => i18next.t("moveTriggers:isTighteningFocus", { pokemonName: getPokemonNameWithAffix(user) }))
-      .attr(PreUseInterruptAttr, i18next.t("moveTriggers:lostFocus"), user => !!user.turnData.attacksReceived.find(r => r.damage))
+      .attr(PreUseInterruptAttr, (user, target, move) => i18next.t("moveTriggers:lostFocus", { pokemonName: getPokemonNameWithAffix(user) }), user => !!user.turnData.attacksReceived.find(r => r.damage))
       .punchingMove(),
     new AttackMove(Moves.SMELLING_SALTS, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)

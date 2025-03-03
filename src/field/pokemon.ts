@@ -1226,10 +1226,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Checks if the {@linkcode Pokemon} has is the specified {@linkcode Species} or is fused with it.
    * @param species the pokemon {@linkcode Species} to check
+   * @param formKey If provided, requires the species to be in that form
    * @returns `true` if the pokemon is the species or is fused with it, `false` otherwise
    */
-  hasSpecies(species: Species): boolean {
-    return this.species.speciesId === species || this.fusionSpecies?.speciesId === species;
+  hasSpecies(species: Species, formKey?: string): boolean {
+    if (Utils.isNullOrUndefined(formKey)) {
+      return this.species.speciesId === species || this.fusionSpecies?.speciesId === species;
+    }
+
+    return (this.species.speciesId === species && this.getFormKey() === formKey) || (this.fusionSpecies?.speciesId === species && this.getFusionFormKey() === formKey);
   }
 
   abstract isBoss(): boolean;
@@ -3208,6 +3213,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   isMax(): boolean {
     const maxForms = [ SpeciesFormKey.GIGANTAMAX, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE, SpeciesFormKey.ETERNAMAX ] as string[];
     return maxForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!));
+  }
+
+  isMega(): boolean {
+    const megaForms = [ SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.PRIMAL ] as string[];
+    return megaForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!));
   }
 
   canAddTag(tagType: BattlerTagType): boolean {
