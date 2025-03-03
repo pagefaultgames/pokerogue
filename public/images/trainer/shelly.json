@@ -4,8 +4,8 @@
 			"image": "shelly.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 80,
-				"h": 80
+				"w": 78,
+				"h": 78
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 45,
+						"h": 78
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 80,
-						"h": 80
+						"w": 45,
+						"h": 78
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 80,
-						"h": 80
+						"w": 45,
+						"h": 78
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:831f5748dad92911b10a1cb358ee2dae:a3bf81bbaa3b49cad5e0e549cf94563b:bb6befc9383c9c08837183ae2a7a80c1$"
+		"smartupdate": "$TexturePacker:SmartUpdate:601dbcee82b14bde5072df26ddd7d684:a0d576e65d8e3ff549dde75f0a82bc94:a277ff67eb669e1dac57ad29940004ac$"
 	}
 }

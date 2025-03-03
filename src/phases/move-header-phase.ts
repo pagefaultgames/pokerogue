@@ -1,14 +1,14 @@
-import BattleScene from "#app/battle-scene";
 import { applyMoveAttrs, MoveHeaderAttr } from "#app/data/move";
-import Pokemon, { PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
 
 export class MoveHeaderPhase extends BattlePhase {
   public pokemon: Pokemon;
   public move: PokemonMove;
 
-  constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove) {
-    super(scene);
+  constructor(pokemon: Pokemon, move: PokemonMove) {
+    super();
 
     this.pokemon = pokemon;
     this.move = move;
@@ -22,9 +22,8 @@ export class MoveHeaderPhase extends BattlePhase {
     super.start();
 
     if (this.canMove()) {
-      applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove()).then(() => this.end());
-    } else {
-      this.end();
+      applyMoveAttrs(MoveHeaderAttr, this.pokemon, null, this.move.getMove());
     }
+    this.end();
   }
 }

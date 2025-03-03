@@ -343,92 +343,94 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 
 # 💻 Development
 
-## Server Owner/Administrator
+## Server Developers
 - pancakes aka patapancakes
 
-## Senior Developers
-- Walker
-- NightKev
-- Moka
-- Temp aka Tempo-anon
-- Madmadness65
-
-## Developers
+## Current and former Development Team members
+- bennybroseph
+- Brain Frog
 - CodeTappert
+- Dakurei
 - flx-sta
-- innerthunder
 - frutescens
+- Greenlamp
+- ImperialSympathizer
+- innerthunder
+- KimJeongSun
+- Madmadness65
+- Moka
+- Navori
+- NightKev
 - Opaquer
+- OrangeRed
+- Sam aka Flashfyre (initial developer, started PokéRogue)
+- sirzento
 - SN34KZ
 - Swain aka torranx
-
-## Junior Developers
-- KimJeongSun
-- ImperialSympathizer
+- Temp aka Tempo-anon
+- Walker
+- Xavion
 
 ## Bug/Issue Managers
-- Snailman
 - Daleks
 - Lily
 - PigeonBar
+- Snailman
 
-## Past Contributors
-- Fontbane
-- sodaMelon
-- schmidtc1
-- shayebeadling
+## Other Code Contributors
+- Admiral-Billy
+- allen925
+- arColm
+- Arxalc
+- AsdarDevelops
+- Corrade
 - DustinLin
-- lucfd
-- madibye
+- ElizaAlex
 - EmberCM
-- Mewtwo2387
+- EmoUsedHM01
+- EvasiveAce
+- Fontbane
+- francktrouillez
+- FredeX
+- geeilhan
+- happinyz
 - hayuna
-- sirzento
-- ReneGV
-- mattrossdev
-- zacharied
-- NxKarim
-- td76099
-- Xiaphear
+- InfernoVulpix
 - j-diefenbach
 - jaimefd
-- EvasiveAce
-- EmoUsedHM01
-- francktrouillez
 - JakubHanko
-- FredeX
-- PigeonBar
-- prime-dialga
-- rnicar245
-- rationality6
-- Neverblade
-- Corrade
-- Admiral-Billy
-- okimin
-- Arxalc
-- PrabbyDD
 - JonStudders
 - karl-police
-- prateau
-- meepen
-- arColm
-- allen925
-- InfernoVulpix
-- snoozbuster
-- zaccie
-- happinyz
-- PyGaVS
+- lucfd
+- Lugiadrien
+- madibye
+- mattrossdev
 - mcmontag
-- ElizaAlex
-- AsdarDevelops
-- Vassiat
+- meepen
+- Mewtwo2387
+- muscode
+- Neverblade
+- NxKarim
+- okimin
+- PigeonBar
+- PrabbyDD
+- prateau
+- prime-dialga
+- PyGaVS
+- rationality6
 - RedstonewolfX
-- Sam/Flashfyre (initial developer, started PokéRogue)
-- Greenlamp
-- bennybroseph
-- OrangeRed
-- Dakurei
-- Brain Frog
+- ReneGV
+- rnicar245
+- schmidtc1
+- shayebeadling
+- snoozbuster
+- sodaMelon
+- td76099
+- Vassiat
+- Xiaphear
+- zaccie
+- zacharied
+- Zé Ricardo
 
 
 # 🌎 Translation
@@ -615,6 +617,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - roi
 
 ## External Tools
-- Ydarissep (RogueDex)
+- Ydarissep (creator of the now defunct "Yda's Dex")
 - Admiral-Billy (Offline App - Desktop)
 - Red aka StonedModder (iOS App)

@@ -1,6 +1,7 @@
 import { randIntRange } from "#app/utils";
 import { StatusEffect } from "#enums/status-effect";
-import i18next, { ParseKeys } from "i18next";
+import type { ParseKeys } from "i18next";
+import i18next from "i18next";
 
 export class Status {
   public effect: StatusEffect;
@@ -161,7 +162,7 @@ export function getNonVolatileStatusEffects():Array<StatusEffect> {
 }
 
 /**
- * Returns whether a statuss effect is non volatile.
+ * Returns whether a status effect is non volatile.
  * Non-volatile status condition is a status that remains after being switched out.
  * @param status The status to check
  */
