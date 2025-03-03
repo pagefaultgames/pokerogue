@@ -1866,11 +1866,14 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 export class AddSubstituteAttr extends MoveEffectAttr {
   /** The ratio of the user's max HP that is required to apply this effect */
   private hpCost: number;
+  /** Whether the damage taken should be rounded up (Shed Tail rounds up) */
+  private roundUp: boolean;
 
-  constructor(hpCost: number = 0.25) {
+  constructor(hpCost: number, roundUp: boolean) {
     super(true);
 
     this.hpCost = hpCost;
+    this.roundUp = roundUp;
   }
 
   /**
@@ -1886,7 +1889,8 @@ export class AddSubstituteAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.damageAndUpdate(Math.floor(user.getMaxHp() * this.hpCost), HitResult.OTHER, false, true, true);
+    const damageTaken = this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost);
+    user.damageAndUpdate(damageTaken, HitResult.OTHER, false, true, true);
     user.addTag(BattlerTagType.SUBSTITUTE, 0, move.id, user.id);
     return true;
   }
@@ -1899,7 +1903,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.getTag(SubstituteTag) && user.hp > Math.floor(user.getMaxHp() * this.hpCost) && user.getMaxHp() > 1;
+    return (user, target, move) => !user.getTag(SubstituteTag) && user.hp > (this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost)) && user.getMaxHp() > 1;
   }
 
   /**
@@ -5232,7 +5236,7 @@ export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const combinedPledgeMove = user.turnData.combiningPledge;
+    const combinedPledgeMove = user?.turnData?.combiningPledge;
     if (!combinedPledgeMove) {
       return false;
     }
@@ -7811,10 +7815,11 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
       return false;
     }
 
-    target.summonData.abilitySuppressed = true;
-    globalScene.arena.triggerWeatherBasedFormChangesToNormal();
-
     globalScene.queueMessage(i18next.t("moveTriggers:suppressAbilities", { pokemonName: getPokemonNameWithAffix(target) }));
+
+    target.suppressAbility();
+
+    globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
   }
@@ -9035,7 +9040,7 @@ export function initMoves() {
       .attr(HighCritAttr)
       .slicingMove(),
     new SelfStatusMove(Moves.SUBSTITUTE, Type.NORMAL, -1, 10, -1, 0, 1)
-      .attr(AddSubstituteAttr),
+      .attr(AddSubstituteAttr, 0.25, false),
     new AttackMove(Moves.STRUGGLE, Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
       .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
@@ -9379,7 +9384,7 @@ export function initMoves() {
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(Moves.FOCUS_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
       .attr(MessageHeaderAttr, (user, move) => i18next.t("moveTriggers:isTighteningFocus", { pokemonName: getPokemonNameWithAffix(user) }))
-      .attr(PreUseInterruptAttr, i18next.t("moveTriggers:lostFocus"), user => !!user.turnData.attacksReceived.find(r => r.damage))
+      .attr(PreUseInterruptAttr, (user, target, move) => i18next.t("moveTriggers:lostFocus", { pokemonName: getPokemonNameWithAffix(user) }), user => !!user.turnData.attacksReceived.find(r => r.damage))
       .punchingMove(),
     new AttackMove(Moves.SMELLING_SALTS, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
@@ -11381,7 +11386,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 5461 / 4096 : 1)
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
-      .attr(AddSubstituteAttr, 0.5)
+      .attr(AddSubstituteAttr, 0.5, true)
       .attr(ForceSwitchOutAttr, true, SwitchType.SHED_TAIL)
       .condition(failIfLastInPartyCondition),
     new SelfStatusMove(Moves.CHILLY_RECEPTION, Type.ICE, -1, 10, -1, 0, 9)
