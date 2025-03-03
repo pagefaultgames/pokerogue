@@ -598,8 +598,8 @@ export class Arena {
     // creates a new tag object
     const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
     if (newTag) {
-      this.tags.push(newTag);
       newTag.onAdd(this, quiet);
+      this.tags.push(newTag);
 
       const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
 

@@ -63,8 +63,9 @@ import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/
 import { BattlerTag, BattlerTagLapseType, EncoreTag, GroundedTag, HighestStatBoostTag, SubstituteTag, TypeImmuneTag, getBattlerTag, SemiInvulnerableTag, TypeBoostTag, MoveRestrictionBattlerTag, ExposedTag, DragonCheerTag, CritBoostTag, TrappedTag, TarShotTag, AutotomizedTag, PowerTrickTag } from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
+import type { SuppressAbilitiesTag } from "#app/data/arena-tag";
 import type { Ability, AbAttr } from "#app/data/ability";
-import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr, applyOnGainAbAttrs, PreLeaveFieldAbAttr, applyPreLeaveFieldAbAttrs, applyOnLoseClearWeatherAbAttrs } from "#app/data/ability";
+import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr, applyOnGainAbAttrs, PreLeaveFieldAbAttr, applyPreLeaveFieldAbAttrs, applyOnLoseAbAttrs, PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr } from "#app/data/ability";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -1225,10 +1226,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Checks if the {@linkcode Pokemon} has is the specified {@linkcode Species} or is fused with it.
    * @param species the pokemon {@linkcode Species} to check
+   * @param formKey If provided, requires the species to be in that form
    * @returns `true` if the pokemon is the species or is fused with it, `false` otherwise
    */
-  hasSpecies(species: Species): boolean {
-    return this.species.speciesId === species || this.fusionSpecies?.speciesId === species;
+  hasSpecies(species: Species, formKey?: string): boolean {
+    if (Utils.isNullOrUndefined(formKey)) {
+      return this.species.speciesId === species || this.fusionSpecies?.speciesId === species;
+    }
+
+    return (this.species.speciesId === species && this.getFormKey() === formKey) || (this.fusionSpecies?.speciesId === species && this.getFusionFormKey() === formKey);
   }
 
   abstract isBoss(): boolean;
@@ -1487,13 +1493,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ability New Ability
    */
   public setTempAbility(ability: Ability, passive: boolean = false): void {
-    applyOnLoseClearWeatherAbAttrs(this, passive);
+    applyOnLoseAbAttrs(this, passive);
     if (passive) {
       this.summonData.passiveAbility = ability.id;
     } else {
       this.summonData.ability = ability.id;
     }
     applyOnGainAbAttrs(this, passive);
+  }
+
+  /**
+   * Suppresses an ability and calls its onlose attributes
+   */
+  public suppressAbility() {
+    [ true, false ].forEach((passive) => applyOnLoseAbAttrs(this, passive));
+    this.summonData.abilitySuppressed = true;
   }
 
   /**
@@ -1553,17 +1567,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData?.abilitySuppressed && !ability.hasAttr(UnsuppressableAbilityAbAttr)) {
       return false;
     }
-    if (this.isOnField() && !ability.hasAttr(SuppressFieldAbilitiesAbAttr)) {
-      const suppressed = new Utils.BooleanHolder(false);
-      globalScene.getField(true).filter(p => p !== this).map(p => {
-        if (p.getAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility()) {
-          p.getAbility().getAttrs(SuppressFieldAbilitiesAbAttr).map(a => a.apply(this, false, false, suppressed, [ ability ]));
-        }
-        if (p.getPassiveAbility().hasAttr(SuppressFieldAbilitiesAbAttr) && p.canApplyAbility(true)) {
-          p.getPassiveAbility().getAttrs(SuppressFieldAbilitiesAbAttr).map(a => a.apply(this, true, false, suppressed, [ ability ]));
-        }
-      });
-      if (suppressed.value) {
+    const suppressAbilitiesTag = arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
+    if (this.isOnField() && suppressAbilitiesTag && !suppressAbilitiesTag.isBeingRemoved()) {
+      const thisAbilitySuppressing = ability.hasAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr);
+      const hasSuppressingAbility = this.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false);
+      // Neutralizing gas is up - suppress abilities unless they are unsuppressable or this pokemon is responsible for the gas
+      // (Balance decided that the other ability of a neutralizing gas pokemon should not be neutralized)
+      // If the ability itself is neutralizing gas, don't suppress it (handled through arena tag)
+      const unsuppressable = ability.hasAttr(UnsuppressableAbilityAbAttr) || thisAbilitySuppressing || (hasSuppressingAbility && !suppressAbilitiesTag.shouldApplyToSelf());
+      if (!unsuppressable) {
         return false;
       }
     }
@@ -2344,8 +2356,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Weight towards higher power moves, by reducing the power of moves below the highest power.
     // Caps max power at 90 to avoid something like hyper beam ruining the stats.
     // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
-    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
-    movePool = movePool.map(m => [ m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power / maxPower, 1), 0.5)) ]);
+    const maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].calculateEffectivePower(), v), 40), 90);
+    movePool = movePool.map(m => [ m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].calculateEffectivePower() / maxPower, 1), 0.5)) ]);
 
     // Weight damaging moves against the lower stat. This uses a non-linear relationship.
     // If the higher stat is 1 - 1.09x higher, no change. At higher stat ~1.38x lower stat, off-stat moves have half weight.
@@ -2395,14 +2407,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {
       if (this.hasTrainer()) {
         // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
-        // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
+        // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights get 20x if STAB.
         // Status moves remain unchanged on weight, this encourages 1-2
         movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo?.moveId)).map((m) => {
           let ret: number;
           if (this.moveset.some(mo => mo?.getMove().category !== MoveCategory.STATUS && mo?.getMove().type === allMoves[m[0]].type)) {
             ret = Math.ceil(Math.sqrt(m[1]));
           } else if (allMoves[m[0]].category !== MoveCategory.STATUS) {
-            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1));
+            ret = Math.ceil(m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo?.getMove().power ?? 0) > 1).length) / 8, 0.5) * (this.isOfType(allMoves[m[0]].type) ? 20 : 1));
           } else {
             ret = m[1];
           }
@@ -2848,7 +2860,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       stabMultiplier.value += 0.5;
     }
 
-    if (source.isTerastallized && source.teraType === Type.STELLAR && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(Species.TERAPAGOS))) {
+    if (source.isTerastallized && source.getTeraType() === Type.STELLAR && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(Species.TERAPAGOS))) {
       if (matchesSourceType) {
         stabMultiplier.value += 0.5;
       } else {
@@ -3195,6 +3207,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   isMax(): boolean {
     const maxForms = [ SpeciesFormKey.GIGANTAMAX, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE, SpeciesFormKey.ETERNAMAX ] as string[];
     return maxForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!));
+  }
+
+  isMega(): boolean {
+    const megaForms = [ SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.PRIMAL ] as string[];
+    return megaForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!));
   }
 
   canAddTag(tagType: BattlerTagType): boolean {
@@ -4632,8 +4649,9 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
         newPokemon.fusionLuck = this.fusionLuck;
-        newPokemon.fusionTeraType = this.teraType;
+        newPokemon.fusionTeraType = this.fusionTeraType;
         newPokemon.usedTMs = this.usedTMs;
+        newPokemon.evoCounter = this.evoCounter;
 
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve((!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution)), evoSpecies);
@@ -4702,6 +4720,7 @@ export class PlayerPokemon extends Pokemon {
     this.fusionGender = pokemon.gender;
     this.fusionLuck = pokemon.luck;
     this.fusionCustomPokemonData = pokemon.customPokemonData;
+    this.evoCounter = Math.max(pokemon.evoCounter, this.evoCounter);
     if (pokemon.pauseEvolutions || this.pauseEvolutions) {
       this.pauseEvolutions = true;
     }

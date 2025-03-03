@@ -749,7 +749,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if (this.speciesId === Species.ARCEUS) {
       ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
     } else if ([ SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.PRIMAL, SpeciesFormKey.GIGANTAMAX, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE, SpeciesFormKey.ETERNAMAX ].includes(formKey as SpeciesFormKey)) {
-      return i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: (append ? this.name : "") });
+      return append ? i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: this.name }) : i18next.t(`pokemonForm:battleForm.${formKey}`);
     } else if (region === Region.NORMAL || (this.speciesId === Species.GALAR_DARMANITAN && formIndex > 0) || this.speciesId === Species.PALDEA_TAUROS) { // More special cases can be added here
       const i18key = `pokemonForm:${speciesName}${formText}`;
       if (i18next.exists(i18key)) {
@@ -830,7 +830,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
     }
 
-    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId)) {
+    if ( // If evolutions shouldn't happen, add more cases here :)
+      !allowEvolving
+      || !pokemonEvolutions.hasOwnProperty(this.speciesId)
+      || globalScene.currentBattle?.waveIndex === 20 && globalScene.gameMode.isClassic && globalScene.currentBattle.trainer
+    ) {
       return this.speciesId;
     }
 

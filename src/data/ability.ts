@@ -12,7 +12,7 @@ import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffect
 import { Gender } from "./gender";
 import type Move from "./move";
 import { AttackMove, MoveCategory, MoveFlags, MoveTarget, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./move";
-import type { ArenaTrapTag } from "./arena-tag";
+import type { ArenaTrapTag, SuppressAbilitiesTag } from "./arena-tag";
 import { ArenaTagSide } from "./arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { TerrainType } from "./terrain";
@@ -44,6 +44,7 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -280,6 +281,58 @@ export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
       for (const statStageChangePhase of statStageChangePhases) {
         globalScene.unshiftPhase(statStageChangePhase);
       }
+    }
+  }
+}
+
+/**
+ * Clears a specified weather whenever this attribute is called.
+ */
+export class ClearWeatherAbAttr extends AbAttr {
+  private weather: WeatherType[];
+
+  /**
+   * @param weather {@linkcode WeatherType[]} - the weather to be removed
+   */
+  constructor(weather: WeatherType[]) {
+    super(true);
+
+    this.weather = weather;
+  }
+
+  public override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return globalScene.arena.canSetWeather(WeatherType.NONE);
+  }
+
+  public override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
+    if (!simulated) {
+      globalScene.arena.trySetWeather(WeatherType.NONE, true);
+    }
+  }
+}
+
+/**
+ * Clears a specified terrain whenever this attribute is called.
+ */
+export class ClearTerrainAbAttr extends AbAttr {
+  private terrain: TerrainType[];
+
+  /**
+   * @param terrain {@linkcode TerrainType[]} - the terrain to be removed
+   */
+  constructor(terrain: TerrainType[]) {
+    super(true);
+
+    this.terrain = terrain;
+  }
+
+  public override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return globalScene.arena.canSetTerrain(TerrainType.NONE);
+  }
+
+  public override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
+    if (!simulated) {
+      globalScene.arena.trySetTerrain(TerrainType.NONE, true, true);
     }
   }
 }
@@ -2171,12 +2224,44 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
     this.arenaTags = arenaTags;
   }
 
+  override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return globalScene.arena.tags.some(tag => this.arenaTags.includes(tag.tagType));
+  }
+
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (!simulated) {
       for (const arenaTag of this.arenaTags) {
         globalScene.arena.removeTag(arenaTag);
       }
     }
+  }
+}
+
+/**
+ * Generic class to add an arena tag upon switching in
+ */
+export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
+  private readonly tagType: ArenaTagType;
+  private readonly turnCount: number;
+  private readonly side?: ArenaTagSide;
+  private readonly quiet?: boolean;
+  private sourceId: number;
+
+
+  constructor(tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
+    super(false);
+    this.tagType = tagType;
+    this.turnCount = turnCount;
+    this.side = side;
+    this.quiet = quiet;
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    this.sourceId = pokemon.id;
+    if (!simulated) {
+      globalScene.arena.addTag(this.tagType, this.turnCount, undefined, this.sourceId, this.side, this.quiet);
+    }
+    return true;
   }
 }
 
@@ -2902,6 +2987,24 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
     if (!simulated) {
       globalScene.arena.trySetWeather(WeatherType.NONE, false);
     }
+  }
+}
+
+/**
+ * Updates the active {@linkcode SuppressAbilitiesTag} when a pokemon with {@linkcode Abilities.NEUTRALIZING_GAS} leaves the field
+ */
+export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFieldAbAttr {
+  constructor() {
+    super(false);
+  }
+
+  public override canApplyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return !!globalScene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS);
+  }
+
+  public override applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
+    const suppressTag = globalScene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
+    suppressTag.onSourceLeave(globalScene.arena);
   }
 }
 
@@ -4656,21 +4759,6 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
   }
 }
 
-export class SuppressFieldAbilitiesAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-
-  override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const ability = (args[0] as Ability);
-    return !ability.hasAttr(UnsuppressableAbilityAbAttr) && !ability.hasAttr(SuppressFieldAbilitiesAbAttr);
-  }
-
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
-    cancelled.value = true;
-  }
-}
-
 export class AlwaysHitAbAttr extends AbAttr { }
 
 /** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
@@ -4968,7 +5056,7 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
     const turnCommand = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
     const isCommandFight = turnCommand?.command === Command.FIGHT;
     const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
-    return this.condition(pokemon, move!) && isCommandFight;
+    return isCommandFight && this.condition(pokemon, move!);
   }
 
   /**
@@ -5073,6 +5161,10 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   simulated: boolean = false,
   messages: string[] = []
 ) {
+  if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
+    return;
+  }
+
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
   if (gainedMidTurn && ability.getAttrs(attrType).some(attr => attr instanceof PostSummonAbAttr && !attr.shouldActivateOnGain())) {
     return;
@@ -5376,11 +5468,10 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(
   gainedMidTurn: boolean = false
 ) {
   for (const passive of [ false, true ]) {
-    if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
-      continue;
+    if (pokemon) {
+      applySingleAbAttrs(pokemon, passive, attrType, applyFunc, successFunc, args, gainedMidTurn, simulated, messages);
+      globalScene.clearPhaseQueueSplice();
     }
-
-    applySingleAbAttrs(pokemon, passive, attrType, applyFunc, successFunc, args, gainedMidTurn, simulated, messages);
   }
 }
 
@@ -5916,23 +6007,18 @@ export function applyOnGainAbAttrs(
 }
 
 /**
- * Clears primal weather during the turn if {@linkcode pokemon}'s ability corresponds to one
+ * Clears primal weather/neutralizing gas during the turn if {@linkcode pokemon}'s ability corresponds to one
  */
-export function applyOnLoseClearWeatherAbAttrs(
-  pokemon: Pokemon,
-  passive: boolean = false,
-  simulated: boolean = false,
-  ...args: any[]): void {
-  applySingleAbAttrs<PreLeaveFieldClearWeatherAbAttr>(
+export function applyOnLoseAbAttrs(pokemon: Pokemon, passive: boolean = false, simulated: boolean = false, ...args: any[]): void {
+  applySingleAbAttrs<PreLeaveFieldAbAttr>(
     pokemon,
     passive,
-    PreLeaveFieldClearWeatherAbAttr,
+    PreLeaveFieldAbAttr,
     (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]),
     (attr, passive) => attr.canApplyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]),
     args,
     true,
-    simulated,
-  );
+    simulated);
 }
 
 /**
@@ -6817,12 +6903,12 @@ export function initAbilities() {
     new Ability(Abilities.GORILLA_TACTICS, 8)
       .attr(GorillaTacticsAbAttr),
     new Ability(Abilities.NEUTRALIZING_GAS, 8)
-      .attr(SuppressFieldAbilitiesAbAttr)
+      .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.NEUTRALIZING_GAS, 0)
+      .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
-      .partial(), // A bunch of weird interactions with other abilities being suppressed then unsuppressed
+      .bypassFaint(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
@@ -7018,9 +7104,11 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
+      .attr(ClearWeatherAbAttr, [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.STRONG_WINDS ])
+      .attr(ClearTerrainAbAttr, [ TerrainType.MISTY, TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.PSYCHIC ])
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .unimplemented(),
+      .condition(getOncePerBattleCondition(Abilities.TERAFORM_ZERO)),
     new Ability(Abilities.POISON_PUPPETEER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)

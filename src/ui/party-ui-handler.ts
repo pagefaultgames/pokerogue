@@ -422,7 +422,10 @@ export default class PartyUiHandler extends MessageUiHandler {
               if (option === PartyOption.TRANSFER) {
                 if (this.transferCursor !== this.cursor) {
                   if (this.transferAll) {
-                    getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach((_, i) => (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, i, this.transferQuantitiesMax[i], this.cursor));
+                    getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach((_, i, array) => {
+                      const invertedIndex = array.length - 1 - i;
+                      (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, invertedIndex, this.transferQuantitiesMax[invertedIndex], this.cursor);
+                    });
                   } else {
                     (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.transferQuantities[this.transferOptionCursor], this.cursor);
                   }
@@ -1187,7 +1190,6 @@ class PartySlot extends Phaser.GameObjects.Container {
   public slotHpText: Phaser.GameObjects.Text;
   public slotDescriptionLabel: Phaser.GameObjects.Text; // this is used to show text instead of the HP bar i.e. for showing "Able"/"Not Able" for TMs when you try to learn them
 
-
   private pokemonIcon: Phaser.GameObjects.Container;
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -1208,6 +1210,10 @@ class PartySlot extends Phaser.GameObjects.Container {
   }
 
   setup(partyUiMode: PartyUiMode, tmMoveId: Moves) {
+
+    const currentLanguage = i18next.resolvedLanguage ?? "en";
+    const offsetJa = currentLanguage === "ja";
+
     const battlerCount = globalScene.currentBattle.getBattlerCount();
 
     const slotKey = `party_slot${this.slotIndex >= battlerCount ? "" : "_main"}`;
@@ -1246,15 +1252,15 @@ class PartySlot extends Phaser.GameObjects.Container {
     nameSizeTest.destroy();
 
     this.slotName = addTextObject(0, 0, displayName, TextStyle.PARTY);
-    this.slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 2 : 10);
+    this.slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, (this.slotIndex >= battlerCount ? 2 : 10) + (offsetJa ? 2 : 0));
     this.slotName.setOrigin(0, 0);
 
     const slotLevelLabel = globalScene.add.image(0, 0, "party_slot_overlay_lv");
-    slotLevelLabel.setPositionRelative(this.slotName, 8, 12);
+    slotLevelLabel.setPositionRelative(slotBg, (this.slotIndex >= battlerCount ? 21 : 24) + 8, (this.slotIndex >= battlerCount ? 2 : 10) + 12);
     slotLevelLabel.setOrigin(0, 0);
 
     const slotLevelText = addTextObject(0, 0, this.pokemon.level.toString(), this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED);
-    slotLevelText.setPositionRelative(slotLevelLabel, 9, 0);
+    slotLevelText.setPositionRelative(slotLevelLabel, 9, offsetJa ? 1.5 : 0);
     slotLevelText.setOrigin(0, 0.25);
 
     slotInfoContainer.add([ this.slotName, slotLevelLabel, slotLevelText ]);
@@ -1331,7 +1337,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotHpOverlay.setVisible(false);
 
     this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
-    this.slotHpText.setPositionRelative(this.slotHpBar, this.slotHpBar.width - 3, this.slotHpBar.height - 2);
+    this.slotHpText.setPositionRelative(this.slotHpBar, this.slotHpBar.width - 3, this.slotHpBar.height - 2 + (offsetJa ? 2 : 0));
     this.slotHpText.setOrigin(1, 0);
     this.slotHpText.setVisible(false);
 
