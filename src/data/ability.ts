@@ -44,7 +44,6 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 
 export class Ability implements Localizable {
   public id: Abilities;
