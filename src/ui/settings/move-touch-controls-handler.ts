@@ -93,9 +93,9 @@ export default class MoveTouchControlsHandler {
     toolbar.innerHTML = `
     <div class="column">
       <div class="button-row">
-        <div id="resetButton" class="button">${i18next.t("settings:reset")}</div>
-        <div id="saveButton" class="button">${i18next.t("settings:saveClose")}</div>
-        <div id="cancelButton" class="button">${i18next.t("settings:cancel")}</div>
+        <div id="resetButton" class="button">${i18next.t("settings:touchReset")}</div>
+        <div id="saveButton" class="button">${i18next.t("settings:touchSaveClose")}</div>
+        <div id="cancelButton" class="button">${i18next.t("settings:touchCancel")}</div>
       </div>
       <div class="info-row">
         <div class="orientation-label"> 
