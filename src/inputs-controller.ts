@@ -564,6 +564,15 @@ export class InputsController {
     if (!this.configs[selectedDevice]) {
       this.configs[selectedDevice] = {};
     }
+    // A proper way of handling migrating keybinds would be much better
+    const mappingOverrides = {
+      "BUTTON_CYCLE_VARIANT": "BUTTON_CYCLE_TERA",
+    };
+    for (const key in mappingConfigs.custom) {
+      if (mappingConfigs.custom[key] in mappingOverrides) {
+        mappingConfigs.custom[key] = mappingOverrides[mappingConfigs.custom[key]];
+      }
+    }
     this.configs[selectedDevice].custom = mappingConfigs.custom;
   }
 

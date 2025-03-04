@@ -109,7 +109,7 @@ export class UiInputs {
       [Button.CYCLE_GENDER]:    () => undefined,
       [Button.CYCLE_ABILITY]:   () => undefined,
       [Button.CYCLE_NATURE]:    () => undefined,
-      [Button.CYCLE_TERA]:      () => undefined,
+      [Button.CYCLE_TERA]:      () => this.buttonInfo(false),
       [Button.SPEED_UP]:        () => undefined,
       [Button.SLOW_DOWN]:       () => undefined,
     };

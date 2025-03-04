@@ -898,16 +898,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
       if (this.filterMode && this.filterBar.openDropDown) {
         // CANCEL with a filter menu open > close it
         this.filterBar.toggleDropDown(this.filterBarCursor);
-
-        // if there are possible pokemon go the first one of the list
-        if (numberOfStarters > 0) {
-          this.setFilterMode(false);
-          this.scrollCursor = 0;
-          this.updateScroll();
-          this.setCursor(0);
-        }
         success = true;
-
+      } else if (this.filterMode && !this.filterBar.getFilter(this.filterBarCursor).hasDefaultValues()) {
+        this.filterBar.resetSelection(this.filterBarCursor);
+        this.updateStarters();
+        success = true;
       } else if (this.filterTextMode && !(this.filterText.getValue(this.filterTextCursor) === this.filterText.defaultText)) {
         this.filterText.resetSelection(this.filterTextCursor);
         success = true;
@@ -991,7 +986,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             this.updateScroll();
             const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
             const targetCol = Math.min(8, proportion < 0.5 ? Math.floor(proportion * 8) : Math.ceil(proportion * 8));
-            this.setCursor(Math.min(targetCol, numberOfStarters));
+            this.setCursor(Math.min(targetCol, numberOfStarters - 1));
             success = true;
           }
           break;
@@ -1113,7 +1108,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             }
             break;
           case Button.DOWN:
-            if (currentRow < numOfRows - 1) { // not last row
+            if ((currentRow < numOfRows - 1) && (this.cursor + 9 < this.filteredPokemonData.length)) { // not last row
               if (currentRow - this.scrollCursor === 8) { // last row of visible pokemon
                 this.scrollCursor++;
                 this.updateScroll();
@@ -1580,6 +1575,37 @@ export default class PokedexUiHandler extends MessageUiHandler {
           container.icon.setTint(0x808080);
         } else {
           container.icon.setTint(0);
+        }
+
+        if (data.eggMove1) {
+          container.eggMove1Icon.setVisible(true);
+        } else {
+          container.eggMove1Icon.setVisible(false);
+        }
+        if (data.eggMove2) {
+          container.eggMove2Icon.setVisible(true);
+        } else {
+          container.eggMove2Icon.setVisible(false);
+        }
+        if (data.tmMove1) {
+          container.tmMove1Icon.setVisible(true);
+        } else {
+          container.tmMove1Icon.setVisible(false);
+        }
+        if (data.tmMove2) {
+          container.tmMove2Icon.setVisible(true);
+        } else {
+          container.tmMove2Icon.setVisible(false);
+        }
+        if (data.passive1) {
+          container.passive1Icon.setVisible(true);
+        } else {
+          container.passive1Icon.setVisible(false);
+        }
+        if (data.passive2) {
+          container.passive2Icon.setVisible(true);
+        } else {
+          container.passive2Icon.setVisible(false);
         }
 
         if (this.showDecorations) {

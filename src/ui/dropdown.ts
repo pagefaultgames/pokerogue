@@ -629,6 +629,8 @@ export class DropDown extends Phaser.GameObjects.Container {
           }
         }
       }
+
+      this.onChange();
     }
   }
 

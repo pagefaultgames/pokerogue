@@ -28,6 +28,7 @@ import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 import { Nature } from "#enums/nature";
+import { achvs } from "#app/system/achv";
 
 enum Page {
   PROFILE,
@@ -783,9 +784,6 @@ export default class SummaryUiHandler extends UiHandler {
         if (types.length > 1) {
           profileContainer.add(getTypeIcon(1, types[1]));
         }
-        if (this.pokemon?.isTerastallized) {
-          profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
-        }
 
         if (this.pokemon?.getLuck()) {
           const luckLabelText = addTextObject(141, 28, i18next.t("common:luckIndicator"), TextStyle.SUMMARY_ALT);
@@ -796,6 +794,13 @@ export default class SummaryUiHandler extends UiHandler {
           luckText.setOrigin(0, 0);
           luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
           profileContainer.add(luckText);
+        }
+
+        if (globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(this.pokemon)) {
+          const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
+          teraIcon.setName("terrastallize-icon");
+          teraIcon.setFrame(Type[this.pokemon.getTeraType()].toLowerCase());
+          profileContainer.add(teraIcon);
         }
 
         this.abilityContainer = {

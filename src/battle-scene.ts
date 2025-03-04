@@ -1865,6 +1865,58 @@ export default class BattleScene extends SceneBase {
       this.getCurrentPhase()?.constructor.name ?? "",
     );
 
+    if ( // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.
+      !isEggPhase &&
+      this.currentBattle?.battleType === BattleType.TRAINER && !isNullOrUndefined(this.currentBattle.trainer) &&
+      this.currentBattle.trainer.config.hasSpecialtyType()
+    ) {
+      if (species.speciesId === Species.WORMADAM) {
+        switch (this.currentBattle.trainer.config.specialtyType) {
+          case Type.GROUND:
+            return 1; // Sandy Cloak
+          case Type.STEEL:
+            return 2; // Trash Cloak
+          case Type.GRASS:
+            return 0; // Plant Cloak
+        }
+      } else if (species.speciesId === Species.ROTOM) {
+        switch (this.currentBattle.trainer.config.specialtyType) {
+          case Type.FLYING:
+            return 4; // Fan Rotom
+          case Type.GHOST:
+            return 0; // Lightbulb Rotom
+          case Type.FIRE:
+            return 1; // Heat Rotom
+          case Type.GRASS:
+            return 5; // Mow Rotom
+          case Type.WATER:
+            return 2; // Wash Rotom
+          case Type.ICE:
+            return 3; // Frost Rotom
+        }
+      } else if (species.speciesId === Species.ORICORIO) {
+        switch (this.currentBattle.trainer.config.specialtyType) {
+          case Type.GHOST:
+            return 3; // Sensu Style
+          case Type.FIRE:
+            return 0; // Baile Style
+          case Type.ELECTRIC:
+            return 1; // Pom-Pom Style
+          case Type.PSYCHIC:
+            return 2; // Pa'u Style
+        }
+      } else if (species.speciesId === Species.PALDEA_TAUROS) {
+        switch (this.currentBattle.trainer.config.specialtyType) {
+          case Type.FIRE:
+            return 1; // Blaze Breed
+          case Type.WATER:
+            return 2; // Aqua Breed
+        }
+      } else if (species.speciesId === Species.SILVALLY || species.speciesId === Species.ARCEUS) { // Would probably never happen, but might as well
+        return this.currentBattle.trainer.config.specialtyType;
+      }
+    }
+
     switch (species.speciesId) {
       case Species.UNOWN:
       case Species.SHELLOS:
@@ -1872,8 +1924,6 @@ export default class BattleScene extends SceneBase {
       case Species.BASCULIN:
       case Species.DEERLING:
       case Species.SAWSBUCK:
-      case Species.FROAKIE:
-      case Species.FROGADIER:
       case Species.SCATTERBUG:
       case Species.SPEWPA:
       case Species.VIVILLON:
@@ -1907,9 +1957,14 @@ export default class BattleScene extends SceneBase {
           return 0; // No Partner Eevee for Wave 12 Preschoolers
         }
         return Utils.randSeedInt(2);
+      case Species.FROAKIE:
+      case Species.FROGADIER:
       case Species.GRENINJA:
-        if (this.currentBattle?.battleType === BattleType.TRAINER) {
-          return 0; // Don't give trainers Battle Bond Greninja
+        if (
+          this.currentBattle?.battleType === BattleType.TRAINER &&
+          !isEggPhase
+        ) {
+          return 0; // Don't give trainers Battle Bond Greninja, Froakie or Frogadier
         }
         return Utils.randSeedInt(2);
       case Species.URSHIFU:

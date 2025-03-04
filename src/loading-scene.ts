@@ -101,6 +101,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("icon_lock", "ui", "icon_lock.png");
     this.loadImage("icon_stop", "ui", "icon_stop.png");
     this.loadImage("icon_tera", "ui");
+    this.loadImage("cursor_tera", "ui");
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
     this.loadAtlas("button_tera", "ui");
@@ -250,9 +251,9 @@ export class LoadingScene extends SceneBase {
     }
     const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("valentines2025event-" + lang, "events");
+      this.loadImage("pkmnday2025event-" + lang, "events");
     } else {
-      this.loadImage("valentines2025event-en", "events");
+      this.loadImage("pkmnday2025event-en", "events");
     }
 
     this.loadAtlas("statuses", "");

@@ -5054,7 +5054,7 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
     const turnCommand = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
     const isCommandFight = turnCommand?.command === Command.FIGHT;
     const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
-    if (this.condition(pokemon, move!) && isCommandFight) {
+    if (isCommandFight && this.condition(pokemon, move!)) {
       bypassSpeed.value = false;
       canCheckHeldItems.value = false;
       return false;
@@ -5152,6 +5152,10 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   showAbilityInstant: boolean = false,
   messages: string[] = []
 ) {
+  if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
+    return;
+  }
+
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
   if (gainedMidTurn && ability.getAttrs(attrType).some(attr => attr instanceof PostSummonAbAttr && !attr.shouldActivateOnGain())) {
     return;
@@ -5445,12 +5449,10 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(
   gainedMidTurn: boolean = false
 ) {
   for (const passive of [ false, true ]) {
-    if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
-      continue;
+    if (pokemon) {
+      applySingleAbAttrs(pokemon, passive, attrType, applyFunc, args, gainedMidTurn, simulated, showAbilityInstant, messages);
+      globalScene.clearPhaseQueueSplice();
     }
-
-    applySingleAbAttrs(pokemon, passive, attrType, applyFunc, args, gainedMidTurn, simulated, showAbilityInstant, messages);
-    globalScene.clearPhaseQueueSplice();
   }
 }
 
@@ -6184,7 +6186,8 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr, Stat.ATK)
       .ignorable(),
     new Ability(Abilities.PICKUP, 3)
-      .attr(PostBattleLootAbAttr),
+      .attr(PostBattleLootAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.TRUANT, 3)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, 3)
@@ -6376,7 +6379,8 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SNOW),
     new Ability(Abilities.HONEY_GATHER, 4)
-      .attr(MoneyAbAttr),
+      .attr(MoneyAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.FRISK, 4)
       .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, 4)
@@ -6875,7 +6879,8 @@ export function initAbilities() {
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)

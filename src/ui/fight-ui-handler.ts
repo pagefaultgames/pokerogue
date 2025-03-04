@@ -226,7 +226,9 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     }
 
     if (!this.cursorObj) {
-      this.cursorObj = globalScene.add.image(0, 0, "cursor");
+      const isTera = this.fromCommand === Command.TERA;
+      this.cursorObj = globalScene.add.image(0, 0, isTera ? "cursor_tera" : "cursor");
+      this.cursorObj.setScale(isTera ? 0.7 : 1);
       ui.add(this.cursorObj);
     }
 

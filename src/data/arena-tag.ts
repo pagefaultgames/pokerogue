@@ -1230,10 +1230,12 @@ export class FairyLockTag extends ArenaTag {
  */
 export class SuppressAbilitiesTag extends ArenaTag {
   private sourceCount: number;
+  private beingRemoved: boolean;
 
   constructor(sourceId: number) {
     super(ArenaTagType.NEUTRALIZING_GAS, 0, undefined, sourceId);
     this.sourceCount = 1;
+    this.beingRemoved = false;
   }
 
   public override onAdd(arena: Arena): void {
@@ -1267,6 +1269,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
   }
 
   public override onRemove(arena: Arena, quiet: boolean = false) {
+    this.beingRemoved = true;
     if (!quiet) {
       globalScene.queueMessage(i18next.t("arenaTag:neutralizingGasOnRemove"));
     }
@@ -1281,6 +1284,10 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
   public shouldApplyToSelf(): boolean {
     return this.sourceCount > 1;
+  }
+
+  public isBeingRemoved() {
+    return this.beingRemoved;
   }
 }
 

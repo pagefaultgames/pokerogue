@@ -461,7 +461,7 @@ export const speciesStarterCosts = {
   [Species.GUZZLORD]: 6,
   [Species.NECROZMA]: 8,
   [Species.MAGEARNA]: 7,
-  [Species.MARSHADOW]: 7,
+  [Species.MARSHADOW]: 8,
   [Species.POIPOLE]: 8,
   [Species.STAKATAKA]: 6,
   [Species.BLACEPHALON]: 7,
