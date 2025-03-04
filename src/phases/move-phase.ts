@@ -9,7 +9,7 @@ import {
   PokemonTypeChangeAbAttr,
   PostMoveUsedAbAttr,
   RedirectMoveAbAttr,
-  ReduceStatusEffectDurationAbAttr
+  ReduceStatusEffectDurationAbAttr,
 } from "#app/data/ability";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
@@ -24,7 +24,8 @@ import {
   frenzyMissFunc,
   HealStatusEffectAttr,
   MoveFlags,
-  PreMoveMessageAttr
+  PreMoveMessageAttr,
+  PreUseInterruptAttr,
 } from "#app/data/move";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
@@ -42,7 +43,7 @@ import { MoveChargePhase } from "#app/phases/move-charge-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { BooleanHolder, NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -293,7 +294,18 @@ export class MovePhase extends BattlePhase {
       }
     }
 
-    this.showMoveText();
+    let success: boolean = true;
+    // Check if there are any attributes that can interrupt the move, overriding the fail message.
+    for (const move of this.move.getMove().getAttrs(PreUseInterruptAttr)) {
+      if (move.apply(this.pokemon, targets[0], this.move.getMove())) {
+        success = false;
+        break;
+      }
+    }
+
+    if (success) {
+      this.showMoveText();
+    }
 
     if (moveQueue.length > 0) {
       // Using .shift here clears out two turn moves once they've been used
@@ -329,11 +341,14 @@ export class MovePhase extends BattlePhase {
      * Move conditions assume the move has a single target
      * TODO: is this sustainable?
      */
-    const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
-    const failedDueToWeather: boolean = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
-    const failedDueToTerrain: boolean = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
+    let failedDueToTerrain: boolean = false;
+    if (success) {
+      const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
+      const failedDueToWeather: boolean = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
+      failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
+      success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
+    }
 
-    const success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
 
     // Update the battle's "last move" pointer, unless we're currently mimicking a move.
     if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
@@ -360,9 +375,8 @@ export class MovePhase extends BattlePhase {
 
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
+      const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
       let failedText: string | undefined;
-      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
-
       if (failureMessage) {
         failedText = failureMessage;
       } else if (failedDueToTerrain) {
@@ -398,7 +412,7 @@ export class MovePhase extends BattlePhase {
     } else {
       this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
 
-      const failureMessage = move.getFailedText(this.pokemon, targets[0], move, new BooleanHolder(false));
+      const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
       this.showMoveText();
       this.showFailedText(failureMessage ?? undefined);
 
@@ -566,7 +580,7 @@ export class MovePhase extends BattlePhase {
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents()[0], this.move.getMove());
   }
 
-  public showFailedText(failedText?: string): void {
-    globalScene.queueMessage(failedText ?? i18next.t("battle:attackFailed"));
+  public showFailedText(failedText: string = i18next.t("battle:attackFailed")): void {
+    globalScene.queueMessage(failedText);
   }
 }

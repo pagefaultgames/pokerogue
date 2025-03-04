@@ -12,6 +12,7 @@ import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { Mode } from "#app/ui/ui";
 import type { Species } from "#enums/species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import * as Utils from "../utils";
 
 export class SelectStarterPhase extends Phase {
 
@@ -77,6 +78,12 @@ export class SelectStarterPhase extends Phase {
 
       if (starter.nickname) {
         starterPokemon.nickname = starter.nickname;
+      }
+
+      if (!Utils.isNullOrUndefined(starter.teraType)) {
+        starterPokemon.teraType = starter.teraType;
+      } else {
+        starterPokemon.teraType = starterPokemon.species.type1;
       }
 
       if (globalScene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {
