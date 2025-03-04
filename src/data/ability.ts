@@ -6283,7 +6283,8 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr, Stat.ATK)
       .ignorable(),
     new Ability(Abilities.PICKUP, 3)
-      .attr(PostBattleLootAbAttr),
+      .attr(PostBattleLootAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.TRUANT, 3)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, 3)
@@ -6475,7 +6476,8 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SNOW),
     new Ability(Abilities.HONEY_GATHER, 4)
-      .attr(MoneyAbAttr),
+      .attr(MoneyAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.FRISK, 4)
       .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, 4)
