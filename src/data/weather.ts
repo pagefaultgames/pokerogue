@@ -205,6 +205,18 @@ export function getWeatherClearMessage(weatherType: WeatherType): string | null 
   return null;
 }
 
+export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): string | null {
+  switch (weatherType) {
+    case WeatherType.HARSH_SUN:
+      return i18next.t("weather:harshSunContinueMessage");
+    case WeatherType.HEAVY_RAIN:
+      return i18next.t("weather:heavyRainContinueMessage");
+    case WeatherType.STRONG_WINDS:
+      return i18next.t("weather:strongWindsContinueMessage");
+  }
+  return null;
+}
+
 export function getTerrainStartMessage(terrainType: TerrainType): string | null {
   switch (terrainType) {
     case TerrainType.MISTY:
