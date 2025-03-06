@@ -36,16 +36,16 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
   private dexProgressWindow: Phaser.GameObjects.NineSlice;
   private dexProgressContainer: Phaser.GameObjects.Container;
-  private showDexProgress: boolean = false;
+  private showDexProgress = false;
 
   private overrideSettings?: OptionSelectSettings;
   private encounterOptions: MysteryEncounterOption[] = [];
   private optionsMeetsReqs: boolean[];
 
-  protected viewPartyIndex: number = 0;
-  protected viewPartyXPosition: number = 0;
+  protected viewPartyIndex = 0;
+  protected viewPartyXPosition = 0;
 
-  protected blockInput: boolean = true;
+  protected blockInput = true;
 
   constructor() {
     super(Mode.MYSTERY_ENCOUNTER);
@@ -86,7 +86,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     this.descriptionContainer.add(this.rarityBall);
 
     const dexProgressIndicator = globalScene.add.sprite(12, 10, "encounter_radar");
-    dexProgressIndicator.setScale(0.80);
+    dexProgressIndicator.setScale(0.8);
     this.dexProgressContainer.add(dexProgressIndicator);
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
   }
@@ -94,9 +94,13 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   override show(args: any[]): boolean {
     super.show(args);
 
-    this.overrideSettings = args[0] as OptionSelectSettings ?? {};
-    const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription) ? true : !this.overrideSettings.hideDescription;
-    const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription) ? true : this.overrideSettings.slideInDescription;
+    this.overrideSettings = (args[0] as OptionSelectSettings) ?? {};
+    const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription)
+      ? true
+      : !this.overrideSettings.hideDescription;
+    const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription)
+      ? true
+      : this.overrideSettings.slideInDescription;
     const startingCursorIndex = this.overrideSettings?.startingCursorIndex ?? 0;
 
     this.cursorContainer.setVisible(true);
@@ -136,7 +140,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
           success = true;
           const overrideSettings: OptionSelectSettings = {
             ...this.overrideSettings,
-            slideInDescription: false
+            slideInDescription: false,
           };
           globalScene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
             globalScene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
@@ -145,7 +149,12 @@ export default class MysteryEncounterUiHandler extends UiHandler {
               this.unblockInput();
             }, 300);
           });
-        } else if (this.blockInput || (!this.optionsMeetsReqs[cursor] && (selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL))) {
+        } else if (
+          this.blockInput ||
+          (!this.optionsMeetsReqs[cursor] &&
+            (selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT ||
+              selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL))
+        ) {
           success = false;
         } else {
           if ((globalScene.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)) {
@@ -293,7 +302,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       this.blockInput = false;
       for (let i = 0; i < this.optionsContainer.length - 1; i++) {
         const optionMode = this.encounterOptions[i].optionMode;
-        if (!this.optionsMeetsReqs[i] && (optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
+        if (
+          !this.optionsMeetsReqs[i] &&
+          (optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT ||
+            optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+        ) {
           continue;
         }
         (this.optionsContainer.getAt(i) as Phaser.GameObjects.Text).setAlpha(1);
@@ -321,26 +334,38 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     if (cursor === this.viewPartyIndex) {
       this.cursorObj.setPosition(this.viewPartyXPosition, -17);
-    } else if (this.optionsContainer.getAll()?.length === 3) { // 2 Options
+    } else if (this.optionsContainer.getAll()?.length === 3) {
+      // 2 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 15);
-    } else if (this.optionsContainer.getAll()?.length === 4) { // 3 Options
+    } else if (this.optionsContainer.getAll()?.length === 4) {
+      // 3 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 7 + (cursor > 1 ? 16 : 0));
-    } else if (this.optionsContainer.getAll()?.length === 5) { // 4 Options
+    } else if (this.optionsContainer.getAll()?.length === 5) {
+      // 4 Options
       this.cursorObj.setPosition(-10.5 + (cursor % 2 === 1 ? 100 : 0), 7 + (cursor > 1 ? 16 : 0));
     }
 
     return changed;
   }
 
-  displayEncounterOptions(slideInDescription: boolean = true): void {
+  displayEncounterOptions(slideInDescription = true): void {
     this.getUi().clearText();
     const mysteryEncounter = globalScene.currentBattle.mysteryEncounter!;
     this.encounterOptions = this.overrideSettings?.overrideOptions ?? mysteryEncounter.options;
     this.optionsMeetsReqs = [];
 
-    const titleText: string | null = getEncounterText(mysteryEncounter.dialogue.encounterOptionsDialogue?.title, TextStyle.TOOLTIP_TITLE);
-    const descriptionText: string | null = getEncounterText(mysteryEncounter.dialogue.encounterOptionsDialogue?.description, TextStyle.TOOLTIP_CONTENT);
-    const queryText: string | null = getEncounterText(mysteryEncounter.dialogue.encounterOptionsDialogue?.query, TextStyle.TOOLTIP_CONTENT);
+    const titleText: string | null = getEncounterText(
+      mysteryEncounter.dialogue.encounterOptionsDialogue?.title,
+      TextStyle.TOOLTIP_TITLE,
+    );
+    const descriptionText: string | null = getEncounterText(
+      mysteryEncounter.dialogue.encounterOptionsDialogue?.description,
+      TextStyle.TOOLTIP_CONTENT,
+    );
+    const queryText: string | null = getEncounterText(
+      mysteryEncounter.dialogue.encounterOptionsDialogue?.query,
+      TextStyle.TOOLTIP_CONTENT,
+    );
 
     // Clear options container (except cursor)
     this.optionsContainer.removeAll(true);
@@ -353,21 +378,38 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       switch (this.encounterOptions.length) {
         default:
         case 2:
-          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, {
+            fontSize: "80px",
+            lineSpacing: -8,
+          });
           break;
         case 3:
-          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, {
+            fontSize: "80px",
+            lineSpacing: -8,
+          });
           break;
         case 4:
-          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, { fontSize: "80px", lineSpacing: -8 });
+          optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, i < 2 ? 0 : 16, "-", TextStyle.WINDOW, {
+            fontSize: "80px",
+            lineSpacing: -8,
+          });
           break;
       }
 
       this.optionsMeetsReqs.push(option.meetsRequirements());
       const optionDialogue = option.dialogue!;
-      const label = !this.optionsMeetsReqs[i] && optionDialogue.disabledButtonLabel ? optionDialogue.disabledButtonLabel : optionDialogue.buttonLabel;
+      const label =
+        !this.optionsMeetsReqs[i] && optionDialogue.disabledButtonLabel
+          ? optionDialogue.disabledButtonLabel
+          : optionDialogue.buttonLabel;
       let text: string | null;
-      if (option.hasRequirements() && this.optionsMeetsReqs[i] && (option.optionMode === MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
+      if (
+        option.hasRequirements() &&
+        this.optionsMeetsReqs[i] &&
+        (option.optionMode === MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL ||
+          option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+      ) {
         // Options with special requirements that are met are automatically colored green
         text = getEncounterText(label, TextStyle.ME_OPTION_SPECIAL);
       } else {
@@ -378,7 +420,11 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         optionText.setText(text);
       }
 
-      if (!this.optionsMeetsReqs[i] && (option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)) {
+      if (
+        !this.optionsMeetsReqs[i] &&
+        (option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT ||
+          option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+      ) {
         optionText.setAlpha(0.5);
       }
       if (this.blockInput) {
@@ -389,7 +435,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       const nonScrollWidth = 90;
       const optionTextMaskRect = globalScene.make.graphics({});
       optionTextMaskRect.setScale(6);
-      optionTextMaskRect.fillStyle(0xFFFFFF);
+      optionTextMaskRect.fillStyle(0xffffff);
       optionTextMaskRect.beginPath();
       optionTextMaskRect.fillRect(optionText.x + 11, optionText.y + 140, nonScrollWidth, 18);
 
@@ -411,8 +457,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
           delay: Utils.fixedInt(2000),
           loop: -1,
           hold: Utils.fixedInt(2000),
-          duration: Utils.fixedInt((optionTextWidth - nonScrollWidth) / 15 * 2000),
-          x: `-=${(optionTextWidth - nonScrollWidth)}`
+          duration: Utils.fixedInt(((optionTextWidth - nonScrollWidth) / 15) * 2000),
+          x: `-=${optionTextWidth - nonScrollWidth}`,
         });
       }
 
@@ -420,30 +466,47 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // View Party Button
-    const viewPartyText = addBBCodeTextObject((globalScene.game.canvas.width) / 6, -24, getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY), TextStyle.PARTY);
+    const viewPartyText = addBBCodeTextObject(
+      globalScene.game.canvas.width / 6,
+      -24,
+      getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY),
+      TextStyle.PARTY,
+    );
     this.optionsContainer.add(viewPartyText);
-    viewPartyText.x -= (viewPartyText.displayWidth + 16);
+    viewPartyText.x -= viewPartyText.displayWidth + 16;
     this.viewPartyXPosition = viewPartyText.x - 10;
 
     // Description Window
-    const titleTextObject = addBBCodeTextObject(0, 0, titleText ?? "", TextStyle.TOOLTIP_TITLE, { wordWrap: { width: 750 }, align: "center", lineSpacing: -8 });
+    const titleTextObject = addBBCodeTextObject(0, 0, titleText ?? "", TextStyle.TOOLTIP_TITLE, {
+      wordWrap: { width: 750 },
+      align: "center",
+      lineSpacing: -8,
+    });
     this.descriptionContainer.add(titleTextObject);
     titleTextObject.setPosition(72 - titleTextObject.displayWidth / 2, 5.5);
 
     // Rarity of encounter
-    const index = mysteryEncounter.encounterTier === MysteryEncounterTier.COMMON ? 0 :
-      mysteryEncounter.encounterTier === MysteryEncounterTier.GREAT ? 1 :
-        mysteryEncounter.encounterTier === MysteryEncounterTier.ULTRA ? 2 :
-          mysteryEncounter.encounterTier === MysteryEncounterTier.ROGUE ? 3 : 4;
+    const index =
+      mysteryEncounter.encounterTier === MysteryEncounterTier.COMMON
+        ? 0
+        : mysteryEncounter.encounterTier === MysteryEncounterTier.GREAT
+          ? 1
+          : mysteryEncounter.encounterTier === MysteryEncounterTier.ULTRA
+            ? 2
+            : mysteryEncounter.encounterTier === MysteryEncounterTier.ROGUE
+              ? 3
+              : 4;
     const ballType = getPokeballAtlasKey(index);
     this.rarityBall.setTexture("pb", ballType);
 
-    const descriptionTextObject = addBBCodeTextObject(6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
+    const descriptionTextObject = addBBCodeTextObject(6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, {
+      wordWrap: { width: 830 },
+    });
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
     const descriptionTextMaskRect = globalScene.make.graphics({});
     descriptionTextMaskRect.setScale(6);
-    descriptionTextMaskRect.fillStyle(0xFFFFFF);
+    descriptionTextMaskRect.fillStyle(0xffffff);
     descriptionTextMaskRect.beginPath();
     descriptionTextMaskRect.fillRect(6, 53, 206, 57);
 
@@ -466,13 +529,15 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         loop: -1,
         hold: Utils.fixedInt(2000),
         duration: Utils.fixedInt((descriptionLineCount - 6) * 2000),
-        y: `-=${10 * (descriptionLineCount - 6)}`
+        y: `-=${10 * (descriptionLineCount - 6)}`,
       });
     }
 
     this.descriptionContainer.add(descriptionTextObject);
 
-    const queryTextObject = addBBCodeTextObject(0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 830 }});
+    const queryTextObject = addBBCodeTextObject(0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, {
+      wordWrap: { width: 830 },
+    });
     this.descriptionContainer.add(queryTextObject);
     queryTextObject.setPosition(75 - queryTextObject.displayWidth / 2, 90);
 
@@ -483,7 +548,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         targets: this.descriptionContainer,
         x: "+=150",
         ease: "Sine.easeInOut",
-        duration: 1000
+        duration: 1000,
       });
     }
   }
@@ -510,7 +575,12 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     let text: string | null;
     const cursorOption = this.encounterOptions[cursor];
     const optionDialogue = cursorOption.dialogue!;
-    if (!this.optionsMeetsReqs[cursor] && (cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT || cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL) && optionDialogue.disabledButtonTooltip) {
+    if (
+      !this.optionsMeetsReqs[cursor] &&
+      (cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT ||
+        cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL) &&
+      optionDialogue.disabledButtonTooltip
+    ) {
       text = getEncounterText(optionDialogue.disabledButtonTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
       text = getEncounterText(optionDialogue.buttonTooltip, TextStyle.TOOLTIP_CONTENT);
@@ -518,19 +588,36 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)
     if (text) {
-      const primaryStyleString = [ ...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))! ][0];
-      text = text.replace(/(\(\+\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) + "[/color][/shadow]" + primaryStyleString);
-      text = text.replace(/(\(\-\)[^\(\[]*)/gi, substring => "[/color][/shadow]" + getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) + "[/color][/shadow]" + primaryStyleString);
+      const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+      text = text.replace(
+        /(\(\+\)[^\(\[]*)/gi,
+        substring =>
+          "[/color][/shadow]" +
+          getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) +
+          "[/color][/shadow]" +
+          primaryStyleString,
+      );
+      text = text.replace(
+        /(\(\-\)[^\(\[]*)/gi,
+        substring =>
+          "[/color][/shadow]" +
+          getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) +
+          "[/color][/shadow]" +
+          primaryStyleString,
+      );
     }
 
     if (text) {
-      const tooltipTextObject = addBBCodeTextObject(6, 7, text, TextStyle.TOOLTIP_CONTENT, { wordWrap: { width: 600 }, fontSize: "72px" });
+      const tooltipTextObject = addBBCodeTextObject(6, 7, text, TextStyle.TOOLTIP_CONTENT, {
+        wordWrap: { width: 600 },
+        fontSize: "72px",
+      });
       this.tooltipContainer.add(tooltipTextObject);
 
       // Sets up the mask that hides the description text to give an illusion of scrolling
       const tooltipTextMaskRect = globalScene.make.graphics({});
       tooltipTextMaskRect.setScale(6);
-      tooltipTextMaskRect.fillStyle(0xFFFFFF);
+      tooltipTextMaskRect.fillStyle(0xffffff);
       tooltipTextMaskRect.beginPath();
       tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
 
@@ -552,7 +639,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
           loop: -1,
           hold: Utils.fixedInt(1200),
           duration: Utils.fixedInt((tooltipLineCount - 3) * 1200),
-          y: `-=${11.2 * (tooltipLineCount - 3)}`
+          y: `-=${11.2 * (tooltipLineCount - 3)}`,
         });
       }
     }
@@ -606,7 +693,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
           this.dexProgressContainer.on("pointerout", () => {
             globalScene.ui.hideTooltip();
           });
-        }
+        },
       });
     } else if (!show && this.showDexProgress) {
       this.showDexProgress = false;
@@ -619,7 +706,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
         onComplete: () => {
           this.dexProgressContainer.off("pointerover");
           this.dexProgressContainer.off("pointerout");
-        }
+        },
       });
     }
   }

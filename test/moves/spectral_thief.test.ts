@@ -28,9 +28,8 @@ describe("Moves - Spectral Thief", () => {
       .enemyLevel(100)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([ Moves.SPECTRAL_THIEF, Moves.SPLASH ])
-      .ability(Abilities.BALL_FETCH)
-      .disableCrits;
+      .moveset([Moves.SPECTRAL_THIEF, Moves.SPLASH])
+      .ability(Abilities.BALL_FETCH).disableCrits;
   });
 
   it("should steal max possible positive stat changes and ignore negative ones.", async () => {
@@ -61,14 +60,12 @@ describe("Moves - Spectral Thief", () => {
      * enemy has -6 SPDEF and player 0 => player should not steal
      * enemy has +3 SPD and player -2 => player only steals +3
      */
-    expect(player.getStatStages()).toEqual([ 6, 1, 6, 0, 1, 0, 0 ]);
-    expect(enemy.getStatStages()).toEqual([ 4, -6, 0, -6, 0, 0, 0 ]);
+    expect(player.getStatStages()).toEqual([6, 1, 6, 0, 1, 0, 0]);
+    expect(enemy.getStatStages()).toEqual([4, -6, 0, -6, 0, 0, 0]);
   });
 
   it("should steal stat stages before dmg calculation", async () => {
-    game.override
-      .enemySpecies(Species.MAGIKARP)
-      .enemyLevel(50);
+    game.override.enemySpecies(Species.MAGIKARP).enemyLevel(50);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -87,8 +84,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal stat stages as a negative value with Contrary.", async () => {
-    game.override
-      .ability(Abilities.CONTRARY);
+    game.override.ability(Abilities.CONTRARY);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -106,8 +102,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal double the stat stages with Simple.", async () => {
-    game.override
-      .ability(Abilities.SIMPLE);
+    game.override.ability(Abilities.SIMPLE);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -125,8 +120,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through Clear Body.", async () => {
-    game.override
-      .enemyAbility(Abilities.CLEAR_BODY);
+    game.override.enemyAbility(Abilities.CLEAR_BODY);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -144,8 +138,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through White Smoke.", async () => {
-    game.override
-      .enemyAbility(Abilities.WHITE_SMOKE);
+    game.override.enemyAbility(Abilities.WHITE_SMOKE);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -163,8 +156,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through Hyper Cutter.", async () => {
-    game.override
-      .enemyAbility(Abilities.HYPER_CUTTER);
+    game.override.enemyAbility(Abilities.HYPER_CUTTER);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -182,8 +174,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should bypass Substitute.", async () => {
-    game.override
-      .enemyMoveset(Moves.SUBSTITUTE);
+    game.override.enemyMoveset(Moves.SUBSTITUTE);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -194,7 +185,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(Moves.SPECTRAL_THIEF);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
@@ -203,8 +194,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should get blocked by protect.", async () => {
-    game.override
-      .enemyMoveset(Moves.PROTECT);
+    game.override.enemyMoveset(Moves.PROTECT);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;

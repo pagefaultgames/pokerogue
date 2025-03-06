@@ -5,7 +5,7 @@ import {
   SettingKeyboard,
   settingKeyboardBlackList,
   settingKeyboardDefaults,
-  settingKeyboardOptions
+  settingKeyboardOptions,
 } from "#app/system/settings/settings-keyboard";
 import { reverseValueToKeySetting, truncateString } from "#app/utils";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
@@ -24,17 +24,17 @@ import { globalScene } from "#app/global-scene";
  */
 export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler {
   /**
-     * Creates an instance of SettingsKeyboardUiHandler.
-     *
-     * @param mode - The UI mode, optional.
-     */
+   * Creates an instance of SettingsKeyboardUiHandler.
+   *
+   * @param mode - The UI mode, optional.
+   */
   constructor(mode: Mode | null = null) {
     super(mode);
     this.titleSelected = "Keyboard";
     this.setting = SettingKeyboard;
     this.settingDeviceDefaults = settingKeyboardDefaults;
     this.settingDeviceOptions = settingKeyboardOptions;
-    this.configs = [ cfg_keyboard_qwerty ];
+    this.configs = [cfg_keyboard_qwerty];
     this.commonSettingsCount = 0;
     this.textureOverride = "keyboard";
     this.localStoragePropertyName = "settingsKeyboard";
@@ -50,8 +50,8 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
   setSetting = setSettingKeyboard;
 
   /**
-     * Setup UI elements.
-     */
+   * Setup UI elements.
+   */
   setup() {
     super.setup();
     // If no gamepads are detected, set up a default UI prompt in the settings container.
@@ -75,17 +75,16 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
     this.settingsContainer.add(iconDelete);
     this.settingsContainer.add(deleteText);
 
-
     // Map the 'noKeyboard' layout options for easy access.
     this.layout["noKeyboard"].optionsContainer = optionsContainer;
     this.layout["noKeyboard"].label = label;
   }
 
   /**
-     * Handle the home key press event.
-     */
+   * Handle the home key press event.
+   */
   onHomeDown(): void {
-    if (![ Mode.SETTINGS_KEYBOARD, Mode.SETTINGS_GAMEPAD ].includes(globalScene.ui.getMode())) {
+    if (![Mode.SETTINGS_KEYBOARD, Mode.SETTINGS_GAMEPAD].includes(globalScene.ui.getMode())) {
       return;
     }
     globalScene.gameData.resetMappingToFactory();
@@ -93,8 +92,8 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
   }
 
   /**
-     * Handle the delete key press event.
-     */
+   * Handle the delete key press event.
+   */
   onDeleteDown(): void {
     if (globalScene.ui.getMode() !== Mode.SETTINGS_KEYBOARD) {
       return;
@@ -113,11 +112,11 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
   }
 
   /**
-     * Set the layout for the active configuration.
-     *
-     * @param activeConfig - The active keyboard configuration.
-     * @returns `true` if the layout was successfully applied, otherwise `false`.
-     */
+   * Set the layout for the active configuration.
+   *
+   * @param activeConfig - The active keyboard configuration.
+   * @returns `true` if the layout was successfully applied, otherwise `false`.
+   */
   setLayout(activeConfig: InterfaceConfig): boolean {
     // Check if there is no active configuration (e.g., no gamepad connected).
     if (!activeConfig) {
@@ -133,14 +132,14 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
   }
 
   /**
-     * Update the display of the chosen keyboard layout.
-     */
+   * Update the display of the chosen keyboard layout.
+   */
   updateChosenKeyboardDisplay(): void {
     // Update any bindings that might have changed since the last update.
     this.updateBindings();
 
     // Iterate over the keys in the settingDevice enumeration.
-    for (const [ index, key ] of Object.keys(this.setting).entries()) {
+    for (const [index, key] of Object.keys(this.setting).entries()) {
       const setting = this.setting[key]; // Get the actual setting value using the key.
 
       // Check if the current setting corresponds to the layout setting.
@@ -152,31 +151,38 @@ export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUi
           } // Skip updating the no gamepad layout.
           // Update the text of the first option label under the current setting to the name of the chosen gamepad,
           // truncating the name to 30 characters if necessary.
-          this.layout[_key].optionValueLabels[index][0].setText(truncateString(globalScene.inputController.selectedDevice[Device.KEYBOARD], 22));
+          this.layout[_key].optionValueLabels[index][0].setText(
+            truncateString(globalScene.inputController.selectedDevice[Device.KEYBOARD], 22),
+          );
         }
       }
     }
-
   }
 
   /**
-     * Save the custom keyboard mapping to local storage.
-     *
-     * @param config - The configuration to save.
-     */
+   * Save the custom keyboard mapping to local storage.
+   *
+   * @param config - The configuration to save.
+   */
   saveCustomKeyboardMappingToLocalStorage(config): void {
     globalScene.gameData.saveMappingConfigs(globalScene.inputController?.selectedDevice[Device.KEYBOARD], config);
   }
 
   /**
-     * Save the setting to local storage.
-     *
-     * @param settingName - The name of the setting to save.
-     * @param cursor - The cursor position to save.
-     */
+   * Save the setting to local storage.
+   *
+   * @param settingName - The name of the setting to save.
+   * @param cursor - The cursor position to save.
+   */
   saveSettingToLocalStorage(settingName, cursor): void {
     if (this.setting[settingName] !== this.setting.Default_Layout) {
-      globalScene.gameData.saveControlSetting(this.device, this.localStoragePropertyName, settingName, this.settingDeviceDefaults, cursor);
+      globalScene.gameData.saveControlSetting(
+        this.device,
+        this.localStoragePropertyName,
+        settingName,
+        this.settingDeviceDefaults,
+        cursor,
+      );
     }
   }
 }

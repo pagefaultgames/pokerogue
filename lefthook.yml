@@ -1,9 +1,9 @@
 pre-commit:
   parallel: true
   commands:
-    eslint:
+    biome-lint:
       glob: "*.{js,jsx,ts,tsx}"
-      run: npx @biomejs/biome lint --write {staged_files}
+      run: npx @biomejs/biome check --write --reporter=summary {staged_files}
       stage_fixed: true
       skip:
         - merge
@@ -11,9 +11,9 @@ pre-commit:
 
 pre-push:
   commands:
-    eslint:
+    biome-lint:
       glob: "*.{js,ts,jsx,tsx}"
-      run: npx @biomejs/biome lint --write {push_files}
+      run: npx @biomejs/biome check --write --reporter=summary {push_files} 
       
 post-merge:
   commands:

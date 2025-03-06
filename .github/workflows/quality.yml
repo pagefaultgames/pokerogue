@@ -37,4 +37,4 @@ jobs:
         run: npm run eslint-ci
 
       - name: Fix with Biome  # Step to run linters and auto-format the code
-        run: npm run biome-ci
+        run: npm run biome-ci --reporter=GitHub

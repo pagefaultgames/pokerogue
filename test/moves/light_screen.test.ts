@@ -36,22 +36,26 @@ describe("Moves - Light Screen", () => {
     globalScene = game.scene;
     game.override.battleType("single");
     game.override.ability(Abilities.NONE);
-    game.override.moveset([ Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE ]);
+    game.override.moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE]);
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([ Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN ]);
+    game.override.enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
     game.override.disableCrits();
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {
     const moveToUse = Moves.ABSORB;
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(
+      game.scene.getEnemyPokemon()!,
+      game.scene.getPlayerPokemon()!,
+      allMoves[moveToUse],
+    );
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power * singleBattleMultiplier);
   });
@@ -60,20 +64,24 @@ describe("Moves - Light Screen", () => {
     game.override.battleType("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
-    await game.classicMode.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(
+      game.scene.getEnemyPokemon()!,
+      game.scene.getPlayerPokemon()!,
+      allMoves[moveToUse],
+    );
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power * doubleBattleMultiplier);
   });
 
   it("does not affect physical attacks", async () => {
     const moveToUse = Moves.TACKLE;
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
 
@@ -112,7 +120,14 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
 
   if (globalScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side)) {
     if (move.getAttrs(CritOnlyAttr).length === 0) {
-      globalScene.arena.applyTagsForSide(ArenaTagType.LIGHT_SCREEN, side, false, attacker, move.category, multiplierHolder);
+      globalScene.arena.applyTagsForSide(
+      ArenaTagType.LIGHT_SCREEN,
+      side,
+      false,
+      attacker,
+      move.category,
+      multiplierHolder,
+    );
     }
   }
 

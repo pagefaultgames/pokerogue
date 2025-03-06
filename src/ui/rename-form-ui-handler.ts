@@ -14,11 +14,11 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
   }
 
   getMargin(config?: ModalConfig): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:rename"), i18next.t("menu:cancel") ];
+    return [i18next.t("menu:rename"), i18next.t("menu:cancel")];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -42,7 +42,7 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
       } else {
         this.inputs[0].text = args[1];
       }
-      this.submitAction = (_) => {
+      this.submitAction = _ => {
         this.sanitizeInputs();
         const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
         config.buttonActions[0](sanitizedName);
