@@ -3169,9 +3169,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
+   * Checks for 'Indirect' HitResults to account for Endure/Reviver Seed applying correctly
    * @param damage integer - passed to damage()
    * @param result an enum if it's super effective, not very, etc.
-   * @param critical boolean if move is a critical hit
+   * @param isCritical boolean if move is a critical hit
    * @param ignoreSegments boolean, passed to damage() and not used currently
    * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
    * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
