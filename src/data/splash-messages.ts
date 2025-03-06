@@ -44,11 +44,11 @@ interface Season {
 //#region Constants
 
 /** The weight multiplier for the battles-won splash message */
-const BATTLES_WON_WEIGHT_MULTIPLIER = 10;
+const BATTLES_WON_WEIGHT_MULTIPLIER = 15;
 /** The weight multiplier for the Pokémon names splash message */
-const POKEMON_NAMES_WEIGHT_MULTIPLIER = 5;
+const POKEMON_NAMES_WEIGHT_MULTIPLIER = 10;
 /** The weight multiplier for the seasonal splash messages */
-const SEASONAL_WEIGHT_MULTIPLIER = 10;
+const SEASONAL_WEIGHT_MULTIPLIER = 15;
 
 //#region Common Messages
 
@@ -204,7 +204,8 @@ const commonSplashMessages = [
   "weHopeToSeeYouAgain",
   "aHealthyTeamCanMeanGreaterRewards",
   "aWildPokemonAppeared",
-  "isThisThingOn"
+  "isThisThingOn",
+  "needsMoreTesting"
 ];
 
 //#region Seasonal Messages
@@ -224,6 +225,7 @@ const seasonalSplashMessages: Season[] = [
     start: "02-07",
     end: "02-21",
     messages: [
+      "valentines.happyValentines",
       "valentines.fullOfLove",
       "valentines.applinForYou",
       "valentines.thePowerOfLoveIsThreeThirtyBST",
@@ -236,6 +238,8 @@ const seasonalSplashMessages: Season[] = [
     start: "04-01",
     end: "04-02",
     messages: [
+      "aprilFools.battlesOne",
+      "aprilFools.aprilFools",
       "aprilFools.gotcha",
       "aprilFools.alsoTryPokerogueTwo",
       "aprilFools.nowWithSameScumCountermeasures",
@@ -262,12 +266,13 @@ const seasonalSplashMessages: Season[] = [
     start: "10-15",
     end: "10-31",
     messages: [
+      "halloween.happyHalloween",
+      "halloween.boo"
       "halloween.pumpkabooAbout",
       "halloween.mayContainSpiders",
       "halloween.spookyScarySkeledirge",
       "halloween.gourgeistUsedTrickOrTreat",
-      "halloween.letsSnuggleForever",
-      "halloween.boo"
+      "halloween.letsSnuggleForever"
     ],
   },
   {
