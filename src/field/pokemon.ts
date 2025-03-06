@@ -65,7 +65,57 @@ import { WeatherType } from "#enums/weather-type";
 import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
 import type { SuppressAbilitiesTag } from "#app/data/arena-tag";
 import type { Ability, AbAttr } from "#app/data/ability";
-import { StatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, IgnoreOpponentStatStagesAbAttr, MoveImmunityAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr, DamageBoostAbAttr, IgnoreTypeStatusEffectImmunityAbAttr, ConditionalCritAbAttr, applyFieldStatMultiplierAbAttrs, FieldMultiplyStatAbAttr, AddSecondStrikeAbAttr, UserFieldStatusEffectImmunityAbAttr, UserFieldBattlerTagImmunityAbAttr, BattlerTagImmunityAbAttr, MoveTypeChangeAbAttr, FullHpResistTypeAbAttr, applyCheckTrappedAbAttrs, CheckTrappedAbAttr, PostSetStatusAbAttr, applyPostSetStatusAbAttrs, InfiltratorAbAttr, AlliedFieldDamageReductionAbAttr, PostDamageAbAttr, applyPostDamageAbAttrs, CommanderAbAttr, applyPostItemLostAbAttrs, PostItemLostAbAttr, applyOnGainAbAttrs, PreLeaveFieldAbAttr, applyPreLeaveFieldAbAttrs, applyOnLoseAbAttrs, PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr } from "#app/data/ability";
+import {
+  StatMultiplierAbAttr,
+  BlockCritAbAttr,
+  BonusCritAbAttr,
+  BypassBurnDamageReductionAbAttr,
+  FieldPriorityMoveImmunityAbAttr,
+  IgnoreOpponentStatStagesAbAttr,
+  MoveImmunityAbAttr,
+  PreDefendFullHpEndureAbAttr,
+  ReceivedMoveDamageMultiplierAbAttr,
+  StabBoostAbAttr,
+  StatusEffectImmunityAbAttr,
+  TypeImmunityAbAttr,
+  WeightMultiplierAbAttr,
+  allAbilities,
+  applyAbAttrs,
+  applyStatMultiplierAbAttrs,
+  applyPreApplyBattlerTagAbAttrs,
+  applyPreAttackAbAttrs,
+  applyPreDefendAbAttrs,
+  applyPreSetStatusAbAttrs,
+  UnsuppressableAbilityAbAttr,
+  NoFusionAbilityAbAttr,
+  MultCritAbAttr,
+  IgnoreTypeImmunityAbAttr,
+  DamageBoostAbAttr,
+  IgnoreTypeStatusEffectImmunityAbAttr,
+  ConditionalCritAbAttr,
+  applyFieldStatMultiplierAbAttrs,
+  FieldMultiplyStatAbAttr,
+  AddSecondStrikeAbAttr,
+  UserFieldStatusEffectImmunityAbAttr,
+  UserFieldBattlerTagImmunityAbAttr,
+  BattlerTagImmunityAbAttr,
+  MoveTypeChangeAbAttr,
+  FullHpResistTypeAbAttr,
+  applyCheckTrappedAbAttrs,
+  CheckTrappedAbAttr,
+  InfiltratorAbAttr,
+  AlliedFieldDamageReductionAbAttr,
+  PostDamageAbAttr,
+  applyPostDamageAbAttrs,
+  CommanderAbAttr,
+  applyPostItemLostAbAttrs,
+  PostItemLostAbAttr,
+  applyOnGainAbAttrs,
+  PreLeaveFieldAbAttr,
+  applyPreLeaveFieldAbAttrs,
+  applyOnLoseAbAttrs,
+  PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr
+} from "#app/data/ability";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -80,7 +130,7 @@ import { DexAttr } from "#app/system/game-data";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { getNatureStatMultiplier } from "#app/data/nature";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeLapseTeraTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { TerrainType } from "#app/data/terrain";
 import type { TrainerSlot } from "#app/data/trainer-config";
 import Overrides from "#app/overrides";
@@ -115,6 +165,7 @@ import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY
 import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
+import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 
 export enum LearnMoveSituation {
   MISC,
@@ -3248,7 +3299,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!cancelled.value && newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
       newTag.onAdd(this);
-
       return true;
     }
 
@@ -3760,8 +3810,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(effect?: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, turnsRemaining: number = 0, sourceText: string | null = null): boolean {
-    if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
+  trySetStatus(effect?: StatusEffect, asPhase: boolean = false, sourcePokemon: Pokemon | null = null, turnsRemaining: number = 0, sourceText: string | null = null, overrideStatus?: boolean): boolean {
+    if (!this.canSetStatus(effect, asPhase, overrideStatus, sourcePokemon)) {
       return false;
     }
     if (this.isFainted() && effect !== StatusEffect.FAINT) {
@@ -3777,6 +3827,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (asPhase) {
+      if (overrideStatus) {
+        this.resetStatus(false);
+      }
       globalScene.unshiftPhase(new ObtainStatusEffectPhase(this.getBattlerIndex(), effect, turnsRemaining, sourceText, sourcePokemon));
       return true;
     }
@@ -3808,11 +3861,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     effect = effect!; // If `effect` is undefined then `trySetStatus()` will have already returned early via the `canSetStatus()` call
     this.status = new Status(effect, 0, sleepTurnsRemaining?.value);
 
-    if (effect !== StatusEffect.FAINT) {
-      globalScene.triggerPokemonFormChange(this, SpeciesFormChangeStatusEffectTrigger, true);
-      applyPostSetStatusAbAttrs(PostSetStatusAbAttr, this, effect, sourcePokemon);
-    }
-
     return true;
   }
 
@@ -3827,21 +3875,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
     }
-    this.status = null;
-    if (lastStatus === StatusEffect.SLEEP) {
-      this.setFrameRate(10);
-      if (this.getTag(BattlerTagType.NIGHTMARE)) {
-        this.lapseTag(BattlerTagType.NIGHTMARE);
-      }
-    }
-    if (confusion) {
-      if (this.getTag(BattlerTagType.CONFUSED)) {
-        this.lapseTag(BattlerTagType.CONFUSED);
-      }
-    }
-    if (reloadAssets) {
-      this.loadAssets(false).then(() => this.playAnim());
-    }
+    globalScene.unshiftPhase(new ResetStatusPhase(this, confusion, reloadAssets));
   }
 
   /**

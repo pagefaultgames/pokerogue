@@ -2173,6 +2173,11 @@ export class PostSummonAbAttr extends AbAttr {
 }
 
 /**
+ * Base class for ability attributes which remove an effect on summon
+ */
+export class PostSummonRemoveEffectAbAttr extends PostSummonAbAttr {}
+
+/**
  * Removes specified arena tags when a Pokemon is summoned.
  */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
@@ -2279,6 +2284,33 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
     } else {
       return pokemon.addTag(this.tagType, this.turnCount);
     }
+  }
+}
+
+/**
+ * Removes Specific battler tags when a Pokemon is summoned
+ *
+ * This should realistically only ever activate on gain rather than on summon
+ */
+export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAttr {
+  private immuneTags: BattlerTagType[];
+
+  /**
+   * @param immuneTags - The {@linkcode BattlerTagType | battler tags} the Pokémon is immune to.
+   */
+  constructor(...immuneTags: BattlerTagType[]) {
+    super();
+    this.immuneTags = immuneTags;
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    let removed = false;
+    for (const tag of this.immuneTags) {
+      if (pokemon.removeTag(tag)) {
+        removed = true;
+      }
+    }
+    return removed;
   }
 }
 
@@ -2474,6 +2506,40 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
     } else {
       return globalScene.arena.trySetTerrain(this.terrainType, true);
     }
+  }
+}
+
+/**
+ * Heals a status effect if the Pokemon is afflicted with it upon switch in (or gain)
+ */
+export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
+  private immuneEffects: StatusEffect[];
+  private statusHealed: StatusEffect;
+
+  /**
+   * @param immuneEffects - The {@linkcode StatusEffect}s the Pokémon is immune to.
+   */
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+    this.immuneEffects = immuneEffects;
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const status = pokemon.status?.effect;
+    if (status && (this.immuneEffects.length < 1 || this.immuneEffects.includes(status))) {
+      this.statusHealed = status;
+      pokemon.resetStatus(false);
+      pokemon.updateInfo();
+      return true;
+    }
+    return false;
+  }
+
+  public override getTriggerMessage(_pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
+    if (this.statusHealed) {
+      return getStatusEffectHealText(this.statusHealed, getPokemonNameWithAffix(_pokemon));
+    }
+    return null;
   }
 }
 
@@ -6035,6 +6101,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
     new Ability(Abilities.SAND_VEIL, 3)
       .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
@@ -6052,6 +6119,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT ])
+      .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.INFATUATED, BattlerTagType.TAUNT)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
@@ -6064,6 +6132,7 @@ export function initAbilities() {
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, 3)
@@ -6071,6 +6140,7 @@ export function initAbilities() {
       .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.FLASH_FIRE, 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1)
@@ -6080,6 +6150,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
+      .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, 3)
@@ -6146,9 +6217,11 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MAGMA_ARMOR, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.WATER_VEIL, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
       .attr(ArenaTrapAbAttr, (user, target) => {
@@ -6241,6 +6314,7 @@ export function initAbilities() {
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.WHITE_SMOKE, 3)
@@ -6567,6 +6641,7 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, Type.ICE, 1.2, (user, target, move) => move.type === Type.NORMAL && !move.hasAttr(VariableMoveTypeAttr)),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.SLEEP)
       .attr(UserFieldBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
       .partial(), // Mold Breaker ally should not be affected by Sweet Veil
@@ -6651,6 +6726,7 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
@@ -6930,6 +7006,7 @@ export function initAbilities() {
     new Ability(Abilities.THERMAL_EXCHANGE, 9)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === Type.FIRE && move.category !== MoveCategory.STATUS, Stat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)
