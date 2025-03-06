@@ -889,7 +889,7 @@ export default class RunInfoUiHandler extends UiHandler {
   /**
    * Takes input from the user to perform a desired action.
    * @param button - Button object to be processed
-   * Button.CANCEL - removes all containers related to RunInfo and returns the user to Run History
+   * Button.CANCEL, Button.LEFT - removes all containers related to RunInfo and returns the user to Run History
    * Button.CYCLE_FORM, Button.CYCLE_SHINY, Button.CYCLE_ABILITY - runs the function buttonCycleOption()
    */
  	override processInput(button: Button): boolean {
@@ -900,6 +900,7 @@ export default class RunInfoUiHandler extends UiHandler {
 
     switch (button) {
       case Button.CANCEL:
+      case Button.LEFT:
         success = true;
         if (this.pageMode === RunInfoUiMode.MAIN) {
           this.runInfoContainer.removeAll(true);

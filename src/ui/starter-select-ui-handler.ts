@@ -3353,7 +3353,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleForm = species.forms.filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
           .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f)).filter(f => f).length > 1;
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
-        this.canCycleTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2);
+        this.canCycleTera = !this.statsMode && globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -3858,12 +3858,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.showStats();
       this.statsMode = true;
       this.pokemonSprite.setVisible(false);
+      this.teraIcon.setVisible(false);
+      this.canCycleTera = false;
+      this.updateInstructions();
     } else {
       this.statsMode = false;
       this.statsContainer.setVisible(false);
       this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
       //@ts-ignore
       this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. !?!?
+      this.teraIcon.setVisible(globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id));
+      const props = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
+      const formIndex = props.formIndex;
+      this.canCycleTera = !this.statsMode && globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2);
+      this.updateInstructions();
     }
   }
 

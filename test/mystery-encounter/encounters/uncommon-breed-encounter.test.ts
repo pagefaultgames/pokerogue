@@ -116,7 +116,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
 
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
-      const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
+      const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId!;
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -143,7 +143,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
 
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
-      const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId;
+      const speciesToSpawn = config.pokemonConfigs?.[0].species.speciesId!;
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
