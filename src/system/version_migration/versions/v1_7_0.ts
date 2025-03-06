@@ -13,7 +13,11 @@ export const systemMigrators = [
     if (data.starterData && data.dexData) {
       Object.keys(data.starterData).forEach(sd => {
         const caughtAttr = data.dexData[sd]?.caughtAttr;
-        const species = getPokemonSpecies(Number(sd));
+        const speciesNumber = Number(sd);
+        if (!speciesNumber) { // An unknown bug at some point in time caused some accounts to have starter data for pokedex number 0 which crashes
+          return;
+        }
+        const species = getPokemonSpecies(speciesNumber);
         if (caughtAttr && species.forms?.length > 1) {
           const selectableForms = species.forms.filter((form, formIndex) => form.isStarterSelectable && (caughtAttr & globalScene.gameData.getFormAttr(formIndex)));
           if (selectableForms.length === 0) {
