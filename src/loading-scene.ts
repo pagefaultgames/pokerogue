@@ -79,6 +79,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("icon_owned", "ui");
     this.loadImage("icon_egg_move", "ui");
     this.loadImage("ability_bar_left", "ui");
+    this.loadImage("ability_bar_right", "ui");
     this.loadImage("bgm_bar", "ui");
     this.loadImage("party_exp_bar", "ui");
     this.loadImage("achv_bar", "ui");
