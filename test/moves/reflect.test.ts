@@ -1,7 +1,7 @@
 import type BattleScene from "#app/battle-scene";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import type Move from "#app/data/move";
-import { allMoves } from "#app/data/move";
+import { allMoves, CritOnlyAttr } from "#app/data/move";
 import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
@@ -45,7 +45,7 @@ describe("Moves - Reflect", () => {
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
     const moveToUse = Moves.TACKLE;
-    await game.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
 
@@ -59,7 +59,7 @@ describe("Moves - Reflect", () => {
     game.override.battleType("double");
 
     const moveToUse = Moves.ROCK_SLIDE;
-    await game.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
+    await game.classicMode.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
@@ -72,7 +72,7 @@ describe("Moves - Reflect", () => {
 
   it("does not affect special attacks", async () => {
     const moveToUse = Moves.ABSORB;
-    await game.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
 
     game.move.select(moveToUse);
 
@@ -80,6 +80,18 @@ describe("Moves - Reflect", () => {
 
     const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
 
+    expect(mockedDmg).toBe(allMoves[moveToUse].power);
+  });
+
+  it("does not affect critical hits", async () => {
+    game.override.moveset([ Moves.WICKED_BLOW ]);
+    const moveToUse = Moves.WICKED_BLOW;
+    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+
+    game.move.select(moveToUse);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
     expect(mockedDmg).toBe(allMoves[moveToUse].power);
   });
 });
@@ -98,7 +110,9 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
   if (globalScene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
-    globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
+    if (move.getAttrs(CritOnlyAttr).length === 0) {
+      globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
+    }
   }
 
   return move.power * multiplierHolder.value;
