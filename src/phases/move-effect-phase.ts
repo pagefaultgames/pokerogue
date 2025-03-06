@@ -254,7 +254,7 @@ export class MoveEffectPhase extends PokemonPhase {
           /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
           const isProtected = !([ MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES ].includes(this.move.getMove().moveTarget)) && (
             bypassIgnoreProtect.value
-            || !this.move.getMove().checkFlag(MoveFlags.IGNORE_PROTECT, user, target))
+            || !this.move.getMove().doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }))
             && (hasConditionalProtectApplied.value
               || (!target.findTags(t => t instanceof DamageProtectedTag).length
                 && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType)))
@@ -268,7 +268,7 @@ export class MoveEffectPhase extends PokemonPhase {
           const isReflecting = !!target.getTag(BattlerTagType.MAGIC_COAT);
 
           /** Is the target's magic bounce ability not ignored and able to reflect this move? */
-          const canMagicBounce = !isReflecting && !move.checkFlag(MoveFlags.IGNORE_ABILITIES, user, target) && target.hasAbilityWithAttr(ReflectStatusMoveAbAttr);
+          const canMagicBounce = !isReflecting && !move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target }) && target.hasAbilityWithAttr(ReflectStatusMoveAbAttr);
 
           const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
 
