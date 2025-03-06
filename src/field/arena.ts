@@ -274,7 +274,7 @@ export class Arena {
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
-    if (this.weather?.isImmutable() && (weather !== WeatherType.HARSH_SUN && weather !== WeatherType.HEAVY_RAIN && weather !== WeatherType.STRONG_WINDS && weather !== WeatherType.NONE)) {
+    if (this.weather?.isImmutable() && (![ WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE ].contains(weather))) {
       globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (oldWeatherType - 1), true));
       globalScene.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
       return false;
