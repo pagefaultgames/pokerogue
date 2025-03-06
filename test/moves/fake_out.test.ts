@@ -52,7 +52,7 @@ describe("Moves - Fake Out", () => {
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.damageAndUpdate(enemy.getMaxHp() - 1, {});
+    enemy.damageAndUpdate(enemy.getMaxHp() - 1);
 
     game.move.select(Moves.FAKE_OUT);
     await game.toNextWave();

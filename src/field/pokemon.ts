@@ -3063,7 +3063,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, { result: result as DamageResult, critical: isCritical, ignoreSegments: false, ignoreFaintPhase: true, source: source });
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, { result: result as DamageResult, isCritical, ignoreFaintPhase: true, source });
 
         if (damage > 0) {
           if (source.isPlayer()) {
@@ -3179,14 +3179,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   damageAndUpdate(damage: number,
     {
-      result = HitResult.EFFECTIVE, critical = false, ignoreSegments = false, ignoreFaintPhase = false, source = undefined,
+      result = HitResult.EFFECTIVE, isCritical = false, ignoreSegments = false, ignoreFaintPhase = false, source = undefined,
     }:
     {
-      result?: DamageResult, critical?: boolean, ignoreSegments?: boolean, ignoreFaintPhase?: boolean, source?: Pokemon,
-    }
+      result?: DamageResult, isCritical?: boolean, ignoreSegments?: boolean, ignoreFaintPhase?: boolean, source?: Pokemon,
+    } = {}
   ): number {
     const isIndirectDamage = [ HitResult.INDIRECT, HitResult.INDIRECT_KO ].includes(result);
-    const damagePhase = new DamageAnimPhase(this.getBattlerIndex(), damage, result as DamageResult, critical);
+    const damagePhase = new DamageAnimPhase(this.getBattlerIndex(), damage, result as DamageResult, isCritical);
     globalScene.unshiftPhase(damagePhase);
     if (this.switchOutStatus && source) {
       damage = 0;

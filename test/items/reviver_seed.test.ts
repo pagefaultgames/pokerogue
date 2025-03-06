@@ -55,7 +55,7 @@ describe("Items - Reviver Seed", () => {
       .enemyMoveset(move);
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
     const player = game.scene.getPlayerPokemon()!;
-    player.damageAndUpdate(player.hp - 1, {});
+    player.damageAndUpdate(player.hp - 1);
 
     const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
     vi.spyOn(reviverSeed, "apply");
@@ -73,7 +73,7 @@ describe("Items - Reviver Seed", () => {
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
     const player = game.scene.getPlayerPokemon()!;
-    player.damageAndUpdate(player.hp - 1, {});
+    player.damageAndUpdate(player.hp - 1);
     player.addTag(BattlerTagType.CONFUSED, 3);
 
     const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
@@ -102,7 +102,7 @@ describe("Items - Reviver Seed", () => {
       .enemyMoveset(Moves.ENDURE);
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.damageAndUpdate(enemy.hp - 1, {});
+    enemy.damageAndUpdate(enemy.hp - 1);
 
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -126,7 +126,7 @@ describe("Items - Reviver Seed", () => {
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([ Species.GASTLY, Species.FEEBAS ]);
     const player = game.scene.getPlayerPokemon()!;
-    player.damageAndUpdate(player.hp - 1, {});
+    player.damageAndUpdate(player.hp - 1);
 
     const playerSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
     vi.spyOn(playerSeed, "apply");
@@ -147,7 +147,7 @@ describe("Items - Reviver Seed", () => {
       .enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
     const player = game.scene.getPlayerPokemon()!;
-    player.damageAndUpdate(player.hp - 1, {});
+    player.damageAndUpdate(player.hp - 1);
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.DESTINY_BOND);

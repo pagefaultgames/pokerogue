@@ -125,7 +125,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(boss1.bossSegmentIndex).toBe(4);
 
     // Not enough damage to break through all shields
-    boss1.damageAndUpdate(Math.floor(requiredDamageBoss1 - 5), {});
+    boss1.damageAndUpdate(Math.floor(requiredDamageBoss1 - 5));
     expect(boss1.bossSegmentIndex).toBe(1);
     expect(boss1.hp).toBe(boss1.getMaxHp() - toDmgValue(boss1SegmentHp * 3));
 
@@ -137,7 +137,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(boss2.bossSegments).toBe(5);
 
     // Enough damage to break through all shields
-    boss2.damageAndUpdate(Math.ceil(requiredDamageBoss2), {});
+    boss2.damageAndUpdate(Math.ceil(requiredDamageBoss2));
     expect(boss2.bossSegmentIndex).toBe(0);
     expect(boss2.hp).toBe(boss2.getMaxHp() - toDmgValue(boss2SegmentHp * 4));
 
@@ -165,7 +165,7 @@ describe("Boss Pokemon / Shields", () => {
 
     // Break the shields one by one
     for (let i = 1; i <= shieldsToBreak; i++) {
-      boss1.damageAndUpdate(singleShieldDamage, {});
+      boss1.damageAndUpdate(singleShieldDamage);
       expect(boss1.bossSegmentIndex).toBe(shieldsToBreak - i);
       expect(boss1.hp).toBe(boss1.getMaxHp() - toDmgValue(boss1SegmentHp * i));
       // Do nothing and go to next turn so that the StatStageChangePhase gets applied
@@ -186,7 +186,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(getTotalStatStageBoosts(boss2)).toBe(0);
 
     // Enough damage to break all shields at once
-    boss2.damageAndUpdate(Math.ceil(requiredDamage), {});
+    boss2.damageAndUpdate(Math.ceil(requiredDamage));
     expect(boss2.bossSegmentIndex).toBe(0);
     expect(boss2.hp).toBe(boss2.getMaxHp() - toDmgValue(boss2SegmentHp * shieldsToBreak));
     // Do nothing and go to next turn so that the StatStageChangePhase gets applied

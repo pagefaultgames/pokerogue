@@ -43,7 +43,7 @@ describe("Moves - Heal Block", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    player.damageAndUpdate(enemy.getMaxHp() - 1, {});
+    player.damageAndUpdate(enemy.getMaxHp() - 1);
 
     game.move.select(Moves.ABSORB);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
@@ -74,7 +74,7 @@ describe("Moves - Heal Block", () => {
 
     const player = game.scene.getPlayerPokemon()!;
 
-    player.damageAndUpdate(player.getMaxHp() - 1, {});
+    player.damageAndUpdate(player.getMaxHp() - 1);
 
     game.move.select(Moves.WISH);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -95,7 +95,7 @@ describe("Moves - Heal Block", () => {
 
     const player = game.scene.getPlayerPokemon()!;
 
-    player.damageAndUpdate(player.getMaxHp() - 1, {});
+    player.damageAndUpdate(player.getMaxHp() - 1);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -108,7 +108,7 @@ describe("Moves - Heal Block", () => {
 
     const player = game.scene.getPlayerPokemon()!;
 
-    player.damageAndUpdate(player.getMaxHp() - 1, {});
+    player.damageAndUpdate(player.getMaxHp() - 1);
 
     game.move.select(Moves.AQUA_RING);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -126,7 +126,7 @@ describe("Moves - Heal Block", () => {
 
     const player = game.scene.getPlayerPokemon()!;
 
-    player.damageAndUpdate(player.getMaxHp() - 1, {});
+    player.damageAndUpdate(player.getMaxHp() - 1);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -140,7 +140,7 @@ describe("Moves - Heal Block", () => {
     await game.classicMode.startBattle([ Species.CHARIZARD ]);
 
     const player = game.scene.getPlayerPokemon()!;
-    player.damageAndUpdate(player.getMaxHp() - 1, {});
+    player.damageAndUpdate(player.getMaxHp() - 1);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");

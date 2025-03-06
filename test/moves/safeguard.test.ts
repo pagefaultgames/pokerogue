@@ -121,7 +121,7 @@ describe("Moves - Safeguard", () => {
     game.move.select(Moves.SPLASH);
     await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
     await game.toNextTurn();
-    enemyPokemon.damageAndUpdate(1, {});
+    enemyPokemon.damageAndUpdate(1);
 
     expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
 
@@ -130,7 +130,7 @@ describe("Moves - Safeguard", () => {
     // TODO: Remove after enemy AI rework is in
     enemyPokemon.getMoveset();
     game.move.select(Moves.SPLASH);
-    enemyPokemon.damageAndUpdate(1, {});
+    enemyPokemon.damageAndUpdate(1);
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);

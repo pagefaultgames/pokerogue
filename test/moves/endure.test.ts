@@ -76,7 +76,7 @@ describe("Moves - Endure", () => {
       .enemyMoveset(Moves.ENDURE);
     await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.damageAndUpdate(enemy.hp - 1, {});
+    enemy.damageAndUpdate(enemy.hp - 1);
 
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");
