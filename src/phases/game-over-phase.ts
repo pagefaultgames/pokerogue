@@ -1,5 +1,6 @@
 import { clientSessionId } from "#app/account";
-import { BattleType, ClassicFixedBossWaves } from "#app/battle";
+import { BattleType } from "#enums/battle-spec";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";

@@ -8,7 +8,7 @@ import type PokemonData from "../system/pokemon-data";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
 import { Button } from "../enums/buttons";
-import { BattleType } from "../battle";
+import { BattleType } from "#enums/battle-spec";
 import type { RunEntry } from "../system/game-data";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerVariant } from "../field/trainer";

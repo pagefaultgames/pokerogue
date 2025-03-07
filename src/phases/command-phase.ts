@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { TurnCommand } from "#app/battle";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-spec";
 import type { EncoreTag } from "#app/data/battler-tags";
 import { TrappedTag } from "#app/data/battler-tags";
 import type { MoveTargetSet } from "#app/data/move";

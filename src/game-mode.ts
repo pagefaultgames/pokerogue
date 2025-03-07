@@ -1,6 +1,8 @@
 import i18next from "i18next";
-import type { FixedBattleConfigs } from "./battle";
-import { classicFixedBattles, ClassicFixedBossWaves, FixedBattleConfig } from "./battle";
+import type { FixedBattleConfigs } from "./data/balance/fixed-battle-configs";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { FixedBattleConfig } from "./data/balance/fixed-battle-configs";
+import { classicFixedBattles } from "./data/balance/fixed-battle-configs";
 import type { Challenge } from "./data/challenge";
 import { allChallenges, applyChallenges, ChallengeType, copyChallenge } from "./data/challenge";
 import type PokemonSpecies from "./data/pokemon-species";

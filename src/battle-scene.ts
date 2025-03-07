@@ -69,8 +69,9 @@ import {
   PostBattleInitAbAttr,
   PostItemLostAbAttr,
 } from "#app/data/ability";
-import type { FixedBattleConfig } from "#app/battle";
-import Battle, { BattleType } from "#app/battle";
+import type { FixedBattleConfig } from "./data/balance/fixed-battle-configs";
+import Battle from "#app/battle";
+import { BattleType } from "#enums/battle-spec";
 import type { GameMode } from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import FieldSpritePipeline from "#app/pipelines/field-sprite";
