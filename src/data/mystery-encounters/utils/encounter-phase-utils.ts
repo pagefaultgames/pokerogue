@@ -46,6 +46,9 @@ import type { Variant } from "#app/data/variant";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { Type } from "#app/enums/type";
+import { getNatureName } from "#app/data/nature";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -98,6 +101,7 @@ export interface EnemyPokemonConfig {
   modifierConfigs?: HeldModifierConfig[];
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
+  tera?: Type;
   aiType?: AiType;
 }
 
@@ -329,6 +333,14 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         tags.forEach(tag => enemyPokemon.addTag(tag));
       }
 
+      // Set tera
+      if (config.tera && config.tera !== Type.UNKNOWN) {
+        enemyPokemon.teraType = config.tera;
+        if (battle.trainer) {
+          battle.trainer.config.setInstantTera(e);
+        }
+      }
+
       // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
       if (config.mysteryEncounterBattleEffects) {
         enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
@@ -347,7 +359,31 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
 
-    console.log(`Pokemon: ${enemyPokemon.name}`, `Species ID: ${enemyPokemon.species.speciesId}`, `Stats: ${enemyPokemon.stats}`, `Ability: ${enemyPokemon.getAbility().name}`, `Passive Ability: ${enemyPokemon.getPassiveAbility().name}`);
+    const stats: string[] = [
+      `HP: ${enemyPokemon.stats[0]} (${enemyPokemon.ivs[0]})`,
+      ` Atk: ${enemyPokemon.stats[1]} (${enemyPokemon.ivs[1]})`,
+      ` Def: ${enemyPokemon.stats[2]} (${enemyPokemon.ivs[2]})`,
+      ` Spatk: ${enemyPokemon.stats[3]} (${enemyPokemon.ivs[3]})`,
+      ` Spdef: ${enemyPokemon.stats[4]} (${enemyPokemon.ivs[4]})`,
+      ` Spd: ${enemyPokemon.stats[5]} (${enemyPokemon.ivs[5]})`,
+    ];
+    const moveset: string[] = [];
+    enemyPokemon.getMoveset().forEach((move) => {
+      moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
+    });
+
+    console.log(
+      `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
+      `| Species ID: ${enemyPokemon.species.speciesId}`,
+      `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
+    );
+    console.log(`Stats (IVs): ${stats}`);
+    console.log(
+      `Ability: ${enemyPokemon.getAbility().name}`,
+      `| Passive Ability${enemyPokemon.hasPassive() ? "" : " (inactive)"}: ${enemyPokemon.getPassiveAbility().name}`,
+      `${enemyPokemon.isBoss() ? `| Boss Bars: ${enemyPokemon.bossSegments}` : ""}`
+    );
+    console.log("Moveset:", moveset);
   });
 
   globalScene.pushPhase(new MysteryEncounterBattlePhase(partyConfig.disableSwitch));

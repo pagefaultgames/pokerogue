@@ -11,7 +11,7 @@ import { Type } from "#enums/type";
 import type { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { AddPokeballModifier, AddVoucherModifier, AttackTypeBoosterModifier, BaseStatModifier, BerryModifier, BoostBugSpawnModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, CritBoosterModifier, DamageMoneyRewardModifier, DoubleBattleChanceBoosterModifier, EnemyAttackStatusEffectChanceModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, EvolutionItemModifier, EvolutionStatBoosterModifier, EvoTrackerModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, GigantamaxAccessModifier, HealingBoosterModifier, HealShopCostModifier, HiddenAbilityRateBoosterModifier, HitHealModifier, IvScannerModifier, LevelIncrementBoosterModifier, LockModifierTiersModifier, MapModifier, MegaEvolutionAccessModifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, MultipleParticipantExpBonusModifier, PokemonAllMovePpRestoreModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, PokemonInstantReviveModifier, PokemonLevelIncrementModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PokemonNatureChangeModifier, PokemonNatureWeightModifier, PokemonPpRestoreModifier, PokemonPpUpModifier, PokemonStatusHealModifier, PreserveBerryModifier, RememberMoveModifier, ResetNegativeStatStageModifier, ShinyRateBoosterModifier, SpeciesCritBoosterModifier, SpeciesStatBoosterModifier, SurviveDamageModifier, SwitchEffectTransferModifier, TempCritBoosterModifier, TempStatStageBoosterModifier, TerastallizeAccessModifier, TerastallizeModifier, TmModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier, type EnemyPersistentModifier, type Modifier, type PersistentModifier, TempExtraModifierModifier, CriticalCatchChanceBoosterModifier } from "#app/modifier/modifier";
+import { AddPokeballModifier, AddVoucherModifier, AttackTypeBoosterModifier, BaseStatModifier, BerryModifier, BoostBugSpawnModifier, BypassSpeedChanceModifier, ContactHeldItemTransferChanceModifier, CritBoosterModifier, DamageMoneyRewardModifier, DoubleBattleChanceBoosterModifier, EnemyAttackStatusEffectChanceModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, EvolutionItemModifier, EvolutionStatBoosterModifier, EvoTrackerModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, GigantamaxAccessModifier, HealingBoosterModifier, HealShopCostModifier, HiddenAbilityRateBoosterModifier, HitHealModifier, IvScannerModifier, LevelIncrementBoosterModifier, LockModifierTiersModifier, MapModifier, MegaEvolutionAccessModifier, MoneyInterestModifier, MoneyMultiplierModifier, MoneyRewardModifier, MultipleParticipantExpBonusModifier, PokemonAllMovePpRestoreModifier, PokemonBaseStatFlatModifier, PokemonBaseStatTotalModifier, PokemonExpBoosterModifier, PokemonFormChangeItemModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonHpRestoreModifier, PokemonIncrementingStatModifier, PokemonInstantReviveModifier, PokemonLevelIncrementModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, PokemonNatureChangeModifier, PokemonNatureWeightModifier, PokemonPpRestoreModifier, PokemonPpUpModifier, PokemonStatusHealModifier, PreserveBerryModifier, RememberMoveModifier, ResetNegativeStatStageModifier, ShinyRateBoosterModifier, SpeciesCritBoosterModifier, SpeciesStatBoosterModifier, SurviveDamageModifier, SwitchEffectTransferModifier, TempCritBoosterModifier, TempStatStageBoosterModifier, TerastallizeAccessModifier, TerrastalizeModifier, TmModifier, TurnHealModifier, TurnHeldItemTransferModifier, TurnStatusEffectModifier, type EnemyPersistentModifier, type Modifier, type PersistentModifier, TempExtraModifierModifier, CriticalCatchChanceBoosterModifier } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
 import { Unlockables } from "#app/system/unlockables";
@@ -19,7 +19,7 @@ import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import { getModifierTierTextTint } from "#app/ui/text";
-import { formatMoney, getEnumKeys, getEnumValues, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#app/utils";
+import { formatMoney, getEnumKeys, getEnumValues, isNullOrUndefined, NumberHolder, padInt, randSeedInt } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -272,6 +272,36 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 
   newModifier(...args: any[]): PokemonHeldItemModifier {
     return super.newModifier(...args) as PokemonHeldItemModifier;
+  }
+}
+
+
+export class TerastallizeModifierType extends PokemonModifierType {
+  private teraType: Type;
+
+  constructor(teraType: Type) {
+    super("", `${Type[teraType].toLowerCase()}_tera_shard`, (type, args) => new TerrastalizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType),
+      (pokemon: PlayerPokemon) => {
+        if ([ pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId ].filter(s => s === Species.TERAPAGOS || s === Species.OGERPON || s === Species.SHEDINJA).length > 0) {
+          return PartyUiHandler.NoEffectMessage;
+        }
+        return null;
+      },
+      "tera_shard");
+
+    this.teraType = teraType;
+  }
+
+  get name(): string {
+    return i18next.t("modifierType:ModifierType.TerastallizeModifierType.name", { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
+  }
+
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.TerastallizeModifierType.description", { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.teraType ];
   }
 }
 
@@ -1156,11 +1186,11 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
 
         if (p.species.speciesId === Species.NECROZMA) {
           // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
-
           let foundULTRA_Z = false,
             foundN_LUNA = false,
             foundN_SOLAR = false;
           formChangeItemTriggers.forEach((fc, _i) => {
+            console.log("Checking ", fc.item);
             switch (fc.item) {
               case FormChangeItem.ULTRANECROZIUM_Z:
                 foundULTRA_Z = true;
@@ -1176,6 +1206,8 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
           if (foundULTRA_Z && foundN_LUNA && foundN_SOLAR) {
             // all three items are present -> user hasn't acquired any of the N_*ARIZERs -> block ULTRANECROZIUM_Z acquisition.
             formChangeItemTriggers = formChangeItemTriggers.filter(fc => fc.item !== FormChangeItem.ULTRANECROZIUM_Z);
+          } else {
+            console.log("DID NOT FIND ");
           }
         }
         return formChangeItemTriggers;
@@ -1189,28 +1221,6 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
 
       return new FormChangeItemModifierType(formChangeItemPool[randSeedInt(formChangeItemPool.length)]);
     });
-  }
-}
-
-export class TerastallizeModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
-  private teraType: Type;
-
-  constructor(teraType: Type) {
-    super("", `${Type[teraType].toLowerCase()}_tera_shard`, (type, args) => new TerastallizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType), "tera_shard");
-
-    this.teraType = teraType;
-  }
-
-  get name(): string {
-    return i18next.t("modifierType:ModifierType.TerastallizeModifierType.name", { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
-  }
-
-  getDescription(): string {
-    return i18next.t("modifierType:ModifierType.TerastallizeModifierType.description", { teraType: i18next.t(`pokemonInfo:Type.${Type[this.teraType]}`) });
-  }
-
-  getPregenArgs(): any[] {
-    return [ this.teraType ];
   }
 }
 
@@ -1469,14 +1479,21 @@ export const modifierTypes = {
     if (!globalScene.getModifiers(TerastallizeAccessModifier).length) {
       return null;
     }
-    let type: Type;
-    if (!randSeedInt(3)) {
-      const partyMemberTypes = party.map(p => p.getTypes(false, false, true)).flat();
-      type = randSeedItem(partyMemberTypes);
-    } else {
-      type = randSeedInt(64) ? randSeedInt(18) as Type : Type.STELLAR;
+    const teraTypes: Type[] = [];
+    party.forEach(p => {
+      if (!(p.hasSpecies(Species.TERAPAGOS) || p.hasSpecies(Species.OGERPON) || p.hasSpecies(Species.SHEDINJA))) {
+        teraTypes.push(p.teraType);
+      }
+    });
+    let excludedType = Type.UNKNOWN;
+    if (teraTypes.length > 0 && teraTypes.filter(t => t === teraTypes[0]).length === teraTypes.length) {
+      excludedType = teraTypes[0];
     }
-    return new TerastallizeModifierType(type);
+    let shardType = randSeedInt(64) ? randSeedInt(18) as Type : Type.STELLAR;
+    while (shardType === excludedType) {
+      shardType = randSeedInt(64) ? randSeedInt(18) as Type : Type.STELLAR;
+    }
+    return new TerastallizeModifierType(shardType);
   }),
 
   BERRY: () => new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
@@ -1719,7 +1736,7 @@ const modifierPool: ModifierPool = {
       return Math.min(Math.ceil(highestPartyLevel / 20), 4);
     }, 4),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
-    new WeightedModifierType(modifierTypes.TERA_SHARD, 1),
+    new WeightedModifierType(modifierTypes.TERA_SHARD, (party: Pokemon[]) => party.filter(p => !(p.hasSpecies(Species.TERAPAGOS) || p.hasSpecies(Species.OGERPON) || p.hasSpecies(Species.SHEDINJA))).length > 0 ? 1 : 0),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => {
       if (party.filter(p => !p.fusionSpecies).length > 1) {
         if (globalScene.gameMode.isSplicedOnly) {
@@ -1805,7 +1822,7 @@ const modifierPool: ModifierPool = {
 
         if (!isHoldingOrb) {
           const moveset = p.getMoveset(true).filter(m => !isNullOrUndefined(m)).map(m => m.moveId);
-          const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
+          const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
 
           // Moves that take advantage of obtaining the actual status effect
           const hasStatusMoves = [ Moves.FACADE, Moves.PSYCHO_SHIFT ]
@@ -1842,7 +1859,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.IV_SCANNER, skipInLastClassicWaveOrDefault(4)),
     new WeightedModifierType(modifierTypes.EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
     new WeightedModifierType(modifierTypes.EXP_SHARE, skipInLastClassicWaveOrDefault(10)),
-    new WeightedModifierType(modifierTypes.TERA_ORB, () => Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
+    new WeightedModifierType(modifierTypes.TERA_ORB, () => !globalScene.gameMode.isClassic ? Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4) : 0, 4),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 7),
   ].map(m => {
@@ -2537,7 +2554,7 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     return DailyLuck.value;
   }
   const eventSpecies = globalScene.eventManager.getEventLuckBoostedSpecies();
-  const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() + (eventSpecies.includes(p.species.speciesId) ? 3 : 0) : 0)
+  const luck = Phaser.Math.Clamp(party.map(p => p.isAllowedInBattle() ? p.getLuck() + (eventSpecies.includes(p.species.speciesId) ? 1 : 0) : 0)
     .reduce((total: number, value: number) => total += value, 0), 0, 14);
   return Math.min(globalScene.eventManager.getEventLuckBoost() + (luck ?? 0), 14);
 }

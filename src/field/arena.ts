@@ -5,7 +5,7 @@ import type { Constructor } from "#app/utils";
 import * as Utils from "#app/utils";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather } from "#app/data/weather";
+import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, getLegendaryWeatherContinuesMessage, Weather } from "#app/data/weather";
 import { CommonAnim } from "#app/data/battle-anims";
 import type { Type } from "#enums/type";
 import type Move from "#app/data/move";
@@ -44,6 +44,7 @@ export class Arena {
   public bgm: string;
   public ignoreAbilities: boolean;
   public ignoringEffectSource: BattlerIndex | null;
+  public playerTerasUsed: number;
   /**
    * Saves the number of times a party pokemon faints during a arena encounter.
    * {@linkcode globalScene.currentBattle.enemyFaints} is the corresponding faint counter for the enemy (this resets every wave).
@@ -63,6 +64,7 @@ export class Arena {
     this.bgm = bgm;
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
+    this.playerTerasUsed = 0;
     this.playerFaints = playerFaints;
   }
 
@@ -272,6 +274,12 @@ export class Arena {
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
+    if (this.weather?.isImmutable() && ![ WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE ].includes(weather)) {
+      globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (oldWeatherType - 1), true));
+      globalScene.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
+      return false;
+    }
+
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!)); // TODO: is this bang correct?
 
@@ -354,6 +362,10 @@ export class Arena {
 
   public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
     return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+  }
+
+  public getWeatherType(): WeatherType {
+    return this.weather?.weatherType ?? WeatherType.NONE;
   }
 
   public getTerrainType(): TerrainType {
@@ -586,8 +598,8 @@ export class Arena {
     // creates a new tag object
     const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
     if (newTag) {
-      this.tags.push(newTag);
       newTag.onAdd(this, quiet);
+      this.tags.push(newTag);
 
       const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
 

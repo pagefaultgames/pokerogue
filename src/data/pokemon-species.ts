@@ -7,7 +7,7 @@ import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
-import type { StarterMoveset } from "#app/system/game-data";
+import { DexAttr, type StarterMoveset } from "#app/system/game-data";
 import * as Utils from "#app/utils";
 import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
@@ -32,15 +32,43 @@ export enum Region {
   PALDEA
 }
 
+// TODO: this is horrible and will need to be removed once a refactor/cleanup of forms is executed.
+export const normalForm: Species[] = [
+  Species.PIKACHU,
+  Species.RAICHU,
+  Species.EEVEE,
+  Species.JOLTEON,
+  Species.FLAREON,
+  Species.VAPOREON,
+  Species.ESPEON,
+  Species.UMBREON,
+  Species.LEAFEON,
+  Species.GLACEON,
+  Species.SYLVEON,
+  Species.PICHU,
+  Species.ROTOM,
+  Species.DIALGA,
+  Species.PALKIA,
+  Species.KYUREM,
+  Species.GENESECT,
+  Species.FROAKIE,
+  Species.FROGADIER,
+  Species.GRENINJA,
+  Species.ROCKRUFF,
+  Species.NECROZMA,
+  Species.MAGEARNA,
+  Species.MARSHADOW,
+  Species.CRAMORANT,
+  Species.ZARUDE,
+  Species.CALYREX
+];
+
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode Species} enum given
  * @param species The species to fetch
  * @returns The associated {@linkcode PokemonSpecies} object
  */
-export function getPokemonSpecies(species: Species | Species[] | undefined): PokemonSpecies {
-  if (!species) {
-    throw new Error("`species` must not be undefined in `getPokemonSpecies()`");
-  }
+export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
   // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
   if (Array.isArray(species)) {
     // Pick a random species from the list
@@ -718,7 +746,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     if (this.speciesId === Species.ARCEUS) {
       ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
     } else if ([ SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y, SpeciesFormKey.PRIMAL, SpeciesFormKey.GIGANTAMAX, SpeciesFormKey.GIGANTAMAX_RAPID, SpeciesFormKey.GIGANTAMAX_SINGLE, SpeciesFormKey.ETERNAMAX ].includes(formKey as SpeciesFormKey)) {
-      return i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: (append ? this.name : "") });
+      return append ? i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: this.name }) : i18next.t(`pokemonForm:battleForm.${formKey}`);
     } else if (region === Region.NORMAL || (this.speciesId === Species.GALAR_DARMANITAN && formIndex > 0) || this.speciesId === Species.PALDEA_TAUROS) { // More special cases can be added here
       const i18key = `pokemonForm:${speciesName}${formText}`;
       if (i18next.exists(i18key)) {
@@ -799,7 +827,11 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
     }
 
-    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId)) {
+    if ( // If evolutions shouldn't happen, add more cases here :)
+      !allowEvolving
+      || !pokemonEvolutions.hasOwnProperty(this.speciesId)
+      || globalScene.currentBattle?.waveIndex === 20 && globalScene.gameMode.isClassic && globalScene.currentBattle.trainer
+    ) {
       return this.speciesId;
     }
 
@@ -879,7 +911,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
-        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength, currentWave);
+        // TODO: this entire function is dumb and should be changed, adding a `!` here for now until then
+        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(level, true, forTrainer, strength, currentWave);
       }
     }
 
@@ -996,6 +1029,37 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     return this.forms?.length
       ? this.forms[formIndex || 0].getFormSpriteKey()
       : "";
+  }
+
+  /**
+   * Generates a {@linkcode bigint} corresponding to the maximum unlocks possible for this species,
+   * taking into account if the species has a male/female gender, and which variants are implemented.
+   * @returns {@linkcode bigint} Maximum unlocks, can be compared with {@linkcode DexEntry.caughtAttr}.
+   */
+  getFullUnlocksData(): bigint {
+    let caughtAttr: bigint = 0n;
+    caughtAttr += DexAttr.NON_SHINY;
+    caughtAttr += DexAttr.SHINY;
+    if (this.malePercent !== null) {
+      if (this.malePercent > 0) {
+        caughtAttr += DexAttr.MALE;
+      }
+      if (this.malePercent < 100) {
+        caughtAttr += DexAttr.FEMALE;
+      }
+    }
+    caughtAttr += DexAttr.DEFAULT_VARIANT;
+    if (this.hasVariants()) {
+      caughtAttr += DexAttr.VARIANT_2;
+      caughtAttr += DexAttr.VARIANT_3;
+    }
+
+    // Summing successive bigints for each obtainable form
+    caughtAttr += this?.forms?.length > 1 ?
+      this.forms.map((f, index) => f.isUnobtainable ? 0n : 128n * 2n ** BigInt(index)).reduce((acc, val) => acc + val, 0n) :
+      DexAttr.DEFAULT_FORM;
+
+    return caughtAttr;
   }
 }
 
@@ -1786,7 +1850,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.REGIGIGAS, 4, true, false, false, "Colossal Pokémon", Type.NORMAL, null, 3.7, 420, Abilities.SLOW_START, Abilities.NONE, Abilities.NORMALIZE, 670, 110, 160, 110, 80, 110, 100, 3, 0, 335, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.GIRATINA, 4, false, true, false, "Renegade Pokémon", Type.GHOST, Type.DRAGON, 4.5, 750, Abilities.PRESSURE, Abilities.NONE, Abilities.TELEPATHY, 680, 150, 100, 120, 100, 120, 90, 3, 0, 340, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Altered Forme", "altered", Type.GHOST, Type.DRAGON, 4.5, 750, Abilities.PRESSURE, Abilities.NONE, Abilities.TELEPATHY, 680, 150, 100, 120, 100, 120, 90, 3, 0, 340, false, null, true),
-      new PokemonForm("Origin Forme", "origin", Type.GHOST, Type.DRAGON, 6.9, 650, Abilities.LEVITATE, Abilities.NONE, Abilities.NONE, 680, 150, 120, 100, 120, 100, 90, 3, 0, 340),
+      new PokemonForm("Origin Forme", "origin", Type.GHOST, Type.DRAGON, 6.9, 650, Abilities.LEVITATE, Abilities.NONE, Abilities.LEVITATE, 680, 150, 120, 100, 120, 100, 90, 3, 0, 340),
     ),
     new PokemonSpecies(Species.CRESSELIA, 4, true, false, false, "Lunar Pokémon", Type.PSYCHIC, null, 1.5, 85.6, Abilities.LEVITATE, Abilities.NONE, Abilities.NONE, 580, 120, 70, 110, 75, 120, 85, 3, 100, 300, GrowthRate.SLOW, 0, false),
     new PokemonSpecies(Species.PHIONE, 4, false, false, true, "Sea Drifter Pokémon", Type.WATER, null, 0.4, 3.1, Abilities.HYDRATION, Abilities.NONE, Abilities.NONE, 480, 80, 80, 80, 80, 80, 80, 30, 70, 240, GrowthRate.SLOW, null, false),
