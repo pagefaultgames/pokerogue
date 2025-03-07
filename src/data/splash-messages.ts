@@ -267,7 +267,7 @@ const seasonalSplashMessages: Season[] = [
     end: "10-31",
     messages: [
       "halloween.happyHalloween",
-      "halloween.boo"
+      "halloween.boo",
       "halloween.pumpkabooAbout",
       "halloween.mayContainSpiders",
       "halloween.spookyScarySkeledirge",
