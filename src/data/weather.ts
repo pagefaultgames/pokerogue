@@ -216,6 +216,16 @@ export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): s
   }
   return null;
 }
+  
+export function getWeatherBlockMessage(weatherType: WeatherType): string {
+  switch (weatherType) {
+    case WeatherType.HARSH_SUN:
+      return i18next.t("weather:harshSunEffectMessage");
+    case WeatherType.HEAVY_RAIN:
+      return i18next.t("weather:heavyRainEffectMessage");
+  }
+  return i18next.t("weather:defaultEffectMessage");
+}
 
 export function getTerrainStartMessage(terrainType: TerrainType): string | null {
   switch (terrainType) {

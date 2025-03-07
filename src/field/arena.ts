@@ -364,6 +364,10 @@ export class Arena {
     return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
+  public getWeatherType(): WeatherType {
+    return this.weather?.weatherType ?? WeatherType.NONE;
+  }
+
   public getTerrainType(): TerrainType {
     return this.terrain?.terrainType ?? TerrainType.NONE;
   }
