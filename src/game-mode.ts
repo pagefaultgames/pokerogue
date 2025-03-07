@@ -1,6 +1,8 @@
 import i18next from "i18next";
-import type { FixedBattleConfigs } from "./battle";
-import { classicFixedBattles, FixedBattleConfig } from "./battle";
+import type { FixedBattleConfigs } from "./data/balance/fixed-battle-configs";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { FixedBattleConfig } from "./data/balance/fixed-battle-configs";
+import { classicFixedBattles } from "./data/balance/fixed-battle-configs";
 import type { Challenge } from "./data/challenge";
 import { allChallenges, applyChallenges, ChallengeType, copyChallenge } from "./data/challenge";
 import type PokemonSpecies from "./data/pokemon-species";
@@ -215,7 +217,7 @@ export class GameMode implements GameModeConfig {
     switch (modeId) {
       case GameModes.CLASSIC:
       case GameModes.CHALLENGE:
-        return waveIndex === 200;
+        return waveIndex === ClassicFixedBossWaves.ETERNATUS;
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
         return !(waveIndex % 250);

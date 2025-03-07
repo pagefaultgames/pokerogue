@@ -23,7 +23,7 @@ import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "./pokeball";
 import type { BattlerIndex } from "#app/battle";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-spec";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";

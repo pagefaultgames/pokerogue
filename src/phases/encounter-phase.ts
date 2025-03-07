@@ -1,4 +1,6 @@
-import { BattlerIndex, BattleType } from "#app/battle";
+import { BattlerIndex } from "#app/battle";
+import { BattleType } from "#enums/battle-spec";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { globalScene } from "#app/global-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
@@ -59,7 +61,7 @@ export class EncounterPhase extends BattlePhase {
     globalScene.eventTarget.dispatchEvent(new EncounterPhaseEvent());
 
     // Failsafe if players somehow skip floor 200 in classic mode
-    if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > 200) {
+    if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > ClassicFixedBossWaves.ETERNATUS) {
       globalScene.unshiftPhase(new GameOverPhase());
     }
 

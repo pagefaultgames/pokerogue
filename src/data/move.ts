@@ -79,7 +79,7 @@ import {
   PreserveBerryModifier,
 } from "../modifier/modifier";
 import type { BattlerIndex } from "../battle";
-import { BattleType } from "../battle";
+import { BattleType } from "#enums/battle-spec";
 import { TerrainType } from "./terrain";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";

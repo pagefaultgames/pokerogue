@@ -22,6 +22,7 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Gender } from "#app/data/gender";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
@@ -1218,21 +1219,25 @@ interface TrainerConfigs {
 }
 
 /**
- * The function to get variable strength grunts
+ * The function to get the appropriate strength template for grunts and admins.
+ * Each successive evil team battle has higher strength template.
+ * The exception is Grunt 4 and Admin 2, who share the GYM_LEADER_5 template.
+ * The Leader's strength template is defined separately.
+ * @see {@linkcode initForEvilTeamLeader}
  * @returns the correct TrainerPartyTemplate
  */
 function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
-  const waveIndex = globalScene.currentBattle?.waveIndex;
-  if (waveIndex < 40) {
-    return trainerPartyTemplates.TWO_AVG;
-  } else if (waveIndex < 63) {
-    return trainerPartyTemplates.THREE_AVG;
-  } else if (waveIndex < 65) {
-    return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
-  } else if (waveIndex < 112) {
-    return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
-  } else {
-    return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
+  switch (globalScene.currentBattle?.waveIndex) {
+    case ClassicFixedBossWaves.EVIL_GRUNT_1:
+      return trainerPartyTemplates.TWO_AVG;
+    case ClassicFixedBossWaves.EVIL_GRUNT_2:
+      return trainerPartyTemplates.THREE_AVG;
+    case ClassicFixedBossWaves.EVIL_GRUNT_3:
+      return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
+    case ClassicFixedBossWaves.EVIL_ADMIN_1:
+      return trainerPartyTemplates.GYM_LEADER_4; // 3 avg 1 strong 1 stronger
+    default:
+      return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
   }
 }
 

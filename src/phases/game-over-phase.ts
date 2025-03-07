@@ -1,5 +1,6 @@
 import { clientSessionId } from "#app/account";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-spec";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
@@ -46,7 +47,7 @@ export class GameOverPhase extends BattlePhase {
     super.start();
 
     // Failsafe if players somehow skip floor 200 in classic mode
-    if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > 200) {
+    if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > ClassicFixedBossWaves.ETERNATUS) {
       this.isVictory = true;
     }
 
