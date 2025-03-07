@@ -7,7 +7,6 @@ import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import * as Utils from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
-import { trainerConfigs } from "../trainer-config";
 import type { EnemyPokemon } from "#app/field/pokemon";
 
 export class FixedBattleConfig {
@@ -79,10 +78,7 @@ export function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[
     }
 
     /* 1/3 chance for evil team grunts to be double battles */
-    const evilTeamGrunts = [ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
-    const isEvilTeamGrunt = evilTeamGrunts.includes(trainerTypes[rand]);
-
-    if (trainerConfigs[trainerTypes[rand]].hasDouble && isEvilTeamGrunt) {
+    if ([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ].includes(trainerTypes[rand])) {
       return new Trainer(trainerTypes[rand], (Utils.randInt(3) === 0) ? TrainerVariant.DOUBLE : trainerGender);
     }
 
