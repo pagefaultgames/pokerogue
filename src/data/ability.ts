@@ -1671,6 +1671,51 @@ export class StatMultiplierAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Multiplies a Stat from an ally pokemon's ability.
+ * @see {@link applyAllyStatMultiplierAbAttrs}
+ * @see {@link applyAllyStat}
+ */
+export class AllyStatMultiplierAbAttr extends AbAttr {
+  private stat: BattleStat;
+  private multiplier: number;
+  private ignorable: boolean;
+
+  /**
+   * @param stat - The stat being modified
+   * @param multipler - The multiplier to apply to the stat
+   * @param ignorable - Whether the multiplier can be ignored by mold breaker-like moves and abilities
+   */
+  constructor(stat: BattleStat, multiplier: number, ignorable: boolean = true) {
+    super(false);
+
+    this.stat = stat;
+    this.multiplier = multiplier;
+    this.ignorable = ignorable;
+  }
+
+  /**
+   * Multiply a Pokemon's Stat due to an Ally's ability.
+   * @param pokemon - The ally {@linkcode Pokemon} with the ability (unused)
+   * @param passive - unused
+   * @param simulated - Whether the ability is being simulated (unused)
+   * @param stat - The type of the checked {@linkcode Stat}
+   * @param statValue - {@linkcode Utils.NumberHolder} containing the value of the checked stat
+   * @param checkedPokemon - The {@linkcode Pokemon} this ability is targeting (unused)
+   * @param ignoreAbility - Whether the ability should be ignored if possible
+   * @param args - unused
+   * @returns `true` if this changed the checked stat, `false` otherwise.
+   */
+  applyAllyStat(pokemon: Pokemon, _passive: boolean, simulated: boolean, stat: BattleStat, statValue: Utils.NumberHolder, checkedPokemon: Pokemon, ignoreAbility: boolean, args: any[]): boolean | Promise<boolean> {
+    if (stat === this.stat && !(ignoreAbility && this.ignorable)) {
+      statValue.value *= this.multiplier;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PostAttackAbAttr extends AbAttr {
   private attackCondition: PokemonAttackCondition;
 
@@ -5561,6 +5606,23 @@ export function applyStatMultiplierAbAttrs(
     args,
   );
 }
+
+/**
+ * Applies an ally's Stat multiplier attribute
+ * @param attrType - {@linkcode AllyStatMultiplierAbAttr} should always be AllyStatMultiplierAbAttr for the time being
+ * @param pokemon - The {@linkcode Pokemon} with the ability
+ * @param stat - The type of the checked {@linkcode Stat}
+ * @param statValue - {@linkcode Utils.NumberHolder} containing the value of the checked stat
+ * @param checkedPokemon - The {@linkcode Pokemon} with the checked stat
+ * @param ignoreAbility - Whether or not the ability should be ignored by the pokemon or its move.
+ * @param args - unused
+ */
+export function applyAllyStatMultiplierAbAttrs(attrType: Constructor<AllyStatMultiplierAbAttr>,
+  pokemon: Pokemon, stat: BattleStat, statValue: Utils.NumberHolder, simulated: boolean = false, checkedPokemon: Pokemon, ignoreAbility: boolean, ...args: any[]
+): void {
+  return applyAbAttrsInternal<AllyStatMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyAllyStat(pokemon, passive, simulated, stat, statValue, checkedPokemon, ignoreAbility, args), args);
+}
+
 export function applyPostSetStatusAbAttrs(
   attrType: Constructor<PostSetStatusAbAttr>,
   pokemon: Pokemon,
@@ -6393,11 +6455,12 @@ export function initAbilities() {
     new Ability(Abilities.FLOWER_GIFT, 4)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 1.5)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.SPDEF, 1.5)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), AllyStatMultiplierAbAttr, Stat.ATK, 1.5)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), AllyStatMultiplierAbAttr, Stat.SPDEF, 1.5)
       .attr(UncopiableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FLOWER_GIFT)
       .attr(PostWeatherChangeFormChangeAbAttr, Abilities.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ])
-      .partial() // Should also boosts stats of ally
       .ignorable(),
     new Ability(Abilities.BAD_DREAMS, 4)
       .attr(PostTurnHurtIfSleepingAbAttr),
@@ -6533,7 +6596,7 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(Abilities.VICTORY_STAR, 5)
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.1)
-      .partial(), // Does not boost ally's accuracy
+      .attr(AllyStatMultiplierAbAttr, Stat.ACC, 1.1, false),
     new Ability(Abilities.TURBOBLAZE, 5)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonTurboblaze", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
