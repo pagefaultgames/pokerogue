@@ -5,7 +5,7 @@ import type { Constructor } from "#app/utils";
 import * as Utils from "#app/utils";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, Weather } from "#app/data/weather";
+import { getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage, getLegendaryWeatherContinuesMessage, Weather } from "#app/data/weather";
 import { CommonAnim } from "#app/data/battle-anims";
 import type { Type } from "#enums/type";
 import type Move from "#app/data/move";
@@ -273,6 +273,12 @@ export class Arena {
     }
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
+
+    if (this.weather?.isImmutable() && ![ WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE ].includes(weather)) {
+      globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (oldWeatherType - 1), true));
+      globalScene.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
+      return false;
+    }
 
     this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!)); // TODO: is this bang correct?
