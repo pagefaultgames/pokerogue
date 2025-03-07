@@ -1,4 +1,3 @@
-import type { GetEnemyPartyFunc, GetTrainerFunc } from "#app/battle";
 import { BattleType } from "#enums/battle-spec";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
@@ -9,6 +8,7 @@ import * as Utils from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import { trainerConfigs } from "../trainer-config";
+import type { EnemyPokemon } from "#app/field/pokemon";
 
 export class FixedBattleConfig {
   public battleType: BattleType;
@@ -48,6 +48,9 @@ export class FixedBattleConfig {
     return this;
   }
 }
+
+type GetTrainerFunc = () => Trainer;
+type GetEnemyPartyFunc = () => EnemyPokemon[];
 
 /**
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion

@@ -29,12 +29,12 @@ export enum BattlerIndex {
 }
 
 export interface TurnCommand {
-    command: Command;
-    cursor?: number;
-    move?: TurnMove;
-    targets?: BattlerIndex[];
-    skip?: boolean;
-    args?: any[];
+  command: Command;
+  cursor?: number;
+  move?: TurnMove;
+  targets?: BattlerIndex[];
+  skip?: boolean;
+  args?: any[];
 }
 
 export interface FaintLogEntry {
@@ -440,6 +440,3 @@ export class FixedBattle extends Battle {
     }
   }
 }
-
-export type GetTrainerFunc = () => Trainer;
-export type GetEnemyPartyFunc = () => EnemyPokemon[];
