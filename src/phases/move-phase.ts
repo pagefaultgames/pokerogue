@@ -30,7 +30,7 @@ import {
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { Type } from "#enums/type";
-import { getTerrainBlockMessage } from "#app/data/weather";
+import { getTerrainBlockMessage, getWeatherBlockMessage } from "#app/data/weather";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import type { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
@@ -342,9 +342,10 @@ export class MovePhase extends BattlePhase {
      * TODO: is this sustainable?
      */
     let failedDueToTerrain: boolean = false;
+    let failedDueToWeather: boolean = false;
     if (success) {
       const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
-      const failedDueToWeather: boolean = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
+      failedDueToWeather = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
       failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
       success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
     }
@@ -381,6 +382,8 @@ export class MovePhase extends BattlePhase {
         failedText = failureMessage;
       } else if (failedDueToTerrain) {
         failedText = getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType());
+      } else if (failedDueToWeather) {
+        failedText = getWeatherBlockMessage(globalScene.arena.getWeatherType());
       }
 
       this.showFailedText(failedText);
