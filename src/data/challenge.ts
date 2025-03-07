@@ -18,8 +18,6 @@ import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
 import type { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 
 /** A constant for the default max cost of the starting party before a run */
@@ -283,10 +281,9 @@ export abstract class Challenge {
    * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
    * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
    * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
-   * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps): boolean {
     return false;
   }
 
@@ -433,22 +430,8 @@ export class SingleGenerationChallenge extends Challenge {
     super(Challenges.SINGLE_GENERATION, 9);
   }
 
-  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
-    const generations = [ pokemon.generation ];
-    if (soft) {
-      const speciesToCheck = [ pokemon.speciesId ];
-      while (speciesToCheck.length) {
-        const checking = speciesToCheck.pop();
-        if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
-          pokemonEvolutions[checking].forEach(e => {
-            speciesToCheck.push(e.speciesId);
-            generations.push(getPokemonSpecies(e.speciesId).generation);
-          });
-        }
-      }
-    }
-
-    if (!generations.includes(this.value)) {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
+    if (pokemon.generation !== this.value) {
       valid.value = false;
       return true;
     }
@@ -591,30 +574,9 @@ export class SingleTypeChallenge extends Challenge {
     super(Challenges.SINGLE_TYPE, 18);
   }
 
-  override applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean = false): boolean {
+  override applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps): boolean {
     const speciesForm = getPokemonSpeciesForm(pokemon.speciesId, dexAttr.formIndex);
     const types = [ speciesForm.type1, speciesForm.type2 ];
-    if (soft && !SingleTypeChallenge.SPECIES_OVERRIDES.includes(pokemon.speciesId)) {
-      const speciesToCheck = [ pokemon.speciesId ];
-      while (speciesToCheck.length) {
-        const checking = speciesToCheck.pop();
-        if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
-          pokemonEvolutions[checking].forEach(e => {
-            speciesToCheck.push(e.speciesId);
-            types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
-          });
-        }
-        if (checking && pokemonFormChanges.hasOwnProperty(checking)) {
-          pokemonFormChanges[checking].forEach(f1 => {
-            getPokemonSpecies(checking).forms.forEach(f2 => {
-              if (f1.formKey === f2.formKey) {
-                types.push(f2.type1, f2.type2);
-              }
-            });
-          });
-        }
-      }
-    }
     if (!types.includes(this.value - 1)) {
       valid.value = false;
       return true;
@@ -855,10 +817,9 @@ export class LowerStarterPointsChallenge extends Challenge {
  * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
  * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
  * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
- * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps, soft: boolean): boolean;
+export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps): boolean;
 /**
  * Apply all challenges that modify available total starter points.
  * @param gameMode {@link GameMode} The current gameMode
@@ -977,7 +938,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
     if (c.value !== 0) {
       switch (challengeType) {
         case ChallengeType.STARTER_CHOICE:
-          ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3]);
+          ret ||= c.applyStarterChoice(args[0], args[1], args[2]);
           break;
         case ChallengeType.STARTER_POINTS:
           ret ||= c.applyStarterPoints(args[0]);
