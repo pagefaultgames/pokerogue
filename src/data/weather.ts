@@ -216,7 +216,7 @@ export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): s
   }
   return null;
 }
-  
+
 export function getWeatherBlockMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.HARSH_SUN:
