@@ -7,10 +7,10 @@ describe("Data - Splash Messages", () => {
     expect(getSplashMessages().length).toBeGreaterThanOrEqual(15);
   });
 
-  // make sure to adjust this test if the weight it changed!
-  it("should add contain 10 `battlesWon` splash messages", () => {
+  // Make sure to adjust this test if the weight is changed!
+  it("should add contain 15 `battlesWon` splash messages", () => {
     const battlesWonMessages = getSplashMessages().filter((message) => message === "splashMessages:battlesWon");
-    expect(battlesWonMessages).toHaveLength(10);
+    expect(battlesWonMessages).toHaveLength(15);
   });
 
   describe("Seasonal", () => {
