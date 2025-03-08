@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/consistent-type-imports */
-import { type PokeballCounts } from "#app/battle-scene";
+import type { PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
-import { Gender } from "#app/data/gender";
+import type { Gender } from "#app/data/gender";
 import { FormChangeItem } from "#app/data/pokemon-forms";
-import { Variant } from "#app/data/variant";
-import { type ModifierOverride } from "#app/modifier/modifier-type";
-import { Unlockables } from "#app/system/unlockables";
+import type { Variant } from "#app/data/variant";
+import type { ModifierOverride } from "#app/modifier/modifier-type";
+import type { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
@@ -16,7 +14,7 @@ import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
-import { Species } from "#enums/species";
+import type { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { TimeOfDay } from "#enums/time-of-day";
