@@ -13,10 +13,18 @@ export default class ArenaData {
   public playerTerasUsed: number;
 
   constructor(source: Arena | any) {
-    const sourceArena = source instanceof Arena ? source as Arena : null;
+    const sourceArena = source instanceof Arena ? (source as Arena) : null;
     this.biome = sourceArena ? sourceArena.biomeType : source.biome;
-    this.weather = sourceArena ? sourceArena.weather : source.weather ? new Weather(source.weather.weatherType, source.weather.turnsLeft) : null;
-    this.terrain = sourceArena ? sourceArena.terrain : source.terrain ? new Terrain(source.terrain.terrainType, source.terrain.turnsLeft) : null;
+    this.weather = sourceArena
+      ? sourceArena.weather
+      : source.weather
+        ? new Weather(source.weather.weatherType, source.weather.turnsLeft)
+        : null;
+    this.terrain = sourceArena
+      ? sourceArena.terrain
+      : source.terrain
+        ? new Terrain(source.terrain.terrainType, source.terrain.turnsLeft)
+        : null;
     this.playerTerasUsed = (sourceArena ? sourceArena.playerTerasUsed : source.playerTerasUsed) ?? 0;
     this.tags = [];
 

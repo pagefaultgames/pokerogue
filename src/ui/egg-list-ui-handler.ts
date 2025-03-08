@@ -24,7 +24,7 @@ export default class EggListUiHandler extends MessageUiHandler {
   private eggListMessageBoxContainer: Phaser.GameObjects.Container;
 
   private cursorObj: Phaser.GameObjects.Image;
-  private scrollGridHandler : ScrollableGridUiHandler;
+  private scrollGridHandler: ScrollableGridUiHandler;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -39,7 +39,13 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggListContainer.setVisible(false);
     ui.add(this.eggListContainer);
 
-    const bgColor = globalScene.add.rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6, 0x006860);
+    const bgColor = globalScene.add.rectangle(
+      0,
+      0,
+      globalScene.game.canvas.width / 6,
+      globalScene.game.canvas.height / 6,
+      0x006860,
+    );
     bgColor.setOrigin(0, 0);
     this.eggListContainer.add(bgColor);
 
@@ -86,7 +92,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.scrollGridHandler = new ScrollableGridUiHandler(this, this.ROWS, this.COLUMNS)
       .withScrollBar(scrollBar)
       .withUpdateGridCallBack(() => this.updateEggIcons())
-      .withUpdateSingleElementCallback((i:number) => this.setEggDetails(i));
+      .withUpdateSingleElementCallback((i: number) => this.setEggDetails(i));
 
     this.eggListMessageBoxContainer = globalScene.add.container(0, globalScene.game.canvas.height / 6);
     this.eggListMessageBoxContainer.setVisible(false);
@@ -170,8 +176,8 @@ export default class EggListUiHandler extends MessageUiHandler {
         weekday: "short",
         year: "numeric",
         month: "2-digit",
-        day: "numeric"
-      })
+        day: "numeric",
+      }),
     );
     this.eggHatchWavesText.setText(egg.getEggHatchWavesMessage());
     this.eggGachaInfoText.setText(egg.getEggTypeDescriptor());

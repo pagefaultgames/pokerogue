@@ -36,7 +36,7 @@ export class MoveChargePhase extends PokemonPhase {
 
     // If the target is somehow not defined, or the move is somehow not a ChargingMove,
     // immediately end this phase.
-    if (!target || !(move.isChargingMove())) {
+    if (!target || !move.isChargingMove()) {
       console.warn("Invalid parameters for MoveChargePhase");
       return super.end();
     }
@@ -62,15 +62,19 @@ export class MoveChargePhase extends PokemonPhase {
 
       if (instantCharge.value) {
         // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
-        globalScene.tryRemovePhase((phase) => phase instanceof MoveEndPhase && phase.getPokemon() === user);
+        globalScene.tryRemovePhase(phase => phase instanceof MoveEndPhase && phase.getPokemon() === user);
         // queue a new MovePhase for this move's attack phase
-        globalScene.unshiftPhase(new MovePhase(user, [ this.targetIndex ], this.move, false));
+        globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, false));
       } else {
-        user.getMoveQueue().push({ move: move.id, targets: [ this.targetIndex ]});
+        user.getMoveQueue().push({ move: move.id, targets: [this.targetIndex] });
       }
 
       // Add this move's charging phase to the user's move history
-      user.pushMoveHistory({ move: this.move.moveId, targets: [ this.targetIndex ], result: MoveResult.OTHER });
+      user.pushMoveHistory({
+        move: this.move.moveId,
+        targets: [this.targetIndex],
+        result: MoveResult.OTHER,
+      });
     }
     super.end();
   }
@@ -80,6 +84,6 @@ export class MoveChargePhase extends PokemonPhase {
   }
 
   public getTargetPokemon(): Pokemon | undefined {
-    return globalScene.getField(true).find((p) => this.targetIndex === p.getBattlerIndex());
+    return globalScene.getField(true).find(p => this.targetIndex === p.getBattlerIndex());
   }
 }

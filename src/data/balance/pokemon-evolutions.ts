@@ -92,7 +92,7 @@ export class SpeciesFormEvolution {
   public item: EvolutionItem | null;
   public condition: SpeciesEvolutionCondition | null;
   public wildDelay: SpeciesWildEvolutionDelay;
-  public description: string = "";
+  public description = "";
 
   constructor(speciesId: Species, preFormKey: string | null, evoFormKey: string | null, level: number, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay) {
     this.speciesId = speciesId;
@@ -206,7 +206,7 @@ class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
       super(p => p.friendship >= amount && (globalScene.arena.getTimeOfDay() === TimeOfDay.DUSK || globalScene.arena.getTimeOfDay() === TimeOfDay.NIGHT));
       this.timesOfDay = [ TimeOfDay.DUSK, TimeOfDay.NIGHT ];
     } else {
-      super(p => false);
+      super(_p => false);
       this.timesOfDay = [];
     }
     this.amount = amount;
@@ -1898,7 +1898,7 @@ export function initPokemonPrevolutions(): void {
       if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
         continue;
       }
-      pokemonPrevolutions[ev.speciesId] = parseInt(pk) as Species;
+      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as Species;
     }
   });
 }

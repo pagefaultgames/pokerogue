@@ -28,7 +28,8 @@ describe("Abilities - Sap Sipper", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single")
+    game.override
+      .battleType("single")
       .disableCrits()
       .ability(Abilities.SAP_SIPPER)
       .enemySpecies(Species.RATTATA)
@@ -36,12 +37,12 @@ describe("Abilities - Sap Sipper", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("raises ATK stat stage by 1 and block effects when activated against a grass attack", async() => {
+  it("raises ATK stat stage by 1 and block effects when activated against a grass attack", async () => {
     const moveToUse = Moves.LEAFAGE;
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const initialEnemyHp = enemyPokemon.hp;
@@ -54,12 +55,12 @@ describe("Abilities - Sap Sipper", () => {
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 
-  it("raises ATK stat stage by 1 and block effects when activated against a grass status move", async() => {
+  it("raises ATK stat stage by 1 and block effects when activated against a grass status move", async () => {
     const moveToUse = Moves.SPORE;
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -76,7 +77,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
 
     game.move.select(moveToUse);
 
@@ -92,7 +93,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const initialEnemyHp = enemyPokemon.hp;
@@ -110,7 +111,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -134,7 +135,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const initialEnemyHp = enemyPokemon.hp;
@@ -150,7 +151,7 @@ describe("Abilities - Sap Sipper", () => {
   it("still activates regardless of accuracy check", async () => {
     game.override.moveset(Moves.LEAF_BLADE);
 
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 

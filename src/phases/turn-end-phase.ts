@@ -5,7 +5,13 @@ import { WeatherType } from "#app/enums/weather-type";
 import { TurnEndEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { TurnHealModifier, EnemyTurnHealModifier, EnemyStatusEffectHealChanceModifier, TurnStatusEffectModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import {
+  TurnHealModifier,
+  EnemyTurnHealModifier,
+  EnemyStatusEffectHealChanceModifier,
+  TurnStatusEffectModifier,
+  TurnHeldItemTransferModifier,
+} from "#app/modifier/modifier";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
@@ -29,8 +35,16 @@ export class TurnEndPhase extends FieldPhase {
         globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
-          globalScene.unshiftPhase(new PokemonHealPhase(pokemon.getBattlerIndex(),
-            Math.max(pokemon.getMaxHp() >> 4, 1), i18next.t("battle:turnEndHpRestore", { pokemonName: getPokemonNameWithAffix(pokemon) }), true));
+          globalScene.unshiftPhase(
+            new PokemonHealPhase(
+              pokemon.getBattlerIndex(),
+              Math.max(pokemon.getMaxHp() >> 4, 1),
+              i18next.t("battle:turnEndHpRestore", {
+                pokemonName: getPokemonNameWithAffix(pokemon),
+              }),
+              true,
+            ),
+          );
         }
 
         if (!pokemon.isPlayer()) {

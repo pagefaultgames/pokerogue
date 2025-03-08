@@ -271,7 +271,10 @@ export function getTypeDamageMultiplier(attackType: PokemonType, defType: Pokemo
  * Retrieve the color corresponding to a specific damage multiplier
  * @returns A color or undefined if the default color should be used
  */
-export function getTypeDamageMultiplierColor(multiplier: TypeDamageMultiplier, side: "defense" | "offense"): string | undefined {
+export function getTypeDamageMultiplierColor(
+  multiplier: TypeDamageMultiplier,
+  side: "defense" | "offense",
+): string | undefined {
   if (side === "offense") {
     switch (multiplier) {
       case 0:
@@ -291,7 +294,8 @@ export function getTypeDamageMultiplierColor(multiplier: TypeDamageMultiplier, s
       case 8:
         return "#52C200";
     }
-  } else if (side === "defense") {
+  }
+  if (side === "defense") {
     switch (multiplier) {
       case 0:
         return "#B1B100";
@@ -313,47 +317,47 @@ export function getTypeDamageMultiplierColor(multiplier: TypeDamageMultiplier, s
   }
 }
 
-export function getTypeRgb(type: PokemonType): [ number, number, number ] {
+export function getTypeRgb(type: PokemonType): [number, number, number] {
   switch (type) {
     case PokemonType.NORMAL:
-      return [ 168, 168, 120 ];
+      return [168, 168, 120];
     case PokemonType.FIGHTING:
-      return [ 192, 48, 40 ];
+      return [192, 48, 40];
     case PokemonType.FLYING:
-      return [ 168, 144, 240 ];
+      return [168, 144, 240];
     case PokemonType.POISON:
-      return [ 160, 64, 160 ];
+      return [160, 64, 160];
     case PokemonType.GROUND:
-      return [ 224, 192, 104 ];
+      return [224, 192, 104];
     case PokemonType.ROCK:
-      return [ 184, 160, 56 ];
+      return [184, 160, 56];
     case PokemonType.BUG:
-      return [ 168, 184, 32 ];
+      return [168, 184, 32];
     case PokemonType.GHOST:
-      return [ 112, 88, 152 ];
+      return [112, 88, 152];
     case PokemonType.STEEL:
-      return [ 184, 184, 208 ];
+      return [184, 184, 208];
     case PokemonType.FIRE:
-      return [ 240, 128, 48 ];
+      return [240, 128, 48];
     case PokemonType.WATER:
-      return [ 104, 144, 240 ];
+      return [104, 144, 240];
     case PokemonType.GRASS:
-      return [ 120, 200, 80 ];
+      return [120, 200, 80];
     case PokemonType.ELECTRIC:
-      return [ 248, 208, 48 ];
+      return [248, 208, 48];
     case PokemonType.PSYCHIC:
-      return [ 248, 88, 136 ];
+      return [248, 88, 136];
     case PokemonType.ICE:
-      return [ 152, 216, 216 ];
+      return [152, 216, 216];
     case PokemonType.DRAGON:
-      return [ 112, 56, 248 ];
+      return [112, 56, 248];
     case PokemonType.DARK:
-      return [ 112, 88, 72 ];
+      return [112, 88, 72];
     case PokemonType.FAIRY:
-      return [ 232, 136, 200 ];
+      return [232, 136, 200];
     case PokemonType.STELLAR:
-      return [ 255, 255, 255 ];
+      return [255, 255, 255];
     default:
-      return [ 0, 0, 0 ];
+      return [0, 0, 0];
   }
 }

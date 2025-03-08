@@ -59,8 +59,8 @@ describe("Pokerogue System Savedata API", () => {
               trainerId: 123456789,
             } as SystemSaveData,
             valid: true,
-          })
-        )
+          }),
+        ),
       );
 
       const savedata = await systemSavedataApi.verify(params);
@@ -76,8 +76,8 @@ describe("Pokerogue System Savedata API", () => {
               trainerId: 123456789,
             } as SystemSaveData,
             valid: false,
-          })
-        )
+          }),
+        ),
       );
 
       const savedata = await systemSavedataApi.verify(params);

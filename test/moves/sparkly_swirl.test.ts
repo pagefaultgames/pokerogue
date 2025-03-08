@@ -27,18 +27,16 @@ describe("Moves - Sparkly Swirl", () => {
       .enemyLevel(100)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([ Moves.SPARKLY_SWIRL, Moves.SPLASH ])
+      .moveset([Moves.SPARKLY_SWIRL, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH);
 
     vi.spyOn(allMoves[Moves.SPARKLY_SWIRL], "accuracy", "get").mockReturnValue(100);
   });
 
   it("should cure status effect of the user, its ally, and all party pokemon", async () => {
-    game.override
-      .battleType("double")
-      .statusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([ Species.RATTATA, Species.RATTATA, Species.RATTATA ]);
-    const [ leftPlayer, rightPlayer, partyPokemon ] = game.scene.getPlayerParty();
+    game.override.battleType("double").statusEffect(StatusEffect.BURN);
+    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA, Species.RATTATA]);
+    const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getPlayerParty();
     const leftOpp = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(leftPlayer, "resetStatus");
@@ -60,11 +58,9 @@ describe("Moves - Sparkly Swirl", () => {
   });
 
   it("should not cure status effect of the target/target's allies", async () => {
-    game.override
-      .battleType("double")
-      .enemyStatusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([ Species.RATTATA, Species.RATTATA ]);
-    const [ leftOpp, rightOpp ] = game.scene.getEnemyField();
+    game.override.battleType("double").enemyStatusEffect(StatusEffect.BURN);
+    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA]);
+    const [leftOpp, rightOpp] = game.scene.getEnemyField();
 
     vi.spyOn(leftOpp, "resetStatus");
     vi.spyOn(rightOpp, "resetStatus");

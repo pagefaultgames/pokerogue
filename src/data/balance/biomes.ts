@@ -2022,6 +2022,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   }
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: init methods are expected to have many lines.
 export function initBiomes() {
   const pokemonBiomes = [
     [ Species.BULBASAUR, PokemonType.GRASS, PokemonType.POISON, [
@@ -7677,7 +7678,7 @@ export function initBiomes() {
 
   const traverseBiome = (biome: Biome, depth: number) => {
     if (biome === Biome.END) {
-      const biomeList = Object.keys(Biome).filter(key => !isNaN(Number(key)));
+      const biomeList = Object.keys(Biome).filter(key => !Number.isNaN(Number(key)));
       biomeList.pop(); // Removes Biome.END from the list
       const randIndex = Utils.randSeedInt(biomeList.length, 1); // Will never be Biome.TOWN
       biome = Biome[biomeList[randIndex]];
@@ -7764,7 +7765,8 @@ export function initBiomes() {
               treeIndex = t;
               arrayIndex = es + 1;
               break;
-            } else if (speciesEvolutions && speciesEvolutions.find(se => se.speciesId === existingSpeciesId)) {
+            }
+            if (speciesEvolutions?.find(se => se.speciesId === existingSpeciesId)) {
               treeIndex = t;
               arrayIndex = es;
               break;
@@ -7786,7 +7788,7 @@ export function initBiomes() {
 
   for (const b of Object.keys(biomePokemonPools)) {
     for (const t of Object.keys(biomePokemonPools[b])) {
-      const tier = parseInt(t) as BiomePoolTier;
+      const tier = Number.parseInt(t) as BiomePoolTier;
       for (const tod of Object.keys(biomePokemonPools[b][t])) {
         const biomeTierTimePool = biomePokemonPools[b][t][tod];
         for (let e = 0; e < biomeTierTimePool.length; e++) {
@@ -7799,7 +7801,7 @@ export function initBiomes() {
             };
             for (let s = 1; s < entry.length; s++) {
               const speciesId = entry[s];
-              const prevolution = entry.map(s => pokemonEvolutions[s]).flat().find(e => e && e.speciesId === speciesId);
+              const prevolution = entry.flatMap((s: string | number) => pokemonEvolutions[s]).find(e => e && e.speciesId === speciesId);
               const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
               if (!newEntry.hasOwnProperty(level)) {
                 newEntry[level] = [ speciesId ];

@@ -18,14 +18,14 @@ import { afterAll, beforeAll, vi } from "vitest";
 process.env.TZ = "UTC";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
-vi.mock("#app/overrides", async (importOriginal) => {
+vi.mock("#app/overrides", async importOriginal => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();
 
   return {
     default: defaultOverrides,
     defaultOverrides,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   } satisfies typeof import("#app/overrides");
 });
 
@@ -35,13 +35,13 @@ vi.mock("#app/overrides", async (importOriginal) => {
  * This is necessary because how our code is structured.
  * Do NOT try to put any of this code into external functions, it won't work as it's elevated during runtime.
  */
-vi.mock("i18next", async (importOriginal) => {
+vi.mock("i18next", async importOriginal => {
   console.log("Mocking i18next");
   const { setupServer } = await import("msw/node");
   const { http, HttpResponse } = await import("msw");
 
   global.server = setupServer(
-    http.get("/locales/en/*", async (req) => {
+    http.get("/locales/en/*", async req => {
       const filename = req.params[0];
 
       try {

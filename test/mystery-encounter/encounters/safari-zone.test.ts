@@ -4,19 +4,25 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/mystery-encounter/encounter-test-utils";
+import {
+  runMysteryEncounterToEnd,
+  runSelectMysteryEncounterOption,
+} from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { getSafariSpeciesSpawn, SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
+import {
+  getSafariSpeciesSpawn,
+  SafariZoneEncounter,
+} from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 const namespace = "mysteryEncounters/safariZone";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.SWAMP;
 const defaultWave = 45;
 
@@ -38,10 +44,10 @@ describe("Safari Zone - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [ Biome.VOLCANO, [ MysteryEncounterType.FIGHT_OR_FLIGHT ]],
-      [ Biome.FOREST, [ MysteryEncounterType.SAFARI_ZONE ]],
-      [ Biome.SWAMP, [ MysteryEncounterType.SAFARI_ZONE ]],
-      [ Biome.JUNGLE, [ MysteryEncounterType.SAFARI_ZONE ]],
+      [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+      [Biome.FOREST, [MysteryEncounterType.SAFARI_ZONE]],
+      [Biome.SWAMP, [MysteryEncounterType.SAFARI_ZONE]],
+      [Biome.JUNGLE, [MysteryEncounterType.SAFARI_ZONE]],
     ]);
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -58,9 +64,7 @@ describe("Safari Zone - Mystery Encounter", () => {
     expect(SafariZoneEncounter.encounterType).toBe(MysteryEncounterType.SAFARI_ZONE);
     expect(SafariZoneEncounter.encounterTier).toBe(MysteryEncounterTier.GREAT);
     expect(SafariZoneEncounter.dialogue).toBeDefined();
-    expect(SafariZoneEncounter.dialogue.intro).toStrictEqual([
-      { text: `${namespace}:intro` },
-    ]);
+    expect(SafariZoneEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);

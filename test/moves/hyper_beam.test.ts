@@ -15,7 +15,7 @@ describe("Moves - Hyper Beam", () => {
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
-      type: Phaser.HEADLESS
+      type: Phaser.HEADLESS,
     });
   });
 
@@ -30,41 +30,38 @@ describe("Moves - Hyper Beam", () => {
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset([ Moves.SPLASH ]);
+    game.override.enemyMoveset([Moves.SPLASH]);
     game.override.enemyLevel(100);
 
-    game.override.moveset([ Moves.HYPER_BEAM, Moves.TACKLE ]);
+    game.override.moveset([Moves.HYPER_BEAM, Moves.TACKLE]);
     vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
   });
 
-  it(
-    "should force the user to recharge on the next turn (and only that turn)",
-    async () => {
-      await game.startBattle([ Species.MAGIKARP ]);
+  it("should force the user to recharge on the next turn (and only that turn)", async () => {
+    await game.startBattle([Species.MAGIKARP]);
 
-      const leadPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-      game.move.select(Moves.HYPER_BEAM);
+    game.move.select(Moves.HYPER_BEAM);
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-      expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
 
-      const enemyPostAttackHp = enemyPokemon.hp;
+    const enemyPostAttackHp = enemyPokemon.hp;
 
-      /** Game should progress without a new command from the player */
-      await game.phaseInterceptor.to(TurnEndPhase);
+    /** Game should progress without a new command from the player */
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-      expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
-      expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
+    expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
+    expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
 
-      game.move.select(Moves.TACKLE);
+    game.move.select(Moves.TACKLE);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.hp).toBeLessThan(enemyPostAttackHp);
-    }
-  );
+    expect(enemyPokemon.hp).toBeLessThan(enemyPostAttackHp);
+  });
 });

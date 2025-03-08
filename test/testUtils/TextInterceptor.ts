@@ -9,12 +9,26 @@ export default class TextInterceptor {
     scene.messageWrapper = this;
   }
 
-  showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
+  showText(
+    text: string,
+    _delay?: number,
+    _callback?: Function,
+    _callbackDelay?: number,
+    _prompt?: boolean,
+    _promptDelay?: number,
+  ): void {
     console.log(text);
     this.logs.push(text);
   }
 
-  showDialogue(text: string, name: string, delay?: number, callback?: Function, callbackDelay?: number, promptDelay?: number): void {
+  showDialogue(
+    text: string,
+    name: string,
+    _delay?: number,
+    _callback?: Function,
+    _callbackDelay?: number,
+    _promptDelay?: number,
+  ): void {
     console.log(name, text);
     this.logs.push(name, text);
   }

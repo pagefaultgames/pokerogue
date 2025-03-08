@@ -24,23 +24,27 @@ export class MoveAnimTestPhase extends BattlePhase {
     if (moveId === undefined) {
       this.playMoveAnim(this.moveQueue.slice(0), true);
       return;
-    } else if (player) {
+    }
+    if (player) {
       console.log(Moves[moveId]);
     }
 
     initMoveAnim(moveId).then(() => {
-      loadMoveAnimAssets([ moveId ], true)
-        .then(() => {
-          const user = player ? globalScene.getPlayerPokemon()! : globalScene.getEnemyPokemon()!;
-          const target = (player !== (allMoves[moveId] instanceof SelfStatusMove)) ? globalScene.getEnemyPokemon()! : globalScene.getPlayerPokemon()!;
-          new MoveAnim(moveId, user, target.getBattlerIndex()).play(allMoves[moveId].hitsSubstitute(user, target), () => { // TODO: are the bangs correct here?
-            if (player) {
-              this.playMoveAnim(moveQueue, false);
-            } else {
-              this.playMoveAnim(moveQueue, true);
-            }
-          });
+      loadMoveAnimAssets([moveId], true).then(() => {
+        const user = player ? globalScene.getPlayerPokemon()! : globalScene.getEnemyPokemon()!;
+        const target =
+          player !== allMoves[moveId] instanceof SelfStatusMove
+            ? globalScene.getEnemyPokemon()!
+            : globalScene.getPlayerPokemon()!;
+        new MoveAnim(moveId, user, target.getBattlerIndex()).play(allMoves[moveId].hitsSubstitute(user, target), () => {
+          // TODO: are the bangs correct here?
+          if (player) {
+            this.playMoveAnim(moveQueue, false);
+          } else {
+            this.playMoveAnim(moveQueue, true);
+          }
         });
+      });
     });
   }
 }

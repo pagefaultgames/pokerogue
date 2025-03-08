@@ -24,7 +24,7 @@ describe("Moves - Metal Burst", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.METAL_BURST, Moves.FISSURE, Moves.PRECIPICE_BLADES ])
+      .moveset([Moves.METAL_BURST, Moves.FISSURE, Moves.PRECIPICE_BLADES])
       .ability(Abilities.PURE_POWER)
       .startingLevel(10)
       .battleType("double")
@@ -35,9 +35,9 @@ describe("Moves - Metal Burst", () => {
   });
 
   it("should redirect target if intended target faints", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.FEEBAS]);
 
-    const [ , enemy2 ] = game.scene.getEnemyField();
+    const [, enemy2] = game.scene.getEnemyField();
 
     game.move.select(Moves.METAL_BURST);
     game.move.select(Moves.FISSURE, 1, BattlerIndex.ENEMY);
@@ -45,7 +45,7 @@ describe("Moves - Metal Burst", () => {
     await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
 
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.move.forceHit();
@@ -56,9 +56,9 @@ describe("Moves - Metal Burst", () => {
   });
 
   it("should not crash if both opponents faint before the move is used", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.ARCEUS ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.ARCEUS]);
 
-    const [ enemy1, enemy2 ] = game.scene.getEnemyField();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
 
     game.move.select(Moves.METAL_BURST);
     game.move.select(Moves.PRECIPICE_BLADES, 1);
@@ -66,7 +66,7 @@ describe("Moves - Metal Burst", () => {
     await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
 
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.move.forceHit();

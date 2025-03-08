@@ -22,7 +22,7 @@ describe("Abilities - Mummy", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.MUMMY)
       .battleType("single")
       .disableCrits()
@@ -32,7 +32,7 @@ describe("Abilities - Mummy", () => {
   });
 
   it("should set the enemy's ability to mummy when hit by a contact move", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -42,7 +42,7 @@ describe("Abilities - Mummy", () => {
 
   it("should not change the enemy's ability hit by a non-contact move", async () => {
     game.override.enemyMoveset(Moves.EARTHQUAKE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");

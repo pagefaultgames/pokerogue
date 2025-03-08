@@ -72,4 +72,3 @@ export default class MysteryEncounterDialogue {
   encounterOptionsDialogue?: EncounterOptionsDialogue;
   outro?: TextDisplay[];
 }
-

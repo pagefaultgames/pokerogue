@@ -1,7 +1,7 @@
 import type { Mode } from "../ui";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { SettingType } from "#app/system/settings/settings";
-"#app/inputs-controller";
+("#app/inputs-controller");
 
 export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
   /**

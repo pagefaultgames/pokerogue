@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 export enum PokemonIconAnimMode {
   NONE,
   PASSIVE,
-  ACTIVE
+  ACTIVE,
 }
 
 type PokemonIcon = Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
@@ -33,7 +33,7 @@ export default class PokemonIconAnimHandler {
       yoyo: true,
       repeat: -1,
       onRepeat: onAlternate,
-      onYoyo: onAlternate
+      onYoyo: onAlternate,
     });
   }
 
@@ -50,16 +50,14 @@ export default class PokemonIconAnimHandler {
 
   addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
     if (!Array.isArray(icons)) {
-      icons = [ icons ];
+      icons = [icons];
     }
     for (const i of icons) {
       if (this.icons.has(i) && this.icons.get(i) === mode) {
         continue;
       }
       if (this.toggled) {
-        const lastYDelta = this.icons.has(i)
-          ? this.icons.get(i)!
-          : 0;
+        const lastYDelta = this.icons.has(i) ? this.icons.get(i)! : 0;
         const yDelta = this.getModeYDelta(mode);
         i.y += yDelta + lastYDelta;
       }
@@ -69,7 +67,7 @@ export default class PokemonIconAnimHandler {
 
   remove(icons: PokemonIcon | PokemonIcon[]): void {
     if (!Array.isArray(icons)) {
-      icons = [ icons ];
+      icons = [icons];
     }
     for (const i of icons) {
       if (this.toggled) {

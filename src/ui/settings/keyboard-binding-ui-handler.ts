@@ -5,9 +5,7 @@ import { Device } from "#enums/devices";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { globalScene } from "#app/global-scene";
 
-
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
-
   constructor(mode: Mode | null = null) {
     super(mode);
     // Listen to gamepad button down events to initiate binding.
@@ -70,5 +68,4 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     }
     return false;
   }
-
 }

@@ -8,17 +8,17 @@ const MockConsoleLog = (_logDisabled = false, _phaseText = false) => {
   const originalWarn = console.warn;
   const notified: any[] = [];
 
-  const blacklist = [ "Phaser", "variant icon does not exist", "Texture \"%s\" not found" ];
-  const whitelist = [ "Phase" ];
+  const blacklist = ["Phaser", "variant icon does not exist", 'Texture "%s" not found'];
+  const whitelist = ["Phase"];
 
-  return ({
+  return {
     log(...args) {
       const argsStr = this.getStr(args);
       logs.push(argsStr);
-      if (logDisabled && (!phaseText)) {
+      if (logDisabled && !phaseText) {
         return;
       }
-      if ((phaseText && !whitelist.some((b) => argsStr.includes(b))) || blacklist.some((b) => argsStr.includes(b))) {
+      if ((phaseText && !whitelist.some(b => argsStr.includes(b))) || blacklist.some(b => argsStr.includes(b))) {
         return;
       }
       originalLog(args);
@@ -31,10 +31,10 @@ const MockConsoleLog = (_logDisabled = false, _phaseText = false) => {
     debug(...args) {
       const argsStr = this.getStr(args);
       logs.push(argsStr);
-      if (logDisabled && (!phaseText)) {
+      if (logDisabled && !phaseText) {
         return;
       }
-      if (!whitelist.some((b) => argsStr.includes(b)) || blacklist.some((b) => argsStr.includes(b))) {
+      if (!whitelist.some(b => argsStr.includes(b)) || blacklist.some(b => argsStr.includes(b))) {
         return;
       }
       originalDebug(args);
@@ -42,10 +42,10 @@ const MockConsoleLog = (_logDisabled = false, _phaseText = false) => {
     warn(...args) {
       const argsStr = this.getStr(args);
       logs.push(args);
-      if (logDisabled && (!phaseText)) {
+      if (logDisabled && !phaseText) {
         return;
       }
-      if (!whitelist.some((b) => argsStr.includes(b)) || blacklist.some((b) => argsStr.includes(b))) {
+      if (!whitelist.some(b => argsStr.includes(b)) || blacklist.some(b => argsStr.includes(b))) {
         return;
       }
       originalWarn(args);
@@ -61,22 +61,22 @@ const MockConsoleLog = (_logDisabled = false, _phaseText = false) => {
       logs = [];
     },
     getStr(...args) {
-      return args.map(arg => {
-        if (typeof arg === "object" && arg !== null) {
-          // Handle objects including arrays
-          return JSON.stringify(arg, (key, value) =>
-            typeof value === "bigint" ? value.toString() : value
-          );
-        } else if (typeof arg === "bigint") {
-          // Handle BigInt values
-          return arg.toString();
-        } else {
+      return args
+        .map(arg => {
+          if (typeof arg === "object" && arg !== null) {
+            // Handle objects including arrays
+            return JSON.stringify(arg, (_key, value) => (typeof value === "bigint" ? value.toString() : value));
+          }
+          if (typeof arg === "bigint") {
+            // Handle BigInt values
+            return arg.toString();
+          }
           // Handle all other types
           return arg.toString();
-        }
-      }).join(";");
+        })
+        .join(";");
     },
-  });
+  };
 };
 
 export default MockConsoleLog;

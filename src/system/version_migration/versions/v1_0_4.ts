@@ -1,6 +1,6 @@
 import { SettingKeys } from "#app/system/settings/settings";
-import type { SystemSaveData, SessionSaveData  } from "#app/system/game-data";
-import { AbilityAttr, defaultStarterSpecies, DexAttr  } from "#app/system/game-data";
+import type { SystemSaveData, SessionSaveData } from "#app/system/game-data";
+import { AbilityAttr, defaultStarterSpecies, DexAttr } from "#app/system/game-data";
 import { allSpecies } from "#app/data/pokemon-species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { isNullOrUndefined } from "#app/utils";
@@ -12,8 +12,9 @@ export const systemMigrators = [
    */
   function migrateAbilityData(data: SystemSaveData) {
     if (data.starterData && data.dexData) {
+      // biome-ignore lint/complexity/noForEach: <explanation>
       Object.keys(data.starterData).forEach(sd => {
-        if (data.dexData[sd]?.caughtAttr && (data.starterData[sd] && !data.starterData[sd].abilityAttr)) {
+        if (data.dexData[sd]?.caughtAttr && data.starterData[sd] && !data.starterData[sd].abilityAttr) {
           data.starterData[sd].abilityAttr = 1;
         }
       });
@@ -25,22 +26,44 @@ export const systemMigrators = [
    * @param data {@linkcode SystemSaveData}
    */
   function fixLegendaryStats(data: SystemSaveData) {
-    if (data.gameStats && (data.gameStats.legendaryPokemonCaught !== undefined && data.gameStats.subLegendaryPokemonCaught === undefined)) {
+    if (
+      data.gameStats &&
+      data.gameStats.legendaryPokemonCaught !== undefined &&
+      data.gameStats.subLegendaryPokemonCaught === undefined
+    ) {
       data.gameStats.subLegendaryPokemonSeen = 0;
       data.gameStats.subLegendaryPokemonCaught = 0;
       data.gameStats.subLegendaryPokemonHatched = 0;
-      allSpecies.filter(s => s.subLegendary).forEach(s => {
-        const dexEntry = data.dexData[s.speciesId];
-        data.gameStats.subLegendaryPokemonSeen += dexEntry.seenCount;
-        data.gameStats.legendaryPokemonSeen = Math.max(data.gameStats.legendaryPokemonSeen - dexEntry.seenCount, 0);
-        data.gameStats.subLegendaryPokemonCaught += dexEntry.caughtCount;
-        data.gameStats.legendaryPokemonCaught = Math.max(data.gameStats.legendaryPokemonCaught - dexEntry.caughtCount, 0);
-        data.gameStats.subLegendaryPokemonHatched += dexEntry.hatchedCount;
-        data.gameStats.legendaryPokemonHatched = Math.max(data.gameStats.legendaryPokemonHatched - dexEntry.hatchedCount, 0);
-      });
-      data.gameStats.subLegendaryPokemonSeen = Math.max(data.gameStats.subLegendaryPokemonSeen, data.gameStats.subLegendaryPokemonCaught);
-      data.gameStats.legendaryPokemonSeen = Math.max(data.gameStats.legendaryPokemonSeen, data.gameStats.legendaryPokemonCaught);
-      data.gameStats.mythicalPokemonSeen = Math.max(data.gameStats.mythicalPokemonSeen, data.gameStats.mythicalPokemonCaught);
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      allSpecies
+        .filter(s => s.subLegendary)
+        .forEach(s => {
+          const dexEntry = data.dexData[s.speciesId];
+          data.gameStats.subLegendaryPokemonSeen += dexEntry.seenCount;
+          data.gameStats.legendaryPokemonSeen = Math.max(data.gameStats.legendaryPokemonSeen - dexEntry.seenCount, 0);
+          data.gameStats.subLegendaryPokemonCaught += dexEntry.caughtCount;
+          data.gameStats.legendaryPokemonCaught = Math.max(
+            data.gameStats.legendaryPokemonCaught - dexEntry.caughtCount,
+            0,
+          );
+          data.gameStats.subLegendaryPokemonHatched += dexEntry.hatchedCount;
+          data.gameStats.legendaryPokemonHatched = Math.max(
+            data.gameStats.legendaryPokemonHatched - dexEntry.hatchedCount,
+            0,
+          );
+        });
+      data.gameStats.subLegendaryPokemonSeen = Math.max(
+        data.gameStats.subLegendaryPokemonSeen,
+        data.gameStats.subLegendaryPokemonCaught,
+      );
+      data.gameStats.legendaryPokemonSeen = Math.max(
+        data.gameStats.legendaryPokemonSeen,
+        data.gameStats.legendaryPokemonCaught,
+      );
+      data.gameStats.mythicalPokemonSeen = Math.max(
+        data.gameStats.mythicalPokemonSeen,
+        data.gameStats.mythicalPokemonCaught,
+      );
     }
   },
 
@@ -59,7 +82,7 @@ export const systemMigrators = [
         }
       }
     }
-  }
+  },
 ] as const;
 
 export const settingsMigrators = [
@@ -68,13 +91,16 @@ export const settingsMigrators = [
    * SettingKeys.Shop_Cursor_Target}.
    * @param data the `settings` object
    */
+
+  // biome-ignore lint/complexity/noBannedTypes: TODO: fix the type to not be object...
   function fixRerollTarget(data: Object) {
     if (data.hasOwnProperty("REROLL_TARGET") && !data.hasOwnProperty(SettingKeys.Shop_Cursor_Target)) {
       data[SettingKeys.Shop_Cursor_Target] = data["REROLL_TARGET"];
+      // biome-ignore lint/performance/noDelete: intentional
       delete data["REROLL_TARGET"];
       localStorage.setItem("settings", JSON.stringify(data));
     }
-  }
+  },
 ] as const;
 
 export const sessionMigrators = [
@@ -85,7 +111,7 @@ export const sessionMigrators = [
    *  @param data {@linkcode SessionSaveData}
    */
   function migrateModifiers(data: SessionSaveData) {
-    data.modifiers.forEach((m) => {
+    for (const m of data.modifiers) {
       if (m.className === "PokemonBaseStatModifier") {
         m.className = "BaseStatModifier";
       } else if (m.className === "PokemonResetNegativeStatStageModifier") {
@@ -102,13 +128,13 @@ export const sessionMigrators = [
           m.typePregenArgs[0] = newStat;
 
           // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
-          m.args = [ newStat, maxBattles, Math.min(m.args[1], maxBattles) ];
+          m.args = [newStat, maxBattles, Math.min(m.args[1], maxBattles)];
         } else {
           m.className = "TempCritBoosterModifier";
           m.typePregenArgs = [];
 
           // From [ stat, battlesLeft ] to [ maxBattles, battleCount ]
-          m.args = [ maxBattles, Math.min(m.args[1], maxBattles) ];
+          m.args = [maxBattles, Math.min(m.args[1], maxBattles)];
         }
       } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
         let maxBattles: number;
@@ -125,17 +151,17 @@ export const sessionMigrators = [
         }
 
         // From [ battlesLeft ] to [ maxBattles, battleCount ]
-        m.args = [ maxBattles, Math.min(m.args[0], maxBattles) ];
+        m.args = [maxBattles, Math.min(m.args[0], maxBattles)];
       }
-    });
+    }
 
-    data.enemyModifiers.forEach((m) => {
+    for (const m of data.enemyModifiers) {
       if (m.className === "PokemonBaseStatModifier") {
         m.className = "BaseStatModifier";
       } else if (m.className === "PokemonResetNegativeStatStageModifier") {
         m.className = "ResetNegativeStatStageModifier";
       }
-    });
+    }
   },
   /**
    *  Converts old Pokemon natureOverride and mysteryEncounterData
@@ -144,7 +170,7 @@ export const sessionMigrators = [
    */
   function migrateCustomPokemonDataAndNatureOverrides(data: SessionSaveData) {
     // Fix Pokemon nature overrides and custom data migration
-    data.party.forEach(pokemon => {
+    for (const pokemon of data.party) {
       if (pokemon["mysteryEncounterPokemonData"]) {
         pokemon.customPokemonData = new CustomPokemonData(pokemon["mysteryEncounterPokemonData"]);
         pokemon["mysteryEncounterPokemonData"] = null;
@@ -158,6 +184,6 @@ export const sessionMigrators = [
         pokemon.customPokemonData.nature = pokemon["natureOverride"];
         pokemon["natureOverride"] = -1;
       }
-    });
-  }
+    }
+  },
 ] as const;

@@ -25,7 +25,7 @@ describe("Abilities - Early Bird", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.REST, Moves.BELLY_DRUM, Moves.SPLASH ])
+      .moveset([Moves.REST, Moves.BELLY_DRUM, Moves.SPLASH])
       .ability(Abilities.EARLY_BIRD)
       .battleType("single")
       .disableCrits()
@@ -35,7 +35,7 @@ describe("Abilities - Early Bird", () => {
   });
 
   it("reduces Rest's sleep time to 1 turn", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const player = game.scene.getPlayerPokemon()!;
 
@@ -60,7 +60,7 @@ describe("Abilities - Early Bird", () => {
   });
 
   it("reduces 3-turn sleep to 1 turn", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const player = game.scene.getPlayerPokemon()!;
     player.status = new Status(StatusEffect.SLEEP, 0, 4);
@@ -79,7 +79,7 @@ describe("Abilities - Early Bird", () => {
   });
 
   it("reduces 1-turn sleep to 0 turns", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const player = game.scene.getPlayerPokemon()!;
     player.status = new Status(StatusEffect.SLEEP, 0, 2);

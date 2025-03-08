@@ -30,10 +30,8 @@ describe("Abilities - Simple", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should double stat changes when applied", async() => {
-    await game.startBattle([
-      Species.SLOWBRO
-    ]);
+  it("should double stat changes when applied", async () => {
+    await game.startBattle([Species.SLOWBRO]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 

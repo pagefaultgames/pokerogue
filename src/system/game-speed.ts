@@ -15,7 +15,7 @@ export function initGameSpeed() {
     if (value instanceof Utils.FixedInt) {
       return (value as Utils.FixedInt).value;
     }
-    return thisArg.gameSpeed === 1 ? value : Math.ceil(value /= thisArg.gameSpeed);
+    return thisArg.gameSpeed === 1 ? value : Math.ceil((value /= thisArg.gameSpeed));
   };
 
   const originalAddEvent = this.time.addEvent;
@@ -23,15 +23,21 @@ export function initGameSpeed() {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
       config.delay = transformValue(config.delay);
     }
-    return originalAddEvent.apply(this, [ config ]);
+    return originalAddEvent.apply(this, [config]);
   };
   const originalTweensAdd = this.tweens.add;
-  this.tweens.add = function (config: Phaser.Types.Tweens.TweenBuilderConfig | Phaser.Types.Tweens.TweenChainBuilderConfig | Phaser.Tweens.Tween | Phaser.Tweens.TweenChain) {
+  this.tweens.add = function (
+    config:
+      | Phaser.Types.Tweens.TweenBuilderConfig
+      | Phaser.Types.Tweens.TweenChainBuilderConfig
+      | Phaser.Tweens.Tween
+      | Phaser.Tweens.TweenChain,
+  ) {
     if (config.loopDelay) {
       config.loopDelay = transformValue(config.loopDelay as number);
     }
 
-    if (!(config instanceof Phaser.Tweens.TweenChain) ) {
+    if (!(config instanceof Phaser.Tweens.TweenChain)) {
       if (config.duration) {
         config.duration = transformValue(config.duration);
       }
@@ -48,12 +54,12 @@ export function initGameSpeed() {
         }
       }
     }
-    return originalTweensAdd.apply(this, [ config ]);
+    return originalTweensAdd.apply(this, [config]);
   };
   const originalTweensChain = this.tweens.chain;
   this.tweens.chain = function (config: Phaser.Types.Tweens.TweenChainBuilderConfig): Phaser.Tweens.TweenChain {
     if (config.tweens) {
-      config.tweens.forEach(t => {
+      for (const t of config.tweens) {
         if (t.duration) {
           t.duration = transformValue(t.duration);
         }
@@ -69,9 +75,9 @@ export function initGameSpeed() {
         if (t.hold) {
           t.hold = transformValue(t.hold);
         }
-      });
+      }
     }
-    return originalTweensChain.apply(this, [ config ]);
+    return originalTweensChain.apply(this, [config]);
   };
   const originalAddCounter = this.tweens.addCounter;
   this.tweens.addCounter = function (config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
@@ -90,23 +96,19 @@ export function initGameSpeed() {
     if (config.hold) {
       config.hold = transformValue(config.hold);
     }
-    return originalAddCounter.apply(this, [ config ]);
+    return originalAddCounter.apply(this, [config]);
   };
 
   const originalFadeOut = SoundFade.fadeOut;
-  SoundFade.fadeOut = ((
-    scene: Phaser.Scene,
-    sound: Phaser.Sound.BaseSound,
-    duration: number,
-    destroy?: boolean
-  ) => originalFadeOut(globalScene, sound, transformValue(duration), destroy)) as FadeOut;
+  SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>
+    originalFadeOut(globalScene, sound, transformValue(duration), destroy)) as FadeOut;
 
   const originalFadeIn = SoundFade.fadeIn;
   SoundFade.fadeIn = ((
-    scene: Phaser.Scene,
+    _scene: Phaser.Scene,
     sound: string | Phaser.Sound.BaseSound,
     duration: number,
     endVolume?: number,
-    startVolume?: number
+    startVolume?: number,
   ) => originalFadeIn(globalScene, sound, transformValue(duration), endVolume, startVolume)) as FadeIn;
 }

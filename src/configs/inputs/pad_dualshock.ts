@@ -24,7 +24,7 @@ const pad_dualshock = {
     LC_S: 13,
     LC_W: 14,
     LC_E: 15,
-    TOUCH: 17
+    TOUCH: 17,
   },
   icons: {
     RC_S: "CROSS.png",
@@ -43,7 +43,7 @@ const pad_dualshock = {
     LC_S: "DOWN.png",
     LC_W: "LEFT.png",
     LC_E: "RIGHT.png",
-    TOUCH: "TOUCH.png"
+    TOUCH: "TOUCH.png",
   },
   settings: {
     [SettingGamepad.Button_Up]: Button.UP,
@@ -56,13 +56,13 @@ const pad_dualshock = {
     [SettingGamepad.Button_Cycle_Tera]: Button.CYCLE_TERA,
     [SettingGamepad.Button_Menu]: Button.MENU,
     [SettingGamepad.Button_Stats]: Button.STATS,
-    [SettingGamepad.Button_Cycle_Form]:  Button.CYCLE_FORM,
+    [SettingGamepad.Button_Cycle_Form]: Button.CYCLE_FORM,
     [SettingGamepad.Button_Cycle_Shiny]: Button.CYCLE_SHINY,
     [SettingGamepad.Button_Cycle_Gender]: Button.CYCLE_GENDER,
     [SettingGamepad.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
     [SettingGamepad.Button_Speed_Up]: Button.SPEED_UP,
     [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN,
-    [SettingGamepad.Button_Submit]: Button.SUBMIT
+    [SettingGamepad.Button_Submit]: Button.SUBMIT,
   },
   default: {
     LC_N: SettingGamepad.Button_Up,

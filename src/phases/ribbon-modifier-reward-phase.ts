@@ -20,13 +20,20 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       globalScene.addModifier(newModifier);
       globalScene.playSound("level_up_fanfare");
       globalScene.ui.setMode(Mode.MESSAGE);
-      globalScene.ui.showText(i18next.t("battle:beatModeFirstTime", {
-        speciesName: this.species.name,
-        gameMode: globalScene.gameMode.getName(),
-        newModifier: newModifier?.type.name,
-      }), null, () => {
-        resolve();
-      }, null, true, 1500);
+      globalScene.ui.showText(
+        i18next.t("battle:beatModeFirstTime", {
+          speciesName: this.species.name,
+          gameMode: globalScene.gameMode.getName(),
+          newModifier: newModifier?.type.name,
+        }),
+        null,
+        () => {
+          resolve();
+        },
+        null,
+        true,
+        1500,
+      );
     });
   }
 }

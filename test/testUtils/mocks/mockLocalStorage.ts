@@ -1,4 +1,4 @@
-const mockLocalStorage = (() => {
+const mockLocalStorage = () => {
   let store = {} as Storage;
 
   return {
@@ -22,6 +22,6 @@ const mockLocalStorage = (() => {
       store = {} as Storage;
     },
   };
-});
+};
 
 export default mockLocalStorage;

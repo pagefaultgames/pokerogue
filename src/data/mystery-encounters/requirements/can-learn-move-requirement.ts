@@ -29,7 +29,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
 
   constructor(requiredMoves: Moves | Moves[], options: CanLearnMoveRequirementOptions = {}) {
     super();
-    this.requiredMoves = Array.isArray(requiredMoves) ? requiredMoves : [ requiredMoves ];
+    this.requiredMoves = Array.isArray(requiredMoves) ? requiredMoves : [requiredMoves];
 
     this.excludeLevelMoves = options.excludeLevelMoves ?? false;
     this.excludeTmMoves = options.excludeTmMoves ?? false;
@@ -40,7 +40,9 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   }
 
   override meetsRequirement(): boolean {
-    const partyPokemon = globalScene.getPlayerParty().filter((pkm) => (this.includeFainted ? pkm.isAllowedInChallenge() : pkm.isAllowedInBattle()));
+    const partyPokemon = globalScene
+      .getPlayerParty()
+      .filter(pkm => (this.includeFainted ? pkm.isAllowedInChallenge() : pkm.isAllowedInBattle()));
 
     if (isNullOrUndefined(partyPokemon) || this.requiredMoves?.length < 0) {
       return false;
@@ -51,25 +53,24 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter((pokemon) =>
+      return partyPokemon.filter(pokemon =>
         // every required move should be included
-        this.requiredMoves.every((requiredMove) => this.getAllPokemonMoves(pokemon).includes(requiredMove))
-      );
-    } else {
-      return partyPokemon.filter(
-        (pokemon) =>
-          // none of the "required" moves should be included
-          !this.requiredMoves.some((requiredMove) => this.getAllPokemonMoves(pokemon).includes(requiredMove))
+        this.requiredMoves.every(requiredMove => this.getAllPokemonMoves(pokemon).includes(requiredMove)),
       );
     }
+    return partyPokemon.filter(
+      pokemon =>
+        // none of the "required" moves should be included
+        !this.requiredMoves.some(requiredMove => this.getAllPokemonMoves(pokemon).includes(requiredMove)),
+    );
   }
 
   override getDialogueToken(__pokemon?: PlayerPokemon): [string, string] {
-    return [ "requiredMoves", this.requiredMoves.map(m => new PokemonMove(m).getName()).join(", ") ];
+    return ["requiredMoves", this.requiredMoves.map(m => new PokemonMove(m).getName()).join(", ")];
   }
 
   private getPokemonLevelMoves(pkm: PlayerPokemon): Moves[] {
-    return pkm.getLevelMoves().map(([ _level, move ]) => move);
+    return pkm.getLevelMoves().map(([_level, move]) => move);
   }
 
   private getAllPokemonMoves(pkm: PlayerPokemon): Moves[] {

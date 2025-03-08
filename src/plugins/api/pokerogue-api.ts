@@ -48,9 +48,8 @@ export class PokerogueApi extends ApiBase {
       const response = await this.doPost("/auth/discord/logout");
       if (response.ok) {
         return true;
-      } else {
-        console.warn(`Discord unlink failed (${response.status}: ${response.statusText})`);
       }
+      console.warn(`Discord unlink failed (${response.status}: ${response.statusText})`);
     } catch (err) {
       console.warn("Could not unlink Discord!", err);
     }
@@ -67,9 +66,8 @@ export class PokerogueApi extends ApiBase {
       const response = await this.doPost("/auth/google/logout");
       if (response.ok) {
         return true;
-      } else {
-        console.warn(`Google unlink failed (${response.status}: ${response.statusText})`);
       }
+      console.warn(`Google unlink failed (${response.status}: ${response.statusText})`);
     } catch (err) {
       console.warn("Could not unlink Google!", err);
     }

@@ -4,5 +4,5 @@ export enum ModifierTier {
   ULTRA,
   ROGUE,
   MASTER,
-  LUXURY
+  LUXURY,
 }

@@ -8,7 +8,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
-
 describe("Moves - Tail whip", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -31,16 +30,13 @@ describe("Moves - Tail whip", () => {
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.ability(Abilities.INSOMNIA);
     game.override.startingLevel(2000);
-    game.override.moveset([ moveToUse ]);
+    game.override.moveset([moveToUse]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
-  it("should lower DEF stat stage by 1", async() => {
+  it("should lower DEF stat stage by 1", async () => {
     const moveToUse = Moves.TAIL_WHIP;
-    await game.startBattle([
-      Species.MIGHTYENA,
-      Species.MIGHTYENA,
-    ]);
+    await game.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);

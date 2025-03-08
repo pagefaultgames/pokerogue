@@ -6,7 +6,6 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Abilities - Seed Sower", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -31,11 +30,11 @@ describe("Abilities - Seed Sower", () => {
 
     game.override.starterSpecies(Species.ARBOLIVA);
     game.override.ability(Abilities.SEED_SOWER);
-    game.override.moveset([ Moves.SPLASH ]);
+    game.override.moveset([Moves.SPLASH]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([ Moves.TACKLE ]);
+    game.override.enemyMoveset([Moves.TACKLE]);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.SPLASH);
@@ -45,10 +44,8 @@ describe("Abilities - Seed Sower", () => {
   });
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([ Moves.TACKLE ])
-      .enemyLevel(100)
-      .startingLevel(1);
-    await game.classicMode.startBattle([ Species.ARBOLIVA, Species.MAGIKARP ]);
+    game.override.enemyMoveset([Moves.TACKLE]).enemyLevel(100).startingLevel(1);
+    await game.classicMode.startBattle([Species.ARBOLIVA, Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
     game.doSelectPartyPokemon(1);
@@ -58,7 +55,7 @@ describe("Abilities - Seed Sower", () => {
   });
 
   it("should not trigger when targetted with status moves", async () => {
-    game.override.enemyMoveset([ Moves.GROWL ]);
+    game.override.enemyMoveset([Moves.GROWL]);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.SPLASH);

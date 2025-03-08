@@ -9,7 +9,7 @@ describe("Data - Splash Messages", () => {
 
   // make sure to adjust this test if the weight it changed!
   it("should add contain 10 `battlesWon` splash messages", () => {
-    const battlesWonMessages = getSplashMessages().filter((message) => message === "splashMessages:battlesWon");
+    const battlesWonMessages = getSplashMessages().filter(message => message === "splashMessages:battlesWon");
     expect(battlesWonMessages).toHaveLength(10);
   });
 
@@ -51,8 +51,8 @@ function testSeason(startDate: Date, endDate: Date, prefix: string) {
   const afterDate = new Date(endDate);
   afterDate.setDate(endDate.getDate() + 1);
 
-  const dates: Date[] = [ beforeDate, startDate, endDate, afterDate ];
-  const [ before, start, end, after ] = dates.map((date) => {
+  const dates: Date[] = [beforeDate, startDate, endDate, afterDate];
+  const [before, start, end, after] = dates.map(date => {
     vi.setSystemTime(date);
     console.log("System time set to", date);
     const count = getSplashMessages().filter(filterFn).length;

@@ -5,7 +5,7 @@ import { PokemonPhase } from "./pokemon-phase";
 export class ShowAbilityPhase extends PokemonPhase {
   private passive: boolean;
 
-  constructor(battlerIndex: BattlerIndex, passive: boolean = false) {
+  constructor(battlerIndex: BattlerIndex, passive = false) {
     super(battlerIndex);
 
     this.passive = passive;
@@ -17,7 +17,6 @@ export class ShowAbilityPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
 
     if (pokemon) {
-
       if (!pokemon.isPlayer()) {
         /** If its an enemy pokemon, list it as last enemy to use ability or move */
         globalScene.currentBattle.lastEnemyInvolved = pokemon.getBattlerIndex() % 2;

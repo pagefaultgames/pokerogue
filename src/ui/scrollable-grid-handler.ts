@@ -111,7 +111,7 @@ export default class ScrollableGridUiHandler {
         } else if (this.scrollCursor > 0) {
           success = this.setScrollCursor(this.scrollCursor - 1);
         } else {
-        // wrap around to the last row
+          // wrap around to the last row
           let newCursor = this.cursor + (onScreenRows - 1) * this.COLUMNS;
           if (newCursor > lastVisibleIndex) {
             newCursor -= this.COLUMNS;
@@ -121,13 +121,13 @@ export default class ScrollableGridUiHandler {
         break;
       case Button.DOWN:
         if (currentRowIndex < onScreenRows - 1) {
-        // Go down one row
+          // Go down one row
           success = this.setCursor(Math.min(this.cursor + this.COLUMNS, this.totalElements - itemOffset - 1));
         } else if (this.scrollCursor < maxScrollCursor) {
-        // Scroll down one row
+          // Scroll down one row
           success = this.setScrollCursor(this.scrollCursor + 1);
         } else {
-        // Wrap around to the top row
+          // Wrap around to the top row
           success = this.setScrollCursor(0, this.cursor % this.COLUMNS);
         }
         break;
@@ -192,5 +192,4 @@ export default class ScrollableGridUiHandler {
 
     return scrollChanged || cursorChanged;
   }
-
 }

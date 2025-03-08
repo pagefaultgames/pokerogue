@@ -23,7 +23,7 @@ describe("Moves - Moongeist Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.MOONGEIST_BEAM, Moves.METRONOME ])
+      .moveset([Moves.MOONGEIST_BEAM, Moves.METRONOME])
       .ability(Abilities.BALL_FETCH)
       .startingLevel(200)
       .battleType("single")
@@ -35,7 +35,7 @@ describe("Moves - Moongeist Beam", () => {
 
   // Also covers Photon Geyser and Sunsteel Strike
   it("should ignore enemy abilities", async () => {
-    await game.classicMode.startBattle([ Species.MILOTIC ]);
+    await game.classicMode.startBattle([Species.MILOTIC]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -47,8 +47,10 @@ describe("Moves - Moongeist Beam", () => {
 
   // Also covers Photon Geyser and Sunsteel Strike
   it("should not ignore enemy abilities when called by another move, such as metronome", async () => {
-    await game.classicMode.startBattle([ Species.MILOTIC ]);
-    vi.spyOn(allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0], "getMoveOverride").mockReturnValue(Moves.MOONGEIST_BEAM);
+    await game.classicMode.startBattle([Species.MILOTIC]);
+    vi.spyOn(allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0], "getMoveOverride").mockReturnValue(
+      Moves.MOONGEIST_BEAM,
+    );
 
     game.move.select(Moves.METRONOME);
     await game.phaseInterceptor.to("BerryPhase");

@@ -23,7 +23,7 @@ describe("Moves - Skill Swap", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.SKILL_SWAP ])
+      .moveset([Moves.SPLASH, Moves.SKILL_SWAP])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -34,7 +34,7 @@ describe("Moves - Skill Swap", () => {
 
   it("should swap the two abilities", async () => {
     game.override.ability(Abilities.ADAPTABILITY);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
@@ -45,7 +45,7 @@ describe("Moves - Skill Swap", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.ability(Abilities.INTIMIDATE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");

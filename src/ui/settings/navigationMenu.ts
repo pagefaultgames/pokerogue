@@ -33,7 +33,13 @@ export class NavigationManager {
       Mode.SETTINGS_GAMEPAD,
       Mode.SETTINGS_KEYBOARD,
     ];
-    this.labels = [ i18next.t("settings:general"), i18next.t("settings:display"), i18next.t("settings:audio"), i18next.t("settings:gamepad"), i18next.t("settings:keyboard") ];
+    this.labels = [
+      i18next.t("settings:general"),
+      i18next.t("settings:display"),
+      i18next.t("settings:audio"),
+      i18next.t("settings:gamepad"),
+      i18next.t("settings:keyboard"),
+    ];
   }
 
   public reset() {
@@ -95,7 +101,6 @@ export class NavigationManager {
   public clearNavigationMenus() {
     this.navigationMenus.length = 0;
   }
-
 }
 
 export default class NavigationMenu extends Phaser.GameObjects.Container {
@@ -118,7 +123,7 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
    */
   setup() {
     const navigationManager = NavigationManager.getInstance();
-    const headerBg = addWindow(0, 0, (globalScene.game.canvas.width / 6) - 2, 24);
+    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
     headerBg.setOrigin(0, 0);
     this.add(headerBg);
     this.width = headerBg.width;
@@ -161,7 +166,7 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
     const navigationManager = NavigationManager.getInstance();
     const posSelected = navigationManager.modes.indexOf(navigationManager.selectedMode);
 
-    for (const [ index, title ] of this.headerTitles.entries()) {
+    for (const [index, title] of this.headerTitles.entries()) {
       setTextStyle(title, index === posSelected ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL);
     }
   }
@@ -171,8 +176,8 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
    */
   updateIcons() {
     const specialIcons = {
-      "BUTTON_HOME": "HOME.png",
-      "BUTTON_DELETE": "DEL.png",
+      BUTTON_HOME: "HOME.png",
+      BUTTON_DELETE: "DEL.png",
     };
     for (const settingName of Object.keys(this.navigationIcons)) {
       if (Object.keys(specialIcons).includes(settingName)) {

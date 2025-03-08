@@ -38,8 +38,8 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
     const message = addTextObject(0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
       wordWrap: {
-        width: 1780
-      }
+        width: 1780,
+      },
     });
     this.messageContainer.add(message);
 

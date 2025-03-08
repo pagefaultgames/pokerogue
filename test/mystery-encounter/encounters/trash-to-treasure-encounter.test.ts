@@ -7,7 +7,10 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
+import {
+  runMysteryEncounterToEnd,
+  skipBattleRunMysteryEncounterRewardsPhase,
+} from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
@@ -24,7 +27,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 
 const namespace = "mysteryEncounters/trashToTreasure";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -46,9 +49,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [ Biome.CAVE, [ MysteryEncounterType.TRASH_TO_TREASURE ]],
-      ])
+      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]]]),
     );
   });
 
@@ -95,10 +96,10 @@ describe("Trash to Treasure - Mystery Encounter", () => {
             shiny: false,
             formIndex: 1,
             bossSegmentModifier: 1,
-            moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ],
-          }
+            moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH],
+          },
         ],
-      }
+      },
     ]);
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
     await vi.waitFor(() => expect(moveLoadSpy).toHaveBeenCalled());
@@ -176,7 +177,12 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
-      expect(enemyField[0].moveset).toEqual([ new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.GUNK_SHOT), new PokemonMove(Moves.STOMPING_TANTRUM), new PokemonMove(Moves.DRAIN_PUNCH) ]);
+      expect(enemyField[0].moveset).toEqual([
+        new PokemonMove(Moves.PAYBACK),
+        new PokemonMove(Moves.GUNK_SHOT),
+        new PokemonMove(Moves.STOMPING_TANTRUM),
+        new PokemonMove(Moves.DRAIN_PUNCH),
+      ]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
@@ -194,12 +200,26 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ROGUE);
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ROGUE);
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.tier - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ULTRA);
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.tier - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount).toEqual(ModifierTier.GREAT);
+      expect(
+        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ROGUE);
+      expect(
+        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ROGUE);
+      expect(
+        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ULTRA);
+      expect(
+        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.GREAT);
     });
   });
 });

@@ -29,14 +29,12 @@ describe("Moves - Guard Swap", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
-      .moveset([ Moves.GUARD_SWAP ])
+      .moveset([Moves.GUARD_SWAP])
       .ability(Abilities.NONE);
   });
 
   it("should swap the user's DEF and SPDEF stat stages with the target's", async () => {
-    await game.classicMode.startBattle([
-      Species.INDEEDEE
-    ]);
+    await game.classicMode.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

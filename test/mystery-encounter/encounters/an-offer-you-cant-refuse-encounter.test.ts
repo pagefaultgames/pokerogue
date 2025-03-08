@@ -22,7 +22,7 @@ import { Abilities } from "#enums/abilities";
 
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 /** Gyarados for Indimidate */
-const defaultParty = [ Species.GYARADOS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.GYARADOS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -38,17 +38,18 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100)
+    game.override
+      .mysteryEncounterChance(100)
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
       .ability(Abilities.INTIMIDATE); // Extortion ability
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
+      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [ MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE ]);
+      biomeMap.set(biome, [MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -67,10 +68,12 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     expect(AnOfferYouCantRefuseEncounter.dialogue).toBeDefined();
     expect(AnOfferYouCantRefuseEncounter.dialogue.intro).toStrictEqual([
       { text: `${namespace}:intro` },
-      { speaker: `${namespace}:speaker`, text: `${namespace}:intro_dialogue` }
+      { speaker: `${namespace}:speaker`, text: `${namespace}:intro_dialogue` },
     ]);
     expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
-    expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.description).toBe(
+      `${namespace}:description`,
+    );
     expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(AnOfferYouCantRefuseEncounter.options.length).toBe(3);
   });
@@ -80,7 +83,9 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE);
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(
+      MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE,
+    );
   });
 
   it("should initialize fully ", async () => {
@@ -96,10 +101,14 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
     expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.strongestPokemon).toBeDefined();
     expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.price).toBeDefined();
-    expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.option2PrimaryAbility).toBe(i18next.t("ability:intimidate.name"));
+    expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.option2PrimaryAbility).toBe(
+      i18next.t("ability:intimidate.name"),
+    );
     expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.moveOrAbility).toBe(i18next.t("ability:intimidate.name"));
     expect(AnOfferYouCantRefuseEncounter.misc.pokemon instanceof PlayerPokemon).toBeTruthy();
-    expect(AnOfferYouCantRefuseEncounter.misc?.price?.toString()).toBe(AnOfferYouCantRefuseEncounter.dialogueTokens?.price);
+    expect(AnOfferYouCantRefuseEncounter.misc?.price?.toString()).toBe(
+      AnOfferYouCantRefuseEncounter.dialogueTokens?.price,
+    );
     expect(onInitResult).toBe(true);
   });
 
@@ -187,27 +196,29 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     it("should award EXP to a pokemon with an ability in EXTORTION_ABILITIES", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
       const party = scene.getPlayerParty();
-      const gyarados = party.find((pkm) => pkm.species.speciesId === Species.GYARADOS)!;
+      const gyarados = party.find(pkm => pkm.species.speciesId === Species.GYARADOS)!;
       const expBefore = gyarados.exp;
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
-      expect(gyarados.exp).toBe(expBefore + Math.floor(getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave / 5 + 1));
+      expect(gyarados.exp).toBe(
+        expBefore + Math.floor((getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave) / 5 + 1),
+      );
     });
 
     it("should award EXP to a pokemon with a move in EXTORTION_MOVES", async () => {
       game.override.ability(Abilities.SYNCHRONIZE); // Not an extortion ability, so we can test extortion move
-      await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [ Species.ABRA ]);
+      await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [Species.ABRA]);
       const party = scene.getPlayerParty();
-      const abra = party.find((pkm) => pkm.species.speciesId === Species.ABRA)!;
-      abra.moveset = [ new PokemonMove(Moves.BEAT_UP) ];
+      const abra = party.find(pkm => pkm.species.speciesId === Species.ABRA)!;
+      abra.moveset = [new PokemonMove(Moves.BEAT_UP)];
       const expBefore = abra.exp;
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
-      expect(abra.exp).toBe(expBefore + Math.floor(getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave / 5 + 1));
+      expect(abra.exp).toBe(expBefore + Math.floor((getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave) / 5 + 1));
     });
 
     it("Should update the player's money properly", async () => {

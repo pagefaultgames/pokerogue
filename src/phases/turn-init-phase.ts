@@ -1,5 +1,8 @@
 import { BattlerIndex } from "#app/battle";
-import { handleMysteryEncounterBattleStartEffects, handleMysteryEncounterTurnStartEffects } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import {
+  handleMysteryEncounterBattleStartEffects,
+  handleMysteryEncounterTurnStartEffects,
+} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { TurnInitEvent } from "#app/events/battle-scene";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
@@ -22,7 +25,7 @@ export class TurnInitPhase extends FieldPhase {
     globalScene.getPlayerField().forEach(p => {
       // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
       if (p.isOnField() && !p.isAllowedInBattle()) {
-        globalScene.queueMessage(i18next.t("challenges:illegalEvolution", { "pokemon": p.name }), null, true);
+        globalScene.queueMessage(i18next.t("challenges:illegalEvolution", { pokemon: p.name }), null, true);
 
         const allowedPokemon = globalScene.getPokemonAllowedInBattle();
 
@@ -30,7 +33,10 @@ export class TurnInitPhase extends FieldPhase {
           // If there are no longer any legal pokemon in the party, game over.
           globalScene.clearPhaseQueue();
           globalScene.unshiftPhase(new GameOverPhase());
-        } else if (allowedPokemon.length >= globalScene.currentBattle.getBattlerCount() || (globalScene.currentBattle.double && !allowedPokemon[0].isActive(true))) {
+        } else if (
+          allowedPokemon.length >= globalScene.currentBattle.getBattlerCount() ||
+          (globalScene.currentBattle.double && !allowedPokemon[0].isActive(true))
+        ) {
           // If there is at least one pokemon in the back that is legal to switch in, force a switch.
           p.switchOut();
         } else {

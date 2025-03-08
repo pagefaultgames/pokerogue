@@ -5,7 +5,10 @@ import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
+import {
+  runMysteryEncounterToEnd,
+  skipBattleRunMysteryEncounterRewardsPhase,
+} from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
 import { Mode } from "#app/ui/ui";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -19,7 +22,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 
 const namespace = "mysteryEncounters/weirdDream";
-const defaultParty = [ Species.MAGBY, Species.HAUNTER, Species.ABRA ];
+const defaultParty = [Species.MAGBY, Species.HAUNTER, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -39,12 +42,12 @@ describe("Weird Dream - Mystery Encounter", () => {
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
-    vi.spyOn(EncounterTransformationSequence, "doPokemonTransformationSequence").mockImplementation(() => new Promise<void>(resolve => resolve()));
+    vi.spyOn(EncounterTransformationSequence, "doPokemonTransformationSequence").mockImplementation(
+      () => new Promise<void>(resolve => resolve()),
+    );
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [ Biome.CAVE, [ MysteryEncounterType.WEIRD_DREAM ]],
-      ])
+      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.WEIRD_DREAM]]]),
     );
   });
 
@@ -62,7 +65,7 @@ describe("Weird Dream - Mystery Encounter", () => {
     expect(WeirdDreamEncounter.dialogue).toBeDefined();
     expect(WeirdDreamEncounter.dialogue.intro).toStrictEqual([
       {
-        text: `${namespace}:intro`
+        text: `${namespace}:intro`,
       },
       {
         speaker: `${namespace}:speaker`,
@@ -142,7 +145,9 @@ describe("Weird Dream - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("ROGUE_BALL");
@@ -196,14 +201,34 @@ describe("Weird Dream - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(6);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ROGUE);
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ROGUE);
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.tier - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ULTRA);
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.tier - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ULTRA);
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.tier - modifierSelectHandler.options[4].modifierTypeOption.upgradeCount).toEqual(ModifierTier.GREAT);
-      expect(modifierSelectHandler.options[5].modifierTypeOption.type.tier - modifierSelectHandler.options[5].modifierTypeOption.upgradeCount).toEqual(ModifierTier.GREAT);
+      expect(
+        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ROGUE);
+      expect(
+        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ROGUE);
+      expect(
+        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ULTRA);
+      expect(
+        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ULTRA);
+      expect(
+        modifierSelectHandler.options[4].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.GREAT);
+      expect(
+        modifierSelectHandler.options[5].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[5].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.GREAT);
     });
   });
 

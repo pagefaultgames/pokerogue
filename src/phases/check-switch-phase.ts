@@ -39,26 +39,43 @@ export class CheckSwitchPhase extends BattlePhase {
     }
 
     // ...if there are no other allowed Pokemon in the player's party to switch with
-    if (!globalScene.getPlayerParty().slice(1).filter(p => p.isActive()).length) {
+    if (
+      !globalScene
+        .getPlayerParty()
+        .slice(1)
+        .filter(p => p.isActive()).length
+    ) {
       return super.end();
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
-    if (pokemon.getTag(BattlerTagType.FRENZY)
-        || pokemon.isTrapped()
-        || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))) {
+    if (
+      pokemon.getTag(BattlerTagType.FRENZY) ||
+      pokemon.isTrapped() ||
+      globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
+    ) {
       return super.end();
     }
 
-    globalScene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon") }), null, () => {
-      globalScene.ui.setMode(Mode.CONFIRM, () => {
-        globalScene.ui.setMode(Mode.MESSAGE);
-        globalScene.unshiftPhase(new SwitchPhase(SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
-        this.end();
-      }, () => {
-        globalScene.ui.setMode(Mode.MESSAGE);
-        this.end();
-      });
-    });
+    globalScene.ui.showText(
+      i18next.t("battle:switchQuestion", {
+        pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon"),
+      }),
+      null,
+      () => {
+        globalScene.ui.setMode(
+          Mode.CONFIRM,
+          () => {
+            globalScene.ui.setMode(Mode.MESSAGE);
+            globalScene.unshiftPhase(new SwitchPhase(SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
+            this.end();
+          },
+          () => {
+            globalScene.ui.setMode(Mode.MESSAGE);
+            this.end();
+          },
+        );
+      },
+    );
   }
 }

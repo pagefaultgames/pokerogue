@@ -6,7 +6,6 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Moves - Glaive Rush", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -28,10 +27,10 @@ describe("Moves - Glaive Rush", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([ Moves.GLAIVE_RUSH ])
+      .enemyMoveset([Moves.GLAIVE_RUSH])
       .starterSpecies(Species.KLINK)
       .ability(Abilities.BALL_FETCH)
-      .moveset([ Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH ]);
+      .moveset([Moves.SHADOW_SNEAK, Moves.AVALANCHE, Moves.SPLASH, Moves.GLAIVE_RUSH]);
   });
 
   it("takes double damage from attacks", async () => {
@@ -46,8 +45,7 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     game.move.select(Moves.SHADOW_SNEAK);
     await game.phaseInterceptor.to("DamageAnimPhase");
-    expect(enemy.hp).toBeLessThanOrEqual(1001 - (damageDealt * 3));
-
+    expect(enemy.hp).toBeLessThanOrEqual(1001 - damageDealt * 3);
   });
 
   it("always gets hit by attacks", async () => {
@@ -60,13 +58,10 @@ describe("Moves - Glaive Rush", () => {
     game.move.select(Moves.AVALANCHE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.hp).toBeLessThan(1000);
-
   });
 
   it("interacts properly with multi-lens", async () => {
-    game.override
-      .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
-      .enemyMoveset([ Moves.AVALANCHE ]);
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }]).enemyMoveset([Moves.AVALANCHE]);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -83,11 +78,10 @@ describe("Moves - Glaive Rush", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(1000);
-
   });
 
   it("secondary effects only last until next move", async () => {
-    game.override.enemyMoveset([ Moves.SHADOW_SNEAK ]);
+    game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -109,14 +103,11 @@ describe("Moves - Glaive Rush", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(damagedHp);
-
   });
 
   it("secondary effects are removed upon switching", async () => {
-    game.override
-      .enemyMoveset([ Moves.SHADOW_SNEAK ])
-      .starterSpecies(0);
-    await game.classicMode.startBattle([ Species.KLINK, Species.FEEBAS ]);
+    game.override.enemyMoveset([Moves.SHADOW_SNEAK]).starterSpecies(0);
+    await game.classicMode.startBattle([Species.KLINK, Species.FEEBAS]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -133,11 +124,10 @@ describe("Moves - Glaive Rush", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(player.getMaxHp());
-
   });
 
   it("secondary effects don't activate if move fails", async () => {
-    game.override.moveset([ Moves.SHADOW_SNEAK, Moves.PROTECT, Moves.SPLASH, Moves.GLAIVE_RUSH ]);
+    game.override.moveset([Moves.SHADOW_SNEAK, Moves.PROTECT, Moves.SPLASH, Moves.GLAIVE_RUSH]);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -151,7 +141,7 @@ describe("Moves - Glaive Rush", () => {
 
     game.move.select(Moves.SHADOW_SNEAK);
     await game.phaseInterceptor.to("TurnEndPhase");
-    game.override.enemyMoveset([ Moves.SPLASH ]);
+    game.override.enemyMoveset([Moves.SPLASH]);
     const damagedHP1 = 1000 - enemy.hp;
     enemy.hp = 1000;
 
@@ -159,6 +149,6 @@ describe("Moves - Glaive Rush", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     const damagedHP2 = 1000 - enemy.hp;
 
-    expect(damagedHP2).toBeGreaterThanOrEqual((damagedHP1 * 2) - 1);
+    expect(damagedHP2).toBeGreaterThanOrEqual(damagedHP1 * 2 - 1);
   });
 });

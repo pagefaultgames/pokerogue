@@ -24,17 +24,17 @@ export class EggHatchData {
   }
 
   /**
-     * Sets the boolean for if the egg move for the hatch is a new unlock
-     * @param unlocked True if the EM is new
-     */
+   * Sets the boolean for if the egg move for the hatch is a new unlock
+   * @param unlocked True if the EM is new
+   */
   setEggMoveUnlocked(unlocked: boolean) {
-    this.eggMoveUnlocked  = unlocked;
+    this.eggMoveUnlocked = unlocked;
   }
 
   /**
-     * Stores a copy of the current DexEntry of the pokemon and StarterDataEntry of its starter
-     * Used before updating the dex, so comparing the pokemon to these entries will show the new attributes
-     */
+   * Stores a copy of the current DexEntry of the pokemon and StarterDataEntry of its starter
+   * Used before updating the dex, so comparing the pokemon to these entries will show the new attributes
+   */
   setDex() {
     const currDexEntry = globalScene.gameData.dexData[this.pokemon.species.speciesId];
     const currStarterDataEntry = globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()];
@@ -45,7 +45,7 @@ export class EggHatchData {
       seenCount: currDexEntry.seenCount,
       caughtCount: currDexEntry.caughtCount,
       hatchedCount: currDexEntry.hatchedCount,
-      ivs: [ ...currDexEntry.ivs ]
+      ivs: [...currDexEntry.ivs],
     };
     this.starterDataEntryBeforeUpdate = {
       moveset: currStarterDataEntry.moveset,
@@ -55,37 +55,37 @@ export class EggHatchData {
       abilityAttr: currStarterDataEntry.abilityAttr,
       passiveAttr: currStarterDataEntry.passiveAttr,
       valueReduction: currStarterDataEntry.valueReduction,
-      classicWinCount: currStarterDataEntry.classicWinCount
+      classicWinCount: currStarterDataEntry.classicWinCount,
     };
   }
 
   /**
-     * Gets the dex entry before update
-     * @returns Dex Entry corresponding to this pokemon before the pokemon was added / updated to dex
-     */
+   * Gets the dex entry before update
+   * @returns Dex Entry corresponding to this pokemon before the pokemon was added / updated to dex
+   */
   getDex(): DexEntry {
     return this.dexEntryBeforeUpdate;
   }
 
   /**
-     * Gets the starter dex entry before update
-     * @returns Starter Dex Entry corresponding to this pokemon before the pokemon was added / updated to dex
-     */
+   * Gets the starter dex entry before update
+   * @returns Starter Dex Entry corresponding to this pokemon before the pokemon was added / updated to dex
+   */
   getStarterEntry(): StarterDataEntry {
     return this.starterDataEntryBeforeUpdate;
   }
 
   /**
-     * Update the pokedex data corresponding with the new hatch's pokemon data
-     * Also sets whether the egg move is a new unlock or not
-     * @param showMessage boolean to show messages for the new catches and egg moves (false by default)
-     * @returns
-     */
-  updatePokemon(showMessage : boolean = false) {
+   * Update the pokedex data corresponding with the new hatch's pokemon data
+   * Also sets whether the egg move is a new unlock or not
+   * @param showMessage boolean to show messages for the new catches and egg moves (false by default)
+   * @returns
+   */
+  updatePokemon(showMessage = false) {
     return new Promise<void>(resolve => {
       globalScene.gameData.setPokemonCaught(this.pokemon, true, true, showMessage).then(() => {
         globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-        globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then((value) => {
+        globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex, showMessage).then(value => {
           this.setEggMoveUnlocked(value);
           resolve();
         });

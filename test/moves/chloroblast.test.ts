@@ -22,7 +22,7 @@ describe("Moves - Chloroblast", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.CHLOROBLAST ])
+      .moveset([Moves.CHLOROBLAST])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -32,7 +32,7 @@ describe("Moves - Chloroblast", () => {
   });
 
   it("should not deal recoil damage if the opponent uses protect", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.CHLOROBLAST);
     await game.phaseInterceptor.to("BerryPhase");

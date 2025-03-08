@@ -25,13 +25,13 @@ describe("Moves - Imprison", () => {
     game.override
       .battleType("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([ Moves.IMPRISON, Moves.SPLASH, Moves.GROWL ])
+      .enemyMoveset([Moves.IMPRISON, Moves.SPLASH, Moves.GROWL])
       .enemySpecies(Species.SHUCKLE)
-      .moveset([ Moves.TRANSFORM, Moves.SPLASH ]);
+      .moveset([Moves.TRANSFORM, Moves.SPLASH]);
   });
 
   it("Pokemon under Imprison cannot use shared moves", async () => {
-    await game.classicMode.startBattle([ Species.REGIELEKI ]);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -39,7 +39,10 @@ describe("Moves - Imprison", () => {
     await game.forceEnemyMove(Moves.IMPRISON);
     await game.toNextTurn();
     const playerMoveset = playerPokemon.getMoveset().map(x => x?.moveId);
-    const enemyMoveset = game.scene.getEnemyPokemon()!.getMoveset().map(x => x?.moveId);
+    const enemyMoveset = game.scene
+      .getEnemyPokemon()!
+      .getMoveset()
+      .map(x => x?.moveId);
     expect(enemyMoveset.includes(playerMoveset[0])).toBeTruthy();
     const imprisonArenaTag = game.scene.arena.getTag(ArenaTagType.IMPRISON);
     const imprisonBattlerTag = playerPokemon.getTag(BattlerTagType.IMPRISON);
@@ -55,7 +58,7 @@ describe("Moves - Imprison", () => {
   });
 
   it("Imprison applies to Pokemon switched into Battle", async () => {
-    await game.classicMode.startBattle([ Species.REGIELEKI, Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
     const playerPokemon1 = game.scene.getPlayerPokemon()!;
 
@@ -78,8 +81,8 @@ describe("Moves - Imprison", () => {
   });
 
   it("The effects of Imprison only end when the source is no longer active", async () => {
-    game.override.moveset([ Moves.SPLASH, Moves.IMPRISON ]);
-    await game.classicMode.startBattle([ Species.REGIELEKI, Species.BULBASAUR ]);
+    game.override.moveset([Moves.SPLASH, Moves.IMPRISON]);
+    await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;

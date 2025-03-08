@@ -26,7 +26,7 @@ describe("Spec - Pokemon", () => {
   });
 
   it("should not crash when trying to set status of undefined", async () => {
-    await game.classicMode.runToSummon([ Species.ABRA ]);
+    await game.classicMode.runToSummon([Species.ABRA]);
 
     const pkm = game.scene.getPlayerPokemon()!;
     expect(pkm).toBeDefined();
@@ -39,7 +39,7 @@ describe("Spec - Pokemon", () => {
 
     beforeEach(async () => {
       game.override.enemySpecies(Species.ZUBAT);
-      await game.classicMode.runToSummon([ Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA ]); // 5 Abra, only 1 slot left
+      await game.classicMode.runToSummon([Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA]); // 5 Abra, only 1 slot left
       scene = game.scene;
     });
 
@@ -49,7 +49,7 @@ describe("Spec - Pokemon", () => {
 
       const party = scene.getPlayerParty();
       expect(party).toHaveLength(6);
-      party.forEach((pkm, index) =>{
+      party.forEach((pkm, index) => {
         expect(pkm.species.speciesId).toBe(index === 5 ? Species.ZUBAT : Species.ABRA);
       });
     });
@@ -61,7 +61,7 @@ describe("Spec - Pokemon", () => {
 
       const party = scene.getPlayerParty();
       expect(party).toHaveLength(6);
-      party.forEach((pkm, index) =>{
+      party.forEach((pkm, index) => {
         expect(pkm.species.speciesId).toBe(index === slotIndex ? Species.ZUBAT : Species.ABRA);
       });
     });
@@ -70,7 +70,7 @@ describe("Spec - Pokemon", () => {
   it("should not share tms between different forms", async () => {
     game.override.starterForms({ [Species.ROTOM]: 4 });
 
-    await game.classicMode.startBattle([ Species.ROTOM ]);
+    await game.classicMode.startBattle([Species.ROTOM]);
 
     const fanRotom = game.scene.getPlayerPokemon()!;
 
@@ -97,12 +97,12 @@ describe("Spec - Pokemon", () => {
       expect(types[0]).toBe(PokemonType.PSYCHIC);
       expect(types[1]).toBe(PokemonType.FIRE);
 
-      pokemon.customPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.NORMAL ];
+      pokemon.customPokemonData.types = [PokemonType.UNKNOWN, PokemonType.NORMAL];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
       expect(types[1]).toBe(PokemonType.FIRE);
 
-      pokemon.customPokemonData.types = [ PokemonType.NORMAL, PokemonType.UNKNOWN ];
+      pokemon.customPokemonData.types = [PokemonType.NORMAL, PokemonType.UNKNOWN];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.NORMAL);
       expect(types[1]).toBe(PokemonType.FIRE);
@@ -112,18 +112,18 @@ describe("Spec - Pokemon", () => {
       }
       pokemon.customPokemonData.types = [];
 
-      pokemon.fusionCustomPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.NORMAL ];
+      pokemon.fusionCustomPokemonData.types = [PokemonType.UNKNOWN, PokemonType.NORMAL];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
       expect(types[1]).toBe(PokemonType.NORMAL);
 
-      pokemon.fusionCustomPokemonData.types = [ PokemonType.NORMAL, PokemonType.UNKNOWN ];
+      pokemon.fusionCustomPokemonData.types = [PokemonType.NORMAL, PokemonType.UNKNOWN];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
       expect(types[1]).toBe(PokemonType.NORMAL);
 
-      pokemon.customPokemonData.types = [ PokemonType.NORMAL, PokemonType.UNKNOWN ];
-      pokemon.fusionCustomPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.NORMAL ];
+      pokemon.customPokemonData.types = [PokemonType.NORMAL, PokemonType.UNKNOWN];
+      pokemon.fusionCustomPokemonData.types = [PokemonType.UNKNOWN, PokemonType.NORMAL];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.NORMAL);
       expect(types[1]).toBe(PokemonType.FIRE);
@@ -172,13 +172,13 @@ describe("Spec - Pokemon", () => {
       expect(types[1]).toBe(PokemonType.FIRE);
 
       // Natu Psychic/Grass
-      pokemon.customPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.GRASS ];
+      pokemon.customPokemonData.types = [PokemonType.UNKNOWN, PokemonType.GRASS];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
       expect(types[1]).toBe(PokemonType.FIRE);
 
       // Natu Grass/Flying
-      pokemon.customPokemonData.types = [ PokemonType.GRASS, PokemonType.UNKNOWN ];
+      pokemon.customPokemonData.types = [PokemonType.GRASS, PokemonType.UNKNOWN];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.GRASS);
       expect(types[1]).toBe(PokemonType.FIRE);
@@ -189,21 +189,21 @@ describe("Spec - Pokemon", () => {
       pokemon.customPokemonData.types = [];
 
       // Houndour Dark/Grass
-      pokemon.fusionCustomPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.GRASS ];
+      pokemon.fusionCustomPokemonData.types = [PokemonType.UNKNOWN, PokemonType.GRASS];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
       expect(types[1]).toBe(PokemonType.GRASS);
 
       // Houndour Grass/Fire
-      pokemon.fusionCustomPokemonData.types = [ PokemonType.GRASS, PokemonType.UNKNOWN ];
+      pokemon.fusionCustomPokemonData.types = [PokemonType.GRASS, PokemonType.UNKNOWN];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
       expect(types[1]).toBe(PokemonType.FIRE);
 
       // Natu Grass/Flying
       // Houndour Dark/Grass
-      pokemon.customPokemonData.types = [ PokemonType.GRASS, PokemonType.UNKNOWN ];
-      pokemon.fusionCustomPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.GRASS ];
+      pokemon.customPokemonData.types = [PokemonType.GRASS, PokemonType.UNKNOWN];
+      pokemon.fusionCustomPokemonData.types = [PokemonType.UNKNOWN, PokemonType.GRASS];
       types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.GRASS);
       expect(types[1]).toBe(PokemonType.DARK);

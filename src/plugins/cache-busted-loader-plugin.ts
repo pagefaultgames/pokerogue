@@ -15,7 +15,7 @@ export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin 
 
   addFile(file): void {
     if (!Array.isArray(file)) {
-      file = [ file ];
+      file = [file];
     }
 
     file.forEach(item => {

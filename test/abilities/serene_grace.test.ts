@@ -28,22 +28,22 @@ describe("Abilities - Serene Grace", () => {
       .disableCrits()
       .battleType("single")
       .ability(Abilities.SERENE_GRACE)
-      .moveset([ Moves.AIR_SLASH ])
+      .moveset([Moves.AIR_SLASH])
       .enemySpecies(Species.ALOLA_GEODUDE)
       .enemyLevel(10)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([ Moves.SPLASH ]);
+      .enemyMoveset([Moves.SPLASH]);
   });
 
   it("Serene Grace should double the secondary effect chance of a move", async () => {
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const airSlashMove = allMoves[Moves.AIR_SLASH];
     const airSlashFlinchAttr = airSlashMove.getAttrs(FlinchAttr)[0];
     vi.spyOn(airSlashFlinchAttr, "getMoveChance");
 
     game.move.select(Moves.AIR_SLASH);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase");
 

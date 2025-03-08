@@ -3,7 +3,7 @@ import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
 import type { InputsController } from "#app/inputs-controller";
 import TouchControl from "#app/touch-controls";
 import { holdOn } from "#test/testUtils/gameManagerUtils";
-import fs from "fs";
+import fs from "node:fs";
 import { JSDOM } from "jsdom";
 import Phaser from "phaser";
 
@@ -31,7 +31,7 @@ export default class InputsHandler {
   }
 
   pressTouch(button: string, duration: number): Promise<void> {
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
       this.fakeMobile.touchDown(button);
       await holdOn(duration);
       this.fakeMobile.touchUp(button);
@@ -40,7 +40,7 @@ export default class InputsHandler {
   }
 
   pressGamepadButton(button: number, duration: number): Promise<void> {
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
       this.scene.input.gamepad?.emit("down", this.fakePad, { index: button });
       await holdOn(duration);
       this.scene.input.gamepad?.emit("up", this.fakePad, { index: button });
@@ -49,7 +49,7 @@ export default class InputsHandler {
   }
 
   pressKeyboardKey(key: number, duration: number): Promise<void> {
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
       this.scene.input.keyboard?.emit("keydown", { keyCode: key });
       await holdOn(duration);
       this.scene.input.keyboard?.emit("keyup", { keyCode: key });
@@ -66,13 +66,21 @@ export default class InputsHandler {
   }
 
   listenInputs(): void {
-    this.events.on("input_down", (event) => {
-      this.log.push({ type: "input_down", button: event.button });
-    }, this);
+    this.events.on(
+      "input_down",
+      event => {
+        this.log.push({ type: "input_down", button: event.button });
+      },
+      this,
+    );
 
-    this.events.on("input_up", (event) => {
-      this.logUp.push({ type: "input_up", button: event.button });
-    }, this);
+    this.events.on(
+      "input_up",
+      event => {
+        this.logUp.push({ type: "input_up", button: event.button });
+      },
+      this,
+    );
   }
 }
 
@@ -82,7 +90,7 @@ class Fakepad extends Phaser.Input.Gamepad.Gamepad {
 
   constructor(pad) {
     //@ts-ignore
-    super(undefined, { ...pad, buttons: pad.deviceMapping, axes: []}); //TODO: resolve ts-ignore
+    super(undefined, { ...pad, buttons: pad.deviceMapping, axes: [] }); //TODO: resolve ts-ignore
     this.id = "xbox_360_fakepad";
     this.index = 0;
   }

@@ -10,11 +10,11 @@ export default class CharSprite extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(globalScene, (globalScene.game.canvas.width / 6) + 32, -42);
+    super(globalScene, globalScene.game.canvas.width / 6 + 32, -42);
   }
 
   setup(): void {
-    [ this.sprite, this.transitionSprite ] = new Array(2).fill(null).map(() => {
+    [this.sprite, this.transitionSprite] = new Array(2).fill(null).map(() => {
       const ret = globalScene.add.sprite(0, 0, "", "");
       ret.setOrigin(0.5, 1);
       this.add(ret);
@@ -49,12 +49,12 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
       globalScene.tweens.add({
         targets: this,
-        x: (globalScene.game.canvas.width / 6) - 102,
+        x: globalScene.game.canvas.width / 6 - 102,
         duration: 750,
         ease: "Cubic.easeOut",
         onComplete: () => {
           resolve();
-        }
+        },
       });
 
       this.setVisible(globalScene.textures.get(key).key !== Utils.MissingTextureKey);
@@ -81,7 +81,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
           this.sprite.setTexture(this.key, variant);
           this.transitionSprite.setVisible(false);
           resolve();
-        }
+        },
       });
       this.variant = variant;
     });
@@ -95,7 +95,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
 
       globalScene.tweens.add({
         targets: this,
-        x: (globalScene.game.canvas.width / 6) + 32,
+        x: globalScene.game.canvas.width / 6 + 32,
         duration: 750,
         ease: "Cubic.easeIn",
         onComplete: () => {
@@ -103,7 +103,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
             this.setVisible(false);
           }
           resolve();
-        }
+        },
       });
 
       this.shown = false;

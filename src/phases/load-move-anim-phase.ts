@@ -14,7 +14,7 @@ export class LoadMoveAnimPhase extends Phase {
 
   public override start(): void {
     initMoveAnim(this.moveId)
-      .then(() => loadMoveAnimAssets([ this.moveId ], true))
+      .then(() => loadMoveAnimAssets([this.moveId], true))
       .then(() => this.end());
   }
 }

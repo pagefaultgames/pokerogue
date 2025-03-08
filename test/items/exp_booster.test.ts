@@ -27,7 +27,7 @@ describe("EXP Modifier Items", () => {
     game.override.battleType("single");
   });
 
-  it("EXP booster items stack multiplicatively", async() => {
+  it("EXP booster items stack multiplicatively", async () => {
     game.override.startingHeldItems([{ name: "LUCKY_EGG", count: 3 }, { name: "GOLDEN_EGG" }]);
     await game.startBattle();
 

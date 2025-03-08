@@ -23,7 +23,7 @@ describe("Moves - Trick Or Treat", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.FORESTS_CURSE, Moves.TRICK_OR_TREAT ])
+      .moveset([Moves.FORESTS_CURSE, Moves.TRICK_OR_TREAT])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -33,7 +33,7 @@ describe("Moves - Trick Or Treat", () => {
   });
 
   it("will replace added type from Forest's Curse", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     game.move.select(Moves.FORESTS_CURSE);

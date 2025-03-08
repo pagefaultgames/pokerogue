@@ -4,11 +4,11 @@ export default class MockGraphics implements MockGameObject {
   private scene;
   public list: MockGameObject[] = [];
   public name: string;
-  constructor(textureManager, config) {
+  constructor(textureManager, _config) {
     this.scene = textureManager.scene;
   }
 
-  fillStyle(color) {
+  fillStyle(_color) {
     // Sets the fill style to be used by the fill methods.
   }
 
@@ -16,7 +16,7 @@ export default class MockGraphics implements MockGameObject {
     // Starts a new path by emptying the list of sub-paths. Call this method when you want to create a new path.
   }
 
-  fillRect(x, y, width, height) {
+  fillRect(_x, _y, _width, _height) {
     // Adds a rectangle shape to the path which is filled when you call fill().
   }
 
@@ -24,20 +24,15 @@ export default class MockGraphics implements MockGameObject {
     // Creates a geometry mask.
   }
 
-  setOrigin(x, y) {
-  }
+  setOrigin(_x, _y) {}
 
-  setAlpha(alpha) {
-  }
+  setAlpha(_alpha) {}
 
-  setVisible(visible) {
-  }
+  setVisible(_visible) {}
 
-  setName(name) {
-  }
+  setName(_name) {}
 
-  once(event, callback, source) {
-  }
+  once(_event, _callback, _source) {}
 
   removeFromDisplayList() {
     // same as remove or destroy
@@ -47,7 +42,7 @@ export default class MockGraphics implements MockGameObject {
     // This callback is invoked when this Game Object is added to a Scene.
   }
 
-  setPositionRelative(source, x, y) {
+  setPositionRelative(_source, _x, _y) {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
   }
 
@@ -55,12 +50,11 @@ export default class MockGraphics implements MockGameObject {
     this.list = [];
   }
 
-  setScale(scale) {
+  setScale(_scale) {
     // Sets the scale of this Game Object.
   }
 
-  off(event, callback, source) {
-  }
+  off(_event, _callback, _source) {}
 
   add(obj) {
     // Adds a child to this Game Object.

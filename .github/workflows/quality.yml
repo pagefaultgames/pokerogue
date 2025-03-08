@@ -1,4 +1,4 @@
-name: ESLint
+name: Biome Code Quality
 
 on:
   # Trigger the workflow on push or pull request,
@@ -28,10 +28,13 @@ jobs:
       - name: Set up Node.js  # Step to set up Node.js environment
         uses: actions/setup-node@v4  # Use the setup-node action version 4
         with:
-          node-version: 20  # Specify Node.js version 20
+          node-version-file: '.nvmrc'
 
       - name: Install Node.js dependencies  # Step to install Node.js dependencies
         run: npm ci  # Use 'npm ci' to install dependencies
-
+      
       - name: eslint  # Step to run linters
         run: npm run eslint-ci
+
+      - name: Lint with Biome  # Step to run linters
+        run: npm run biome-ci

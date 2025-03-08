@@ -5,7 +5,10 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
+import {
+  runMysteryEncounterToEnd,
+  skipBattleRunMysteryEncounterRewardsPhase,
+} from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
 import { Mode } from "#app/ui/ui";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -22,7 +25,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounters/mysteriousChallengers";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -43,11 +46,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
 
-    const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [ Biome.VOLCANO, [ MysteryEncounterType.FIGHT_OR_FLIGHT ]],
-    ]);
+    const biomeMap = new Map<Biome, MysteryEncounterType[]>([[Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]);
+      biomeMap.set(biome, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -66,7 +67,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     expect(MysteriousChallengersEncounter.dialogue).toBeDefined();
     expect(MysteriousChallengersEncounter.dialogue.intro).toStrictEqual([{ text: `${namespace}:intro` }]);
     expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
-    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.description).toBe(
+      `${namespace}:description`,
+    );
     expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(MysteriousChallengersEncounter.options.length).toBe(3);
   });
@@ -108,16 +111,20 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
         trainerConfig: expect.any(TrainerConfig),
         levelAdditiveModifier: 1.5,
         female: expect.any(Boolean),
-      }
+      },
     ]);
-    expect(encounter.enemyPartyConfigs[1].trainerConfig?.partyTemplates[0]).toEqual(new TrainerPartyCompoundTemplate(
-      new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true),
-      new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true)
-    ));
-    expect(encounter.enemyPartyConfigs[2].trainerConfig?.partyTemplates[0]).toEqual(new TrainerPartyCompoundTemplate(
-      new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-      new TrainerPartyTemplate(3, PartyMemberStrength.STRONG),
-      new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER))
+    expect(encounter.enemyPartyConfigs[1].trainerConfig?.partyTemplates[0]).toEqual(
+      new TrainerPartyCompoundTemplate(
+        new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true),
+        new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true),
+      ),
+    );
+    expect(encounter.enemyPartyConfigs[2].trainerConfig?.partyTemplates[0]).toEqual(
+      new TrainerPartyCompoundTemplate(
+        new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
+        new TrainerPartyTemplate(3, PartyMemberStrength.STRONG),
+        new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+      ),
     );
     expect(encounter.spriteConfigs).toBeDefined();
     expect(encounter.spriteConfigs.length).toBe(3);
@@ -158,7 +165,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(3);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("TM_COMMON");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toContain("TM_GREAT");
@@ -200,12 +209,26 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount).toBe(ModifierTier.ULTRA);
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount).toBe(ModifierTier.ULTRA);
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.tier - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount).toBe(ModifierTier.GREAT);
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.tier - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount).toBe(ModifierTier.GREAT);
+      expect(
+        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      ).toBe(ModifierTier.ULTRA);
+      expect(
+        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      ).toBe(ModifierTier.ULTRA);
+      expect(
+        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      ).toBe(ModifierTier.GREAT);
+      expect(
+        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+      ).toBe(ModifierTier.GREAT);
     });
   });
 
@@ -243,12 +266,26 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount).toBe(ModifierTier.ROGUE);
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount).toBe(ModifierTier.ROGUE);
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.tier - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount).toBe(ModifierTier.ULTRA);
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.tier - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount).toBe(ModifierTier.GREAT);
+      expect(
+        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      ).toBe(ModifierTier.ROGUE);
+      expect(
+        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      ).toBe(ModifierTier.ROGUE);
+      expect(
+        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      ).toBe(ModifierTier.ULTRA);
+      expect(
+        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+      ).toBe(ModifierTier.GREAT);
     });
   });
 });
