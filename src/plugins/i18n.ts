@@ -53,12 +53,12 @@ const fonts: Array<LoadingFontFaceProperty> = [
   {
     face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "ro" ],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", { unicodeRange: rangesByLanguage.chinese }),
     extraOptions: { format: "woff2" },
-    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca" ],
+    only: [ "en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "ro" ],
   },
   // japanese
   {
@@ -153,7 +153,7 @@ export async function initI18n(): Promise<void> {
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
     fallbackLng: "en",
-    supportedLngs: [ "en", "es-ES", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES" ],
+    supportedLngs: [ "en", "es-ES", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES", "ro" ],
     backend: {
       loadPath(lng: string, [ ns ]: string[]) {
         let fileName: string;
