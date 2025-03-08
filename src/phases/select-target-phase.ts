@@ -5,7 +5,7 @@ import { Mode } from "#app/ui/ui";
 import { CommandPhase } from "./command-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import i18next from "#app/plugins/i18n";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 
 export class SelectTargetPhase extends PokemonPhase {
   constructor(fieldIndex: number) {

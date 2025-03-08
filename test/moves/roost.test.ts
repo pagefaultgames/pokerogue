@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -59,7 +59,7 @@ describe("Moves - Roost", () => {
 
       // Should only be normal type, and NOT flying type
       let playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.NORMAL).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
 
@@ -68,7 +68,7 @@ describe("Moves - Roost", () => {
       // Lose HP, still normal type
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
-      expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.NORMAL).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
     }
@@ -86,8 +86,8 @@ describe("Moves - Roost", () => {
 
       // Should only be normal type, and NOT flying type
       let playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes[0] === Type.NORMAL).toBeTruthy();
-      expect(playerPokemonTypes[0] === Type.FLYING).toBeFalsy();
+      expect(playerPokemonTypes[0] === PokemonType.NORMAL).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.FLYING).toBeFalsy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
 
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -95,8 +95,8 @@ describe("Moves - Roost", () => {
       // Should have lost HP and is now back to being pure flying
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
-      expect(playerPokemonTypes[0] === Type.NORMAL).toBeFalsy();
-      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.NORMAL).toBeFalsy();
+      expect(playerPokemonTypes[0] === PokemonType.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
     }
@@ -114,7 +114,7 @@ describe("Moves - Roost", () => {
 
       // Should only be pure fighting type and grounded
       let playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes[0] === Type.FIGHTING).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.FIGHTING).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
 
@@ -123,8 +123,8 @@ describe("Moves - Roost", () => {
       // Should have lost HP and is now back to being fighting/flying
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
-      expect(playerPokemonTypes[0] === Type.FIGHTING).toBeTruthy();
-      expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.FIGHTING).toBeTruthy();
+      expect(playerPokemonTypes[1] === PokemonType.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
     }
@@ -143,7 +143,7 @@ describe("Moves - Roost", () => {
 
       // Should only be pure eletric type and grounded
       let playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.ELECTRIC).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
@@ -152,8 +152,8 @@ describe("Moves - Roost", () => {
       // Should have lost HP and is now back to being electric/flying
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBe(playerPokemonStartingHP);
-      expect(playerPokemonTypes[0] === Type.ELECTRIC).toBeTruthy();
-      expect(playerPokemonTypes[1] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.ELECTRIC).toBeTruthy();
+      expect(playerPokemonTypes[1] === PokemonType.FLYING).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
     }
@@ -171,7 +171,7 @@ describe("Moves - Roost", () => {
 
       // Should only be pure flying type after burn up
       let playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.FLYING).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
 
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -182,7 +182,7 @@ describe("Moves - Roost", () => {
       // Should only be typeless type after roost and is grounded
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
-      expect(playerPokemonTypes[0] === Type.UNKNOWN).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.UNKNOWN).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
 
@@ -191,7 +191,7 @@ describe("Moves - Roost", () => {
       // Should go back to being pure flying and have taken damage from earthquake, and is ungrounded again
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
-      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.FLYING).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
@@ -211,7 +211,7 @@ describe("Moves - Roost", () => {
 
       // Should only be pure flying type after burn up
       let playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.FLYING).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
 
       await game.phaseInterceptor.to(TurnEndPhase);
@@ -222,7 +222,7 @@ describe("Moves - Roost", () => {
       // Should only be typeless type after roost and is grounded
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.getTag(BattlerTagType.ROOSTED)).toBeDefined();
-      expect(playerPokemonTypes[0] === Type.UNKNOWN).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.UNKNOWN).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
 
@@ -231,7 +231,7 @@ describe("Moves - Roost", () => {
       // Should go back to being pure flying and have taken damage from earthquake, and is ungrounded again
       playerPokemonTypes = playerPokemon.getTypes();
       expect(playerPokemon.hp).toBeLessThan(playerPokemonStartingHP);
-      expect(playerPokemonTypes[0] === Type.FLYING).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.FLYING).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 
@@ -248,7 +248,7 @@ describe("Moves - Roost", () => {
       await game.phaseInterceptor.to(MoveEffectPhase);
 
       let playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes[0] === Type.FIRE).toBeTruthy();
+      expect(playerPokemonTypes[0] === PokemonType.FIRE).toBeTruthy();
       expect(playerPokemonTypes.length === 1).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeTruthy();
 
@@ -256,9 +256,9 @@ describe("Moves - Roost", () => {
 
       // Should be fire/flying/ghost
       playerPokemonTypes = playerPokemon.getTypes();
-      expect(playerPokemonTypes.filter(type => type === Type.FLYING)).toHaveLength(1);
-      expect(playerPokemonTypes.filter(type => type === Type.FIRE)).toHaveLength(1);
-      expect(playerPokemonTypes.filter(type => type === Type.GHOST)).toHaveLength(1);
+      expect(playerPokemonTypes.filter(type => type === PokemonType.FLYING)).toHaveLength(1);
+      expect(playerPokemonTypes.filter(type => type === PokemonType.FIRE)).toHaveLength(1);
+      expect(playerPokemonTypes.filter(type => type === PokemonType.GHOST)).toHaveLength(1);
       expect(playerPokemonTypes.length === 3).toBeTruthy();
       expect(playerPokemon.isGrounded()).toBeFalsy();
 

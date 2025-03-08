@@ -2,7 +2,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TerrainType } from "#app/data/terrain";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { BattlerIndex } from "#app/battle";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -44,6 +44,6 @@ describe("Moves - Camouflage", () => {
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTerrainType()).toBe(TerrainType.PSYCHIC);
     const pokemonType = playerPokemon.getTypes()[0];
-    expect(pokemonType).toBe(Type.PSYCHIC);
+    expect(pokemonType).toBe(PokemonType.PSYCHIC);
   });
 });

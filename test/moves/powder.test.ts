@@ -6,7 +6,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveResult, PokemonMove } from "#app/field/pokemon";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
@@ -163,7 +163,7 @@ describe("Moves - Powder", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
       expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-      expect(enemyPokemon.summonData?.types).not.toBe(Type.FIRE);
+      expect(enemyPokemon.summonData?.types).not.toBe(PokemonType.FIRE);
     });
 
   it(

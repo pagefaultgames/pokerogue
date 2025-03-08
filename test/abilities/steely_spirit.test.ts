@@ -1,5 +1,5 @@
 import { allAbilities } from "#app/data/ability";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

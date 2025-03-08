@@ -3,9 +3,9 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
-import type Move from "../data/move";
-import { MoveCategory } from "../data/move";
-import { Type } from "#enums/type";
+import type Move from "../data/moves/move";
+import { MoveCategory } from "#enums/MoveCategory";
+import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 
 export interface MoveInfoOverlaySettings {
@@ -153,7 +153,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
     this.pow.setText(move.power >= 0 ? move.power.toString() : "---");
     this.acc.setText(move.accuracy >= 0 ? move.accuracy.toString() : "---");
     this.pp.setText(move.pp >= 0 ? move.pp.toString() : "---");
-    this.typ.setTexture(Utils.getLocalizedSpriteKey("types"), Type[move.type].toLowerCase());
+    this.typ.setTexture(Utils.getLocalizedSpriteKey("types"), PokemonType[move.type].toLowerCase());
     this.cat.setFrame(MoveCategory[move.category].toLowerCase());
 
     this.desc.setText(move?.effect || "");

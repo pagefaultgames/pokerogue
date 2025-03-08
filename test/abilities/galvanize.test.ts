@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/move";
-import { Type } from "#enums/type";
+import { allMoves } from "#app/data/moves/move";
+import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -54,7 +54,7 @@ describe("Abilities - Galvanize", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getMoveType).toHaveLastReturnedWith(Type.ELECTRIC);
+    expect(playerPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.EFFECTIVE);
     expect(move.calculateBattlePower).toHaveReturnedWith(48);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
@@ -77,7 +77,7 @@ describe("Abilities - Galvanize", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getMoveType).toHaveLastReturnedWith(Type.ELECTRIC);
+    expect(playerPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.NO_EFFECT);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -96,7 +96,7 @@ describe("Abilities - Galvanize", () => {
     game.move.select(Moves.REVELATION_DANCE);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getMoveType).not.toHaveLastReturnedWith(Type.ELECTRIC);
+    expect(playerPokemon.getMoveType).not.toHaveLastReturnedWith(PokemonType.ELECTRIC);
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.NO_EFFECT);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -122,7 +122,7 @@ describe("Abilities - Galvanize", () => {
       const enemyStartingHp = enemyPokemon.hp;
       await game.phaseInterceptor.to("MoveEffectPhase");
 
-      expect(playerPokemon.getMoveType).toHaveLastReturnedWith(Type.ELECTRIC);
+      expect(playerPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
     }
 

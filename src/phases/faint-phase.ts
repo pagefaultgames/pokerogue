@@ -5,7 +5,7 @@ import { applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostVictoryAbAttr
 import type { DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
-import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
+import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";

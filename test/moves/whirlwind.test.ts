@@ -1,6 +1,6 @@
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Challenges } from "#enums/challenges";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -86,7 +86,7 @@ describe("Moves - Whirlwind", () => {
 
   it("should not force a switch to a challenge-ineligible Pokemon", async () => {
     // Mono-Water challenge, Eevee is ineligible
-    game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, Type.WATER + 1, 0);
+    game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.WATER + 1, 0);
     await game.challengeMode.startBattle([ Species.LAPRAS, Species.EEVEE, Species.TOXAPEX, Species.PRIMARINA ]);
 
     const [ lapras, eevee, toxapex, primarina ] = game.scene.getPlayerParty();

@@ -1,7 +1,7 @@
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { type FormChangeItem, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
@@ -24,7 +24,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import type { Type } from "#enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 import { type DoubleBattleChanceBoosterModifierType, type EvolutionItemModifierType, type FormChangeItemModifierType, type ModifierOverride, type ModifierType, type PokemonBaseStatTotalModifierType, type PokemonExpBoosterModifierType, type PokemonFriendshipBoosterModifierType, type PokemonMoveAccuracyBoosterModifierType, type PokemonMultiHitModifierType, type TerastallizeModifierType, type TmModifierType, getModifierType, ModifierPoolType, ModifierTypeGenerator, modifierTypes, PokemonHeldItemModifierType } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
@@ -1372,10 +1372,10 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
  * Applies Specific Type item boosts (e.g., Magnet)
  */
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
-  public moveType: Type;
+  public moveType: PokemonType;
   private boostMultiplier: number;
 
-  constructor(type: ModifierType, pokemonId: number, moveType: Type, boostPercent: number, stackCount?: number) {
+  constructor(type: ModifierType, pokemonId: number, moveType: PokemonType, boostPercent: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
 
     this.moveType = moveType;
@@ -1402,22 +1402,22 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   /**
    * Checks if {@linkcode AttackTypeBoosterModifier} should be applied
    * @param pokemon the {@linkcode Pokemon} that holds the held item
-   * @param moveType the {@linkcode Type} of the move being used
+   * @param moveType the {@linkcode PokemonType} of the move being used
    * @param movePower the {@linkcode NumberHolder} that holds the power of the move
    * @returns `true` if boosts should be applied to the move.
    */
-  override shouldApply(pokemon?: Pokemon, moveType?: Type, movePower?: NumberHolder): boolean {
+  override shouldApply(pokemon?: Pokemon, moveType?: PokemonType, movePower?: NumberHolder): boolean {
     return super.shouldApply(pokemon, moveType, movePower) && typeof moveType === "number" && movePower instanceof NumberHolder;
   }
 
   /**
    * Applies {@linkcode AttackTypeBoosterModifier}
    * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param moveType {@linkcode Type} of the move being used
+   * @param moveType {@linkcode PokemonType} of the move being used
    * @param movePower {@linkcode NumberHolder} that holds the power of the move
    * @returns `true` if boosts have been applied to the move.
    */
-  override apply(_pokemon: Pokemon, moveType: Type, movePower: NumberHolder): boolean {
+  override apply(_pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder): boolean {
     if (moveType === this.moveType && movePower.value >= 1) {
       (movePower as NumberHolder).value = Math.floor((movePower as NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
       return true;
@@ -1957,9 +1957,9 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 
 export class TerrastalizeModifier extends ConsumablePokemonModifier {
   public override type: TerastallizeModifierType;
-  public teraType: Type;
+  public teraType: PokemonType;
 
-  constructor(type: TerastallizeModifierType, pokemonId: number, teraType: Type) {
+  constructor(type: TerastallizeModifierType, pokemonId: number, teraType: PokemonType) {
     super(type, pokemonId);
 
     this.teraType = teraType;

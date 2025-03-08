@@ -15,7 +15,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Abilities } from "#enums/abilities";
 import { applyAbilityOverrideToPokemon, applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { randSeedInt, randSeedShuffle } from "#app/utils";
@@ -31,7 +31,7 @@ import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
-import { MoveCategory } from "#app/data/move";
+import { MoveCategory } from "#enums/MoveCategory";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
@@ -354,13 +354,13 @@ export const ClowningAroundEncounter: MysteryEncounter =
               priorityTypes = randSeedShuffle(priorityTypes);
             }
 
-            const newTypes = [ Type.UNKNOWN ];
-            let secondType: Type | null = null;
+            const newTypes = [ PokemonType.UNKNOWN ];
+            let secondType: PokemonType | null = null;
             while (secondType === null || secondType === newTypes[0] || originalTypes.includes(secondType)) {
               if (priorityTypes.length > 0) {
                 secondType = priorityTypes.pop() ?? null;
               } else {
-                secondType = randSeedInt(18) as Type;
+                secondType = randSeedInt(18) as PokemonType;
               }
             }
             newTypes.push(secondType);

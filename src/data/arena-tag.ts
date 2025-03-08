@@ -1,8 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
-import { MoveCategory, allMoves, MoveTarget } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
+import { MoveTarget } from "#enums/MoveTarget";
+import { MoveCategory } from "#enums/MoveCategory";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, PokemonMove } from "#app/field/pokemon";
@@ -501,7 +503,7 @@ class WishTag extends ArenaTag {
  * Abstract class to implement weakened moves of a specific type.
  */
 export class WeakenMoveTypeTag extends ArenaTag {
-  private weakenedType: Type;
+  private weakenedType: PokemonType;
 
   /**
    * Creates a new instance of the WeakenMoveTypeTag class.
@@ -512,7 +514,7 @@ export class WeakenMoveTypeTag extends ArenaTag {
    * @param sourceMove - The move that created the tag.
    * @param sourceId - The ID of the source of the tag.
    */
-  constructor(tagType: ArenaTagType, turnCount: number, type: Type, sourceMove: Moves, sourceId: number) {
+  constructor(tagType: ArenaTagType, turnCount: number, type: PokemonType, sourceMove: Moves, sourceId: number) {
     super(tagType, turnCount, sourceMove, sourceId);
 
     this.weakenedType = type;
@@ -522,11 +524,11 @@ export class WeakenMoveTypeTag extends ArenaTag {
    * Reduces an attack's power by 0.33x if it matches this tag's weakened type.
    * @param arena n/a
    * @param simulated n/a
-   * @param type the attack's {@linkcode Type}
+   * @param type the attack's {@linkcode PokemonType}
    * @param power a {@linkcode NumberHolder} containing the attack's power
    * @returns `true` if the attack's power was reduced; `false` otherwise.
    */
-  override apply(arena: Arena, simulated: boolean, type: Type, power: NumberHolder): boolean {
+  override apply(arena: Arena, simulated: boolean, type: PokemonType, power: NumberHolder): boolean {
     if (type === this.weakenedType) {
       power.value *= 0.33;
       return true;
@@ -541,7 +543,7 @@ export class WeakenMoveTypeTag extends ArenaTag {
  */
 class MudSportTag extends WeakenMoveTypeTag {
   constructor(turnCount: number, sourceId: number) {
-    super(ArenaTagType.MUD_SPORT, turnCount, Type.ELECTRIC, Moves.MUD_SPORT, sourceId);
+    super(ArenaTagType.MUD_SPORT, turnCount, PokemonType.ELECTRIC, Moves.MUD_SPORT, sourceId);
   }
 
   onAdd(arena: Arena): void {
@@ -559,7 +561,7 @@ class MudSportTag extends WeakenMoveTypeTag {
  */
 class WaterSportTag extends WeakenMoveTypeTag {
   constructor(turnCount: number, sourceId: number) {
-    super(ArenaTagType.WATER_SPORT, turnCount, Type.FIRE, Moves.WATER_SPORT, sourceId);
+    super(ArenaTagType.WATER_SPORT, turnCount, PokemonType.FIRE, Moves.WATER_SPORT, sourceId);
   }
 
   onAdd(arena: Arena): void {
@@ -592,12 +594,12 @@ export class IonDelugeTag extends ArenaTag {
    * Converts Normal-type moves to Electric type
    * @param arena n/a
    * @param simulated n/a
-   * @param moveType a {@linkcode NumberHolder} containing a move's {@linkcode Type}
+   * @param moveType a {@linkcode NumberHolder} containing a move's {@linkcode PokemonType}
    * @returns `true` if the given move type changed; `false` otherwise.
    */
   override apply(arena: Arena, simulated: boolean, moveType: NumberHolder): boolean {
-    if (moveType.value === Type.NORMAL) {
-      moveType.value = Type.ELECTRIC;
+    if (moveType.value === PokemonType.NORMAL) {
+      moveType.value = PokemonType.ELECTRIC;
       return true;
     }
     return false;
@@ -744,7 +746,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
       if (simulated) {
         return true;
       }
-      if (pokemon.isOfType(Type.POISON)) {
+      if (pokemon.isOfType(PokemonType.POISON)) {
         this.neutralized = true;
         if (globalScene.arena.removeTag(this.tagType)) {
           globalScene.queueMessage(i18next.t("arenaTag:toxicSpikesActivateTrapPoison", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), moveName: this.getMoveName() }));
@@ -765,7 +767,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
     if (pokemon.isGrounded() || !pokemon.canSetStatus(StatusEffect.POISON, true)) {
       return 1;
     }
-    if (pokemon.isOfType(Type.POISON)) {
+    if (pokemon.isOfType(PokemonType.POISON)) {
       return 1.25;
     }
     return super.getMatchupScoreMultiplier(pokemon);
@@ -820,7 +822,7 @@ class StealthRockTag extends ArenaTrapTag {
   }
 
   getDamageHpRatio(pokemon: Pokemon): number {
-    const effectiveness = pokemon.getAttackTypeEffectiveness(Type.ROCK, undefined, true);
+    const effectiveness = pokemon.getAttackTypeEffectiveness(PokemonType.ROCK, undefined, true);
 
     let damageHpRatio: number = 0;
 
@@ -1143,7 +1145,7 @@ class FireGrassPledgeTag extends ArenaTag {
       ? globalScene.getPlayerField()
       : globalScene.getEnemyField();
 
-    field.filter(pokemon => !pokemon.isOfType(Type.FIRE) && !pokemon.switchOutStatus).forEach(pokemon => {
+    field.filter(pokemon => !pokemon.isOfType(PokemonType.FIRE) && !pokemon.switchOutStatus).forEach(pokemon => {
       // "{pokemonNameWithAffix} was hurt by the sea of fire!"
       globalScene.queueMessage(i18next.t("arenaTag:fireGrassPledgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       // TODO: Replace this with a proper animation

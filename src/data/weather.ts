@@ -2,9 +2,9 @@ import { Biome } from "#enums/biome";
 import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
 import type Pokemon from "../field/pokemon";
-import { Type } from "#enums/type";
-import type Move from "./move";
-import { AttackMove } from "./move";
+import { PokemonType } from "#enums/pokemon-type";
+import type Move from "./moves/move";
+import { AttackMove } from "./moves/move";
 import * as Utils from "../utils";
 import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType, getTerrainName } from "./terrain";
@@ -53,34 +53,34 @@ export class Weather {
     return false;
   }
 
-  isTypeDamageImmune(type: Type): boolean {
+  isTypeDamageImmune(type: PokemonType): boolean {
     switch (this.weatherType) {
       case WeatherType.SANDSTORM:
-        return type === Type.GROUND || type === Type.ROCK || type === Type.STEEL;
+        return type === PokemonType.GROUND || type === PokemonType.ROCK || type === PokemonType.STEEL;
       case WeatherType.HAIL:
-        return type === Type.ICE;
+        return type === PokemonType.ICE;
     }
 
     return false;
   }
 
-  getAttackTypeMultiplier(attackType: Type): number {
+  getAttackTypeMultiplier(attackType: PokemonType): number {
     switch (this.weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
-        if (attackType === Type.FIRE) {
+        if (attackType === PokemonType.FIRE) {
           return 1.5;
         }
-        if (attackType === Type.WATER) {
+        if (attackType === PokemonType.WATER) {
           return 0.5;
         }
         break;
       case WeatherType.RAIN:
       case WeatherType.HEAVY_RAIN:
-        if (attackType === Type.FIRE) {
+        if (attackType === PokemonType.FIRE) {
           return 0.5;
         }
-        if (attackType === Type.WATER) {
+        if (attackType === PokemonType.WATER) {
           return 1.5;
         }
         break;
@@ -94,9 +94,9 @@ export class Weather {
 
     switch (this.weatherType) {
       case WeatherType.HARSH_SUN:
-        return move instanceof AttackMove && moveType === Type.WATER;
+        return move instanceof AttackMove && moveType === PokemonType.WATER;
       case WeatherType.HEAVY_RAIN:
-        return move instanceof AttackMove && moveType === Type.FIRE;
+        return move instanceof AttackMove && moveType === PokemonType.FIRE;
     }
 
     return false;
@@ -203,6 +203,28 @@ export function getWeatherClearMessage(weatherType: WeatherType): string | null 
   }
 
   return null;
+}
+
+export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): string | null {
+  switch (weatherType) {
+    case WeatherType.HARSH_SUN:
+      return i18next.t("weather:harshSunContinueMessage");
+    case WeatherType.HEAVY_RAIN:
+      return i18next.t("weather:heavyRainContinueMessage");
+    case WeatherType.STRONG_WINDS:
+      return i18next.t("weather:strongWindsContinueMessage");
+  }
+  return null;
+}
+
+export function getWeatherBlockMessage(weatherType: WeatherType): string {
+  switch (weatherType) {
+    case WeatherType.HARSH_SUN:
+      return i18next.t("weather:harshSunEffectMessage");
+    case WeatherType.HEAVY_RAIN:
+      return i18next.t("weather:heavyRainEffectMessage");
+  }
+  return i18next.t("weather:defaultEffectMessage");
 }
 
 export function getTerrainStartMessage(terrainType: TerrainType): string | null {
