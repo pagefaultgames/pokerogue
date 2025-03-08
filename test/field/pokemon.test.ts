@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { PokeballType } from "#enums/pokeball";
 import type BattleScene from "#app/battle-scene";
 import { Moves } from "#app/enums/moves";
-import { Type } from "#app/enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 describe("Spec - Pokemon", () => {
@@ -94,39 +94,39 @@ describe("Spec - Pokemon", () => {
       const pokemon = scene.getPlayerParty()[0];
 
       let types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.FIRE);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
+      expect(types[1]).toBe(PokemonType.FIRE);
 
-      pokemon.customPokemonData.types = [ Type.UNKNOWN, Type.NORMAL ];
+      pokemon.customPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.NORMAL ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.FIRE);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
+      expect(types[1]).toBe(PokemonType.FIRE);
 
-      pokemon.customPokemonData.types = [ Type.NORMAL, Type.UNKNOWN ];
+      pokemon.customPokemonData.types = [ PokemonType.NORMAL, PokemonType.UNKNOWN ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.NORMAL);
-      expect(types[1]).toBe(Type.FIRE);
+      expect(types[0]).toBe(PokemonType.NORMAL);
+      expect(types[1]).toBe(PokemonType.FIRE);
 
       if (!pokemon.fusionCustomPokemonData) {
         pokemon.fusionCustomPokemonData = new CustomPokemonData();
       }
       pokemon.customPokemonData.types = [];
 
-      pokemon.fusionCustomPokemonData.types = [ Type.UNKNOWN, Type.NORMAL ];
+      pokemon.fusionCustomPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.NORMAL ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.NORMAL);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
+      expect(types[1]).toBe(PokemonType.NORMAL);
 
-      pokemon.fusionCustomPokemonData.types = [ Type.NORMAL, Type.UNKNOWN ];
+      pokemon.fusionCustomPokemonData.types = [ PokemonType.NORMAL, PokemonType.UNKNOWN ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.NORMAL);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
+      expect(types[1]).toBe(PokemonType.NORMAL);
 
-      pokemon.customPokemonData.types = [ Type.NORMAL, Type.UNKNOWN ];
-      pokemon.fusionCustomPokemonData.types = [ Type.UNKNOWN, Type.NORMAL ];
+      pokemon.customPokemonData.types = [ PokemonType.NORMAL, PokemonType.UNKNOWN ];
+      pokemon.fusionCustomPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.NORMAL ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.NORMAL);
-      expect(types[1]).toBe(Type.FIRE);
+      expect(types[0]).toBe(PokemonType.NORMAL);
+      expect(types[1]).toBe(PokemonType.FIRE);
     });
 
     it("Fusing two mons with same single type", async () => {
@@ -135,7 +135,7 @@ describe("Spec - Pokemon", () => {
       const pokemon = scene.getPlayerParty()[0];
 
       const types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
       expect(types.length).toBe(1);
     });
 
@@ -146,8 +146,8 @@ describe("Spec - Pokemon", () => {
       const pokemon = scene.getPlayerParty()[0];
 
       const types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.FIRE);
-      expect(types[1]).toBe(Type.DARK);
+      expect(types[0]).toBe(PokemonType.FIRE);
+      expect(types[1]).toBe(PokemonType.DARK);
     });
 
     it("Fusing mons with two and one types", async () => {
@@ -157,8 +157,8 @@ describe("Spec - Pokemon", () => {
       const pokemon = scene.getPlayerParty()[0];
 
       const types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.FIRE);
-      expect(types[1]).toBe(Type.GROUND);
+      expect(types[0]).toBe(PokemonType.FIRE);
+      expect(types[1]).toBe(PokemonType.GROUND);
     });
 
     it("Fusing two mons with two types", async () => {
@@ -168,20 +168,20 @@ describe("Spec - Pokemon", () => {
       const pokemon = scene.getPlayerParty()[0];
 
       let types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.FIRE);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
+      expect(types[1]).toBe(PokemonType.FIRE);
 
       // Natu Psychic/Grass
-      pokemon.customPokemonData.types = [ Type.UNKNOWN, Type.GRASS ];
+      pokemon.customPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.GRASS ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.FIRE);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
+      expect(types[1]).toBe(PokemonType.FIRE);
 
       // Natu Grass/Flying
-      pokemon.customPokemonData.types = [ Type.GRASS, Type.UNKNOWN ];
+      pokemon.customPokemonData.types = [ PokemonType.GRASS, PokemonType.UNKNOWN ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.GRASS);
-      expect(types[1]).toBe(Type.FIRE);
+      expect(types[0]).toBe(PokemonType.GRASS);
+      expect(types[1]).toBe(PokemonType.FIRE);
 
       if (!pokemon.fusionCustomPokemonData) {
         pokemon.fusionCustomPokemonData = new CustomPokemonData();
@@ -189,24 +189,24 @@ describe("Spec - Pokemon", () => {
       pokemon.customPokemonData.types = [];
 
       // Houndour Dark/Grass
-      pokemon.fusionCustomPokemonData.types = [ Type.UNKNOWN, Type.GRASS ];
+      pokemon.fusionCustomPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.GRASS ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.GRASS);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
+      expect(types[1]).toBe(PokemonType.GRASS);
 
       // Houndour Grass/Fire
-      pokemon.fusionCustomPokemonData.types = [ Type.GRASS, Type.UNKNOWN ];
+      pokemon.fusionCustomPokemonData.types = [ PokemonType.GRASS, PokemonType.UNKNOWN ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.PSYCHIC);
-      expect(types[1]).toBe(Type.FIRE);
+      expect(types[0]).toBe(PokemonType.PSYCHIC);
+      expect(types[1]).toBe(PokemonType.FIRE);
 
       // Natu Grass/Flying
       // Houndour Dark/Grass
-      pokemon.customPokemonData.types = [ Type.GRASS, Type.UNKNOWN ];
-      pokemon.fusionCustomPokemonData.types = [ Type.UNKNOWN, Type.GRASS ];
+      pokemon.customPokemonData.types = [ PokemonType.GRASS, PokemonType.UNKNOWN ];
+      pokemon.fusionCustomPokemonData.types = [ PokemonType.UNKNOWN, PokemonType.GRASS ];
       types = pokemon.getTypes();
-      expect(types[0]).toBe(Type.GRASS);
-      expect(types[1]).toBe(Type.DARK);
+      expect(types[0]).toBe(PokemonType.GRASS);
+      expect(types[1]).toBe(PokemonType.DARK);
     });
   });
 });

@@ -30,7 +30,7 @@ import { Nature } from "#enums/nature";
 import { GameStats } from "#app/system/game-stats";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { TrainerVariant } from "#app/field/trainer";
 import type { Variant } from "#app/data/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
@@ -56,7 +56,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
-import type { Type } from "#enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 
 export const defaultStarterSpecies: Species[] = [
   Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
@@ -231,7 +231,7 @@ export interface StarterAttributes {
   shiny?: boolean;
   favorite?: boolean;
   nickname?: string;
-  tera?: Type;
+  tera?: PokemonType;
 }
 
 export interface StarterPreferences {

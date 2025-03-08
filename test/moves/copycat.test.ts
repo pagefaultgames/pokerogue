@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves, RandomMoveAttr } from "#app/data/move";
+import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";

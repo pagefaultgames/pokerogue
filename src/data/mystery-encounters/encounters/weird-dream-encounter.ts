@@ -1,4 +1,4 @@
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import { globalScene } from "#app/global-scene";
@@ -528,10 +528,10 @@ async function postProcessTransformedPokemon(previousPokemon: PlayerPokemon, new
 
   // Randomize the second type of the pokemon
   // If the pokemon does not normally have a second type, it will gain 1
-  const newTypes = [ Type.UNKNOWN ];
-  let newType = randSeedInt(18) as Type;
+  const newTypes = [ PokemonType.UNKNOWN ];
+  let newType = randSeedInt(18) as PokemonType;
   while (newType === newTypes[0]) {
-    newType = randSeedInt(18) as Type;
+    newType = randSeedInt(18) as PokemonType;
   }
   newTypes.push(newType);
   if (!newPokemon.customPokemonData) {

@@ -6,7 +6,7 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 
 describe("Abilities - Supreme Overlord", () => {
   let phaserGame: Phaser.Game;
