@@ -15,18 +15,18 @@ import { Moves } from "#enums/moves";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
-import { Type } from "#enums/type";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
  * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
- * {@linkcode Stat}, {@linkcode Type}
+ * {@linkcode Stat}, {@linkcode PokemonType}
  */
 /**
  * Overrides that are using when testing different in game situations
