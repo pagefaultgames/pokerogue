@@ -144,9 +144,10 @@ export interface SessionSaveData {
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
   mysteryEncounterSaveData: MysteryEncounterSaveData;
   /**
-   * Counts the amount of pokemon fainted in your party during the current arena encounter.
+   * Counts the amount of pokemon fainted in your party throughout the run.
    */
   playerFaints: number;
+  enemyFaints: number;
 }
 
 interface Unlocks {
@@ -972,7 +973,8 @@ export class GameData {
       challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
       mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,
-      playerFaints: globalScene.arena.playerFaints
+      playerFaints: globalScene.totalPlayerFaints,
+      enemyFaints: globalScene.totalEnemyFaints
     } as SessionSaveData;
   }
 
@@ -1064,7 +1066,10 @@ export class GameData {
 
           globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
 
-          globalScene.newArena(sessionData.arena.biome, sessionData.playerFaints);
+          globalScene.totalPlayerFaints = sessionData.playerFaints;
+          globalScene.totalEnemyFaints = sessionData.enemyFaints;
+
+          globalScene.newArena(sessionData.arena.biome);
 
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
@@ -1091,6 +1096,8 @@ export class GameData {
           globalScene.arena.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE, globalScene.arena.terrain?.terrainType!, globalScene.arena.terrain?.turnsLeft!)); // TODO: is this bang correct?
 
           globalScene.arena.playerTerasUsed = sessionData.arena.playerTerasUsed;
+
+          globalScene.arena.playerFaints = sessionData.arena.playerFaints;
 
           globalScene.arena.tags = sessionData.arena.tags;
           if (globalScene.arena.tags) {
