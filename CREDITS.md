@@ -364,11 +364,13 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Opaquer
 - OrangeRed
 - Sam aka Flashfyre (initial developer, started PokéRogue)
+- SirzBenjie
 - sirzento
 - SN34KZ
 - Swain aka torranx
 - Temp aka Tempo-anon
 - Walker
+- Wlowscha (aka Curbio)
 - Xavion
 
 ## Bug/Issue Managers
