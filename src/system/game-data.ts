@@ -1635,9 +1635,11 @@ export class GameData {
                             `An error occurred while updating ${dataName} data. Please contact the administrator.`,
                           );
                         }
+                        window.location.reload();
                       });
                     });
                   } else {
+                    window.location.reload();
                   }
                 },
                 () => {
