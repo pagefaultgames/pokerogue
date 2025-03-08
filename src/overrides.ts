@@ -1,31 +1,22 @@
-import type { PokeballCounts } from "#app/battle-scene";
-import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
-import type { Gender } from "#app/data/gender";
-import { FormChangeItem } from "#app/data/pokemon-forms";
-import type { Variant } from "#app/data/variant";
-import type { ModifierOverride } from "#app/modifier/modifier-type";
-import type { Unlockables } from "#app/system/unlockables";
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+import { type PokeballCounts } from "#app/battle-scene";
+import { Gender } from "#app/data/gender";
+import { Variant } from "#app/data/variant";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
-import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
-import type { EggTier } from "#enums/egg-type";
-import type { Moves } from "#enums/moves";
-import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { EggTier } from "#enums/egg-type";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
-import { PokemonType } from "#enums/pokemon-type";
-import type { Species } from "#enums/species";
-import { Stat } from "#enums/stat";
+import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
-import type { TimeOfDay } from "#enums/time-of-day";
-import type { VariantTier } from "#enums/variant-tier";
+import { TimeOfDay } from "#enums/time-of-day";
+import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 
-/**
- * This comment block exists to prevent IDEs from automatically removing unused imports
- * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
- * {@linkcode Stat}, {@linkcode PokemonType}
- */
 /**
  * Overrides that are using when testing different in game situations
  *
@@ -260,7 +251,7 @@ export const defaultOverrides = new DefaultOverrides();
 
 export default {
   ...defaultOverrides,
-  ...overrides,
+  ...overrides
 } satisfies InstanceType<typeof DefaultOverrides>;
 
 export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";

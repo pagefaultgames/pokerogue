@@ -15,6 +15,8 @@
   },
   "files": {
     "ignoreUnknown": true,
+    // Adding folders to the ignore list is GREAT for performance because it prevents biome from descending into them
+    // and having to verify whether each individual file is ignored
     "ignore": [
       "**/*.d.ts",
       "dist/*",
@@ -26,6 +28,7 @@
       ".vscode/*",
       "*.css", // TODO?
       "*.html", // TODO?
+      "src/overrides.ts",
       // TODO: these files are too big and complex, ignore them until their respective refactors
       "src/data/moves/move.ts",
       "src/data/ability.ts",
