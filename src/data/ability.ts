@@ -4571,9 +4571,19 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   }
 }
 
+/**
+ * Redirects a move to the pokemon with this ability if it meets the conditions
+ */
 export class RedirectMoveAbAttr extends AbAttr {
+  /**
+   * @param pokemon - The Pokemon with the redirection ability
+   * @param args - The args passed to the `AbAttr`:
+   *  - `[0]` - The id of the {@linkcode Move} used
+   *  - `[1]` - The target's battler index (before redirection)
+   *  - `[2]` - The Pokemon that used the move being redirected
+   */
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.canRedirect(args[0] as Moves)) {
+    if (this.canRedirect(args[0] as Moves, args[2] as Pokemon)) {
       const target = args[1] as Utils.NumberHolder;
       const newTarget = pokemon.getBattlerIndex();
       if (target.value !== newTarget) {
@@ -4585,7 +4595,7 @@ export class RedirectMoveAbAttr extends AbAttr {
     return false;
   }
 
-  canRedirect(moveId: Moves): boolean {
+  canRedirect(moveId: Moves, user: Pokemon): boolean {
     const move = allMoves[moveId];
     return !![ MoveTarget.NEAR_OTHER, MoveTarget.OTHER ].find(t => move.moveTarget === t);
   }
@@ -4599,8 +4609,8 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
     this.type = type;
   }
 
-  canRedirect(moveId: Moves): boolean {
-    return super.canRedirect(moveId) && allMoves[moveId].type === this.type;
+  canRedirect(moveId: Moves, user: Pokemon): boolean {
+    return super.canRedirect(moveId, user) && user.getMoveType(allMoves[moveId]) === this.type;
   }
 }
 
