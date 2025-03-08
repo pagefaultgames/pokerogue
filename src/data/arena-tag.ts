@@ -700,7 +700,7 @@ class SpikesTag extends ArenaTrapTag {
         const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
 
         globalScene.queueMessage(i18next.t("arenaTag:spikesActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-        pokemon.damageAndUpdate(damage, HitResult.OTHER);
+        pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
         if (pokemon.turnData) {
           pokemon.turnData.damageTaken += damage;
         }
@@ -866,7 +866,7 @@ class StealthRockTag extends ArenaTrapTag {
       }
       const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
       globalScene.queueMessage(i18next.t("arenaTag:stealthRockActivateTrap", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
-      pokemon.damageAndUpdate(damage, HitResult.OTHER);
+      pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
       if (pokemon.turnData) {
         pokemon.turnData.damageTaken += damage;
       }
@@ -1150,7 +1150,7 @@ class FireGrassPledgeTag extends ArenaTag {
       globalScene.queueMessage(i18next.t("arenaTag:fireGrassPledgeLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
       // TODO: Replace this with a proper animation
       globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.MAGMA_STORM));
-      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8));
+      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
     });
 
     return super.lapse(arena);
