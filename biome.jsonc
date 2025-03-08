@@ -91,7 +91,11 @@
     {
       "include": ["test/**/*.test.ts"],
       "javascript": { "globals": [] },
-      "linter": { "rules": {} }
+      "linter": { "rules": {
+        "performance": {
+          "noDelete": "off"
+        }
+      } }
     }
   ]
 }

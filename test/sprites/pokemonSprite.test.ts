@@ -1,6 +1,6 @@
 import { getAppRootDir } from "#test/sprites/spritesUtils";
-import fs from "node:fs";
-import path from "node:path";
+import fs from "fs";
+import path from "path";
 import { beforeAll, describe, expect, it } from "vitest";
 import _masterlist from "../../public/images/pokemon/variant/_masterlist.json";
 
@@ -24,11 +24,11 @@ describe("check if every variant's sprite are correctly set", () => {
     femaleVariant = masterlist.female;
     backVariant = masterlist.back;
     //@ts-ignore
-    masterlist.exp = undefined; //TODO: resolve ts-ignore
+    delete masterlist.exp; //TODO: resolve ts-ignore
     //@ts-ignore
-    masterlist.female = undefined; //TODO: resolve ts-ignore
+    delete masterlist.female; //TODO: resolve ts-ignore
     //@ts-ignore
-    masterlist.back = undefined; //TODO: resolve ts-ignore
+    delete masterlist.back; //TODO: resolve ts-ignore
   });
 
   it("data should not be undefined", () => {
@@ -70,10 +70,7 @@ describe("check if every variant's sprite are correctly set", () => {
                 errors.push(`[${id}] missing key ${id} in masterlist for ${trimmedFilePath}`);
               }
               if (mlist[id][index] === 1 && jsonFileExists) {
-                const raw = fs.readFileSync(urlJsonFile, {
-                  encoding: "utf8",
-                  flag: "r",
-                });
+                const raw = fs.readFileSync(urlJsonFile, { encoding: "utf8", flag: "r" });
                 const data = JSON.parse(raw);
                 const keys = Object.keys(data);
                 if (!keys.includes(`${index}`)) {
@@ -92,10 +89,7 @@ describe("check if every variant's sprite are correctly set", () => {
         } else if (!mlist.hasOwnProperty(name)) {
           errors.push(`[${name}] - missing key ${name} in masterlist for ${trimmedFilePath}`);
         } else {
-          const raw = fs.readFileSync(filePath, {
-            encoding: "utf8",
-            flag: "r",
-          });
+          const raw = fs.readFileSync(filePath, { encoding: "utf8", flag: "r" });
           const data = JSON.parse(raw);
           for (const key of Object.keys(data)) {
             if (mlist[name][key] !== 1) {
@@ -125,10 +119,7 @@ describe("check if every variant's sprite are correctly set", () => {
         } else if (elm === 1) {
           url = `${key}.json`;
           const filePath = `${dirPath}${url}`;
-          const raw = fs.readFileSync(filePath, {
-            encoding: "utf8",
-            flag: "r",
-          });
+          const raw = fs.readFileSync(filePath, { encoding: "utf8", flag: "r" });
           const data = JSON.parse(raw);
           if (!data.hasOwnProperty(index)) {
             errors.push(`index: ${index} - ${filePath}`);
@@ -183,7 +174,7 @@ describe("check if every variant's sprite are correctly set", () => {
   it("check back male back variant files", () => {
     const dirPath = `${rootDir}back${path.sep}`;
     const backMaleVariant = deepCopy(backVariant);
-    backMaleVariant.female = undefined;
+    delete backMaleVariant.female;
     const errors = getMissingFiles(backMaleVariant, dirPath);
     if (errors.length) {
       console.log("errors", errors);
@@ -203,7 +194,7 @@ describe("check if every variant's sprite are correctly set", () => {
   it("check exp back male variant files", () => {
     const dirPath = `${rootDir}exp${path.sep}back${path.sep}`;
     const backMaleVariant = deepCopy(expVariant.back);
-    backMaleVariant.female = undefined;
+    delete backMaleVariant.female;
     const errors = getMissingFiles(backMaleVariant, dirPath);
     if (errors.length) {
       console.log("errors", errors);
@@ -223,8 +214,8 @@ describe("check if every variant's sprite are correctly set", () => {
   it("check exp male variant files", () => {
     const dirPath = `${rootDir}exp${path.sep}`;
     const expMaleVariant = deepCopy(expVariant);
-    expMaleVariant.female = undefined;
-    expMaleVariant.back = undefined;
+    delete expMaleVariant.female;
+    delete expMaleVariant.back;
     const errors = getMissingFiles(expMaleVariant, dirPath);
     if (errors.length) {
       console.log("errors", errors);
