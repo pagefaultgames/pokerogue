@@ -12,7 +12,7 @@ import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUN
 import { catchableSpecies } from "#app/data/balance/biomes";
 import { PokemonType } from "#enums/pokemon-type";
 import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
-import { AbilityAttr, DexAttr, StarterPrefs } from "#app/system/game-data";
+import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "#app/ui/text";
@@ -612,7 +612,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   show(args: any[]): boolean {
     if (!this.starterPreferences) {
-      this.starterPreferences = StarterPrefs.load();
+      this.starterPreferences = loadStarterPreferences();
     }
 
     this.pokerusSpecies = getPokerusStarters();
@@ -675,11 +675,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const hasNonShiny = caughtAttr & DexAttr.NON_SHINY;
     if (starterAttributes.shiny && !hasShiny) {
       // shiny form wasn't unlocked, purging shiny and variant setting
-      delete starterAttributes.shiny;
-      delete starterAttributes.variant;
+
+      starterAttributes.shiny = undefined;
+      starterAttributes.variant = undefined;
     } else if (starterAttributes.shiny === false && !hasNonShiny) {
       // non shiny form wasn't unlocked, purging shiny setting
-      delete starterAttributes.shiny;
+      starterAttributes.shiny = undefined;
     }
 
     if (starterAttributes.variant !== undefined) {
@@ -694,14 +695,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
         !unlockedVariants[starterAttributes.variant]
       ) {
         // variant value is invalid or requested variant wasn't unlocked, purging setting
-        delete starterAttributes.variant;
+        starterAttributes.variant = undefined;
       }
     }
 
     if (starterAttributes.female !== undefined) {
       if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
         // requested gender wasn't unlocked, purging setting
-        delete starterAttributes.female;
+        starterAttributes.female = undefined;
       }
     }
 
@@ -720,7 +721,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       ];
       if (!unlockedAbilities[starterAttributes.ability]) {
         // requested ability wasn't unlocked, purging setting
-        delete starterAttributes.ability;
+        starterAttributes.ability = undefined;
       }
     }
 
@@ -731,14 +732,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
         !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
-      delete starterAttributes.form;
+      starterAttributes.form = undefined;
     }
 
     if (starterAttributes.nature !== undefined) {
       const unlockedNatures = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr);
       if (unlockedNatures.indexOf(starterAttributes.nature as unknown as Nature) < 0) {
         // requested nature wasn't unlocked, purging setting
-        delete starterAttributes.nature;
+        starterAttributes.nature = undefined;
       }
     }
 
@@ -1236,12 +1237,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
               success = true;
             }
             break;
-          case Button.CYCLE_FORM:
+          case Button.CYCLE_FORM: {
             const species = this.pokemonContainers[this.cursor].species;
             if (this.canShowFormTray) {
               success = this.openFormTray(species);
             }
             break;
+          }
         }
       }
     }
@@ -1256,6 +1258,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   }
 
   updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
+    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
@@ -1283,6 +1286,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   }
 
   updateFilterButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
+    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
@@ -1461,8 +1465,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }
-      const showNoBiome =
-        biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36 ? true : false;
+      const showNoBiome = !!(biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36);
       const fitsBiome =
         this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? "")) ||
         showNoBiome;
@@ -1650,19 +1653,18 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
     this.filteredPokemonData.sort((a, b) => {
       switch (sort.val) {
-        default:
-          break;
         case SortCriteria.NUMBER:
           return (a.species.speciesId - b.species.speciesId) * -sort.dir;
         case SortCriteria.COST:
           return (a.cost - b.cost) * -sort.dir;
-        case SortCriteria.CANDY:
+        case SortCriteria.CANDY: {
           const candyCountA =
             globalScene.gameData.starterData[this.getStarterSpeciesId(a.species.speciesId)].candyCount;
           const candyCountB =
             globalScene.gameData.starterData[this.getStarterSpeciesId(b.species.speciesId)].candyCount;
           return (candyCountA - candyCountB) * -sort.dir;
-        case SortCriteria.IV:
+        }
+        case SortCriteria.IV: {
           const avgIVsA =
             globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
             globalScene.gameData.dexData[a.species.speciesId].ivs.length;
@@ -1670,6 +1672,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
             globalScene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
             globalScene.gameData.dexData[b.species.speciesId].ivs.length;
           return (avgIVsA - avgIVsB) * -sort.dir;
+        }
         case SortCriteria.NAME:
           return a.species.name.localeCompare(b.species.name) * -sort.dir;
         case SortCriteria.CAUGHT:
@@ -1684,6 +1687,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
               globalScene.gameData.dexData[this.getStarterSpeciesId(b.species.speciesId)].hatchedCount) *
             -sort.dir
           );
+        default:
+          break;
       }
       return 0;
     });

@@ -20,10 +20,6 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   abilityKeys: string[];
   row: number;
 
-  constructor(mode) {
-    super(mode);
-  }
-
   setup() {
     super.setup();
 
@@ -32,19 +28,19 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
     this.abilityKeys = allAbilities.map(a => a.name);
   }
 
-  getModalTitle(config?: ModalConfig): string {
+  getModalTitle(_config?: ModalConfig): string {
     return i18next.t("pokedexUiHandler:scanChooseOption");
   }
 
-  getWidth(config?: ModalConfig): number {
+  getWidth(_config?: ModalConfig): number {
     return 300;
   }
 
-  getMargin(config?: ModalConfig): [number, number, number, number] {
+  getMargin(_config?: ModalConfig): [number, number, number, number] {
     return [0, 0, 48, 0];
   }
 
-  getButtonLabels(config?: ModalConfig): string[] {
+  getButtonLabels(_config?: ModalConfig): string[] {
     return [i18next.t("pokedexUiHandler:scanSelect"), i18next.t("pokedexUiHandler:scanCancel")];
   }
 

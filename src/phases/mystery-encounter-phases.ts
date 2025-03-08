@@ -221,10 +221,6 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
  * See {@linkcode TurnEndPhase} for more details
  */
 export class MysteryEncounterBattleStartCleanupPhase extends Phase {
-  constructor() {
-    super();
-  }
-
   /**
    * Cleans up `TURN_END` tags, any {@linkcode PostTurnStatusEffectPhase}s, checks for Pokemon switches, then continues
    */
@@ -250,7 +246,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     });
 
     // Remove any status tick phases
-    while (!!globalScene.findPhase(p => p instanceof PostTurnStatusEffectPhase)) {
+    while (globalScene.findPhase(p => p instanceof PostTurnStatusEffectPhase)) {
       globalScene.tryRemovePhase(p => p instanceof PostTurnStatusEffectPhase);
     }
 

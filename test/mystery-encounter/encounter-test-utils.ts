@@ -142,9 +142,6 @@ export async function runSelectMysteryEncounterOption(
   uiHandler.unblockInput(); // input are blocked by 1s to prevent accidental input. Tests need to handle that
 
   switch (optionNo) {
-    default:
-      // no movement needed. Default cursor position
-      break;
     case 2:
       uiHandler.processInput(Button.RIGHT);
       break;
@@ -154,6 +151,9 @@ export async function runSelectMysteryEncounterOption(
     case 4:
       uiHandler.processInput(Button.RIGHT);
       uiHandler.processInput(Button.DOWN);
+      break;
+    default:
+      // no movement needed. Default cursor position
       break;
   }
 

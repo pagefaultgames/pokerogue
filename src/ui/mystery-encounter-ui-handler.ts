@@ -168,6 +168,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       }
     } else {
       switch (this.optionsContainer.getAll()?.length) {
+        // biome-ignore lint/suspicious/useDefaultSwitchClauseLast: Default shares logic with case 3 and it makes more sense for the statements to be ordered by the case value
         default:
         case 3:
           success = this.handleTwoOptionMoveInput(button);
@@ -376,6 +377,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       let optionText: BBCodeText;
       switch (this.encounterOptions.length) {
+        // biome-ignore lint/suspicious/useDefaultSwitchClauseLast: default shares logic with case 2 and it makes more sense for the statements to be ordered by the case number
         default:
         case 2:
           optionText = addBBCodeTextObject(i % 2 === 0 ? 0 : 100, 8, "-", TextStyle.WINDOW, {

@@ -572,7 +572,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             shiny: pokemon.shiny,
             variant: pokemon.variant,
             form: pokemon.formIndex,
-            female: pokemon.gender === Gender.FEMALE ? true : false,
+            female: pokemon.gender === Gender.FEMALE,
           };
           ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, pokemon.formIndex, attributes).then(() =>
             this.clearOptions(),
@@ -1301,7 +1301,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.partyUiMode === PartyUiMode.RELEASE) {
           const selectCallback = this.selectCallback;
           this.selectCallback = null;
-          selectCallback && selectCallback(this.cursor, PartyOption.RELEASE);
+          selectCallback?.(this.cursor, PartyOption.RELEASE);
         }
         this.showText("", 0);
       },

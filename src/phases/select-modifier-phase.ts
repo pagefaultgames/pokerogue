@@ -74,7 +74,7 @@ export class SelectModifierPhase extends BattlePhase {
     }
 
     // If custom modifiers are specified, overrides default item count
-    if (!!this.customModifierSettings) {
+    if (this.customModifierSettings) {
       const newItemCount =
         (this.customModifierSettings.guaranteedModifierTiers?.length || 0) +
         (this.customModifierSettings.guaranteedModifierTypeOptions?.length || 0) +

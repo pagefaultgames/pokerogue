@@ -735,7 +735,9 @@ interface monotypeOverride {
  * Implements a mono type challenge.
  */
 export class SingleTypeChallenge extends Challenge {
-  private static TYPE_OVERRIDES: monotypeOverride[] = [{ species: Species.CASTFORM, type: PokemonType.NORMAL, fusion: false }];
+  private static TYPE_OVERRIDES: monotypeOverride[] = [
+    { species: Species.CASTFORM, type: PokemonType.NORMAL, fusion: false },
+  ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
   private static SPECIES_OVERRIDES: Species[] = [Species.MELOETTA];
 

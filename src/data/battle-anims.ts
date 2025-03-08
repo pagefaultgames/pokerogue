@@ -1,20 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import {
-  AttackMove,
-  BeakBlastHeaderAttr,
-  DelayedAttackAttr,
-  SelfStatusMove,
-  allMoves,
-} from "./moves/move";
+import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, SelfStatusMove, allMoves } from "./moves/move";
 import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
-import {
-  type nil,
-  getFrameMs,
-  getEnumKeys,
-  getEnumValues,
-  animationFileName,
-} from "../utils";
+import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils";
 import type { BattlerIndex } from "../battle";
 import type { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
@@ -1122,103 +1110,113 @@ export abstract class BattleAnim {
               spritePriorities.push(1);
             }
 
-              const graphicIndex = g++;
-              const moveSprite = sprites[graphicIndex];
-              if (spritePriorities[graphicIndex] !== frame.priority) {
-                spritePriorities[graphicIndex] = frame.priority;
-                /** Move the position that the moveSprite is rendered in based on the priority.
-                 * @param priority The priority level to draw the sprite.
-                 * - 0: Draw the sprite in front of the pokemon on the field.
-                 * - 1: Draw the sprite in front of the user pokemon.
-                 * - 2: Draw the sprite in front of its `bgSprite` (if it has one), or its
-                 * `AnimFocus` (if that is user/target), otherwise behind everything.
-                 * - 3: Draw the sprite behind its `AnimFocus` (if that is user/target), otherwise in front of everything.
-                */
-                const setSpritePriority = (priority: number) => {
-                  /** The sprite we are moving the moveSprite in relation to */
-                  let targetSprite: Phaser.GameObjects.GameObject | nil;
-                  /** The method that is being used to move the sprite.*/
-                  let moveFunc: ((sprite: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) => void) |
-                              ((sprite: Phaser.GameObjects.GameObject) => void) = globalScene.field.bringToTop;
+            const graphicIndex = g++;
+            const moveSprite = sprites[graphicIndex];
+            if (spritePriorities[graphicIndex] !== frame.priority) {
+              spritePriorities[graphicIndex] = frame.priority;
+              /** Move the position that the moveSprite is rendered in based on the priority.
+               * @param priority The priority level to draw the sprite.
+               * - 0: Draw the sprite in front of the pokemon on the field.
+               * - 1: Draw the sprite in front of the user pokemon.
+               * - 2: Draw the sprite in front of its `bgSprite` (if it has one), or its
+               * `AnimFocus` (if that is user/target), otherwise behind everything.
+               * - 3: Draw the sprite behind its `AnimFocus` (if that is user/target), otherwise in front of everything.
+               */
+              const setSpritePriority = (priority: number) => {
+                /** The sprite we are moving the moveSprite in relation to */
+                let targetSprite: Phaser.GameObjects.GameObject | nil;
+                /** The method that is being used to move the sprite.*/
+                let moveFunc:
+                  | ((sprite: Phaser.GameObjects.GameObject, target: Phaser.GameObjects.GameObject) => void)
+                  | ((sprite: Phaser.GameObjects.GameObject) => void) = globalScene.field.bringToTop;
 
-                  if (priority === 0) { // Place the sprite in front of the pokemon on the field.
-                    targetSprite = globalScene.getEnemyField().find(p => p) ?? globalScene.getPlayerField().find(p => p);
-                    console.log(typeof targetSprite);
-                    moveFunc = globalScene.field.moveBelow;
-                  } else if (priority === 2 && this.bgSprite) {
-                    moveFunc = globalScene.field.moveAbove;
-                    targetSprite = this.bgSprite;
-                  } else if (priority === 2 || priority === 3) {
-                    moveFunc = priority === 2 ? globalScene.field.moveBelow : globalScene.field.moveAbove;
-                    if (frame.focus === AnimFocus.USER) {
-                      targetSprite = this.user;
-                    } else if (frame.focus === AnimFocus.TARGET) {
-                      targetSprite = this.target;
-                    }
+                if (priority === 0) {
+                  // Place the sprite in front of the pokemon on the field.
+                  targetSprite = globalScene.getEnemyField().find(p => p) ?? globalScene.getPlayerField().find(p => p);
+                  console.log(typeof targetSprite);
+                  moveFunc = globalScene.field.moveBelow;
+                } else if (priority === 2 && this.bgSprite) {
+                  moveFunc = globalScene.field.moveAbove;
+                  targetSprite = this.bgSprite;
+                } else if (priority === 2 || priority === 3) {
+                  moveFunc = priority === 2 ? globalScene.field.moveBelow : globalScene.field.moveAbove;
+                  if (frame.focus === AnimFocus.USER) {
+                    targetSprite = this.user;
+                  } else if (frame.focus === AnimFocus.TARGET) {
+                    targetSprite = this.target;
                   }
-                  // If target sprite is not undefined and exists in the field container, then move the sprite using the moveFunc.
-                  // Otherwise, default to just bringing it to the top.
-                  targetSprite && globalScene.field.exists(targetSprite) ? moveFunc.bind(globalScene.field)(moveSprite as Phaser.GameObjects.GameObject, targetSprite) : globalScene.field.bringToTop(moveSprite as Phaser.GameObjects.GameObject);
-                };
-                setSpritePriority(frame.priority);
-              }
-              moveSprite.setFrame(frame.graphicFrame);
-              //console.log(AnimFocus[frame.focus]);
+                }
+                // If target sprite is not undefined and exists in the field container, then move the sprite using the moveFunc.
+                // Otherwise, default to just bringing it to the top.
+                targetSprite && globalScene.field.exists(targetSprite)
+                  ? moveFunc.bind(globalScene.field)(moveSprite as Phaser.GameObjects.GameObject, targetSprite)
+                  : globalScene.field.bringToTop(moveSprite as Phaser.GameObjects.GameObject);
+              };
+              setSpritePriority(frame.priority);
+            }
+            moveSprite.setFrame(frame.graphicFrame);
+            //console.log(AnimFocus[frame.focus]);
 
             const graphicFrameData = frameData.get(frame.target)!.get(graphicIndex)!; // TODO: are those bangs correct?
             moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
             moveSprite.setAngle(graphicFrameData.angle);
             moveSprite.setScale(graphicFrameData.scaleX, graphicFrameData.scaleY);
 
-              moveSprite.setAlpha(frame.opacity / 255);
-              moveSprite.setVisible(frame.visible);
-              moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
-            }
+            moveSprite.setAlpha(frame.opacity / 255);
+            moveSprite.setVisible(frame.visible);
+            moveSprite.setBlendMode(
+              frame.blendType === AnimBlendType.NORMAL
+                ? Phaser.BlendModes.NORMAL
+                : frame.blendType === AnimBlendType.ADD
+                  ? Phaser.BlendModes.ADD
+                  : Phaser.BlendModes.DIFFERENCE,
+            );
           }
-          if (anim?.frameTimedEvents.has(f)) {
-            const base = anim.frames.length - f;
-            // Bang is correct due to `has` check above, which cannot return true for an undefined / null `f`
-            for (const event of anim.frameTimedEvents.get(f)!) {
-              r = Math.max(base + event.execute(this), r);
-            }
+        }
+        if (anim?.frameTimedEvents.has(f)) {
+          const base = anim.frames.length - f;
+          // Bang is correct due to `has` check above, which cannot return true for an undefined / null `f`
+          for (const event of anim.frameTimedEvents.get(f)!) {
+            r = Math.max(base + event.execute(this), r);
           }
-          const targets = getEnumValues(AnimFrameTarget);
-          for (const i of targets) {
-            const count = i === AnimFrameTarget.GRAPHIC ? g : i === AnimFrameTarget.USER ? u : t;
-            if (count < spriteCache[i].length) {
-              const spritesToRemove = spriteCache[i].slice(count, spriteCache[i].length);
-              for (const rs of spritesToRemove) {
-                if (!rs.getData("locked") as boolean) {
-                  const spriteCacheIndex = spriteCache[i].indexOf(rs);
-                  spriteCache[i].splice(spriteCacheIndex, 1);
-                  if (i === AnimFrameTarget.GRAPHIC) {
-                    spritePriorities.splice(spriteCacheIndex, 1);
-                  }
-                  rs.destroy();
+        }
+        const targets = getEnumValues(AnimFrameTarget);
+        for (const i of targets) {
+          const count = i === AnimFrameTarget.GRAPHIC ? g : i === AnimFrameTarget.USER ? u : t;
+          if (count < spriteCache[i].length) {
+            const spritesToRemove = spriteCache[i].slice(count, spriteCache[i].length);
+            for (const rs of spritesToRemove) {
+              if (!rs.getData("locked") as boolean) {
+                const spriteCacheIndex = spriteCache[i].indexOf(rs);
+                spriteCache[i].splice(spriteCacheIndex, 1);
+                if (i === AnimFrameTarget.GRAPHIC) {
+                  spritePriorities.splice(spriteCacheIndex, 1);
                 }
+                rs.destroy();
               }
             }
           }
-          f++;
-          r--;
-        },
-        onComplete: () => {
-          for (const ms of Object.values(spriteCache).flat()) {
-            if (ms && !ms.getData("locked")) {
-              ms.destroy();
-            }
-          }
-          if (r) {
-            globalScene.tweens.addCounter({
-              duration: getFrameMs(r),
-              onComplete: () => cleanUpAndComplete()
-            });
-          } else {
-            cleanUpAndComplete();
+        }
+        f++;
+        r--;
+      },
+      onComplete: () => {
+        for (const ms of Object.values(spriteCache).flat()) {
+          if (ms && !ms.getData("locked")) {
+            ms.destroy();
           }
         }
-      });
-    }
+        if (r) {
+          globalScene.tweens.addCounter({
+            duration: getFrameMs(r),
+            onComplete: () => cleanUpAndComplete(),
+          });
+        } else {
+          cleanUpAndComplete();
+        }
+      },
+    });
+  }
 
   private getGraphicFrameDataWithoutTarget(
     frames: AnimFrame[],
@@ -1356,51 +1354,57 @@ export abstract class BattleAnim {
             moveSprite.setAngle(graphicFrameData.angle);
             moveSprite.setScale(graphicFrameData.scaleX, graphicFrameData.scaleY);
 
-              moveSprite.setAlpha(frame.opacity / 255);
-              moveSprite.setVisible(frame.visible);
-              moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
-            }
+            moveSprite.setAlpha(frame.opacity / 255);
+            moveSprite.setVisible(frame.visible);
+            moveSprite.setBlendMode(
+              frame.blendType === AnimBlendType.NORMAL
+                ? Phaser.BlendModes.NORMAL
+                : frame.blendType === AnimBlendType.ADD
+                  ? Phaser.BlendModes.ADD
+                  : Phaser.BlendModes.DIFFERENCE,
+            );
           }
-          if (anim?.frameTimedEvents.get(frameCount)) {
-            const base = anim.frames.length - frameCount;
-            for (const event of anim.frameTimedEvents.get(frameCount)!) {
-              totalFrames = Math.max(base + event.execute(this, frameTimedEventPriority), totalFrames);
-            }
+        }
+        if (anim?.frameTimedEvents.get(frameCount)) {
+          const base = anim.frames.length - frameCount;
+          for (const event of anim.frameTimedEvents.get(frameCount)!) {
+            totalFrames = Math.max(base + event.execute(this, frameTimedEventPriority), totalFrames);
           }
-          const targets = getEnumValues(AnimFrameTarget);
-          for (const i of targets) {
-            const count = graphicFrameCount;
-            if (count < spriteCache[i].length) {
-              const spritesToRemove = spriteCache[i].slice(count, spriteCache[i].length);
-              for (const sprite of spritesToRemove) {
-                if (!sprite.getData("locked") as boolean) {
-                  const spriteCacheIndex = spriteCache[i].indexOf(sprite);
-                  spriteCache[i].splice(spriteCacheIndex, 1);
-                  sprite.destroy();
-                }
+        }
+        const targets = getEnumValues(AnimFrameTarget);
+        for (const i of targets) {
+          const count = graphicFrameCount;
+          if (count < spriteCache[i].length) {
+            const spritesToRemove = spriteCache[i].slice(count, spriteCache[i].length);
+            for (const sprite of spritesToRemove) {
+              if (!sprite.getData("locked") as boolean) {
+                const spriteCacheIndex = spriteCache[i].indexOf(sprite);
+                spriteCache[i].splice(spriteCacheIndex, 1);
+                sprite.destroy();
               }
             }
           }
-          frameCount++;
-          totalFrames--;
-        },
-        onComplete: () => {
-          for (const sprite of Object.values(spriteCache).flat()) {
-            if (sprite && !sprite.getData("locked")) {
-              sprite.destroy();
-            }
-          }
-          if (totalFrames) {
-            globalScene.tweens.addCounter({
-              duration: getFrameMs(totalFrames),
-              onComplete: () => cleanUpAndComplete()
-            });
-          } else {
-            cleanUpAndComplete();
+        }
+        frameCount++;
+        totalFrames--;
+      },
+      onComplete: () => {
+        for (const sprite of Object.values(spriteCache).flat()) {
+          if (sprite && !sprite.getData("locked")) {
+            sprite.destroy();
           }
         }
-      });
-    }
+        if (totalFrames) {
+          globalScene.tweens.addCounter({
+            duration: getFrameMs(totalFrames),
+            onComplete: () => cleanUpAndComplete(),
+          });
+        } else {
+          cleanUpAndComplete();
+        }
+      },
+    });
+  }
 }
 
 export class CommonBattleAnim extends BattleAnim {

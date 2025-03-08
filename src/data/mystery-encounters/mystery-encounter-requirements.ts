@@ -969,7 +969,12 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
   invertQuery: boolean;
   requireTransferable: boolean;
 
-  constructor(heldItemTypes: PokemonType | PokemonType[], minNumberOfPokemon = 1, invertQuery = false, requireTransferable = true) {
+  constructor(
+    heldItemTypes: PokemonType | PokemonType[],
+    minNumberOfPokemon = 1,
+    invertQuery = false,
+    requireTransferable = true,
+  ) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;

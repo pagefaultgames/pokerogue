@@ -24,7 +24,7 @@ export class RevivalBlessingPhase extends BattlePhase {
       Mode.PARTY,
       PartyUiMode.REVIVAL_BLESSING,
       this.user.getFieldIndex(),
-      (slotIndex: integer, option: PartyOption) => {
+      (slotIndex: integer, _option: PartyOption) => {
         if (slotIndex >= 0 && slotIndex < 6) {
           const pokemon = globalScene.getPlayerParty()[slotIndex];
           if (!pokemon || !pokemon.isFainted()) {

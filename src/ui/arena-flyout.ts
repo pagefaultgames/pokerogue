@@ -215,7 +215,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     globalScene.eventTarget.addEventListener(BattleSceneEventType.TURN_END, this.onTurnEndEvent);
   }
 
-  private onNewArena(event: Event) {
+  private onNewArena(_event: Event) {
     this.fieldEffectInfo.length = 0;
 
     // Subscribes to required events available on battle start
@@ -282,7 +282,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     let foundIndex: number;
     switch (arenaEffectChangedEvent.constructor) {
-      case TagAddedEvent:
+      case TagAddedEvent: {
         const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
         const isArenaTrapTag = globalScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof ArenaTrapTag;
         let arenaEffectType: ArenaEffectType;
@@ -321,7 +321,8 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           tagType: tagAddedEvent.arenaTagType,
         });
         break;
-      case TagRemovedEvent:
+      }
+      case TagRemovedEvent: {
         const tagRemovedEvent = arenaEffectChangedEvent as TagRemovedEvent;
         foundIndex = this.fieldEffectInfo.findIndex(info => info.tagType === tagRemovedEvent.arenaTagType);
 
@@ -330,9 +331,10 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           this.fieldEffectInfo.splice(foundIndex, 1);
         }
         break;
+      }
 
       case WeatherChangedEvent:
-      case TerrainChangedEvent:
+      case TerrainChangedEvent: {
         const fieldEffectChangedEvent = arenaEffectChangedEvent as WeatherChangedEvent | TerrainChangedEvent;
 
         // Stores the old Weather/Terrain name in case it's in the array already
@@ -365,6 +367,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           this.fieldEffectInfo[foundIndex] = newInfo; // Otherwise, replace the old info
         }
         break;
+      }
     }
 
     this.updateFieldText();

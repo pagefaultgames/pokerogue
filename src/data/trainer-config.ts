@@ -60,15 +60,15 @@ export class TrainerPartyTemplate {
     this.balanced = !!balanced;
   }
 
-  getStrength(index: number): PartyMemberStrength {
+  getStrength(_index: number): PartyMemberStrength {
     return this.strength;
   }
 
-  isSameSpecies(index: number): boolean {
+  isSameSpecies(_index: number): boolean {
     return this.sameSpecies;
   }
 
-  isBalanced(index: number): boolean {
+  isBalanced(_index: number): boolean {
     return this.balanced;
   }
 }
@@ -1230,10 +1230,10 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
-   * @param isMale Whether the stat trainer is Male or Female (for localization of the title).
+   * @param _isMale Whether the stat trainer is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    **/
-  initForStatTrainer(isMale = false): TrainerConfig {
+  initForStatTrainer(_isMale = false): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }

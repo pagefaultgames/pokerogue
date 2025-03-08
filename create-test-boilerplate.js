@@ -31,7 +31,8 @@ async function promptTestType() {
   if (typeAnswer.selectedOption === "EXIT") {
     console.log("Exiting...");
     return process.exit();
-  } else if (!typeChoices.includes(typeAnswer.selectedOption)) {
+  }
+  if (!typeChoices.includes(typeAnswer.selectedOption)) {
     console.error(`Please provide a valid type (${typeChoices.join(", ")})!`);
     return await promptTestType();
   }

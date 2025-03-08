@@ -128,7 +128,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.shown = true;
   }
 
-  protected hide(playerGender: PlayerGender): void {
+  protected hide(_playerGender: PlayerGender): void {
     if (!this.shown) {
       return;
     }

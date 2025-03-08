@@ -10,7 +10,8 @@ import {
   getTerrainStartMessage,
   getWeatherClearMessage,
   getWeatherStartMessage,
-  getLegendaryWeatherContinuesMessage, Weather,
+  getLegendaryWeatherContinuesMessage,
+  Weather,
 } from "#app/data/weather";
 import { CommonAnim } from "#app/data/battle-anims";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -319,8 +320,13 @@ export class Arena {
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
-    if (this.weather?.isImmutable() && ![ WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE ].includes(weather)) {
-      globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (oldWeatherType - 1), true));
+    if (
+      this.weather?.isImmutable() &&
+      ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
+    ) {
+      globalScene.unshiftPhase(
+        new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (oldWeatherType - 1), true),
+      );
       globalScene.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
       return false;
     }

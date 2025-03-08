@@ -456,7 +456,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
 
     switch (this.summaryUiMode) {
-      case SummaryUiMode.DEFAULT:
+      case SummaryUiMode.DEFAULT: {
         const page = args.length < 2 ? Page.PROFILE : (args[2] as Page);
         this.hideMoveEffect(true);
         this.setCursor(page);
@@ -464,6 +464,7 @@ export default class SummaryUiHandler extends UiHandler {
           this.selectCallback = args[3];
         }
         break;
+      }
       case SummaryUiMode.LEARN_MOVE:
         this.newMove = args[2] as Move;
         this.moveSelectFunction = args[3] as Function;
@@ -500,7 +501,7 @@ export default class SummaryUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         if (this.pokemon && this.moveCursor < this.pokemon.moveset.length) {
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
-            this.moveSelectFunction && this.moveSelectFunction(this.moveCursor);
+            this.moveSelectFunction?.(this.moveCursor);
           } else {
             if (this.selectedMoveIndex === -1) {
               this.selectedMoveIndex = this.moveCursor;
@@ -602,7 +603,7 @@ export default class SummaryUiHandler extends UiHandler {
         const pages = Utils.getEnumValues(Page);
         switch (button) {
           case Button.UP:
-          case Button.DOWN:
+          case Button.DOWN: {
             if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
               break;
             }
@@ -618,6 +619,7 @@ export default class SummaryUiHandler extends UiHandler {
               this.show([party[partyMemberIndex + (isDown ? 1 : -1)], this.summaryUiMode, page]);
             }
             break;
+          }
           case Button.LEFT:
             if (this.cursor) {
               success = this.setCursor(this.cursor - 1);
@@ -786,7 +788,7 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     switch (page) {
-      case Page.PROFILE:
+      case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
 
@@ -956,7 +958,8 @@ export default class SummaryUiHandler extends UiHandler {
         memoText.setOrigin(0, 0);
         profileContainer.add(memoText);
         break;
-      case Page.STATS:
+      }
+      case Page.STATS: {
         this.statsContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(this.statsContainer);
         this.permStatsContainer = globalScene.add.container(27, 56);
@@ -1075,7 +1078,8 @@ export default class SummaryUiHandler extends UiHandler {
         this.abilityPrompt.setOrigin(0, 0);
         this.statsContainer.add(this.abilityPrompt);
         break;
-      case Page.MOVES:
+      }
+      case Page.MOVES: {
         this.movesContainer = globalScene.add.container(5, -pageBg.height + 26);
         pageContainer.add(this.movesContainer);
 
@@ -1168,6 +1172,7 @@ export default class SummaryUiHandler extends UiHandler {
 
         this.moveDescriptionText.setMask(moveDescriptionTextMask);
         break;
+      }
     }
   }
 
@@ -1221,7 +1226,7 @@ export default class SummaryUiHandler extends UiHandler {
 
   hideMoveSelect() {
     if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
-      this.moveSelectFunction && this.moveSelectFunction(4);
+      this.moveSelectFunction?.(4);
       return;
     }
 

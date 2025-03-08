@@ -197,7 +197,8 @@ export default class CommandUiHandler extends UiHandler {
   canTera(): boolean {
     const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
     const activePokemon = globalScene.getField()[this.fieldIndex];
-    const isBlockedForm = activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(Species.NECROZMA, "ultra");
+    const isBlockedForm =
+      activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(Species.NECROZMA, "ultra");
     const currentTeras = globalScene.arena.playerTerasUsed;
     const plannedTera =
       globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;

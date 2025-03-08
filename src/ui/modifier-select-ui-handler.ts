@@ -173,7 +173,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       return false;
     }
 
-    if (args.length !== 4 || !(args[1] instanceof Array) || !(args[2] instanceof Function)) {
+    if (args.length !== 4 || !Array.isArray(args[1]) || !(args[2] instanceof Function)) {
       return false;
     }
 

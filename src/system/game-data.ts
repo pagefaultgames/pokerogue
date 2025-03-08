@@ -265,31 +265,30 @@ export interface StarterPreferences {
 const StarterPrefers_DEFAULT: string = "{}";
 let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
 
+// called on starter selection show once
+export function loadStarterPreferences(): StarterPreferences {
+  return JSON.parse(
+    (StarterPrefers_private_latest =
+      localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
+  );
+}
+
+// called on starter selection clear, always
+export function saveStarterPreferences(prefs: StarterPreferences): void {
+  const pStr: string = JSON.stringify(prefs);
+  if (pStr !== StarterPrefers_private_latest) {
+    // something changed, store the update
+    localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+    // update the latest prefs
+    StarterPrefers_private_latest = pStr;
+  }
+}
 // This is its own class as StarterPreferences...
 // - don't need to be loaded on startup
 // - isn't stored with other data
 // - don't require to be encrypted
 // - shouldn't require calls outside of the starter selection
-export class StarterPrefs {
-  // called on starter selection show once
-  static load(): StarterPreferences {
-    return JSON.parse(
-      (StarterPrefers_private_latest =
-        localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
-    );
-  }
-
-  // called on starter selection clear, always
-  static save(prefs: StarterPreferences): void {
-    const pStr: string = JSON.stringify(prefs);
-    if (pStr !== StarterPrefers_private_latest) {
-      // something changed, store the update
-      localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
-      // update the latest prefs
-      StarterPrefers_private_latest = pStr;
-    }
-  }
-}
+export class StarterPrefs {}
 
 export interface StarterDataEntry {
   moveset: StarterMoveset | StarterFormMoveData | null;
@@ -424,7 +423,7 @@ export class GameData {
       const data = this.getSystemSaveData();
 
       const maxIntAttrValue = 0x80000000;
-      const systemData = JSON.stringify(data, (k: any, v: any) =>
+      const systemData = JSON.stringify(data, (_k: any, v: any) =>
         typeof v === "bigint" ? (v <= maxIntAttrValue ? Number(v) : v.toString()) : v,
       );
 
@@ -1319,7 +1318,7 @@ export class GameData {
         }
         localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       } else {
-        if (jsonResponse && jsonResponse.error?.startsWith("session out of date")) {
+        if (jsonResponse?.error?.startsWith("session out of date")) {
           globalScene.clearPhaseQueue();
           globalScene.unshiftPhase(new ReloadSessionPhase());
         }
@@ -1439,7 +1438,7 @@ export class GameData {
         localStorage.setItem(
           `data_${loggedInUser?.username}`,
           encrypt(
-            JSON.stringify(systemData, (k: any, v: any) =>
+            JSON.stringify(systemData, (_k: any, v: any) =>
               typeof v === "bigint" ? (v <= maxIntAttrValue ? Number(v) : v.toString()) : v,
             ),
             bypassLogin,
@@ -1636,11 +1635,9 @@ export class GameData {
                             `An error occurred while updating ${dataName} data. Please contact the administrator.`,
                           );
                         }
-                        window.location = window.location;
                       });
                     });
                   } else {
-                    window.location = window.location;
                   }
                 },
                 () => {
@@ -2108,7 +2105,7 @@ export class GameData {
     return ret;
   }
 
-  getSpeciesDexAttrProps(species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
+  getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
     let variant: Variant = 0;

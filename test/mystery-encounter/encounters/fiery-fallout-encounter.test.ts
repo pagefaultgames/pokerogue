@@ -218,8 +218,12 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
 
-      const burnablePokemon = party.filter(pkm => pkm.isAllowedInBattle() && !pkm.getTypes().includes(PokemonType.FIRE));
-      const notBurnablePokemon = party.filter(pkm => !pkm.isAllowedInBattle() || pkm.getTypes().includes(PokemonType.FIRE));
+      const burnablePokemon = party.filter(
+        pkm => pkm.isAllowedInBattle() && !pkm.getTypes().includes(PokemonType.FIRE),
+      );
+      const notBurnablePokemon = party.filter(
+        pkm => !pkm.isAllowedInBattle() || pkm.getTypes().includes(PokemonType.FIRE),
+      );
       expect(scene.currentBattle.mysteryEncounter?.dialogueTokens["burnedPokemon"]).toBe(i18next.t("pokemon:gengar"));
       burnablePokemon.forEach(pkm => {
         expect(pkm.hp, `${pkm.name} should have received 20% damage: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(

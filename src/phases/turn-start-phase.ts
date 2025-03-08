@@ -221,7 +221,7 @@ export class TurnStartPhase extends FieldPhase {
           let runningPokemon = pokemon;
           if (globalScene.currentBattle.double) {
             const playerActivePokemon = field.filter(pokemon => {
-              if (!!pokemon) {
+              if (pokemon) {
                 return pokemon.isPlayer() && pokemon.isActive();
               }
               return;

@@ -14,7 +14,8 @@ export const systemMigrators = [
       Object.keys(data.starterData).forEach(sd => {
         const caughtAttr = data.dexData[sd]?.caughtAttr;
         const speciesNumber = Number(sd);
-        if (!speciesNumber) { // An unknown bug at some point in time caused some accounts to have starter data for pokedex number 0 which crashes
+        if (!speciesNumber) {
+          // An unknown bug at some point in time caused some accounts to have starter data for pokedex number 0 which crashes
           return;
         }
         const species = getPokemonSpecies(speciesNumber);

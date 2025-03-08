@@ -30,7 +30,7 @@ import type {
   StarterAttributes,
   StarterPreferences,
 } from "#app/system/game-data";
-import { AbilityAttr, DexAttr, StarterPrefs } from "#app/system/game-data";
+import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
@@ -79,6 +79,7 @@ import type { Nature } from "#enums/nature";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { achvs } from "#app/system/achv";
 import * as Utils from "../utils";
+import type { GameObjects } from "phaser";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -1174,7 +1175,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     if (!this.starterPreferences) {
       // starterPreferences haven't been loaded yet
-      this.starterPreferences = StarterPrefs.load();
+      this.starterPreferences = loadStarterPreferences();
     }
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.pokerusSpecies = getPokerusStarters();
@@ -1241,11 +1242,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const hasNonShiny = caughtAttr & DexAttr.NON_SHINY;
     if (starterAttributes.shiny && !hasShiny) {
       // shiny form wasn't unlocked, purging shiny and variant setting
-      delete starterAttributes.shiny;
-      delete starterAttributes.variant;
+      starterAttributes.shiny = undefined;
+      starterAttributes.variant = undefined;
     } else if (starterAttributes.shiny === false && !hasNonShiny) {
       // non shiny form wasn't unlocked, purging shiny setting
-      delete starterAttributes.shiny;
+      starterAttributes.shiny = undefined;
     }
 
     if (starterAttributes.variant !== undefined) {
@@ -1260,14 +1261,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         !unlockedVariants[starterAttributes.variant]
       ) {
         // variant value is invalid or requested variant wasn't unlocked, purging setting
-        delete starterAttributes.variant;
+        starterAttributes.variant = undefined;
       }
     }
 
     if (starterAttributes.female !== undefined) {
       if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
         // requested gender wasn't unlocked, purging setting
-        delete starterAttributes.female;
+        starterAttributes.female = undefined;
       }
     }
 
@@ -1286,7 +1287,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       ];
       if (!unlockedAbilities[starterAttributes.ability]) {
         // requested ability wasn't unlocked, purging setting
-        delete starterAttributes.ability;
+        starterAttributes.ability = undefined;
       }
     }
 
@@ -1297,14 +1298,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
-      delete starterAttributes.form;
+      starterAttributes.form = undefined;
     }
 
     if (starterAttributes.nature !== undefined) {
       const unlockedNatures = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr);
       if (unlockedNatures.indexOf(starterAttributes.nature as unknown as Nature) < 0) {
         // requested nature wasn't unlocked, purging setting
-        delete starterAttributes.nature;
+        starterAttributes.nature = undefined;
       }
     }
 
@@ -1836,7 +1837,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           break;
       }
     } else {
-      let starterContainer;
+      let starterContainer: StarterContainer;
       const starterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
       // prepare persistent starter data to store changes
       let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
@@ -2806,8 +2807,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
-    let iconPath;
+  updateButtonIcon(
+    iconSetting: SettingKeyboard,
+    gamepadType: string,
+    iconElement: GameObjects.Sprite,
+    controlLabel: GameObjects.Text,
+  ): void {
+    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+    let iconPath: string;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
@@ -2840,6 +2847,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     } else {
       iconPath = globalScene.inputController?.getIconForLatestInputRecorded(iconSetting);
     }
+    // @ts-ignore: TODO can iconPath actually be undefined?
     iconElement.setTexture(gamepadType, iconPath);
     iconElement.setPosition(this.instructionRowX, this.instructionRowY);
     controlLabel.setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY);
@@ -2853,8 +2861,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  updateFilterButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
-    let iconPath;
+  updateFilterButtonIcon(
+    iconSetting: SettingKeyboard,
+    gamepadType: string,
+    iconElement: GameObjects.Sprite,
+    controlLabel: GameObjects.Text,
+  ): void {
+    let iconPath: string;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
@@ -2884,7 +2897,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.hideInstructions();
     this.instructionsContainer.removeAll();
     this.filterInstructionsContainer.removeAll();
-    let gamepadType;
+    let gamepadType: string;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
         globalScene.inputController.selectedDevice[Device.GAMEPAD],
@@ -3216,17 +3229,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
     this.filteredStarterContainers.sort((a, b) => {
       switch (sort.val) {
-        default:
-          break;
         case SortCriteria.NUMBER:
           return (a.species.speciesId - b.species.speciesId) * -sort.dir;
         case SortCriteria.COST:
           return (a.cost - b.cost) * -sort.dir;
-        case SortCriteria.CANDY:
+        case SortCriteria.CANDY: {
           const candyCountA = globalScene.gameData.starterData[a.species.speciesId].candyCount;
           const candyCountB = globalScene.gameData.starterData[b.species.speciesId].candyCount;
           return (candyCountA - candyCountB) * -sort.dir;
-        case SortCriteria.IV:
+        }
+        case SortCriteria.IV: {
           const avgIVsA =
             globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
             globalScene.gameData.dexData[a.species.speciesId].ivs.length;
@@ -3234,6 +3246,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             globalScene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
             globalScene.gameData.dexData[b.species.speciesId].ivs.length;
           return (avgIVsA - avgIVsB) * -sort.dir;
+        }
         case SortCriteria.NAME:
           return a.species.name.localeCompare(b.species.name) * -sort.dir;
         case SortCriteria.CAUGHT:
@@ -3893,7 +3906,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             .filter(f => f).length > 1;
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
         this.canCycleTera =
-          !this.statsMode && globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
+          !this.statsMode &&
+          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
           !Utils.isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2);
       }
 
@@ -4015,7 +4029,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const availableStarterMoves = this.speciesStarterMoves.concat(
           speciesEggMoves.hasOwnProperty(species.speciesId)
             ? speciesEggMoves[species.speciesId].filter(
-                (_, em: number) => globalScene.gameData.starterData[species.speciesId].eggMoves & (1 << em),
+                (_: any, em: number) => globalScene.gameData.starterData[species.speciesId].eggMoves & (1 << em),
               )
             : [],
         );
@@ -4081,7 +4095,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     for (let em = 0; em < 4; em++) {
       const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
       const eggMoveUnlocked = eggMove && globalScene.gameData.starterData[species.speciesId].eggMoves & (1 << em);
-      this.pokemonEggMoveBgs[em].setFrame(PokemonType[eggMove ? eggMove.type : PokemonType.UNKNOWN].toString().toLowerCase());
+      this.pokemonEggMoveBgs[em].setFrame(
+        PokemonType[eggMove ? eggMove.type : PokemonType.UNKNOWN].toString().toLowerCase(),
+      );
       this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
     }
 
@@ -4354,26 +4370,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               const thisObj = this;
               const originalStarterSelectCallback = this.starterSelectCallback;
               this.starterSelectCallback = null;
-              originalStarterSelectCallback &&
-                originalStarterSelectCallback(
-                  new Array(this.starterSpecies.length).fill(0).map((_, i) => {
-                    const starterSpecies = thisObj.starterSpecies[i];
-                    return {
-                      species: starterSpecies,
-                      dexAttr: thisObj.starterAttr[i],
-                      abilityIndex: thisObj.starterAbilityIndexes[i],
-                      passive: !(
-                        globalScene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^
-                        (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)
-                      ),
-                      nature: thisObj.starterNatures[i] as Nature,
-                      teraType: thisObj.starterTeras[i] as PokemonType,
-                      moveset: thisObj.starterMovesets[i],
-                      pokerus: thisObj.pokerusSpecies.includes(starterSpecies),
-                      nickname: thisObj.starterPreferences[starterSpecies.speciesId]?.nickname,
-                    };
-                  }),
-                );
+              originalStarterSelectCallback?.(
+                new Array(this.starterSpecies.length).fill(0).map((_, i) => {
+                  const starterSpecies = thisObj.starterSpecies[i];
+                  return {
+                    species: starterSpecies,
+                    dexAttr: thisObj.starterAttr[i],
+                    abilityIndex: thisObj.starterAbilityIndexes[i],
+                    passive: !(
+                      globalScene.gameData.starterData[starterSpecies.speciesId].passiveAttr ^
+                      (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)
+                    ),
+                    nature: thisObj.starterNatures[i] as Nature,
+                    teraType: thisObj.starterTeras[i] as PokemonType,
+                    moveset: thisObj.starterMovesets[i],
+                    pokerus: thisObj.pokerusSpecies.includes(starterSpecies),
+                    nickname: thisObj.starterPreferences[starterSpecies.speciesId]?.nickname,
+                  };
+                }),
+              );
             };
             startRun();
           },
@@ -4495,9 +4510,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       //@ts-ignore
       this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. !?!?
       this.teraIcon.setVisible(globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id));
-      const props = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.getCurrentDexProps(this.lastSpecies.speciesId));
+      const props = globalScene.gameData.getSpeciesDexAttrProps(
+        this.lastSpecies,
+        this.getCurrentDexProps(this.lastSpecies.speciesId),
+      );
       const formIndex = props.formIndex;
-      this.canCycleTera = !this.statsMode && globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2);
+      this.canCycleTera =
+        !this.statsMode &&
+        globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
+        !Utils.isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2);
       this.updateInstructions();
     }
   }
@@ -4537,7 +4558,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   clear(): void {
     super.clear();
 
-    StarterPrefs.save(this.starterPreferences);
+    saveStarterPreferences(this.starterPreferences);
     this.cursor = -1;
     this.hideInstructions();
     this.activeTooltip = undefined;

@@ -48,19 +48,19 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     this.keys = keys;
   }
 
-  getModalTitle(config?: ModalConfig): string {
+  getModalTitle(_config?: ModalConfig): string {
     return "Test Dialogue";
   }
 
-  getWidth(config?: ModalConfig): number {
+  getWidth(_config?: ModalConfig): number {
     return 300;
   }
 
-  getMargin(config?: ModalConfig): [number, number, number, number] {
+  getMargin(_config?: ModalConfig): [number, number, number, number] {
     return [0, 0, 48, 0];
   }
 
-  getButtonLabels(config?: ModalConfig): string[] {
+  getButtonLabels(_config?: ModalConfig): string[] {
     return ["Check", "Cancel"];
   }
 

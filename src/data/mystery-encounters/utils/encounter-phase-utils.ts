@@ -210,8 +210,8 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   battle.enemyLevels = battle.enemyLevels.map(level => level + additive);
 
   battle.enemyLevels.forEach((level, e) => {
-    let enemySpecies;
-    let dataSource;
+    let enemySpecies: PokemonSpecies | undefined;
+    let dataSource: PokemonData | undefined;
     let isBoss = false;
     if (!loaded) {
       if ((!isNullOrUndefined(trainerType) || trainerConfig) && battle.trainer) {
@@ -991,7 +991,7 @@ export function handleMysteryEncounterBattleStartEffects() {
   ) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
-      let source;
+      let source: EnemyPokemon | Pokemon;
       if (effect.sourcePokemon) {
         source = effect.sourcePokemon;
       } else if (!isNullOrUndefined(effect.sourceBattlerIndex)) {
@@ -1009,6 +1009,7 @@ export function handleMysteryEncounterBattleStartEffects() {
       } else {
         source = globalScene.getEnemyField()[0];
       }
+      // @ts-ignore: source cannot be undefined
       globalScene.pushPhase(new MovePhase(source, effect.targets, effect.move, effect.followUp, effect.ignorePp));
     });
 
@@ -1045,7 +1046,7 @@ export function getRandomEncounterSpecies(level: number, isBoss = false, rerollH
   let bossSpecies: PokemonSpecies;
   let isEventEncounter = false;
   const eventEncounters = globalScene.eventManager.getEventEncounters();
-  let formIndex;
+  let formIndex: number | undefined;
 
   if (eventEncounters.length > 0 && randSeedInt(2) === 1) {
     const eventEncounter = randSeedItem(eventEncounters);

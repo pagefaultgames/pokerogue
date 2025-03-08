@@ -47,7 +47,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
 
   showDialogue(
     text: string,
-    name?: string,
+    _name?: string,
     delay?: number | null,
     callback?: Function | null,
     callbackDelay?: number | null,

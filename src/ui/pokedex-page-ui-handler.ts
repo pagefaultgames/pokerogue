@@ -763,7 +763,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.tmMoves =
       speciesTmMoves[species.speciesId]
-        ?.filter(m => (Array.isArray(m) ? (m[0] === formKey ? true : false) : true))
+        ?.filter(m => (Array.isArray(m) ? m[0] === formKey : true))
         .map(m => (Array.isArray(m) ? m[1] : m))
         .sort((a, b) => (allMoves[a].name > allMoves[b].name ? 1 : -1)) ?? [];
 
@@ -1539,7 +1539,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     });
                     this.evolutions.map(evo => {
                       const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
-                      const isCaughtEvo = this.isCaught(evoSpecies) ? true : false;
+                      const isCaughtEvo = !!this.isCaught(evoSpecies);
                       // Attempts to find the formIndex of the evolved species
                       const newFormKey = evo.evoFormKey
                         ? evo.evoFormKey
@@ -1664,7 +1664,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
                   ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                     options: natures
-                      .map((n: Nature, i: number) => {
+                      .map((n: Nature, _i: number) => {
                         const option: OptionSelectItem = {
                           label: getNatureName(n, true, true, true, globalScene.uiTheme),
                           handler: () => {
@@ -2029,6 +2029,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
+    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
@@ -2074,6 +2075,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.hideInstructions();
     this.instructionsContainer.removeAll();
     this.filterInstructionsContainer.removeAll();
+
+    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
     let gamepadType;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
@@ -2166,7 +2169,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return ret;
   }
 
-  getFriendship(speciesId: number) {
+  getFriendship(_speciesId: number) {
     let currentFriendship = globalScene.gameData.starterData[this.starterId].friendship;
     if (!currentFriendship || currentFriendship === undefined) {
       currentFriendship = 0;
@@ -2399,7 +2402,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.assetLoadCancelled = assetLoadCancelled;
 
       if (shouldUpdateSprite) {
-        const back = this.showBackSprite ? true : false;
+        const back = !!this.showBackSprite;
         species.loadAssets(female!, formIndex, shiny, variant as Variant, true, back).then(() => {
           // TODO: is this bang correct?
           if (assetLoadCancelled.value) {

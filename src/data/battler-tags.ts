@@ -2125,7 +2125,13 @@ export class TypeBoostTag extends BattlerTag {
   public boostValue: number;
   public oneUse: boolean;
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, boostedType: PokemonType, boostValue: number, oneUse: boolean) {
+  constructor(
+    tagType: BattlerTagType,
+    sourceMove: Moves,
+    boostedType: PokemonType,
+    boostValue: number,
+    oneUse: boolean,
+  ) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
 
     this.boostedType = boostedType;
@@ -2334,8 +2340,10 @@ export class RoostedTag extends BattlerTag {
     const currentTypes = pokemon.getTypes();
     const baseTypes = pokemon.getTypes(false, false, true);
 
-    const forestsCurseApplied: boolean = currentTypes.includes(PokemonType.GRASS) && !baseTypes.includes(PokemonType.GRASS);
-    const trickOrTreatApplied: boolean = currentTypes.includes(PokemonType.GHOST) && !baseTypes.includes(PokemonType.GHOST);
+    const forestsCurseApplied: boolean =
+      currentTypes.includes(PokemonType.GRASS) && !baseTypes.includes(PokemonType.GRASS);
+    const trickOrTreatApplied: boolean =
+      currentTypes.includes(PokemonType.GHOST) && !baseTypes.includes(PokemonType.GHOST);
 
     if (this.isBaseFlying) {
       let modifiedTypes: PokemonType[] = [];

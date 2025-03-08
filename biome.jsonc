@@ -27,7 +27,7 @@
       "*.css", // TODO?
       "*.html", // TODO?
       // TODO: these files are too big and complex, ignore them until their respective refactors
-      "src/data/move.ts",
+      "src/data/moves/move.ts",
       "src/data/ability.ts",
       "src/field/pokemon.ts",
 
@@ -77,7 +77,7 @@
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",
         "useLiteralKeys": "off",
-        "noForEach": "info", // TODO: Refactor use of foreach and remove this line.
+        "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "warn", // TODO: Refactor and make this an error
         "noBannedTypes": "warn" // TODO: Refactor and make this an error

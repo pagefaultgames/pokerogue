@@ -233,7 +233,7 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
   }
 
   // width of this element
-  static getWidth(scale: number): number {
+  static getWidth(_scale: number): number {
     return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
   }
 

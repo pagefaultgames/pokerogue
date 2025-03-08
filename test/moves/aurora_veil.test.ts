@@ -117,27 +117,35 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("does not affect physical critical hits", async () => {
-    game.override.moveset([ Moves.WICKED_BLOW ]);
+    game.override.moveset([Moves.WICKED_BLOW]);
     const moveToUse = Moves.WICKED_BLOW;
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(
+      game.scene.getEnemyPokemon()!,
+      game.scene.getPlayerPokemon()!,
+      allMoves[moveToUse],
+    );
     expect(mockedDmg).toBe(allMoves[moveToUse].power);
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([ Moves.FROST_BREATH ]);
+    game.override.moveset([Moves.FROST_BREATH]);
     const moveToUse = Moves.FROST_BREATH;
     vi.spyOn(allMoves[Moves.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(
+      game.scene.getEnemyPokemon()!,
+      game.scene.getPlayerPokemon()!,
+      allMoves[moveToUse],
+    );
     expect(mockedDmg).toBe(allMoves[moveToUse].power);
   });
 });
@@ -158,13 +166,13 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   if (globalScene.arena.getTagOnSide(ArenaTagType.AURORA_VEIL, side)) {
     if (move.getAttrs(CritOnlyAttr).length === 0) {
       globalScene.arena.applyTagsForSide(
-      ArenaTagType.AURORA_VEIL,
-      side,
-      false,
-      attacker,
-      move.category,
-      multiplierHolder,
-    );
+        ArenaTagType.AURORA_VEIL,
+        side,
+        false,
+        attacker,
+        move.category,
+        multiplierHolder,
+      );
     }
   }
 

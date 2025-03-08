@@ -168,7 +168,7 @@ export abstract class ModalUiHandler extends UiHandler {
     }
   }
 
-  processInput(button: Button): boolean {
+  processInput(_button: Button): boolean {
     return false;
   }
 

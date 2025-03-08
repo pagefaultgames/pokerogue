@@ -21,15 +21,15 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 };
 
 export default class RegistrationFormUiHandler extends FormModalUiHandler {
-  getModalTitle(config?: ModalConfig): string {
+  getModalTitle(_config?: ModalConfig): string {
     return i18next.t("menu:register");
   }
 
-  getWidth(config?: ModalConfig): number {
+  getWidth(_config?: ModalConfig): number {
     return 160;
   }
 
-  getMargin(config?: ModalConfig): [number, number, number, number] {
+  getMargin(_config?: ModalConfig): [number, number, number, number] {
     return [0, 0, 48, 0];
   }
 
@@ -37,7 +37,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
     return 8;
   }
 
-  getButtonLabels(config?: ModalConfig): string[] {
+  getButtonLabels(_config?: ModalConfig): string[] {
     return [i18next.t("menu:register"), i18next.t("menu:backToLogin")];
   }
 
@@ -134,7 +134,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
                 })
                 .then(loginError => {
                   if (!loginError) {
-                    originalRegistrationAction && originalRegistrationAction();
+                    originalRegistrationAction?.();
                   } else {
                     onFail(loginError);
                   }

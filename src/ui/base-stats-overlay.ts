@@ -107,12 +107,12 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
   }
 
   // width of this element
-  static getWidth(scale: number): number {
+  static getWidth(_scale: number): number {
     return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
   }
 
   // height of this element
-  static getHeight(scale: number, onSide?: boolean): number {
+  static getHeight(scale: number, _onSide?: boolean): number {
     return HEIGHT * scale;
   }
 }

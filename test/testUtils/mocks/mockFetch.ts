@@ -1,7 +1,9 @@
 export const MockFetch = (input, _init) => {
   const url = typeof input === "string" ? input : input.url;
 
+  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
   let responseHandler;
+  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
   let responseText;
 
   const handlers = {

@@ -96,27 +96,35 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([ Moves.WICKED_BLOW ]);
+    game.override.moveset([Moves.WICKED_BLOW]);
     const moveToUse = Moves.WICKED_BLOW;
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(
+      game.scene.getEnemyPokemon()!,
+      game.scene.getPlayerPokemon()!,
+      allMoves[moveToUse],
+    );
 
     expect(mockedDmg).toBe(allMoves[moveToUse].power);
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([ Moves.WICKED_BLOW ]);
+    game.override.moveset([Moves.WICKED_BLOW]);
     const moveToUse = Moves.WICKED_BLOW;
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const mockedDmg = getMockedMoveDamage(game.scene.getEnemyPokemon()!, game.scene.getPlayerPokemon()!, allMoves[moveToUse]);
+    const mockedDmg = getMockedMoveDamage(
+      game.scene.getEnemyPokemon()!,
+      game.scene.getPlayerPokemon()!,
+      allMoves[moveToUse],
+    );
     expect(mockedDmg).toBe(allMoves[moveToUse].power);
   });
 });

@@ -24,11 +24,5 @@
     "exclude": "**/*+.test.ts",
     "out": "typedoc"
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "vite.config.ts",
-    "vitest.config.ts",
-    "vitest.workspace.ts"
-  ]
+  "exclude": ["node_modules", "dist", "vite.config.ts", "vitest.config.ts", "vitest.workspace.ts"]
 }

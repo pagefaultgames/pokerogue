@@ -10,8 +10,11 @@ import { MenuManip } from "#test/settingMenu/helpers/menuManip";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Rebinding", () => {
+  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
   let config;
+  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
   let inGame;
+  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
   let inTheSettingMenu;
   const configs: Map<string, InterfaceConfig> = new Map();
   const selectedDevice = {

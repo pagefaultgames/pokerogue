@@ -51,7 +51,7 @@ export class SelectBiomePhase extends BattlePhase {
               ? [biomeLinks[currentBiome] as Biome]
               : (biomeLinks[currentBiome] as (Biome | [Biome, number])[])
           )
-            .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
+            .filter((b, _i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
             .map(b => (Array.isArray(b) ? b[0] : b));
         }, globalScene.currentBattle.waveIndex);
         const biomeSelectItems = biomeChoices.map(b => {

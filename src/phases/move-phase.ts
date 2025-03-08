@@ -373,7 +373,7 @@ export class MovePhase extends BattlePhase {
      * TODO: is this sustainable?
      */
     let failedDueToTerrain = false;
-    let failedDueToWeather: boolean = false;
+    let failedDueToWeather = false;
     if (success) {
       const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
       failedDueToWeather = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
@@ -517,7 +517,8 @@ export class MovePhase extends BattlePhase {
         // Handle interaction between the rage powder center-of-attention tag and moves used by grass types/overcoat-havers (which are immune to RP's redirect)
         if (
           redirectTag &&
-          (!redirectTag.powder || (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))
+          (!redirectTag.powder ||
+            (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))
         ) {
           redirectTarget.value = p.getBattlerIndex();
           redirectedByAbility = false;

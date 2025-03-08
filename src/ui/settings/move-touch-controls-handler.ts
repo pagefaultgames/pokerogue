@@ -53,7 +53,7 @@ export default class MoveTouchControlsHandler {
     this.touchControls = touchControls;
     this.inConfigurationMode = false;
     this.setPositions(this.getSavedPositionsOfCurrentOrientation() ?? []);
-    window.addEventListener("resize", event => {
+    window.addEventListener("resize", _event => {
       const screenSize = this.getScreenSize();
       if (screenSize.width > screenSize.height !== this.isLandscapeMode) {
         this.changeOrientation(screenSize.width > screenSize.height);
