@@ -48,7 +48,8 @@ export type TempBattleStat = typeof TEMP_BATTLE_STATS[number];
 export function getStatStageChangeDescriptionKey(stages: number, isIncrease: boolean) {
   if (stages === 1) {
     return isIncrease ? "battle:statRose" : "battle:statFell";
-  }if (stages === 2) {
+  }
+  if (stages === 2) {
     return isIncrease ? "battle:statSharplyRose" : "battle:statHarshlyFell";
   }
   if (stages > 2 && stages <= 6) {
