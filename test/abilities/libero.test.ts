@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/moves/move";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Weather } from "#app/data/weather";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";

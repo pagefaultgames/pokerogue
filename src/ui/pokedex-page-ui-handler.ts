@@ -19,7 +19,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { GameModes } from "#app/game-mode";
 import type { DexEntry, StarterAttributes  } from "#app/system/game-data";
 import { AbilityAttr, DexAttr  } from "#app/system/game-data";

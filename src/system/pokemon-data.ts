@@ -13,7 +13,7 @@ import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import type { PokemonType } from "#app/enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 
 export default class PokemonData {
   public id: number;

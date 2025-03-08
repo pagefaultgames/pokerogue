@@ -13,7 +13,7 @@ import { Mode } from "#app/ui/ui";
 import type { PartyOption } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
-import type { PokemonType } from "#enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";

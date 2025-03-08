@@ -2,7 +2,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TerrainType } from "#app/data/terrain";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { BattlerIndex } from "#app/battle";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";

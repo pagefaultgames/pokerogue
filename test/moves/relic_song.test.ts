@@ -1,4 +1,4 @@
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#app/enums/challenges";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";

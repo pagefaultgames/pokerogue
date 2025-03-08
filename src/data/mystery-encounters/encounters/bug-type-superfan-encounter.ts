@@ -41,7 +41,7 @@ import {
   HeldItemRequirement,
   TypeRequirement
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import type {

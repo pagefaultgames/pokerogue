@@ -3,7 +3,7 @@ import { allMoves } from "#app/data/moves/move";
 import { Status } from "#app/data/status-effect";
 import { Challenges } from "#enums/challenges";
 import { StatusEffect } from "#enums/status-effect";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

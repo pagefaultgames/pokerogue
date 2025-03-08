@@ -1,4 +1,4 @@
-import type { PokemonType } from "#enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";

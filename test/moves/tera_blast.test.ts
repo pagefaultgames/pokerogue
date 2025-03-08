@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { allMoves, TeraMoveCategoryAttr } from "#app/data/moves/move";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
 import { HitResult } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";

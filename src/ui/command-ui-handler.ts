@@ -8,7 +8,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
-import { PokemonType } from "#app/enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { getTypeRgb } from "#app/data/type";
 import { Species } from "#enums/species";
 

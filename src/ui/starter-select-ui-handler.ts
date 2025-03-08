@@ -21,7 +21,7 @@ import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balan
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { GameModes } from "#app/game-mode";
 import type { DexAttrProps, DexEntry, StarterMoveset, StarterAttributes, StarterPreferences } from "#app/system/game-data";
 import { AbilityAttr, DexAttr, StarterPrefs } from "#app/system/game-data";

@@ -2,7 +2,7 @@ import { Biome } from "#enums/biome";
 import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
 import type Pokemon from "../field/pokemon";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import type Move from "./moves/move";
 import { AttackMove } from "./moves/move";
 import * as Utils from "../utils";

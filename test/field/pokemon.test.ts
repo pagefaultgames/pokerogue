@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { PokeballType } from "#enums/pokeball";
 import type BattleScene from "#app/battle-scene";
 import { Moves } from "#app/enums/moves";
-import { PokemonType } from "#app/enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
 describe("Spec - Pokemon", () => {

@@ -3,7 +3,7 @@ import type { Moves } from "#app/enums/moves";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import type { PokemonType } from "#enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 import { EncounterPokemonRequirement, EncounterSceneRequirement, MoneyRequirement, TypeRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import type { CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 import { CanLearnMoveRequirement } from "./requirements/can-learn-move-requirement";

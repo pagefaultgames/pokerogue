@@ -6,7 +6,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveResult, PokemonMove } from "#app/field/pokemon";
-import { PokemonType } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";

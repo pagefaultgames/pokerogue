@@ -1,5 +1,5 @@
 import type { Abilities } from "#enums/abilities";
-import type { PokemonType } from "#enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 import { isNullOrUndefined } from "#app/utils";
 import type { Nature } from "#enums/nature";
 
