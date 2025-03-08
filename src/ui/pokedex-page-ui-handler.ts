@@ -9,7 +9,7 @@ import { allAbilities } from "#app/data/ability";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { getNatureName } from "#app/data/nature";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
@@ -19,7 +19,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { GameModes } from "#app/game-mode";
 import type { DexEntry, StarterAttributes  } from "#app/system/game-data";
 import { AbilityAttr, DexAttr  } from "#app/system/game-data";
@@ -2376,16 +2376,16 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  setTypeIcons(type1: Type | null, type2: Type | null): void {
+  setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
     if (type1 !== null) {
       this.type1Icon.setVisible(true);
-      this.type1Icon.setFrame(Type[type1].toLowerCase());
+      this.type1Icon.setFrame(PokemonType[type1].toLowerCase());
     } else {
       this.type1Icon.setVisible(false);
     }
     if (type2 !== null) {
       this.type2Icon.setVisible(true);
-      this.type2Icon.setFrame(Type[type2].toLowerCase());
+      this.type2Icon.setFrame(PokemonType[type2].toLowerCase());
     } else {
       this.type2Icon.setVisible(false);
     }

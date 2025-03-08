@@ -1,7 +1,7 @@
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TrainerSlot } from "#app/data/trainer-config";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -11,7 +11,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 function testMoveEffectiveness(game: GameManager, move: Moves, targetSpecies: Species,
-  expected: number, targetAbility: Abilities = Abilities.BALL_FETCH, teraType?: Type): void {
+  expected: number, targetAbility: Abilities = Abilities.BALL_FETCH, teraType?: PokemonType): void {
   // Suppress getPokemonNameWithAffix because it calls on a null battle spec
   vi.spyOn(Messages, "getPokemonNameWithAffix").mockReturnValue("");
   game.override.enemyAbility(targetAbility);
@@ -83,7 +83,7 @@ describe("Moves - Type Effectiveness", () => {
   );
 
   it("Electric-type attacks are super-effective against Tera-Water Pokemon",
-    () => testMoveEffectiveness(game, Moves.THUNDERBOLT, Species.EXCADRILL, 2, Abilities.BALL_FETCH, Type.WATER)
+    () => testMoveEffectiveness(game, Moves.THUNDERBOLT, Species.EXCADRILL, 2, Abilities.BALL_FETCH, PokemonType.WATER)
   );
 
   it("Powder moves have no effect on Grass-type Pokemon",
@@ -91,7 +91,7 @@ describe("Moves - Type Effectiveness", () => {
   );
 
   it("Powder moves have no effect on Tera-Grass Pokemon",
-    () => testMoveEffectiveness(game, Moves.SLEEP_POWDER, Species.SNORLAX, 0, Abilities.BALL_FETCH, Type.GRASS)
+    () => testMoveEffectiveness(game, Moves.SLEEP_POWDER, Species.SNORLAX, 0, Abilities.BALL_FETCH, PokemonType.GRASS)
   );
 
   it("Prankster-boosted status moves have no effect on Dark-type Pokemon",
@@ -104,7 +104,7 @@ describe("Moves - Type Effectiveness", () => {
   it("Prankster-boosted status moves have no effect on Tera-Dark Pokemon",
     () => {
       game.override.ability(Abilities.PRANKSTER);
-      testMoveEffectiveness(game, Moves.BABY_DOLL_EYES, Species.SNORLAX, 0, Abilities.BALL_FETCH, Type.DARK);
+      testMoveEffectiveness(game, Moves.BABY_DOLL_EYES, Species.SNORLAX, 0, Abilities.BALL_FETCH, PokemonType.DARK);
     }
   );
 });

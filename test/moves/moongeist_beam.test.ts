@@ -1,4 +1,4 @@
-import { allMoves, RandomMoveAttr } from "#app/data/move";
+import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

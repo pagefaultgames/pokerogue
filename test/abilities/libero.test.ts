@@ -1,5 +1,5 @@
-import { allMoves } from "#app/data/move";
-import { Type } from "#enums/type";
+import { allMoves } from "#app/data/moves/move";
+import { PokemonType } from "#enums/pokemon-type";
 import { Weather } from "#app/data/weather";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -74,8 +74,8 @@ describe("Abilities - Libero", () => {
       await game.phaseInterceptor.to(TurnEndPhase);
 
       expect(leadPokemon.summonData.abilitiesApplied.filter((a) => a === Abilities.LIBERO)).toHaveLength(1);
-      const leadPokemonType = Type[leadPokemon.getTypes()[0]];
-      const moveType = Type[allMoves[Moves.AGILITY].type];
+      const leadPokemonType = PokemonType[leadPokemon.getTypes()[0]];
+      const moveType = PokemonType[allMoves[Moves.AGILITY].type];
       expect(leadPokemonType).not.toBe(moveType);
 
       await game.toNextTurn();
@@ -110,8 +110,8 @@ describe("Abilities - Libero", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.LIBERO);
       expect(leadPokemon.getTypes()).toHaveLength(1);
-      const leadPokemonType = Type[leadPokemon.getTypes()[0]],
-        moveType = Type[Type.FIRE];
+      const leadPokemonType = PokemonType[leadPokemon.getTypes()[0]],
+        moveType = PokemonType[PokemonType.FIRE];
       expect(leadPokemonType).toBe(moveType);
     },
   );
@@ -132,8 +132,8 @@ describe("Abilities - Libero", () => {
 
       expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.LIBERO);
       expect(leadPokemon.getTypes()).toHaveLength(1);
-      const leadPokemonType = Type[leadPokemon.getTypes()[0]],
-        moveType = Type[Type.ICE];
+      const leadPokemonType = PokemonType[leadPokemon.getTypes()[0]],
+        moveType = PokemonType[PokemonType.ICE];
       expect(leadPokemonType).toBe(moveType);
     },
   );
@@ -341,7 +341,7 @@ describe("Abilities - Libero", () => {
 function testPokemonTypeMatchesDefaultMoveType(pokemon: PlayerPokemon, move: Moves) {
   expect(pokemon.summonData.abilitiesApplied).toContain(Abilities.LIBERO);
   expect(pokemon.getTypes()).toHaveLength(1);
-  const pokemonType = Type[pokemon.getTypes()[0]],
-    moveType = Type[allMoves[move].type];
+  const pokemonType = PokemonType[pokemon.getTypes()[0]],
+    moveType = PokemonType[allMoves[move].type];
   expect(pokemonType).toBe(moveType);
 }

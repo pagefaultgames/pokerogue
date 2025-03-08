@@ -3,10 +3,10 @@ import {
   AttackMove,
   BeakBlastHeaderAttr,
   DelayedAttackAttr,
-  MoveFlags,
   SelfStatusMove,
   allMoves,
-} from "./move";
+} from "./moves/move";
+import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
 import {
   type nil,

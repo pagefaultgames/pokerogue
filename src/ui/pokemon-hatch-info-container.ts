@@ -1,10 +1,10 @@
 import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { Gender } from "#app/data/gender";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import * as Utils from "#app/utils";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { starterColors } from "#app/battle-scene";
@@ -167,7 +167,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     for (let em = 0; em < 4; em++) {
       const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
       const eggMoveUnlocked = eggMove && globalScene.gameData.starterData[species.speciesId].eggMoves & Math.pow(2, em);
-      this.pokemonEggMoveBgs[em].setFrame(Type[eggMove ? eggMove.type : Type.UNKNOWN].toString().toLowerCase());
+      this.pokemonEggMoveBgs[em].setFrame(PokemonType[eggMove ? eggMove.type : PokemonType.UNKNOWN].toString().toLowerCase());
 
       this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
       if (!(eggMove && hatchInfo.starterDataEntryBeforeUpdate.eggMoves & Math.pow(2, em)) && eggMoveUnlocked) {

@@ -1,7 +1,7 @@
 import type Pokemon from "../field/pokemon";
-import type Move from "./move";
-import { Type } from "#enums/type";
-import { ProtectAttr } from "./move";
+import type Move from "./moves/move";
+import { PokemonType } from "#enums/pokemon-type";
+import { ProtectAttr } from "./moves/move";
 import type { BattlerIndex } from "#app/battle";
 import i18next from "i18next";
 
@@ -30,20 +30,20 @@ export class Terrain {
     return true;
   }
 
-  getAttackTypeMultiplier(attackType: Type): number {
+  getAttackTypeMultiplier(attackType: PokemonType): number {
     switch (this.terrainType) {
       case TerrainType.ELECTRIC:
-        if (attackType === Type.ELECTRIC) {
+        if (attackType === PokemonType.ELECTRIC) {
           return 1.3;
         }
         break;
       case TerrainType.GRASSY:
-        if (attackType === Type.GRASS) {
+        if (attackType === PokemonType.GRASS) {
           return 1.3;
         }
         break;
       case TerrainType.PSYCHIC:
-        if (attackType === Type.PSYCHIC) {
+        if (attackType === PokemonType.PSYCHIC) {
           return 1.3;
         }
         break;

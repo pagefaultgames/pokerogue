@@ -3,7 +3,7 @@ import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { globalScene } from "#app/global-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { getNatureName } from "../data/nature";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import type Pokemon from "../field/pokemon";
 import i18next from "i18next";
 import type { DexEntry, StarterDataEntry } from "../system/game-data";
@@ -342,7 +342,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       for (let m = 0; m < 4; m++) {
         const move = m < pokemon.moveset.length && pokemon.moveset[m] ? pokemon.moveset[m]!.getMove() : null;
-        this.pokemonMoveBgs[m].setFrame(Type[move ? move.type : Type.UNKNOWN].toString().toLowerCase());
+        this.pokemonMoveBgs[m].setFrame(PokemonType[move ? move.type : PokemonType.UNKNOWN].toString().toLowerCase());
         this.pokemonMoveLabels[m].setText(move ? move.name : "-");
         this.pokemonMovesContainers[m].setVisible(!!move);
       }

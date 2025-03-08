@@ -7,10 +7,10 @@ import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { getTypeRgb } from "#app/data/type";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
-import type Move from "#app/data/move";
-import { MoveCategory } from "#app/data/move";
+import type Move from "#app/data/moves/move";
+import { MoveCategory } from "#enums/MoveCategory";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
@@ -765,10 +765,10 @@ export default class SummaryUiHandler extends UiHandler {
         typeLabel.setOrigin(0, 0);
         profileContainer.add(typeLabel);
 
-        const getTypeIcon = (index: number, type: Type, tera: boolean = false) => {
+        const getTypeIcon = (index: number, type: PokemonType, tera: boolean = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
           const typeIcon = !tera
-            ? globalScene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), Type[type].toLowerCase())
+            ? globalScene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase())
             : globalScene.add.sprite(xCoord, 42, "type_tera");
           if (tera) {
             typeIcon.setScale(0.5);
@@ -799,7 +799,7 @@ export default class SummaryUiHandler extends UiHandler {
         if (globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && !Utils.isNullOrUndefined(this.pokemon)) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
           teraIcon.setName("terrastallize-icon");
-          teraIcon.setFrame(Type[this.pokemon.getTeraType()].toLowerCase());
+          teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());
           profileContainer.add(teraIcon);
         }
 
@@ -1010,7 +1010,7 @@ export default class SummaryUiHandler extends UiHandler {
           if (this.newMove && this.pokemon) {
             const spriteKey = Utils.getLocalizedSpriteKey("types");
             const moveType = this.pokemon.getMoveType(this.newMove);
-            const newMoveTypeIcon = globalScene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+            const newMoveTypeIcon = globalScene.add.sprite(0, 0, spriteKey, PokemonType[moveType].toLowerCase());
             newMoveTypeIcon.setOrigin(0, 1);
             this.extraMoveRowContainer.add(newMoveTypeIcon);
           }
@@ -1035,7 +1035,7 @@ export default class SummaryUiHandler extends UiHandler {
           if (move && this.pokemon) {
             const spriteKey = Utils.getLocalizedSpriteKey("types");
             const moveType = this.pokemon.getMoveType(move.getMove());
-            const typeIcon = globalScene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+            const typeIcon = globalScene.add.sprite(0, 0, spriteKey, PokemonType[moveType].toLowerCase());
             typeIcon.setOrigin(0, 1);
             moveRowContainer.add(typeIcon);
           }

@@ -2,7 +2,7 @@ import { BattlerIndex } from "../battle";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { getMoveTargets } from "../data/move";
+import { getMoveTargets } from "../data/moves/move";
 import { Button } from "#enums/buttons";
 import type { Moves } from "#enums/moves";
 import type Pokemon from "#app/field/pokemon";

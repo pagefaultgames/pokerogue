@@ -46,7 +46,7 @@ import type { Variant } from "#app/data/variant";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Type } from "#app/enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
 
@@ -101,7 +101,7 @@ export interface EnemyPokemonConfig {
   modifierConfigs?: HeldModifierConfig[];
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
-  tera?: Type;
+  tera?: PokemonType;
   aiType?: AiType;
 }
 
@@ -334,7 +334,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       }
 
       // Set tera
-      if (config.tera && config.tera !== Type.UNKNOWN) {
+      if (config.tera && config.tera !== PokemonType.UNKNOWN) {
         enemyPokemon.teraType = config.tera;
         if (battle.trainer) {
           battle.trainer.config.setInstantTera(e);

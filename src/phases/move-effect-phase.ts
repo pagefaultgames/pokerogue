@@ -25,7 +25,7 @@ import {
   SubstituteTag,
 } from "#app/data/battler-tags";
 import type {
-  MoveAttr } from "#app/data/move";
+  MoveAttr } from "#app/data/moves/move";
 import {
   applyFilteredMoveAttrs,
   applyMoveAttrs,
@@ -35,20 +35,20 @@ import {
   getMoveTargets,
   HitsTagAttr,
   MissEffectAttr,
-  MoveCategory,
   MoveEffectAttr,
-  MoveEffectTrigger,
-  MoveFlags,
-  MoveTarget,
   MultiHitAttr,
   NoEffectAttr,
   OneHitKOAttr,
   OverrideMoveEffectAttr,
   ToxicAccuracyAttr,
   VariableTargetAttr,
-} from "#app/data/move";
+} from "#app/data/moves/move";
+import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
+import { MoveFlags } from "#enums/MoveFlags";
+import { MoveTarget } from "#enums/MoveTarget";
+import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, MoveResult } from "#app/field/pokemon";
@@ -671,7 +671,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
       return true;
     }
-    if ((this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(Type.POISON))) {
+    if ((this.move.getMove().hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON))) {
       return true;
     }
     // TODO: Fix lock on / mind reader check.

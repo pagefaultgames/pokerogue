@@ -7,7 +7,7 @@ import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
 import { WeatherType } from "#app/enums/weather-type";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 
 
 describe("Moves - Fell Stinger", () => {

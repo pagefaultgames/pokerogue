@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Stat } from "#app/enums/stat";
@@ -87,7 +87,7 @@ describe("Moves - Tar Shot", () => {
     await game.classicMode.startBattle([ Species.PIKACHU ]);
 
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.teraType = Type.GRASS;
+    enemy.teraType = PokemonType.GRASS;
     enemy.isTerastallized = true;
 
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -121,7 +121,7 @@ describe("Moves - Tar Shot", () => {
 
     await game.toNextTurn();
 
-    enemy.teraType = Type.GRASS;
+    enemy.teraType = PokemonType.GRASS;
     enemy.isTerastallized = true;
 
     game.move.select(Moves.FIRE_PUNCH);

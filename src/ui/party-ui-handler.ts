@@ -7,7 +7,7 @@ import MessageUiHandler from "#app/ui/message-ui-handler";
 import { Mode } from "#app/ui/ui";
 import * as Utils from "#app/utils";
 import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "#app/modifier/modifier";
-import { allMoves, ForceSwitchOutAttr } from "#app/data/move";
+import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
