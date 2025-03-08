@@ -15,6 +15,8 @@ import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { MoneyMultiplierModifier } from "#app/modifier/modifier";
+import * as Utils from "#app/utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/partTimer";
@@ -100,7 +102,7 @@ export const PartTimerEncounter: MysteryEncounter =
           const moneyMultiplier = Math.min(Math.max(2.5 * (1 + percentDiff), 1), 4);
 
           encounter.misc = {
-            moneyMultiplier
+            moneyMultiplier,
           };
 
           // Reduce all PP to 2 (if they started at greater than 2)
@@ -139,9 +141,9 @@ export const PartTimerEncounter: MysteryEncounter =
         } else {
           await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
         }
-        const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
-        updatePlayerMoney(moneyChange, true, false);
-        await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
+
+        const formattedMoneyAmount = applyMoneyMultipliers(moneyMultiplier);
+        await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: formattedMoneyAmount }));
         await showEncounterText(`${namespace}:pokemon_tired`);
 
         setEncounterRewards({ fillRemaining: true });
@@ -216,9 +218,9 @@ export const PartTimerEncounter: MysteryEncounter =
         } else {
           await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
         }
-        const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
-        updatePlayerMoney(moneyChange, true, false);
-        await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
+
+        const formattedMoneyAmount = applyMoneyMultipliers(moneyMultiplier);
+        await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: formattedMoneyAmount }));
         await showEncounterText(`${namespace}:pokemon_tired`);
 
         setEncounterRewards({ fillRemaining: true });
@@ -268,9 +270,9 @@ export const PartTimerEncounter: MysteryEncounter =
 
           // Give money and do dialogue
           await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
-          const moneyChange = globalScene.getWaveMoneyAmount(2.5);
-          updatePlayerMoney(moneyChange, true, false);
-          await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: moneyChange }));
+
+          const formattedMoneyAmount = applyMoneyMultipliers(2.5);
+          await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: formattedMoneyAmount }));
           await showEncounterText(`${namespace}:pokemon_tired`);
 
           setEncounterRewards({ fillRemaining: true });
@@ -333,4 +335,15 @@ function doSalesSfx() {
   globalScene.time.delayedCall(3000, () => {
     globalScene.playSound("battle_anims/PRSFX- Attract2");
   });
+}
+
+function applyMoneyMultipliers(moneyMultiplier) {
+  const moneyChange = new Utils.IntegerHolder(globalScene.getWaveMoneyAmount(moneyMultiplier));
+  globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyChange);
+  updatePlayerMoney(moneyChange.value, true, false);
+
+  const userLocale = navigator.language || "en-US";
+  const formattedMoneyAmount = moneyChange.value.toLocaleString(userLocale);
+
+  return formattedMoneyAmount;
 }
