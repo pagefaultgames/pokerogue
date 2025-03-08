@@ -1872,44 +1872,44 @@ export default class BattleScene extends SceneBase {
     ) {
       if (species.speciesId === Species.WORMADAM) {
         switch (this.currentBattle.trainer.config.specialtyType) {
-          case Type.GROUND:
+          case PokemonType.GROUND:
             return 1; // Sandy Cloak
-          case Type.STEEL:
+          case PokemonType.STEEL:
             return 2; // Trash Cloak
-          case Type.GRASS:
+          case PokemonType.GRASS:
             return 0; // Plant Cloak
         }
       } else if (species.speciesId === Species.ROTOM) {
         switch (this.currentBattle.trainer.config.specialtyType) {
-          case Type.FLYING:
+          case PokemonType.FLYING:
             return 4; // Fan Rotom
-          case Type.GHOST:
+          case PokemonType.GHOST:
             return 0; // Lightbulb Rotom
-          case Type.FIRE:
+          case PokemonType.FIRE:
             return 1; // Heat Rotom
-          case Type.GRASS:
+          case PokemonType.GRASS:
             return 5; // Mow Rotom
-          case Type.WATER:
+          case PokemonType.WATER:
             return 2; // Wash Rotom
-          case Type.ICE:
+          case PokemonType.ICE:
             return 3; // Frost Rotom
         }
       } else if (species.speciesId === Species.ORICORIO) {
         switch (this.currentBattle.trainer.config.specialtyType) {
-          case Type.GHOST:
+          case PokemonType.GHOST:
             return 3; // Sensu Style
-          case Type.FIRE:
+          case PokemonType.FIRE:
             return 0; // Baile Style
-          case Type.ELECTRIC:
+          case PokemonType.ELECTRIC:
             return 1; // Pom-Pom Style
-          case Type.PSYCHIC:
+          case PokemonType.PSYCHIC:
             return 2; // Pa'u Style
         }
       } else if (species.speciesId === Species.PALDEA_TAUROS) {
         switch (this.currentBattle.trainer.config.specialtyType) {
-          case Type.FIRE:
+          case PokemonType.FIRE:
             return 1; // Blaze Breed
-          case Type.WATER:
+          case PokemonType.WATER:
             return 2; // Aqua Breed
         }
       } else if (species.speciesId === Species.SILVALLY || species.speciesId === Species.ARCEUS) { // Would probably never happen, but might as well
