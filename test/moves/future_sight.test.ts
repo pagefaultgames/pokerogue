@@ -23,7 +23,7 @@ describe("Moves - Future Sight", () => {
     game = new GameManager(phaserGame);
     game.override
       .startingLevel(50)
-      .moveset([ Moves.FUTURE_SIGHT, Moves.SPLASH ])
+      .moveset([Moves.FUTURE_SIGHT, Moves.SPLASH])
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.STURDY)
@@ -31,7 +31,7 @@ describe("Moves - Future Sight", () => {
   });
 
   it("hits 2 turns after use, ignores user switch out", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
 
     game.move.select(Moves.FUTURE_SIGHT);
     await game.toNextTurn();

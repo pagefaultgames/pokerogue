@@ -24,7 +24,7 @@ describe("Test Ability Swapping", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -34,7 +34,7 @@ describe("Test Ability Swapping", () => {
   });
 
   it("should activate post-summon abilities", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     game.scene.getPlayerPokemon()?.setTempAbility(allAbilities[Abilities.INTIMIDATE]);
@@ -45,7 +45,7 @@ describe("Test Ability Swapping", () => {
 
   it("should remove primal weather when the setter's ability is removed", async () => {
     game.override.ability(Abilities.DESOLATE_LAND);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     game.scene.getPlayerPokemon()?.setTempAbility(allAbilities[Abilities.BALL_FETCH]);
@@ -56,7 +56,7 @@ describe("Test Ability Swapping", () => {
 
   it("should not activate passive abilities", async () => {
     game.override.passiveAbility(Abilities.INTREPID_SWORD);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     game.scene.getPlayerPokemon()?.setTempAbility(allAbilities[Abilities.BALL_FETCH]);

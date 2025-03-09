@@ -30,12 +30,12 @@ describe("Moves - Power Trick", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([ Moves.POWER_TRICK ])
+      .moveset([Moves.POWER_TRICK])
       .ability(Abilities.BALL_FETCH);
   });
 
   it("swaps the user's ATK and DEF stats", async () => {
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const baseATK = player.getStat(Stat.ATK, false);
@@ -51,7 +51,7 @@ describe("Moves - Power Trick", () => {
   });
 
   it("resets initial ATK and DEF stat swap when used consecutively", async () => {
-    await game.classicMode.startBattle([ Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const baseATK = player.getStat(Stat.ATK, false);
@@ -71,8 +71,8 @@ describe("Moves - Power Trick", () => {
   });
 
   it("should pass effect when using BATON_PASS", async () => {
-    await game.classicMode.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
-    await game.override.moveset([ Moves.POWER_TRICK, Moves.BATON_PASS ]);
+    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    await game.override.moveset([Moves.POWER_TRICK, Moves.BATON_PASS]);
 
     const player = game.scene.getPlayerPokemon()!;
     player.addTag(BattlerTagType.POWER_TRICK);
@@ -92,8 +92,8 @@ describe("Moves - Power Trick", () => {
   });
 
   it("should remove effect after using Transform", async () => {
-    await game.classicMode.startBattle([ Species.SHUCKLE, Species.SHUCKLE ]);
-    await game.override.moveset([ Moves.POWER_TRICK, Moves.TRANSFORM ]);
+    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    await game.override.moveset([Moves.POWER_TRICK, Moves.TRANSFORM]);
 
     const player = game.scene.getPlayerPokemon()!;
     player.addTag(BattlerTagType.POWER_TRICK);

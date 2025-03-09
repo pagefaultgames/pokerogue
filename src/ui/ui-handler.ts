@@ -9,8 +9,8 @@ import type { Button } from "#enums/buttons";
  */
 export default abstract class UiHandler {
   protected mode: number | null;
-  protected cursor: number = 0;
-  public active: boolean = false;
+  protected cursor = 0;
+  public active = false;
 
   /**
    * @param mode The mode of the UI element. These should be unique.
@@ -33,7 +33,7 @@ export default abstract class UiHandler {
     return globalScene.ui;
   }
 
-  getTextColor(style: TextStyle, shadow: boolean = false): string {
+  getTextColor(style: TextStyle, shadow = false): string {
     return getTextColor(style, shadow, globalScene.uiTheme);
   }
 
