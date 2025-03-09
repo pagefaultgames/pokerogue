@@ -27,14 +27,16 @@ describe("Abilities - Quick Draw", () => {
 
     game.override.starterSpecies(Species.MAGIKARP);
     game.override.ability(Abilities.QUICK_DRAW);
-    game.override.moveset([ Moves.TACKLE, Moves.TAIL_WHIP ]);
+    game.override.moveset([Moves.TACKLE, Moves.TAIL_WHIP]);
 
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset([ Moves.TACKLE ]);
+    game.override.enemyMoveset([Moves.TACKLE]);
 
-    vi.spyOn(allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(100);
+    vi.spyOn(allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(
+      100,
+    );
   });
 
   test("makes pokemon going first in its priority bracket", async () => {
@@ -54,28 +56,31 @@ describe("Abilities - Quick Draw", () => {
     expect(pokemon.battleData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
   }, 20000);
 
-  test("does not triggered by non damage moves", {
-    retry: 5
-  }, async () => {
-    await game.startBattle();
+  test(
+    "does not triggered by non damage moves",
+    {
+      retry: 5,
+    },
+    async () => {
+      await game.startBattle();
 
-    const pokemon = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+      const pokemon = game.scene.getPlayerPokemon()!;
+      const enemy = game.scene.getEnemyPokemon()!;
 
-    pokemon.hp = 1;
-    enemy.hp = 1;
+      pokemon.hp = 1;
+      enemy.hp = 1;
 
-    game.move.select(Moves.TAIL_WHIP);
-    await game.phaseInterceptor.to(FaintPhase, false);
+      game.move.select(Moves.TAIL_WHIP);
+      await game.phaseInterceptor.to(FaintPhase, false);
 
-    expect(pokemon.isFainted()).toBe(true);
-    expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.battleData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
-  }
+      expect(pokemon.isFainted()).toBe(true);
+      expect(enemy.isFainted()).toBe(false);
+      expect(pokemon.battleData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
+    },
   );
 
   test("does not increase priority", async () => {
-    game.override.enemyMoveset([ Moves.EXTREME_SPEED ]);
+    game.override.enemyMoveset([Moves.EXTREME_SPEED]);
 
     await game.startBattle();
 

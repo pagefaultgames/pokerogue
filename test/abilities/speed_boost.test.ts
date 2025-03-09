@@ -33,97 +33,83 @@ describe("Abilities - Speed Boost", () => {
       .enemyLevel(100)
       .ability(Abilities.SPEED_BOOST)
       .enemyMoveset(Moves.SPLASH)
-      .moveset([ Moves.SPLASH, Moves.U_TURN ]);
+      .moveset([Moves.SPLASH, Moves.U_TURN]);
   });
 
-  it("should increase speed by 1 stage at end of turn",
-    async () => {
-      await game.classicMode.startBattle();
+  it("should increase speed by 1 stage at end of turn", async () => {
+    await game.classicMode.startBattle();
 
-      const playerPokemon = game.scene.getPlayerPokemon()!;
-      game.move.select(Moves.SPLASH);
-      await game.toNextTurn();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
 
-      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
-    });
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+  });
 
-  it("should not trigger this turn if pokemon was switched into combat via attack, but the turn after",
-    async () => {
-      await game.classicMode.startBattle([
-        Species.SHUCKLE,
-        Species.NINJASK
-      ]);
+  it("should not trigger this turn if pokemon was switched into combat via attack, but the turn after", async () => {
+    await game.classicMode.startBattle([Species.SHUCKLE, Species.NINJASK]);
 
-      game.move.select(Moves.U_TURN);
-      game.doSelectPartyPokemon(1);
-      await game.toNextTurn();
-      const playerPokemon = game.scene.getPlayerPokemon()!;
-      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+    game.move.select(Moves.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 
-      game.move.select(Moves.SPLASH);
-      await game.toNextTurn();
-      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
-    });
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+  });
 
-  it("checking back to back swtiches",
-    async () => {
-      await game.classicMode.startBattle([
-        Species.SHUCKLE,
-        Species.NINJASK
-      ]);
+  it("checking back to back swtiches", async () => {
+    await game.classicMode.startBattle([Species.SHUCKLE, Species.NINJASK]);
 
-      const [ shuckle, ninjask ] = game.scene.getPlayerParty();
+    const [shuckle, ninjask] = game.scene.getPlayerParty();
 
-      game.move.select(Moves.U_TURN);
-      game.doSelectPartyPokemon(1);
-      await game.toNextTurn();
-      expect(game.scene.getPlayerPokemon()!).toBe(ninjask);
-      expect(ninjask.getStatStage(Stat.SPD)).toBe(0);
+    game.move.select(Moves.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+    expect(game.scene.getPlayerPokemon()!).toBe(ninjask);
+    expect(ninjask.getStatStage(Stat.SPD)).toBe(0);
 
-      game.move.select(Moves.U_TURN);
-      game.doSelectPartyPokemon(1);
-      await game.toNextTurn();
-      expect(game.scene.getPlayerPokemon()!).toBe(shuckle);
-      expect(shuckle.getStatStage(Stat.SPD)).toBe(0);
+    game.move.select(Moves.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+    expect(game.scene.getPlayerPokemon()!).toBe(shuckle);
+    expect(shuckle.getStatStage(Stat.SPD)).toBe(0);
 
-      game.move.select(Moves.SPLASH);
-      await game.toNextTurn();
-      expect(shuckle.getStatStage(Stat.SPD)).toBe(1);
-    });
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+    expect(shuckle.getStatStage(Stat.SPD)).toBe(1);
+  });
 
-  it("should not trigger this turn if pokemon was switched into combat via normal switch, but the turn after",
-    async () => {
-      await game.classicMode.startBattle([
-        Species.SHUCKLE,
-        Species.NINJASK
-      ]);
+  it("should not trigger this turn if pokemon was switched into combat via normal switch, but the turn after", async () => {
+    await game.classicMode.startBattle([Species.SHUCKLE, Species.NINJASK]);
 
-      game.doSwitchPokemon(1);
-      await game.toNextTurn();
-      const playerPokemon = game.scene.getPlayerPokemon()!;
-      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 
-      game.move.select(Moves.SPLASH);
-      await game.toNextTurn();
-      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
-    });
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+  });
 
-  it("should not trigger if pokemon fails to escape",
-    async () => {
-      await game.classicMode.startBattle([ Species.SHUCKLE ]);
+  it("should not trigger if pokemon fails to escape", async () => {
+    await game.classicMode.startBattle([Species.SHUCKLE]);
 
-      const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
-      commandPhase.handleCommand(Command.RUN, 0);
-      const runPhase = game.scene.getCurrentPhase() as AttemptRunPhase;
-      runPhase.forceFailEscape = true;
-      await game.phaseInterceptor.to(AttemptRunPhase);
-      await game.toNextTurn();
+    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    commandPhase.handleCommand(Command.RUN, 0);
+    const runPhase = game.scene.getCurrentPhase() as AttemptRunPhase;
+    runPhase.forceFailEscape = true;
+    await game.phaseInterceptor.to(AttemptRunPhase);
+    await game.toNextTurn();
 
-      const playerPokemon = game.scene.getPlayerPokemon()!;
-      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 
-      game.move.select(Moves.SPLASH);
-      await game.toNextTurn();
-      expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
-    });
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+  });
 });

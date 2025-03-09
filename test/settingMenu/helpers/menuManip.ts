@@ -40,7 +40,10 @@ export class MenuManip {
     const parts = input.split("_");
 
     // Skip the first part and join the rest with an underscore
-    const result = parts.slice(1).map(part => part.toUpperCase()).join("_");
+    const result = parts
+      .slice(1)
+      .map(part => part.toUpperCase())
+      .join("_");
 
     return result;
   }
@@ -54,7 +57,7 @@ export class MenuManip {
   }
 
   iconDisplayedIs(icon) {
-    if (!(icon.toUpperCase().includes("KEY_"))) {
+    if (!icon.toUpperCase().includes("KEY_")) {
       icon = "KEY_" + icon.toUpperCase();
     }
     this.iconDisplayed = this.config.icons[icon];
@@ -109,7 +112,6 @@ export class MenuManip {
   butLetsForceIt() {
     this.confirm();
   }
-
 
   confirm() {
     assign(this.config, this.settingName, this.keycode);

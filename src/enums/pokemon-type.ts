@@ -1,4 +1,4 @@
-export enum Type {
+export enum PokemonType {
   UNKNOWN = -1,
   NORMAL = 0,
   FIGHTING,

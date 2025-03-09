@@ -4,7 +4,12 @@ import { isNullOrUndefined, randSeedInt } from "#app/utils";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor } from "#app/data/pokeball";
+import {
+  doPokeballBounceAnim,
+  getPokeballAtlasKey,
+  getPokeballCatchMultiplier,
+  getPokeballTintColor,
+} from "#app/data/pokeball";
 import { PlayerGender } from "#enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
@@ -13,11 +18,15 @@ import { Mode } from "#app/ui/ui";
 import type { PartyOption } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { Species } from "#enums/species";
-import type { Type } from "#enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { getEncounterText, queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import {
+  getEncounterText,
+  queueEncounterMessage,
+  showEncounterText,
+} from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
@@ -41,18 +50,41 @@ export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
  * @param shiny
  * @param variant
  */
-export function getSpriteKeysFromSpecies(species: Species, female?: boolean, formIndex?: number, shiny?: boolean, variant?: number): { spriteKey: string, fileRoot: string } {
-  const spriteKey = getPokemonSpecies(species).getSpriteKey(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
-  const fileRoot = getPokemonSpecies(species).getSpriteAtlasPath(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
+export function getSpriteKeysFromSpecies(
+  species: Species,
+  female?: boolean,
+  formIndex?: number,
+  shiny?: boolean,
+  variant?: number,
+): { spriteKey: string; fileRoot: string } {
+  const spriteKey = getPokemonSpecies(species).getSpriteKey(
+    female ?? false,
+    formIndex ?? 0,
+    shiny ?? false,
+    variant ?? 0,
+  );
+  const fileRoot = getPokemonSpecies(species).getSpriteAtlasPath(
+    female ?? false,
+    formIndex ?? 0,
+    shiny ?? false,
+    variant ?? 0,
+  );
   return { spriteKey, fileRoot };
 }
 
 /**
  * Gets the sprite key and file root for a given Pokemon (accounts for gender, shiny, variants, forms, and experimental)
  */
-export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string, fileRoot: string } {
-  const spriteKey = pokemon.getSpeciesForm().getSpriteKey(pokemon.getGender() === Gender.FEMALE, pokemon.formIndex, pokemon.shiny, pokemon.variant);
-  const fileRoot = pokemon.getSpeciesForm().getSpriteAtlasPath(pokemon.getGender() === Gender.FEMALE, pokemon.formIndex, pokemon.shiny, pokemon.variant);
+export function getSpriteKeysFromPokemon(pokemon: Pokemon): {
+  spriteKey: string;
+  fileRoot: string;
+} {
+  const spriteKey = pokemon
+    .getSpeciesForm()
+    .getSpriteKey(pokemon.getGender() === Gender.FEMALE, pokemon.formIndex, pokemon.shiny, pokemon.variant);
+  const fileRoot = pokemon
+    .getSpeciesForm()
+    .getSpriteAtlasPath(pokemon.getGender() === Gender.FEMALE, pokemon.formIndex, pokemon.shiny, pokemon.variant);
 
   return { spriteKey, fileRoot };
 }
@@ -65,7 +97,11 @@ export function getSpriteKeysFromPokemon(pokemon: Pokemon): { spriteKey: string,
  * @param doNotReturnLastAllowedMon Default `false`. If `true`, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
-export function getRandomPlayerPokemon(isAllowed: boolean = false, isFainted: boolean = false, doNotReturnLastAllowedMon: boolean = false): PlayerPokemon {
+export function getRandomPlayerPokemon(
+  isAllowed = false,
+  isFainted = false,
+  doNotReturnLastAllowedMon = false,
+): PlayerPokemon {
   const party = globalScene.getPlayerParty();
   let chosenIndex: number;
   let chosenPokemon: PlayerPokemon | null = null;
@@ -104,7 +140,7 @@ export function getRandomPlayerPokemon(isAllowed: boolean = false, isFainted: bo
  * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestLevelPlayerPokemon(isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
+export function getHighestLevelPlayerPokemon(isAllowed = false, isFainted = false): PlayerPokemon {
   const party = globalScene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
@@ -116,7 +152,7 @@ export function getHighestLevelPlayerPokemon(isAllowed: boolean = false, isFaint
       continue;
     }
 
-    pokemon = pokemon ? pokemon?.level < p?.level ? p : pokemon : p;
+    pokemon = pokemon ? (pokemon?.level < p?.level ? p : pokemon) : p;
   }
 
   return pokemon!;
@@ -130,7 +166,7 @@ export function getHighestLevelPlayerPokemon(isAllowed: boolean = false, isFaint
  * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestStatPlayerPokemon(stat: PermanentStat, isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
+export function getHighestStatPlayerPokemon(stat: PermanentStat, isAllowed = false, isFainted = false): PlayerPokemon {
   const party = globalScene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
@@ -142,7 +178,7 @@ export function getHighestStatPlayerPokemon(stat: PermanentStat, isAllowed: bool
       continue;
     }
 
-    pokemon = pokemon ? pokemon.getStat(stat) < p?.getStat(stat) ? p : pokemon : p;
+    pokemon = pokemon ? (pokemon.getStat(stat) < p?.getStat(stat) ? p : pokemon) : p;
   }
 
   return pokemon!;
@@ -155,7 +191,7 @@ export function getHighestStatPlayerPokemon(stat: PermanentStat, isAllowed: bool
  * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getLowestLevelPlayerPokemon(isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
+export function getLowestLevelPlayerPokemon(isAllowed = false, isFainted = false): PlayerPokemon {
   const party = globalScene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
@@ -167,7 +203,7 @@ export function getLowestLevelPlayerPokemon(isAllowed: boolean = false, isFainte
       continue;
     }
 
-    pokemon = pokemon ? pokemon?.level > p?.level ? p : pokemon : p;
+    pokemon = pokemon ? (pokemon?.level > p?.level ? p : pokemon) : p;
   }
 
   return pokemon!;
@@ -180,7 +216,7 @@ export function getLowestLevelPlayerPokemon(isAllowed: boolean = false, isFainte
  * @param isFainted Default false. If true, includes fainted mons.
  * @returns
  */
-export function getHighestStatTotalPlayerPokemon(isAllowed: boolean = false, isFainted: boolean = false): PlayerPokemon {
+export function getHighestStatTotalPlayerPokemon(isAllowed = false, isFainted = false): PlayerPokemon {
   const party = globalScene.getPlayerParty();
   let pokemon: PlayerPokemon | null = null;
 
@@ -192,7 +228,7 @@ export function getHighestStatTotalPlayerPokemon(isAllowed: boolean = false, isF
       continue;
     }
 
-    pokemon = pokemon ? pokemon?.stats.reduce((a, b) => a + b) < p?.stats.reduce((a, b) => a + b) ? p : pokemon : p;
+    pokemon = pokemon ? (pokemon?.stats.reduce((a, b) => a + b) < p?.stats.reduce((a, b) => a + b) ? p : pokemon) : p;
   }
 
   return pokemon!;
@@ -209,28 +245,40 @@ export function getHighestStatTotalPlayerPokemon(isAllowed: boolean = false, isF
  * @param allowMythical
  * @returns
  */
-export function getRandomSpeciesByStarterCost(starterTiers: number | [number, number], excludedSpecies?: Species[], types?: Type[], allowSubLegendary: boolean = true, allowLegendary: boolean = true, allowMythical: boolean = true): Species {
+export function getRandomSpeciesByStarterCost(
+  starterTiers: number | [number, number],
+  excludedSpecies?: Species[],
+  types?: PokemonType[],
+  allowSubLegendary = true,
+  allowLegendary = true,
+  allowMythical = true,
+): Species {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
   let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
-    .map(s => [ parseInt(s) as Species, speciesStarterCosts[s] as number ])
+    .map(s => [Number.parseInt(s) as Species, speciesStarterCosts[s] as number])
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
-      return pokemonSpecies && (!excludedSpecies || !excludedSpecies.includes(s[0]))
-        && (allowSubLegendary || !pokemonSpecies.subLegendary)
-        && (allowLegendary || !pokemonSpecies.legendary)
-        && (allowMythical || !pokemonSpecies.mythical);
+      return (
+        pokemonSpecies &&
+        (!excludedSpecies || !excludedSpecies.includes(s[0])) &&
+        (allowSubLegendary || !pokemonSpecies.subLegendary) &&
+        (allowLegendary || !pokemonSpecies.legendary) &&
+        (allowMythical || !pokemonSpecies.mythical)
+      );
     })
-    .map(s => [ getPokemonSpecies(s[0]), s[1] ]);
+    .map(s => [getPokemonSpecies(s[0]), s[1]]);
 
   if (types && types.length > 0) {
-    filteredSpecies = filteredSpecies.filter(s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2)));
+    filteredSpecies = filteredSpecies.filter(
+      s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2)),
+    );
   }
 
   // If no filtered mons exist at specified starter tiers, will expand starter search range until there are
   // Starts by decrementing starter tier min until it is 0, then increments tier max up to 10
-  let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => (s[1] >= min && s[1] <= max));
+  let tryFilterStarterTiers: [PokemonSpecies, number][] = filteredSpecies.filter(s => s[1] >= min && s[1] <= max);
   while (tryFilterStarterTiers.length === 0 && !(min === 0 && max === 10)) {
     if (min > 0) {
       min--;
@@ -259,7 +307,11 @@ export function koPlayerPokemon(pokemon: PlayerPokemon) {
   pokemon.hp = 0;
   pokemon.trySetStatus(StatusEffect.FAINT);
   pokemon.updateInfo();
-  queueEncounterMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }));
+  queueEncounterMessage(
+    i18next.t("battle:fainted", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+    }),
+  );
 }
 
 /**
@@ -290,7 +342,9 @@ function applyHpChangeToPokemon(pokemon: PlayerPokemon, value: number) {
  */
 export function applyDamageToPokemon(pokemon: PlayerPokemon, damage: number) {
   if (damage <= 0) {
-    console.warn("Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.");
+    console.warn(
+      "Healing pokemon with `applyDamageToPokemon` is not recommended! Please use `applyHealToPokemon` instead.",
+    );
   }
   // If a Pokemon would faint from the damage applied, its HP is instead set to 1.
   if (pokemon.isAllowedInBattle() && pokemon.hp - damage <= 0) {
@@ -308,7 +362,9 @@ export function applyDamageToPokemon(pokemon: PlayerPokemon, damage: number) {
  */
 export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
   if (heal <= 0) {
-    console.warn("Damaging pokemon with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.");
+    console.warn(
+      "Damaging pokemon with `applyHealToPokemon` is not recommended! Please use `applyDamageToPokemon` instead.",
+    );
   }
 
   applyHpChangeToPokemon(pokemon, heal);
@@ -321,8 +377,9 @@ export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
  * @param value
  */
 export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
-  const modType = modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(globalScene.getPlayerParty(), [ value ])
+  const modType = modifierTypes
+    .MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
+    .generateType(globalScene.getPlayerParty(), [value])
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
@@ -339,15 +396,20 @@ export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: numb
  * @param modType
  * @param fallbackModifierType
  */
-export async function applyModifierTypeToPlayerPokemon(pokemon: PlayerPokemon, modType: PokemonHeldItemModifierType, fallbackModifierType?: PokemonHeldItemModifierType) {
+export async function applyModifierTypeToPlayerPokemon(
+  pokemon: PlayerPokemon,
+  modType: PokemonHeldItemModifierType,
+  fallbackModifierType?: PokemonHeldItemModifierType,
+) {
   // Check if the Pokemon has max stacks of that item already
   const modifier = modType.newModifier(pokemon);
-  const existing = globalScene.findModifier(m => (
-    m instanceof PokemonHeldItemModifier &&
-    m.type.id === modType.id &&
-    m.pokemonId === pokemon.id &&
-    m.matchType(modifier)
-  )) as PokemonHeldItemModifier;
+  const existing = globalScene.findModifier(
+    m =>
+      m instanceof PokemonHeldItemModifier &&
+      m.type.id === modType.id &&
+      m.pokemonId === pokemon.id &&
+      m.matchType(modifier),
+  ) as PokemonHeldItemModifier;
 
   // At max stacks
   if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
@@ -373,7 +435,11 @@ export async function applyModifierTypeToPlayerPokemon(pokemon: PlayerPokemon, m
  * @param pokeballType
  * @param ballTwitchRate - can pass custom ball catch rates (for special events, like safari)
  */
-export function trainerThrowPokeball(pokemon: EnemyPokemon, pokeballType: PokeballType, ballTwitchRate?: number): Promise<boolean> {
+export function trainerThrowPokeball(
+  pokemon: EnemyPokemon,
+  pokeballType: PokeballType,
+  ballTwitchRate?: number,
+): Promise<boolean> {
   const originalY: number = pokemon.y;
 
   if (!ballTwitchRate) {
@@ -397,7 +463,9 @@ export function trainerThrowPokeball(pokemon: EnemyPokemon, pokeballType: Pokeba
   });
 
   return new Promise(resolve => {
-    globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+    globalScene.trainer.setTexture(
+      `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
+    );
     globalScene.time.delayedCall(512, () => {
       globalScene.playSound("se/pb_throw");
 
@@ -406,7 +474,9 @@ export function trainerThrowPokeball(pokemon: EnemyPokemon, pokeballType: Pokeba
       globalScene.time.delayedCall(256, () => {
         globalScene.trainer.setFrame("3");
         globalScene.time.delayedCall(768, () => {
-          globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+          globalScene.trainer.setTexture(
+            `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
+          );
         });
       });
 
@@ -486,22 +556,22 @@ export function trainerThrowPokeball(pokemon: EnemyPokemon, pokeballType: Pokeba
                             alpha: 0,
                             duration: 200,
                             easing: "Sine.easeIn",
-                            onComplete: () => pbTint.destroy()
+                            onComplete: () => pbTint.destroy(),
                           });
-                        }
+                        },
                       });
                     }
                   },
                   onComplete: () => {
                     catchPokemon(pokemon, pokeball, pokeballType).then(() => resolve(true));
-                  }
+                  },
                 });
               };
 
               globalScene.time.delayedCall(250, () => doPokeballBounceAnim(pokeball, 16, 72, 350, doShake));
-            }
+            },
           });
-        }
+        },
       });
     });
   });
@@ -515,7 +585,12 @@ export function trainerThrowPokeball(pokemon: EnemyPokemon, pokeballType: Pokeba
  * @param pokeball
  * @param pokeballType
  */
-function failCatch(pokemon: EnemyPokemon, originalY: number, pokeball: Phaser.GameObjects.Sprite, pokeballType: PokeballType) {
+function failCatch(
+  pokemon: EnemyPokemon,
+  originalY: number,
+  pokeball: Phaser.GameObjects.Sprite,
+  pokeballType: PokeballType,
+) {
   return new Promise<void>(resolve => {
     globalScene.playSound("se/pb_rel");
     pokemon.setY(originalY);
@@ -534,13 +609,21 @@ function failCatch(pokemon: EnemyPokemon, originalY: number, pokeball: Phaser.Ga
       targets: pokemon,
       duration: 250,
       ease: "Sine.easeOut",
-      scale: 1
+      scale: 1,
     });
 
     globalScene.currentBattle.lastUsedPokeball = pokeballType;
     removePb(pokeball);
 
-    globalScene.ui.showText(i18next.t("battle:pokemonBrokeFree", { pokemonName: pokemon.getNameToRender() }), null, () => resolve(), null, true);
+    globalScene.ui.showText(
+      i18next.t("battle:pokemonBrokeFree", {
+        pokemonName: pokemon.getNameToRender(),
+      }),
+      null,
+      () => resolve(),
+      null,
+      true,
+    );
   });
 }
 
@@ -553,10 +636,19 @@ function failCatch(pokemon: EnemyPokemon, originalY: number, pokeball: Phaser.Ga
  * @param showCatchObtainMessage
  * @param isObtain
  */
-export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameObjects.Sprite | null, pokeballType: PokeballType, showCatchObtainMessage: boolean = true, isObtain: boolean = false): Promise<void> {
+export async function catchPokemon(
+  pokemon: EnemyPokemon,
+  pokeball: Phaser.GameObjects.Sprite | null,
+  pokeballType: PokeballType,
+  showCatchObtainMessage = true,
+  isObtain = false,
+): Promise<void> {
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
-  if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1) {
+  if (
+    speciesForm.abilityHidden &&
+    (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+  ) {
     globalScene.validateAchv(achvs.HIDDEN_ABILITY);
   }
 
@@ -611,35 +703,70 @@ export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameO
           }
         });
       };
-      Promise.all([ pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon) ]).then(() => {
+      Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (globalScene.getPlayerParty().length === 6) {
           const promptRelease = () => {
-            globalScene.ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
-              globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
-              globalScene.ui.setMode(Mode.CONFIRM, () => {
-                const newPokemon = globalScene.addPlayerPokemon(pokemon.species, pokemon.level, pokemon.abilityIndex, pokemon.formIndex, pokemon.gender, pokemon.shiny, pokemon.variant, pokemon.ivs, pokemon.nature, pokemon);
-                globalScene.ui.setMode(Mode.SUMMARY, newPokemon, 0, SummaryUiMode.DEFAULT, () => {
-                  globalScene.ui.setMode(Mode.MESSAGE).then(() => {
-                    promptRelease();
-                  });
-                }, false);
-              }, () => {
-                globalScene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: number, _option: PartyOption) => {
-                  globalScene.ui.setMode(Mode.MESSAGE).then(() => {
-                    if (slotIndex < 6) {
-                      addToParty(slotIndex);
-                    } else {
-                      promptRelease();
-                    }
-                  });
-                });
-              }, () => {
-                globalScene.ui.setMode(Mode.MESSAGE).then(() => {
-                  removePokemon();
-                  end();
-                });
-              }, "fullParty");
-            });
+            globalScene.ui.showText(
+              i18next.t("battle:partyFull", {
+                pokemonName: pokemon.getNameToRender(),
+              }),
+              null,
+              () => {
+                globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
+                globalScene.ui.setMode(
+                  Mode.CONFIRM,
+                  () => {
+                    const newPokemon = globalScene.addPlayerPokemon(
+                      pokemon.species,
+                      pokemon.level,
+                      pokemon.abilityIndex,
+                      pokemon.formIndex,
+                      pokemon.gender,
+                      pokemon.shiny,
+                      pokemon.variant,
+                      pokemon.ivs,
+                      pokemon.nature,
+                      pokemon,
+                    );
+                    globalScene.ui.setMode(
+                      Mode.SUMMARY,
+                      newPokemon,
+                      0,
+                      SummaryUiMode.DEFAULT,
+                      () => {
+                        globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                          promptRelease();
+                        });
+                      },
+                      false,
+                    );
+                  },
+                  () => {
+                    globalScene.ui.setMode(
+                      Mode.PARTY,
+                      PartyUiMode.RELEASE,
+                      0,
+                      (slotIndex: number, _option: PartyOption) => {
+                        globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                          if (slotIndex < 6) {
+                            addToParty(slotIndex);
+                          } else {
+                            promptRelease();
+                          }
+                        });
+                      },
+                    );
+                  },
+                  () => {
+                    globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                      removePokemon();
+                      end();
+                    });
+                  },
+                  "fullParty",
+                );
+              },
+            );
           };
           promptRelease();
         } else {
@@ -649,7 +776,15 @@ export async function catchPokemon(pokemon: EnemyPokemon, pokeball: Phaser.GameO
     };
 
     if (showCatchObtainMessage) {
-      globalScene.ui.showText(i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", { pokemonName: pokemon.getNameToRender() }), null, doPokemonCatchMenu, 0, true);
+      globalScene.ui.showText(
+        i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", {
+          pokemonName: pokemon.getNameToRender(),
+        }),
+        null,
+        doPokemonCatchMenu,
+        0,
+        true,
+      );
     } else {
       doPokemonCatchMenu();
     }
@@ -671,7 +806,7 @@ function removePb(pokeball: Phaser.GameObjects.Sprite) {
       alpha: 0,
       onComplete: () => {
         pokeball.destroy();
-      }
+      },
     });
   }
 }
@@ -696,11 +831,17 @@ export async function doPokemonFlee(pokemon: EnemyPokemon): Promise<void> {
       onComplete: () => {
         pokemon.setVisible(false);
         pokemon.leaveField(true, true, true);
-        showEncounterText(i18next.t("battle:pokemonFled", { pokemonName: pokemon.getNameToRender() }), null, 600, false)
-          .then(() => {
-            resolve();
-          });
-      }
+        showEncounterText(
+          i18next.t("battle:pokemonFled", {
+            pokemonName: pokemon.getNameToRender(),
+          }),
+          null,
+          600,
+          false,
+        ).then(() => {
+          resolve();
+        });
+      },
     });
   });
 }
@@ -724,11 +865,17 @@ export function doPlayerFlee(pokemon: EnemyPokemon): Promise<void> {
       onComplete: () => {
         pokemon.setVisible(false);
         pokemon.leaveField(true, true, true);
-        showEncounterText(i18next.t("battle:playerFled", { pokemonName: pokemon.getNameToRender() }), null, 600, false)
-          .then(() => {
-            resolve();
-          });
-      }
+        showEncounterText(
+          i18next.t("battle:playerFled", {
+            pokemonName: pokemon.getNameToRender(),
+          }),
+          null,
+          600,
+          false,
+        ).then(() => {
+          resolve();
+        });
+      },
     });
   });
 }
@@ -737,33 +884,33 @@ export function doPlayerFlee(pokemon: EnemyPokemon): Promise<void> {
  * Bug Species and their corresponding weights
  */
 const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
-  [ Species.SCYTHER, 40 ],
-  [ Species.SCIZOR, 40 ],
-  [ Species.KLEAVOR, 40 ],
-  [ Species.PINSIR, 40 ],
-  [ Species.HERACROSS, 40 ],
-  [ Species.YANMA, 40 ],
-  [ Species.YANMEGA, 40 ],
-  [ Species.SHUCKLE, 40 ],
-  [ Species.ANORITH, 40 ],
-  [ Species.ARMALDO, 40 ],
-  [ Species.ESCAVALIER, 40 ],
-  [ Species.ACCELGOR, 40 ],
-  [ Species.JOLTIK, 40 ],
-  [ Species.GALVANTULA, 40 ],
-  [ Species.DURANT, 40 ],
-  [ Species.LARVESTA, 40 ],
-  [ Species.VOLCARONA, 40 ],
-  [ Species.DEWPIDER, 40 ],
-  [ Species.ARAQUANID, 40 ],
-  [ Species.WIMPOD, 40 ],
-  [ Species.GOLISOPOD, 40 ],
-  [ Species.SIZZLIPEDE, 40 ],
-  [ Species.CENTISKORCH, 40 ],
-  [ Species.NYMBLE, 40 ],
-  [ Species.LOKIX, 40 ],
-  [ Species.BUZZWOLE, 1 ],
-  [ Species.PHEROMOSA, 1 ],
+  [Species.SCYTHER, 40],
+  [Species.SCIZOR, 40],
+  [Species.KLEAVOR, 40],
+  [Species.PINSIR, 40],
+  [Species.HERACROSS, 40],
+  [Species.YANMA, 40],
+  [Species.YANMEGA, 40],
+  [Species.SHUCKLE, 40],
+  [Species.ANORITH, 40],
+  [Species.ARMALDO, 40],
+  [Species.ESCAVALIER, 40],
+  [Species.ACCELGOR, 40],
+  [Species.JOLTIK, 40],
+  [Species.GALVANTULA, 40],
+  [Species.DURANT, 40],
+  [Species.LARVESTA, 40],
+  [Species.VOLCARONA, 40],
+  [Species.DEWPIDER, 40],
+  [Species.ARAQUANID, 40],
+  [Species.WIMPOD, 40],
+  [Species.GOLISOPOD, 40],
+  [Species.SIZZLIPEDE, 40],
+  [Species.CENTISKORCH, 40],
+  [Species.NYMBLE, 40],
+  [Species.LOKIX, 40],
+  [Species.BUZZWOLE, 1],
+  [Species.PHEROMOSA, 1],
 ];
 
 /**
@@ -792,7 +939,7 @@ export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
  * @param scene
  * @param levelAdditiveModifier Default 0. will add +(1 level / 10 waves * levelAdditiveModifier) to the level calculation
  */
-export function getEncounterPokemonLevelForWave(levelAdditiveModifier: number = 0) {
+export function getEncounterPokemonLevelForWave(levelAdditiveModifier = 0) {
   const currentBattle = globalScene.currentBattle;
   const baseLevel = currentBattle.getLevelForWave();
 
@@ -803,7 +950,10 @@ export function getEncounterPokemonLevelForWave(levelAdditiveModifier: number = 
 export async function addPokemonDataToDexAndValidateAchievements(pokemon: PlayerPokemon) {
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
-  if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1) {
+  if (
+    speciesForm.abilityHidden &&
+    (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+  ) {
     globalScene.validateAchv(achvs.HIDDEN_ABILITY);
   }
 
@@ -832,9 +982,16 @@ export async function addPokemonDataToDexAndValidateAchievements(pokemon: Player
  * @param scene
  * @param invalidSelectionKey
  */
-export function isPokemonValidForEncounterOptionSelection(pokemon: Pokemon, invalidSelectionKey: string): string | null {
+export function isPokemonValidForEncounterOptionSelection(
+  pokemon: Pokemon,
+  invalidSelectionKey: string,
+): string | null {
   if (!pokemon.isAllowedInChallenge()) {
-    return i18next.t("partyUiHandler:cantBeUsed", { pokemonName: pokemon.getNameToRender() }) ?? null;
+    return (
+      i18next.t("partyUiHandler:cantBeUsed", {
+        pokemonName: pokemon.getNameToRender(),
+      }) ?? null
+    );
   }
   if (!pokemon.isAllowedInBattle()) {
     return getEncounterText(invalidSelectionKey) ?? null;
