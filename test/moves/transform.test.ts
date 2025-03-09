@@ -32,11 +32,11 @@ describe("Moves - Transform", () => {
       .enemyPassiveAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .ability(Abilities.INTIMIDATE)
-      .moveset([ Moves.TRANSFORM ]);
+      .moveset([Moves.TRANSFORM]);
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
-    await game.classicMode.startBattle([ Species.DITTO ]);
+    await game.classicMode.startBattle([Species.DITTO]);
 
     game.move.select(Moves.TRANSFORM);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -75,9 +75,9 @@ describe("Moves - Transform", () => {
   });
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset([ Moves.POWER_SPLIT ]);
+    game.override.enemyMoveset([Moves.POWER_SPLIT]);
 
-    await game.classicMode.startBattle([ Species.DITTO ]);
+    await game.classicMode.startBattle([Species.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -96,9 +96,9 @@ describe("Moves - Transform", () => {
   });
 
   it("should set each move's pp to a maximum of 5", async () => {
-    game.override.enemyMoveset([ Moves.SWORDS_DANCE, Moves.GROWL, Moves.SKETCH, Moves.RECOVER ]);
+    game.override.enemyMoveset([Moves.SWORDS_DANCE, Moves.GROWL, Moves.SKETCH, Moves.RECOVER]);
 
-    await game.classicMode.startBattle([ Species.DITTO ]);
+    await game.classicMode.startBattle([Species.DITTO]);
     const player = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.TRANSFORM);
@@ -118,10 +118,9 @@ describe("Moves - Transform", () => {
   });
 
   it("should activate its ability if it copies one that activates on summon", async () => {
-    game.override.enemyAbility(Abilities.INTIMIDATE)
-      .ability(Abilities.BALL_FETCH);
+    game.override.enemyAbility(Abilities.INTIMIDATE).ability(Abilities.BALL_FETCH);
 
-    await game.classicMode.startBattle([ Species.DITTO ]);
+    await game.classicMode.startBattle([Species.DITTO]);
     game.move.select(Moves.TRANSFORM);
 
     await game.phaseInterceptor.to("BerryPhase");
