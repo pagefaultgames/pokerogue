@@ -7,8 +7,7 @@ import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
 import { WeatherType } from "#app/enums/weather-type";
-import { allMoves } from "#app/data/move";
-
+import { allMoves } from "#app/data/moves/move";
 
 describe("Moves - Fell Stinger", () => {
   let phaserGame: Phaser.Game;
@@ -27,13 +26,9 @@ describe("Moves - Fell Stinger", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single")
-      .moveset([
-        Moves.FELL_STINGER,
-        Moves.SALT_CURE,
-        Moves.BIND,
-        Moves.LEECH_SEED
-      ])
+    game.override
+      .battleType("single")
+      .moveset([Moves.FELL_STINGER, Moves.SALT_CURE, Moves.BIND, Moves.LEECH_SEED])
       .startingLevel(50)
       .disableCrits()
       .enemyAbility(Abilities.STURDY)
@@ -43,9 +38,9 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if opponent gets KO'd by recoil", async () => {
-    game.override.enemyMoveset([ Moves.DOUBLE_EDGE ]);
+    game.override.enemyMoveset([Moves.DOUBLE_EDGE]);
 
-    await game.classicMode.startBattle([ Species.LEAVANNY ]);
+    await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.FELL_STINGER);
 
@@ -55,11 +50,9 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is KO'd by status effect", async () => {
-    game.override
-      .enemyMoveset(Moves.SPLASH)
-      .enemyStatusEffect(StatusEffect.BURN);
+    game.override.enemyMoveset(Moves.SPLASH).enemyStatusEffect(StatusEffect.BURN);
 
-    await game.classicMode.startBattle([ Species.LEAVANNY ]);
+    await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.FELL_STINGER);
 
@@ -71,7 +64,7 @@ describe("Moves - Fell Stinger", () => {
   it("should not grant stat boost if enemy is KO'd by damaging weather", async () => {
     game.override.weather(WeatherType.HAIL);
 
-    await game.classicMode.startBattle([ Species.LEAVANNY ]);
+    await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.FELL_STINGER);
@@ -82,12 +75,9 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is KO'd by Dry Skin + Harsh Sunlight", async () => {
-    game.override
-      .enemyPassiveAbility(Abilities.STURDY)
-      .enemyAbility(Abilities.DRY_SKIN)
-      .weather(WeatherType.HARSH_SUN);
+    game.override.enemyPassiveAbility(Abilities.STURDY).enemyAbility(Abilities.DRY_SKIN).weather(WeatherType.HARSH_SUN);
 
-    await game.challengeMode.startBattle([ Species.LEAVANNY ]);
+    await game.challengeMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.FELL_STINGER);
@@ -98,11 +88,9 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is saved by Reviver Seed", async () => {
-    game.override
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyHeldItems([{ name: "REVIVER_SEED" }]);
+    game.override.enemyAbility(Abilities.BALL_FETCH).enemyHeldItems([{ name: "REVIVER_SEED" }]);
 
-    await game.classicMode.startBattle([ Species.LEAVANNY ]);
+    await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.FELL_STINGER);
 
@@ -111,14 +99,13 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is KO'd by Salt Cure", async () => {
-    game.override.battleType("double")
-      .startingLevel(5);
+    game.override.battleType("double").startingLevel(5);
     const saltCure = allMoves[Moves.SALT_CURE];
     const fellStinger = allMoves[Moves.FELL_STINGER];
     vi.spyOn(saltCure, "accuracy", "get").mockReturnValue(100);
     vi.spyOn(fellStinger, "power", "get").mockReturnValue(50000);
 
-    await game.classicMode.startBattle([ Species.LEAVANNY ]);
+    await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
@@ -137,12 +124,11 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy dies to Bind or a similar effect", async () => {
-    game.override.battleType("double")
-      .startingLevel(5);
+    game.override.battleType("double").startingLevel(5);
     vi.spyOn(allMoves[Moves.BIND], "accuracy", "get").mockReturnValue(100);
     vi.spyOn(allMoves[Moves.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
-    await game.classicMode.startBattle([ Species.LEAVANNY ]);
+    await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
@@ -161,12 +147,11 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy dies to Leech Seed", async () => {
-    game.override.battleType("double")
-      .startingLevel(5);
+    game.override.battleType("double").startingLevel(5);
     vi.spyOn(allMoves[Moves.LEECH_SEED], "accuracy", "get").mockReturnValue(100);
     vi.spyOn(allMoves[Moves.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
-    await game.classicMode.startBattle([ Species.LEAVANNY ]);
+    await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
@@ -187,7 +172,7 @@ describe("Moves - Fell Stinger", () => {
   it("should grant stat boost if enemy dies directly to hit", async () => {
     game.override.enemyAbility(Abilities.KLUTZ);
 
-    await game.classicMode.startBattle([ Species.LEAVANNY ]);
+    await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon();
     game.move.select(Moves.FELL_STINGER);
 

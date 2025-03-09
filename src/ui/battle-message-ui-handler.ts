@@ -55,7 +55,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     moveDetailsWindow.setName("move-details-window");
     moveDetailsWindow.setOrigin(0, 1);
 
-    this.movesWindowContainer.add([ movesWindow, moveDetailsWindow ]);
+    this.movesWindowContainer.add([movesWindow, moveDetailsWindow]);
     ui.add(this.movesWindowContainer);
 
     const messageContainer = globalScene.add.container(12, -39);
@@ -64,8 +64,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     const message = addTextObject(0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
       wordWrap: {
-        width: this.wordWrapWidth
-      }
+        width: this.wordWrapWidth,
+      },
     });
     messageContainer.add(message);
 
@@ -77,7 +77,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.nameBox = globalScene.add.nineslice(0, 0, "namebox", globalScene.windowType, 72, 16, 8, 8, 5, 5);
     this.nameBox.setOrigin(0, 0);
 
-    this.nameText = addTextObject(8, 0, "Rival", TextStyle.MESSAGE, { maxLines: 1 });
+    this.nameText = addTextObject(8, 0, "Rival", TextStyle.MESSAGE, {
+      maxLines: 1,
+    });
 
     this.nameBoxContainer.add(this.nameBox);
     this.nameBoxContainer.add(this.nameText);
@@ -91,7 +93,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.levelUpStatsContainer = levelUpStatsContainer;
 
-    const levelUpStatsLabelsContent = addTextObject((globalScene.game.canvas.width / 6) - 73, -94, "", TextStyle.WINDOW, { maxLines: 6 });
+    const levelUpStatsLabelsContent = addTextObject(globalScene.game.canvas.width / 6 - 73, -94, "", TextStyle.WINDOW, {
+      maxLines: 6,
+    });
     levelUpStatsLabelsContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     let levelUpStatsLabelText = "";
 
@@ -101,19 +105,36 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsLabelsContent.text = levelUpStatsLabelText;
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;
 
-    const levelUpStatsBg = addWindow((globalScene.game.canvas.width / 6), -100, 80 + levelUpStatsLabelsContent.displayWidth, 100);
+    const levelUpStatsBg = addWindow(
+      globalScene.game.canvas.width / 6,
+      -100,
+      80 + levelUpStatsLabelsContent.displayWidth,
+      100,
+    );
     levelUpStatsBg.setOrigin(1, 0);
     levelUpStatsContainer.add(levelUpStatsBg);
 
     levelUpStatsContainer.add(levelUpStatsLabelsContent);
 
-    const levelUpStatsIncrContent = addTextObject((globalScene.game.canvas.width / 6) - 50, -94, "+\n+\n+\n+\n+\n+", TextStyle.WINDOW, { maxLines: 6 });
+    const levelUpStatsIncrContent = addTextObject(
+      globalScene.game.canvas.width / 6 - 50,
+      -94,
+      "+\n+\n+\n+\n+\n+",
+      TextStyle.WINDOW,
+      { maxLines: 6 },
+    );
     levelUpStatsIncrContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsContainer.add(levelUpStatsIncrContent);
 
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
 
-    const levelUpStatsValuesContent = addBBCodeTextObject((globalScene.game.canvas.width / 6) - 7, -94, "", TextStyle.WINDOW, { maxLines: 6, lineSpacing: 5 });
+    const levelUpStatsValuesContent = addBBCodeTextObject(
+      globalScene.game.canvas.width / 6 - 7,
+      -94,
+      "",
+      TextStyle.WINDOW,
+      { maxLines: 6, lineSpacing: 5 },
+    );
     levelUpStatsValuesContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsValuesContent.setOrigin(1, 0);
     levelUpStatsValuesContent.setAlign("right");
@@ -153,12 +174,27 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     super.clear();
   }
 
-  showText(text: string, delay?: number | null, callback?: Function | null, callbackDelay?: number | null, prompt?: boolean | null, promptDelay?: number | null) {
+  showText(
+    text: string,
+    delay?: number | null,
+    callback?: Function | null,
+    callbackDelay?: number | null,
+    prompt?: boolean | null,
+    promptDelay?: number | null,
+  ) {
     this.hideNameText();
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name?: string, delay?: number | null, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number) {
+  showDialogue(
+    text: string,
+    name?: string,
+    delay?: number | null,
+    callback?: Function,
+    callbackDelay?: number,
+    prompt?: boolean,
+    promptDelay?: number,
+  ) {
     if (name) {
       this.showNameText(name);
     }
@@ -182,10 +218,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
       this.onActionInput = () => {
         if (!showTotals) {
           return this.promptLevelUpStats(partyMemberIndex, [], true).then(() => resolve());
-        } else {
-          this.levelUpStatsContainer.setVisible(false);
-          resolve();
         }
+        this.levelUpStatsContainer.setVisible(false);
+        resolve();
       };
     });
   }

@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import * as Utils from "#app/utils";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -591,7 +591,7 @@ function parseEggMoves(content: string): void {
   const speciesValues = Utils.getEnumValues(Species);
   const lines = content.split(/\n/g);
 
-  lines.forEach((line, l) => {
+  for (const line of lines) {
     const cols = line.split(",").slice(0, 5);
     const moveNames = allMoves.map(m => m.name.replace(/ \([A-Z]\)$/, "").toLowerCase());
     const enumSpeciesName = cols[0].toUpperCase().replace(/[ -]/g, "_");
@@ -612,7 +612,7 @@ function parseEggMoves(content: string): void {
     if (eggMoves.find(m => m !== Moves.NONE)) {
       output += `[Species.${Species[species]}]: [ ${eggMoves.map(m => `Moves.${Moves[m]}`).join(", ")} ],\n`;
     }
-  });
+  }
 
   console.log(output);
 }

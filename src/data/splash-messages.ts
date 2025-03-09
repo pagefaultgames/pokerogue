@@ -185,26 +185,38 @@ const seasonalSplashMessages: Season[] = [
     name: "Halloween",
     start: "09-15",
     end: "10-31",
-    messages: [ "halloween.pumpkabooAbout", "halloween.mayContainSpiders", "halloween.spookyScarySkeledirge", "halloween.gourgeistUsedTrickOrTreat", "halloween.letsSnuggleForever" ],
+    messages: [
+      "halloween.pumpkabooAbout",
+      "halloween.mayContainSpiders",
+      "halloween.spookyScarySkeledirge",
+      "halloween.gourgeistUsedTrickOrTreat",
+      "halloween.letsSnuggleForever",
+    ],
   },
   {
     name: "XMAS",
     start: "12-01",
     end: "12-26",
-    messages: [ "xmas.happyHolidays", "xmas.unaffilicatedWithDelibirdServices", "xmas.delibirdSeason", "xmas.diamondsFromTheSky", "xmas.holidayStylePikachuNotIncluded" ],
+    messages: [
+      "xmas.happyHolidays",
+      "xmas.unaffilicatedWithDelibirdServices",
+      "xmas.delibirdSeason",
+      "xmas.diamondsFromTheSky",
+      "xmas.holidayStylePikachuNotIncluded",
+    ],
   },
   {
     name: "New Year's",
     start: "01-01",
     end: "01-31",
-    messages: [ "newYears.happyNewYear" ],
+    messages: ["newYears.happyNewYear"],
   },
 ];
 
 //#endregion
 
 export function getSplashMessages(): string[] {
-  const splashMessages: string[] = [ ...commonSplashMessages ];
+  const splashMessages: string[] = [...commonSplashMessages];
   console.log("use seasonal splash messages", USE_SEASONAL_SPLASH_MESSAGES);
   if (USE_SEASONAL_SPLASH_MESSAGES) {
     // add seasonal splash messages if the season is active
@@ -215,13 +227,13 @@ export function getSplashMessages(): string[] {
 
       if (now >= startDate && now <= endDate) {
         console.log(`Adding ${messages.length} ${name} splash messages (weight: x${SEASONAL_WEIGHT_MULTIPLIER})`);
-        messages.forEach((message) => {
+        for (const message of messages) {
           const weightedMessage = Array(SEASONAL_WEIGHT_MULTIPLIER).fill(message);
           splashMessages.push(...weightedMessage);
-        });
+        }
       }
     }
   }
 
-  return splashMessages.map((message) => `splashMessages:${message}`);
+  return splashMessages.map(message => `splashMessages:${message}`);
 }

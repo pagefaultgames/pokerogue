@@ -33,7 +33,7 @@ export class MoveHelper extends GameManagerHelper {
    * Used to force a move to miss.
    * @param firstTargetOnly - Whether the move should force miss on the first target only, in the case of multi-target moves.
    */
-  public async forceMiss(firstTargetOnly: boolean = false): Promise<void> {
+  public async forceMiss(firstTargetOnly = false): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
     const hitCheck = vi.spyOn(this.game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck");
 
@@ -84,25 +84,25 @@ export class MoveHelper extends GameManagerHelper {
    */
   public changeMoveset(pokemon: Pokemon, moveset: Moves | Moves[]): void {
     if (!Array.isArray(moveset)) {
-      moveset = [ moveset ];
+      moveset = [moveset];
     }
     pokemon.moveset = [];
-    moveset.forEach((move) => {
+    moveset.forEach(move => {
       pokemon.moveset.push(new PokemonMove(move));
     });
-    const movesetStr = moveset.map((moveId) => Moves[moveId]).join(", ");
+    const movesetStr = moveset.map(moveId => Moves[moveId]).join(", ");
     console.log(`Pokemon ${pokemon.species.name}'s moveset manually set to ${movesetStr} (=[${moveset.join(", ")}])!`);
   }
 
   /**
-  * Simulates learning a move for a player pokemon.
-  * @param move The {@linkcode Moves} being learnt
-  * @param partyIndex The party position of the {@linkcode PlayerPokemon} learning the move (defaults to 0)
-  * @param moveSlotIndex The INDEX (0-4) of the move slot to replace if existent move slots are full;
-  * defaults to 0 (first slot) and 4 aborts the procedure
-  * @returns a promise that resolves once the move has been successfully learnt
- */
-  public async learnMove(move: Moves | number, partyIndex: number = 0, moveSlotIndex: number = 0) {
+   * Simulates learning a move for a player pokemon.
+   * @param move The {@linkcode Moves} being learnt
+   * @param partyIndex The party position of the {@linkcode PlayerPokemon} learning the move (defaults to 0)
+   * @param moveSlotIndex The INDEX (0-4) of the move slot to replace if existent move slots are full;
+   * defaults to 0 (first slot) and 4 aborts the procedure
+   * @returns a promise that resolves once the move has been successfully learnt
+   */
+  public async learnMove(move: Moves | number, partyIndex = 0, moveSlotIndex = 0) {
     return new Promise<void>(async (resolve, reject) => {
       this.game.scene.pushPhase(new LearnMovePhase(partyIndex, move));
 
@@ -128,5 +128,4 @@ export class MoveHelper extends GameManagerHelper {
       resolve();
     });
   }
-
 }
