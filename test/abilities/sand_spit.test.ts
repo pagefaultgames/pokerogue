@@ -6,7 +6,6 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Abilities - Sand Spit", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -31,11 +30,11 @@ describe("Abilities - Sand Spit", () => {
 
     game.override.starterSpecies(Species.SILICOBRA);
     game.override.ability(Abilities.SAND_SPIT);
-    game.override.moveset([ Moves.SPLASH, Moves.COIL ]);
+    game.override.moveset([Moves.SPLASH, Moves.COIL]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([ Moves.TACKLE ]);
+    game.override.enemyMoveset([Moves.TACKLE]);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.SPLASH);
@@ -45,10 +44,8 @@ describe("Abilities - Sand Spit", () => {
   }, 20000);
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([ Moves.TACKLE ])
-      .enemyLevel(100)
-      .startingLevel(1);
-    await game.classicMode.startBattle([ Species.SILICOBRA, Species.MAGIKARP ]);
+    game.override.enemyMoveset([Moves.TACKLE]).enemyLevel(100).startingLevel(1);
+    await game.classicMode.startBattle([Species.SILICOBRA, Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
     game.doSelectPartyPokemon(1);
@@ -58,7 +55,7 @@ describe("Abilities - Sand Spit", () => {
   });
 
   it("should not trigger when targetted with status moves", async () => {
-    game.override.enemyMoveset([ Moves.GROWL ]);
+    game.override.enemyMoveset([Moves.GROWL]);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.COIL);

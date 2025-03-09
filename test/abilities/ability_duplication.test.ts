@@ -23,7 +23,7 @@ describe("Ability Duplication", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .battleType("single")
       .ability(Abilities.HUGE_POWER)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -33,9 +33,9 @@ describe("Ability Duplication", () => {
   it("huge power should only be applied once if both normal and passive", async () => {
     game.override.passiveAbility(Abilities.HUGE_POWER);
 
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    const [ magikarp ] = game.scene.getPlayerField();
+    const [magikarp] = game.scene.getPlayerField();
     const magikarpAttack = magikarp.getEffectiveStat(Stat.ATK);
 
     magikarp.summonData.abilitySuppressed = true;
@@ -46,9 +46,9 @@ describe("Ability Duplication", () => {
   it("huge power should stack with pure power", async () => {
     game.override.passiveAbility(Abilities.PURE_POWER);
 
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    const [ magikarp ] = game.scene.getPlayerField();
+    const [magikarp] = game.scene.getPlayerField();
     const magikarpAttack = magikarp.getEffectiveStat(Stat.ATK);
 
     magikarp.summonData.abilitySuppressed = true;

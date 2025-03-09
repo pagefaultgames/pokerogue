@@ -1,5 +1,5 @@
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
@@ -28,7 +28,7 @@ describe("Abilities - Infiltrator", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.TACKLE, Moves.WATER_GUN, Moves.SPORE, Moves.BABY_DOLL_EYES ])
+      .moveset([Moves.TACKLE, Moves.WATER_GUN, Moves.SPORE, Moves.BABY_DOLL_EYES])
       .ability(Abilities.INFILTRATOR)
       .battleType("single")
       .disableCrits()
@@ -40,11 +40,23 @@ describe("Abilities - Infiltrator", () => {
   });
 
   it.each([
-    { effectName: "Light Screen", tagType: ArenaTagType.LIGHT_SCREEN, move: Moves.WATER_GUN },
-    { effectName: "Reflect", tagType: ArenaTagType.REFLECT, move: Moves.TACKLE },
-    { effectName: "Aurora Veil", tagType: ArenaTagType.AURORA_VEIL, move: Moves.TACKLE }
+    {
+      effectName: "Light Screen",
+      tagType: ArenaTagType.LIGHT_SCREEN,
+      move: Moves.WATER_GUN,
+    },
+    {
+      effectName: "Reflect",
+      tagType: ArenaTagType.REFLECT,
+      move: Moves.TACKLE,
+    },
+    {
+      effectName: "Aurora Veil",
+      tagType: ArenaTagType.AURORA_VEIL,
+      move: Moves.TACKLE,
+    },
   ])("should bypass the target's $effectName", async ({ tagType, move }) => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -60,7 +72,7 @@ describe("Abilities - Infiltrator", () => {
   });
 
   it("should bypass the target's Safeguard", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -76,7 +88,7 @@ describe("Abilities - Infiltrator", () => {
 
   // TODO: fix this interaction to pass this test
   it.todo("should bypass the target's Mist", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -91,7 +103,7 @@ describe("Abilities - Infiltrator", () => {
   });
 
   it("should bypass the target's Substitute", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

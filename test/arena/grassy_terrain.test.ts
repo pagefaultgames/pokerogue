@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -28,12 +28,12 @@ describe("Arena - Grassy Terrain", () => {
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.STURDY)
       .enemyMoveset(Moves.FLY)
-      .moveset([ Moves.GRASSY_TERRAIN, Moves.EARTHQUAKE ])
+      .moveset([Moves.GRASSY_TERRAIN, Moves.EARTHQUAKE])
       .ability(Abilities.NO_GUARD);
   });
 
   it("halves the damage of Earthquake", async () => {
-    await game.classicMode.startBattle([ Species.TAUROS ]);
+    await game.classicMode.startBattle([Species.TAUROS]);
 
     const eq = allMoves[Moves.EARTHQUAKE];
     vi.spyOn(eq, "calculateBattlePower");
@@ -53,7 +53,7 @@ describe("Arena - Grassy Terrain", () => {
   });
 
   it("Does not halve the damage of Earthquake if opponent is not grounded", async () => {
-    await game.classicMode.startBattle([ Species.NINJASK ]);
+    await game.classicMode.startBattle([Species.NINJASK]);
 
     const eq = allMoves[Moves.EARTHQUAKE];
     vi.spyOn(eq, "calculateBattlePower");

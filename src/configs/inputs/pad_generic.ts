@@ -23,7 +23,7 @@ const pad_generic = {
     LC_N: 12,
     LC_S: 13,
     LC_W: 14,
-    LC_E: 15
+    LC_E: 15,
   },
   icons: {
     RC_S: "XB_Letter_A_OL.png",
@@ -54,12 +54,12 @@ const pad_generic = {
     [SettingGamepad.Button_Cycle_Tera]: Button.CYCLE_TERA,
     [SettingGamepad.Button_Menu]: Button.MENU,
     [SettingGamepad.Button_Stats]: Button.STATS,
-    [SettingGamepad.Button_Cycle_Form]:  Button.CYCLE_FORM,
+    [SettingGamepad.Button_Cycle_Form]: Button.CYCLE_FORM,
     [SettingGamepad.Button_Cycle_Shiny]: Button.CYCLE_SHINY,
     [SettingGamepad.Button_Cycle_Gender]: Button.CYCLE_GENDER,
     [SettingGamepad.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
     [SettingGamepad.Button_Speed_Up]: Button.SPEED_UP,
-    [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN
+    [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN,
   },
   default: {
     LC_N: SettingGamepad.Button_Up,
@@ -77,14 +77,9 @@ const pad_generic = {
     LT: SettingGamepad.Button_Cycle_Gender,
     RT: SettingGamepad.Button_Cycle_Ability,
     LS: SettingGamepad.Button_Speed_Up,
-    RS: SettingGamepad.Button_Slow_Down
+    RS: SettingGamepad.Button_Slow_Down,
   },
-  blacklist: [
-    "LC_N",
-    "LC_S",
-    "LC_W",
-    "LC_E",
-  ]
+  blacklist: ["LC_N", "LC_S", "LC_W", "LC_E"],
 };
 
 export default pad_generic;
