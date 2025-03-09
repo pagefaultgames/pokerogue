@@ -14,7 +14,7 @@ export class PokemonTransformPhase extends PokemonPhase {
   protected targetIndex: BattlerIndex;
   private playSound: boolean;
 
-  constructor(userIndex: BattlerIndex, targetIndex: BattlerIndex, playSound: boolean = false) {
+  constructor(userIndex: BattlerIndex, targetIndex: BattlerIndex, playSound = false) {
     super(userIndex);
 
     this.targetIndex = targetIndex;
@@ -23,7 +23,7 @@ export class PokemonTransformPhase extends PokemonPhase {
 
   public override start(): void {
     const user = this.getPokemon();
-    const target = globalScene.getField(true).find((p) => p.getBattlerIndex() === this.targetIndex);
+    const target = globalScene.getField(true).find(p => p.getBattlerIndex() === this.targetIndex);
 
     if (!target) {
       return this.end();
@@ -46,18 +46,17 @@ export class PokemonTransformPhase extends PokemonPhase {
       user.setStatStage(s, target.getStatStage(s));
     }
 
-    user.summonData.moveset = target.getMoveset().map((m) => {
+    user.summonData.moveset = target.getMoveset().map(m => {
       if (m) {
         // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
         return new PokemonMove(m.moveId, 0, 0, false, Math.min(m.getMove().pp, 5));
-      } else {
-        console.warn(`Transform: somehow iterating over a ${m} value when copying moveset!`);
-        return new PokemonMove(Moves.NONE);
       }
+      console.warn(`Transform: somehow iterating over a ${m} value when copying moveset!`);
+      return new PokemonMove(Moves.NONE);
     });
     user.summonData.types = target.getTypes();
 
-    const promises = [ user.updateInfo() ];
+    const promises = [user.updateInfo()];
 
     if (this.playSound) {
       globalScene.playSound("battle_anims/PRSFX- Transform");

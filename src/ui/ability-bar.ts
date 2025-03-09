@@ -27,7 +27,9 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
     this.add(this.bg);
 
-    this.abilityBarText = addTextObject(15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.abilityBarText = addTextObject(15, 3, "", TextStyle.MESSAGE, {
+      fontSize: "72px",
+    });
     this.abilityBarText.setOrigin(0, 0);
     this.abilityBarText.setWordWrapWidth(600, true);
     this.add(this.abilityBarText);
@@ -36,15 +38,16 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showAbility(pokemon: Pokemon, passive: boolean = false): void {
-    this.abilityBarText.setText(`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: getPokemonNameWithAffix(pokemon), passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ?  pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`);
+  showAbility(pokemon: Pokemon, passive = false): void {
+    this.abilityBarText.setText(
+      `${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: getPokemonNameWithAffix(pokemon), passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ? pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`,
+    );
 
     if (this.shown) {
       return;
     }
 
     globalScene.fieldUI.bringToTop(this);
-
 
     this.y = baseY + (globalScene.currentBattle.double ? 14 : 0);
     this.tween = globalScene.tweens.add({
@@ -55,7 +58,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
       onComplete: () => {
         this.tween = null;
         this.resetAutoHideTimer();
-      }
+      },
     });
 
     this.setVisible(true);
@@ -83,7 +86,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
       onComplete: () => {
         this.tween = null;
         this.setVisible(false);
-      }
+      },
     });
 
     this.shown = false;

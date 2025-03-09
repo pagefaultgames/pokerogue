@@ -30,7 +30,7 @@ describe("Moves - Secret Power", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SECRET_POWER ])
+      .moveset([Moves.SECRET_POWER])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -40,13 +40,11 @@ describe("Moves - Secret Power", () => {
   });
 
   it("Secret Power checks for an active terrain first then looks at the biome for its secondary effect", async () => {
-    game.override
-      .startingBiome(Biome.VOLCANO)
-      .enemyMoveset([ Moves.SPLASH, Moves.MISTY_TERRAIN ]);
+    game.override.startingBiome(Biome.VOLCANO).enemyMoveset([Moves.SPLASH, Moves.MISTY_TERRAIN]);
     vi.spyOn(allMoves[Moves.SECRET_POWER], "chance", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
-    const enemyPokemon  = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // No Terrain + Biome.VOLCANO --> Burn
     game.move.select(Moves.SECRET_POWER);
@@ -61,38 +59,36 @@ describe("Moves - Secret Power", () => {
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-1);
   });
 
-  it("Secret Power's effect chance is doubled by Serene Grace, but not by the 'rainbow' effect from Fire/Water Pledge",
-    async () => {
-      game.override
-        .moveset([ Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.SECRET_POWER, Moves.SPLASH ])
-        .ability(Abilities.SERENE_GRACE)
-        .enemyMoveset([ Moves.SPLASH ])
-        .battleType("double");
-      await game.classicMode.startBattle([ Species.BLASTOISE, Species.CHARIZARD ]);
+  it("Secret Power's effect chance is doubled by Serene Grace, but not by the 'rainbow' effect from Fire/Water Pledge", async () => {
+    game.override
+      .moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.SECRET_POWER, Moves.SPLASH])
+      .ability(Abilities.SERENE_GRACE)
+      .enemyMoveset([Moves.SPLASH])
+      .battleType("double");
+    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
-      const sereneGraceAttr = allAbilities[Abilities.SERENE_GRACE].getAttrs(MoveEffectChanceMultiplierAbAttr)[0];
-      vi.spyOn(sereneGraceAttr, "apply");
+    const sereneGraceAttr = allAbilities[Abilities.SERENE_GRACE].getAttrs(MoveEffectChanceMultiplierAbAttr)[0];
+    vi.spyOn(sereneGraceAttr, "apply");
 
-      game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
-      game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
+    game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
-      await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-      let rainbowEffect = game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER);
-      expect(rainbowEffect).toBeDefined();
+    let rainbowEffect = game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER);
+    expect(rainbowEffect).toBeDefined();
 
-      rainbowEffect = rainbowEffect!;
-      vi.spyOn(rainbowEffect, "apply");
+    rainbowEffect = rainbowEffect!;
+    vi.spyOn(rainbowEffect, "apply");
 
-      game.move.select(Moves.SECRET_POWER, 0, BattlerIndex.ENEMY);
-      game.move.select(Moves.SPLASH, 1);
+    game.move.select(Moves.SECRET_POWER, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.SPLASH, 1);
 
-      await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(sereneGraceAttr.apply).toHaveBeenCalledOnce();
-      expect(sereneGraceAttr.apply).toHaveLastReturnedWith(true);
+    expect(sereneGraceAttr.apply).toHaveBeenCalledOnce();
+    expect(sereneGraceAttr.apply).toHaveLastReturnedWith(true);
 
-      expect(rainbowEffect.apply).toHaveBeenCalledTimes(0);
-    }
-  );
+    expect(rainbowEffect.apply).toHaveBeenCalledTimes(0);
+  });
 });

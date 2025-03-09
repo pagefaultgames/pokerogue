@@ -45,7 +45,7 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
             this.hide();
           }
         });
-      }
+      },
     });
 
     this.setVisible(true);
@@ -72,7 +72,7 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
         if (this.shown) {
           this.show();
         }
-      }
+      },
     });
 
     this.shown = false;

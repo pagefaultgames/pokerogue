@@ -17,7 +17,7 @@ import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import i18next from "i18next";
 
 const namespace = "mysteryEncounters/fieldTrip";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -37,12 +37,10 @@ describe("Field Trip - Mystery Encounter", () => {
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
-    game.override.moveset([ Moves.TACKLE, Moves.UPROAR, Moves.SWORDS_DANCE ]);
+    game.override.moveset([Moves.TACKLE, Moves.UPROAR, Moves.SWORDS_DANCE]);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [ Biome.CAVE, [ MysteryEncounterType.FIELD_TRIP ]],
-      ])
+      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.FIELD_TRIP]]]),
     );
   });
 
@@ -60,12 +58,12 @@ describe("Field Trip - Mystery Encounter", () => {
     expect(FieldTripEncounter.dialogue).toBeDefined();
     expect(FieldTripEncounter.dialogue.intro).toStrictEqual([
       {
-        text: `${namespace}:intro`
+        text: `${namespace}:intro`,
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`
-      }
+        text: `${namespace}:intro_dialogue`,
+      },
     ]);
     expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
@@ -91,7 +89,9 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -101,13 +101,25 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_attack"));
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_defense"));
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_speed"));
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.DIRE_HIT.name"));
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.RARER_CANDY.name"));
+      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:TempStatStageBoosterItem.x_attack"),
+      );
+      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:TempStatStageBoosterItem.x_defense"),
+      );
+      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
+      );
+      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:ModifierType.DIRE_HIT.name"),
+      );
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
+      );
     });
 
     it("should leave encounter without battle", async () => {
@@ -138,7 +150,9 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -148,13 +162,25 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_sp_atk"));
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_sp_def"));
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_speed"));
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.DIRE_HIT.name"));
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.RARER_CANDY.name"));
+      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:TempStatStageBoosterItem.x_sp_atk"),
+      );
+      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:TempStatStageBoosterItem.x_sp_def"),
+      );
+      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
+      );
+      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:ModifierType.DIRE_HIT.name"),
+      );
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
+      );
     });
 
     it("should leave encounter without battle", async () => {
@@ -185,7 +211,9 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -196,14 +224,32 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_accuracy"));
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(i18next.t("modifierType:TempStatStageBoosterItem.x_speed"));
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", { modifierCount: 5, pokeballName: i18next.t("pokeball:greatBall") }));
-      expect(i18next.t).toHaveBeenCalledWith(("modifierType:ModifierType.AddPokeballModifierType.name"), expect.objectContaining({ modifierCount: 5 }));
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.IV_SCANNER.name"));
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(i18next.t("modifierType:ModifierType.RARER_CANDY.name"));
+      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:TempStatStageBoosterItem.x_accuracy"),
+      );
+      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
+      );
+      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
+          modifierCount: 5,
+          pokeballName: i18next.t("pokeball:greatBall"),
+        }),
+      );
+      expect(i18next.t).toHaveBeenCalledWith(
+        "modifierType:ModifierType.AddPokeballModifierType.name",
+        expect.objectContaining({ modifierCount: 5 }),
+      );
+      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:ModifierType.IV_SCANNER.name"),
+      );
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+        i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
+      );
     });
 
     it("should leave encounter without battle", async () => {

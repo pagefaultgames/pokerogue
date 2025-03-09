@@ -30,7 +30,7 @@ describe("Pokerogue Account API", () => {
       };
       server.use(http.get(`${apiBase}/account/info`, () => HttpResponse.json(expectedAccountInfo)));
 
-      const [ accountInfo, status ] = await accountApi.getInfo();
+      const [accountInfo, status] = await accountApi.getInfo();
 
       expect(accountInfo).toEqual(expectedAccountInfo);
       expect(status).toBe(200);
@@ -39,7 +39,7 @@ describe("Pokerogue Account API", () => {
     it("should return null + status-code anad report a warning on FAILURE", async () => {
       server.use(http.get(`${apiBase}/account/info`, () => new HttpResponse("", { status: 401 })));
 
-      const [ accountInfo, status ] = await accountApi.getInfo();
+      const [accountInfo, status] = await accountApi.getInfo();
 
       expect(accountInfo).toBeNull();
       expect(status).toBe(401);
@@ -49,7 +49,7 @@ describe("Pokerogue Account API", () => {
     it("should return null + 500 anad report a warning on ERROR", async () => {
       server.use(http.get(`${apiBase}/account/info`, () => HttpResponse.error()));
 
-      const [ accountInfo, status ] = await accountApi.getInfo();
+      const [accountInfo, status] = await accountApi.getInfo();
 
       expect(accountInfo).toBeNull();
       expect(status).toBe(500);
@@ -70,7 +70,7 @@ describe("Pokerogue Account API", () => {
 
     it("should return error message on FAILURE", async () => {
       server.use(
-        http.post(`${apiBase}/account/register`, () => new HttpResponse("Username is already taken", { status: 400 }))
+        http.post(`${apiBase}/account/register`, () => new HttpResponse("Username is already taken", { status: 400 })),
       );
 
       const error = await accountApi.register(registerParams);
@@ -78,7 +78,7 @@ describe("Pokerogue Account API", () => {
       expect(error).toBe("Username is already taken");
     });
 
-    it("should return \"Unknown error\" and report a warning on ERROR", async () => {
+    it('should return "Unknown error" and report a warning on ERROR', async () => {
       server.use(http.post(`${apiBase}/account/register`, () => HttpResponse.error()));
 
       const error = await accountApi.register(registerParams);
@@ -103,7 +103,7 @@ describe("Pokerogue Account API", () => {
 
     it("should return error message and report a warning on FAILURE", async () => {
       server.use(
-        http.post(`${apiBase}/account/login`, () => new HttpResponse("Password is incorrect", { status: 401 }))
+        http.post(`${apiBase}/account/login`, () => new HttpResponse("Password is incorrect", { status: 401 })),
       );
 
       const error = await accountApi.login(loginParams);
@@ -112,7 +112,7 @@ describe("Pokerogue Account API", () => {
       expect(console.warn).toHaveBeenCalledWith("Login failed!", 401, "Unauthorized");
     });
 
-    it("should return \"Unknown error\" and report a warning on ERROR", async () => {
+    it('should return "Unknown error" and report a warning on ERROR', async () => {
       server.use(http.post(`${apiBase}/account/login`, () => HttpResponse.error()));
 
       const error = await accountApi.login(loginParams);

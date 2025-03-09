@@ -27,7 +27,7 @@ describe("Moves - Obstruct", () => {
       .enemyMoveset(Moves.TACKLE)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH)
-      .moveset([ Moves.OBSTRUCT ])
+      .moveset([Moves.OBSTRUCT])
       .starterSpecies(Species.FEEBAS);
   });
 
@@ -57,8 +57,7 @@ describe("Moves - Obstruct", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.isFullHp()).toBe(true);
     expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
-  }
-  );
+  });
 
   it("protects from non-contact damaging moves and doesn't lower the opponent's defense by 2 stages", async () => {
     game.override.enemyMoveset(Moves.WATER_GUN);
