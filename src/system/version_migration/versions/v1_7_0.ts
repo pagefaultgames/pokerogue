@@ -13,9 +13,16 @@ export const systemMigrators = [
     if (data.starterData && data.dexData) {
       Object.keys(data.starterData).forEach(sd => {
         const caughtAttr = data.dexData[sd]?.caughtAttr;
-        const species = getPokemonSpecies(Number(sd));
+        const speciesNumber = Number(sd);
+        if (!speciesNumber) {
+          // An unknown bug at some point in time caused some accounts to have starter data for pokedex number 0 which crashes
+          return;
+        }
+        const species = getPokemonSpecies(speciesNumber);
         if (caughtAttr && species.forms?.length > 1) {
-          const selectableForms = species.forms.filter((form, formIndex) => form.isStarterSelectable && (caughtAttr & globalScene.gameData.getFormAttr(formIndex)));
+          const selectableForms = species.forms.filter(
+            (form, formIndex) => form.isStarterSelectable && caughtAttr & globalScene.gameData.getFormAttr(formIndex),
+          );
           if (selectableForms.length === 0) {
             data.dexData[sd].caughtAttr += DexAttr.DEFAULT_FORM;
           }
@@ -29,9 +36,9 @@ export const settingsMigrators = [] as const;
 
 export const sessionMigrators = [
   function migrateTera(data: SessionSaveData) {
-    for (let i = 0; i < data.modifiers.length;) {
+    for (let i = 0; i < data.modifiers.length; ) {
       if (data.modifiers[i].className === "TerastallizeModifier") {
-        data.party.forEach((p) => {
+        data.party.forEach(p => {
           if (p.id === data.modifiers[i].args[0]) {
             p.teraType = data.modifiers[i].args[1];
           }
@@ -42,9 +49,9 @@ export const sessionMigrators = [
       }
     }
 
-    for (let i = 0; i < data.enemyModifiers.length;) {
+    for (let i = 0; i < data.enemyModifiers.length; ) {
       if (data.enemyModifiers[i].className === "TerastallizeModifier") {
-        data.enemyParty.forEach((p) => {
+        data.enemyParty.forEach(p => {
           if (p.id === data.enemyModifiers[i].args[0]) {
             p.teraType = data.enemyModifiers[i].args[1];
           }
@@ -66,5 +73,5 @@ export const sessionMigrators = [
         p.teraType = getPokemonSpeciesForm(p.species, p.formIndex).type1;
       }
     });
-  }
+  },
 ] as const;

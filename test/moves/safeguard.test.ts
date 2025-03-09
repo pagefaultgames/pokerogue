@@ -8,7 +8,6 @@ import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-
 describe("Moves - Safeguard", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -28,11 +27,11 @@ describe("Moves - Safeguard", () => {
     game.override
       .battleType("single")
       .enemySpecies(Species.DRATINI)
-      .enemyMoveset([ Moves.SAFEGUARD ])
+      .enemyMoveset([Moves.SAFEGUARD])
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyLevel(5)
       .starterSpecies(Species.DRATINI)
-      .moveset([ Moves.NUZZLE, Moves.SPORE, Moves.YAWN, Moves.SPLASH ])
+      .moveset([Moves.NUZZLE, Moves.SPORE, Moves.YAWN, Moves.SPLASH])
       .ability(Abilities.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
   });
 
@@ -41,7 +40,7 @@ describe("Moves - Safeguard", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.NUZZLE);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemy.status).toBeUndefined();
@@ -52,19 +51,19 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPORE);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon.status).toBeUndefined();
   });
 
   it("protects from confusion", async () => {
-    game.override.moveset([ Moves.CONFUSE_RAY ]);
+    game.override.moveset([Moves.CONFUSE_RAY]);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.CONFUSE_RAY);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon.summonData.tags).toEqual([]);
@@ -78,7 +77,7 @@ describe("Moves - Safeguard", () => {
     game.move.select(Moves.SPORE, 0, BattlerIndex.ENEMY_2);
     game.move.select(Moves.NUZZLE, 1, BattlerIndex.ENEMY_2);
 
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -93,7 +92,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.YAWN);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon.summonData.tags).toEqual([]);
@@ -104,7 +103,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.YAWN);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     game.move.select(Moves.SPLASH);
@@ -119,13 +118,13 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     enemyPokemon.damageAndUpdate(1);
 
     expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
 
-    game.override.enemyMoveset([ Moves.REST ]);
+    game.override.enemyMoveset([Moves.REST]);
     // Force the moveset to update mid-battle
     // TODO: Remove after enemy AI rework is in
     enemyPokemon.getMoveset();
@@ -138,14 +137,18 @@ describe("Moves - Safeguard", () => {
 
   it("protects from ability-inflicted status", async () => {
     game.override.ability(Abilities.STATIC);
-    vi.spyOn(allAbilities[Abilities.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0], "chance", "get").mockReturnValue(100);
+    vi.spyOn(
+      allAbilities[Abilities.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
+      "chance",
+      "get",
+    ).mockReturnValue(100);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
-    game.override.enemyMoveset([ Moves.TACKLE ]);
+    game.override.enemyMoveset([Moves.TACKLE]);
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
