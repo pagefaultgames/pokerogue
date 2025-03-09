@@ -16,12 +16,8 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
  * Also handles prompts for skipping animation, and calling the egg summary phase
  */
 export class EggLapsePhase extends Phase {
-
   private eggHatchData: EggHatchData[] = [];
   private readonly minEggsToSkip: number = 2;
-  constructor() {
-    super();
-  }
 
   start() {
     super.start();
@@ -33,19 +29,37 @@ export class EggLapsePhase extends Phase {
 
     if (eggsToHatchCount > 0) {
       if (eggsToHatchCount >= this.minEggsToSkip && globalScene.eggSkipPreference === 1) {
-        globalScene.ui.showText(i18next.t("battle:eggHatching"), 0, () => {
-          // show prompt for skip, blocking inputs for 1 second
-          globalScene.ui.showText(i18next.t("battle:eggSkipPrompt", { eggsToHatch: eggsToHatchCount }), 0);
-          globalScene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
-            this.hatchEggsSkipped(eggsToHatch);
-            this.showSummary();
-          }, () => {
-            this.hatchEggsRegular(eggsToHatch);
-            this.end();
+        globalScene.ui.showText(
+          i18next.t("battle:eggHatching"),
+          0,
+          () => {
+            // show prompt for skip, blocking inputs for 1 second
+            globalScene.ui.showText(
+              i18next.t("battle:eggSkipPrompt", {
+                eggsToHatch: eggsToHatchCount,
+              }),
+              0,
+            );
+            globalScene.ui.setModeWithoutClear(
+              Mode.CONFIRM,
+              () => {
+                this.hatchEggsSkipped(eggsToHatch);
+                this.showSummary();
+              },
+              () => {
+                this.hatchEggsRegular(eggsToHatch);
+                this.end();
+              },
+              null,
+              null,
+              null,
+              1000,
+              true,
+            );
           },
-          null, null, null, 1000, true
-          );
-        }, 100, true);
+          100,
+          true,
+        );
       } else if (eggsToHatchCount >= this.minEggsToSkip && globalScene.eggSkipPreference === 2) {
         globalScene.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsSkipped(eggsToHatch);
@@ -118,7 +132,6 @@ export class EggLapsePhase extends Phase {
     if (pokemon.isShiny()) {
       globalScene.validateAchv(achvs.HATCH_SHINY);
     }
-
   }
 
   /**
@@ -129,14 +142,16 @@ export class EggLapsePhase extends Phase {
   generatePokemon(egg: Egg): EggHatchData {
     let ret: PlayerPokemon;
     let newHatchData: EggHatchData;
-    globalScene.executeWithSeedOffset(() => {
-      ret = egg.generatePlayerPokemon();
-      newHatchData = new EggHatchData(ret, egg.eggMoveIndex);
-      newHatchData.setDex();
-      this.eggHatchData.push(newHatchData);
-
-    }, egg.id, EGG_SEED.toString());
+    globalScene.executeWithSeedOffset(
+      () => {
+        ret = egg.generatePlayerPokemon();
+        newHatchData = new EggHatchData(ret, egg.eggMoveIndex);
+        newHatchData.setDex();
+        this.eggHatchData.push(newHatchData);
+      },
+      egg.id,
+      EGG_SEED.toString(),
+    );
     return newHatchData!;
   }
-
 }

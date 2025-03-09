@@ -33,7 +33,7 @@ describe("Moves - Tera Blast", () => {
       .battleType("single")
       .disableCrits()
       .starterSpecies(Species.FEEBAS)
-      .moveset([ Moves.TERA_BLAST ])
+      .moveset([Moves.TERA_BLAST])
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
@@ -54,7 +54,7 @@ describe("Moves - Tera Blast", () => {
     playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.SUPER_EFFECTIVE);
@@ -68,7 +68,7 @@ describe("Moves - Tera Blast", () => {
     playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(100);
@@ -86,7 +86,7 @@ describe("Moves - Tera Blast", () => {
     enemyPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.SUPER_EFFECTIVE);
@@ -122,7 +122,7 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("should stay as a special move if ATK turns lower than SPATK mid-turn", async () => {
-    game.override.enemyMoveset([ Moves.CHARM ]);
+    game.override.enemyMoveset([Moves.CHARM]);
     await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -132,7 +132,7 @@ describe("Moves - Tera Blast", () => {
     vi.spyOn(teraBlastAttr, "apply");
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(teraBlastAttr.apply).toHaveLastReturnedWith(false);
   });
@@ -151,7 +151,7 @@ describe("Moves - Tera Blast", () => {
     vi.spyOn(teraBlastAttr, "apply");
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(teraBlastAttr.apply).toHaveLastReturnedWith(false);
@@ -168,11 +168,10 @@ describe("Moves - Tera Blast", () => {
     vi.spyOn(teraBlastAttr, "apply");
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(teraBlastAttr.apply).toHaveLastReturnedWith(false);
   });
-
 
   it("causes stat drops if user is Stellar tera type", async () => {
     await game.startBattle();
@@ -182,7 +181,7 @@ describe("Moves - Tera Blast", () => {
     playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
