@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
@@ -29,7 +29,7 @@ describe("Moves - Scale Shot", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SCALE_SHOT ])
+      .moveset([Moves.SCALE_SHOT])
       .battleType("single")
       .disableCrits()
       .ability(Abilities.NO_GUARD)
@@ -41,11 +41,11 @@ describe("Moves - Scale Shot", () => {
   it("applies stat changes after last hit", async () => {
     game.override.enemySpecies(Species.FORRETRESS);
 
-    await game.classicMode.startBattle([ Species.MINCCINO ]);
+    await game.classicMode.startBattle([Species.MINCCINO]);
     const minccino = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.SCALE_SHOT);
 
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase);
     await game.phaseInterceptor.to(DamageAnimPhase);
@@ -69,7 +69,7 @@ describe("Moves - Scale Shot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([ Species.MINCCINO ]);
+    await game.classicMode.startBattle([Species.MINCCINO]);
     const minccino = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SCALE_SHOT);

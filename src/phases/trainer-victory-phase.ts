@@ -38,47 +38,92 @@ export class TrainerVictoryPhase extends BattlePhase {
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
     // Validate Voucher for boss trainers
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
-      if (!globalScene.validateVoucher(vouchers[TrainerType[trainerType]]) && globalScene.currentBattle.trainer?.config.isBoss) {
+      if (
+        !globalScene.validateVoucher(vouchers[TrainerType[trainerType]]) &&
+        globalScene.currentBattle.trainer?.config.isBoss
+      ) {
         if (globalScene.eventManager.getUpgradeUnlockedVouchers()) {
-          globalScene.unshiftPhase(new ModifierRewardPhase([ modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
+          globalScene.unshiftPhase(
+            new ModifierRewardPhase(
+              [
+                modifierTypes.VOUCHER_PLUS,
+                modifierTypes.VOUCHER_PLUS,
+                modifierTypes.VOUCHER_PLUS,
+                modifierTypes.VOUCHER_PREMIUM,
+              ][vouchers[TrainerType[trainerType]].voucherType],
+            ),
+          );
         } else {
-          globalScene.unshiftPhase(new ModifierRewardPhase([ modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
+          globalScene.unshiftPhase(
+            new ModifierRewardPhase(
+              [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
+                vouchers[TrainerType[trainerType]].voucherType
+              ],
+            ),
+          );
         }
       }
     }
     // Breeders in Space achievement
     if (
-      globalScene.arena.biomeType === Biome.SPACE
-      && (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
+      globalScene.arena.biomeType === Biome.SPACE &&
+      (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
     ) {
       globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);
     }
 
-    globalScene.ui.showText(i18next.t("battle:trainerDefeated", { trainerName: globalScene.currentBattle.trainer?.getName(TrainerSlot.NONE, true) }), null, () => {
-      const victoryMessages = globalScene.currentBattle.trainer?.getVictoryMessages()!; // TODO: is this bang correct?
-      let message: string;
-      globalScene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), globalScene.currentBattle.waveIndex);
-      message = message!; // tell TS compiler it's defined now
+    globalScene.ui.showText(
+      i18next.t("battle:trainerDefeated", {
+        trainerName: globalScene.currentBattle.trainer?.getName(TrainerSlot.NONE, true),
+      }),
+      null,
+      () => {
+        const victoryMessages = globalScene.currentBattle.trainer?.getVictoryMessages()!; // TODO: is this bang correct?
+        let message: string;
+        globalScene.executeWithSeedOffset(
+          () => (message = Utils.randSeedItem(victoryMessages)),
+          globalScene.currentBattle.waveIndex,
+        );
+        message = message!; // tell TS compiler it's defined now
 
-      const showMessage = () => {
-        const originalFunc = showMessageOrEnd;
-        showMessageOrEnd = () => globalScene.ui.showDialogue(message, globalScene.currentBattle.trainer?.getName(TrainerSlot.TRAINER, true), null, originalFunc);
-
-        showMessageOrEnd();
-      };
-      let showMessageOrEnd = () => this.end();
-      if (victoryMessages?.length) {
-        if (globalScene.currentBattle.trainer?.config.hasCharSprite && !globalScene.ui.shouldSkipDialogue(message)) {
+        const showMessage = () => {
           const originalFunc = showMessageOrEnd;
-          showMessageOrEnd = () => globalScene.charSprite.hide().then(() => globalScene.hideFieldOverlay(250).then(() => originalFunc()));
-          globalScene.showFieldOverlay(500).then(() => globalScene.charSprite.showCharacter(globalScene.currentBattle.trainer?.getKey()!, getCharVariantFromDialogue(victoryMessages[0])).then(() => showMessage())); // TODO: is this bang correct?
+          showMessageOrEnd = () =>
+            globalScene.ui.showDialogue(
+              message,
+              globalScene.currentBattle.trainer?.getName(TrainerSlot.TRAINER, true),
+              null,
+              originalFunc,
+            );
+
+          showMessageOrEnd();
+        };
+        let showMessageOrEnd = () => this.end();
+        if (victoryMessages?.length) {
+          if (globalScene.currentBattle.trainer?.config.hasCharSprite && !globalScene.ui.shouldSkipDialogue(message)) {
+            const originalFunc = showMessageOrEnd;
+            showMessageOrEnd = () =>
+              globalScene.charSprite.hide().then(() => globalScene.hideFieldOverlay(250).then(() => originalFunc()));
+            globalScene
+              .showFieldOverlay(500)
+              .then(() =>
+                globalScene.charSprite
+                  .showCharacter(
+                    globalScene.currentBattle.trainer?.getKey()!,
+                    getCharVariantFromDialogue(victoryMessages[0]),
+                  )
+                  .then(() => showMessage()),
+              ); // TODO: is this bang correct?
+          } else {
+            showMessage();
+          }
         } else {
-          showMessage();
+          showMessageOrEnd();
         }
-      } else {
-        showMessageOrEnd();
-      }
-    }, null, true);
+      },
+      null,
+      true,
+    );
 
     this.showEnemyTrainer();
   }

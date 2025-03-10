@@ -19,7 +19,7 @@ import { globalScene } from "#app/global-scene";
 export class SummonPhase extends PartyMemberPokemonPhase {
   private loaded: boolean;
 
-  constructor(fieldIndex: number, player: boolean = true, loaded: boolean = false) {
+  constructor(fieldIndex: number, player = true, loaded = false) {
     super(fieldIndex, player);
 
     this.loaded = loaded;
@@ -33,13 +33,15 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   /**
-    * Sends out a Pokemon before the battle begins and shows the appropriate messages
-    */
+   * Sends out a Pokemon before the battle begins and shows the appropriate messages
+   */
   preSummon(): void {
     const partyMember = this.getPokemon();
     // If the Pokemon about to be sent out is fainted, illegal under a challenge, or no longer in the party for some reason, switch to the first non-fainted legal Pokemon
     if (!partyMember.isAllowedInBattle() || (this.player && !this.getParty().some(p => p.id === partyMember.id))) {
-      console.warn("The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...");
+      console.warn(
+        "The Pokemon about to be sent out is fainted or illegal under a challenge. Attempting to resolve...",
+      );
 
       // First check if they're somehow still in play, if so remove them.
       if (partyMember.isOnField()) {
@@ -60,16 +62,28 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       }
 
       // Swaps the fainted Pokemon and the first non-fainted legal Pokemon in the party
-      [ party[this.partyMemberIndex], party[legalIndex] ] = [ party[legalIndex], party[this.partyMemberIndex] ];
-      console.warn("Swapped %s %O with %s %O", getPokemonNameWithAffix(partyMember), partyMember, getPokemonNameWithAffix(party[0]), party[0]);
+      [party[this.partyMemberIndex], party[legalIndex]] = [party[legalIndex], party[this.partyMemberIndex]];
+      console.warn(
+        "Swapped %s %O with %s %O",
+        getPokemonNameWithAffix(partyMember),
+        partyMember,
+        getPokemonNameWithAffix(party[0]),
+        party[0],
+      );
     }
 
     if (this.player) {
-      globalScene.ui.showText(i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(this.getPokemon()) }));
+      globalScene.ui.showText(
+        i18next.t("battle:playerGo", {
+          pokemonName: getPokemonNameWithAffix(this.getPokemon()),
+        }),
+      );
       if (this.player) {
         globalScene.pbTray.hide();
       }
-      globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+      globalScene.trainer.setTexture(
+        `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
+      );
       globalScene.time.delayedCall(562, () => {
         globalScene.trainer.setFrame("2");
         globalScene.time.delayedCall(64, () => {
@@ -80,13 +94,21 @@ export class SummonPhase extends PartyMemberPokemonPhase {
         targets: globalScene.trainer,
         x: -36,
         duration: 1000,
-        onComplete: () => globalScene.trainer.setVisible(false)
+        onComplete: () => globalScene.trainer.setVisible(false),
       });
       globalScene.time.delayedCall(750, () => this.summon());
-    } else if (globalScene.currentBattle.battleType === BattleType.TRAINER || globalScene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
-      const trainerName = globalScene.currentBattle.trainer?.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
+    } else if (
+      globalScene.currentBattle.battleType === BattleType.TRAINER ||
+      globalScene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+    ) {
+      const trainerName = globalScene.currentBattle.trainer?.getName(
+        !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+      );
       const pokemonName = this.getPokemon().getNameToRender();
-      const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
+      const message = i18next.t("battle:trainerSendOut", {
+        trainerName,
+        pokemonName,
+      });
 
       globalScene.pbTrayEnemy.hide();
       globalScene.ui.showText(message, null, () => this.summon());
@@ -103,7 +125,10 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     const pokemon = this.getPokemon();
 
     const pokeball = globalScene.addFieldSprite(
-      this.player ? 36 : 248, this.player ? 80 : 44, "pb", getPokeballAtlasKey(pokemon.battleData.illusion.pokeball ?? pokemon.pokeball)
+      this.player ? 36 : 248, 
+      this.player ? 80 : 44, 
+      "pb", 
+      getPokeballAtlasKey(pokemon.battleData.illusion.pokeball ?? pokemon.pokeball)
     );
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
@@ -113,7 +138,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
     } else {
       const availablePartyMembers = this.getParty().filter(p => p.isAllowedInBattle()).length;
-      pokemon.setFieldPosition(!globalScene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT);
+      pokemon.setFieldPosition(
+        !globalScene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT,
+      );
     }
 
     const fpOffset = pokemon.getFieldPositionOffset();
@@ -123,7 +150,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     globalScene.tweens.add({
       targets: pokeball,
       duration: 650,
-      x: (this.player ? 100 : 236) + fpOffset[0]
+      x: (this.player ? 100 : 236) + fpOffset[0],
     });
 
     globalScene.tweens.add({
@@ -171,11 +198,11 @@ export class SummonPhase extends PartyMemberPokemonPhase {
                 pokemon.getSprite().clearTint();
                 pokemon.resetSummonData();
                 globalScene.time.delayedCall(1000, () => this.end());
-              }
+              },
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 
@@ -191,7 +218,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
     } else {
       const availablePartyMembers = this.getParty().filter(p => !p.isFainted()).length;
-      pokemon.setFieldPosition(!globalScene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT);
+      pokemon.setFieldPosition(
+        !globalScene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT,
+      );
     }
 
     globalScene.add.existing(pokemon);
@@ -232,7 +261,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
         pokemon.resetSummonData();
         globalScene.updateFieldScale();
         globalScene.time.delayedCall(1000, () => this.end());
-      }
+      },
     });
   }
 
@@ -245,7 +274,11 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
-    if (!this.loaded || [ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(globalScene.currentBattle.battleType) || (globalScene.currentBattle.waveIndex % 10) === 1) {
+    if (
+      !this.loaded ||
+      [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) ||
+      globalScene.currentBattle.waveIndex % 10 === 1
+    ) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
     }
