@@ -23,7 +23,7 @@ describe("Moves - Role Play", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.ROLE_PLAY ])
+      .moveset([Moves.SPLASH, Moves.ROLE_PLAY])
       .ability(Abilities.ADAPTABILITY)
       .battleType("single")
       .disableCrits()
@@ -33,7 +33,7 @@ describe("Moves - Role Play", () => {
   });
 
   it("should set the user's ability to the target's ability", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.ROLE_PLAY);
     await game.phaseInterceptor.to("BerryPhase");
@@ -43,7 +43,7 @@ describe("Moves - Role Play", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.enemyAbility(Abilities.INTIMIDATE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.ROLE_PLAY);
     await game.phaseInterceptor.to("BerryPhase");

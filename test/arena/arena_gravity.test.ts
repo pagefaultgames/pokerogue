@@ -27,7 +27,7 @@ describe("Arena - Gravity", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset([ Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE ])
+      .moveset([Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE])
       .ability(Abilities.UNNERVE)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
@@ -43,7 +43,7 @@ describe("Arena - Gravity", () => {
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
     // Setup Gravity on first turn
-    await game.classicMode.startBattle([ Species.PIKACHU ]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     game.move.select(Moves.GRAVITY);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -64,7 +64,7 @@ describe("Arena - Gravity", () => {
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
     // Setup Gravity on first turn
-    await game.classicMode.startBattle([ Species.PIKACHU ]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     game.move.select(Moves.GRAVITY);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -80,11 +80,9 @@ describe("Arena - Gravity", () => {
 
   describe("Against flying types", () => {
     it("can be hit by ground-type moves now", async () => {
-      game.override
-        .enemySpecies(Species.PIDGEOT)
-        .moveset([ Moves.GRAVITY, Moves.EARTHQUAKE ]);
+      game.override.enemySpecies(Species.PIDGEOT).moveset([Moves.GRAVITY, Moves.EARTHQUAKE]);
 
-      await game.classicMode.startBattle([ Species.PIKACHU ]);
+      await game.classicMode.startBattle([Species.PIKACHU]);
 
       const pidgeot = game.scene.getEnemyPokemon()!;
       vi.spyOn(pidgeot, "getAttackTypeEffectiveness");
@@ -111,11 +109,9 @@ describe("Arena - Gravity", () => {
     });
 
     it("keeps super-effective moves super-effective after using gravity", async () => {
-      game.override
-        .enemySpecies(Species.PIDGEOT)
-        .moveset([ Moves.GRAVITY, Moves.THUNDERBOLT ]);
+      game.override.enemySpecies(Species.PIDGEOT).moveset([Moves.GRAVITY, Moves.THUNDERBOLT]);
 
-      await game.classicMode.startBattle([ Species.PIKACHU ]);
+      await game.classicMode.startBattle([Species.PIKACHU]);
 
       const pidgeot = game.scene.getEnemyPokemon()!;
       vi.spyOn(pidgeot, "getAttackTypeEffectiveness");
@@ -136,12 +132,9 @@ describe("Arena - Gravity", () => {
   });
 
   it("cancels Fly if its user is semi-invulnerable", async () => {
-    game.override
-      .enemySpecies(Species.SNORLAX)
-      .enemyMoveset(Moves.FLY)
-      .moveset([ Moves.GRAVITY, Moves.SPLASH ]);
+    game.override.enemySpecies(Species.SNORLAX).enemyMoveset(Moves.FLY).moveset([Moves.GRAVITY, Moves.SPLASH]);
 
-    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const charizard = game.scene.getPlayerPokemon()!;
     const snorlax = game.scene.getEnemyPokemon()!;
@@ -152,7 +145,7 @@ describe("Arena - Gravity", () => {
     expect(snorlax.getTag(BattlerTagType.FLYING)).toBeDefined();
 
     game.move.select(Moves.GRAVITY);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
     expect(snorlax.getTag(BattlerTagType.INTERRUPTED)).toBeDefined();

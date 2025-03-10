@@ -15,7 +15,6 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import * as Utils from "../utils";
 
 export class SelectStarterPhase extends Phase {
-
   constructor() {
     super();
   }
@@ -59,19 +58,30 @@ export class SelectStarterPhase extends Phase {
         starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!;
       }
 
-      let starterGender = starter.species.malePercent !== null
-        ? !starterProps.female ? Gender.MALE : Gender.FEMALE
-        : Gender.GENDERLESS;
+      let starterGender =
+        starter.species.malePercent !== null ? (!starterProps.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
       if (Overrides.GENDER_OVERRIDE !== null) {
         starterGender = Overrides.GENDER_OVERRIDE;
       }
       const starterIvs = globalScene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-      const starterPokemon = globalScene.addPlayerPokemon(starter.species, globalScene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
+      const starterPokemon = globalScene.addPlayerPokemon(
+        starter.species,
+        globalScene.gameMode.getStartingLevel(),
+        starter.abilityIndex,
+        starterFormIndex,
+        starterGender,
+        starterProps.shiny,
+        starterProps.variant,
+        starterIvs,
+        starter.nature,
+      );
       starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
       if (starter.passive) {
         starterPokemon.passive = true;
       }
-      starterPokemon.luck = globalScene.gameData.getDexAttrLuck(globalScene.gameData.dexData[starter.species.speciesId].caughtAttr);
+      starterPokemon.luck = globalScene.gameData.getDexAttrLuck(
+        globalScene.gameData.dexData[starter.species.speciesId].caughtAttr,
+      );
       if (starter.pokerus) {
         starterPokemon.pokerus = true;
       }
@@ -109,7 +119,7 @@ export class SelectStarterPhase extends Phase {
       globalScene.sessionPlayTime = 0;
       globalScene.lastSavePlayTime = 0;
       // Ensures Keldeo (or any future Pokemon that have this type of form change) starts in the correct form
-      globalScene.getPlayerParty().forEach((p) => {
+      globalScene.getPlayerParty().forEach(p => {
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeMoveLearnedTrigger);
       });
       this.end();

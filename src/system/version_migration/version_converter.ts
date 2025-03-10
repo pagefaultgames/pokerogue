@@ -10,7 +10,7 @@ import * as v1_1_0 from "./versions/v1_1_0";
 // --- v1.7.0 PATCHES --- //
 import * as v1_7_0 from "./versions/v1_7_0";
 
-const LATEST_VERSION = version.split(".").map(value => parseInt(value));
+const LATEST_VERSION = version.split(".").map(value => Number.parseInt(value));
 
 /**
  * Converts incoming {@linkcode SystemSaveData} that has a version below the
@@ -23,7 +23,7 @@ const LATEST_VERSION = version.split(".").map(value => parseInt(value));
  * @see {@link SystemVersionConverter}
  */
 export function applySystemVersionMigration(data: SystemSaveData) {
-  const curVersion = data.gameVersion.split(".").map(value => parseInt(value));
+  const curVersion = data.gameVersion.split(".").map(value => Number.parseInt(value));
 
   if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
     const converter = new SystemVersionConverter();
@@ -43,7 +43,7 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * @see {@link SessionVersionConverter}
  */
 export function applySessionVersionMigration(data: SessionSaveData) {
-  const curVersion = data.gameVersion.split(".").map(value => parseInt(value));
+  const curVersion = data.gameVersion.split(".").map(value => Number.parseInt(value));
 
   if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
     const converter = new SessionVersionConverter();
@@ -64,7 +64,7 @@ export function applySessionVersionMigration(data: SessionSaveData) {
  */
 export function applySettingsVersionMigration(data: Object) {
   const gameVersion: string = data.hasOwnProperty("gameVersion") ? data["gameVersion"] : "1.0.0";
-  const curVersion = gameVersion.split(".").map(value => parseInt(value));
+  const curVersion = gameVersion.split(".").map(value => Number.parseInt(value));
 
   if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
     const converter = new SettingsVersionConverter();
@@ -101,8 +101,7 @@ abstract class VersionConverter {
    * body.
    * @param data The data to be operated on
    */
-  applyStaticPreprocessors(_data: any): void {
-  }
+  applyStaticPreprocessors(_data: any): void {}
 
   /**
    * Uses the current version the incoming data to determine the starting point
@@ -128,7 +127,7 @@ class SessionVersionConverter extends VersionConverter {
   }
 
   override applyMigration(data: SessionSaveData, curVersion: number[]): void {
-    const [ curMajor, curMinor, curPatch ] = curVersion;
+    const [curMajor, curMinor, curPatch] = curVersion;
 
     if (curMajor === 1) {
       if (curMinor === 0) {
@@ -158,7 +157,7 @@ class SessionVersionConverter extends VersionConverter {
  */
 class SystemVersionConverter extends VersionConverter {
   override applyMigration(data: SystemSaveData, curVersion: number[]): void {
-    const [ curMajor, curMinor, curPatch ] = curVersion;
+    const [curMajor, curMinor, curPatch] = curVersion;
 
     if (curMajor === 1) {
       if (curMinor === 0) {
@@ -188,7 +187,7 @@ class SystemVersionConverter extends VersionConverter {
  */
 class SettingsVersionConverter extends VersionConverter {
   override applyMigration(data: Object, curVersion: number[]): void {
-    const [ curMajor, curMinor, curPatch ] = curVersion;
+    const [curMajor, curMinor, curPatch] = curVersion;
 
     if (curMajor === 1) {
       if (curMinor === 0) {
