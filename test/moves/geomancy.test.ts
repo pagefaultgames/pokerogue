@@ -35,31 +35,31 @@ describe("Moves - Geomancy", () => {
   });
 
   it("should boost the user's stats on the second turn of use", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const player = game.scene.getPlayerPokemon()!;
-    const affectedStats: EffectiveStat[] = [ Stat.SPATK, Stat.SPDEF, Stat.SPD ];
+    const affectedStats: EffectiveStat[] = [Stat.SPATK, Stat.SPDEF, Stat.SPD];
 
     game.move.select(Moves.GEOMANCY);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    affectedStats.forEach((stat) => expect(player.getStatStage(stat)).toBe(0));
+    affectedStats.forEach(stat => expect(player.getStatStage(stat)).toBe(0));
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.OTHER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    affectedStats.forEach((stat) => expect(player.getStatStage(stat)).toBe(2));
+    affectedStats.forEach(stat => expect(player.getStatStage(stat)).toBe(2));
     expect(player.getMoveHistory()).toHaveLength(2);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerGeomancy = player.getMoveset().find((mv) => mv && mv.moveId === Moves.GEOMANCY);
+    const playerGeomancy = player.getMoveset().find(mv => mv && mv.moveId === Moves.GEOMANCY);
     expect(playerGeomancy?.ppUsed).toBe(1);
   });
 
   it("should execute over 2 turns between waves", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const player = game.scene.getPlayerPokemon()!;
-    const affectedStats: EffectiveStat[] = [ Stat.SPATK, Stat.SPDEF, Stat.SPD ];
+    const affectedStats: EffectiveStat[] = [Stat.SPATK, Stat.SPDEF, Stat.SPD];
 
     game.move.select(Moves.GEOMANCY);
 
@@ -69,11 +69,11 @@ describe("Moves - Geomancy", () => {
     await game.toNextWave();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    affectedStats.forEach((stat) => expect(player.getStatStage(stat)).toBe(2));
+    affectedStats.forEach(stat => expect(player.getStatStage(stat)).toBe(2));
     expect(player.getMoveHistory()).toHaveLength(2);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerGeomancy = player.getMoveset().find((mv) => mv && mv.moveId === Moves.GEOMANCY);
+    const playerGeomancy = player.getMoveset().find(mv => mv && mv.moveId === Moves.GEOMANCY);
     expect(playerGeomancy?.ppUsed).toBe(1);
   });
 });

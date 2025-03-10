@@ -24,7 +24,7 @@ describe("Moves - Shed Tail", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SHED_TAIL ])
+      .moveset([Moves.SHED_TAIL])
       .battleType("single")
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -32,7 +32,7 @@ describe("Moves - Shed Tail", () => {
   });
 
   it("transfers a Substitute doll to the switched in Pokemon", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
     const magikarp = game.scene.getPlayerPokemon()!;
 
@@ -46,17 +46,14 @@ describe("Moves - Shed Tail", () => {
 
     expect(feebas).not.toBe(magikarp);
     expect(feebas.hp).toBe(feebas.getMaxHp());
-    // Note: Shed Tail's HP cost is currently not accurate to mainline, as it
-    // should cost ceil(maxHP / 2) instead of max(floor(maxHp / 2), 1). The current
-    // implementation is consistent with Substitute's HP cost logic, but that's not
-    // the case in mainline for some reason :regiDespair:.
-    expect(magikarp.hp).toBe(Math.ceil(magikarp.getMaxHp() / 2));
+    // Note: Altered the test to be consistent with the correct HP cost :yipeevee_static:
+    expect(magikarp.hp).toBe(Math.floor(magikarp.getMaxHp() / 2));
     expect(substituteTag).toBeDefined();
     expect(substituteTag?.hp).toBe(Math.floor(magikarp.getMaxHp() / 4));
   });
 
   it("should fail if no ally is available to switch in", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const magikarp = game.scene.getPlayerPokemon()!;
     expect(game.scene.getPlayerParty().length).toBe(1);

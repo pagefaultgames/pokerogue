@@ -1,5 +1,5 @@
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
-import { allMoves, RandomMoveAttr } from "#app/data/move";
+import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -28,7 +28,7 @@ describe("Moves - Metronome", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.METRONOME, Moves.SPLASH ])
+      .moveset([Moves.METRONOME, Moves.SPLASH])
       .battleType("single")
       .startingLevel(100)
       .starterSpecies(Species.REGIELEKI)
@@ -79,9 +79,9 @@ describe("Moves - Metronome", () => {
 
   it("should only target ally for Aromatic Mist", async () => {
     game.override.battleType("double");
-    await game.classicMode.startBattle([ Species.REGIELEKI, Species.RATTATA ]);
-    const [ leftPlayer, rightPlayer ] = game.scene.getPlayerField();
-    const [ leftOpp, rightOpp ] = game.scene.getEnemyField();
+    await game.classicMode.startBattle([Species.REGIELEKI, Species.RATTATA]);
+    const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
+    const [leftOpp, rightOpp] = game.scene.getEnemyField();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.AROMATIC_MIST);
 
     game.move.select(Moves.METRONOME, 0);

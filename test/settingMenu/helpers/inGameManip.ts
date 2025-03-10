@@ -45,7 +45,9 @@ export class InGameManip {
       icon = "KEY_" + icon;
     }
     this.icon = this.config.icons[icon];
-    expect(getIconForLatestInput(this.configs, this.latestSource, this.selectedDevice, this.settingName)).toEqual(this.icon);
+    expect(getIconForLatestInput(this.configs, this.latestSource, this.selectedDevice, this.settingName)).toEqual(
+      this.icon,
+    );
     return this;
   }
 
