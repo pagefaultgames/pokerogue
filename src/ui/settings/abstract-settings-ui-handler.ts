@@ -11,7 +11,6 @@ import { Setting, SettingKeys } from "#app/system/settings/settings";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
-
 /**
  * Abstract class for handling UI elements related to settings.
  */
@@ -58,17 +57,30 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.settingsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
     this.settingsContainer.setName(`settings-${this.title}`);
-    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6 - 20), Phaser.Geom.Rectangle.Contains);
+    this.settingsContainer.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6 - 20),
+      Phaser.Geom.Rectangle.Contains,
+    );
 
     this.navigationIcons = {};
 
     this.navigationContainer = new NavigationMenu(0, 0);
 
-    this.optionsBg = addWindow(0, this.navigationContainer.height, (globalScene.game.canvas.width / 6) - 2, (globalScene.game.canvas.height / 6) - 16 - this.navigationContainer.height - 2);
+    this.optionsBg = addWindow(
+      0,
+      this.navigationContainer.height,
+      globalScene.game.canvas.width / 6 - 2,
+      globalScene.game.canvas.height / 6 - 16 - this.navigationContainer.height - 2,
+    );
     this.optionsBg.setName("window-options-bg");
     this.optionsBg.setOrigin(0, 0);
 
-    const actionsBg = addWindow(0, (globalScene.game.canvas.height / 6) - this.navigationContainer.height, (globalScene.game.canvas.width / 6) - 2, 22);
+    const actionsBg = addWindow(
+      0,
+      globalScene.game.canvas.height / 6 - this.navigationContainer.height,
+      globalScene.game.canvas.width / 6 - 2,
+      22,
+    );
     actionsBg.setOrigin(0, 0);
 
     const iconAction = globalScene.add.sprite(0, 0, "keyboard");
@@ -96,44 +108,56 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
-    this.settings
-      .forEach((setting, s) => {
-        let settingName = setting.label;
-        if (setting?.requireReload) {
-          settingName += ` (${i18next.t("settings:requireReload")})`;
-        }
+    this.settings.forEach((setting, s) => {
+      let settingName = setting.label;
+      if (setting?.requireReload) {
+        settingName += ` (${i18next.t("settings:requireReload")})`;
+      }
 
-        this.settingLabels[s] = addTextObject(8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
-        this.settingLabels[s].setOrigin(0, 0);
+      this.settingLabels[s] = addTextObject(8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
+      this.settingLabels[s].setOrigin(0, 0);
 
-        this.optionsContainer.add(this.settingLabels[s]);
-        this.optionValueLabels.push(setting.options.map((option, o) => {
-          const valueLabel = addTextObject(0, 0, option.label, setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_VALUE);
+      this.optionsContainer.add(this.settingLabels[s]);
+      this.optionValueLabels.push(
+        setting.options.map((option, o) => {
+          const valueLabel = addTextObject(
+            0,
+            0,
+            option.label,
+            setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_VALUE,
+          );
           valueLabel.setOrigin(0, 0);
 
           this.optionsContainer.add(valueLabel);
 
           return valueLabel;
-        }));
+        }),
+      );
 
-        const totalWidth = this.optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
+      const totalWidth = this.optionValueLabels[s].map(o => o.width).reduce((total, width) => (total += width), 0);
 
-        const labelWidth =  Math.max(78, this.settingLabels[s].displayWidth + 8);
+      const labelWidth = Math.max(78, this.settingLabels[s].displayWidth + 8);
 
-        const totalSpace = (297 - labelWidth) - totalWidth / 6;
-        const optionSpacing = Math.floor(totalSpace / (this.optionValueLabels[s].length - 1));
+      const totalSpace = 297 - labelWidth - totalWidth / 6;
+      const optionSpacing = Math.floor(totalSpace / (this.optionValueLabels[s].length - 1));
 
-        let xOffset = 0;
+      let xOffset = 0;
 
-        for (const value of this.optionValueLabels[s]) {
-          value.setPositionRelative(this.settingLabels[s], labelWidth + xOffset, 0);
-          xOffset += value.width / 6 + optionSpacing;
-        }
-      });
+      for (const value of this.optionValueLabels[s]) {
+        value.setPositionRelative(this.settingLabels[s], labelWidth + xOffset, 0);
+        xOffset += value.width / 6 + optionSpacing;
+      }
+    });
 
     this.optionCursors = this.settings.map(setting => setting.default);
 
-    this.scrollBar = new ScrollBar(this.optionsBg.width - 9, this.optionsBg.y + 5, 4, this.optionsBg.height - 11, this.rowsToDisplay);
+    this.scrollBar = new ScrollBar(
+      this.optionsBg.width - 9,
+      this.optionsBg.y + 5,
+      4,
+      this.optionsBg.height - 11,
+      this.rowsToDisplay,
+    );
     this.scrollBar.setTotalRows(this.settings.length);
 
     // Two-lines message box
@@ -145,7 +169,9 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     settingsMessageBox.setOrigin(0, 1);
     this.messageBoxContainer.add(settingsMessageBox);
 
-    const messageText = addTextObject(8, -40, "", TextStyle.WINDOW, { maxLines: 2 });
+    const messageText = addTextObject(8, -40, "", TextStyle.WINDOW, {
+      maxLines: 2,
+    });
     messageText.setWordWrapWidth(globalScene.game.canvas.width - 60);
     messageText.setName("settings-message");
     messageText.setOrigin(0, 0);
@@ -200,14 +226,18 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
    *
    * @param args - Arguments to be passed to the show method.
    * @returns `true` if successful.
-     */
+   */
   show(args: any[]): boolean {
     super.show(args);
     this.updateBindings();
 
-    const settings: object = localStorage.hasOwnProperty(this.localStorageKey) ? JSON.parse(localStorage.getItem(this.localStorageKey)!) : {}; // TODO: is this bang correct?
+    const settings: object = localStorage.hasOwnProperty(this.localStorageKey)
+      ? JSON.parse(localStorage.getItem(this.localStorageKey)!)
+      : {}; // TODO: is this bang correct?
 
-    this.settings.forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default));
+    this.settings.forEach((setting, s) =>
+      this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default),
+    );
 
     this.settingsContainer.setVisible(true);
     this.setCursor(0);
@@ -251,8 +281,8 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
               success = this.setScrollCursor(this.scrollCursor - 1);
             }
           } else {
-          // When at the top of the menu and pressing UP, move to the bottommost item.
-          // First, set the cursor to the last visible element, preparing for the scroll to the end.
+            // When at the top of the menu and pressing UP, move to the bottommost item.
+            // First, set the cursor to the last visible element, preparing for the scroll to the end.
             const successA = this.setCursor(this.rowsToDisplay - 1);
             // Then, adjust the scroll to display the bottommost elements of the menu.
             const successB = this.setScrollCursor(this.optionValueLabels.length - this.rowsToDisplay);
@@ -261,14 +291,15 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
           break;
         case Button.DOWN:
           if (cursor < this.optionValueLabels.length - 1) {
-            if (this.cursor < this.rowsToDisplay - 1) {// if the visual cursor is in the frame of 0 to 8
+            if (this.cursor < this.rowsToDisplay - 1) {
+              // if the visual cursor is in the frame of 0 to 8
               success = this.setCursor(this.cursor + 1);
             } else if (this.scrollCursor < this.optionValueLabels.length - this.rowsToDisplay) {
               success = this.setScrollCursor(this.scrollCursor + 1);
             }
           } else {
-          // When at the bottom of the menu and pressing DOWN, move to the topmost item.
-          // First, set the cursor to the first visible element, resetting the scroll to the top.
+            // When at the bottom of the menu and pressing DOWN, move to the topmost item.
+            // First, set the cursor to the first visible element, resetting the scroll to the top.
             const successA = this.setCursor(0);
             // Then, reset the scroll to start from the first element of the menu.
             const successB = this.setScrollCursor(0);
@@ -276,12 +307,13 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
           }
           break;
         case Button.LEFT:
-          if (this.optionCursors[cursor]) {// Moves the option cursor left, if possible.
+          if (this.optionCursors[cursor]) {
+            // Moves the option cursor left, if possible.
             success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
           }
           break;
         case Button.RIGHT:
-        // Moves the option cursor right, if possible.
+          // Moves the option cursor right, if possible.
           if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
             success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
           }
@@ -331,7 +363,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      const cursorWidth = (globalScene.game.canvas.width / 6) - (this.scrollBar.visible ? 16 : 10);
+      const cursorWidth = globalScene.game.canvas.width / 6 - (this.scrollBar.visible ? 16 : 10);
       this.cursorObj = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
@@ -390,7 +422,8 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
           this.setOptionCursor(settingIndex, lastCursor, false);
         };
 
-        const confirmationMessage = setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
+        const confirmationMessage =
+          setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
         globalScene.ui.showText(confirmationMessage, null, () => {
           globalScene.ui.setOverlayMode(Mode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
         });
@@ -463,7 +496,14 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.cursorObj = null;
   }
 
-  override showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number) {
+  override showText(
+    text: string,
+    delay?: number,
+    callback?: Function,
+    callbackDelay?: number,
+    prompt?: boolean,
+    promptDelay?: number,
+  ) {
     this.messageBoxContainer.setVisible(!!text?.length);
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }

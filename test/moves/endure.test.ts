@@ -22,7 +22,7 @@ describe("Moves - Endure", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC ])
+      .moveset([Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC])
       .ability(Abilities.SKILL_LINK)
       .startingLevel(100)
       .battleType("single")
@@ -33,7 +33,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive with 1 HP", async () => {
-    await game.classicMode.startBattle([ Species.ARCEUS ]);
+    await game.classicMode.startBattle([Species.ARCEUS]);
 
     game.move.select(Moves.THUNDER);
     await game.phaseInterceptor.to("BerryPhase");
@@ -42,7 +42,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive with 1 HP when hit with a multihit move", async () => {
-    await game.classicMode.startBattle([ Species.ARCEUS ]);
+    await game.classicMode.startBattle([Species.ARCEUS]);
 
     game.move.select(Moves.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");
@@ -52,7 +52,7 @@ describe("Moves - Endure", () => {
 
   it("shouldn't prevent fainting from indirect damage", async () => {
     game.override.enemyLevel(100);
-    await game.classicMode.startBattle([ Species.ARCEUS ]);
+    await game.classicMode.startBattle([Species.ARCEUS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 2;

@@ -16,7 +16,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounters/departmentStoreSale";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.PLAINS;
 const defaultWave = 37;
 
@@ -38,10 +38,10 @@ describe("Department Store Sale - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
+      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
     ]);
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [ MysteryEncounterType.DEPARTMENT_STORE_SALE ]);
+      biomeMap.set(biome, [MysteryEncounterType.DEPARTMENT_STORE_SALE]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -63,10 +63,12 @@ describe("Department Store Sale - Mystery Encounter", () => {
       {
         speaker: `${namespace}:speaker`,
         text: `${namespace}:intro_dialogue`,
-      }
+      },
     ]);
     expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
-    expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.description).toBe(
+      `${namespace}:description`,
+    );
     expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(DepartmentStoreSaleEncounter.options.length).toBe(4);
   });
@@ -97,7 +99,9 @@ describe("Department Store Sale - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
         expect(option.modifierTypeOption.type.id).toContain("TM_");
@@ -132,11 +136,15 @@ describe("Department Store Sale - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(3);
       for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id.includes("PP_UP") ||
-          option.modifierTypeOption.type.id.includes("BASE_STAT_BOOSTER")).toBeTruthy();
+        expect(
+          option.modifierTypeOption.type.id.includes("PP_UP") ||
+            option.modifierTypeOption.type.id.includes("BASE_STAT_BOOSTER"),
+        ).toBeTruthy();
       }
     });
 
@@ -168,11 +176,15 @@ describe("Department Store Sale - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id.includes("DIRE_HIT") ||
-          option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER")).toBeTruthy();
+        expect(
+          option.modifierTypeOption.type.id.includes("DIRE_HIT") ||
+            option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
+        ).toBeTruthy();
       }
     });
 
@@ -204,7 +216,9 @@ describe("Department Store Sale - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       for (const option of modifierSelectHandler.options) {
         expect(option.modifierTypeOption.type.id).toContain("BALL");

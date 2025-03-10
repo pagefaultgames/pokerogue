@@ -8,7 +8,10 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import * as BattleAnims from "#app/data/battle-anims";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
+import {
+  runMysteryEncounterToEnd,
+  skipBattleRunMysteryEncounterRewardsPhase,
+} from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
 import type Pokemon from "#app/field/pokemon";
@@ -29,14 +32,14 @@ import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 
 const namespace = "mysteryEncounters/clowningAround";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -58,9 +61,7 @@ describe("Clowning Around - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [ Biome.CAVE, [ MysteryEncounterType.CLOWNING_AROUND ]],
-      ])
+      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.CLOWNING_AROUND]]]),
     );
   });
 
@@ -116,13 +117,13 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(config.pokemonConfigs?.[0]).toEqual({
       species: getPokemonSpecies(Species.MR_MIME),
       isBoss: true,
-      moveSet: [ Moves.TEETER_DANCE, Moves.ALLY_SWITCH, Moves.DAZZLING_GLEAM, Moves.PSYCHIC ]
+      moveSet: [Moves.TEETER_DANCE, Moves.ALLY_SWITCH, Moves.DAZZLING_GLEAM, Moves.PSYCHIC],
     });
     expect(config.pokemonConfigs?.[1]).toEqual({
       species: getPokemonSpecies(Species.BLACEPHALON),
       customPokemonData: expect.anything(),
       isBoss: true,
-      moveSet: [ Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN ]
+      moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN],
     });
     expect(config.pokemonConfigs?.[1].customPokemonData?.types.length).toBe(2);
     expect([
@@ -140,7 +141,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       Abilities.MISTY_SURGE,
       Abilities.MAGICIAN,
       Abilities.SHEER_FORCE,
-      Abilities.PRANKSTER
+      Abilities.PRANKSTER,
     ]).toContain(config.pokemonConfigs?.[1].customPokemonData?.ability);
     expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs?.[1].customPokemonData?.ability);
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
@@ -175,9 +176,19 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(2);
       expect(enemyField[0].species.speciesId).toBe(Species.MR_MIME);
-      expect(enemyField[0].moveset).toEqual([ new PokemonMove(Moves.TEETER_DANCE), new PokemonMove(Moves.ALLY_SWITCH), new PokemonMove(Moves.DAZZLING_GLEAM), new PokemonMove(Moves.PSYCHIC) ]);
+      expect(enemyField[0].moveset).toEqual([
+        new PokemonMove(Moves.TEETER_DANCE),
+        new PokemonMove(Moves.ALLY_SWITCH),
+        new PokemonMove(Moves.DAZZLING_GLEAM),
+        new PokemonMove(Moves.PSYCHIC),
+      ]);
       expect(enemyField[1].species.speciesId).toBe(Species.BLACEPHALON);
-      expect(enemyField[1].moveset).toEqual([ new PokemonMove(Moves.TRICK), new PokemonMove(Moves.HYPNOSIS), new PokemonMove(Moves.SHADOW_BALL), new PokemonMove(Moves.MIND_BLOWN) ]);
+      expect(enemyField[1].moveset).toEqual([
+        new PokemonMove(Moves.TRICK),
+        new PokemonMove(Moves.HYPNOSIS),
+        new PokemonMove(Moves.SHADOW_BALL),
+        new PokemonMove(Moves.MIND_BLOWN),
+      ]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
@@ -253,14 +264,14 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Set some moves on party for attack type booster generation
-      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.THIEF) ];
+      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.THIEF)];
 
       // 2 Sitrus Berries on lead
       scene.modifiers = [];
-      let itemType = generateModifierType(modifierTypes.BERRY, [ BerryType.SITRUS ]) as PokemonHeldItemModifierType;
+      let itemType = generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 2, itemType);
       // 2 Ganlon Berries on lead
-      itemType = generateModifierType(modifierTypes.BERRY, [ BerryType.GANLON ]) as PokemonHeldItemModifierType;
+      itemType = generateModifierType(modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType;
       await addItemToPokemon(scene, scene.getPlayerParty()[0], 2, itemType);
       // 5 Golden Punch on lead (ultra)
       itemType = generateModifierType(modifierTypes.GOLDEN_PUNCH) as PokemonHeldItemModifierType;
@@ -338,9 +349,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Same type moves on lead
-      scene.getPlayerParty()[0].moveset = [ new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.SURF) ];
+      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.SURF)];
       // Different type moves on second
-      scene.getPlayerParty()[1].moveset = [ new PokemonMove(Moves.GRASS_KNOT), new PokemonMove(Moves.ELECTRO_BALL) ];
+      scene.getPlayerParty()[1].moveset = [new PokemonMove(Moves.GRASS_KNOT), new PokemonMove(Moves.ELECTRO_BALL)];
       // No moves on third
       scene.getPlayerParty()[2].moveset = [];
       await runMysteryEncounterToEnd(game, 3);
@@ -350,15 +361,15 @@ describe("Clowning Around - Mystery Encounter", () => {
       const thirdTypesAfter = scene.getPlayerParty()[2].getTypes();
 
       expect(leadTypesAfter.length).toBe(2);
-      expect(leadTypesAfter[0]).toBe(Type.WATER);
-      expect([ Type.WATER, Type.ICE ].includes(leadTypesAfter[1])).toBeFalsy();
+      expect(leadTypesAfter[0]).toBe(PokemonType.WATER);
+      expect([PokemonType.WATER, PokemonType.ICE].includes(leadTypesAfter[1])).toBeFalsy();
       expect(secondaryTypesAfter.length).toBe(2);
-      expect(secondaryTypesAfter[0]).toBe(Type.GHOST);
-      expect([ Type.GHOST, Type.POISON ].includes(secondaryTypesAfter[1])).toBeFalsy();
-      expect([ Type.GRASS, Type.ELECTRIC ].includes(secondaryTypesAfter[1])).toBeTruthy();
+      expect(secondaryTypesAfter[0]).toBe(PokemonType.GHOST);
+      expect([PokemonType.GHOST, PokemonType.POISON].includes(secondaryTypesAfter[1])).toBeFalsy();
+      expect([PokemonType.GRASS, PokemonType.ELECTRIC].includes(secondaryTypesAfter[1])).toBeTruthy();
       expect(thirdTypesAfter.length).toBe(2);
-      expect(thirdTypesAfter[0]).toBe(Type.PSYCHIC);
-      expect(secondaryTypesAfter[1]).not.toBe(Type.PSYCHIC);
+      expect(thirdTypesAfter[0]).toBe(PokemonType.PSYCHIC);
+      expect(secondaryTypesAfter[1]).not.toBe(PokemonType.PSYCHIC);
     });
 
     it("should leave encounter without battle", async () => {
@@ -372,7 +383,12 @@ describe("Clowning Around - Mystery Encounter", () => {
   });
 });
 
-async function addItemToPokemon(scene: BattleScene, pokemon: Pokemon, stackCount: number, itemType: PokemonHeldItemModifierType) {
+async function addItemToPokemon(
+  scene: BattleScene,
+  pokemon: Pokemon,
+  stackCount: number,
+  itemType: PokemonHeldItemModifierType,
+) {
   const itemMod = itemType.newModifier(pokemon) as PokemonHeldItemModifier;
   itemMod.stackCount = stackCount;
   scene.addModifier(itemMod, true, false, false, true);
