@@ -1900,7 +1900,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} fakeName - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
    */
   getName(fakeName: boolean = false): string {
-    return (!fakeName && this.battleData?.illusion.active && this.battleData?.illusion.basePokemon) ? this.battleData?.illusion.basePokemon.name : this.name;
+    return (!fakeName && this.battleData?.illusion.active && this.battleData?.illusion.basePokemon) 
+    ? this.battleData?.illusion.basePokemon.name 
+    : this.name;
   }
 
   /**
