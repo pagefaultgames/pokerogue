@@ -884,7 +884,7 @@ export default class BattleScene extends SceneBase {
     return true;
   }
 
-  public getPlayerParty(fakeShininess: boolean = true): PlayerPokemon[] {
+  public getPlayerParty(fakeShininess = true): PlayerPokemon[] {
     const party = this.party;
     if (!fakeShininess) {
       party.map(pokemon => {

@@ -125,10 +125,10 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     const pokemon = this.getPokemon();
 
     const pokeball = globalScene.addFieldSprite(
-      this.player ? 36 : 248, 
-      this.player ? 80 : 44, 
-      "pb", 
-      getPokeballAtlasKey(pokemon.battleData.illusion.pokeball ?? pokemon.pokeball)
+      this.player ? 36 : 248,
+      this.player ? 80 : 44,
+      "pb",
+      getPokeballAtlasKey(pokemon.battleData.illusion.pokeball ?? pokemon.pokeball),
     );
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
@@ -177,7 +177,11 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               }
               globalScene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
-            addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.battleData.illusion.pokeball ?? pokemon.pokeball);
+            addPokeballOpenParticles(
+              pokemon.x,
+              pokemon.y - 16,
+              pokemon.battleData.illusion.pokeball ?? pokemon.pokeball,
+            );
             globalScene.updateModifiers(this.player);
             globalScene.updateFieldScale();
             pokemon.showInfo();

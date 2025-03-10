@@ -348,8 +348,14 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemonSprite.setPipelineData("isTerastallized", this.pokemon.isTerastallized);
     this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
     this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData("shiny", this.pokemon.battleData.illusion.basePokemon?.shiny ?? this.pokemon.shiny);
-    this.pokemonSprite.setPipelineData("variant", this.pokemon.battleData.illusion.basePokemon?.variant ?? this.pokemon.variant);
+    this.pokemonSprite.setPipelineData(
+      "shiny",
+      this.pokemon.battleData.illusion.basePokemon?.shiny ?? this.pokemon.shiny,
+    );
+    this.pokemonSprite.setPipelineData(
+      "variant",
+      this.pokemon.battleData.illusion.basePokemon?.variant ?? this.pokemon.variant,
+    );
     ["spriteColors", "fusionSpriteColors"].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData?.speciesForm) {
@@ -446,7 +452,9 @@ export default class SummaryUiHandler extends UiHandler {
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.fusionShinyIcon.setVisible(doubleShiny);
     if (isFusion) {
-      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.battleData.illusion.basePokemon?.fusionVariant ?? this.pokemon.fusionVariant));
+      this.fusionShinyIcon.setTint(
+        getVariantTint(this.pokemon.battleData.illusion.basePokemon?.fusionVariant ?? this.pokemon.fusionVariant),
+      );
     }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
