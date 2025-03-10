@@ -5441,7 +5441,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sourceText: string | null = null,
     overrideStatus?: boolean
   ): boolean {
-    if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
+    if (!this.canSetStatus(effect, asPhase, overrideStatus, sourcePokemon)) {
       return false;
     }
     if (this.isFainted() && effect !== StatusEffect.FAINT) {
