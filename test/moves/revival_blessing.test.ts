@@ -25,7 +25,7 @@ describe("Moves - Revival Blessing", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.REVIVAL_BLESSING, Moves.MEMENTO ])
+      .moveset([Moves.SPLASH, Moves.REVIVAL_BLESSING, Moves.MEMENTO])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -35,7 +35,7 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should revive a selected fainted Pokemon when used by the player", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     game.move.select(Moves.MEMENTO);
     game.doSelectPartyPokemon(1, "SwitchPhase");
@@ -46,7 +46,7 @@ describe("Moves - Revival Blessing", () => {
     expect(player.species.speciesId).toBe(Species.MAGIKARP);
     game.move.select(Moves.REVIVAL_BLESSING);
 
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1, "RevivalBlessingPhase");
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
@@ -59,14 +59,14 @@ describe("Moves - Revival Blessing", () => {
   it("should revive a random fainted enemy when used by an enemy Trainer", async () => {
     game.override.enemyMoveset(Moves.REVIVAL_BLESSING).startingWave(8);
 
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
 
     await game.toNextTurn();
     game.move.select(Moves.SPLASH);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -76,10 +76,10 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should fail when there are no fainted Pokemon to target", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     game.move.select(Moves.REVIVAL_BLESSING);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -89,10 +89,10 @@ describe("Moves - Revival Blessing", () => {
   it("should revive a player pokemon and immediately send it back out if used in the same turn it fainted in doubles", async () => {
     game.override
       .battleType("double")
-      .enemyMoveset([ Moves.SPLASH, Moves.FISSURE ])
+      .enemyMoveset([Moves.SPLASH, Moves.FISSURE])
       .enemyAbility(Abilities.NO_GUARD)
       .enemyLevel(100);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC, Species.GYARADOS ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC, Species.GYARADOS]);
 
     const feebas = game.scene.getPlayerField()[0];
 
@@ -100,7 +100,7 @@ describe("Moves - Revival Blessing", () => {
     game.move.select(Moves.REVIVAL_BLESSING, 1);
     await game.forceEnemyMove(Moves.FISSURE, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.SPLASH);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2 ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");

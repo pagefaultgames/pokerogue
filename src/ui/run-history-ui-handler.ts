@@ -25,7 +25,6 @@ export const RUN_HISTORY_LIMIT: number = 25;
  * The only valid input buttons are Button.ACTION and Button.CANCEL.
  */
 export default class RunHistoryUiHandler extends MessageUiHandler {
-
   private readonly maxRows = 3;
 
   private runSelectContainer: Phaser.GameObjects.Container;
@@ -34,7 +33,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
 
   private runSelectCallback: RunSelectCallback | null;
 
-  private scrollCursor: number = 0;
+  private scrollCursor = 0;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
@@ -51,7 +50,13 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     this.runSelectContainer.setVisible(false);
     ui.add(this.runSelectContainer);
 
-    const loadSessionBg = globalScene.add.rectangle(0, 0, globalScene.game.canvas.width / 6, -globalScene.game.canvas.height / 6, 0x006860);
+    const loadSessionBg = globalScene.add.rectangle(
+      0,
+      0,
+      globalScene.game.canvas.width / 6,
+      -globalScene.game.canvas.height / 6,
+      0x006860,
+    );
     loadSessionBg.setOrigin(0, 0);
     this.runSelectContainer.add(loadSessionBg);
 
@@ -101,7 +106,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     let success = false;
     const error = false;
 
-    if ([ Button.ACTION, Button.CANCEL ].includes(button)) {
+    if ([Button.ACTION, Button.CANCEL].includes(button)) {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor]) {
@@ -111,11 +116,10 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
         }
         success = true;
         return success;
-      } else {
-        this.runSelectCallback = null;
-        success = true;
-        globalScene.ui.revertMode();
       }
+      this.runSelectCallback = null;
+      success = true;
+      globalScene.ui.revertMode();
     } else if (this.runs.length > 0) {
       switch (button) {
         case Button.UP:
@@ -124,7 +128,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
           } else if (this.scrollCursor) {
             success = this.setScrollCursor(this.scrollCursor - 1);
           } else if (this.runs.length > 1) {
-          // wrap around to the bottom
+            // wrap around to the bottom
             success = this.setCursor(Math.min(this.runs.length - 1, this.maxRows - 1));
             success = this.setScrollCursor(Math.max(0, this.runs.length - this.maxRows)) || success;
           }
@@ -135,7 +139,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
           } else if (this.scrollCursor < this.runs.length - this.maxRows) {
             success = this.setScrollCursor(this.scrollCursor + 1);
           } else if (this.runs.length > 1) {
-          // wrap around to the top
+            // wrap around to the top
             success = this.setCursor(0);
             success = this.setScrollCursor(0) || success;
           }
@@ -186,7 +190,9 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
     const emptyWindow = addWindow(0, 0, 304, 165);
     this.runsContainer.add(emptyWindow);
     const emptyWindowCoordinates = emptyWindow.getCenter();
-    const emptyText = addTextObject(0, 0, i18next.t("saveSlotSelectUiHandler:empty"), TextStyle.WINDOW, { fontSize: "128px" });
+    const emptyText = addTextObject(0, 0, i18next.t("saveSlotSelectUiHandler:empty"), TextStyle.WINDOW, {
+      fontSize: "128px",
+    });
     emptyText.setPosition(emptyWindowCoordinates.x - 18, emptyWindowCoordinates.y - 15);
     this.runsContainer.add(emptyText);
   }
@@ -213,7 +219,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
         targets: this.runsContainer,
         y: this.runContainerInitialY - 56 * scrollCursor,
         duration: Utils.fixedInt(325),
-        ease: "Sine.easeInOut"
+        ease: "Sine.easeInOut",
       });
     }
     return changed;
@@ -261,7 +267,6 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     this.entryData = entryData;
 
     this.setup(this.entryData);
-
   }
 
   /**
@@ -275,7 +280,6 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
    * The player's party and their levels at the time of the last wave of the run are also displayed.
    */
   private setup(run: RunEntry) {
-
     const victory = run.isVictory;
     const data = globalScene.gameData.parseSessionData(JSON.stringify(run.entry));
 
@@ -286,22 +290,34 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     if (victory) {
       const gameOutcomeLabel = addTextObject(8, 5, `${i18next.t("runHistory:victory")}`, TextStyle.WINDOW);
       this.add(gameOutcomeLabel);
-    } else { // Run Result: Defeats
+    } else {
+      // Run Result: Defeats
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       // Defeats from wild Pokemon battles will show the Pokemon responsible by the text of the run result.
       if (data.battleType === BattleType.WILD || (data.battleType === BattleType.MYSTERY_ENCOUNTER && !data.trainer)) {
         const enemyContainer = globalScene.add.container(8, 5);
-        const gameOutcomeLabel = addTextObject(0, 0, `${i18next.t("runHistory:defeatedWild", { context: genderStr })}`, TextStyle.WINDOW);
+        const gameOutcomeLabel = addTextObject(
+          0,
+          0,
+          `${i18next.t("runHistory:defeatedWild", { context: genderStr })}`,
+          TextStyle.WINDOW,
+        );
         enemyContainer.add(gameOutcomeLabel);
         data.enemyParty.forEach((enemyData, e) => {
-          const enemyIconContainer = globalScene.add.container(65 + (e * 25), -8);
+          const enemyIconContainer = globalScene.add.container(65 + e * 25, -8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
           enemyData["player"] = true;
           const enemy = enemyData.toPokemon();
           const enemyIcon = globalScene.addPokemonIcon(enemy, 0, 0, 0, 0);
-          const enemyLevel = addTextObject(32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+          const enemyLevel = addTextObject(
+            32,
+            20,
+            `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`,
+            TextStyle.PARTY,
+            { fontSize: "54px", color: "#f8f8f8" },
+          );
           enemyLevel.setShadow(0, 0, undefined);
           enemyLevel.setStroke("#424242", 14);
           enemyLevel.setOrigin(1, 0);
@@ -311,16 +327,30 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
           enemy.destroy();
         });
         this.add(enemyContainer);
-      } else if (data.battleType === BattleType.TRAINER || (data.battleType === BattleType.MYSTERY_ENCOUNTER && data.trainer)) { // Defeats from Trainers show the trainer's title and name
+      } else if (
+        data.battleType === BattleType.TRAINER ||
+        (data.battleType === BattleType.MYSTERY_ENCOUNTER && data.trainer)
+      ) {
+        // Defeats from Trainers show the trainer's title and name
         const tObj = data.trainer.toTrainer();
         // Because of the interesting mechanics behind rival names, the rival name and title have to be retrieved differently
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
         if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
-          const rivalName = (tObj.variant === TrainerVariant.FEMALE) ? "trainerNames:rival_female" : "trainerNames:rival";
-          const gameOutcomeLabel = addTextObject(8, 5, `${i18next.t("runHistory:defeatedRival", { context: genderStr })} ${i18next.t(rivalName)}`, TextStyle.WINDOW);
+          const rivalName = tObj.variant === TrainerVariant.FEMALE ? "trainerNames:rival_female" : "trainerNames:rival";
+          const gameOutcomeLabel = addTextObject(
+            8,
+            5,
+            `${i18next.t("runHistory:defeatedRival", { context: genderStr })} ${i18next.t(rivalName)}`,
+            TextStyle.WINDOW,
+          );
           this.add(gameOutcomeLabel);
         } else {
-          const gameOutcomeLabel = addTextObject(8, 5, `${i18next.t("runHistory:defeatedTrainer", { context: genderStr })}${tObj.getName(0, true)}`, TextStyle.WINDOW);
+          const gameOutcomeLabel = addTextObject(
+            8,
+            5,
+            `${i18next.t("runHistory:defeatedTrainer", { context: genderStr })}${tObj.getName(0, true)}`,
+            TextStyle.WINDOW,
+          );
           this.add(gameOutcomeLabel);
         }
       }
@@ -375,7 +405,13 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       const pokemon = p.toPokemon();
       const icon = globalScene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
-      const text = addTextObject(32, 20, `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`, TextStyle.PARTY, { fontSize: "54px", color: "#f8f8f8" });
+      const text = addTextObject(
+        32,
+        20,
+        `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(pokemon.level, 1000)}`,
+        TextStyle.PARTY,
+        { fontSize: "54px", color: "#f8f8f8" },
+      );
       text.setShadow(0, 0, undefined);
       text.setStroke("#424242", 14);
       text.setOrigin(1, 0);

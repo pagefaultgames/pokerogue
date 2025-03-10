@@ -8,15 +8,16 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
-import { Type } from "#app/enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { getTypeRgb } from "#app/data/type";
+import { Species } from "#enums/species";
 
 export enum Command {
   FIGHT = 0,
   BALL,
   POKEMON,
   RUN,
-  TERA
+  TERA,
 }
 
 export default class CommandUiHandler extends UiHandler {
@@ -25,8 +26,8 @@ export default class CommandUiHandler extends UiHandler {
 
   private teraButton: Phaser.GameObjects.Sprite;
 
-  protected fieldIndex: number = 0;
-  protected cursor2: number = 0;
+  protected fieldIndex = 0;
+  protected cursor2 = 0;
 
   constructor() {
     super(Mode.COMMAND);
@@ -38,7 +39,7 @@ export default class CommandUiHandler extends UiHandler {
       i18next.t("commandUiHandler:fight"),
       i18next.t("commandUiHandler:ball"),
       i18next.t("commandUiHandler:pokemon"),
-      i18next.t("commandUiHandler:run")
+      i18next.t("commandUiHandler:run"),
     ];
 
     this.commandsContainer = globalScene.add.container(217, -38.7);
@@ -50,7 +51,12 @@ export default class CommandUiHandler extends UiHandler {
     this.teraButton.setName("terrastallize-button");
     this.teraButton.setScale(1.3);
     this.teraButton.setFrame("fire");
-    this.teraButton.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true, teraColor: getTypeRgb(Type.FIRE), isTerastallized: false });
+    this.teraButton.setPipeline(globalScene.spritePipeline, {
+      tone: [0.0, 0.0, 0.0, 0.0],
+      ignoreTimeTint: true,
+      teraColor: getTypeRgb(PokemonType.FIRE),
+      isTerastallized: false,
+    });
     this.commandsContainer.add(this.teraButton);
 
     for (let c = 0; c < commands.length; c++) {
@@ -63,7 +69,7 @@ export default class CommandUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    this.fieldIndex = args.length ? args[0] as number : 0;
+    this.fieldIndex = args.length ? (args[0] as number) : 0;
 
     this.commandsContainer.setVisible(true);
 
@@ -77,7 +83,7 @@ export default class CommandUiHandler extends UiHandler {
 
     if (this.canTera()) {
       this.teraButton.setVisible(true);
-      this.teraButton.setFrame(Type[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
+      this.teraButton.setFrame(PokemonType[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
     } else {
       this.teraButton.setVisible(false);
       if (this.cursor === Command.TERA) {
@@ -91,7 +97,12 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(this.canTera() ? 910 : 1110);
-    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()) }), 0);
+    messageHandler.showText(
+      i18next.t("commandUiHandler:actionMessage", {
+        pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()),
+      }),
+      0,
+    );
     if (this.getCursor() === Command.POKEMON) {
       this.setCursor(Command.FIGHT);
     } else {
@@ -109,10 +120,9 @@ export default class CommandUiHandler extends UiHandler {
     const cursor = this.getCursor();
 
     if (button === Button.CANCEL || button === Button.ACTION) {
-
       if (button === Button.ACTION) {
         switch (cursor) {
-        // Fight
+          // Fight
           case Command.FIGHT:
             ui.setMode(Mode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
@@ -124,7 +134,13 @@ export default class CommandUiHandler extends UiHandler {
             break;
           // Pokemon
           case Command.POKEMON:
-            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
+            ui.setMode(
+              Mode.PARTY,
+              PartyUiMode.SWITCH,
+              (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(),
+              null,
+              PartyUiHandler.FilterNonFainted,
+            );
             success = true;
             break;
           // Run
@@ -180,13 +196,22 @@ export default class CommandUiHandler extends UiHandler {
 
   canTera(): boolean {
     const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
+    const activePokemon = globalScene.getField()[this.fieldIndex];
+    const isBlockedForm =
+      activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(Species.NECROZMA, "ultra");
     const currentTeras = globalScene.arena.playerTerasUsed;
-    const plannedTera = globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;
-    return hasTeraMod && (currentTeras + plannedTera) < 1;
+    const plannedTera =
+      globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;
+    return hasTeraMod && !isBlockedForm && currentTeras + plannedTera < 1;
   }
 
   toggleTeraButton() {
-    this.teraButton.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true, teraColor: getTypeRgb(globalScene.getField()[this.fieldIndex].getTeraType()), isTerastallized: this.getCursor() === Command.TERA });
+    this.teraButton.setPipeline(globalScene.spritePipeline, {
+      tone: [0.0, 0.0, 0.0, 0.0],
+      ignoreTimeTint: true,
+      teraColor: getTypeRgb(globalScene.getField()[this.fieldIndex].getTeraType()),
+      isTerastallized: this.getCursor() === Command.TERA,
+    });
   }
 
   getCursor(): number {

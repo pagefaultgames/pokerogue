@@ -23,7 +23,7 @@ describe("Abilities - Trace", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.TRACE)
       .battleType("single")
       .disableCrits()
@@ -33,7 +33,7 @@ describe("Abilities - Trace", () => {
   });
 
   it("should copy the opponent's ability", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -43,7 +43,7 @@ describe("Abilities - Trace", () => {
 
   it("should activate a copied post-summon ability", async () => {
     game.override.enemyAbility(Abilities.INTIMIDATE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
