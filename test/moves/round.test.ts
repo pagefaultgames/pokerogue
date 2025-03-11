@@ -25,19 +25,19 @@ describe("Moves - Round", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.ROUND ])
+      .moveset([Moves.SPLASH, Moves.ROUND])
       .ability(Abilities.BALL_FETCH)
       .battleType("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([ Moves.SPLASH, Moves.ROUND ])
+      .enemyMoveset([Moves.SPLASH, Moves.ROUND])
       .startingLevel(100)
       .enemyLevel(100);
   });
 
   it("should cue other instances of Round together in Speed order", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
     const round = allMoves[Moves.ROUND];
     const spy = vi.spyOn(round, "calculateBattlePower");
@@ -48,7 +48,7 @@ describe("Moves - Round", () => {
     await game.forceEnemyMove(Moves.ROUND, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.SPLASH);
 
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     const actualTurnOrder: BattlerIndex[] = [];
 
@@ -58,8 +58,13 @@ describe("Moves - Round", () => {
       await game.phaseInterceptor.to("MoveEndPhase");
     }
 
-    expect(actualTurnOrder).toEqual([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    expect(actualTurnOrder).toEqual([
+      BattlerIndex.PLAYER,
+      BattlerIndex.PLAYER_2,
+      BattlerIndex.ENEMY,
+      BattlerIndex.ENEMY_2,
+    ]);
     const powerResults = spy.mock.results.map(result => result.value);
-    expect(powerResults).toEqual( [ 60, 120, 120 ]);
+    expect(powerResults).toEqual([60, 120, 120]);
   });
 });

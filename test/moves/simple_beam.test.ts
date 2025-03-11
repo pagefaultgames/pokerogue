@@ -22,7 +22,7 @@ describe("Moves - Simple Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.SIMPLE_BEAM ])
+      .moveset([Moves.SPLASH, Moves.SIMPLE_BEAM])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -32,7 +32,7 @@ describe("Moves - Simple Beam", () => {
   });
 
   it("sets the target's ability to simple", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SIMPLE_BEAM);
     await game.phaseInterceptor.to("BerryPhase");

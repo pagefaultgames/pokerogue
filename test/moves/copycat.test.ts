@@ -28,7 +28,7 @@ describe("Moves - Copycat", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.COPYCAT, Moves.SPIKY_SHIELD, Moves.SWORDS_DANCE, Moves.SPLASH ])
+      .moveset([Moves.COPYCAT, Moves.SPIKY_SHIELD, Moves.SWORDS_DANCE, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -65,14 +65,12 @@ describe("Moves - Copycat", () => {
   });
 
   it("should copy the called move when the last move successfully calls another", async () => {
-    game.override
-      .moveset([ Moves.SPLASH, Moves.METRONOME ])
-      .enemyMoveset(Moves.COPYCAT);
+    game.override.moveset([Moves.SPLASH, Moves.METRONOME]).enemyMoveset(Moves.COPYCAT);
     await game.classicMode.startBattle();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.SWORDS_DANCE);
 
     game.move.select(Moves.METRONOME);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]); // Player moves first, so enemy can copy Swords Dance
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]); // Player moves first, so enemy can copy Swords Dance
     await game.toNextTurn();
 
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(2);
@@ -83,7 +81,7 @@ describe("Moves - Copycat", () => {
     await game.classicMode.startBattle();
 
     game.move.select(Moves.COPYCAT);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPDEF)).toBe(-2);

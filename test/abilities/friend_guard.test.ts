@@ -28,15 +28,15 @@ describe("Moves - Friend Guard", () => {
     game.override
       .battleType("double")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([ Moves.TACKLE, Moves.SPLASH, Moves.DRAGON_RAGE ])
+      .enemyMoveset([Moves.TACKLE, Moves.SPLASH, Moves.DRAGON_RAGE])
       .enemySpecies(Species.SHUCKLE)
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .startingLevel(100);
   });
 
   it("should reduce damage that other allied Pokémon receive from attacks (from any Pokémon) by 25%", async () => {
-    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER ]);
-    const [ player1, player2 ] = game.scene.getPlayerField();
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
+    const [player1, player2] = game.scene.getPlayerField();
     const spy = vi.spyOn(player1, "getAttackDamage");
 
     const enemy1 = game.scene.getEnemyField()[0];
@@ -63,13 +63,15 @@ describe("Moves - Friend Guard", () => {
     // Get the last return value from `getAttackDamage`
     const turn2Damage = spy.mock.results[spy.mock.results.length - 1].value.damage;
     // With the ally's Friend Guard, damage should have been reduced from base damage by 25%
-    expect(turn2Damage).toBe(Math.floor(player1.getBaseDamage(enemy1, allMoves[Moves.TACKLE], MoveCategory.PHYSICAL) * 0.75));
+    expect(turn2Damage).toBe(
+      Math.floor(player1.getBaseDamage(enemy1, allMoves[Moves.TACKLE], MoveCategory.PHYSICAL) * 0.75),
+    );
   });
 
   it("should NOT reduce damage to pokemon with friend guard", async () => {
-    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER ]);
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
 
-    const player2  = game.scene.getPlayerField()[1];
+    const player2 = game.scene.getPlayerField()[1];
     const spy = vi.spyOn(player2, "getAttackDamage");
 
     game.move.select(Moves.SPLASH);
@@ -93,9 +95,9 @@ describe("Moves - Friend Guard", () => {
   });
 
   it("should NOT reduce damage from fixed damage attacks", async () => {
-    await game.classicMode.startBattle([ Species.BULBASAUR, Species.CHARMANDER ]);
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
 
-    const [ player1, player2 ] = game.scene.getPlayerField();
+    const [player1, player2] = game.scene.getPlayerField();
     const spy = vi.spyOn(player1, "getAttackDamage");
 
     game.move.select(Moves.SPLASH);

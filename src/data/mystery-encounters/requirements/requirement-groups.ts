@@ -4,14 +4,7 @@ import { Abilities } from "#enums/abilities";
 /**
  * Moves that "steal" things
  */
-export const STEALING_MOVES = [
-  Moves.PLUCK,
-  Moves.COVET,
-  Moves.KNOCK_OFF,
-  Moves.THIEF,
-  Moves.TRICK,
-  Moves.SWITCHEROO
-];
+export const STEALING_MOVES = [Moves.PLUCK, Moves.COVET, Moves.KNOCK_OFF, Moves.THIEF, Moves.TRICK, Moves.SWITCHEROO];
 
 /**
  * Moves that "charm" someone
@@ -24,7 +17,7 @@ export const CHARMING_MOVES = [
   Moves.ATTRACT,
   Moves.SWEET_SCENT,
   Moves.CAPTIVATE,
-  Moves.AROMATIC_MIST
+  Moves.AROMATIC_MIST,
 ];
 
 /**
@@ -42,7 +35,7 @@ export const DANCING_MOVES = [
   Moves.QUIVER_DANCE,
   Moves.SWORDS_DANCE,
   Moves.TEETER_DANCE,
-  Moves.VICTORY_DANCE
+  Moves.VICTORY_DANCE,
 ];
 
 /**
@@ -60,7 +53,7 @@ export const DISTRACTION_MOVES = [
   Moves.CAPTIVATE,
   Moves.RAGE_POWDER,
   Moves.SUBSTITUTE,
-  Moves.SHED_TAIL
+  Moves.SHED_TAIL,
 ];
 
 /**
@@ -79,7 +72,7 @@ export const PROTECTING_MOVES = [
   Moves.CRAFTY_SHIELD,
   Moves.SPIKY_SHIELD,
   Moves.OBSTRUCT,
-  Moves.DETECT
+  Moves.DETECT,
 ];
 
 /**
@@ -116,7 +109,7 @@ export const EXTORTION_ABILITIES = [
   Abilities.ARENA_TRAP,
   Abilities.SHADOW_TAG,
   Abilities.SUCTION_CUPS,
-  Abilities.STICKY_HOLD
+  Abilities.STICKY_HOLD,
 ];
 
 /**
@@ -133,5 +126,5 @@ export const FIRE_RESISTANT_ABILITIES = [
   Abilities.MAGMA_ARMOR,
   Abilities.WATER_VEIL,
   Abilities.STEAM_ENGINE,
-  Abilities.PRIMORDIAL_SEA
+  Abilities.PRIMORDIAL_SEA,
 ];
