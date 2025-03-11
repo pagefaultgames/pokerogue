@@ -8,8 +8,9 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
-import { Type } from "#app/enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { getTypeRgb } from "#app/data/type";
+import { Species } from "#enums/species";
 
 export enum Command {
   FIGHT = 0,
@@ -50,7 +51,7 @@ export default class CommandUiHandler extends UiHandler {
     this.teraButton.setName("terrastallize-button");
     this.teraButton.setScale(1.3);
     this.teraButton.setFrame("fire");
-    this.teraButton.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true, teraColor: getTypeRgb(Type.FIRE), isTerastallized: false });
+    this.teraButton.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true, teraColor: getTypeRgb(PokemonType.FIRE), isTerastallized: false });
     this.commandsContainer.add(this.teraButton);
 
     for (let c = 0; c < commands.length; c++) {
@@ -77,7 +78,7 @@ export default class CommandUiHandler extends UiHandler {
 
     if (this.canTera()) {
       this.teraButton.setVisible(true);
-      this.teraButton.setFrame(Type[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
+      this.teraButton.setFrame(PokemonType[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
     } else {
       this.teraButton.setVisible(false);
       if (this.cursor === Command.TERA) {
@@ -180,9 +181,11 @@ export default class CommandUiHandler extends UiHandler {
 
   canTera(): boolean {
     const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
+    const activePokemon = globalScene.getField()[this.fieldIndex];
+    const isBlockedForm = activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(Species.NECROZMA, "ultra");
     const currentTeras = globalScene.arena.playerTerasUsed;
     const plannedTera = globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;
-    return hasTeraMod && (currentTeras + plannedTera) < 1;
+    return hasTeraMod && !isBlockedForm && (currentTeras + plannedTera) < 1;
   }
 
   toggleTeraButton() {

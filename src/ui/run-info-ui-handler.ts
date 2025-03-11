@@ -15,7 +15,7 @@ import { Challenges } from "#enums/challenges";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 import { getTypeRgb } from "#app/data/type";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/data/variant";
@@ -569,7 +569,7 @@ export default class RunInfoUiHandler extends UiHandler {
             rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
             break;
           case Challenges.SINGLE_TYPE:
-            const typeRule = Type[this.runInfo.challenges[i].value - 1];
+            const typeRule = PokemonType[this.runInfo.challenges[i].value - 1];
             const typeTextColor = `[color=${TypeColor[typeRule]}]`;
             const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
             const typeText = typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
@@ -726,7 +726,7 @@ export default class RunInfoUiHandler extends UiHandler {
       	moveContainer.add(moveLabel);
       	movesetContainer.add(moveContainer);
       	const move = pokemonMoveset[m]?.getMove();
-        pokemonMoveBgs[m].setFrame(Type[move ? move.type : Type.UNKNOWN].toString().toLowerCase());
+        pokemonMoveBgs[m].setFrame(PokemonType[move ? move.type : PokemonType.UNKNOWN].toString().toLowerCase());
         pokemonMoveLabels[m].setText(move ? move.name : "-");
     	}
 
@@ -889,7 +889,7 @@ export default class RunInfoUiHandler extends UiHandler {
   /**
    * Takes input from the user to perform a desired action.
    * @param button - Button object to be processed
-   * Button.CANCEL - removes all containers related to RunInfo and returns the user to Run History
+   * Button.CANCEL, Button.LEFT - removes all containers related to RunInfo and returns the user to Run History
    * Button.CYCLE_FORM, Button.CYCLE_SHINY, Button.CYCLE_ABILITY - runs the function buttonCycleOption()
    */
  	override processInput(button: Button): boolean {
@@ -900,6 +900,7 @@ export default class RunInfoUiHandler extends UiHandler {
 
     switch (button) {
       case Button.CANCEL:
+      case Button.LEFT:
         success = true;
         if (this.pageMode === RunInfoUiMode.MAIN) {
           this.runInfoContainer.removeAll(true);

@@ -1,7 +1,7 @@
 {
 	"name": "pokemon-rogue-battle",
 	"private": true,
-	"version": "1.7.5",
+	"version": "1.7.7",
 	"type": "module",
 	"scripts": {
 		"start": "vite",

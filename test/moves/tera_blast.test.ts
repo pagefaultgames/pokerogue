@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
-import { allMoves, TeraMoveCategoryAttr } from "#app/data/move";
-import { Type } from "#enums/type";
+import { allMoves, TeraMoveCategoryAttr } from "#app/data/moves/move";
+import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
 import { HitResult } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
@@ -50,7 +50,7 @@ describe("Moves - Tera Blast", () => {
     vi.spyOn(enemyPokemon, "apply");
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    playerPokemon.teraType = Type.FIGHTING;
+    playerPokemon.teraType = PokemonType.FIGHTING;
     playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
@@ -64,7 +64,7 @@ describe("Moves - Tera Blast", () => {
     await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    playerPokemon.teraType = Type.STELLAR;
+    playerPokemon.teraType = PokemonType.STELLAR;
     playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);
@@ -78,7 +78,7 @@ describe("Moves - Tera Blast", () => {
     await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    playerPokemon.teraType = Type.STELLAR;
+    playerPokemon.teraType = PokemonType.STELLAR;
     playerPokemon.isTerastallized = true;
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -178,7 +178,7 @@ describe("Moves - Tera Blast", () => {
     await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    playerPokemon.teraType = Type.STELLAR;
+    playerPokemon.teraType = PokemonType.STELLAR;
     playerPokemon.isTerastallized = true;
 
     game.move.select(Moves.TERA_BLAST);

@@ -1,8 +1,8 @@
 import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/ability";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { allMoves, FlinchAttr } from "#app/data/move";
-import { Type } from "#enums/type";
+import { allMoves, FlinchAttr } from "#app/data/moves/move";
+import { PokemonType } from "#enums/pokemon-type";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";
 import { toDmgValue } from "#app/utils";
@@ -57,7 +57,7 @@ describe("Moves - Pledge Moves", () => {
       await game.phaseInterceptor.to("MoveEndPhase", false);
 
       expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
-      expect(playerPokemon[0].getMoveType).toHaveLastReturnedWith(Type.FIRE);
+      expect(playerPokemon[0].getMoveType).toHaveLastReturnedWith(PokemonType.FIRE);
     }
   );
 
@@ -81,11 +81,11 @@ describe("Moves - Pledge Moves", () => {
 
       await game.phaseInterceptor.to("MoveEndPhase");
       expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
-      expect(playerPokemon[0].getMoveType).toHaveLastReturnedWith(Type.FIRE);
+      expect(playerPokemon[0].getMoveType).toHaveLastReturnedWith(PokemonType.FIRE);
 
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
-      expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(Type.FIRE);
+      expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.FIRE);
 
       enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
     }
@@ -137,7 +137,7 @@ describe("Moves - Pledge Moves", () => {
       for (let i = 0; i < 2; i++) {
         await game.phaseInterceptor.to("MoveEndPhase");
       }
-      expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(Type.FIRE);
+      expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.FIRE);
       expect(grassPledge.calculateBattlePower).toHaveLastReturnedWith(150);
 
       const baseDmg = baseDmgMock.mock.results[baseDmgMock.mock.results.length - 1].value;
@@ -174,7 +174,7 @@ describe("Moves - Pledge Moves", () => {
       for (let i = 0; i < 2; i++) {
         await game.phaseInterceptor.to("MoveEndPhase");
       }
-      expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(Type.WATER);
+      expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.WATER);
       expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(150);
       expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp()); // PLAYER should not have attacked
       expect(game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
@@ -214,7 +214,7 @@ describe("Moves - Pledge Moves", () => {
         await game.phaseInterceptor.to("MoveEndPhase");
       }
 
-      expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(Type.GRASS);
+      expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.GRASS);
       expect(waterPledge.calculateBattlePower).toHaveLastReturnedWith(150);
       expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
 

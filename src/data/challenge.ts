@@ -11,7 +11,7 @@ import type { FixedBattleConfig } from "#app/battle";
 import { ClassicFixedBossWaves, BattleType, getRandomTrainerFunc } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import type { GameMode } from "#app/game-mode";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
@@ -555,7 +555,7 @@ interface monotypeOverride {
   /** The species to override */
   species: Species;
   /** The type to count as */
-  type: Type;
+  type: PokemonType;
   /** If part of a fusion, should we check the fused species instead of the base species? */
   fusion: boolean;
 }
@@ -565,7 +565,7 @@ interface monotypeOverride {
  */
 export class SingleTypeChallenge extends Challenge {
   private static TYPE_OVERRIDES: monotypeOverride[] = [
-    { species: Species.CASTFORM, type: Type.NORMAL, fusion: false },
+    { species: Species.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
   private static SPECIES_OVERRIDES: Species[] = [ Species.MELOETTA ];
@@ -609,7 +609,7 @@ export class SingleTypeChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    return Type[this.value - 1].toLowerCase();
+    return PokemonType[this.value - 1].toLowerCase();
   }
 
   /**
@@ -621,8 +621,8 @@ export class SingleTypeChallenge extends Challenge {
     if (overrideValue === undefined) {
       overrideValue = this.value;
     }
-    const type = i18next.t(`pokemonInfo:Type.${Type[this.value - 1]}`);
-    const typeColor = `[color=${TypeColor[Type[this.value - 1]]}][shadow=${TypeShadow[Type[this.value - 1]]}]${type}[/shadow][/color]`;
+    const type = i18next.t(`pokemonInfo:Type.${PokemonType[this.value - 1]}`);
+    const typeColor = `[color=${TypeColor[PokemonType[this.value - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.desc_default");
     const typeDesc = i18next.t("challenges:singleType.desc", { type: typeColor });
     return this.value === 0 ? defaultDesc : typeDesc;

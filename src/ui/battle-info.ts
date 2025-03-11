@@ -6,7 +6,7 @@ import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
 import { getTypeRgb } from "#app/data/type";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { getVariantTint } from "#app/data/variant";
 import { Stat } from "#enums/stat";
 import BattleFlyout from "./battle-flyout";
@@ -25,7 +25,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private bossSegments: number;
   private offset: boolean;
   private lastName: string | null;
-  private lastTeraType: Type;
+  private lastTeraType: PokemonType;
   private lastStatus: StatusEffect;
   private lastHp: number;
   private lastMaxHp: number;
@@ -84,7 +84,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.boss = false;
     this.offset = false;
     this.lastName = null;
-    this.lastTeraType = Type.UNKNOWN;
+    this.lastTeraType = PokemonType.UNKNOWN;
     this.lastStatus = StatusEffect.NONE;
     this.lastHp = -1;
     this.lastMaxHp = -1;
@@ -327,7 +327,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teraIcon.setVisible(pokemon.isTerastallized);
     this.teraIcon.on("pointerover", () => {
       if (pokemon.isTerastallized) {
-        globalScene.ui.showTooltip("", i18next.t("fightUiHandler:teraHover", { type: i18next.t(`pokemonInfo:Type.${Type[this.lastTeraType]}`) }));
+        globalScene.ui.showTooltip("", i18next.t("fightUiHandler:teraHover", { type: i18next.t(`pokemonInfo:Type.${PokemonType[this.lastTeraType]}`) }));
       }
     });
     this.teraIcon.on("pointerout", () => globalScene.ui.hideTooltip());
@@ -410,14 +410,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     const types = pokemon.getTypes(true);
     this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
-    this.type1Icon.setFrame(Type[types[0]].toLowerCase());
+    this.type1Icon.setFrame(PokemonType[types[0]].toLowerCase());
     this.type2Icon.setVisible(types.length > 1);
     this.type3Icon.setVisible(types.length > 2);
     if (types.length > 1) {
-      this.type2Icon.setFrame(Type[types[1]].toLowerCase());
+      this.type2Icon.setFrame(PokemonType[types[1]].toLowerCase());
     }
     if (types.length > 2) {
-      this.type3Icon.setFrame(Type[types[2]].toLowerCase());
+      this.type3Icon.setFrame(PokemonType[types[2]].toLowerCase());
     }
 
     if (this.player) {
@@ -542,11 +542,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
       }
 
-      const teraType = pokemon.isTerastallized ? pokemon.getTeraType() : Type.UNKNOWN;
+      const teraType = pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN;
       const teraTypeUpdated = this.lastTeraType !== teraType;
 
       if (teraTypeUpdated) {
-        this.teraIcon.setVisible(teraType !== Type.UNKNOWN);
+        this.teraIcon.setVisible(teraType !== PokemonType.UNKNOWN);
         this.teraIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
         this.teraIcon.setTintFill(Phaser.Display.Color.GetColor(...getTypeRgb(teraType)));
         this.lastTeraType = teraType;
@@ -575,14 +575,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       const types = pokemon.getTypes(true);
       this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
-      this.type1Icon.setFrame(Type[types[0]].toLowerCase());
+      this.type1Icon.setFrame(PokemonType[types[0]].toLowerCase());
       this.type2Icon.setVisible(types.length > 1);
       this.type3Icon.setVisible(types.length > 2);
       if (types.length > 1) {
-        this.type2Icon.setFrame(Type[types[1]].toLowerCase());
+        this.type2Icon.setFrame(PokemonType[types[1]].toLowerCase());
       }
       if (types.length > 2) {
-        this.type3Icon.setFrame(Type[types[2]].toLowerCase());
+        this.type3Icon.setFrame(PokemonType[types[2]].toLowerCase());
       }
 
       const updateHpFrame = () => {
