@@ -24,7 +24,7 @@ describe("Abilities - Storm Drain", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.WATER_GUN ])
+      .moveset([Moves.SPLASH, Moves.WATER_GUN])
       .ability(Abilities.BALL_FETCH)
       .battleType("double")
       .disableCrits()
@@ -34,7 +34,7 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should redirect water type moves", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
@@ -49,8 +49,8 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should not redirect non-water type moves", async () => {
-    game.override.moveset([ Moves.SPLASH, Moves.AERIAL_ACE ]);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    game.override.moveset([Moves.SPLASH, Moves.AERIAL_ACE]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
@@ -65,7 +65,7 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should boost the user's spatk without damaging", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy2 = game.scene.getEnemyField()[1];
 
@@ -81,7 +81,7 @@ describe("Abilities - Storm Drain", () => {
 
   it("should not redirect moves changed from water type via ability", async () => {
     game.override.ability(Abilities.NORMALIZE);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
@@ -96,9 +96,8 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should redirect moves changed to water type via ability", async () => {
-    game.override.ability(Abilities.LIQUID_VOICE)
-      .moveset(Moves.PSYCHIC_NOISE);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    game.override.ability(Abilities.LIQUID_VOICE).moveset(Moves.PSYCHIC_NOISE);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];

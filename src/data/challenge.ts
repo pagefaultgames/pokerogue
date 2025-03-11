@@ -285,11 +285,7 @@ export abstract class Challenge {
    * @param _dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterChoice(
-    _pokemon: PokemonSpecies,
-    _valid: Utils.BooleanHolder,
-    _dexAttr: DexAttrProps,
-  ): boolean {
+  applyStarterChoice(_pokemon: PokemonSpecies, _valid: Utils.BooleanHolder, _dexAttr: DexAttrProps): boolean {
     return false;
   }
 
@@ -441,10 +437,7 @@ export class SingleGenerationChallenge extends Challenge {
     super(Challenges.SINGLE_GENERATION, 9);
   }
 
-  applyStarterChoice(
-    pokemon: PokemonSpecies,
-    valid: Utils.BooleanHolder,
-  ): boolean {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
     if (pokemon.generation !== this.value) {
       valid.value = false;
       return true;
@@ -725,13 +718,9 @@ export class SingleTypeChallenge extends Challenge {
     super(Challenges.SINGLE_TYPE, 18);
   }
 
-  override applyStarterChoice(
-    pokemon: PokemonSpecies,
-    valid: Utils.BooleanHolder,
-    dexAttr: DexAttrProps,
-  ): boolean {
+  override applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps): boolean {
     const speciesForm = getPokemonSpeciesForm(pokemon.speciesId, dexAttr.formIndex);
-    const types = [ speciesForm.type1, speciesForm.type2 ];
+    const types = [speciesForm.type1, speciesForm.type2];
     if (!types.includes(this.value - 1)) {
       valid.value = false;
       return true;
