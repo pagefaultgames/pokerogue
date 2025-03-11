@@ -10,7 +10,7 @@ export class ShowAbilityPhase extends PokemonPhase {
   private abilityName: string;
   private pokemonOnField: boolean;
 
-  constructor(battlerIndex: BattlerIndex, passive: boolean = false) {
+  constructor(battlerIndex: BattlerIndex, passive = false) {
     super(battlerIndex);
 
     this.passive = passive;

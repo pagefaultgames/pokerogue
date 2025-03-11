@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
@@ -36,7 +36,7 @@ describe("Moves - Solar Beam", () => {
   });
 
   it("should deal damage in two turns if no weather is active", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -60,11 +60,11 @@ describe("Moves - Solar Beam", () => {
 
   it.each([
     { weatherType: WeatherType.SUNNY, name: "Sun" },
-    { weatherType: WeatherType.HARSH_SUN, name: "Harsh Sun" }
+    { weatherType: WeatherType.HARSH_SUN, name: "Harsh Sun" },
   ])("should deal damage in one turn if $name is active", async ({ weatherType }) => {
     game.override.weather(weatherType);
 
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -83,11 +83,11 @@ describe("Moves - Solar Beam", () => {
 
   it.each([
     { weatherType: WeatherType.RAIN, name: "Rain" },
-    { weatherType: WeatherType.HEAVY_RAIN, name: "Heavy Rain" }
+    { weatherType: WeatherType.HEAVY_RAIN, name: "Heavy Rain" },
   ])("should have its power halved in $name", async ({ weatherType }) => {
     game.override.weather(weatherType);
 
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const solarBeam = allMoves[Moves.SOLAR_BEAM];
 
