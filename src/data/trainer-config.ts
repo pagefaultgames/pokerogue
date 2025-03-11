@@ -1963,8 +1963,10 @@ export const trainerConfigs: TrainerConfigs = {
               Abilities.GLUTTONY,
               Abilities.HONEY_GATHER,
               Abilities.HARVEST,
+              Abilities.CHEEK_POUCH,
               Abilities.SWEET_VEIL,
               Abilities.RIPEN,
+              Abilities.PURIFYING_SALT,
               Abilities.WELL_BAKED_BODY,
               Abilities.SUPERSWEET_SYRUP,
               Abilities.HOSPITALITY,
@@ -2026,9 +2028,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [Species.EKANS, Species.KOFFING, Species.CROAGUNK, Species.VENIPEDE, Species.SCRAGGY],
       [TrainerPoolTier.UNCOMMON]: [
+        Species.GRIMER,
         Species.VOLTORB,
+        Species.TEDDIURSA,
         Species.MAGBY,
-        Species.ELECTRIKE,
         Species.SKORUPI,
         Species.SANDILE,
         Species.PAWNIARD,
@@ -2137,8 +2140,14 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.CYCLIST)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.ONE_AVG)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [Species.PICHU, Species.STARLY, Species.TAILLOW, Species.YAMPER],
-      [TrainerPoolTier.UNCOMMON]: [Species.DODUO, Species.ELECTRIKE, Species.BLITZLE, Species.WATTREL, Species.PONYTA],
+      [TrainerPoolTier.COMMON]: [Species.DODUO, Species.PICHU, Species.TAILLOW, Species.STARLY, Species.PONYTA],
+      [TrainerPoolTier.UNCOMMON]: [
+        Species.ELECTRIKE,
+        Species.SHINX,
+        Species.BLITZLE,
+        Species.DUCKLETT,
+        Species.WATTREL,
+      ],
       [TrainerPoolTier.RARE]: [Species.YANMA, Species.NINJASK, Species.WHIRLIPEDE, Species.EMOLGA, Species.SKIDDO],
       [TrainerPoolTier.SUPER_RARE]: [Species.ACCELGOR, Species.DREEPY],
     }),
@@ -2155,7 +2164,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.COMMON]: [Species.RALTS, Species.SPOINK, Species.LOTAD, Species.BUDEW],
       [TrainerPoolTier.UNCOMMON]: [Species.SPINDA, Species.SWABLU, Species.MARACTUS],
       [TrainerPoolTier.RARE]: [Species.BELLOSSOM, Species.HITMONTOP, Species.MIME_JR, Species.ORICORIO],
-      [TrainerPoolTier.SUPER_RARE]: [Species.POPPLIO],
+      [TrainerPoolTier.SUPER_RARE]: [Species.QUAXLY, Species.JANGMO_O],
     }),
   [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setMoneyMultiplier(1.45).setEncounterBgm(TrainerType.CLERK),
   [TrainerType.DOCTOR]: new TrainerConfig(++t)
@@ -2341,9 +2350,10 @@ export const trainerConfigs: TrainerConfigs = {
               Abilities.HYDRATION,
               Abilities.RAIN_DISH,
               Abilities.DRY_SKIN,
+              Abilities.WIND_POWER,
             ].includes(a),
-        ) || !!s.getLevelMoves().find(plm => [Moves.RAIN_DANCE, Moves.WEATHER_BALL].includes(plm[1])),
-    ), // Mons with rain abilities or who learn Rain Dance or Weather Ball by level
+        ) || !!s.getLevelMoves().find(plm => plm[1] === Moves.RAIN_DANCE),
+    ), // Mons with rain abilities or who learn Rain Dance by level
   [TrainerType.PILOT]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.CLERK)
     .setSpeciesFilter(s => tmSpecies[Moves.FLY].indexOf(s.speciesId) > -1),
