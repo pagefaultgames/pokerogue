@@ -3569,7 +3569,7 @@ function getNewModifierTypeOption(
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       while (modifierPool.hasOwnProperty(tier + upgradeCount + 1) && modifierPool[tier + upgradeCount + 1].length) {
-        if (!randSeedInt(upgradeOdds)) {
+        if (randSeedInt(upgradeOdds) < 4) {
           upgradeCount++;
         } else {
           break;
