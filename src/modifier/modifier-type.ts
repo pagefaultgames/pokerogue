@@ -3566,8 +3566,8 @@ function getNewModifierTypeOption(
   } else if (upgradeCount === undefined && player) {
     upgradeCount = 0;
     if (tier < ModifierTier.MASTER && allowLuckUpgrades) {
-      const partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
-      const upgradeOdds = Math.floor(32 / ((partyShinyCount + 2) / 2));
+      const partyLuckValue = getPartyLuckValue(party);
+      const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       while (modifierPool.hasOwnProperty(tier + upgradeCount + 1) && modifierPool[tier + upgradeCount + 1].length) {
         if (!randSeedInt(upgradeOdds)) {
           upgradeCount++;
