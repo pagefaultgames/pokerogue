@@ -1299,31 +1299,29 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
  * @returns True if the species is considered valid.
  */
 function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
-  if (!soft) {
+  if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
     const isValidForChallenge = new Utils.BooleanHolder(true);
     applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
     return isValidForChallenge.value;
   }
-  if (pokemonFormChanges.hasOwnProperty(species.speciesId)) {
-    pokemonFormChanges[species.speciesId].forEach(f1 => {
-      species.forms.forEach((f2, formIndex) => {
-        if (f1.formKey === f2.formKey) {
-          const formProps = { ...props };
-          formProps.formIndex = formIndex;
-          const isFormValidForChallenge = new Utils.BooleanHolder(true);
-          applyChallenges(
-            globalScene.gameMode,
-            ChallengeType.STARTER_CHOICE,
-            species,
-            isFormValidForChallenge,
-            formProps,
-          );
-          if (isFormValidForChallenge.value) {
-            return true;
-          }
+  pokemonFormChanges[species.speciesId].forEach(f1 => {
+    species.forms.forEach((f2, formIndex) => {
+      if (f1.formKey === f2.formKey) {
+        const formProps = { ...props };
+        formProps.formIndex = formIndex;
+        const isFormValidForChallenge = new Utils.BooleanHolder(true);
+        applyChallenges(
+          globalScene.gameMode,
+          ChallengeType.STARTER_CHOICE,
+          species,
+          isFormValidForChallenge,
+          formProps,
+        );
+        if (isFormValidForChallenge.value) {
+          return true;
         }
-      });
+      }
     });
-  }
+  });
   return false;
 }
