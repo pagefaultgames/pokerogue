@@ -170,6 +170,7 @@ export default class PokemonData {
         this.summonData.ability = source.summonData.ability;
         this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
         this.summonData.types = source.summonData.types;
+        this.summonData.speciesForm = source.summonData.speciesForm;
 
         if (source.summonData.tags) {
           this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
@@ -213,6 +214,11 @@ export default class PokemonData {
           this,
         );
     if (this.summonData) {
+      // when loading from saved session, recover summonData.speciesFrom species object
+      // used to stay transformed on reload session
+      if (this.summonData.speciesForm) {
+        this.summonData.speciesForm = getPokemonSpecies(this.summonData.speciesForm.speciesId);
+      }
       ret.primeSummonData(this.summonData);
     }
     return ret;
