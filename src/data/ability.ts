@@ -6315,7 +6315,9 @@ export function initAbilities() {
       .attr(PostTurnStatusHealAbAttr, StatusEffect.TOXIC, StatusEffect.POISON)
       .attr(BlockStatusDamageAbAttr, StatusEffect.TOXIC, StatusEffect.POISON),
     new Ability(Abilities.ADAPTABILITY, 4)
-      .attr(StabBoostAbAttr),
+      .attr(StabBoostAbAttr, (user, target, move) => {
+        return ![ Moves.STRUGGLE ].includes(move.id);
+      }),
     new Ability(Abilities.SKILL_LINK, 4)
       .attr(MaxMultiHitAbAttr),
     new Ability(Abilities.HYDRATION, 4)
