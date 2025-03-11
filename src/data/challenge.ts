@@ -1269,9 +1269,8 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
     return isValidForChallenge.value;
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
-  const isValid = false;
   const speciesToCheck = [species.speciesId];
-  while (speciesToCheck.length && !isValid) {
+  while (speciesToCheck.length) {
     const checking = speciesToCheck.pop();
     // Linter complains if we don't handle this
     if (!checking) {
@@ -1299,7 +1298,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
  * @returns True if the species is considered valid.
  */
 function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
-  if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
+  if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId) || props.formIndex === 0) {
     const isValidForChallenge = new Utils.BooleanHolder(true);
     applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
     return isValidForChallenge.value;
