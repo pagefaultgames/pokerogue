@@ -1953,10 +1953,32 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BAKER]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.CLERK)
     .setMoneyMultiplier(1.35)
-    .setSpeciesFilter(s =>
-      !![ s.ability1, s.ability2, s.abilityHidden ].find(a => !!a && [ Abilities.WHITE_SMOKE, Abilities.GLUTTONY, Abilities.HONEY_GATHER, Abilities.HARVEST, Abilities.SWEET_VEIL, Abilities.RIPEN, Abilities.WELL_BAKED_BODY, Abilities.SUPERSWEET_SYRUP, Abilities.HOSPITALITY ].includes(a)) ||
-      !!s.getLevelMoves().find(plm => [ Moves.SOFT_BOILED, Moves.SPORE, Moves.OVERHEAT, Moves.TEATIME, Moves.MILK_DRINK ].includes(plm[1]))), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
-  [TrainerType.BEAUTY]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.PARASOL_LADY)
+    .setSpeciesFilter(
+      s =>
+        !![s.ability1, s.ability2, s.abilityHidden].find(
+          a =>
+            !!a &&
+            [
+              Abilities.WHITE_SMOKE,
+              Abilities.GLUTTONY,
+              Abilities.HONEY_GATHER,
+              Abilities.HARVEST,
+              Abilities.SWEET_VEIL,
+              Abilities.RIPEN,
+              Abilities.WELL_BAKED_BODY,
+              Abilities.SUPERSWEET_SYRUP,
+              Abilities.HOSPITALITY,
+            ].includes(a),
+        ) ||
+        !!s
+          .getLevelMoves()
+          .find(plm =>
+            [Moves.SOFT_BOILED, Moves.SPORE, Moves.MILK_DRINK, Moves.OVERHEAT, Moves.TEATIME].includes(plm[1]),
+          ),
+    ), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
+  [TrainerType.BEAUTY]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.55)
+    .setEncounterBgm(TrainerType.PARASOL_LADY)
     .setPartyTemplates(
       trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
       trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
@@ -1973,45 +1995,36 @@ export const trainerConfigs: TrainerConfigs = {
         Species.MARILL,
         Species.SKITTY,
         Species.GLAMEOW,
-        Species.PURRLOIN
+        Species.PURRLOIN,
       ],
       [TrainerPoolTier.UNCOMMON]: [
+        Species.SMOOCHUM,
         Species.ROSELIA,
         Species.LUVDISC,
         Species.BLITZLE,
         Species.SEWADDLE,
         Species.PETILIL,
+        Species.MINCCINO,
+        Species.GOTHITA,
         Species.SPRITZEE,
-        Species.BOUNSWEET,
-        Species.FLITTLE
+        Species.FLITTLE,
       ],
       [TrainerPoolTier.RARE]: [
         Species.FEEBAS,
         Species.FURFROU,
         Species.SALANDIT,
         Species.BRUXISH,
+        Species.HATENNA,
         Species.SNOM,
-        Species.ALOLA_VULPIX
+        Species.ALOLA_VULPIX,
       ],
-      [TrainerPoolTier.SUPER_RARE]: [
-        Species.CLAMPERL,
-        Species.AMAURA,
-        Species.SYLVEON,
-        Species.GOOMY,
-        Species.POPPLIO
-      ]
+      [TrainerPoolTier.SUPER_RARE]: [Species.CLAMPERL, Species.AMAURA, Species.SYLVEON, Species.GOOMY, Species.POPPLIO],
     }),
   [TrainerType.BIKER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [
-        Species.EKANS,
-        Species.KOFFING,
-        Species.CROAGUNK,
-        Species.VENIPEDE,
-        Species.SCRAGGY
-      ],
+      [TrainerPoolTier.COMMON]: [Species.EKANS, Species.KOFFING, Species.CROAGUNK, Species.VENIPEDE, Species.SCRAGGY],
       [TrainerPoolTier.UNCOMMON]: [
         Species.VOLTORB,
         Species.MAGBY,
@@ -2019,12 +2032,9 @@ export const trainerConfigs: TrainerConfigs = {
         Species.SKORUPI,
         Species.SANDILE,
         Species.PAWNIARD,
-        Species.SHROODLE
+        Species.SHROODLE,
       ],
-      [TrainerPoolTier.RARE]: [
-        Species.VAROOM,
-        Species.CYCLIZAR
-      ]
+      [TrainerPoolTier.RARE]: [Species.VAROOM, Species.CYCLIZAR],
     }),
   [TrainerType.BLACK_BELT]: new TrainerConfig(++t)
     .setHasGenders("Battle Girl", TrainerType.PSYCHIC)
@@ -2320,9 +2330,20 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.FOUR_WEAK,
       trainerPartyTemplates.ONE_STRONG,
     )
-    .setSpeciesFilter(s =>
-      !![ s.ability1, s.ability2, s.abilityHidden ].find(a => !!a && [ Abilities.DRIZZLE, Abilities.SWIFT_SWIM, Abilities.HYDRATION, Abilities.RAIN_DISH, Abilities.DRY_SKIN ].includes(a)) ||
-      !!s.getLevelMoves().find(plm => [ Moves.RAIN_DANCE, Moves.WEATHER_BALL ].includes(plm[1]))), // Mons with rain abilities or who learn Rain Dance or Weather Ball by level
+    .setSpeciesFilter(
+      s =>
+        !![s.ability1, s.ability2, s.abilityHidden].find(
+          a =>
+            !!a &&
+            [
+              Abilities.DRIZZLE,
+              Abilities.SWIFT_SWIM,
+              Abilities.HYDRATION,
+              Abilities.RAIN_DISH,
+              Abilities.DRY_SKIN,
+            ].includes(a),
+        ) || !!s.getLevelMoves().find(plm => [Moves.RAIN_DANCE, Moves.WEATHER_BALL].includes(plm[1])),
+    ), // Mons with rain abilities or who learn Rain Dance or Weather Ball by level
   [TrainerType.PILOT]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.CLERK)
     .setSpeciesFilter(s => tmSpecies[Moves.FLY].indexOf(s.speciesId) > -1),
