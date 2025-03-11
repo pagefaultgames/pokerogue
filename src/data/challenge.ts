@@ -19,6 +19,9 @@ import { Nature } from "#enums/nature";
 import type { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import { globalScene } from "#app/global-scene";
+import { pokemonFormChanges } from "./pokemon-forms";
+import { pokemonEvolutions } from "./balance/pokemon-evolutions";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -1249,4 +1252,78 @@ export function initChallenges() {
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
   );
+}
+
+/**
+ * Apply all challenges to the given starter (and form) to check its validity.
+ * Differs from {@link checkSpeciesValidForChallenge} which only checks form changes.
+ * @param species {@link PokemonSpecies} The species to check the validity of.
+ * @param dexAttr {@link DexAttrProps} The dex attributes of the species, including its form index.
+ * @param soft {@link boolean} If true, allow it if it could become valid through evolution or form change.
+ * @returns True if the species is considered valid.
+ */
+export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
+  if (!soft) {
+    const isValidForChallenge = new Utils.BooleanHolder(true);
+    applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+    return isValidForChallenge.value;
+  }
+  // We check the validity of every evolution and form change, and require that at least one is valid
+  const isValid = false;
+  const speciesToCheck = [species.speciesId];
+  while (speciesToCheck.length && !isValid) {
+    const checking = speciesToCheck.pop();
+    // Linter complains if we don't handle this
+    if (!checking) {
+      return false;
+    }
+    const checkingSpecies = getPokemonSpecies(checking);
+    if (checkSpeciesValidForChallenge(checkingSpecies, props, true)) {
+      return true;
+    }
+    if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
+      pokemonEvolutions[checking].forEach(e => {
+        speciesToCheck.push(e.speciesId);
+      });
+    }
+  }
+  return false;
+}
+
+/**
+ * Apply all challenges to the given species (and form) to check its validity.
+ * Differs from {@link checkStarterValidForChallenge} which also checks evolutions.
+ * @param species {@link PokemonSpecies} The species to check the validity of.
+ * @param dexAttr {@link DexAttrProps} The dex attributes of the species, including its form index.
+ * @param soft {@link boolean} If true, allow it if it could become valid through a form change.
+ * @returns True if the species is considered valid.
+ */
+function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
+  if (!soft) {
+    const isValidForChallenge = new Utils.BooleanHolder(true);
+    applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+    return isValidForChallenge.value;
+  }
+  if (pokemonFormChanges.hasOwnProperty(species.speciesId)) {
+    pokemonFormChanges[species.speciesId].forEach(f1 => {
+      species.forms.forEach((f2, formIndex) => {
+        if (f1.formKey === f2.formKey) {
+          const formProps = { ...props };
+          formProps.formIndex = formIndex;
+          const isFormValidForChallenge = new Utils.BooleanHolder(true);
+          applyChallenges(
+            globalScene.gameMode,
+            ChallengeType.STARTER_CHOICE,
+            species,
+            isFormValidForChallenge,
+            formProps,
+          );
+          if (isFormValidForChallenge.value) {
+            return true;
+          }
+        }
+      });
+    });
+  }
+  return false;
 }

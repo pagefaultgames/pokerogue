@@ -80,6 +80,7 @@ import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { achvs } from "#app/system/achv";
 import * as Utils from "../utils";
 import type { GameObjects } from "phaser";
+import { checkStarterValidForChallenge } from "#app/data/challenge";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -1554,69 +1555,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
   }
 
-  /**
-   * Apply all challenges to the given species (and form) to check its validity.
-   * @param species {@link PokemonSpecies} The species to check the validity of.
-   * @param dexAttr {@link DexAttrProps} The dex attributes of the species, including its form index.
-   * @param soft {@link boolean} If true, allow it if it could become valid through evolution or form change.
-   * @returns True if the species is considered valid.
-   */
-  checkValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
-    if (!soft) {
-      const isValidForChallenge = new BooleanHolder(true);
-      Challenge.applyChallenges(
-        globalScene.gameMode,
-        Challenge.ChallengeType.STARTER_CHOICE,
-        species,
-        isValidForChallenge,
-        props,
-      );
-      return isValidForChallenge.value;
-    }
-    // We check the validity of every evolution and battle form separately,
-    // and require that at least one is valid
-    const allValidities: boolean[] = [];
-    const speciesToCheck = [species.speciesId];
-    while (speciesToCheck.length) {
-      const checking = speciesToCheck.pop();
-      const checkingSpecies = getPokemonSpecies(checking ?? Species.BULBASAUR);
-      const isEvoValidForChallenge = new BooleanHolder(true);
-      Challenge.applyChallenges(
-        globalScene.gameMode,
-        Challenge.ChallengeType.STARTER_CHOICE,
-        checkingSpecies,
-        isEvoValidForChallenge,
-        props, // This might be wrong, in principle we need to pass the right formIndex
-      );
-      allValidities.push(isEvoValidForChallenge.value);
-      if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
-        pokemonEvolutions[checking].forEach(e => {
-          speciesToCheck.push(e.speciesId);
-        });
-      }
-      if (checking && pokemonFormChanges.hasOwnProperty(checking)) {
-        pokemonFormChanges[checking].forEach(f1 => {
-          checkingSpecies.forms.forEach((f2, formIndex) => {
-            if (f1.formKey === f2.formKey) {
-              const formProps = { ...props };
-              formProps.formIndex = formIndex;
-              const isFormValidForChallenge = new BooleanHolder(true);
-              Challenge.applyChallenges(
-                globalScene.gameMode,
-                Challenge.ChallengeType.STARTER_CHOICE,
-                checkingSpecies,
-                isFormValidForChallenge,
-                formProps,
-              );
-              allValidities.push(isFormValidForChallenge.value);
-            }
-          });
-        });
-      }
-    }
-    return allValidities.filter(v => v).length > 0;
-  }
-
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
@@ -1823,7 +1761,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             const species = starter.species;
             const [isDupe] = this.isInParty(species);
             const starterCost = globalScene.gameData.getSpeciesStarterValue(species.speciesId);
-            const isValidForChallenge = this.checkValidForChallenge(
+            const isValidForChallenge = checkStarterValidForChallenge(
               species,
               globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
               this.isPartyValid(),
@@ -1920,7 +1858,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies);
 
           const isPartyValid = this.isPartyValid();
-          const isValidForChallenge = this.checkValidForChallenge(
+          const isValidForChallenge = checkStarterValidForChallenge(
             this.lastSpecies,
             globalScene.gameData.getSpeciesDexAttrProps(
               this.lastSpecies,
@@ -3044,7 +2982,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
              * Since some pokemon rely on forms to be valid (i.e. blaze tauros for fire challenges), we make a fake form and dex props to use in the challenge
              */
             const tempFormProps = BigInt(Math.pow(2, i)) * DexAttr.DEFAULT_FORM;
-            const isValidForChallenge = this.checkValidForChallenge(
+            const isValidForChallenge = checkStarterValidForChallenge(
               container.species,
               globalScene.gameData.getSpeciesDexAttrProps(species, tempFormProps),
               true,
@@ -3052,7 +2990,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             allFormsValid = allFormsValid || isValidForChallenge;
           }
         } else {
-          const isValidForChallenge = this.checkValidForChallenge(
+          const isValidForChallenge = checkStarterValidForChallenge(
             container.species,
             globalScene.gameData.getSpeciesDexAttrProps(
               species,
@@ -4269,7 +4207,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     let isPartyValid: boolean = this.isPartyValid();
     if (addingToParty) {
       const species = this.filteredStarterContainers[this.cursor].species;
-      const isNewPokemonValid = this.checkValidForChallenge(
+      const isNewPokemonValid = checkStarterValidForChallenge(
         species,
         globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
         false,
@@ -4298,7 +4236,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
        * If speciesStarterDexEntry?.caughtAttr is true, this species registered in stater.
        * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
        */
-      const isValidForChallenge = this.checkValidForChallenge(
+      const isValidForChallenge = checkStarterValidForChallenge(
         this.allSpecies[s],
         globalScene.gameData.getSpeciesDexAttrProps(
           this.allSpecies[s],
@@ -4442,7 +4380,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     let canStart = false;
     for (let s = 0; s < this.starterSpecies.length; s++) {
       const species = this.starterSpecies[s];
-      const isValidForChallenge = this.checkValidForChallenge(
+      const isValidForChallenge = checkStarterValidForChallenge(
         species,
         globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
         false,
