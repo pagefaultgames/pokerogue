@@ -1917,7 +1917,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const ui = this.getUi();
           let options: any[] = []; // TODO: add proper type
 
-          const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies); // checks to see if the pokemon is a duplicate; if it is, returns the index that will be removed
+          const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies);
 
           const isPartyValid = this.isPartyValid();
           const isValidForChallenge = this.checkValidForChallenge(
@@ -1943,7 +1943,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             currentPartyValue + newCost <= this.getValueLimit() &&
             this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
           ) {
-            // this checks to make sure the pokemon doesn't exist in your party, it's valid for the challenge and that it won't go over the cost limit; if it meets all these criteria it will add it to your party
             options = [
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
@@ -4267,9 +4266,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       globalScene.time.delayedCall(fixedInt(500), () => this.tryUpdateValue());
       return false;
     }
-    let isPartyValid: boolean = this.isPartyValid(); // this checks to see if the party is valid
+    let isPartyValid: boolean = this.isPartyValid();
     if (addingToParty) {
-      // this does a check to see if the pokemon being added is valid; if so, it will update the isPartyValid boolean
       const species = this.filteredStarterContainers[this.cursor].species;
       const isNewPokemonValid = this.checkValidForChallenge(
         species,
