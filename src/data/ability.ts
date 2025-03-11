@@ -2250,20 +2250,19 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private sourceId: number;
 
 
-  constructor(tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
-    super(false);
+  constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
+    super(showAbility);
     this.tagType = tagType;
     this.turnCount = turnCount;
     this.side = side;
     this.quiet = quiet;
   }
 
-  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     this.sourceId = pokemon.id;
     if (!simulated) {
       globalScene.arena.addTag(this.tagType, this.turnCount, undefined, this.sourceId, this.side, this.quiet);
     }
-    return true;
   }
 }
 
@@ -6907,7 +6906,7 @@ export function initAbilities() {
     new Ability(Abilities.GORILLA_TACTICS, 8)
       .attr(GorillaTacticsAbAttr),
     new Ability(Abilities.NEUTRALIZING_GAS, 8)
-      .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.NEUTRALIZING_GAS, 0)
+      .attr(PostSummonAddArenaTagAbAttr, true, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
