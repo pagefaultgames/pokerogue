@@ -66,4 +66,16 @@ describe("Ability Activation Order", () => {
     await game.classicMode.startBattle([Species.DITTO]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
+
+  it("should activate priority abilities first", async () => {
+    game.override
+      .startingLevel(1)
+      .enemyLevel(100)
+      .enemySpecies(Species.ACCELGOR)
+      .enemyAbility(Abilities.DROUGHT)
+      .ability(Abilities.NEUTRALIZING_GAS);
+
+    await game.classicMode.startBattle([Species.SLOWPOKE]);
+    expect(game.scene.arena.weather).toBeUndefined();
+  });
 });
