@@ -1256,11 +1256,11 @@ export function initChallenges() {
 
 /**
  * Apply all challenges to the given starter (and form) to check its validity.
- * Differs from {@link checkSpeciesValidForChallenge} which only checks form changes.
- * @param species {@link PokemonSpecies} The species to check the validity of.
- * @param dexAttr {@link DexAttrProps} The dex attributes of the species, including its form index.
- * @param soft {@link boolean} If true, allow it if it could become valid through evolution or form change.
- * @returns True if the species is considered valid.
+ * Differs from {@linkcode checkSpeciesValidForChallenge} which only checks form changes.
+ * @param species - The {@linkcode PokemonSpecies} to check the validity of.
+ * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
+ * @param soft - If `true`, allow it if it could become valid through evolution or form change.
+ * @returns `true` if the species is considered valid.
  */
 export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   if (!soft) {
@@ -1291,11 +1291,11 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
 
 /**
  * Apply all challenges to the given species (and form) to check its validity.
- * Differs from {@link checkStarterValidForChallenge} which also checks evolutions.
- * @param species {@link PokemonSpecies} The species to check the validity of.
- * @param dexAttr {@link DexAttrProps} The dex attributes of the species, including its form index.
- * @param soft {@link boolean} If true, allow it if it could become valid through a form change.
- * @returns True if the species is considered valid.
+ * Differs from {@linkcode checkStarterValidForChallenge} which also checks evolutions.
+ * @param species - The {@linkcode PokemonSpecies} to check the validity of.
+ * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
+ * @param soft - If `true`, allow it if it could become valid through a form change.
+ * @returns `true` if the species is considered valid.
  */
 function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId) || props.formIndex === 0) {
