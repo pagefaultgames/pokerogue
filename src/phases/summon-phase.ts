@@ -14,6 +14,7 @@ import { GameOverPhase } from "./game-over-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { globalScene } from "#app/global-scene";
+import { Stat } from "#enums/stat";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
   private loaded: boolean;
@@ -283,7 +284,13 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.pushPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    // Insert PostSummonPhase in speed order
+    globalScene.prependToPhaseWithCondition(
+      new PostSummonPhase(this.getPokemon().getBattlerIndex()),
+      PostSummonPhase,
+      (newPhase: PostSummonPhase, prependPhase: PostSummonPhase) =>
+        prependPhase.getPokemon().getEffectiveStat(Stat.SPD) < newPhase.getPokemon().getEffectiveStat(Stat.SPD),
+    );
   }
 
   end() {
