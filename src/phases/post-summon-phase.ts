@@ -7,7 +7,7 @@ import { PokemonPhase } from "./pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
-import { PriorityAbilityActivationPhase } from "#app/phases/priority-ability-activation-phase";
+import { PostSummonActivateAbilityPhase } from "#app/phases/priority-ability-activation-phase";
 
 export class PostSummonPhase extends PokemonPhase {
   /** Represents whether or not this phase has already been placed in the correct (speed) order */
@@ -29,24 +29,15 @@ export class PostSummonPhase extends PokemonPhase {
       globalScene.findPhase(phase => phase instanceof PostSummonPhase && phase.getPokemon() !== pokemon)
     ) {
       globalScene.pushPhase(new PostSummonPhase(pokemon.getBattlerIndex(), true));
-      globalScene.phaseQueue.sort(
-        (phaseA: PostSummonPhase, phaseB: PostSummonPhase) =>
-          phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD),
-      );
-      globalScene.phaseQueue.forEach((phase: PostSummonPhase) => {
-        phase.ordered = true;
-        const phasePokemon = phase.getPokemon();
 
-        if (phasePokemon.hasPriorityAbility()) {
-          globalScene.unshiftPhase(new PriorityAbilityActivationPhase(this.getPokemon().getBattlerIndex()));
-        }
-      });
+      this.orderPostSummonPhases();
+
       this.end();
       return;
     }
 
     if (!this.ordered) {
-      applyPriorityBasedAbAttrs(pokemon, true);
+      applyPriorityBasedAbAttrs(pokemon, (p: number) => p > 0);
     }
 
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
@@ -61,13 +52,45 @@ export class PostSummonPhase extends PokemonPhase {
     ) {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
-
-    applyPriorityBasedAbAttrs(pokemon, false);
+    if (!this.ordered) {
+      applyPriorityBasedAbAttrs(pokemon, (p: number) => p <= 0);
+    }
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     for (const p of field) {
       applyAbAttrs(CommanderAbAttr, p, null, false);
     }
 
     this.end();
+  }
+
+  private orderPostSummonPhases() {
+    globalScene.phaseQueue.sort(
+      (phaseA: PostSummonPhase, phaseB: PostSummonPhase) =>
+        phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD),
+    );
+
+    const positivePriorityPhases: PostSummonActivateAbilityPhase[] = [];
+    const zeroNegativePriorityPhases: PostSummonActivateAbilityPhase[] = [];
+
+    globalScene.phaseQueue.forEach((phase: PostSummonPhase) => {
+      phase.ordered = true;
+      const phasePokemon = phase.getPokemon();
+
+      for (const priority of phasePokemon.getAbilityPriorities()) {
+        (priority > 0 ? positivePriorityPhases : zeroNegativePriorityPhases).push(
+          new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority),
+        );
+      }
+    });
+
+    for (const phaseList of [positivePriorityPhases, zeroNegativePriorityPhases]) {
+      phaseList.sort(
+        (phaseA: PostSummonActivateAbilityPhase, phaseB: PostSummonActivateAbilityPhase) =>
+          phaseB.getPriority() - phaseA.getPriority(),
+      );
+    }
+
+    globalScene.unshiftPhase(...positivePriorityPhases);
+    zeroNegativePriorityPhases.forEach(phase => globalScene.pushPhase(phase));
   }
 }

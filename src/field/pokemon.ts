@@ -2265,11 +2265,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  /**
-   * @returns If either of the Pokemon's abilities have priority activation
-   */
-  public hasPriorityAbility() {
-    return [this.getAbility(), this.getPassiveAbility()].some(ability => ability.isPriority);
+  public getAbilityPriorities(): Set<number> {
+    return new Set([ this.getAbility().postSummonPriority, this.getPassiveAbility().postSummonPriority ]);
   }
 
   /**
