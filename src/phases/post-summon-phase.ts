@@ -45,6 +45,10 @@ export class PostSummonPhase extends PokemonPhase {
       return;
     }
 
+    if (!this.ordered) {
+      applyPriorityBasedAbAttrs(pokemon, true);
+    }
+
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }
