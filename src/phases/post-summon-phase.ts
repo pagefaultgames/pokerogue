@@ -64,7 +64,8 @@ export class PostSummonPhase extends PokemonPhase {
   }
 
   private orderPostSummonPhases() {
-    globalScene.phaseQueue.sort(
+    globalScene.sortPhaseType(
+      PostSummonPhase,
       (phaseA: PostSummonPhase, phaseB: PostSummonPhase) =>
         phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD),
     );

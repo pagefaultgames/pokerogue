@@ -2880,6 +2880,25 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Sorts the first consecutive set of occurences of {@linkcode targetPhase} in {@linkcode phaseQueue}
+   * @param targetPhase The type of phase to search for and sort
+   * @param by A function to compare the phases with
+   * @see {@linkcode Array.sort} for the comparison function
+   */
+  sortPhaseType(targetPhase: Constructor<Phase>, by: (a: Phase, b: Phase) => number): void {
+    const startIndex = this.phaseQueue.findIndex(phase => phase instanceof targetPhase);
+    if (startIndex === -1) {
+      return;
+    }
+    const endIndex = this.phaseQueue.findIndex((phase, index) => index > startIndex && !(phase instanceof targetPhase));
+
+    const sortedSubset = this.phaseQueue
+      .slice(startIndex, endIndex !== -1 ? endIndex + 1 : this.phaseQueue.length)
+      .sort(by);
+    this.phaseQueue.splice(startIndex, sortedSubset.length, ...sortedSubset);
+  }
+
+  /**
    * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
    * @param message string for MessagePhase
    * @param callbackDelay optional param for MessagePhase constructor
