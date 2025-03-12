@@ -14,7 +14,6 @@ export class PostSummonPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    // If another PostSummonPhase exists which should go first, move this one back
     globalScene.phaseQueue;
     const fasterPhase = globalScene.findPhase(
       phase =>
@@ -22,11 +21,10 @@ export class PostSummonPhase extends PokemonPhase {
         phase.getPokemon().getEffectiveStat(Stat.SPD) > pokemon.getEffectiveStat(Stat.SPD),
     );
     if (fasterPhase) {
-      globalScene.prependToPhaseWithCondition(
-        new PostSummonPhase(this.getPokemon().getBattlerIndex()),
-        PostSummonPhase,
-        (newPhase: PostSummonPhase, prependPhase: PostSummonPhase) =>
-          prependPhase.getPokemon().getEffectiveStat(Stat.SPD) < newPhase.getPokemon().getEffectiveStat(Stat.SPD),
+      globalScene.pushPhase(new PostSummonPhase(pokemon.getBattlerIndex()));
+      globalScene.phaseQueue.sort(
+        (phaseA: PostSummonPhase, phaseB: PostSummonPhase) =>
+          phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD),
       );
       this.end();
       return;

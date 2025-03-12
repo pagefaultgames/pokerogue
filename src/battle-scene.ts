@@ -2880,27 +2880,6 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Prepends a phase to the first occurence of {@linkcode targetPhase} which satisfies {@linkcode condition}
-   *
-   * Pushes the phase to the end of the queue if no occurrence is found
-   * @param newPhase The phase to be added
-   * @param targetPhase The type of phase to search for
-   * @param condition The condition that the target phase must meet
-   */
-  prependToPhaseWithCondition(
-    newPhase: Phase,
-    targetPhase: Constructor<Phase>,
-    condition: (newPhase: Phase, prependPhase: Phase) => boolean,
-  ) {
-    const prependPhase = this.findPhase(phase => phase instanceof targetPhase && condition(newPhase, phase));
-    if (prependPhase) {
-      this.phaseQueue.splice(this.phaseQueue.indexOf(prependPhase), 0, newPhase);
-    } else {
-      this.pushPhase(newPhase);
-    }
-  }
-
-  /**
    * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
    * @param message string for MessagePhase
    * @param callbackDelay optional param for MessagePhase constructor
