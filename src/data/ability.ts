@@ -58,14 +58,16 @@ export class Ability implements Localizable {
   public generation: number;
   public isBypassFaint: boolean;
   public isIgnorable: boolean;
+  public isPriority: boolean;
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
 
-  constructor(id: Abilities, generation: number) {
+  constructor(id: Abilities, generation: number, isPriority: boolean = false) {
     this.id = id;
 
     this.nameAppend = "";
     this.generation = generation;
+    this.isPriority = isPriority;
     this.attrs = [];
     this.conditions = [];
 
@@ -5999,6 +6001,21 @@ export function applyOnGainAbAttrs(pokemon: Pokemon, passive = false, simulated 
 export function applyOnLoseAbAttrs(pokemon: Pokemon, passive = false, simulated = false, ...args: any[]): void {
   applySingleAbAttrs<PreLeaveFieldAbAttr>(pokemon, passive, PreLeaveFieldAbAttr, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated);
 }
+
+/**
+ * Applies only abilities that are priority or are not, based on parameters
+ * 
+ * @param priority If true, apply only priority abilities. If false, apply only non-priority abilities
+ */
+export function applyPriorityBasedAbAttrs(pokemon: Pokemon, priority: boolean, simulated: boolean = false, ...args: any[]) {
+  for (const passive of [ false, true ]) {
+    const ability: Ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
+    if (ability.isPriority == priority) {
+      applySingleAbAttrs<PostSummonAbAttr>(pokemon, passive, PostSummonAbAttr, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args), args, false, simulated)
+    }
+  }
+}
+
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
   globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
   globalScene.clearPhaseQueueSplice();
@@ -6887,7 +6904,7 @@ export function initAbilities() {
       .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(Abilities.GORILLA_TACTICS, 8)
       .attr(GorillaTacticsAbAttr),
-    new Ability(Abilities.NEUTRALIZING_GAS, 8)
+    new Ability(Abilities.NEUTRALIZING_GAS, 8, true)
       .attr(PostSummonAddArenaTagAbAttr, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
       .attr(UncopiableAbilityAbAttr)
@@ -6920,14 +6937,14 @@ export function initAbilities() {
       .attr(PostVictoryStatStageChangeAbAttr, Stat.ATK, 1),
     new Ability(Abilities.GRIM_NEIGH, 8)
       .attr(PostVictoryStatStageChangeAbAttr, Stat.SPATK, 1),
-    new Ability(Abilities.AS_ONE_GLASTRIER, 8)
+    new Ability(Abilities.AS_ONE_GLASTRIER, 8, true)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAsOneGlastrier", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(PreventBerryUseAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, Stat.ATK, 1)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
-    new Ability(Abilities.AS_ONE_SPECTRIER, 8)
+    new Ability(Abilities.AS_ONE_SPECTRIER, 8, true)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAsOneSpectrier", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(PreventBerryUseAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, Stat.SPATK, 1)

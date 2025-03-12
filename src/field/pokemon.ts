@@ -2266,6 +2266,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * @returns If either of the Pokemon's abilities have priority activation
+   */
+  public hasPriorityAbility() {
+    return [this.getAbility(), this.getPassiveAbility()].some(ability => ability.isPriority);
+  }
+
+  /**
    * Gets the weight of the Pokemon with subtractive modifiers (Autotomize) happening first
    * and then multiplicative modifiers happening after (Heavy Metal and Light Metal)
    * @returns the kg of the Pokemon (minimum of 0.1)
