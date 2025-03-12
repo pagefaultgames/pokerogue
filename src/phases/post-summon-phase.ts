@@ -7,7 +7,7 @@ import { PokemonPhase } from "./pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
-import { PostSummonActivateAbilityPhase } from "#app/phases/priority-ability-activation-phase";
+import { PostSummonActivateAbilityPhase } from "#app/phases/post-summon-activate-ability-phase";
 
 export class PostSummonPhase extends PokemonPhase {
   /** Represents whether or not this phase has already been placed in the correct (speed) order */
