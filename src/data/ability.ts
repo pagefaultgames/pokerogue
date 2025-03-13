@@ -159,7 +159,7 @@ export abstract class AbAttr {
   public showAbility: boolean;
   private extraCondition: AbAttrCondition;
 
-  constructor(showAbility: boolean = true) {
+  constructor(showAbility = true) {
     this.showAbility = showAbility;
   }
 
@@ -775,7 +775,7 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
   private selfTarget: boolean;
   private allOthers: boolean;
 
-  constructor(condition: PokemonDefendCondition, stat: BattleStat, stages: number, selfTarget: boolean = true, allOthers: boolean = false) {
+  constructor(condition: PokemonDefendCondition, stat: BattleStat, stages: number, selfTarget = true, allOthers = false) {
     super(true);
 
     this.condition = condition;
@@ -813,7 +813,7 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
   private stages: number;
   private selfTarget: boolean;
 
-  constructor(condition: PokemonDefendCondition, hpGate: number, stats: BattleStat[], stages: number, selfTarget: boolean = true) {
+  constructor(condition: PokemonDefendCondition, hpGate: number, stats: BattleStat[], stages: number, selfTarget = true) {
     super(true);
 
     this.condition = condition;
@@ -1320,7 +1320,7 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
   private multiplier: number;
   private canStack: boolean;
 
-  constructor(stat: Stat, multiplier: number, canStack: boolean = false) {
+  constructor(stat: Stat, multiplier: number, canStack = false) {
     super(false);
 
     this.stat = stat;
@@ -1510,7 +1510,7 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
 
-  constructor(condition: PokemonAttackCondition, powerMultiplier: number, showAbility: boolean = true) {
+  constructor(condition: PokemonAttackCondition, powerMultiplier: number, showAbility = true) {
     super(showAbility);
     this.condition = condition;
     this.powerMultiplier = powerMultiplier;
@@ -1555,7 +1555,7 @@ export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
    * @param mult A function which takes the user, target, and move, and returns the power multiplier. 1 means no multiplier.
    * @param {boolean} showAbility Whether to show the ability when it activates.
    */
-  constructor(mult: (user: Pokemon, target: Pokemon, move: Move) => number, showAbility: boolean = true) {
+  constructor(mult: (user: Pokemon, target: Pokemon, move: Move) => number, showAbility = true) {
     super(showAbility);
     this.mult = mult;
   }
@@ -1678,7 +1678,7 @@ export class PostAttackAbAttr extends AbAttr {
   private attackCondition: PokemonAttackCondition;
 
   /** The default attackCondition requires that the selected move is a damaging move */
-  constructor(attackCondition: PokemonAttackCondition = (user, target, move) => (move.category !== MoveCategory.STATUS), showAbility: boolean = true) {
+  constructor(attackCondition: PokemonAttackCondition = (user, target, move) => (move.category !== MoveCategory.STATUS), showAbility = true) {
     super(showAbility);
 
     this.attackCondition = attackCondition;
@@ -2151,7 +2151,7 @@ export class PostSummonAbAttr extends AbAttr {
   /** Should the ability activate when gained in battle? This will almost always be true */
   private activateOnGain: boolean;
 
-  constructor(showAbility: boolean = true, activateOnGain: boolean = true) {
+  constructor(showAbility = true, activateOnGain = true) {
     super(showAbility);
     this.activateOnGain = activateOnGain;
   }
@@ -2334,7 +2334,7 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   private healRatio: number;
   private showAnim: boolean;
 
-  constructor(healRatio: number, showAnim: boolean = false) {
+  constructor(healRatio: number, showAnim = false) {
     super();
 
     this.healRatio = healRatio || 4;
@@ -3296,7 +3296,7 @@ export class MultCritAbAttr extends AbAttr {
 export class ConditionalCritAbAttr extends AbAttr {
   private condition: PokemonAttackCondition;
 
-  constructor(condition: PokemonAttackCondition, checkUser?: Boolean) {
+  constructor(condition: PokemonAttackCondition, checkUser?: boolean) {
     super();
 
     this.condition = condition;
@@ -3400,7 +3400,7 @@ export class IgnoreContactAbAttr extends AbAttr { }
 export class PreWeatherEffectAbAttr extends AbAttr {
   applyPreWeatherEffect(
     pokemon: Pokemon,
-    passive: Boolean,
+    passive: boolean,
     simulated: boolean,
     weather: Weather | null,
     cancelled: Utils.BooleanHolder,
@@ -3837,7 +3837,7 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
   private allyTarget: boolean;
   private target: Pokemon;
 
-  constructor(allyTarget: boolean = false) {
+  constructor(allyTarget = false) {
     super(true);
     this.allyTarget = allyTarget;
   }
@@ -4049,7 +4049,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
    * @returns `true` if any opponents are sleeping
    */
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    let hadEffect: boolean = false;
+    let hadEffect = false;
     for (const opp of pokemon.getOpponents()) {
       if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus) {
         if (!simulated) {
@@ -4571,9 +4571,19 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   }
 }
 
+/**
+ * Redirects a move to the pokemon with this ability if it meets the conditions
+ */
 export class RedirectMoveAbAttr extends AbAttr {
+  /**
+   * @param pokemon - The Pokemon with the redirection ability
+   * @param args - The args passed to the `AbAttr`:
+   *  - `[0]` - The id of the {@linkcode Move} used
+   *  - `[1]` - The target's battler index (before redirection)
+   *  - `[2]` - The Pokemon that used the move being redirected
+   */
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.canRedirect(args[0] as Moves)) {
+    if (this.canRedirect(args[0] as Moves, args[2] as Pokemon)) {
       const target = args[1] as Utils.NumberHolder;
       const newTarget = pokemon.getBattlerIndex();
       if (target.value !== newTarget) {
@@ -4585,7 +4595,7 @@ export class RedirectMoveAbAttr extends AbAttr {
     return false;
   }
 
-  canRedirect(moveId: Moves): boolean {
+  canRedirect(moveId: Moves, user: Pokemon): boolean {
     const move = allMoves[moveId];
     return !![ MoveTarget.NEAR_OTHER, MoveTarget.OTHER ].find(t => move.moveTarget === t);
   }
@@ -4599,8 +4609,8 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
     this.type = type;
   }
 
-  canRedirect(moveId: Moves): boolean {
-    return super.canRedirect(moveId) && allMoves[moveId].type === this.type;
+  canRedirect(moveId: Moves, user: Pokemon): boolean {
+    return super.canRedirect(moveId, user) && user.getMoveType(allMoves[moveId]) === this.type;
   }
 }
 
@@ -5150,9 +5160,9 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
   applyFunc: AbAttrApplyFunc<TAttr>,
   args: any[],
-  gainedMidTurn: boolean = false,
-  simulated: boolean = false,
-  showAbilityInstant: boolean = false,
+  gainedMidTurn = false,
+  simulated = false,
+  showAbilityInstant = false,
   messages: string[] = []
 ) {
   if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
@@ -5362,7 +5372,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
   private helper: ForceSwitchOutHelper = new ForceSwitchOutHelper(SwitchType.SWITCH);
   private hpRatio: number;
 
-  constructor(hpRatio: number = 0.5) {
+  constructor(hpRatio = 0.5) {
     super();
     this.hpRatio = hpRatio;
   }
@@ -5446,10 +5456,10 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(
   pokemon: Pokemon | null,
   applyFunc: AbAttrApplyFunc<TAttr>,
   args: any[],
-  showAbilityInstant: boolean = false,
-  simulated: boolean = false,
+  showAbilityInstant = false,
+  simulated = false,
   messages: string[] = [],
-  gainedMidTurn: boolean = false
+  gainedMidTurn = false
 ) {
   for (const passive of [ false, true ]) {
     if (pokemon) {
@@ -5463,7 +5473,7 @@ export function applyAbAttrs(
   attrType: Constructor<AbAttr>,
   pokemon: Pokemon,
   cancelled: Utils.BooleanHolder | null,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<AbAttr>(
@@ -5479,7 +5489,7 @@ export function applyAbAttrs(
 export function applyPostBattleInitAbAttrs(
   attrType: Constructor<PostBattleInitAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostBattleInitAbAttr>(
@@ -5498,7 +5508,7 @@ export function applyPreDefendAbAttrs(
   attacker: Pokemon,
   move: Move | null,
   cancelled: Utils.BooleanHolder | null,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PreDefendAbAttr>(
@@ -5517,7 +5527,7 @@ export function applyPostDefendAbAttrs(
   attacker: Pokemon,
   move: Move,
   hitResult: HitResult | null,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostDefendAbAttr>(
@@ -5536,7 +5546,7 @@ export function applyPostMoveUsedAbAttrs(
   move: PokemonMove,
   source: Pokemon,
   targets: BattlerIndex[],
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostMoveUsedAbAttr>(
@@ -5554,7 +5564,7 @@ export function applyStatMultiplierAbAttrs(
   pokemon: Pokemon,
   stat: BattleStat,
   statValue: Utils.NumberHolder,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<StatMultiplierAbAttr>(
@@ -5569,7 +5579,7 @@ export function applyPostSetStatusAbAttrs(
   pokemon: Pokemon,
   effect: StatusEffect,
   sourcePokemon?: Pokemon | null,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostSetStatusAbAttr>(
@@ -5587,7 +5597,7 @@ export function applyPostDamageAbAttrs(
   pokemon: Pokemon,
   damage: number,
   passive: boolean,
-  simulated: boolean = false,
+  simulated = false,
   args: any[],
   source?: Pokemon,
 ): void {
@@ -5616,7 +5626,7 @@ export function applyFieldStatMultiplierAbAttrs(
   statValue: Utils.NumberHolder,
   checkedPokemon: Pokemon,
   hasApplied: Utils.BooleanHolder,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<FieldMultiplyStatAbAttr>(
@@ -5633,7 +5643,7 @@ export function applyPreAttackAbAttrs(
   pokemon: Pokemon,
   defender: Pokemon | null,
   move: Move,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PreAttackAbAttr>(
@@ -5652,7 +5662,7 @@ export function applyPostAttackAbAttrs(
   defender: Pokemon,
   move: Move,
   hitResult: HitResult | null,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostAttackAbAttr>(
@@ -5669,7 +5679,7 @@ export function applyPostKnockOutAbAttrs(
   attrType: Constructor<PostKnockOutAbAttr>,
   pokemon: Pokemon,
   knockedOut: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostKnockOutAbAttr>(
@@ -5685,7 +5695,7 @@ export function applyPostKnockOutAbAttrs(
 export function applyPostVictoryAbAttrs(
   attrType: Constructor<PostVictoryAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostVictoryAbAttr>(
@@ -5701,7 +5711,7 @@ export function applyPostVictoryAbAttrs(
 export function applyPostSummonAbAttrs(
   attrType: Constructor<PostSummonAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostSummonAbAttr>(
@@ -5717,7 +5727,7 @@ export function applyPostSummonAbAttrs(
 export function applyPreSwitchOutAbAttrs(
   attrType: Constructor<PreSwitchOutAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PreSwitchOutAbAttr>(
@@ -5733,7 +5743,7 @@ export function applyPreSwitchOutAbAttrs(
 export function applyPreLeaveFieldAbAttrs(
   attrType: Constructor<PreLeaveFieldAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   return applyAbAttrsInternal<PreLeaveFieldAbAttr>(
@@ -5752,7 +5762,7 @@ export function applyPreStatStageChangeAbAttrs(
   pokemon: Pokemon | null,
   stat: BattleStat,
   cancelled: Utils.BooleanHolder,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PreStatStageChangeAbAttr>(
@@ -5771,7 +5781,7 @@ export function applyPostStatStageChangeAbAttrs(
   stats: BattleStat[],
   stages: integer,
   selfTarget: boolean,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostStatStageChangeAbAttr>(
@@ -5789,7 +5799,7 @@ export function applyPreSetStatusAbAttrs(
   pokemon: Pokemon,
   effect: StatusEffect | undefined,
   cancelled: Utils.BooleanHolder,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PreSetStatusAbAttr>(
@@ -5807,7 +5817,7 @@ export function applyPreApplyBattlerTagAbAttrs(
   pokemon: Pokemon,
   tag: BattlerTag,
   cancelled: Utils.BooleanHolder,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PreApplyBattlerTagAbAttr>(
@@ -5825,7 +5835,7 @@ export function applyPreWeatherEffectAbAttrs(
   pokemon: Pokemon,
   weather: Weather | null,
   cancelled: Utils.BooleanHolder,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PreWeatherDamageAbAttr>(
@@ -5841,7 +5851,7 @@ export function applyPreWeatherEffectAbAttrs(
 export function applyPostTurnAbAttrs(
   attrType: Constructor<PostTurnAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostTurnAbAttr>(
@@ -5858,7 +5868,7 @@ export function applyPostWeatherChangeAbAttrs(
   attrType: Constructor<PostWeatherChangeAbAttr>,
   pokemon: Pokemon,
   weather: WeatherType,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostWeatherChangeAbAttr>(
@@ -5875,7 +5885,7 @@ export function applyPostWeatherLapseAbAttrs(
   attrType: Constructor<PostWeatherLapseAbAttr>,
   pokemon: Pokemon,
   weather: Weather | null,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostWeatherLapseAbAttr>(
@@ -5892,7 +5902,7 @@ export function applyPostTerrainChangeAbAttrs(
   attrType: Constructor<PostTerrainChangeAbAttr>,
   pokemon: Pokemon,
   terrain: TerrainType,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostTerrainChangeAbAttr>(
@@ -5911,7 +5921,7 @@ export function applyCheckTrappedAbAttrs(
   trapped: Utils.BooleanHolder,
   otherPokemon: Pokemon,
   messages: string[],
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<CheckTrappedAbAttr>(
@@ -5928,7 +5938,7 @@ export function applyCheckTrappedAbAttrs(
 export function applyPostBattleAbAttrs(
   attrType: Constructor<PostBattleAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostBattleAbAttr>(
@@ -5947,7 +5957,7 @@ export function applyPostFaintAbAttrs(
   attacker?: Pokemon,
   move?: Move,
   hitResult?: HitResult,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostFaintAbAttr>(
@@ -5963,7 +5973,7 @@ export function applyPostFaintAbAttrs(
 export function applyPostItemLostAbAttrs(
   attrType: Constructor<PostItemLostAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostItemLostAbAttr>(
@@ -5979,14 +5989,14 @@ export function applyPostItemLostAbAttrs(
  *
  * Ignores passives as they don't change and shouldn't be reapplied when main abilities change
  */
-export function applyOnGainAbAttrs(pokemon: Pokemon, passive: boolean = false, simulated: boolean = false, ...args: any[]): void {
+export function applyOnGainAbAttrs(pokemon: Pokemon, passive = false, simulated = false, ...args: any[]): void {
   applySingleAbAttrs<PostSummonAbAttr>(pokemon, passive, PostSummonAbAttr, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args), args, true, simulated);
 }
 
 /**
  * Clears primal weather/neutralizing gas during the turn if {@linkcode pokemon}'s ability corresponds to one
  */
-export function applyOnLoseAbAttrs(pokemon: Pokemon, passive: boolean = false, simulated: boolean = false, ...args: any[]): void {
+export function applyOnLoseAbAttrs(pokemon: Pokemon, passive = false, simulated = false, ...args: any[]): void {
   applySingleAbAttrs<PreLeaveFieldAbAttr>(pokemon, passive, PreLeaveFieldAbAttr, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated);
 }
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
@@ -6320,7 +6330,7 @@ export function initAbilities() {
       .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), StatMultiplierAbAttr, Stat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, 4)
       .attr(MoveTypeChangeAbAttr, PokemonType.NORMAL, 1.2, (user, target, move) => {
-        return ![ Moves.HIDDEN_POWER, Moves.WEATHER_BALL, Moves.NATURAL_GIFT, Moves.JUDGMENT, Moves.TECHNO_BLAST ].includes(move.id);
+        return ![ Moves.MULTI_ATTACK, Moves.REVELATION_DANCE, Moves.TERRAIN_PULSE, Moves.HIDDEN_POWER, Moves.WEATHER_BALL, Moves.NATURAL_GIFT, Moves.JUDGMENT, Moves.TECHNO_BLAST ].includes(move.id);
       }),
     new Ability(Abilities.SNIPER, 4)
       .attr(MultCritAbAttr, 1.5),

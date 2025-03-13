@@ -33,7 +33,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive with 1 HP", async () => {
-    await game.classicMode.startBattle([ Species.ARCEUS ]);
+    await game.classicMode.startBattle([Species.ARCEUS]);
 
     game.move.select(Moves.THUNDER);
     await game.phaseInterceptor.to("BerryPhase");
@@ -42,7 +42,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive with 1 HP when hit with a multihit move", async () => {
-    await game.classicMode.startBattle([ Species.ARCEUS ]);
+    await game.classicMode.startBattle([Species.ARCEUS]);
 
     game.move.select(Moves.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");

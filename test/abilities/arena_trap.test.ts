@@ -46,11 +46,7 @@ describe("Abilities - Arena Trap", () => {
   });
 
   it("should guarantee double battle with any one LURE", async () => {
-    game.override
-      .startingModifier([
-        { name: "LURE" },
-      ])
-      .startingWave(2);
+    game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
 
     await game.classicMode.startBattle();
 
@@ -67,12 +63,12 @@ describe("Abilities - Arena Trap", () => {
     game.override
       .battleType("double")
       .enemyMoveset(Moves.SPLASH)
-      .moveset([ Moves.ROAR, Moves.SPLASH ])
+      .moveset([Moves.ROAR, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH);
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.SUDOWOODO, Species.LUNATONE ]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.SUDOWOODO, Species.LUNATONE]);
 
-    const [ enemy1, enemy2 ] = game.scene.getEnemyField();
-    const [ player1, player2 ] = game.scene.getPlayerField();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    const [player1, player2] = game.scene.getPlayerField();
 
     vi.spyOn(enemy1, "getAbility").mockReturnValue(allAbilities[Abilities.ARENA_TRAP]);
 

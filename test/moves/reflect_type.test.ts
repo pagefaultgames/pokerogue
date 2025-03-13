@@ -22,20 +22,16 @@ describe("Moves - Reflect Type", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .ability(Abilities.BALL_FETCH)
-      .battleType("single")
-      .disableCrits()
-      .enemyAbility(Abilities.BALL_FETCH);
+    game.override.ability(Abilities.BALL_FETCH).battleType("single").disableCrits().enemyAbility(Abilities.BALL_FETCH);
   });
 
   it("will make the user Normal/Grass if targetting a typeless Pokemon affected by Forest's Curse", async () => {
     game.override
-      .moveset([ Moves.FORESTS_CURSE, Moves.REFLECT_TYPE ])
+      .moveset([Moves.FORESTS_CURSE, Moves.REFLECT_TYPE])
       .startingLevel(60)
       .enemySpecies(Species.CHARMANDER)
-      .enemyMoveset([ Moves.BURN_UP, Moves.SPLASH ]);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+      .enemyMoveset([Moves.BURN_UP, Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
     const enemyPokemon = game.scene.getEnemyPokemon();

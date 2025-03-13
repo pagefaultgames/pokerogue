@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { type BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#app/battle";
 import { BattleSpec } from "#enums/battle-spec";
 import { type DamageResult, HitResult } from "#app/field/pokemon";
 import { fixedInt } from "#app/utils";
@@ -10,7 +10,7 @@ export class DamageAnimPhase extends PokemonPhase {
   private damageResult: DamageResult;
   private critical: boolean;
 
-  constructor(battlerIndex: BattlerIndex, amount: number, damageResult?: DamageResult, critical: boolean = false) {
+  constructor(battlerIndex: BattlerIndex, amount: number, damageResult?: DamageResult, critical = false) {
     super(battlerIndex);
 
     this.amount = amount;
@@ -65,14 +65,20 @@ export class DamageAnimPhase extends PokemonPhase {
         repeat: 5,
         startAt: 200,
         callback: () => {
-          this.getPokemon().getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
+          this.getPokemon()
+            .getSprite()
+            .setVisible(flashTimer.repeatCount % 2 === 0);
           if (!flashTimer.repeatCount) {
-            this.getPokemon().updateInfo().then(() => this.end());
+            this.getPokemon()
+              .updateInfo()
+              .then(() => this.end());
           }
-        }
+        },
       });
     } else {
-      this.getPokemon().updateInfo().then(() => this.end());
+      this.getPokemon()
+        .updateInfo()
+        .then(() => this.end());
     }
   }
 
