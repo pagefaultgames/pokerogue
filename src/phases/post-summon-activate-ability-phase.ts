@@ -1,5 +1,5 @@
 import type { BattlerIndex } from "#app/battle";
-import { applyPriorityBasedAbAttrs } from "#app/data/ability";
+import { applyPostSummonAbAttrs, PostSummonAbAttr } from "#app/data/ability";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 
 /**
@@ -20,7 +20,7 @@ export class PostSummonActivateAbilityPhase extends PokemonPhase {
   start() {
     super.start();
 
-    applyPriorityBasedAbAttrs(this.getPokemon(), (p: number) => p === this.priority);
+    applyPostSummonAbAttrs(PostSummonAbAttr, this.getPokemon(), false, (p: number) => p === this.priority);
 
     this.end();
   }

@@ -5164,6 +5164,7 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   args: any[],
   gainedMidTurn = false,
   simulated = false,
+  priorityCondition?: (p: number) => boolean,
   showAbilityInstant = false,
   messages: string[] = []
 ) {
@@ -5172,7 +5173,10 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   }
 
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
-  if (gainedMidTurn && ability.getAttrs(attrType).some(attr => attr instanceof PostSummonAbAttr && !attr.shouldActivateOnGain())) {
+  if (
+    gainedMidTurn && ability.getAttrs(attrType).some(attr => attr instanceof PostSummonAbAttr && !attr.shouldActivateOnGain())
+    || (priorityCondition && !priorityCondition(ability.postSummonPriority))
+      ) {
     return;
   }
 
@@ -5453,6 +5457,19 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     return this.helper.getFailedText(target);
   }
 }
+
+/**
+ * Main Function for handling ability application. Applies both the normal ability and passive of the Pokemon
+ * @param attrType The type of {@linkcode AbAttr} to apply
+ * @param pokemon The {@linkcode Pokemon} whose abilities should be applied
+ * @param applyFunc The {@linkcode AbAttrApplyFunc} corresponding to {@linkcode attrType}
+ * @param args Extra arguments, handled by individual {@linkcode AbAttr}s
+ * @param showAbilityInstant If `true`, show the ability bar instantly instead of queuing it
+ * @param simulated `true` if the call is simulated and the battle state should not be changes
+ * @param messages Array of messages which will be added to if the ability displays a message
+ * @param gainedMidTurn `true` if the ability is activating because it was gained during the battle
+ * @param priorityCondition If defined, only abilities with priority that meets the condition will be applied
+ */
 function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
   pokemon: Pokemon | null,
@@ -5461,11 +5478,12 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(
   showAbilityInstant = false,
   simulated = false,
   messages: string[] = [],
-  gainedMidTurn = false
+  gainedMidTurn = false,
+  priorityCondition?: (p: number) => boolean
 ) {
   for (const passive of [ false, true ]) {
     if (pokemon) {
-      applySingleAbAttrs(pokemon, passive, attrType, applyFunc, args, gainedMidTurn, simulated, showAbilityInstant, messages);
+      applySingleAbAttrs(pokemon, passive, attrType, applyFunc, args, gainedMidTurn, simulated, priorityCondition, showAbilityInstant, messages);
       globalScene.clearPhaseQueueSplice();
     }
   }
@@ -5714,6 +5732,7 @@ export function applyPostSummonAbAttrs(
   attrType: Constructor<PostSummonAbAttr>,
   pokemon: Pokemon,
   simulated = false,
+  priorityCondition?: (p: number) => boolean,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostSummonAbAttr>(
@@ -5723,6 +5742,9 @@ export function applyPostSummonAbAttrs(
     args,
     false,
     simulated,
+    [],
+    false,
+    priorityCondition
   );
 }
 
@@ -6000,20 +6022,6 @@ export function applyOnGainAbAttrs(pokemon: Pokemon, passive = false, simulated 
  */
 export function applyOnLoseAbAttrs(pokemon: Pokemon, passive = false, simulated = false, ...args: any[]): void {
   applySingleAbAttrs<PreLeaveFieldAbAttr>(pokemon, passive, PreLeaveFieldAbAttr, (attr, passive) => attr.applyPreLeaveField(pokemon, passive, simulated, [ ...args, true ]), args, true, simulated);
-}
-
-/**
- * Applies only abilities whose priority meets a condition
- * 
- * @param condition Apply to abilities whose priority meets the condition
- */
-export function applyPriorityBasedAbAttrs(pokemon: Pokemon, condition: (p: number) => boolean, simulated: boolean = false, ...args: any[]) {
-  for (const passive of [ false, true ]) {
-    const ability: Ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
-    if (condition(ability.postSummonPriority)) {
-      applySingleAbAttrs<PostSummonAbAttr>(pokemon, passive, PostSummonAbAttr, (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args), args, false, simulated)
-    }
-  }
 }
 
 function queueShowAbility(pokemon: Pokemon, passive: boolean): void {
