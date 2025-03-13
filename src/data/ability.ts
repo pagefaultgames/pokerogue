@@ -165,10 +165,10 @@ export abstract class AbAttr {
 
   /**
    * Applies ability effects without checking conditions
-   * @param pokemon The pokemon to apply this ability to
-   * @param passive Whether or not the ability is a passive
-   * @param simulated Whether the call is simulated
-   * @param args
+   * @param pokemon - The pokemon to apply this ability to
+   * @param passive - Whether or not the ability is a passive
+   * @param simulated - Whether the call is simulated
+   * @param args - Extra args passed to the function. Handled by child classes.
    * @see {@linkcode canApply}
    */
   apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder | null, args: any[]): void {}
@@ -188,11 +188,11 @@ export abstract class AbAttr {
 
   /**
    * Returns a boolean describing whether the ability can be applied under current conditions
-   * @param pokemon The pokemon to apply this ability to
-   * @param passive Whether or not the ability is a passive
-   * @param simulated Whether the call is simulated
-   * @param args
-   * @returns True if the ability can be applied, false otherwise
+   * @param pokemon - The pokemon to apply this ability to
+   * @param passive - Whether or not the ability is a passive
+   * @param simulated - Whether the call is simulated
+   * @param args - Extra args passed to the function. Handled by child classes.
+   * @returns `true` if the ability can be applied, `false` otherwise
    * @see {@linkcode apply}
    */
   canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {

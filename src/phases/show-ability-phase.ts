@@ -29,6 +29,10 @@ export class ShowAbilityPhase extends PokemonPhase {
   start() {
     super.start();
 
+    if (!this.pokemonOnField || !this.getPokemon()) {
+      return this.end();
+    }
+
     // If the bar is already out, hide it before showing the new one
     if (globalScene.abilityBar.isVisible()) {
       globalScene.unshiftPhase(new HideAbilityPhase(this.battlerIndex, this.passive));
@@ -36,28 +40,21 @@ export class ShowAbilityPhase extends PokemonPhase {
       return this.end();
     }
 
-    if (!this.pokemonOnField) {
-      return this.end();
-    }
     const pokemon = this.getPokemon();
 
-    if (pokemon) {
-      if (!pokemon.isPlayer()) {
-        /** If its an enemy pokemon, list it as last enemy to use ability or move */
-        globalScene.currentBattle.lastEnemyInvolved = pokemon.getBattlerIndex() % 2;
-      } else {
-        globalScene.currentBattle.lastPlayerInvolved = pokemon.getBattlerIndex() % 2;
+    if (!pokemon.isPlayer()) {
+      /** If its an enemy pokemon, list it as last enemy to use ability or move */
+      globalScene.currentBattle.lastEnemyInvolved = pokemon.getBattlerIndex() % 2;
+    } else {
+      globalScene.currentBattle.lastPlayerInvolved = pokemon.getBattlerIndex() % 2;
+    }
+
+    globalScene.abilityBar.showAbility(this.pokemonName, this.abilityName, this.passive, this.player).then(() => {
+      if (pokemon?.battleData) {
+        pokemon.battleData.abilityRevealed = true;
       }
 
-      globalScene.abilityBar.showAbility(this.pokemonName, this.abilityName, this.passive, this.player).then(() => {
-        if (pokemon?.battleData) {
-          pokemon.battleData.abilityRevealed = true;
-        }
-
-        this.end();
-      });
-    } else {
       this.end();
-    }
+    });
   }
 }

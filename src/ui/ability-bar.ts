@@ -21,7 +21,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    for (const key of [ "ability_bar_right", "ability_bar_left" ]) {
+    for (const key of ["ability_bar_right", "ability_bar_left"]) {
       const bar = globalScene.add.image(0, 0, key);
       bar.setOrigin(0, 0);
       bar.setVisible(false);
@@ -52,7 +52,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     if (text) {
       this.abilityBarText.setText(text);
     }
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       globalScene.tweens.add({
         ...config,
         onComplete: () => {
@@ -60,13 +60,13 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
             config.onComplete();
           }
           resolve();
-        }
+        },
       });
     });
   }
 
-  public async showAbility(pokemonName: string, abilityName: string, passive: boolean = false, player: boolean = true): Promise<void> {
-    const text = (`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: abilityName })}`);
+  public async showAbility(pokemonName: string, abilityName: string, passive = false, player = true): Promise<void> {
+    const text = `${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: abilityName })}`;
     this.screenRight = globalScene.scaledCanvas.width;
     if (player !== this.player) {
       // Move the bar if it has changed from the player to enemy side (or vice versa)
@@ -77,20 +77,23 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
     let y = baseY;
     if (this.player) {
-      y += (globalScene.currentBattle.double ? 14 : 0);
+      y += globalScene.currentBattle.double ? 14 : 0;
     } else {
       y -= globalScene.currentBattle.double ? 28 : 14;
     }
 
     this.setY(y);
 
-    return this.startTween({
-      targets: this,
-      x: this.player ? screenLeft : this.screenRight - barWidth,
-      duration: 500,
-      ease: "Sine.easeOut",
-      hold: 1000,
-    }, text);
+    return this.startTween(
+      {
+        targets: this,
+        x: this.player ? screenLeft : this.screenRight - barWidth,
+        duration: 500,
+        ease: "Sine.easeOut",
+        hold: 1000,
+      },
+      text,
+    );
   }
 
   public async hide(): Promise<void> {
@@ -101,7 +104,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
       ease: "Sine.easeIn",
       onComplete: () => {
         this.setVisible(false);
-      }
+      },
     });
   }
 

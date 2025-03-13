@@ -2913,7 +2913,11 @@ export default class BattleScene extends SceneBase {
    * @param show Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
-    this.unshiftPhase((show) ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase(pokemon.getBattlerIndex(), passive));
+    this.unshiftPhase(
+      show
+        ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive)
+        : new HideAbilityPhase(pokemon.getBattlerIndex(), passive),
+    );
     this.clearPhaseQueueSplice();
   }
 
@@ -3146,11 +3150,7 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
-  canTransferHeldItemModifier(
-    itemModifier: PokemonHeldItemModifier,
-    target: Pokemon,
-    transferQuantity: number = 1,
-  ): boolean {
+  canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
     const mod = itemModifier.clone() as PokemonHeldItemModifier;
     const source = mod.pokemonId ? mod.getPokemon() : null;
     const cancelled = new Utils.BooleanHolder(false);
@@ -3164,10 +3164,7 @@ export default class BattleScene extends SceneBase {
     }
 
     const matchingModifier = this.findModifier(
-      (m) =>
-        m instanceof PokemonHeldItemModifier
-        && m.matchType(mod)
-        && m.pokemonId === target.id,
+      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
       target.isPlayer(),
     ) as PokemonHeldItemModifier;
 
@@ -3176,11 +3173,7 @@ export default class BattleScene extends SceneBase {
       if (matchingModifier.stackCount >= maxStackCount) {
         return false;
       }
-      const countTaken = Math.min(
-        transferQuantity,
-        mod.stackCount,
-        maxStackCount - matchingModifier.stackCount,
-      );
+      const countTaken = Math.min(transferQuantity, mod.stackCount, maxStackCount - matchingModifier.stackCount);
       mod.stackCount -= countTaken;
     } else {
       const countTaken = Math.min(transferQuantity, mod.stackCount);
@@ -3349,7 +3342,7 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  hasModifier(modifier: PersistentModifier, enemy: boolean = false): boolean {
+  hasModifier(modifier: PersistentModifier, enemy = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
     return modifiers.indexOf(modifier) > -1;
   }

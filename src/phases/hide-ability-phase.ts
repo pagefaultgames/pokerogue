@@ -5,7 +5,7 @@ import { PokemonPhase } from "./pokemon-phase";
 export class HideAbilityPhase extends PokemonPhase {
   private passive: boolean;
 
-  constructor(battlerIndex: BattlerIndex, passive: boolean = false) {
+  constructor(battlerIndex: BattlerIndex, passive = false) {
     super(battlerIndex);
 
     this.passive = passive;
