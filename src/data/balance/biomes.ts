@@ -7174,7 +7174,8 @@ export function initBiomes() {
     ],
     [ TrainerType.BEAUTY, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
-    ]],
+    ]
+    ],
     [ TrainerType.BIKER, [
       [ Biome.SLUM, BiomePoolTier.COMMON ]
     ]
@@ -7204,7 +7205,8 @@ export function initBiomes() {
     ],
     [ TrainerType.CLERK, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
-    ]],
+    ]
+    ],
     [ TrainerType.CYCLIST, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
@@ -7213,7 +7215,8 @@ export function initBiomes() {
     [ TrainerType.DANCER, []],
     [ TrainerType.DEPOT_AGENT, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ]
-    ]],
+    ]
+    ],
     [ TrainerType.DOCTOR, []],
     [ TrainerType.FIREBREATHER, [
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
@@ -7227,7 +7230,8 @@ export function initBiomes() {
     [ TrainerType.GUITARIST, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
-    ]],
+    ]
+    ],
     [ TrainerType.HARLEQUIN, []],
     [ TrainerType.HIKER, [
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],

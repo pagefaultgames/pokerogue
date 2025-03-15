@@ -312,6 +312,72 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       victory: ["dialogue:sailor.victory.1", "dialogue:sailor.victory.2", "dialogue:sailor.victory.3"],
     },
   ],
+  [TrainerType.CLERK]: [
+    {
+      encounter: ["dialogue:clerk.encounter.1", "dialogue:clerk.encounter.2", "dialogue:clerk.encounter.3"],
+      victory: ["dialogue:clerk.victory.1", "dialogue:clerk.victory.2", "dialogue:clerk.victory.3"],
+    },
+    {
+      encounter: [
+        "dialogue:clerk_female.encounter.1",
+        "dialogue:clerk_female.encounter.2",
+        "dialogue:clerk_female.encounter.3",
+      ],
+      victory: [
+        "dialogue:clerk_female.victory.1",
+        "dialogue:clerk_female.victory.2",
+        "dialogue:clerk_female.victory.3",
+      ],
+    },
+  ],
+  [TrainerType.HOOLIGANS]: [
+    {
+      encounter: ["dialogue:hooligans.encounter.1", "dialogue:hooligans.encounter.2"],
+      victory: ["dialogue:hooligans.victory.1"],
+    },
+  ],
+  [TrainerType.MUSICIAN]: [
+    {
+      encounter: ["dialogue:musician.encounter.1"],
+      victory: ["dialogue:musician.victory.1"],
+    },
+  ],
+  [TrainerType.PILOT]: [
+    {
+      encounter: ["dialogue:pilot.encounter.1", "dialogue:pilot.encounter.2"],
+      victory: ["dialogue:pilot.victory.1", "dialogue:pilot.victory.2"],
+    },
+  ],
+  [TrainerType.POKEFAN]: [
+    {
+      encounter: ["dialogue:pokefan.encounter.1"],
+      victory: ["dialogue:pokefan.victory.1"],
+    },
+    {
+      encounter: ["dialogue:pokefan_female.encounter.1"],
+      victory: ["dialogue:pokefan_female.victory.1"],
+    },
+  ],
+  [TrainerType.RICH]: [
+    {
+      encounter: ["dialogue:rich.encounter.1"],
+      victory: ["dialogue:rich.victory.1"],
+    },
+    {
+      encounter: ["dialogue:rich_female.encounter.1"],
+      victory: ["dialogue:rich_female.victory.1"],
+    },
+  ],
+  [TrainerType.RICH_KID]: [
+    {
+      encounter: ["dialogue:rich_kid.encounter.1"],
+      victory: ["dialogue:rich_kid.victory.1"],
+    },
+    {
+      encounter: ["dialogue:rich_kid_female.encounter.1"],
+      victory: ["dialogue:rich_kid_female.victory.1"],
+    },
+  ],
   [TrainerType.ROCKET_GRUNT]: [
     {
       encounter: [
