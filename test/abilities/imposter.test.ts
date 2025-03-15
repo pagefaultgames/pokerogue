@@ -160,4 +160,30 @@ describe("Abilities - Imposter", () => {
     expect(playerMoveset.length).toEqual(1);
     expect(playerMoveset[0]?.moveId).toEqual(Moves.SPLASH);
   });
+
+  it("should stay transformed with the correct form after reload", async () => {
+    game.override.moveset([Moves.ABSORB]);
+    game.override.enemySpecies(Species.UNOWN);
+    await game.classicMode.startBattle([Species.DITTO]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    // change form
+    enemy.species.forms[5];
+    enemy.species.formIndex = 5;
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
+
+    await game.reload.reloadSession();
+
+    const playerReloaded = game.scene.getPlayerPokemon()!;
+
+    expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
+    expect(playerReloaded.getSpeciesForm().formIndex).toBe(enemy.getSpeciesForm().formIndex);
+  });
 });

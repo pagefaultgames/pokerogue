@@ -164,4 +164,35 @@ describe("Moves - Transform", () => {
     expect(playerMoveset.length).toEqual(1);
     expect(playerMoveset[0]?.moveId).toEqual(Moves.MEMENTO);
   });
+
+  it("should stay transformed with the correct form after reload", async () => {
+    game.override.enemyMoveset([]).moveset([]);
+    game.override.enemySpecies(Species.DARMANITAN);
+
+    await game.classicMode.startBattle([Species.DITTO]);
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    // change form
+    enemy.species.forms[1];
+    enemy.species.formIndex = 1;
+
+    game.move.changeMoveset(player, Moves.TRANSFORM);
+    game.move.changeMoveset(enemy, Moves.MEMENTO);
+
+    game.move.select(Moves.TRANSFORM);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextWave();
+
+    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
+
+    await game.reload.reloadSession();
+
+    const playerReloaded = game.scene.getPlayerPokemon()!;
+
+    expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
+    expect(playerReloaded.getSpeciesForm().formIndex).toBe(enemy.getSpeciesForm().formIndex);
+  });
 });
