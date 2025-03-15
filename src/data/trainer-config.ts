@@ -2408,7 +2408,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.LARVESTA],
     }),
   [TrainerType.RICH]: new TrainerConfig(++t)
-    .setMoneyMultiplier(5)
+    .setMoneyMultiplier(3.25)
     .setName("Gentleman")
     .setHasGenders("Madame")
     .setHasDouble("Rich Couple")
@@ -2420,7 +2420,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setSpeciesFilter(s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.ELECTRIC)),
   [TrainerType.RICH_KID]: new TrainerConfig(++t)
-    .setMoneyMultiplier(3.75)
+    .setMoneyMultiplier(2.5)
     .setName("Rich Boy")
     .setHasGenders("Lady")
     .setHasDouble("Rich Kids")
