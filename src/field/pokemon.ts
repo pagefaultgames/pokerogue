@@ -2459,7 +2459,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier,
     );
     if (
-      this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))
+      this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t, move))
     ) {
       typeMultiplier.value = 0;
     }
