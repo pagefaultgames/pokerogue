@@ -715,7 +715,6 @@ export class SingleTypeChallenge extends Challenge {
     { species: Species.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
-  private static SPECIES_OVERRIDES: Species[] = [Species.MELOETTA];
 
   constructor() {
     super(Challenges.SINGLE_TYPE, 18);
@@ -1298,10 +1297,14 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
  * @returns `true` if the species is considered valid.
  */
 function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
-  if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId) || props.formIndex === 0) {
-    const isValidForChallenge = new Utils.BooleanHolder(true);
-    applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+  const isValidForChallenge = new Utils.BooleanHolder(true);
+  applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+  if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
     return isValidForChallenge.value;
+  }
+  // If the form in props is valid, return true before checking other form changes
+  if (soft && isValidForChallenge.value) {
+    return true;
   }
   pokemonFormChanges[species.speciesId].forEach(f1 => {
     species.forms.forEach((f2, formIndex) => {
