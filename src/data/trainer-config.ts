@@ -2212,7 +2212,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.MAID]: new TrainerConfig(++t).setMoneyMultiplier(1.6).setEncounterBgm(TrainerType.RICH),
   [TrainerType.MUSICIAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.1)
-    .setEncounterBgm(TrainerType.ROUGHNECK)
+    .setEncounterBgm(TrainerType.POKEFAN)
     .setPartyTemplates(
       trainerPartyTemplates.FOUR_WEAKER,
       trainerPartyTemplates.THREE_WEAK,
