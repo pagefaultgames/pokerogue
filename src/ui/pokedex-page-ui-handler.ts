@@ -242,6 +242,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterAttributes: StarterAttributes;
   private savedStarterAttributes: StarterAttributes;
 
+  private previousSpecies: PokemonSpecies[];
+  private previousStarterAttributes: StarterAttributes[];
+
   protected blockInput = false;
   protected blockInputOverlay = false;
 
@@ -668,14 +671,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return false;
     }
     this.species = args[0];
-    this.formIndex = args[1] ?? 0;
-    this.savedStarterAttributes = args[2] ?? {
+    this.savedStarterAttributes = args[1] ?? {
       shiny: false,
       female: true,
       variant: 0,
       form: 0,
     };
-    this.filteredIndices = args[3] ?? null;
+    this.formIndex = this.savedStarterAttributes.form ?? 0;
+    this.filteredIndices = args[2] ?? null;
     this.starterSetup();
 
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
@@ -1522,7 +1525,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
+                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText),
@@ -1562,7 +1565,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, evoSpecies, newFormIndex, this.savedStarterAttributes);
+                          ui.setMode(Mode.POKEDEX_PAGE, evoSpecies, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText),
@@ -1607,7 +1610,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                             ui.setMode(
                               Mode.POKEDEX_PAGE,
                               newSpecies,
-                              newFormIndex,
                               this.savedStarterAttributes,
                               this.filteredIndices,
                             );
@@ -1979,7 +1981,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               ui.setModeForceTransition(
                 Mode.POKEDEX_PAGE,
                 newSpecies,
-                newFormIndex,
                 this.savedStarterAttributes,
                 this.filteredIndices,
               );
@@ -2009,7 +2010,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               ui.setModeForceTransition(
                 Mode.POKEDEX_PAGE,
                 newSpecies,
-                newFormIndex,
                 this.savedStarterAttributes,
                 this.filteredIndices,
               );

@@ -2336,7 +2336,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   form: starterAttributes.form,
                   female: starterAttributes.female,
                 };
-                ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, starterAttributes.form, attributes);
+                ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, attributes);
               });
               return true;
             },
