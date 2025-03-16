@@ -26,7 +26,7 @@ import { AbilityAttr, DexAttr } from "#app/system/game-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { StatsContainer } from "#app/ui/stats-container";
-import { TextStyle, addTextObject, getTextStyleOptions } from "#app/ui/text";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import { addWindow } from "#app/ui/ui-theme";
 import { Egg } from "#app/data/egg";
@@ -66,6 +66,7 @@ import { TimeOfDay } from "#app/enums/time-of-day";
 import type { Abilities } from "#app/enums/abilities";
 import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";
 import { globalScene } from "#app/global-scene";
+import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -250,7 +251,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   // Menu
   private menuContainer: Phaser.GameObjects.Container;
   private menuBg: Phaser.GameObjects.NineSlice;
-  protected optionSelectText: Phaser.GameObjects.Text;
+  protected optionSelectText: BBCodeText;
   private menuOptions: MenuOptions[];
   protected scale = 0.1666666667;
   private menuDescriptions: string[];
@@ -592,14 +593,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
-    this.optionSelectText = addTextObject(
+    this.optionSelectText = addBBCodeTextObject(
       0,
       0,
       this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`).join("\n"),
       TextStyle.WINDOW,
-      { maxLines: this.menuOptions.length },
+      { maxLines: this.menuOptions.length, lineSpacing: 12 },
     );
-    this.optionSelectText.setLineSpacing(12);
 
     this.menuDescriptions = [
       i18next.t("pokedexUiHandler:showBaseStats"),
@@ -622,7 +622,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     );
     this.menuBg.setOrigin(0, 0);
 
-    this.optionSelectText.setPositionRelative(this.menuBg, 10 + 24 * this.scale, 6);
+    this.optionSelectText.setPosition(this.menuBg.x + 10 + 24 * this.scale, this.menuBg.y + 6);
 
     this.menuContainer.add(this.menuBg);
 
@@ -696,9 +696,37 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.setSpecies();
     this.updateInstructions();
 
+    this.optionSelectText.setText(this.getMenuText());
+
     this.setCursor(0);
 
     return true;
+  }
+
+  getMenuText(): string {
+    const isFormCaught = this.isFormCaught();
+    const isSeen = this.speciesStarterDexEntry?.seenAttr;
+    if (this.species.speciesId === Species.ODDISH) {
+      console.log(isFormCaught, isSeen);
+    }
+
+    return this.menuOptions
+      .map(o => {
+        const label = `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`;
+        const isWhite = isFormCaught || (isSeen && o === MenuOptions.BIOMES);
+        const color = getTextColor(
+          isWhite ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+          false,
+          globalScene.uiTheme,
+        );
+        const shadow = getTextColor(
+          isWhite ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+          true,
+          globalScene.uiTheme,
+        );
+        return `[shadow=${shadow}][color=${color}]${label}[/color][/shadow]`;
+      })
+      .join("\n");
   }
 
   starterSetup(): void {
