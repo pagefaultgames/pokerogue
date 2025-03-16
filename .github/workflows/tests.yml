@@ -12,7 +12,7 @@ on:
       # src and test files
       - "src/**"
       - "test/**"
-      - "public/**" # PLEASE REVIEW -- Does it make sense to include this? Can modifying these break tests? (REMOVE COMMENT AFTER REVIEW)
+      - "public/**"
       # Workflows that can impact tests
       - ".github/workflows/test*.yml"
       # top-level files
@@ -21,7 +21,7 @@ on:
       - "vite.*.ts" # vite.config.ts, vite.vitest.config.ts, vitest.workspace.ts
       - "tsconfig*.json" # tsconfig.json tweaking can impact compilation
       - "global.d.ts" # I think this can impact tests? (REMOVE COMMENT AFTER REVIEW)
-      - ".env.*" # PLEASE REVIEW -- can these impact test behavior?
+      - ".env.*"
       # Blanket negations for files that cannot impact tests
       - "!**/*.py" # No .py files
       - "!**/*.sh" # No .sh files
@@ -38,7 +38,7 @@ on:
       # src and test files
       - "src/**"
       - "test/**"
-      - "public/**" # PLEASE REVIEW -- Does it make sense to include this? Can modifying these break tests? (REMOVE COMMENT AFTER REVIEW)
+      - "public/**"
       # Workflows that can impact tests
       - ".github/workflows/test*.yml"
       # top-level files
@@ -47,13 +47,13 @@ on:
       - "vite*" # vite.config.ts, vite.vitest.config.ts, vitest.workspace.ts
       - "tsconfig*.json" # tsconfig.json tweaking can impact compilation
       - "global.d.ts" # I think this can impact tests? (REMOVE COMMENT AFTER REVIEW)
-      - ".env.*" # PLEASE REVIEW -- can these impact test behavior?
+      - ".env.*"
       # Blanket negations for files that cannot impact tests
       - "!**/*.py" # No .py files
       - "!**/*.sh" # No .sh files
       - "!**/*.md" # No .md files
-      - "!**/*.png" # TODO: Can the deletion of these files break tests? (REMOVE COMMENT AFTER REVIEW)
-      - "!**/*.jpg" # TODO: Can the deletion of these files break tests? (REMOVE COMMENT AFTER REVIEW)
+      - "!**/*.png"
+      - "!**/*.jpg"
       - "!**/.git*" # .gitkeep and family
   merge_group:
     types: [checks_requested]
