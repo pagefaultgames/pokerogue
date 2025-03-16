@@ -26,8 +26,8 @@ on:
       - "!**/*.py" # No .py files
       - "!**/*.sh" # No .sh files
       - "!**/*.md" # No .md files
-      - "!**/*.png" # TODO: Can the deletion of these files break tests? (REMOVE COMMENT AFTER REVIEW)
-      - "!**/*.jpg" # TODO: Can the deletion of these files break tests? (REMOVE COMMENT AFTER REVIEW)
+      - "!**/*.png"
+      - "!**/*.jpg"
       - "!**/.git*" # .gitkeep and family
 
   pull_request:
