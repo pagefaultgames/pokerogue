@@ -1,13 +1,14 @@
-import BattleScene from "#app/battle-scene";
-import { ModifierType, ModifierTypeFunc, getModifierType } from "#app/modifier/modifier-type";
+import { globalScene } from "#app/global-scene";
+import type { ModifierType, ModifierTypeFunc } from "#app/modifier/modifier-type";
+import { getModifierType } from "#app/modifier/modifier-type";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 
 export class ModifierRewardPhase extends BattlePhase {
   protected modifierType: ModifierType;
 
-  constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc) {
-    super(scene);
+  constructor(modifierTypeFunc: ModifierTypeFunc) {
+    super();
 
     this.modifierType = getModifierType(modifierTypeFunc);
   }
@@ -21,10 +22,17 @@ export class ModifierRewardPhase extends BattlePhase {
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
-      this.scene.addModifier(newModifier).then(() => {
-        this.scene.playSound("item_fanfare");
-        this.scene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }), null, () => resolve(), null, true);
-      });
+      globalScene.addModifier(newModifier);
+      globalScene.playSound("item_fanfare");
+      globalScene.ui.showText(
+        i18next.t("battle:rewardGain", {
+          modifierName: newModifier?.type.name,
+        }),
+        null,
+        () => resolve(),
+        null,
+        true,
+      );
     });
   }
 }

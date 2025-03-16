@@ -1,15 +1,14 @@
 import { Button } from "#enums/buttons";
-import BattleScene from "../battle-scene";
 import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
 
 export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler {
   modalContainer: Phaser.GameObjects.Container;
-  constructor(scene: BattleScene, mode: Mode = Mode.OPTION_SELECT) {
-    super(scene, mode);
+  constructor(mode: Mode = Mode.OPTION_SELECT) {
+    super(mode);
   }
 
-  getWindowWidth(): integer {
+  getWindowWidth(): number {
     return 64;
   }
 
@@ -28,8 +27,15 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
   protected setupOptions() {
     super.setupOptions();
     if (this.modalContainer) {
-      this.optionSelectContainer.setSize(this.optionSelectContainer.height, Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth()));
-      this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width, this.optionSelectBg.height + 50);
+      this.optionSelectContainer.setSize(
+        this.optionSelectContainer.height,
+        Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth()),
+      );
+      this.optionSelectContainer.setPositionRelative(
+        this.modalContainer,
+        this.optionSelectBg.width,
+        this.optionSelectBg.height + 50,
+      );
     }
   }
 

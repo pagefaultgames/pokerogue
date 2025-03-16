@@ -1,23 +1,24 @@
-import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
-import { ModalConfig } from "./modal-ui-handler";
+import type { InputFieldConfig } from "./form-modal-ui-handler";
+import { FormModalUiHandler } from "./form-modal-ui-handler";
+import type { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
-import { PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 
 export default class RenameFormUiHandler extends FormModalUiHandler {
-  getModalTitle(config?: ModalConfig): string {
+  getModalTitle(_config?: ModalConfig): string {
     return i18next.t("menu:renamePokemon");
   }
 
-  getWidth(config?: ModalConfig): number {
+  getWidth(_config?: ModalConfig): number {
     return 160;
   }
 
-  getMargin(config?: ModalConfig): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+  getMargin(_config?: ModalConfig): [number, number, number, number] {
+    return [0, 0, 48, 0];
   }
 
-  getButtonLabels(config?: ModalConfig): string[] {
-    return [ i18next.t("menu:rename"), i18next.t("menu:cancel") ];
+  getButtonLabels(_config?: ModalConfig): string[] {
+    return [i18next.t("menu:rename"), i18next.t("menu:cancel")];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -41,7 +42,7 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
       } else {
         this.inputs[0].text = args[1];
       }
-      this.submitAction = (_) => {
+      this.submitAction = _ => {
         this.sanitizeInputs();
         const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
         config.buttonActions[0](sanitizedName);

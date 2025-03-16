@@ -1,36 +1,56 @@
-import BattleScene from "./battle-scene";
-import { Command } from "./ui/command-ui-handler";
+import { globalScene } from "#app/global-scene";
+import type { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer, { TrainerVariant } from "./field/trainer";
-import { GameMode } from "./game-mode";
+import type { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
-import { PokeballType } from "./data/pokeball";
+import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainer-config";
-import Pokemon, { EnemyPokemon, PlayerPokemon, QueuedMove } from "#app/field/pokemon";
+import { SpeciesFormKey } from "#enums/species-form-key";
+import type { EnemyPokemon, PlayerPokemon, TurnMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
-import { Moves } from "#enums/moves";
+import type { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
+import { MusicPreference } from "#app/system/settings/settings";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { CustomModifierSettings } from "#app/modifier/modifier-type";
+import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 
 export enum ClassicFixedBossWaves {
-  // TODO: other fixed wave battles should be added here
+  TOWN_YOUNGSTER = 5,
+  RIVAL_1 = 8,
+  RIVAL_2 = 25,
+  EVIL_GRUNT_1 = 35,
+  RIVAL_3 = 55,
+  EVIL_GRUNT_2 = 62,
+  EVIL_GRUNT_3 = 64,
+  EVIL_ADMIN_1 = 66,
+  RIVAL_4 = 95,
+  EVIL_GRUNT_4 = 112,
+  EVIL_ADMIN_2 = 114,
   EVIL_BOSS_1 = 115,
+  RIVAL_5 = 145,
   EVIL_BOSS_2 = 165,
+  ELITE_FOUR_1 = 182,
+  ELITE_FOUR_2 = 184,
+  ELITE_FOUR_3 = 186,
+  ELITE_FOUR_4 = 188,
+  CHAMPION = 190,
+  RIVAL_6 = 195,
 }
 
 export enum BattleType {
   WILD,
   TRAINER,
   CLEAR,
-  MYSTERY_ENCOUNTER
+  MYSTERY_ENCOUNTER,
 }
 
 export enum BattlerIndex {
@@ -38,25 +58,25 @@ export enum BattlerIndex {
   PLAYER,
   PLAYER_2,
   ENEMY,
-  ENEMY_2
+  ENEMY_2,
 }
 
 export interface TurnCommand {
   command: Command;
   cursor?: number;
-  move?: QueuedMove;
+  move?: TurnMove;
   targets?: BattlerIndex[];
   skip?: boolean;
   args?: any[];
 }
 
 export interface FaintLogEntry {
-  pokemon: Pokemon,
-  turn: number
+  pokemon: Pokemon;
+  turn: number;
 }
 
 interface TurnCommands {
-  [key: number]: TurnCommand | null
+  [key: number]: TurnCommand | null;
 }
 
 export default class Battle {
@@ -69,23 +89,29 @@ export default class Battle {
   public enemyParty: EnemyPokemon[] = [];
   public seenEnemyPartyMemberIds: Set<number> = new Set<number>();
   public double: boolean;
-  public started: boolean = false;
-  public enemySwitchCounter: number = 0;
-  public turn: number = 0;
+  public started = false;
+  public enemySwitchCounter = 0;
+  public turn = 0;
+  public preTurnCommands: TurnCommands;
   public turnCommands: TurnCommands;
   public playerParticipantIds: Set<number> = new Set<number>();
-  public battleScore: number = 0;
+  public battleScore = 0;
   public postBattleLoot: PokemonHeldItemModifier[] = [];
-  public escapeAttempts: number = 0;
+  public escapeAttempts = 0;
   public lastMove: Moves;
   public battleSeed: string = Utils.randomString(16, true);
   private battleSeedState: string | null = null;
-  public moneyScattered: number = 0;
+  public moneyScattered = 0;
+  /** Primarily for double battles, keeps track of last enemy and player pokemon that triggered its ability or used a move */
+  public lastEnemyInvolved: number;
+  public lastPlayerInvolved: number;
   public lastUsedPokeball: PokeballType | null = null;
-  /** The number of times a Pokemon on the player's side has fainted this battle */
-  public playerFaints: number = 0;
-  /** The number of times a Pokemon on the enemy's side has fainted this battle */
-  public enemyFaints: number = 0;
+  /**
+   * Saves the number of times a Pokemon on the enemy's side has fainted during this battle.
+   * This is saved here since we encounter a new enemy every wave.
+   * {@linkcode globalScene.arena.playerFaints} is the corresponding faint counter for the player and needs to be save across waves (reset every arena encounter).
+   */
+  public enemyFaints = 0;
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
 
@@ -93,18 +119,19 @@ export default class Battle {
   /** If the current battle is a Mystery Encounter, this will always be defined */
   public mysteryEncounter?: MysteryEncounter;
 
-  private rngCounter: number = 0;
+  private rngCounter = 0;
 
-  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double?: boolean) {
+  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double = false) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
     this.trainer = trainer ?? null;
     this.initBattleSpec();
-    this.enemyLevels = battleType !== BattleType.TRAINER
-      ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
-      : trainer?.getPartyLevels(this.waveIndex);
-    this.double = double ?? false;
+    this.enemyLevels =
+      battleType !== BattleType.TRAINER
+        ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
+        : trainer?.getPartyLevels(this.waveIndex);
+    this.double = double;
   }
 
   private initBattleSpec(): void {
@@ -152,9 +179,10 @@ export default class Battle {
     return this.double ? 2 : 1;
   }
 
-  incrementTurn(scene: BattleScene): void {
+  incrementTurn(): void {
     this.turn++;
-    this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
+    this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [bt, null]));
+    this.preTurnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [bt, null]));
     this.battleSeedState = null;
   }
 
@@ -167,214 +195,252 @@ export default class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable, false).map(i => {
-      const ret = i as PokemonHeldItemModifier;
-      //@ts-ignore - this is awful to fix/change
-      ret.pokemonId = null;
-      return ret;
-    }));
+    this.postBattleLoot.push(
+      ...globalScene
+        .findModifiers(
+          m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable,
+          false,
+        )
+        .map(i => {
+          const ret = i as PokemonHeldItemModifier;
+          //@ts-ignore - this is awful to fix/change
+          ret.pokemonId = null;
+          return ret;
+        }),
+    );
   }
 
-  pickUpScatteredMoney(scene: BattleScene): void {
-    const moneyAmount = new Utils.IntegerHolder(scene.currentBattle.moneyScattered);
-    scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+  pickUpScatteredMoney(): void {
+    const moneyAmount = new Utils.NumberHolder(globalScene.currentBattle.moneyScattered);
+    globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-    if (scene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
+    if (globalScene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
       moneyAmount.value *= 2;
     }
 
-    scene.addMoney(moneyAmount.value);
+    globalScene.addMoney(moneyAmount.value);
 
     const userLocale = navigator.language || "en-US";
     const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
-    const message = i18next.t("battle:moneyPickedUp", { moneyAmount: formattedMoneyAmount });
-    scene.queueMessage(message, undefined, true);
+    const message = i18next.t("battle:moneyPickedUp", {
+      moneyAmount: formattedMoneyAmount,
+    });
+    globalScene.queueMessage(message, undefined, true);
 
-    scene.currentBattle.moneyScattered = 0;
+    globalScene.currentBattle.moneyScattered = 0;
   }
 
-  addBattleScore(scene: BattleScene): void {
-    let partyMemberTurnMultiplier = scene.getEnemyParty().length / 2 + 0.5;
+  addBattleScore(): void {
+    let partyMemberTurnMultiplier = globalScene.getEnemyParty().length / 2 + 0.5;
     if (this.double) {
       partyMemberTurnMultiplier /= 1.5;
     }
-    for (const p of scene.getEnemyParty()) {
+    for (const p of globalScene.getEnemyParty()) {
       if (p.isBoss()) {
-        partyMemberTurnMultiplier *= (p.bossSegments / 1.5) / scene.getEnemyParty().length;
+        partyMemberTurnMultiplier *= p.bossSegments / 1.5 / globalScene.getEnemyParty().length;
       }
     }
-    const turnMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(1 - Math.min(this.turn - 2, 10 * partyMemberTurnMultiplier) / (10 * partyMemberTurnMultiplier));
+    const turnMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(
+      1 - Math.min(this.turn - 2, 10 * partyMemberTurnMultiplier) / (10 * partyMemberTurnMultiplier),
+    );
     const finalBattleScore = Math.ceil(this.battleScore * turnMultiplier);
-    scene.score += finalBattleScore;
-    console.log(`Battle Score: ${finalBattleScore} (${this.turn - 1} Turns x${Math.floor(turnMultiplier * 100) / 100})`);
-    console.log(`Total Score: ${scene.score}`);
-    scene.updateScoreText();
+    globalScene.score += finalBattleScore;
+    console.log(
+      `Battle Score: ${finalBattleScore} (${this.turn - 1} Turns x${Math.floor(turnMultiplier * 100) / 100})`,
+    );
+    console.log(`Total Score: ${globalScene.score}`);
+    globalScene.updateScoreText();
   }
 
-  getBgmOverride(scene: BattleScene): string | null {
-    const battlers = this.enemyParty.slice(0, this.getBattlerCount());
+  getBgmOverride(): string | null {
     if (this.isBattleMysteryEncounter() && this.mysteryEncounter?.encounterMode === MysteryEncounterMode.DEFAULT) {
       // Music is overridden for MEs during ME onInit()
       // Should not use any BGM overrides before swapping from DEFAULT mode
       return null;
-    } else if (this.battleType === BattleType.TRAINER || this.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
+    }
+    if (
+      this.battleType === BattleType.TRAINER ||
+      this.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+    ) {
       if (!this.started && this.trainer?.config.encounterBgm && this.trainer?.getEncounterMessages()?.length) {
         return `encounter_${this.trainer?.getEncounterBgm()}`;
       }
-      if (scene.musicPreference === 0) {
+      if (globalScene.musicPreference === MusicPreference.GENFIVE) {
         return this.trainer?.getBattleBgm() ?? null;
-      } else {
-        return this.trainer?.getMixedBattleBgm() ?? null;
       }
-    } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
+      return this.trainer?.getMixedBattleBgm() ?? null;
+    }
+    if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
       return "end_summit";
     }
-    for (const pokemon of battlers) {
+    const wildOpponents = globalScene.getEnemyParty();
+    for (const pokemon of wildOpponents) {
       if (this.battleSpec === BattleSpec.FINAL_BOSS) {
-        if (pokemon.formIndex) {
+        if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ETERNAMAX) {
           return "battle_final";
         }
         return "battle_final_encounter";
       }
       if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
-        if (scene.musicPreference === 0) {
-          if (pokemon.species.speciesId === Species.REGIROCK || pokemon.species.speciesId === Species.REGICE || pokemon.species.speciesId === Species.REGISTEEL || pokemon.species.speciesId === Species.REGIGIGAS || pokemon.species.speciesId === Species.REGIELEKI || pokemon.species.speciesId === Species.REGIDRAGO) {
-            return "battle_legendary_regis_g5";
+        if (globalScene.musicPreference === MusicPreference.GENFIVE) {
+          switch (pokemon.species.speciesId) {
+            case Species.REGIROCK:
+            case Species.REGICE:
+            case Species.REGISTEEL:
+            case Species.REGIGIGAS:
+            case Species.REGIDRAGO:
+            case Species.REGIELEKI:
+              return "battle_legendary_regis_g5";
+            case Species.KYUREM:
+              return "battle_legendary_kyurem";
+            default:
+              if (pokemon.species.legendary) {
+                return "battle_legendary_res_zek";
+              }
+              return "battle_legendary_unova";
           }
-          if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT) {
-            return "battle_legendary_unova";
-          }
-          if (pokemon.species.speciesId === Species.KYUREM) {
-            return "battle_legendary_kyurem";
-          }
-          if (pokemon.species.legendary) {
-            return "battle_legendary_res_zek";
-          }
-          return "battle_legendary_unova";
-        } else {
-          if (pokemon.species.speciesId === Species.ARTICUNO || pokemon.species.speciesId === Species.ZAPDOS || pokemon.species.speciesId === Species.MOLTRES || pokemon.species.speciesId === Species.MEWTWO || pokemon.species.speciesId === Species.MEW) {
-            return "battle_legendary_kanto";
-          }
-          if (pokemon.species.speciesId === Species.RAIKOU) {
-            return "battle_legendary_raikou";
-          }
-          if (pokemon.species.speciesId === Species.ENTEI) {
-            return "battle_legendary_entei";
-          }
-          if (pokemon.species.speciesId === Species.SUICUNE) {
-            return "battle_legendary_suicune";
-          }
-          if (pokemon.species.speciesId === Species.LUGIA) {
-            return "battle_legendary_lugia";
-          }
-          if (pokemon.species.speciesId === Species.HO_OH) {
-            return "battle_legendary_ho_oh";
-          }
-          if (pokemon.species.speciesId === Species.REGIROCK || pokemon.species.speciesId === Species.REGICE || pokemon.species.speciesId === Species.REGISTEEL || pokemon.species.speciesId === Species.REGIGIGAS || pokemon.species.speciesId === Species.REGIELEKI || pokemon.species.speciesId === Species.REGIDRAGO) {
-            return "battle_legendary_regis_g6";
-          }
-          if (pokemon.species.speciesId === Species.GROUDON || pokemon.species.speciesId === Species.KYOGRE) {
-            return "battle_legendary_gro_kyo";
-          }
-          if (pokemon.species.speciesId === Species.RAYQUAZA) {
-            return "battle_legendary_rayquaza";
-          }
-          if (pokemon.species.speciesId === Species.DEOXYS) {
-            return "battle_legendary_deoxys";
-          }
-          if (pokemon.species.speciesId === Species.UXIE || pokemon.species.speciesId === Species.MESPRIT || pokemon.species.speciesId === Species.AZELF) {
-            return "battle_legendary_lake_trio";
-          }
-          if (pokemon.species.speciesId === Species.HEATRAN || pokemon.species.speciesId === Species.CRESSELIA || pokemon.species.speciesId === Species.DARKRAI || pokemon.species.speciesId === Species.SHAYMIN) {
-            return "battle_legendary_sinnoh";
-          }
-          if (pokemon.species.speciesId === Species.DIALGA || pokemon.species.speciesId === Species.PALKIA) {
-            if (pokemon.getFormKey() === "") {
+        }
+        if (globalScene.musicPreference === MusicPreference.ALLGENS) {
+          switch (pokemon.species.speciesId) {
+            case Species.ARTICUNO:
+            case Species.ZAPDOS:
+            case Species.MOLTRES:
+            case Species.MEWTWO:
+            case Species.MEW:
+              return "battle_legendary_kanto";
+            case Species.RAIKOU:
+              return "battle_legendary_raikou";
+            case Species.ENTEI:
+              return "battle_legendary_entei";
+            case Species.SUICUNE:
+              return "battle_legendary_suicune";
+            case Species.LUGIA:
+              return "battle_legendary_lugia";
+            case Species.HO_OH:
+              return "battle_legendary_ho_oh";
+            case Species.REGIROCK:
+            case Species.REGICE:
+            case Species.REGISTEEL:
+            case Species.REGIGIGAS:
+            case Species.REGIDRAGO:
+            case Species.REGIELEKI:
+              return "battle_legendary_regis_g6";
+            case Species.GROUDON:
+            case Species.KYOGRE:
+              return "battle_legendary_gro_kyo";
+            case Species.RAYQUAZA:
+              return "battle_legendary_rayquaza";
+            case Species.DEOXYS:
+              return "battle_legendary_deoxys";
+            case Species.UXIE:
+            case Species.MESPRIT:
+            case Species.AZELF:
+              return "battle_legendary_lake_trio";
+            case Species.HEATRAN:
+            case Species.CRESSELIA:
+            case Species.DARKRAI:
+            case Species.SHAYMIN:
+              return "battle_legendary_sinnoh";
+            case Species.DIALGA:
+            case Species.PALKIA:
+              if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ORIGIN) {
+                return "battle_legendary_origin_forme";
+              }
               return "battle_legendary_dia_pal";
-            }
-            if (pokemon.getFormKey() === "origin") {
-              return "battle_legendary_origin_forme";
-            }
-          }
-          if (pokemon.species.speciesId === Species.GIRATINA) {
-            return "battle_legendary_giratina";
-          }
-          if (pokemon.species.speciesId === Species.ARCEUS) {
-            return "battle_legendary_arceus";
-          }
-          if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT) {
-            return "battle_legendary_unova";
-          }
-          if (pokemon.species.speciesId === Species.KYUREM) {
-            return "battle_legendary_kyurem";
-          }
-          if (pokemon.species.speciesId === Species.XERNEAS || pokemon.species.speciesId === Species.YVELTAL || pokemon.species.speciesId === Species.ZYGARDE) {
-            return "battle_legendary_xern_yvel";
-          }
-          if (pokemon.species.speciesId === Species.TAPU_KOKO || pokemon.species.speciesId === Species.TAPU_LELE || pokemon.species.speciesId === Species.TAPU_BULU || pokemon.species.speciesId === Species.TAPU_FINI) {
-            return "battle_legendary_tapu";
-          }
-          if ([ Species.COSMOG, Species.COSMOEM, Species.SOLGALEO, Species.LUNALA ].includes(pokemon.species.speciesId)) {
-            return "battle_legendary_sol_lun";
-          }
-          if (pokemon.species.speciesId === Species.NECROZMA) {
-            if (pokemon.getFormKey() === "") {
+            case Species.GIRATINA:
+              return "battle_legendary_giratina";
+            case Species.ARCEUS:
+              return "battle_legendary_arceus";
+            case Species.COBALION:
+            case Species.TERRAKION:
+            case Species.VIRIZION:
+            case Species.KELDEO:
+            case Species.TORNADUS:
+            case Species.LANDORUS:
+            case Species.THUNDURUS:
+            case Species.MELOETTA:
+            case Species.GENESECT:
+              return "battle_legendary_unova";
+            case Species.KYUREM:
+              return "battle_legendary_kyurem";
+            case Species.XERNEAS:
+            case Species.YVELTAL:
+            case Species.ZYGARDE:
+              return "battle_legendary_xern_yvel";
+            case Species.TAPU_KOKO:
+            case Species.TAPU_LELE:
+            case Species.TAPU_BULU:
+            case Species.TAPU_FINI:
+              return "battle_legendary_tapu";
+            case Species.SOLGALEO:
+            case Species.LUNALA:
               return "battle_legendary_sol_lun";
-            }
-            if (pokemon.getFormKey() === "dusk-mane" || pokemon.getFormKey() === "dawn-wings") {
-              return "battle_legendary_dusk_dawn";
-            }
-            if (pokemon.getFormKey() === "ultra") {
-              return "battle_legendary_ultra_nec";
-            }
-          }
-          if ([ Species.NIHILEGO, Species.BUZZWOLE, Species.PHEROMOSA, Species.XURKITREE, Species.CELESTEELA, Species.KARTANA, Species.GUZZLORD, Species.POIPOLE, Species.NAGANADEL, Species.STAKATAKA, Species.BLACEPHALON ].includes(pokemon.species.speciesId)) {
-            return "battle_legendary_ub";
-          }
-          if (pokemon.species.speciesId === Species.ZACIAN || pokemon.species.speciesId === Species.ZAMAZENTA) {
-            return "battle_legendary_zac_zam";
-          }
-          if (pokemon.species.speciesId === Species.GLASTRIER || pokemon.species.speciesId === Species.SPECTRIER) {
-            return "battle_legendary_glas_spec";
-          }
-          if (pokemon.species.speciesId === Species.CALYREX) {
-            if (pokemon.getFormKey() === "") {
+            case Species.NECROZMA:
+              switch (pokemon.getFormKey()) {
+                case "dusk-mane":
+                case "dawn-wings":
+                  return "battle_legendary_dusk_dawn";
+                case "ultra":
+                  return "battle_legendary_ultra_nec";
+                default:
+                  return "battle_legendary_sol_lun";
+              }
+            case Species.NIHILEGO:
+            case Species.PHEROMOSA:
+            case Species.BUZZWOLE:
+            case Species.XURKITREE:
+            case Species.CELESTEELA:
+            case Species.KARTANA:
+            case Species.GUZZLORD:
+            case Species.POIPOLE:
+            case Species.NAGANADEL:
+            case Species.STAKATAKA:
+            case Species.BLACEPHALON:
+              return "battle_legendary_ub";
+            case Species.ZACIAN:
+            case Species.ZAMAZENTA:
+              return "battle_legendary_zac_zam";
+            case Species.GLASTRIER:
+            case Species.SPECTRIER:
+              return "battle_legendary_glas_spec";
+            case Species.CALYREX:
+              if (pokemon.getFormKey() === "ice" || pokemon.getFormKey() === "shadow") {
+                return "battle_legendary_riders";
+              }
               return "battle_legendary_calyrex";
-            }
-            if (pokemon.getFormKey() === "ice" || pokemon.getFormKey() === "shadow") {
-              return "battle_legendary_riders";
-            }
+            case Species.GALAR_ARTICUNO:
+            case Species.GALAR_ZAPDOS:
+            case Species.GALAR_MOLTRES:
+              return "battle_legendary_birds_galar";
+            case Species.WO_CHIEN:
+            case Species.CHIEN_PAO:
+            case Species.TING_LU:
+            case Species.CHI_YU:
+              return "battle_legendary_ruinous";
+            case Species.KORAIDON:
+            case Species.MIRAIDON:
+              return "battle_legendary_kor_mir";
+            case Species.OKIDOGI:
+            case Species.MUNKIDORI:
+            case Species.FEZANDIPITI:
+              return "battle_legendary_loyal_three";
+            case Species.OGERPON:
+              return "battle_legendary_ogerpon";
+            case Species.TERAPAGOS:
+              return "battle_legendary_terapagos";
+            case Species.PECHARUNT:
+              return "battle_legendary_pecharunt";
+            default:
+              if (pokemon.species.legendary) {
+                return "battle_legendary_res_zek";
+              }
+              return "battle_legendary_unova";
           }
-          if (pokemon.species.speciesId === Species.GALAR_ARTICUNO || pokemon.species.speciesId === Species.GALAR_ZAPDOS || pokemon.species.speciesId === Species.GALAR_MOLTRES) {
-            return "battle_legendary_birds_galar";
-          }
-          if (pokemon.species.speciesId === Species.WO_CHIEN || pokemon.species.speciesId === Species.CHIEN_PAO || pokemon.species.speciesId === Species.TING_LU || pokemon.species.speciesId === Species.CHI_YU) {
-            return "battle_legendary_ruinous";
-          }
-          if (pokemon.species.speciesId === Species.KORAIDON || pokemon.species.speciesId === Species.MIRAIDON) {
-            return "battle_legendary_kor_mir";
-          }
-          if (pokemon.species.speciesId === Species.OKIDOGI || pokemon.species.speciesId === Species.MUNKIDORI || pokemon.species.speciesId === Species.FEZANDIPITI) {
-            return "battle_legendary_loyal_three";
-          }
-          if (pokemon.species.speciesId === Species.OGERPON) {
-            return "battle_legendary_ogerpon";
-          }
-          if (pokemon.species.speciesId === Species.TERAPAGOS) {
-            return "battle_legendary_terapagos";
-          }
-          if (pokemon.species.speciesId === Species.PECHARUNT) {
-            return "battle_legendary_pecharunt";
-          }
-          if (pokemon.species.legendary) {
-            return "battle_legendary_res_zek";
-          }
-          return "battle_legendary_unova";
         }
       }
     }
 
-    if (scene.gameMode.isClassic && this.waveIndex <= 4) {
+    if (globalScene.gameMode.isClassic && this.waveIndex <= 4) {
       return "battle_wild";
     }
 
@@ -387,26 +453,26 @@ export default class Battle {
    * @param min The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
-  randSeedInt(scene: BattleScene, range: number, min: number = 0): number {
+  randSeedInt(range: number, min = 0): number {
     if (range <= 1) {
       return min;
     }
-    const tempRngCounter = scene.rngCounter;
-    const tempSeedOverride = scene.rngSeedOverride;
+    const tempRngCounter = globalScene.rngCounter;
+    const tempSeedOverride = globalScene.rngSeedOverride;
     const state = Phaser.Math.RND.state();
     if (this.battleSeedState) {
       Phaser.Math.RND.state(this.battleSeedState);
     } else {
-      Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.battleSeed, this.turn << 6) ]);
+      Phaser.Math.RND.sow([Utils.shiftCharCodes(this.battleSeed, this.turn << 6)]);
       console.log("Battle Seed:", this.battleSeed);
     }
-    scene.rngCounter = this.rngCounter++;
-    scene.rngSeedOverride = this.battleSeed;
+    globalScene.rngCounter = this.rngCounter++;
+    globalScene.rngSeedOverride = this.battleSeed;
     const ret = Utils.randSeedInt(range, min);
     this.battleSeedState = Phaser.Math.RND.state();
     Phaser.Math.RND.state(state);
-    scene.rngCounter = tempRngCounter;
-    scene.rngSeedOverride = tempSeedOverride;
+    globalScene.rngCounter = tempRngCounter;
+    globalScene.rngSeedOverride = tempSeedOverride;
     return ret;
   }
 
@@ -419,16 +485,22 @@ export default class Battle {
 }
 
 export class FixedBattle extends Battle {
-  constructor(scene: BattleScene, waveIndex: number, config: FixedBattleConfig) {
-    super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : undefined, config.double);
+  constructor(waveIndex: number, config: FixedBattleConfig) {
+    super(
+      globalScene.gameMode,
+      waveIndex,
+      config.battleType,
+      config.battleType === BattleType.TRAINER ? config.getTrainer() : undefined,
+      config.double,
+    );
     if (config.getEnemyParty) {
-      this.enemyParty = config.getEnemyParty(scene);
+      this.enemyParty = config.getEnemyParty();
     }
   }
 }
 
-type GetTrainerFunc = (scene: BattleScene) => Trainer;
-type GetEnemyPartyFunc = (scene: BattleScene) => EnemyPokemon[];
+type GetTrainerFunc = () => Trainer;
+type GetEnemyPartyFunc = () => EnemyPokemon[];
 
 export class FixedBattleConfig {
   public battleType: BattleType;
@@ -469,7 +541,6 @@ export class FixedBattleConfig {
   }
 }
 
-
 /**
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion
  * @param trainerPool The TrainerType or list of TrainerTypes that can possibly be generated
@@ -477,39 +548,52 @@ export class FixedBattleConfig {
  * @param seedOffset the seed offset to use for the random generation of the trainer
  * @returns the generated trainer
  */
-function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[], randomGender: boolean = false, seedOffset: number  = 0): GetTrainerFunc {
-  return (scene: BattleScene) => {
+export function getRandomTrainerFunc(
+  trainerPool: (TrainerType | TrainerType[])[],
+  randomGender = false,
+  seedOffset = 0,
+): GetTrainerFunc {
+  return () => {
     const rand = Utils.randSeedInt(trainerPool.length);
     const trainerTypes: TrainerType[] = [];
 
-    scene.executeWithSeedOffset(() => {
+    globalScene.executeWithSeedOffset(() => {
       for (const trainerPoolEntry of trainerPool) {
-        const trainerType = Array.isArray(trainerPoolEntry)
-          ? Utils.randSeedItem(trainerPoolEntry)
-          : trainerPoolEntry;
+        const trainerType = Array.isArray(trainerPoolEntry) ? Utils.randSeedItem(trainerPoolEntry) : trainerPoolEntry;
         trainerTypes.push(trainerType);
       }
     }, seedOffset);
 
     let trainerGender = TrainerVariant.DEFAULT;
     if (randomGender) {
-      trainerGender = (Utils.randInt(2) === 0) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
+      trainerGender = Utils.randInt(2) === 0 ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT;
     }
 
     /* 1/3 chance for evil team grunts to be double battles */
-    const evilTeamGrunts = [ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ];
+    const evilTeamGrunts = [
+      TrainerType.ROCKET_GRUNT,
+      TrainerType.MAGMA_GRUNT,
+      TrainerType.AQUA_GRUNT,
+      TrainerType.GALACTIC_GRUNT,
+      TrainerType.PLASMA_GRUNT,
+      TrainerType.FLARE_GRUNT,
+      TrainerType.AETHER_GRUNT,
+      TrainerType.SKULL_GRUNT,
+      TrainerType.MACRO_GRUNT,
+      TrainerType.STAR_GRUNT,
+    ];
     const isEvilTeamGrunt = evilTeamGrunts.includes(trainerTypes[rand]);
 
     if (trainerConfigs[trainerTypes[rand]].hasDouble && isEvilTeamGrunt) {
-      return new Trainer(scene, trainerTypes[rand], (Utils.randInt(3) === 0) ? TrainerVariant.DOUBLE : trainerGender);
+      return new Trainer(trainerTypes[rand], Utils.randInt(3) === 0 ? TrainerVariant.DOUBLE : trainerGender);
     }
 
-    return new Trainer(scene, trainerTypes[rand], trainerGender);
+    return new Trainer(trainerTypes[rand], trainerGender);
   };
 }
 
 export interface FixedBattleConfigs {
-    [key: number]: FixedBattleConfig
+  [key: number]: FixedBattleConfig;
 }
 /**
  * Youngster/Lass on 5
@@ -521,51 +605,355 @@ export interface FixedBattleConfigs {
  * Champion on 190
  */
 export const classicFixedBattles: FixedBattleConfigs = {
-  [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
-  [8]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
-  [25]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_2, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT))
-    .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], allowLuckUpgrades: false }),
-  [35]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ], true)),
-  [55]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_3, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT))
-    .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], allowLuckUpgrades: false }),
-  [62]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ], true)),
-  [64]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ], true)),
-  [66]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([[ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [ TrainerType.TABITHA, TrainerType.COURTNEY ], [ TrainerType.MATT, TrainerType.SHELLY ], [ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ], [ TrainerType.ZINZOLIN, TrainerType.ROOD ], [ TrainerType.XEROSIC, TrainerType.BRYONY ], TrainerType.FABA, TrainerType.PLUMERIA, TrainerType.OLEANA, [ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]], true)),
-  [95]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT))
-    .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false }),
-  [112]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_GRUNT, TrainerType.MAGMA_GRUNT, TrainerType.AQUA_GRUNT, TrainerType.GALACTIC_GRUNT, TrainerType.PLASMA_GRUNT, TrainerType.FLARE_GRUNT, TrainerType.AETHER_GRUNT, TrainerType.SKULL_GRUNT, TrainerType.MACRO_GRUNT, TrainerType.STAR_GRUNT ], true)),
-  [114]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([[ TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL ], [ TrainerType.TABITHA, TrainerType.COURTNEY ], [ TrainerType.MATT, TrainerType.SHELLY ], [ TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN ], [ TrainerType.ZINZOLIN, TrainerType.ROOD ], [ TrainerType.XEROSIC, TrainerType.BRYONY ], TrainerType.FABA, TrainerType.PLUMERIA, TrainerType.OLEANA, [ TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI ]], true, 1)),
-  [ClassicFixedBossWaves.EVIL_BOSS_1]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_BOSS_GIOVANNI_1, TrainerType.MAXIE, TrainerType.ARCHIE, TrainerType.CYRUS, TrainerType.GHETSIS, TrainerType.LYSANDRE, TrainerType.LUSAMINE, TrainerType.GUZMA, TrainerType.ROSE, TrainerType.PENNY ]))
-    .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false }),
-  [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_5, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT))
-    .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false }),
-  [ClassicFixedBossWaves.EVIL_BOSS_2]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(35)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.ROCKET_BOSS_GIOVANNI_2, TrainerType.MAXIE_2, TrainerType.ARCHIE_2, TrainerType.CYRUS_2, TrainerType.GHETSIS_2, TrainerType.LYSANDRE_2, TrainerType.LUSAMINE_2, TrainerType.GUZMA_2, TrainerType.ROSE_2, TrainerType.PENNY_2 ]))
-    .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA ], allowLuckUpgrades: false }),
-  [182]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, [ TrainerType.HALA, TrainerType.MOLAYNE ], TrainerType.MARNIE_ELITE, TrainerType.RIKA, TrainerType.CRISPIN ])),
-  [184]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA, TrainerType.NESSA_ELITE, TrainerType.POPPY, TrainerType.AMARYS ])),
-  [186]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA, [ TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE ], TrainerType.LARRY_ELITE, TrainerType.LACEY ])),
-  [188]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI, TrainerType.RAIHAN_ELITE, TrainerType.HASSEL, TrainerType.DRAYTON ])),
-  [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
-    .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BLUE, [ TrainerType.RED, TrainerType.LANCE_CHAMPION ], [ TrainerType.STEVEN, TrainerType.WALLACE ], TrainerType.CYNTHIA, [ TrainerType.ALDER, TrainerType.IRIS ], TrainerType.DIANTHA, TrainerType.HAU, TrainerType.LEON, [ TrainerType.GEETA, TrainerType.NEMONA ], TrainerType.KIERAN ])),
-  [195]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-    .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT))
-    .setCustomModifierRewards({ guaranteedModifierTiers: [ ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT ], allowLuckUpgrades: false })
+  [ClassicFixedBossWaves.TOWN_YOUNGSTER]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      () => new Trainer(TrainerType.YOUNGSTER, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT),
+    ),
+  [ClassicFixedBossWaves.RIVAL_1]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      () =>
+        new Trainer(
+          TrainerType.RIVAL,
+          globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
+        ),
+    ),
+  [ClassicFixedBossWaves.RIVAL_2]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      () =>
+        new Trainer(
+          TrainerType.RIVAL_2,
+          globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
+        ),
+    )
+    .setCustomModifierRewards({
+      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT],
+      allowLuckUpgrades: false,
+    }),
+  [ClassicFixedBossWaves.EVIL_GRUNT_1]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc(
+        [
+          TrainerType.ROCKET_GRUNT,
+          TrainerType.MAGMA_GRUNT,
+          TrainerType.AQUA_GRUNT,
+          TrainerType.GALACTIC_GRUNT,
+          TrainerType.PLASMA_GRUNT,
+          TrainerType.FLARE_GRUNT,
+          TrainerType.AETHER_GRUNT,
+          TrainerType.SKULL_GRUNT,
+          TrainerType.MACRO_GRUNT,
+          TrainerType.STAR_GRUNT,
+        ],
+        true,
+      ),
+    ),
+  [ClassicFixedBossWaves.RIVAL_3]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      () =>
+        new Trainer(
+          TrainerType.RIVAL_3,
+          globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
+        ),
+    )
+    .setCustomModifierRewards({
+      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT],
+      allowLuckUpgrades: false,
+    }),
+  [ClassicFixedBossWaves.EVIL_GRUNT_2]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc(
+        [
+          TrainerType.ROCKET_GRUNT,
+          TrainerType.MAGMA_GRUNT,
+          TrainerType.AQUA_GRUNT,
+          TrainerType.GALACTIC_GRUNT,
+          TrainerType.PLASMA_GRUNT,
+          TrainerType.FLARE_GRUNT,
+          TrainerType.AETHER_GRUNT,
+          TrainerType.SKULL_GRUNT,
+          TrainerType.MACRO_GRUNT,
+          TrainerType.STAR_GRUNT,
+        ],
+        true,
+      ),
+    ),
+  [ClassicFixedBossWaves.EVIL_GRUNT_3]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc(
+        [
+          TrainerType.ROCKET_GRUNT,
+          TrainerType.MAGMA_GRUNT,
+          TrainerType.AQUA_GRUNT,
+          TrainerType.GALACTIC_GRUNT,
+          TrainerType.PLASMA_GRUNT,
+          TrainerType.FLARE_GRUNT,
+          TrainerType.AETHER_GRUNT,
+          TrainerType.SKULL_GRUNT,
+          TrainerType.MACRO_GRUNT,
+          TrainerType.STAR_GRUNT,
+        ],
+        true,
+      ),
+    ),
+  [ClassicFixedBossWaves.EVIL_ADMIN_1]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc(
+        [
+          [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL],
+          [TrainerType.TABITHA, TrainerType.COURTNEY],
+          [TrainerType.MATT, TrainerType.SHELLY],
+          [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
+          [TrainerType.ZINZOLIN, TrainerType.COLRESS],
+          [TrainerType.XEROSIC, TrainerType.BRYONY],
+          TrainerType.FABA,
+          TrainerType.PLUMERIA,
+          TrainerType.OLEANA,
+          [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
+        ],
+        true,
+      ),
+    ),
+  [ClassicFixedBossWaves.RIVAL_4]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      () =>
+        new Trainer(
+          TrainerType.RIVAL_4,
+          globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
+        ),
+    )
+    .setCustomModifierRewards({
+      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA],
+      allowLuckUpgrades: false,
+    }),
+  [ClassicFixedBossWaves.EVIL_GRUNT_4]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc(
+        [
+          TrainerType.ROCKET_GRUNT,
+          TrainerType.MAGMA_GRUNT,
+          TrainerType.AQUA_GRUNT,
+          TrainerType.GALACTIC_GRUNT,
+          TrainerType.PLASMA_GRUNT,
+          TrainerType.FLARE_GRUNT,
+          TrainerType.AETHER_GRUNT,
+          TrainerType.SKULL_GRUNT,
+          TrainerType.MACRO_GRUNT,
+          TrainerType.STAR_GRUNT,
+        ],
+        true,
+      ),
+    ),
+  [ClassicFixedBossWaves.EVIL_ADMIN_2]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc(
+        [
+          [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL],
+          [TrainerType.TABITHA, TrainerType.COURTNEY],
+          [TrainerType.MATT, TrainerType.SHELLY],
+          [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
+          [TrainerType.ZINZOLIN, TrainerType.COLRESS],
+          [TrainerType.XEROSIC, TrainerType.BRYONY],
+          TrainerType.FABA,
+          TrainerType.PLUMERIA,
+          TrainerType.OLEANA,
+          [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
+        ],
+        true,
+        1,
+      ),
+    ),
+  [ClassicFixedBossWaves.EVIL_BOSS_1]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc([
+        TrainerType.ROCKET_BOSS_GIOVANNI_1,
+        TrainerType.MAXIE,
+        TrainerType.ARCHIE,
+        TrainerType.CYRUS,
+        TrainerType.GHETSIS,
+        TrainerType.LYSANDRE,
+        TrainerType.LUSAMINE,
+        TrainerType.GUZMA,
+        TrainerType.ROSE,
+        TrainerType.PENNY,
+      ]),
+    )
+    .setCustomModifierRewards({
+      guaranteedModifierTiers: [
+        ModifierTier.ROGUE,
+        ModifierTier.ROGUE,
+        ModifierTier.ULTRA,
+        ModifierTier.ULTRA,
+        ModifierTier.ULTRA,
+      ],
+      allowLuckUpgrades: false,
+    }),
+  [ClassicFixedBossWaves.RIVAL_5]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      () =>
+        new Trainer(
+          TrainerType.RIVAL_5,
+          globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
+        ),
+    )
+    .setCustomModifierRewards({
+      guaranteedModifierTiers: [
+        ModifierTier.ROGUE,
+        ModifierTier.ROGUE,
+        ModifierTier.ROGUE,
+        ModifierTier.ULTRA,
+        ModifierTier.ULTRA,
+      ],
+      allowLuckUpgrades: false,
+    }),
+  [ClassicFixedBossWaves.EVIL_BOSS_2]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc([
+        TrainerType.ROCKET_BOSS_GIOVANNI_2,
+        TrainerType.MAXIE_2,
+        TrainerType.ARCHIE_2,
+        TrainerType.CYRUS_2,
+        TrainerType.GHETSIS_2,
+        TrainerType.LYSANDRE_2,
+        TrainerType.LUSAMINE_2,
+        TrainerType.GUZMA_2,
+        TrainerType.ROSE_2,
+        TrainerType.PENNY_2,
+      ]),
+    )
+    .setCustomModifierRewards({
+      guaranteedModifierTiers: [
+        ModifierTier.ROGUE,
+        ModifierTier.ROGUE,
+        ModifierTier.ULTRA,
+        ModifierTier.ULTRA,
+        ModifierTier.ULTRA,
+        ModifierTier.ULTRA,
+      ],
+      allowLuckUpgrades: false,
+    }),
+  [ClassicFixedBossWaves.ELITE_FOUR_1]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc([
+        TrainerType.LORELEI,
+        TrainerType.WILL,
+        TrainerType.SIDNEY,
+        TrainerType.AARON,
+        TrainerType.SHAUNTAL,
+        TrainerType.MALVA,
+        [TrainerType.HALA, TrainerType.MOLAYNE],
+        TrainerType.MARNIE_ELITE,
+        TrainerType.RIKA,
+        TrainerType.CRISPIN,
+      ]),
+    ),
+  [ClassicFixedBossWaves.ELITE_FOUR_2]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.ELITE_FOUR_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc([
+        TrainerType.BRUNO,
+        TrainerType.KOGA,
+        TrainerType.PHOEBE,
+        TrainerType.BERTHA,
+        TrainerType.MARSHAL,
+        TrainerType.SIEBOLD,
+        TrainerType.OLIVIA,
+        TrainerType.NESSA_ELITE,
+        TrainerType.POPPY,
+        TrainerType.AMARYS,
+      ]),
+    ),
+  [ClassicFixedBossWaves.ELITE_FOUR_3]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.ELITE_FOUR_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc([
+        TrainerType.AGATHA,
+        TrainerType.BRUNO,
+        TrainerType.GLACIA,
+        TrainerType.FLINT,
+        TrainerType.GRIMSLEY,
+        TrainerType.WIKSTROM,
+        TrainerType.ACEROLA,
+        [TrainerType.BEA_ELITE, TrainerType.ALLISTER_ELITE],
+        TrainerType.LARRY_ELITE,
+        TrainerType.LACEY,
+      ]),
+    ),
+  [ClassicFixedBossWaves.ELITE_FOUR_4]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.ELITE_FOUR_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc([
+        TrainerType.LANCE,
+        TrainerType.KAREN,
+        TrainerType.DRAKE,
+        TrainerType.LUCIAN,
+        TrainerType.CAITLIN,
+        TrainerType.DRASNA,
+        TrainerType.KAHILI,
+        TrainerType.RAIHAN_ELITE,
+        TrainerType.HASSEL,
+        TrainerType.DRAYTON,
+      ]),
+    ),
+  [ClassicFixedBossWaves.CHAMPION]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.ELITE_FOUR_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc([
+        TrainerType.BLUE,
+        [TrainerType.RED, TrainerType.LANCE_CHAMPION],
+        [TrainerType.STEVEN, TrainerType.WALLACE],
+        TrainerType.CYNTHIA,
+        [TrainerType.ALDER, TrainerType.IRIS],
+        TrainerType.DIANTHA,
+        [TrainerType.KUKUI, TrainerType.HAU],
+        [TrainerType.LEON, TrainerType.MUSTARD],
+        [TrainerType.GEETA, TrainerType.NEMONA],
+        TrainerType.KIERAN,
+      ]),
+    ),
+  [ClassicFixedBossWaves.RIVAL_6]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setGetTrainerFunc(
+      () =>
+        new Trainer(
+          TrainerType.RIVAL_6,
+          globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
+        ),
+    )
+    .setCustomModifierRewards({
+      guaranteedModifierTiers: [
+        ModifierTier.ROGUE,
+        ModifierTier.ROGUE,
+        ModifierTier.ULTRA,
+        ModifierTier.ULTRA,
+        ModifierTier.GREAT,
+        ModifierTier.GREAT,
+      ],
+      allowLuckUpgrades: false,
+    }),
 };

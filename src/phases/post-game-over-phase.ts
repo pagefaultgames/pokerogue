@@ -1,13 +1,13 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import { EndCardPhase } from "./end-card-phase";
+import type { EndCardPhase } from "./end-card-phase";
 import { TitlePhase } from "./title-phase";
 
 export class PostGameOverPhase extends Phase {
   private endCardPhase: EndCardPhase | null;
 
-  constructor(scene: BattleScene, endCardPhase?: EndCardPhase) {
-    super(scene);
+  constructor(endCardPhase?: EndCardPhase) {
+    super();
 
     this.endCardPhase = endCardPhase!; // TODO: is this bang correct?
   }
@@ -16,24 +16,26 @@ export class PostGameOverPhase extends Phase {
     super.start();
 
     const saveAndReset = () => {
-      this.scene.gameData.saveAll(this.scene, true, true, true).then(success => {
+      globalScene.gameData.saveAll(true, true, true).then(success => {
         if (!success) {
-          return this.scene.reset(true);
+          return globalScene.reset(true);
         }
-        this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
-          if (!success[0]) {
-            return this.scene.reset(true);
-          }
-          this.scene.reset();
-          this.scene.unshiftPhase(new TitlePhase(this.scene));
-          this.end();
-        });
+        globalScene.gameData
+          .tryClearSession(globalScene.sessionSlotId)
+          .then((success: boolean | [boolean, boolean]) => {
+            if (!success[0]) {
+              return globalScene.reset(true);
+            }
+            globalScene.reset();
+            globalScene.unshiftPhase(new TitlePhase());
+            this.end();
+          });
       });
     };
 
     if (this.endCardPhase) {
-      this.scene.ui.fadeOut(500).then(() => {
-        this.scene.ui.getMessageHandler().bg.setVisible(true);
+      globalScene.ui.fadeOut(500).then(() => {
+        globalScene.ui.getMessageHandler().bg.setVisible(true);
 
         this.endCardPhase?.endCard.destroy();
         this.endCardPhase?.text.destroy();

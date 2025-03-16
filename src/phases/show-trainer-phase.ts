@@ -1,24 +1,24 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { PlayerGender } from "#app/enums/player-gender";
 import { BattlePhase } from "./battle-phase";
 
 export class ShowTrainerPhase extends BattlePhase {
-  constructor(scene: BattleScene) {
-    super(scene);
+  constructor() {
+    super();
   }
 
   start() {
     super.start();
 
-    this.scene.trainer.setVisible(true);
+    globalScene.trainer.setVisible(true);
 
-    this.scene.trainer.setTexture(`trainer_${this.scene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+    globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
 
-    this.scene.tweens.add({
-      targets: this.scene.trainer,
+    globalScene.tweens.add({
+      targets: globalScene.trainer,
       x: 106,
       duration: 1000,
-      onComplete: () => this.end()
+      onComplete: () => this.end(),
     });
   }
 }

@@ -1,34 +1,35 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/ability";
 import { getRandomWeatherType } from "#app/data/weather";
 import { NextEncounterPhase } from "./next-encounter-phase";
 
 export class NewBiomeEncounterPhase extends NextEncounterPhase {
-  constructor(scene: BattleScene) {
-    super(scene);
+  constructor() {
+    super();
   }
 
   doEncounter(): void {
-    this.scene.playBgm(undefined, true);
+    globalScene.playBgm(undefined, true);
 
-    for (const pokemon of this.scene.getParty()) {
+    for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
         pokemon.resetBattleData();
+        pokemon.customPokemonData.resetHitReceivedCount();
       }
     }
 
-    for (const pokemon of this.scene.getParty().filter(p => p.isOnField())) {
+    for (const pokemon of globalScene.getPlayerParty().filter(p => p.isOnField())) {
       applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
     }
 
-    const enemyField = this.scene.getEnemyField();
-    const moveTargets: any[]  = [ this.scene.arenaEnemy, enemyField ];
-    const mysteryEncounter = this.scene.currentBattle?.mysteryEncounter?.introVisuals;
+    const enemyField = globalScene.getEnemyField();
+    const moveTargets: any[] = [globalScene.arenaEnemy, enemyField];
+    const mysteryEncounter = globalScene.currentBattle?.mysteryEncounter?.introVisuals;
     if (mysteryEncounter) {
       moveTargets.push(mysteryEncounter);
     }
 
-    this.scene.tweens.add({
+    globalScene.tweens.add({
       targets: moveTargets.flat(),
       x: "+=300",
       duration: 2000,
@@ -36,7 +37,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
         if (!this.tryOverrideForBattleSpec()) {
           this.doEncounterCommon();
         }
-      }
+      },
     });
   }
 
@@ -44,6 +45,6 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
    * Set biome weather.
    */
   trySetWeatherIfNewBiome(): void {
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+    globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena), false);
   }
 }

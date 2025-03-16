@@ -7,9 +7,8 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
 import { initI18n } from "./plugins/i18n";
 
-
 // Catch global errors and display them in an alert so users can report the issue.
-window.onerror = function (message, source, lineno, colno, error) {
+window.onerror = (_message, _source, _lineno, _colno, error) => {
   console.error(error);
   // const errorString = `Received unhandled error. Open browser console and click OK to see details.\nError: ${message}\nSource: ${source}\nLine: ${lineno}\nColumn: ${colno}\nStack: ${error.stack}`;
   //alert(errorString);
@@ -18,7 +17,7 @@ window.onerror = function (message, source, lineno, colno, error) {
 };
 
 // Catch global promise rejections and display them in an alert so users can report the issue.
-window.addEventListener("unhandledrejection", (event) => {
+window.addEventListener("unhandledrejection", event => {
   // const errorString = `Received unhandled promise rejection. Open browser console and click OK to see details.\nReason: ${event.reason}`;
   console.error(event.reason);
   //alert(errorString);
@@ -41,10 +40,10 @@ Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
 document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
-
+// biome-ignore lint/suspicious/noImplicitAnyLet: TODO
 let game;
 
-const startGame = async () => {
+const startGame = async (manifest?: any) => {
   await initI18n();
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).default;
@@ -54,54 +53,63 @@ const startGame = async () => {
     scale: {
       width: 1920,
       height: 1080,
-      mode: Phaser.Scale.FIT
+      mode: Phaser.Scale.FIT,
     },
     plugins: {
-      global: [{
-        key: "rexInputTextPlugin",
-        plugin: InputTextPlugin,
-        start: true
-      }, {
-        key: "rexBBCodeTextPlugin",
-        plugin: BBCodeTextPlugin,
-        start: true
-      }, {
-        key: "rexTransitionImagePackPlugin",
-        plugin: TransitionImagePackPlugin,
-        start: true
-      }],
-      scene: [{
-        key: "rexUI",
-        plugin: UIPlugin,
-        mapping: "rexUI"
-      }]
+      global: [
+        {
+          key: "rexInputTextPlugin",
+          plugin: InputTextPlugin,
+          start: true,
+        },
+        {
+          key: "rexBBCodeTextPlugin",
+          plugin: BBCodeTextPlugin,
+          start: true,
+        },
+        {
+          key: "rexTransitionImagePackPlugin",
+          plugin: TransitionImagePackPlugin,
+          start: true,
+        },
+      ],
+      scene: [
+        {
+          key: "rexUI",
+          plugin: UIPlugin,
+          mapping: "rexUI",
+        },
+      ],
     },
     input: {
       mouse: {
-        target: "app"
+        target: "app",
       },
       touch: {
-        target: "app"
+        target: "app",
       },
-      gamepad: true
+      gamepad: true,
     },
     dom: {
-      createContainer: true
+      createContainer: true,
     },
     pixelArt: true,
-    pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
-    scene: [ LoadingScene, BattleScene ],
-    version: version
+    pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
+    scene: [LoadingScene, BattleScene],
+    version: version,
   });
   game.sound.pauseOnBlur = false;
+  if (manifest) {
+    game["manifest"] = manifest;
+  }
 };
 
 fetch("/manifest.json")
   .then(res => res.json())
   .then(jsonResponse => {
-    startGame();
-    game["manifest"] = jsonResponse.manifest;
-  }).catch(() => {
+    startGame(jsonResponse.manifest);
+  })
+  .catch(() => {
     // Manifest not found (likely local build)
     startGame();
   });

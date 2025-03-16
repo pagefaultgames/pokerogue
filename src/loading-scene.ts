@@ -5,12 +5,12 @@ import { SceneBase } from "#app/scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
 import * as Utils from "#app/utils";
-import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
-import { initMoves } from "#app/data/move";
+import { initMoves } from "#app/data/moves/move";
 import { initAbilities } from "#app/data/ability";
 import { initAchievements } from "#app/system/achv";
 import { initTrainerTypeDialogue } from "#app/data/dialogue";
@@ -79,6 +79,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("icon_owned", "ui");
     this.loadImage("icon_egg_move", "ui");
     this.loadImage("ability_bar_left", "ui");
+    this.loadImage("ability_bar_right", "ui");
     this.loadImage("bgm_bar", "ui");
     this.loadImage("party_exp_bar", "ui");
     this.loadImage("achv_bar", "ui");
@@ -101,8 +102,12 @@ export class LoadingScene extends SceneBase {
     this.loadImage("icon_lock", "ui", "icon_lock.png");
     this.loadImage("icon_stop", "ui", "icon_stop.png");
     this.loadImage("icon_tera", "ui");
+    this.loadImage("cursor_tera", "ui");
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
+    this.loadAtlas("button_tera", "ui");
+    this.loadImage("mystery_egg", "ui");
+    this.loadImage("normal_memory", "ui");
 
     this.loadImage("dawn_icon_fg", "ui");
     this.loadImage("dawn_icon_mg", "ui");
@@ -134,10 +139,10 @@ export class LoadingScene extends SceneBase {
     this.loadImage("summary_bg", "ui");
     this.loadImage("summary_overlay_shiny", "ui");
     this.loadImage("summary_profile", "ui");
-    this.loadImage("summary_profile_prompt_z", "ui");      // The pixel Z button prompt
-    this.loadImage("summary_profile_prompt_a", "ui");     // The pixel A button prompt
-    this.loadImage("summary_profile_ability", "ui");      // Pixel text 'ABILITY'
-    this.loadImage("summary_profile_passive", "ui");      // Pixel text 'PASSIVE'
+    this.loadImage("summary_profile_prompt_z", "ui"); // The pixel Z button prompt
+    this.loadImage("summary_profile_prompt_a", "ui"); // The pixel A button prompt
+    this.loadImage("summary_profile_ability", "ui"); // Pixel text 'ABILITY'
+    this.loadImage("summary_profile_passive", "ui"); // Pixel text 'PASSIVE'
     this.loadImage("summary_status", "ui");
     this.loadImage("summary_stats", "ui");
     this.loadImage("summary_stats_overlay_exp", "ui");
@@ -154,6 +159,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("scroll_bar_handle", "ui");
     this.loadImage("starter_container_bg", "ui");
     this.loadImage("starter_select_bg", "ui");
+    this.loadImage("pokedex_summary_bg", "ui");
     this.loadImage("select_cursor", "ui");
     this.loadImage("select_cursor_highlight", "ui");
     this.loadImage("select_cursor_highlight_thick", "ui");
@@ -188,7 +194,7 @@ export class LoadingScene extends SceneBase {
       }
       if (getBiomeHasProps(bt)) {
         for (let p = 1; p <= 3; p++) {
-          const isPropAnimated = p === 3 && [ "power_plant", "end" ].find(b => b === btKey);
+          const isPropAnimated = p === 3 && ["power_plant", "end"].find(b => b === btKey);
           const propKey = `${btKey}_b_${p}`;
           if (!isPropAnimated) {
             this.loadImage(propKey, "arenas");
@@ -232,7 +238,7 @@ export class LoadingScene extends SceneBase {
     // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
     const lang = i18next.resolvedLanguage;
     if (lang !== "en") {
-      if (Utils.verifyLang(lang)) {
+      if (Utils.hasAllLocalizedSprites(lang)) {
         this.loadAtlas(`statuses_${lang}`, "");
         this.loadAtlas(`types_${lang}`, "");
       } else {
@@ -244,11 +250,11 @@ export class LoadingScene extends SceneBase {
       this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
-    const availableLangs = [ "en", "de", "it", "fr", "ja", "ko", "es", "pt-BR", "zh-CN" ];
+    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"];
     if (lang && availableLangs.includes(lang)) {
-      this.loadImage("egg-update_" + lang, "events");
+      this.loadImage(`pkmnday2025event-${lang}`, "events");
     } else {
-      this.loadImage("egg-update_en", "events");
+      this.loadImage("pkmnday2025event-en", "events");
     }
 
     this.loadAtlas("statuses", "");
@@ -259,11 +265,11 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("egg_icons", "egg");
     this.loadAtlas("egg_shard", "egg");
     this.loadAtlas("egg_lightrays", "egg");
-    Utils.getEnumKeys(GachaType).forEach(gt => {
+    for (const gt of Utils.getEnumKeys(GachaType)) {
       const key = gt.toLowerCase();
       this.loadImage(`gacha_${key}`, "egg");
       this.loadAtlas(`gacha_underlay_${key}`, "egg");
-    });
+    }
     this.loadImage("gacha_glass", "egg");
     this.loadImage("gacha_eggs", "egg");
     this.loadAtlas("gacha_hatch", "egg");
@@ -319,6 +325,7 @@ export class LoadingScene extends SceneBase {
     this.loadSe("pb_move");
     this.loadSe("pb_catch");
     this.loadSe("pb_lock");
+    this.loadSe("crit_throw");
 
     this.loadSe("pb_tray_enter");
     this.loadSe("pb_tray_ball");
@@ -345,7 +352,11 @@ export class LoadingScene extends SceneBase {
     this.loadBgm("evolution", "bw/evolution.mp3");
     this.loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
 
-    this.load.plugin("rextexteditplugin", "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js", true);
+    this.load.plugin(
+      "rextexteditplugin",
+      "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js",
+      true,
+    );
 
     this.loadLoadingScreen();
 
@@ -353,6 +364,7 @@ export class LoadingScene extends SceneBase {
     initVouchers();
     initStatsKeys();
     initPokemonPrevolutions();
+    initPokemonStarters();
     initBiomes();
     initEggMoves();
     initPokemonForms();
@@ -434,12 +446,22 @@ export class LoadingScene extends SceneBase {
       style: {
         font: "48px emerald",
         color: "#ffffff",
-        align: "center"
+        align: "center",
       },
     });
     disclaimerDescriptionText.setOrigin(0.5, 0.5);
 
-    loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText, disclaimerText, disclaimerDescriptionText);
+    loadingGraphics.push(
+      bg,
+      graphics,
+      progressBar,
+      progressBox,
+      logo,
+      percentText,
+      assetText,
+      disclaimerText,
+      disclaimerDescriptionText,
+    );
 
     if (!mobile) {
       loadingGraphics.map(g => g.setVisible(false));
@@ -454,7 +476,9 @@ export class LoadingScene extends SceneBase {
         ease: "Sine.easeIn",
         onComplete: () => video.destroy(),
       });
-      loadingGraphics.forEach(g => g.setVisible(true));
+      for (const g of loadingGraphics) {
+        g.setVisible(true);
+      }
     });
     intro.setOrigin(0, 0);
     intro.setScale(3);
@@ -495,7 +519,9 @@ export class LoadingScene extends SceneBase {
     });
 
     this.load.on(this.LOAD_EVENTS.COMPLETE, () => {
-      loadingGraphics.forEach(go => go.destroy());
+      for (const go of loadingGraphics) {
+        go.destroy();
+      }
       intro.destroy();
     });
   }

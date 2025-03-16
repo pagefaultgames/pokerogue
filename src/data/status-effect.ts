@@ -1,16 +1,15 @@
 import { randIntRange } from "#app/utils";
 import { StatusEffect } from "#enums/status-effect";
-import i18next, { ParseKeys } from "i18next";
-
-export { StatusEffect };
+import type { ParseKeys } from "i18next";
+import i18next from "i18next";
 
 export class Status {
   public effect: StatusEffect;
   /** Toxic damage is `1/16 max HP * toxicTurnCount` */
-  public toxicTurnCount: number = 0;
+  public toxicTurnCount = 0;
   public sleepTurnsRemaining?: number;
 
-  constructor(effect: StatusEffect, toxicTurnCount: number = 0, sleepTurnsRemaining?: number) {
+  constructor(effect: StatusEffect, toxicTurnCount = 0, sleepTurnsRemaining?: number) {
     this.effect = effect;
     this.toxicTurnCount = toxicTurnCount;
     this.sleepTurnsRemaining = sleepTurnsRemaining;
@@ -24,7 +23,9 @@ export class Status {
   }
 
   isPostTurn(): boolean {
-    return this.effect === StatusEffect.POISON || this.effect === StatusEffect.TOXIC || this.effect === StatusEffect.BURN;
+    return (
+      this.effect === StatusEffect.POISON || this.effect === StatusEffect.TOXIC || this.effect === StatusEffect.BURN
+    );
   }
 }
 
@@ -47,17 +48,24 @@ function getStatusEffectMessageKey(statusEffect: StatusEffect | undefined): stri
   }
 }
 
-export function getStatusEffectObtainText(statusEffect: StatusEffect | undefined, pokemonNameWithAffix: string, sourceText?: string): string {
+export function getStatusEffectObtainText(
+  statusEffect: StatusEffect | undefined,
+  pokemonNameWithAffix: string,
+  sourceText?: string,
+): string {
   if (statusEffect === StatusEffect.NONE) {
     return "";
   }
 
   if (!sourceText) {
-    const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain`as ParseKeys;
+    const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain` as ParseKeys;
     return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
   }
-  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtainSource`as ParseKeys;
-  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix, sourceText: sourceText });
+  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtainSource` as ParseKeys;
+  return i18next.t(i18nKey, {
+    pokemonNameWithAffix: pokemonNameWithAffix,
+    sourceText: sourceText,
+  });
 }
 
 export function getStatusEffectActivationText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
@@ -108,17 +116,17 @@ export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): 
 }
 
 /**
-* Returns a random non-volatile StatusEffect
-*/
+ * Returns a random non-volatile StatusEffect
+ */
 export function generateRandomStatusEffect(): StatusEffect {
   return randIntRange(1, 6);
 }
 
 /**
-* Returns a random non-volatile StatusEffect between the two provided
-* @param statusEffectA The first StatusEffect
-* @param statusEffectA The second StatusEffect
-*/
+ * Returns a random non-volatile StatusEffect between the two provided
+ * @param statusEffectA The first StatusEffect
+ * @param statusEffectA The second StatusEffect
+ */
 export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB: StatusEffect): StatusEffect {
   if (statusEffectA === StatusEffect.NONE || statusEffectA === StatusEffect.FAINT) {
     return statusEffectB;
@@ -131,10 +139,10 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
 }
 
 /**
-* Returns a random non-volatile StatusEffect between the two provided
-* @param statusA The first Status
-* @param statusB The second Status
-*/
+ * Returns a random non-volatile StatusEffect between the two provided
+ * @param statusA The first Status
+ * @param statusB The second Status
+ */
 export function getRandomStatus(statusA: Status | null, statusB: Status | null): Status | null {
   if (!statusA || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
     return statusB;
@@ -143,7 +151,6 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
     return statusA;
   }
 
-
   return randIntRange(0, 2) ? statusA : statusB;
 }
 
@@ -151,19 +158,19 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
  * Gets all non volatile status effects
  * @returns A list containing all non volatile status effects
  */
-export function getNonVolatileStatusEffects():Array<StatusEffect> {
+export function getNonVolatileStatusEffects(): Array<StatusEffect> {
   return [
     StatusEffect.POISON,
     StatusEffect.TOXIC,
     StatusEffect.PARALYSIS,
     StatusEffect.SLEEP,
     StatusEffect.FREEZE,
-    StatusEffect.BURN
+    StatusEffect.BURN,
   ];
 }
 
 /**
- * Returns whether a statuss effect is non volatile.
+ * Returns whether a status effect is non volatile.
  * Non-volatile status condition is a status that remains after being switched out.
  * @param status The status to check
  */

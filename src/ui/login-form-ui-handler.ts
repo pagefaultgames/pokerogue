@@ -1,12 +1,15 @@
-import { FormModalUiHandler, InputFieldConfig } from "./form-modal-ui-handler";
-import { ModalConfig } from "./modal-ui-handler";
+import type { InputFieldConfig } from "./form-modal-ui-handler";
+import { FormModalUiHandler } from "./form-modal-ui-handler";
+import type { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
 import i18next from "i18next";
-import BattleScene from "#app/battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
-import { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { globalScene } from "#app/global-scene";
+import JSZip from "jszip";
 
 interface BuildInteractableImageOpts {
   scale?: number;
@@ -26,37 +29,47 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   private googleImage: Phaser.GameObjects.Image;
   private discordImage: Phaser.GameObjects.Image;
   private usernameInfoImage: Phaser.GameObjects.Image;
+  private saveDownloadImage: Phaser.GameObjects.Image;
   private externalPartyContainer: Phaser.GameObjects.Container;
   private infoContainer: Phaser.GameObjects.Container;
   private externalPartyBg: Phaser.GameObjects.NineSlice;
   private externalPartyTitle: Phaser.GameObjects.Text;
-  constructor(scene: BattleScene, mode: Mode | null = null) {
-    super(scene, mode);
+  constructor(mode: Mode | null = null) {
+    super(mode);
   }
 
   setup(): void {
     super.setup();
     this.buildExternalPartyContainer();
 
-    this.infoContainer = this.scene.add.container(0, 0);
+    this.infoContainer = globalScene.add.container(0, 0);
 
     this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
       x: 20,
-      scale: 0.5
+      scale: 0.5,
+    });
+
+    this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", {
+      x: 0,
+      scale: 0.75,
     });
 
     this.infoContainer.add(this.usernameInfoImage);
+    this.infoContainer.add(this.saveDownloadImage);
     this.getUi().add(this.infoContainer);
     this.infoContainer.setVisible(false);
     this.infoContainer.disableInteractive();
   }
 
   private buildExternalPartyContainer() {
-    this.externalPartyContainer = this.scene.add.container(0, 0);
-    this.externalPartyContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 12, this.scene.game.canvas.height / 12), Phaser.Geom.Rectangle.Contains);
-    this.externalPartyTitle = addTextObject(this.scene, 0, 4, "", TextStyle.SETTINGS_LABEL);
+    this.externalPartyContainer = globalScene.add.container(0, 0);
+    this.externalPartyContainer.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 12, globalScene.game.canvas.height / 12),
+      Phaser.Geom.Rectangle.Contains,
+    );
+    this.externalPartyTitle = addTextObject(0, 4, "", TextStyle.SETTINGS_LABEL);
     this.externalPartyTitle.setOrigin(0.5, 0);
-    this.externalPartyBg = addWindow(this.scene, 0, 0, 0, 0);
+    this.externalPartyBg = addWindow(0, 0, 0, 0);
     this.externalPartyContainer.add(this.externalPartyBg);
     this.externalPartyContainer.add(this.externalPartyTitle);
 
@@ -72,7 +85,11 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getModalTitle(_config?: ModalConfig): string {
-    return i18next.t("menu:login");
+    let key = "menu:login";
+    if (import.meta.env.VITE_SERVER_URL === "https://apibeta.pokerogue.net") {
+      key = "menu:loginBeta";
+    }
+    return i18next.t(key);
   }
 
   override getWidth(_config?: ModalConfig): number {
@@ -80,11 +97,11 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   override getMargin(_config?: ModalConfig): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   override getButtonLabels(_config?: ModalConfig): string[] {
-    return [ i18next.t("menu:login"), i18next.t("menu:register") ];
+    return [i18next.t("menu:login"), i18next.t("menu:register")];
   }
 
   override getReadableErrorMessage(error: string): string {
@@ -113,43 +130,40 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   override getInputFieldConfigs(): InputFieldConfig[] {
     const inputFieldConfigs: InputFieldConfig[] = [];
     inputFieldConfigs.push({ label: i18next.t("menu:username") });
-    inputFieldConfigs.push({ label: i18next.t("menu:password"), isPassword: true });
+    inputFieldConfigs.push({
+      label: i18next.t("menu:password"),
+      isPassword: true,
+    });
     return inputFieldConfigs;
   }
 
   override show(args: any[]): boolean {
     if (super.show(args)) {
-
       const config = args[0] as ModalConfig;
       this.processExternalProvider(config);
       const originalLoginAction = this.submitAction;
-      this.submitAction = (_) => {
+      this.submitAction = _ => {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
-        this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
+        globalScene.ui.setMode(Mode.LOADING, { buttonActions: [] });
         const onFail = error => {
-          this.scene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-          this.scene.ui.playError();
+          globalScene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+          globalScene.ui.playError();
         };
         if (!this.inputs[0].text) {
           return onFail(i18next.t("menu:emptyUsername"));
         }
-        Utils.apiPost("account/login", `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, "application/x-www-form-urlencoded")
-          .then(response => {
-            if (!response.ok) {
-              return response.text();
-            }
-            return response.json();
-          })
-          .then(response => {
-            if (response.hasOwnProperty("token")) {
-              Utils.setCookie(Utils.sessionIdKey, response.token);
-              originalLoginAction && originalLoginAction();
-            } else {
-              onFail(response);
-            }
-          });
+
+        const [usernameInput, passwordInput] = this.inputs;
+
+        pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
+          if (!error && originalLoginAction) {
+            originalLoginAction();
+          } else {
+            onFail(error);
+          }
+        });
       };
 
       return true;
@@ -164,7 +178,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [ this.discordImage, this.googleImage, this.usernameInfoImage ].forEach((img) => img.off("pointerdown"));
+    [this.discordImage, this.googleImage, this.usernameInfoImage, this.saveDownloadImage].forEach(img =>
+      img.off("pointerdown"),
+    );
   }
 
   private processExternalProvider(config: ModalConfig): void {
@@ -182,6 +198,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(true);
     this.getUi().moveTo(this.infoContainer, this.getUi().length - 1);
     this.usernameInfoImage.setPositionRelative(this.infoContainer, 0, 0);
+    this.saveDownloadImage.setPositionRelative(this.infoContainer, 20, 0);
 
     this.discordImage.on("pointerdown", () => {
       const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
@@ -198,9 +215,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     });
 
     const onFail = error => {
-      this.scene.ui.setMode(Mode.LOADING, { buttonActions: []});
-      this.scene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-      this.scene.ui.playError();
+      globalScene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+      globalScene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+      globalScene.ui.playError();
     };
 
     this.usernameInfoImage.on("pointerdown", () => {
@@ -213,53 +230,78 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           options.push({
             label: dataKeys[i].replace(keyToFind, ""),
             handler: () => {
-              this.scene.ui.revertMode();
+              globalScene.ui.revertMode();
               this.infoContainer.disableInteractive();
               return true;
-            }
+            },
           });
         }
-        this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+        globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
           options: options,
-          delay: 1000
+          delay: 1000,
         });
-        this.infoContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width, this.scene.game.canvas.height), Phaser.Geom.Rectangle.Contains);
+        this.infoContainer.setInteractive(
+          new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),
+          Phaser.Geom.Rectangle.Contains,
+        );
       } else {
         if (dataKeys.length > 2) {
           return onFail(this.ERR_TOO_MANY_SAVES);
-        } else {
-          return onFail(this.ERR_NO_SAVES);
         }
+        return onFail(this.ERR_NO_SAVES);
+      }
+    });
+
+    this.saveDownloadImage.on("pointerdown", () => {
+      // find all data_ and sessionData keys, put them in a .txt file and download everything in a single zip
+      const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
+      const keyToFind = "data_";
+      const sessionKeyToFind = "sessionData";
+      const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
+      const sessionKeys = localStorageKeys.filter(ls => ls.indexOf(sessionKeyToFind) >= 0);
+      if (dataKeys.length > 0 || sessionKeys.length > 0) {
+        const zip = new JSZip();
+        for (let i = 0; i < dataKeys.length; i++) {
+          zip.file(dataKeys[i] + ".prsv", localStorage.getItem(dataKeys[i])!);
+        }
+        for (let i = 0; i < sessionKeys.length; i++) {
+          zip.file(sessionKeys[i] + ".prsv", localStorage.getItem(sessionKeys[i])!);
+        }
+        zip.generateAsync({ type: "blob" }).then(content => {
+          const url = URL.createObjectURL(content);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "pokerogue_saves.zip";
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      } else {
+        return onFail(this.ERR_NO_SAVES);
       }
     });
 
     this.externalPartyContainer.setAlpha(0);
-    this.scene.tweens.add({
+    globalScene.tweens.add({
       targets: this.externalPartyContainer,
       duration: Utils.fixedInt(1000),
       ease: "Sine.easeInOut",
       y: "-=24",
-      alpha: 1
+      alpha: 1,
     });
 
     this.infoContainer.setAlpha(0);
-    this.scene.tweens.add({
+    globalScene.tweens.add({
       targets: this.infoContainer,
       duration: Utils.fixedInt(1000),
       ease: "Sine.easeInOut",
       y: "-=24",
-      alpha: 1
+      alpha: 1,
     });
   }
 
   private buildInteractableImage(texture: string, name: string, opts: BuildInteractableImageOpts = {}) {
-    const {
-      scale = 0.07,
-      x = 0,
-      y = 0,
-      origin = { x: 0, y: 0 }
-    } = opts;
-    const img = this.scene.add.image(x, y, texture);
+    const { scale = 0.07, x = 0, y = 0, origin = { x: 0, y: 0 } } = opts;
+    const img = globalScene.add.image(x, y, texture);
     img.setName(name);
     img.setOrigin(origin.x, origin.y);
     img.setScale(scale);

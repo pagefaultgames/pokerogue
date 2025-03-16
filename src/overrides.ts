@@ -1,27 +1,37 @@
+import { type PokeballCounts } from "#app/battle-scene";
+import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
+import { Gender } from "#app/data/gender";
+import { FormChangeItem } from "#app/data/pokemon-forms";
+import { Variant } from "#app/data/variant";
+import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
+import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
 import { Moves } from "#enums/moves";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { type PokeballCounts } from "./battle-scene";
-import { Gender } from "./data/gender";
-import { Variant } from "./data/variant";
-import { type ModifierOverride } from "./modifier/modifier-type";
-import { Unlockables } from "./system/unlockables";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 
+/**
+ * This comment block exists to prevent IDEs from automatically removing unused imports
+ * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
+ * {@linkcode Stat}, {@linkcode PokemonType}
+ */
 /**
  * Overrides that are using when testing different in game situations
  *
  * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}
  *
- * If an override name starts with "STARTING", it will apply when a new run begins
+ * If an override name starts with "STARTING", it will only apply when a new run begins.
  *
  * @example
  * ```
@@ -38,7 +48,7 @@ const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
  * ---
  * Defaults for Overrides that are used when testing different in game situations
  *
- * If an override name starts with "STARTING", it will apply when a new run begins
+ * If an override name starts with "STARTING", it will only apply when a new run begins.
  */
 class DefaultOverrides {
   // -----------------
@@ -46,13 +56,28 @@ class DefaultOverrides {
   // -----------------
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
+  readonly DAILY_RUN_SEED_OVERRIDE: string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
-  readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null = null;
+  /**
+   * If `null`, ignore this override.
+   *
+   * If `"single"`, set every non-trainer battle to be a single battle.
+   *
+   * If `"double"`, set every battle (including trainer battles) to be a double battle.
+   *
+   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers, and follow the `"single"` rule on odd wave numbers.
+   *
+   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
+   */
+  readonly BATTLE_TYPE_OVERRIDE: BattleStyle | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
-  /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
+  /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  /** Sets the level cap to this number during experience gain calculations. Set to `0` to disable override & use normal wave-based level caps,
+  or any negative number to set it to 9 quadrillion (effectively disabling it). */
+  readonly LEVEL_CAP_OVERRIDE: number = 0;
   readonly NEVER_CRIT_OVERRIDE: boolean = false;
   /** default 1000 */
   readonly STARTING_MONEY_OVERRIDE: number = 0;
@@ -75,6 +100,8 @@ class DefaultOverrides {
   readonly ITEM_UNLOCK_OVERRIDE: Unlockables[] = [];
   /** Set to `true` to show all tutorials */
   readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
+  /** Set to `true` to be able to re-earn already unlocked achievements */
+  readonly ACHIEVEMENTS_REUNLOCK_OVERRIDE: boolean = false;
   /** Set to `true` to force Paralysis and Freeze to always activate, or `false` to force them to not activate */
   readonly STATUS_ACTIVATION_OVERRIDE: boolean | null = null;
 
@@ -109,9 +136,10 @@ class DefaultOverrides {
   /**
    * This will override the species of the fusion
    */
-  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | number = 0;
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+  readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
@@ -129,10 +157,11 @@ class DefaultOverrides {
   /**
    * This will override the species of the fusion only when the opponent is already a fusion
    */
-  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | integer = 0;
+  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | number = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+  readonly OPP_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
   readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
@@ -164,7 +193,11 @@ class DefaultOverrides {
   // MYSTERY ENCOUNTER OVERRIDES
   // -------------------------
 
-  /** 1 to 256, set to null to ignore */
+  /**
+   * `1` (almost never) to `256` (always), set to `null` to disable the override
+   *
+   * Note: Make sure `STARTING_WAVE_OVERRIDE > 10`, otherwise MEs won't trigger
+   */
   readonly MYSTERY_ENCOUNTER_RATE_OVERRIDE: number | null = null;
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
   readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
@@ -229,3 +262,5 @@ export default {
   ...defaultOverrides,
   ...overrides
 } satisfies InstanceType<typeof DefaultOverrides>;
+
+export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
