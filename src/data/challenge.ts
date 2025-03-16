@@ -1311,6 +1311,11 @@ function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrPr
     return true;
   }
   pokemonFormChanges[species.speciesId].forEach(f1 => {
+    // Exclude form changes that require the mon to be on the field to begin with,
+    // such as Castform
+    if (!("item" in f1)) {
+      return;
+    }
     species.forms.forEach((f2, formIndex) => {
       if (f1.formKey === f2.formKey) {
         const formProps = { ...props };
