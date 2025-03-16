@@ -300,19 +300,18 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
             }
           }
 
-            // If Pokemon is still not shiny or with HA, give the Pokemon a random Common egg move in its moveset
-            if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
-              const eggMoves = tradePokemon.getEggMoves();
-              if (eggMoves) {
-                // Cannot gen the rare egg move, only 1 of the first 3 common moves
-                const eggMove = eggMoves[randSeedInt(3)];
-                if (!tradePokemon.moveset.some(m => m.moveId === eggMove)) {
-                  if (tradePokemon.moveset.length < 4) {
-                    tradePokemon.moveset.push(new PokemonMove(eggMove));
-                  } else {
-                    const eggMoveIndex = randSeedInt(4);
-                    tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
-                  }
+          // If Pokemon is still not shiny or with HA, give the Pokemon a random Common egg move in its moveset
+          if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
+            const eggMoves = tradePokemon.getEggMoves();
+            if (eggMoves) {
+              // Cannot gen the rare egg move, only 1 of the first 3 common moves
+              const eggMove = eggMoves[randSeedInt(3)];
+              if (!tradePokemon.moveset.some(m => m.moveId === eggMove)) {
+                if (tradePokemon.moveset.length < 4) {
+                  tradePokemon.moveset.push(new PokemonMove(eggMove));
+                } else {
+                  const eggMoveIndex = randSeedInt(4);
+                  tradePokemon.moveset[eggMoveIndex] = new PokemonMove(eggMove);
                 }
               }
             }
