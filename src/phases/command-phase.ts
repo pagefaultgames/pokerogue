@@ -99,9 +99,19 @@ export class CommandPhase extends FieldPhase {
 
     const moveQueue = playerPokemon.getMoveQueue();
 
-    while (moveQueue.length && moveQueue[0]
-        && moveQueue[0].move && !moveQueue[0].virtual && (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move)
-          || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(playerPokemon, moveQueue[0].ignorePP))) {
+    while (
+      moveQueue.length &&
+      moveQueue[0] &&
+      moveQueue[0].move &&
+      !moveQueue[0].virtual &&
+      (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move) ||
+        !playerPokemon
+          .getMoveset()
+          [playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(
+            playerPokemon,
+            moveQueue[0].ignorePP,
+          ))
+    ) {
       moveQueue.shift();
     }
 
@@ -111,7 +121,10 @@ export class CommandPhase extends FieldPhase {
         this.handleCommand(Command.FIGHT, -1);
       } else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
-        if ((moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) || queuedMove.virtual) {
+        if (
+          (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) ||
+          queuedMove.virtual
+        ) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
         } else {
           globalScene.ui.setMode(Mode.COMMAND, this.fieldIndex);
@@ -138,11 +151,12 @@ export class CommandPhase extends FieldPhase {
       case Command.TERA:
       case Command.FIGHT:
         let useStruggle = false;
-        const turnMove: TurnMove | undefined = (args.length === 2 ? (args[1] as TurnMove) : undefined);
-        if (cursor === -1 ||
-            playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
-            (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
-
+        const turnMove: TurnMove | undefined = args.length === 2 ? (args[1] as TurnMove) : undefined;
+        if (
+          cursor === -1 ||
+          playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
+          (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)
+        ) {
           let moveId: Moves;
           if (useStruggle) {
             moveId = Moves.STRUGGLE;
@@ -181,7 +195,11 @@ export class CommandPhase extends FieldPhase {
           }
           if (turnCommand.move && (moveTargets.targets.length <= 1 || moveTargets.multiple)) {
             turnCommand.move.targets = moveTargets.targets;
-          } else if (turnCommand.move && playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1) {
+          } else if (
+            turnCommand.move &&
+            playerPokemon.getTag(BattlerTagType.CHARGING) &&
+            playerPokemon.getMoveQueue().length >= 1
+          ) {
             turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
           } else {
             globalScene.unshiftPhase(new SelectTargetPhase(this.fieldIndex));

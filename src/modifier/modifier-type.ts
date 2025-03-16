@@ -1168,7 +1168,10 @@ export class TmModifierType extends PokemonModifierType {
       `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
       (_type, args) => new TmModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
-        if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.getMoveset().filter(m => m.moveId === moveId).length) {
+        if (
+          pokemon.compatibleTms.indexOf(moveId) === -1 ||
+          pokemon.getMoveset().filter(m => m.moveId === moveId).length
+        ) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -1327,7 +1330,13 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as PokemonType, 20);
       }
 
-      const attackMoveTypes = party.map(p => p.getMoveset().map(m => m.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
+      const attackMoveTypes = party.flatMap(p =>
+        p
+          .getMoveset()
+          .map(m => m.getMove())
+          .filter(m => m instanceof AttackMove)
+          .map(m => m.type),
+      );
       if (!attackMoveTypes.length) {
         return null;
       }
@@ -1519,7 +1528,9 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       }
       const partyMemberCompatibleTms = party.map(p => {
         const previousLevelMoves = p.getLearnableLevelMoves();
-        return (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m.moveId === tm) && !previousLevelMoves.find(lm=>lm === tm));
+        return (p as PlayerPokemon).compatibleTms.filter(
+          tm => !p.moveset.find(m => m.moveId === tm) && !previousLevelMoves.find(lm => lm === tm),
+        );
       });
       const tierUniqueCompatibleTms = partyMemberCompatibleTms
         .flat()
@@ -2390,24 +2401,66 @@ const modifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.POKEBALL, () => (hasMaximumBalls(PokeballType.POKEBALL) ? 0 : 6), 6),
     new WeightedModifierType(modifierTypes.RARE_CANDY, 2),
-    new WeightedModifierType(modifierTypes.POTION, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 10 && p.getHpRatio() <= 0.875) && !p.isFainted()).length, 3);
-      return thresholdPartyMemberCount * 3;
-    }, 9),
-    new WeightedModifierType(modifierTypes.SUPER_POTION, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 25 && p.getHpRatio() <= 0.75) && !p.isFainted()).length, 3);
-      return thresholdPartyMemberCount;
-    }, 3),
-    new WeightedModifierType(modifierTypes.ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA)
-        && p.getMoveset().filter(m => m.ppUsed && (m.getMovePp() - m.ppUsed) <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2)).length).length, 3);
-      return thresholdPartyMemberCount * 3;
-    }, 9),
-    new WeightedModifierType(modifierTypes.MAX_ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA)
-        && p.getMoveset().filter(m => m.ppUsed && (m.getMovePp() - m.ppUsed) <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2)).length).length, 3);
-      return thresholdPartyMemberCount;
-    }, 3),
+    new WeightedModifierType(
+      modifierTypes.POTION,
+      (party: Pokemon[]) => {
+        const thresholdPartyMemberCount = Math.min(
+          party.filter(p => p.getInverseHp() >= 10 && p.getHpRatio() <= 0.875 && !p.isFainted()).length,
+          3,
+        );
+        return thresholdPartyMemberCount * 3;
+      },
+      9,
+    ),
+    new WeightedModifierType(
+      modifierTypes.SUPER_POTION,
+      (party: Pokemon[]) => {
+        const thresholdPartyMemberCount = Math.min(
+          party.filter(p => p.getInverseHp() >= 25 && p.getHpRatio() <= 0.75 && !p.isFainted()).length,
+          3,
+        );
+        return thresholdPartyMemberCount;
+      },
+      3,
+    ),
+    new WeightedModifierType(
+      modifierTypes.ETHER,
+      (party: Pokemon[]) => {
+        const thresholdPartyMemberCount = Math.min(
+          party.filter(
+            p =>
+              p.hp &&
+              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              p
+                .getMoveset()
+                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
+                .length,
+          ).length,
+          3,
+        );
+        return thresholdPartyMemberCount * 3;
+      },
+      9,
+    ),
+    new WeightedModifierType(
+      modifierTypes.MAX_ETHER,
+      (party: Pokemon[]) => {
+        const thresholdPartyMemberCount = Math.min(
+          party.filter(
+            p =>
+              p.hp &&
+              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              p
+                .getMoveset()
+                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
+                .length,
+          ).length,
+          3,
+        );
+        return thresholdPartyMemberCount;
+      },
+      3,
+    ),
     new WeightedModifierType(modifierTypes.LURE, lureWeightFunc(10, 2)),
     new WeightedModifierType(modifierTypes.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
@@ -2419,54 +2472,136 @@ const modifierPool: ModifierPool = {
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), 6),
     new WeightedModifierType(modifierTypes.PP_UP, 2),
-    new WeightedModifierType(modifierTypes.FULL_HEAL, (party: Pokemon[]) => {
-      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
-        if (i instanceof TurnStatusEffectModifier) {
-          return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-        }
-        return false;
-      })).length, 3);
-      return statusEffectPartyMemberCount * 6;
-    }, 18),
-    new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
-      const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
-      return faintedPartyMemberCount * 9;
-    }, 27),
-    new WeightedModifierType(modifierTypes.MAX_REVIVE, (party: Pokemon[]) => {
-      const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
-      return faintedPartyMemberCount * 3;
-    }, 9),
-    new WeightedModifierType(modifierTypes.SACRED_ASH, (party: Pokemon[]) => {
-      return party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2) ? 1 : 0;
-    }, 1),
-    new WeightedModifierType(modifierTypes.HYPER_POTION, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 100 && p.getHpRatio() <= 0.625) && !p.isFainted()).length, 3);
-      return thresholdPartyMemberCount * 3;
-    }, 9),
-    new WeightedModifierType(modifierTypes.MAX_POTION, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => (p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3);
-      return thresholdPartyMemberCount;
-    }, 3),
-    new WeightedModifierType(modifierTypes.FULL_RESTORE, (party: Pokemon[]) => {
-      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status && !p.getHeldItems().some(i => {
-        if (i instanceof TurnStatusEffectModifier) {
-          return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-        }
-        return false;
-      })).length, 3);
-      const thresholdPartyMemberCount = Math.floor((Math.min(party.filter(p => (p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5) && !p.isFainted()).length, 3) + statusEffectPartyMemberCount) / 2);
-      return thresholdPartyMemberCount;
-    }, 3),
-    new WeightedModifierType(modifierTypes.ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA)
-        && p.getMoveset().filter(m => m.ppUsed && (m.getMovePp() - m.ppUsed) <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2)).length).length, 3);
-      return thresholdPartyMemberCount * 3;
-    }, 9),
-    new WeightedModifierType(modifierTypes.MAX_ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA)
-        && p.getMoveset().filter(m => m.ppUsed && (m.getMovePp() - m.ppUsed) <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2)).length).length, 3);
-      return thresholdPartyMemberCount;
-    }, 3),
+    new WeightedModifierType(
+      modifierTypes.FULL_HEAL,
+      (party: Pokemon[]) => {
+        const statusEffectPartyMemberCount = Math.min(
+          party.filter(
+            p =>
+              p.hp &&
+              !!p.status &&
+              !p.getHeldItems().some(i => {
+                if (i instanceof TurnStatusEffectModifier) {
+                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
+                }
+                return false;
+              }),
+          ).length,
+          3,
+        );
+        return statusEffectPartyMemberCount * 6;
+      },
+      18,
+    ),
+    new WeightedModifierType(
+      modifierTypes.REVIVE,
+      (party: Pokemon[]) => {
+        const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
+        return faintedPartyMemberCount * 9;
+      },
+      27,
+    ),
+    new WeightedModifierType(
+      modifierTypes.MAX_REVIVE,
+      (party: Pokemon[]) => {
+        const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
+        return faintedPartyMemberCount * 3;
+      },
+      9,
+    ),
+    new WeightedModifierType(
+      modifierTypes.SACRED_ASH,
+      (party: Pokemon[]) => {
+        return party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2) ? 1 : 0;
+      },
+      1,
+    ),
+    new WeightedModifierType(
+      modifierTypes.HYPER_POTION,
+      (party: Pokemon[]) => {
+        const thresholdPartyMemberCount = Math.min(
+          party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.625 && !p.isFainted()).length,
+          3,
+        );
+        return thresholdPartyMemberCount * 3;
+      },
+      9,
+    ),
+    new WeightedModifierType(
+      modifierTypes.MAX_POTION,
+      (party: Pokemon[]) => {
+        const thresholdPartyMemberCount = Math.min(
+          party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted()).length,
+          3,
+        );
+        return thresholdPartyMemberCount;
+      },
+      3,
+    ),
+    new WeightedModifierType(
+      modifierTypes.FULL_RESTORE,
+      (party: Pokemon[]) => {
+        const statusEffectPartyMemberCount = Math.min(
+          party.filter(
+            p =>
+              p.hp &&
+              !!p.status &&
+              !p.getHeldItems().some(i => {
+                if (i instanceof TurnStatusEffectModifier) {
+                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
+                }
+                return false;
+              }),
+          ).length,
+          3,
+        );
+        const thresholdPartyMemberCount = Math.floor(
+          (Math.min(party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted()).length, 3) +
+            statusEffectPartyMemberCount) /
+            2,
+        );
+        return thresholdPartyMemberCount;
+      },
+      3,
+    ),
+    new WeightedModifierType(
+      modifierTypes.ELIXIR,
+      (party: Pokemon[]) => {
+        const thresholdPartyMemberCount = Math.min(
+          party.filter(
+            p =>
+              p.hp &&
+              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              p
+                .getMoveset()
+                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
+                .length,
+          ).length,
+          3,
+        );
+        return thresholdPartyMemberCount * 3;
+      },
+      9,
+    ),
+    new WeightedModifierType(
+      modifierTypes.MAX_ELIXIR,
+      (party: Pokemon[]) => {
+        const thresholdPartyMemberCount = Math.min(
+          party.filter(
+            p =>
+              p.hp &&
+              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              p
+                .getMoveset()
+                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
+                .length,
+          ).length,
+          3,
+        );
+        return thresholdPartyMemberCount;
+      },
+      3,
+    ),
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
     new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),

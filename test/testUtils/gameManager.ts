@@ -284,17 +284,29 @@ export default class GameManager {
    * @param movePosition The index of the move in the pokemon's moveset array
    */
   selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
-    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition].getMove();
-      if (!move.isMultiTarget()) {
-        handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
-      }
-      if (move.isMultiTarget() && targetIndex !== undefined) {
-        throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
-      }
-      handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnStartPhase) || this.isCurrentPhase(TurnEndPhase));
+    this.onNextPrompt(
+      "SelectTargetPhase",
+      Mode.TARGET_SELECT,
+      () => {
+        const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+        const move = (this.scene.getCurrentPhase() as SelectTargetPhase)
+          .getPokemon()
+          .getMoveset()
+          [movePosition].getMove();
+        if (!move.isMultiTarget()) {
+          handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
+        }
+        if (move.isMultiTarget() && targetIndex !== undefined) {
+          throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
+        }
+        handler.processInput(Button.ACTION);
+      },
+      () =>
+        this.isCurrentPhase(CommandPhase) ||
+        this.isCurrentPhase(MovePhase) ||
+        this.isCurrentPhase(TurnStartPhase) ||
+        this.isCurrentPhase(TurnEndPhase),
+    );
   }
 
   /** Faint all opponents currently on the field */

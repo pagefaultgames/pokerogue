@@ -818,7 +818,11 @@ async function addEggMoveToNewPokemonMoveset(
  * @param newPokemonGeneratedMoveset
  * @param newEggMoveIndex
  */
-function addFavoredMoveToNewPokemonMoveset(newPokemon: PlayerPokemon, newPokemonGeneratedMoveset: (PokemonMove)[], newEggMoveIndex: number | null) {
+function addFavoredMoveToNewPokemonMoveset(
+  newPokemon: PlayerPokemon,
+  newPokemonGeneratedMoveset: PokemonMove[],
+  newEggMoveIndex: number | null,
+) {
   let favoredMove: PokemonMove | null = null;
   for (const move of newPokemonGeneratedMoveset) {
     // Needs to match first type, second type will be replaced

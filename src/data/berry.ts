@@ -147,7 +147,9 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         if (pokemon.battleData) {
           pokemon.battleData.berriesEaten.push(berryType);
         }
-        const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio()) ? pokemon.getMoveset().find(m => !m.getPpRatio()) : pokemon.getMoveset().find(m => m.getPpRatio() < 1);
+        const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio())
+          ? pokemon.getMoveset().find(m => !m.getPpRatio())
+          : pokemon.getMoveset().find(m => m.getPpRatio() < 1);
         if (ppRestoreMove !== undefined) {
           ppRestoreMove!.ppUsed = Math.max(ppRestoreMove!.ppUsed - 10, 0);
           globalScene.queueMessage(
