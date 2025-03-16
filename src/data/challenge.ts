@@ -1281,7 +1281,11 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
     }
     if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
       pokemonEvolutions[checking].forEach(e => {
-        speciesToCheck.push(e.speciesId);
+        // Form check to deal with cases such as Basculin -> Basculegion
+        // TODO: does this miss anything if checking forms of a stage 2 Pokémon?
+        if (!e?.preFormKey || e.preFormKey === species.forms[props.formIndex].formKey) {
+          speciesToCheck.push(e.speciesId);
+        }
       });
     }
   }
