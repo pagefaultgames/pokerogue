@@ -2765,8 +2765,9 @@ export default class BattleScene extends SceneBase {
 
     this.currentPhase = this.phaseQueue.shift() ?? null;
 
+    const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
     // Check if there are any conditional phases queued
-    if (this.conditionalQueue?.length) {
+    while (this.conditionalQueue?.length) {
       // Retrieve the first conditional phase from the queue
       const conditionalPhase = this.conditionalQueue.shift();
       // Evaluate the condition associated with the phase
@@ -2775,11 +2776,12 @@ export default class BattleScene extends SceneBase {
         this.pushPhase(conditionalPhase[1]);
       } else if (conditionalPhase) {
         // If the condition is not met, re-add the phase back to the front of the conditional queue
-        this.conditionalQueue.unshift(conditionalPhase);
+        unactivatedConditionalPhases.push(conditionalPhase);
       } else {
         console.warn("condition phase is undefined/null!", conditionalPhase);
       }
     }
+    this.conditionalQueue.push(...unactivatedConditionalPhases);
 
     if (this.currentPhase) {
       console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
