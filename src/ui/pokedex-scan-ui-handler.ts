@@ -7,12 +7,11 @@ import { isNullOrUndefined } from "#app/utils";
 import { Mode } from "./ui";
 import { FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/ability";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { allSpecies } from "#app/data/pokemon-species";
 import i18next from "i18next";
 
 export default class PokedexScanUiHandler extends FormModalUiHandler {
-
   keys: string[];
   reducedKeys: string[];
   parallelKeys: string[];
@@ -20,10 +19,6 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
   moveKeys: string[];
   abilityKeys: string[];
   row: number;
-
-  constructor(mode) {
-    super(mode);
-  }
 
   setup() {
     super.setup();
@@ -33,20 +28,20 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
     this.abilityKeys = allAbilities.map(a => a.name);
   }
 
-  getModalTitle(config?: ModalConfig): string {
+  getModalTitle(_config?: ModalConfig): string {
     return i18next.t("pokedexUiHandler:scanChooseOption");
   }
 
-  getWidth(config?: ModalConfig): number {
+  getWidth(_config?: ModalConfig): number {
     return 300;
   }
 
-  getMargin(config?: ModalConfig): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+  getMargin(_config?: ModalConfig): [number, number, number, number] {
+    return [0, 0, 48, 0];
   }
 
-  getButtonLabels(config?: ModalConfig): string[] {
-    return [ i18next.t("pokedexUiHandler:scanSelect"), i18next.t("pokedexUiHandler:scanCancel") ];
+  getButtonLabels(_config?: ModalConfig): string[] {
+    return [i18next.t("pokedexUiHandler:scanSelect"), i18next.t("pokedexUiHandler:scanCancel")];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -67,7 +62,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
       case FilterTextRow.MOVE_2: {
         return [{ label: i18next.t("pokedexUiHandler:scanLabelMove") }];
       }
-      case FilterTextRow.ABILITY_1:{
+      case FilterTextRow.ABILITY_1: {
         return [{ label: i18next.t("pokedexUiHandler:scanLabelAbility") }];
       }
       case FilterTextRow.ABILITY_2: {
@@ -77,7 +72,6 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
         return [{ label: "" }];
       }
     }
-
   }
 
   reduceKeys(): void {
@@ -102,7 +96,6 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
     }
   }
 
-
   // args[2] is an index of FilterTextRow
   show(args: any[]): boolean {
     this.row = args[2];
@@ -115,8 +108,15 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
 
     this.reduceKeys();
 
+    setTimeout(() => {
+      input.setFocus(); // Focus after a short delay to avoid unwanted input
+    }, 50);
+
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
-      if ([ "escape", "space" ].some((v) => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) && ui.getMode() === Mode.AUTO_COMPLETE) {
+      if (
+        ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) &&
+        ui.getMode() === Mode.AUTO_COMPLETE
+      ) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
         ui.revertMode();
@@ -130,9 +130,11 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
       }
 
       let options: OptionSelectItem[] = [];
-      const filteredKeys = this.reducedKeys.filter((command) => command.toLowerCase().includes(inputObject.text.toLowerCase()));
+      const filteredKeys = this.reducedKeys.filter(command =>
+        command.toLowerCase().includes(inputObject.text.toLowerCase()),
+      );
       if (inputObject.text !== "" && filteredKeys.length > 0) {
-        options = filteredKeys.slice(0).map((value) => {
+        options = filteredKeys.slice(0).map(value => {
           return {
             label: value,
             handler: () => {
@@ -141,7 +143,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
               }
               ui.revertMode();
               return true;
-            }
+            },
           };
         });
       }
@@ -150,11 +152,10 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
         const modalOpts = {
           options: options,
           maxOptions: 5,
-          modalContainer: this.modalContainer
+          modalContainer: this.modalContainer,
         };
         ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOpts);
       }
-
     });
 
     if (super.show(args)) {
@@ -166,10 +167,11 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
       } else {
         this.inputs[0].text = args[1];
       }
-      this.submitAction = (_) => {
+      this.submitAction = _ => {
         if (ui.getMode() === Mode.POKEDEX_SCAN) {
           this.sanitizeInputs();
-          const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
+          const outputName = this.reducedKeys.includes(this.inputs[0].text) ? this.inputs[0].text : "";
+          const sanitizedName = btoa(unescape(encodeURIComponent(outputName)));
           config.buttonActions[0](sanitizedName);
           return true;
         }

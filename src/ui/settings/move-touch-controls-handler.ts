@@ -1,31 +1,30 @@
 import { globalScene } from "#app/global-scene";
 import type TouchControl from "#app/touch-controls";
 import type UI from "#app/ui/ui";
+import i18next from "i18next";
 
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
 export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
 
-
-type ControlPosition = { id: string, x: number, y: number };
+type ControlPosition = { id: string; x: number; y: number };
 
 type ConfigurationEventListeners = {
-  "touchstart": EventListener[]
-  "touchmove": EventListener[]
-  "touchend": EventListener[]
+  touchstart: EventListener[];
+  touchmove: EventListener[];
+  touchend: EventListener[];
 };
 
 type ToolbarRefs = {
-  toolbar: HTMLDivElement,
-  saveButton: HTMLDivElement
-  resetButton: HTMLDivElement
-  cancelButton: HTMLDivElement
+  toolbar: HTMLDivElement;
+  saveButton: HTMLDivElement;
+  resetButton: HTMLDivElement;
+  cancelButton: HTMLDivElement;
 };
 
 /**
  * Handles the dragging of touch controls around the screen.
  */
 export default class MoveTouchControlsHandler {
-
   /** The element that is currently being dragged */
   private draggingElement: HTMLElement | null = null;
 
@@ -40,9 +39,9 @@ export default class MoveTouchControlsHandler {
    * These are used to remove the event listeners when the configuration mode is disabled.
    */
   private configurationEventListeners: ConfigurationEventListeners = {
-    "touchstart": [],
-    "touchmove": [],
-    "touchend": []
+    touchstart: [],
+    touchmove: [],
+    touchend: [],
   };
 
   private overlay: Phaser.GameObjects.Container;
@@ -54,7 +53,7 @@ export default class MoveTouchControlsHandler {
     this.touchControls = touchControls;
     this.inConfigurationMode = false;
     this.setPositions(this.getSavedPositionsOfCurrentOrientation() ?? []);
-    window.addEventListener("resize", (event) => {
+    window.addEventListener("resize", _event => {
       const screenSize = this.getScreenSize();
       if (screenSize.width > screenSize.height !== this.isLandscapeMode) {
         this.changeOrientation(screenSize.width > screenSize.height);
@@ -71,7 +70,9 @@ export default class MoveTouchControlsHandler {
     if (this.inConfigurationMode) {
       const orientation = document.querySelector("#touchControls #orientation");
       if (orientation) {
-        orientation.textContent = this.isLandscapeMode ? "Landscape" : "Portrait";
+        orientation.textContent = this.isLandscapeMode
+          ? i18next.t("settings:landscape")
+          : i18next.t("settings:portrait");
       }
     }
     const positions = this.getSavedPositionsOfCurrentOrientation() ?? [];
@@ -90,19 +91,22 @@ export default class MoveTouchControlsHandler {
     const toolbar = document.createElement("div");
     toolbar.id = "configToolbar";
     toolbar.innerHTML = `
-      <div class="column">
-        <div class="button-row">
-          <div id="resetButton" class="button">Reset</div>
-          <div id="saveButton" class="button">Save & close</div>
-          <div id="cancelButton" class="button">Cancel</div>
-        </div>
-        <div class="info-row">
-          <div class="orientation-label"> 
-            Orientation: <span id="orientation">${this.isLandscapeMode ? "Landscape" : "Portrait"}</span>
-          </div>
+    <div class="column">
+      <div class="button-row">
+        <div id="resetButton" class="button">${i18next.t("settings:touchReset")}</div>
+        <div id="saveButton" class="button">${i18next.t("settings:touchSaveClose")}</div>
+        <div id="cancelButton" class="button">${i18next.t("settings:touchCancel")}</div>
+      </div>
+      <div class="info-row">
+        <div class="orientation-label"> 
+          ${i18next.t("settings:orientation")}
+          <span id="orientation">
+            ${this.isLandscapeMode ? i18next.t("settings:landscape") : i18next.t("settings:portrait")}
+          </span>
         </div>
       </div>
-    `;
+    </div>
+  `;
     return toolbar;
   }
 
@@ -146,7 +150,7 @@ export default class MoveTouchControlsHandler {
       toolbar,
       saveButton: toolbar.querySelector("#saveButton")!,
       resetButton: toolbar.querySelector("#resetButton")!,
-      cancelButton: toolbar.querySelector("#cancelButton")!
+      cancelButton: toolbar.querySelector("#cancelButton")!,
     };
   }
 
@@ -178,7 +182,9 @@ export default class MoveTouchControlsHandler {
     }
     const rect = this.draggingElement.getBoundingClientRect();
     // Map the touch position to the center of the dragged element.
-    const xOffset = this.isLeft(this.draggingElement) ? touch.clientX - rect.width / 2 : window.innerWidth - touch.clientX - rect.width / 2;
+    const xOffset = this.isLeft(this.draggingElement)
+      ? touch.clientX - rect.width / 2
+      : window.innerWidth - touch.clientX - rect.width / 2;
     const yOffset = window.innerHeight - touch.clientY - rect.height / 2;
     this.setPosition(this.draggingElement, xOffset, yOffset);
   };
@@ -200,8 +206,8 @@ export default class MoveTouchControlsHandler {
       .map((controlGroup: HTMLElement) => {
         return {
           id: controlGroup.id,
-          x: parseFloat(this.isLeft(controlGroup) ? controlGroup.style.left : controlGroup.style.right),
-          y: parseFloat(controlGroup.style.bottom),
+          x: Number.parseFloat(this.isLeft(controlGroup) ? controlGroup.style.left : controlGroup.style.right),
+          y: Number.parseFloat(controlGroup.style.bottom),
         };
       });
   }
@@ -287,7 +293,7 @@ export default class MoveTouchControlsHandler {
    * @returns All control groups of the touch controls.
    */
   private getControlGroupElements(): HTMLDivElement[] {
-    return [ ...document.querySelectorAll("#touchControls .control-group") ] as HTMLDivElement[];
+    return [...document.querySelectorAll("#touchControls .control-group")] as HTMLDivElement[];
   }
 
   /**
@@ -297,21 +303,21 @@ export default class MoveTouchControlsHandler {
    */
   private createConfigurationEventListeners(controlGroups: HTMLDivElement[]): ConfigurationEventListeners {
     return {
-      "touchstart": controlGroups.map((element: HTMLDivElement) => {
+      touchstart: controlGroups.map((element: HTMLDivElement) => {
         const startDrag = () => this.startDrag(element);
         element.addEventListener("touchstart", startDrag, { passive: true });
         return startDrag;
       }),
-      "touchmove": controlGroups.map(() => {
-        const drag = (event) => this.drag(event.touches[0]);
+      touchmove: controlGroups.map(() => {
+        const drag = event => this.drag(event.touches[0]);
         window.addEventListener("touchmove", drag, { passive: true });
         return drag;
       }),
-      "touchend": controlGroups.map(() => {
+      touchend: controlGroups.map(() => {
         const stopDrag = () => this.stopDrag();
         window.addEventListener("touchend", stopDrag, { passive: true });
         return stopDrag;
-      })
+      }),
     };
   }
 
@@ -322,7 +328,15 @@ export default class MoveTouchControlsHandler {
    */
   private createOverlay(ui: UI) {
     const container = new Phaser.GameObjects.Container(globalScene, 0, 0);
-    const overlay = new Phaser.GameObjects.Rectangle(globalScene, 0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height, 0x000000, 0.5);
+    const overlay = new Phaser.GameObjects.Rectangle(
+      globalScene,
+      0,
+      0,
+      globalScene.game.canvas.width,
+      globalScene.game.canvas.height,
+      0x000000,
+      0.5,
+    );
     overlay.setInteractive();
     container.add(overlay);
     ui.add(container);
@@ -333,9 +347,9 @@ export default class MoveTouchControlsHandler {
   }
 
   /**
-  * Allows the user to configure the touch controls by dragging buttons around the screen.
-  * @param ui The UI of the game.
-  */
+   * Allows the user to configure the touch controls by dragging buttons around the screen.
+   * @param ui The UI of the game.
+   */
   public enableConfigurationMode(ui: UI) {
     if (this.inConfigurationMode) {
       return;
@@ -360,9 +374,11 @@ export default class MoveTouchControlsHandler {
 
     // Remove event listeners
     const { touchstart, touchmove, touchend } = this.configurationEventListeners;
-    this.getControlGroupElements().forEach((element, index) => element.removeEventListener("touchstart", touchstart[index]));
-    touchmove.forEach((listener) => window.removeEventListener("touchmove", listener));
-    touchend.forEach((listener) => window.removeEventListener("touchend", listener));
+    this.getControlGroupElements().forEach((element, index) =>
+      element.removeEventListener("touchstart", touchstart[index]),
+    );
+    touchmove.forEach(listener => window.removeEventListener("touchmove", listener));
+    touchend.forEach(listener => window.removeEventListener("touchend", listener));
 
     // Remove configuration toolbar
     const toolbar = document.querySelector("#touchControls #configToolbar");
@@ -373,5 +389,4 @@ export default class MoveTouchControlsHandler {
     document.querySelector("#touchControls")?.classList.remove("config-mode");
     this.touchControls.enable();
   }
-
 }

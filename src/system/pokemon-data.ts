@@ -13,6 +13,7 @@ import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import type { PokemonType } from "#enums/pokemon-type";
 
 export default class PokemonData {
   public id: number;
@@ -37,14 +38,17 @@ export default class PokemonData {
   public status: Status | null;
   public friendship: number;
   public metLevel: number;
-  public metBiome: Biome | -1;        // -1 for starters
+  public metBiome: Biome | -1; // -1 for starters
   public metSpecies: Species;
-  public metWave: number;            // 0 for unknown (previous saves), -1 for starters
+  public metWave: number; // 0 for unknown (previous saves), -1 for starters
   public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public usedTMs: Moves[];
   public evoCounter: number;
+  public teraType: PokemonType;
+  public isTerastallized: boolean;
+  public stellarTypesBoosted: PokemonType[];
 
   public fusionSpecies: Species;
   public fusionFormIndex: number;
@@ -53,6 +57,7 @@ export default class PokemonData {
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: number;
+  public fusionTeraType: PokemonType;
 
   public boss: boolean;
   public bossSegments?: number;
@@ -68,7 +73,7 @@ export default class PokemonData {
   public mysteryEncounterPokemonData: CustomPokemonData | null;
   public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
-  constructor(source: Pokemon | any, forHistory: boolean = false) {
+  constructor(source: Pokemon | any, forHistory = false) {
     const sourcePokemon = source instanceof Pokemon ? source : null;
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
@@ -91,18 +96,22 @@ export default class PokemonData {
     }
     this.stats = source.stats;
     this.ivs = source.ivs;
-    this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
-    this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
+    this.nature = source.nature !== undefined ? source.nature : (0 as Nature);
+    this.friendship =
+      source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.metSpecies = source.metSpecies;
     this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
-    this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
+    this.luck = source.luck !== undefined ? source.luck : source.shiny ? source.variant + 1 : 0;
     if (!forHistory) {
       this.pauseEvolutions = !!source.pauseEvolutions;
       this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
+    this.teraType = source.teraType as PokemonType;
+    this.isTerastallized = source.isTerastallized || false;
+    this.stellarTypesBoosted = source.stellarTypesBoosted || [];
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
@@ -110,16 +119,22 @@ export default class PokemonData {
     this.fusionShiny = source.fusionShiny;
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
-    this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
+    this.fusionLuck =
+      source.fusionLuck !== undefined ? source.fusionLuck : source.fusionShiny ? source.fusionVariant + 1 : 0;
     this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
+    this.fusionTeraType = (source.fusionTeraType ?? 0) as PokemonType;
     this.usedTMs = source.usedTMs ?? [];
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
 
     // Deprecated, but needed for session data migration
     this.natureOverride = source.natureOverride;
-    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData ? new CustomPokemonData(source.mysteryEncounterPokemonData) : null;
-    this.fusionMysteryEncounterPokemonData = source.fusionMysteryEncounterPokemonData ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData) : null;
+    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData
+      ? new CustomPokemonData(source.mysteryEncounterPokemonData)
+      : null;
+    this.fusionMysteryEncounterPokemonData = source.fusionMysteryEncounterPokemonData
+      ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData)
+      : null;
 
     if (!forHistory) {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -135,7 +150,9 @@ export default class PokemonData {
         }
       }
     } else {
-      this.moveset = (source.moveset || [ new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL) ]).filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
+      this.moveset = (source.moveset || [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)])
+        .filter(m => m)
+        .map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
       if (!forHistory) {
         this.status = source.status
           ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
@@ -163,15 +180,38 @@ export default class PokemonData {
     }
   }
 
-  toPokemon(battleType?: BattleType, partyMemberIndex: number = 0, double: boolean = false): Pokemon {
+  toPokemon(battleType?: BattleType, partyMemberIndex = 0, double = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
-      ? globalScene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this, (playerPokemon) => {
-        if (this.nickname) {
-          playerPokemon.nickname = this.nickname;
-        }
-      })
-      : globalScene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, false, this);
+      ? globalScene.addPlayerPokemon(
+          species,
+          this.level,
+          this.abilityIndex,
+          this.formIndex,
+          this.gender,
+          this.shiny,
+          this.variant,
+          this.ivs,
+          this.nature,
+          this,
+          playerPokemon => {
+            if (this.nickname) {
+              playerPokemon.nickname = this.nickname;
+            }
+          },
+        )
+      : globalScene.addEnemyPokemon(
+          species,
+          this.level,
+          battleType === BattleType.TRAINER
+            ? !double || !(partyMemberIndex % 2)
+              ? TrainerSlot.TRAINER
+              : TrainerSlot.TRAINER_PARTNER
+            : TrainerSlot.NONE,
+          this.boss,
+          false,
+          this,
+        );
     if (this.summonData) {
       ret.primeSummonData(this.summonData);
     }
