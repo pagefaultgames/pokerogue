@@ -912,23 +912,11 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.MIMIKYU, "disguised", "busted", new SpeciesFormChangeAbilityTrigger(), true),
     new SpeciesFormChange(Species.MIMIKYU, "busted", "disguised", new SpeciesFormChangeAbilityTrigger(), true)
   ],
-  [Species.SOLGALEO]: [
-    new SpeciesFormChange(Species.SOLGALEO, "", "radiant-sun", new SpeciesFormChangePreMoveTrigger(Moves.SUNSTEEL_STRIKE), true),
-    new SpeciesFormChange(Species.SOLGALEO, "radiant-sun", "", new SpeciesFormChangeActiveTrigger(false), true)
-  ],
-  [Species.LUNALA]: [
-    new SpeciesFormChange(Species.LUNALA, "", "full-moon", new SpeciesFormChangePreMoveTrigger(Moves.MOONGEIST_BEAM), true),
-    new SpeciesFormChange(Species.LUNALA, "full-moon", "", new SpeciesFormChangeActiveTrigger(false), true)
-  ],
   [Species.NECROZMA]: [
     new SpeciesFormChange(Species.NECROZMA, "", "dawn-wings", new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER), false, getSpeciesDependentFormChangeCondition(Species.LUNALA)),
     new SpeciesFormChange(Species.NECROZMA, "", "dusk-mane", new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER), false, getSpeciesDependentFormChangeCondition(Species.SOLGALEO)),
     new SpeciesFormChange(Species.NECROZMA, "dawn-wings", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z)),
     new SpeciesFormChange(Species.NECROZMA, "dusk-mane", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z))
-  ],
-  [Species.MARSHADOW]: [
-    new SpeciesFormChange(Species.MARSHADOW, "", "zenith", new SpeciesFormChangePreMoveTrigger(Moves.SPECTRAL_THIEF), true),
-    new SpeciesFormChange(Species.MARSHADOW, "zenith", "", new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.MELMETAL]: [
     new SpeciesFormChange(Species.MELMETAL, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
