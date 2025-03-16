@@ -24,7 +24,7 @@ describe("Abilities - Lightningrod", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.SHOCK_WAVE ])
+      .moveset([Moves.SPLASH, Moves.SHOCK_WAVE])
       .ability(Abilities.BALL_FETCH)
       .battleType("double")
       .disableCrits()
@@ -34,7 +34,7 @@ describe("Abilities - Lightningrod", () => {
   });
 
   it("should redirect electric type moves", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
@@ -49,8 +49,8 @@ describe("Abilities - Lightningrod", () => {
   });
 
   it("should not redirect non-electric type moves", async () => {
-    game.override.moveset([ Moves.SPLASH, Moves.AERIAL_ACE ]);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    game.override.moveset([Moves.SPLASH, Moves.AERIAL_ACE]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
@@ -65,7 +65,7 @@ describe("Abilities - Lightningrod", () => {
   });
 
   it("should boost the user's spatk without damaging", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy2 = game.scene.getEnemyField()[1];
 
@@ -81,7 +81,7 @@ describe("Abilities - Lightningrod", () => {
 
   it("should not redirect moves changed from electric type via ability", async () => {
     game.override.ability(Abilities.NORMALIZE);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
@@ -96,9 +96,8 @@ describe("Abilities - Lightningrod", () => {
   });
 
   it("should redirect moves changed to electric type via ability", async () => {
-    game.override.ability(Abilities.GALVANIZE)
-      .moveset(Moves.TACKLE);
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    game.override.ability(Abilities.GALVANIZE).moveset(Moves.TACKLE);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];

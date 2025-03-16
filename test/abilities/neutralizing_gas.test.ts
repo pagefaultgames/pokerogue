@@ -158,11 +158,8 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should not activate abilities of pokemon no longer on the field", async () => {
-    game.override
-      .battleType("single")
-      .ability(Abilities.NEUTRALIZING_GAS)
-      .enemyAbility(Abilities.DELTA_STREAM);
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    game.override.battleType("single").ability(Abilities.NEUTRALIZING_GAS).enemyAbility(Abilities.DELTA_STREAM);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     const weatherChangeAttr = enemy.getAbilityAttrs(PostSummonWeatherChangeAbAttr, false)[0];
