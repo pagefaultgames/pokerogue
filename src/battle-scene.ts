@@ -168,6 +168,8 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 import { StatusEffect } from "#enums/status-effect";
 import { initGlobalScene } from "#app/global-scene";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -2924,6 +2926,21 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Queues an ability bar flyout phase
+   * @param pokemon The pokemon who has the ability
+   * @param passive Whether the ability is a passive
+   * @param show Whether to show or hide the bar
+   */
+  public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
+    this.unshiftPhase(
+      show
+        ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive)
+        : new HideAbilityPhase(pokemon.getBattlerIndex(), passive),
+    );
+    this.clearPhaseQueueSplice();
+  }
+
+  /**
    * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
    */
   populatePhaseQueue(): void {
@@ -3152,6 +3169,41 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
+  canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
+    const mod = itemModifier.clone() as PokemonHeldItemModifier;
+    const source = mod.pokemonId ? mod.getPokemon() : null;
+    const cancelled = new Utils.BooleanHolder(false);
+
+    if (source && source.isPlayer() !== target.isPlayer()) {
+      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+    }
+
+    if (cancelled.value) {
+      return false;
+    }
+
+    const matchingModifier = this.findModifier(
+      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
+      target.isPlayer(),
+    ) as PokemonHeldItemModifier;
+
+    if (matchingModifier) {
+      const maxStackCount = matchingModifier.getMaxStackCount();
+      if (matchingModifier.stackCount >= maxStackCount) {
+        return false;
+      }
+      const countTaken = Math.min(transferQuantity, mod.stackCount, maxStackCount - matchingModifier.stackCount);
+      mod.stackCount -= countTaken;
+    } else {
+      const countTaken = Math.min(transferQuantity, mod.stackCount);
+      mod.stackCount -= countTaken;
+    }
+
+    const removeOld = mod.stackCount === 0;
+
+    return !removeOld || !source || this.hasModifier(itemModifier, !source.isPlayer());
+  }
+
   removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
     return new Promise(resolve => {
       const pokemonId = this.getPlayerParty()[partyMemberIndex].id;
@@ -3307,6 +3359,11 @@ export default class BattleScene extends SceneBase {
         }),
       ).then(() => resolve());
     });
+  }
+
+  hasModifier(modifier: PersistentModifier, enemy = false): boolean {
+    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+    return modifiers.indexOf(modifier) > -1;
   }
 
   /**
