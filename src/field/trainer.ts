@@ -9,7 +9,6 @@ import {
   TrainerSlot,
   trainerConfigs,
   trainerPartyTemplates,
-  signatureSpecies,
   TeraAIMode,
 } from "#app/data/trainer-config";
 import type { EnemyPokemon } from "#app/field/pokemon";
@@ -22,6 +21,7 @@ import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
+import { signatureSpecies } from "#app/data/balance/signature-species";
 
 export enum TrainerVariant {
   DEFAULT,
