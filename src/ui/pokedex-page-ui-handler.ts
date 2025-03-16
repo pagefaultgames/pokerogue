@@ -659,6 +659,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     // Filter bar sits above everything, except the message box
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
+
+    this.previousSpecies = [];
+    this.previousStarterAttributes = [];
   }
 
   show(args: any[]): boolean {
@@ -1094,8 +1097,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
+      } else if (this.previousSpecies.length > 0) {
+        this.blockInput = true;
+        ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
+          const species = this.previousSpecies.pop();
+          const starterAttributes = this.previousStarterAttributes.pop();
+          this.moveInfoOverlay.clear();
+          this.clearText();
+          ui.setModeForceTransition(Mode.POKEDEX_PAGE, species, starterAttributes);
+          success = true;
+        });
+        this.blockInput = false;
       } else {
-        this.getUi().revertMode();
+        ui.revertMode();
         success = true;
       }
     } else {
@@ -1510,6 +1524,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           ? (preSpecies ?? this.species).getFormNameToDisplay(preFormIndex, true)
                           : (preSpecies ?? this.species).getExpandedSpeciesName(),
                         handler: () => {
+                          this.previousSpecies.push(this.species);
+                          this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
                           const newSpecies = allSpecies.find(
                             species => species.speciesId === pokemonPrevolutions[pre.speciesId],
                           );
@@ -1561,6 +1577,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           : (evoSpecies ?? this.species).getExpandedSpeciesName(),
                         style: isCaughtEvo && isFormCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                         handler: () => {
+                          this.previousSpecies.push(this.species);
+                          this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
                           this.starterAttributes.form = newFormIndex;
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
@@ -1601,6 +1619,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           label: label,
                           style: isFormCaught ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                           handler: () => {
+                            this.previousSpecies.push(this.species);
+                            this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
                             const newSpecies = this.species;
                             const newFormIndex = this.species.forms.find(f => f.formKey === bf.formKey)?.formIndex;
                             this.starterAttributes.form = newFormIndex;
@@ -1960,6 +1980,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           case Button.LEFT:
             this.blockInput = true;
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
+              // Always go back to first selection after scrolling around
+              if (this.previousSpecies.length === 0) {
+                this.previousSpecies.push(this.species);
+                this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
+              }
               let newSpecies: PokemonSpecies;
               if (this.filteredIndices) {
                 const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
@@ -1989,6 +2014,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
           case Button.RIGHT:
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
+              // Always go back to first selection after scrolling around
+              if (this.previousSpecies.length === 0) {
+                this.previousSpecies.push(this.species);
+                this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
+              }
               let newSpecies: PokemonSpecies;
               if (this.filteredIndices) {
                 const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
