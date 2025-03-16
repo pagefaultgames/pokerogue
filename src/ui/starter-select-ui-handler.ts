@@ -2981,6 +2981,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             /* Here we are making a fake form index dex props for challenges
              * Since some pokemon rely on forms to be valid (i.e. blaze tauros for fire challenges), we make a fake form and dex props to use in the challenge
              */
+            if (!species.forms[i].isStarterSelectable) {
+              continue;
+            }
             const tempFormProps = BigInt(Math.pow(2, i)) * DexAttr.DEFAULT_FORM;
             const isValidForChallenge = checkStarterValidForChallenge(
               container.species,
