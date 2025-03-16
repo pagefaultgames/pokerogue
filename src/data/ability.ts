@@ -2802,8 +2802,8 @@ export class CommanderAbAttr extends AbAttr {
     // another Pokemon, this effect cannot apply.
 
     // TODO: Should this work with X + Dondozo fusions?
-    return !(pokemon.getAlly().isFainted() || pokemon.getAlly().getTag(BattlerTagType.COMMANDED))
-              && globalScene.currentBattle?.double && pokemon.getAlly()?.species.speciesId === Species.DONDOZO;
+    return globalScene.currentBattle?.double && pokemon.getAlly()?.species.speciesId === Species.DONDOZO
+           && !(pokemon.getAlly().isFainted() || pokemon.getAlly().getTag(BattlerTagType.COMMANDED));
   }
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): void {
