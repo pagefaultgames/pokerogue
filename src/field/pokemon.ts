@@ -296,7 +296,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public stats: number[];
   public ivs: number[];
   public nature: Nature;
-  public moveset: (PokemonMove)[];
+  public moveset: PokemonMove[];
   public status: Status | null;
   public friendship: number;
   public metLevel: number;
@@ -1751,7 +1751,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract isBoss(): boolean;
 
-  getMoveset(ignoreOverride?: boolean): (PokemonMove)[] {
+  getMoveset(ignoreOverride?: boolean): PokemonMove[] {
     const ret =
       !ignoreOverride && this.summonData?.moveset
         ? this.summonData.moveset
@@ -7578,7 +7578,7 @@ export class PokemonSummonData {
   public gender: Gender;
   public fusionGender: Gender;
   public stats: number[] = [0, 0, 0, 0, 0, 0];
-  public moveset: (PokemonMove)[];
+  public moveset: PokemonMove[];
   // If not initialized this value will not be populated from save data.
   public types: PokemonType[] = [];
   public addedType: PokemonType | null = null;
