@@ -205,7 +205,9 @@ const commonSplashMessages = [
   "aHealthyTeamCanMeanGreaterRewards",
   "aWildPokemonAppeared",
   "isThisThingOn",
-  "needsMoreTesting"
+  "needsMoreTesting",
+  "whoChecksStatChanges",
+  "whenTwoTrainerseyesMeet
 ];
 
 //#region Seasonal Messages
@@ -258,7 +260,12 @@ const seasonalSplashMessages: Season[] = [
       "aprilFools.whoIsFinn",
       "aprilFools.helloKyleAmber",
       "aprilFools.watchOutForShadowPokemon",
-      "aprilFools.nowWithDarkTypeLuxray"
+      "aprilFools.nowWithDarkTypeLuxray",
+      "onlyOnPokerogueNetAGAIN",
+      "noFreeVouchers",
+      "altffourAchievementPoints",
+      "rokePogue",
+      "readMe"
     ],
   },
   {
