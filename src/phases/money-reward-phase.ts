@@ -15,7 +15,7 @@ export class MoneyRewardPhase extends BattlePhase {
   }
 
   start() {
-    const moneyAmount = new Utils.IntegerHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
+    const moneyAmount = new Utils.NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
 
     globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
@@ -27,7 +27,9 @@ export class MoneyRewardPhase extends BattlePhase {
 
     const userLocale = navigator.language || "en-US";
     const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
-    const message = i18next.t("battle:moneyWon", { moneyAmount: formattedMoneyAmount });
+    const message = i18next.t("battle:moneyWon", {
+      moneyAmount: formattedMoneyAmount,
+    });
 
     globalScene.ui.showText(message, null, () => this.end(), null, true);
   }

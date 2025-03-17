@@ -23,7 +23,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     }
 
     const enemyField = globalScene.getEnemyField();
-    const moveTargets: any[]  = [ globalScene.arenaEnemy, enemyField ];
+    const moveTargets: any[] = [globalScene.arenaEnemy, enemyField];
     const mysteryEncounter = globalScene.currentBattle?.mysteryEncounter?.introVisuals;
     if (mysteryEncounter) {
       moveTargets.push(mysteryEncounter);
@@ -37,7 +37,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
         if (!this.tryOverrideForBattleSpec()) {
           this.doEncounterCommon();
         }
-      }
+      },
     });
   }
 

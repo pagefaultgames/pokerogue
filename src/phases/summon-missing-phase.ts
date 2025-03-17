@@ -4,12 +4,16 @@ import { SummonPhase } from "./summon-phase";
 import { globalScene } from "#app/global-scene";
 
 export class SummonMissingPhase extends SummonPhase {
-  constructor(fieldIndex: integer) {
+  constructor(fieldIndex: number) {
     super(fieldIndex);
   }
 
   preSummon(): void {
-    globalScene.ui.showText(i18next.t("battle:sendOutPokemon", { pokemonName: getPokemonNameWithAffix(this.getPokemon()) }));
+    globalScene.ui.showText(
+      i18next.t("battle:sendOutPokemon", {
+        pokemonName: getPokemonNameWithAffix(this.getPokemon()),
+      }),
+    );
     globalScene.time.delayedCall(250, () => this.summon());
   }
 }

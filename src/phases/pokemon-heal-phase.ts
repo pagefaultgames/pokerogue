@@ -15,7 +15,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { HealBlockTag } from "#app/data/battler-tags";
 
 export class PokemonHealPhase extends CommonAnimPhase {
-  private hpHealed: integer;
+  private hpHealed: number;
   private message: string | null;
   private showFullHpMessage: boolean;
   private skipAnim: boolean;
@@ -24,7 +24,17 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private preventFullHeal: boolean;
   private fullRestorePP: boolean;
 
-  constructor(battlerIndex: BattlerIndex, hpHealed: integer, message: string | null, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false, fullRestorePP: boolean = false) {
+  constructor(
+    battlerIndex: BattlerIndex,
+    hpHealed: number,
+    message: string | null,
+    showFullHpMessage: boolean,
+    skipAnim = false,
+    revive = false,
+    healStatus = false,
+    preventFullHeal = false,
+    fullRestorePP = false,
+  ) {
     super(battlerIndex, undefined, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;
@@ -53,7 +63,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     const hasMessage = !!this.message;
-    const healOrDamage = (!pokemon.isFullHp() || this.hpHealed < 0);
+    const healOrDamage = !pokemon.isFullHp() || this.hpHealed < 0;
     const healBlock = pokemon.getTag(BattlerTagType.HEAL_BLOCK) as HealBlockTag;
     let lastStatusEffect = StatusEffect.NONE;
 
@@ -61,8 +71,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
       globalScene.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       return super.end();
-    } else if (healOrDamage) {
-      const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+    }
+    if (healOrDamage) {
+      const hpRestoreMultiplier = new Utils.NumberHolder(1);
       if (!this.revive) {
         globalScene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       }
@@ -73,7 +84,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       }
       // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)
       if (this.preventFullHeal && pokemon.hp + healAmount.value >= pokemon.getMaxHp()) {
-        healAmount.value = (pokemon.getMaxHp() - pokemon.hp) - 1;
+        healAmount.value = pokemon.getMaxHp() - pokemon.hp - 1;
       }
       healAmount.value = pokemon.heal(healAmount.value);
       if (healAmount.value) {
@@ -102,7 +113,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
       pokemon.resetStatus();
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage) {
-      this.message = i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(pokemon) });
+      this.message = i18next.t("battle:hpIsFull", {
+        pokemonName: getPokemonNameWithAffix(pokemon),
+      });
     }
 
     if (this.message) {

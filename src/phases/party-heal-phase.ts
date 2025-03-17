@@ -23,7 +23,7 @@ export class PartyHealPhase extends BattlePhase {
         pokemon.hp = pokemon.getMaxHp();
         pokemon.resetStatus();
         for (const move of pokemon.moveset) {
-            move!.ppUsed = 0; // TODO: is this bang correct?
+          move!.ppUsed = 0; // TODO: is this bang correct?
         }
         pokemon.updateInfo(true);
       }
@@ -36,5 +36,6 @@ export class PartyHealPhase extends BattlePhase {
         globalScene.ui.fadeIn(500).then(() => this.end());
       });
     });
+    globalScene.arena.playerTerasUsed = 0;
   }
 }

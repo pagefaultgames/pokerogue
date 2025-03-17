@@ -8,13 +8,25 @@ export let loggedInUser: UserInfo | null = null;
 export const clientSessionId = Utils.randomString(32);
 
 export function initLoggedInUser(): void {
-  loggedInUser = { username: "Guest", lastSessionSlot: -1, discordId: "", googleId: "", hasAdminRole: false };
+  loggedInUser = {
+    username: "Guest",
+    lastSessionSlot: -1,
+    discordId: "",
+    googleId: "",
+    hasAdminRole: false,
+  };
 }
 
-export function updateUserInfo(): Promise<[boolean, integer]> {
-  return new Promise<[boolean, integer]>(resolve => {
+export function updateUserInfo(): Promise<[boolean, number]> {
+  return new Promise<[boolean, number]>(resolve => {
     if (bypassLogin) {
-      loggedInUser = { username: "Guest", lastSessionSlot: -1, discordId: "", googleId: "", hasAdminRole: false };
+      loggedInUser = {
+        username: "Guest",
+        lastSessionSlot: -1,
+        discordId: "",
+        googleId: "",
+        hasAdminRole: false,
+      };
       let lastSessionSlot = -1;
       for (let s = 0; s < 5; s++) {
         if (localStorage.getItem(`sessionData${s ? s : ""}_${loggedInUser.username}`)) {
@@ -24,7 +36,7 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       }
       loggedInUser.lastSessionSlot = lastSessionSlot;
       // Migrate old data from before the username was appended
-      [ "data", "sessionData", "sessionData1", "sessionData2", "sessionData3", "sessionData4" ].map(d => {
+      ["data", "sessionData", "sessionData1", "sessionData2", "sessionData3", "sessionData4"].map(d => {
         const lsItem = localStorage.getItem(d);
         if (lsItem && !!loggedInUser?.username) {
           const lsUserItem = localStorage.getItem(`${d}_${loggedInUser.username}`);
@@ -35,16 +47,15 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
           localStorage.removeItem(d);
         }
       });
-      return resolve([ true, 200 ]);
+      return resolve([true, 200]);
     }
-    pokerogueApi.account.getInfo().then(([ accountInfo, status ]) => {
+    pokerogueApi.account.getInfo().then(([accountInfo, status]) => {
       if (!accountInfo) {
-        resolve([ false, status ]);
+        resolve([false, status]);
         return;
-      } else {
-        loggedInUser = accountInfo;
-        resolve([ true, 200 ]);
       }
+      loggedInUser = accountInfo;
+      resolve([true, 200]);
     });
   });
 }

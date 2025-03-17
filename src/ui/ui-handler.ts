@@ -8,9 +8,9 @@ import type { Button } from "#enums/buttons";
  * A basic abstract class to act as a holder and processor for UI elements.
  */
 export default abstract class UiHandler {
-  protected mode: integer | null;
-  protected cursor: integer = 0;
-  public active: boolean = false;
+  protected mode: number | null;
+  protected cursor = 0;
+  public active = false;
 
   /**
    * @param mode The mode of the UI element. These should be unique.
@@ -33,15 +33,15 @@ export default abstract class UiHandler {
     return globalScene.ui;
   }
 
-  getTextColor(style: TextStyle, shadow: boolean = false): string {
+  getTextColor(style: TextStyle, shadow = false): string {
     return getTextColor(style, shadow, globalScene.uiTheme);
   }
 
-  getCursor(): integer {
+  getCursor(): number {
     return this.cursor;
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
     const changed = this.cursor !== cursor;
     if (changed) {
       this.cursor = cursor;

@@ -8,10 +8,6 @@ import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class PostSummonPhase extends PokemonPhase {
-  constructor(battlerIndex: BattlerIndex) {
-    super(battlerIndex);
-  }
-
   start() {
     super.start();
 
@@ -23,16 +19,19 @@ export class PostSummonPhase extends PokemonPhase {
     globalScene.arena.applyTags(ArenaTrapTag, false, pokemon);
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects
-    if (globalScene.currentBattle.isBattleMysteryEncounter() && pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0) {
+    if (
+      globalScene.currentBattle.isBattleMysteryEncounter() &&
+      pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0
+    ) {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
 
-    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon)
-      .then(() => {
-        const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-        field.forEach((p) => applyAbAttrs(CommanderAbAttr, p, null, false));
+    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon);
+    const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+    for (const p of field) {
+      applyAbAttrs(CommanderAbAttr, p, null, false);
+    }
 
-        this.end();
-      });
+    this.end();
   }
 }

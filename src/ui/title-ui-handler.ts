@@ -1,7 +1,7 @@
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
+import { TextStyle, addTextObject } from "./text";
 import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
@@ -36,7 +36,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = globalScene.add.image((globalScene.game.canvas.width / 6) / 2, 8, "logo");
+    const logo = globalScene.add.image(globalScene.game.canvas.width / 6 / 2, 8, "logo");
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
@@ -47,16 +47,19 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     }
 
     this.playerCountLabel = addTextObject(
-      (globalScene.game.canvas.width / 6) - 2,
-      (globalScene.game.canvas.height / 6) - 13 - 576 * getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale,
+      // Actual y position will be determined after the title menu has been populated with options
+      globalScene.game.canvas.width / 6 - 2,
+      0,
       `? ${i18next.t("menu:playersOnline")}`,
       TextStyle.MESSAGE,
-      { fontSize: "54px" }
+      { fontSize: "54px" },
     );
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 
-    this.splashMessageText = addTextObject(logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.splashMessageText = addTextObject(logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, {
+      fontSize: "54px",
+    });
     this.splashMessageText.setOrigin(0.5, 0.5);
     this.splashMessageText.setAngle(-20);
     this.titleContainer.add(this.splashMessageText);
@@ -71,14 +74,17 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       yoyo: true,
     });
 
-    this.appVersionText = addTextObject(logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.appVersionText = addTextObject(logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, {
+      fontSize: "54px",
+    });
     this.appVersionText.setOrigin(0.5, 0.5);
     this.appVersionText.setAngle(0);
     this.titleContainer.add(this.appVersionText);
   }
 
   updateTitleStats(): void {
-    pokerogueApi.getGameTitleStats()
+    pokerogueApi
+      .getGameTitleStats()
       .then(stats => {
         if (stats) {
           this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
@@ -96,8 +102,15 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     const ret = super.show(args);
 
     if (ret) {
+      // Moving player count to top of the menu
+      this.playerCountLabel.setY(globalScene.game.canvas.height / 6 - 13 - this.getWindowHeight());
+
       this.splashMessage = Utils.randItem(getSplashMessages());
-      this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
+      this.splashMessageText.setText(
+        i18next.t(this.splashMessage, {
+          count: TitleUiHandler.BATTLES_WON_FALLBACK,
+        }),
+      );
 
       this.appVersionText.setText("v" + version);
 
@@ -115,10 +128,10 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       }, 60000);
 
       globalScene.tweens.add({
-        targets: [ this.titleContainer, ui.getMessageHandler().bg ],
+        targets: [this.titleContainer, ui.getMessageHandler().bg],
         duration: Utils.fixedInt(325),
-        alpha: (target: any) => target === this.titleContainer ? 1 : 0,
-        ease: "Sine.easeInOut"
+        alpha: (target: any) => (target === this.titleContainer ? 1 : 0),
+        ease: "Sine.easeInOut",
       });
     }
 
@@ -136,10 +149,10 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleStatsTimer = null;
 
     globalScene.tweens.add({
-      targets: [ this.titleContainer, ui.getMessageHandler().bg ],
+      targets: [this.titleContainer, ui.getMessageHandler().bg],
       duration: Utils.fixedInt(325),
-      alpha: (target: any) => target === this.titleContainer ? 0 : 1,
-      ease: "Sine.easeInOut"
+      alpha: (target: any) => (target === this.titleContainer ? 0 : 1),
+      ease: "Sine.easeInOut",
     });
   }
 }

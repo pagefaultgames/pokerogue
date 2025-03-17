@@ -1,10 +1,18 @@
 import { Abilities } from "#app/enums/abilities";
 import { Species } from "#app/enums/species";
 
-export const starterPassiveAbilities = {
+export interface PassiveAbilities {
+  [key: number]: Abilities
+}
+
+interface StarterPassiveAbilities {
+  [key: number]: PassiveAbilities
+}
+
+export const starterPassiveAbilities: StarterPassiveAbilities = {
   [Species.BULBASAUR]: { 0: Abilities.GRASSY_SURGE },
   [Species.CHARMANDER]: { 0: Abilities.BEAST_BOOST },
-  [Species.SQUIRTLE]: { 0: Abilities.STURDY },
+  [Species.SQUIRTLE]: { 0: Abilities.DAUNTLESS_SHIELD },
   [Species.CATERPIE]: { 0: Abilities.MAGICIAN },
   [Species.WEEDLE]: { 0: Abilities.TINTED_LENS },
   [Species.PIDGEY]: { 0: Abilities.SHEER_FORCE },
@@ -49,7 +57,7 @@ export const starterPassiveAbilities = {
   [Species.KOFFING]: { 0: Abilities.PARENTAL_BOND },
   [Species.RHYHORN]: { 0: Abilities.FILTER },
   [Species.TANGELA]: { 0: Abilities.SEED_SOWER },
-  [Species.KANGASKHAN]: { 0: Abilities.GUTS },
+  [Species.KANGASKHAN]: { 0: Abilities.TECHNICIAN },
   [Species.HORSEA]: { 0: Abilities.DRAGONS_MAW },
   [Species.GOLDEEN]: { 0: Abilities.MULTISCALE },
   [Species.STARYU]: { 0: Abilities.REGENERATOR },
@@ -121,7 +129,7 @@ export const starterPassiveAbilities = {
   [Species.RAIKOU]: { 0: Abilities.BEAST_BOOST },
   [Species.ENTEI]: { 0: Abilities.BEAST_BOOST },
   [Species.SUICUNE]: { 0: Abilities.BEAST_BOOST },
-  [Species.LARVITAR]: { 0: Abilities.SAND_RUSH },
+  [Species.LARVITAR]: { 0: Abilities.SOLID_ROCK },
   [Species.LUGIA]: { 0: Abilities.DELTA_STREAM },
   [Species.HO_OH]: { 0: Abilities.MAGIC_GUARD },
   [Species.CELEBI]: { 0: Abilities.PSYCHIC_SURGE },
@@ -238,11 +246,11 @@ export const starterPassiveAbilities = {
   [Species.MANTYKE]: { 0: Abilities.UNAWARE },
   [Species.SNOVER]: { 0: Abilities.GRASSY_SURGE },
   [Species.ROTOM]: { 0: Abilities.HADRON_ENGINE },
-  [Species.UXIE]: { 0: Abilities.UNAWARE },
+  [Species.UXIE]: { 0: Abilities.UNNERVE },
   [Species.MESPRIT]: { 0: Abilities.MOODY },
   [Species.AZELF]: { 0: Abilities.NEUROFORCE },
-  [Species.DIALGA]: { 0: Abilities.LEVITATE },
-  [Species.PALKIA]: { 0: Abilities.SPEED_BOOST },
+  [Species.DIALGA]: { 0: Abilities.BERSERK },
+  [Species.PALKIA]: { 0: Abilities.BERSERK },
   [Species.HEATRAN]: { 0: Abilities.EARTH_EATER },
   [Species.REGIGIGAS]: { 0: Abilities.SCRAPPY },
   [Species.GIRATINA]: { 0: Abilities.SHADOW_SHIELD },
@@ -277,7 +285,7 @@ export const starterPassiveAbilities = {
   [Species.SEWADDLE]: { 0: Abilities.SHARPNESS },
   [Species.VENIPEDE]: { 0: Abilities.STAMINA },
   [Species.COTTONEE]: { 0: Abilities.FLUFFY },
-  [Species.PETILIL]: { 0: Abilities.SIMPLE },
+  [Species.PETILIL]: { 0: Abilities.FLOWER_VEIL },
   [Species.BASCULIN]: { 0: Abilities.SUPREME_OVERLORD },
   [Species.SANDILE]: { 0: Abilities.TOUGH_CLAWS },
   [Species.DARUMAKA]: { 0: Abilities.GORILLA_TACTICS },
@@ -339,7 +347,7 @@ export const starterPassiveAbilities = {
   [Species.CHESPIN]: { 0: Abilities.DAUNTLESS_SHIELD },
   [Species.FENNEKIN]: { 0: Abilities.PSYCHIC_SURGE },
   [Species.FROAKIE]: { 0: Abilities.STAKEOUT },
-  [Species.BUNNELBY]: { 0: Abilities.GUTS },
+  [Species.BUNNELBY]: { 0: Abilities.THICK_FAT },
   [Species.FLETCHLING]: { 0: Abilities.MAGIC_GUARD },
   [Species.SCATTERBUG]: { 0: Abilities.PRANKSTER },
   [Species.LITLEO]: { 0: Abilities.BEAST_BOOST },
@@ -372,7 +380,7 @@ export const starterPassiveAbilities = {
   [Species.ZYGARDE]: { 0: Abilities.ADAPTABILITY },
   [Species.DIANCIE]: { 0: Abilities.PRISM_ARMOR },
   [Species.HOOPA]: { 0: Abilities.OPPORTUNIST },
-  [Species.VOLCANION]: { 0: Abilities.FILTER },
+  [Species.VOLCANION]: { 0: Abilities.NEUTRALIZING_GAS },
   [Species.ETERNAL_FLOETTE]: { 0: Abilities.MAGIC_GUARD },
 
   [Species.ROWLET]: { 0: Abilities.SNIPER },
@@ -387,7 +395,7 @@ export const starterPassiveAbilities = {
   [Species.ROCKRUFF]: { 0: Abilities.ROCKY_PAYLOAD },
   [Species.WISHIWASHI]: { 0: Abilities.REGENERATOR },
   [Species.MAREANIE]: { 0: Abilities.TOXIC_DEBRIS },
-  [Species.MUDBRAY]: { 0: Abilities.CUD_CHEW },
+  [Species.MUDBRAY]: { 0: Abilities.SAP_SIPPER },
   [Species.DEWPIDER]: { 0: Abilities.TINTED_LENS },
   [Species.FOMANTIS]: { 0: Abilities.SHARPNESS },
   [Species.MORELULL]: { 0: Abilities.TRIAGE },
@@ -411,8 +419,8 @@ export const starterPassiveAbilities = {
   [Species.DHELMISE]: { 0: Abilities.WATER_BUBBLE },
   [Species.JANGMO_O]: { 0: Abilities.DAUNTLESS_SHIELD },
   [Species.TAPU_KOKO]: { 0: Abilities.DAUNTLESS_SHIELD },
-  [Species.TAPU_LELE]: { 0: Abilities.SHEER_FORCE },
-  [Species.TAPU_BULU]: { 0: Abilities.TRIAGE },
+  [Species.TAPU_LELE]: { 0: Abilities.BERSERK },
+  [Species.TAPU_BULU]: { 0: Abilities.FLOWER_VEIL },
   [Species.TAPU_FINI]: { 0: Abilities.FAIRY_AURA },
   [Species.COSMOG]: { 0: Abilities.BEAST_BOOST },
   [Species.NIHILEGO]: { 0: Abilities.LEVITATE },
@@ -534,7 +542,7 @@ export const starterPassiveAbilities = {
   [Species.VAROOM]: { 0: Abilities.LEVITATE },
   [Species.CYCLIZAR]: { 0: Abilities.PROTEAN },
   [Species.ORTHWORM]: { 0: Abilities.REGENERATOR },
-  [Species.GLIMMET]: { 0: Abilities.LEVITATE },
+  [Species.GLIMMET]: { 0: Abilities.TERA_SHELL },
   [Species.GREAVARD]: { 0: Abilities.UNAWARE },
   [Species.FLAMIGO]: { 0: Abilities.MOXIE },
   [Species.CETODDLE]: { 0: Abilities.REFRIGERATE },
@@ -547,7 +555,7 @@ export const starterPassiveAbilities = {
   [Species.FLUTTER_MANE]: { 0: Abilities.DAZZLING },
   [Species.SLITHER_WING]: { 0: Abilities.SCRAPPY },
   [Species.SANDY_SHOCKS]: { 0: Abilities.ELECTRIC_SURGE },
-  [Species.IRON_TREADS]: { 0: Abilities.STEELY_SPIRIT },
+  [Species.IRON_TREADS]: { 0: Abilities.DAUNTLESS_SHIELD },
   [Species.IRON_BUNDLE]: { 0: Abilities.SNOW_WARNING },
   [Species.IRON_HANDS]: { 0: Abilities.IRON_FIST },
   [Species.IRON_JUGULIS]: { 0: Abilities.LIGHTNING_ROD },
@@ -559,7 +567,7 @@ export const starterPassiveAbilities = {
   [Species.CHIEN_PAO]: { 0: Abilities.INTIMIDATE },
   [Species.TING_LU]: { 0: Abilities.STAMINA },
   [Species.CHI_YU]: { 0: Abilities.BERSERK },
-  [Species.ROARING_MOON]: { 0: Abilities.TOUGH_CLAWS },
+  [Species.ROARING_MOON]: { 0: Abilities.INTIMIDATE },
   [Species.IRON_VALIANT]: { 0: Abilities.NEUROFORCE },
   [Species.KORAIDON]: { 0: Abilities.OPPORTUNIST },
   [Species.MIRAIDON]: { 0: Abilities.OPPORTUNIST },
@@ -574,7 +582,7 @@ export const starterPassiveAbilities = {
   [Species.RAGING_BOLT]: { 0: Abilities.BEAST_BOOST },
   [Species.IRON_BOULDER]: { 0: Abilities.SHARPNESS },
   [Species.IRON_CROWN]: { 0: Abilities.SHARPNESS },
-  [Species.TERAPAGOS]: { 0: Abilities.SOUL_HEART },
+  [Species.TERAPAGOS]: { 0: Abilities.SHIELD_DUST },
   [Species.PECHARUNT]: { 0: Abilities.TOXIC_CHAIN },
   [Species.PALDEA_TAUROS]: { 0: Abilities.ADAPTABILITY },
   [Species.PALDEA_WOOPER]: { 0: Abilities.THICK_FAT },

@@ -1,27 +1,28 @@
 import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow, WindowVariant } from "./ui-theme";
+import { ScrollBar } from "#app/ui/scroll-bar";
 import i18next from "i18next";
 
 export enum DropDownState {
-    ON = 0,
-    OFF = 1,
-    EXCLUDE = 2,
-    UNLOCKABLE = 3,
-    ONE = 4,
-    TWO = 5
+  ON = 0,
+  OFF = 1,
+  EXCLUDE = 2,
+  UNLOCKABLE = 3,
+  ONE = 4,
+  TWO = 5,
 }
 
 export enum DropDownType {
-    SINGLE = 0,
-    MULTI = 1,
-    HYBRID = 2,
-    RADIAL = 3
+  SINGLE = 0,
+  MULTI = 1,
+  HYBRID = 2,
+  RADIAL = 3,
 }
 
 export enum SortDirection {
   ASC = -1,
-  DESC = 1
+  DESC = 1,
 }
 
 export enum SortCriteria {
@@ -31,7 +32,7 @@ export enum SortCriteria {
   IV = 3,
   NAME = 4,
   CAUGHT = 5,
-  HATCHED = 6
+  HATCHED = 6,
 }
 
 export class DropDownLabel {
@@ -45,7 +46,6 @@ export class DropDownLabel {
     this.state = state;
   }
 }
-
 
 export class DropDownOption extends Phaser.GameObjects.Container {
   public state: DropDownState = DropDownState.ON;
@@ -69,7 +69,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
     if (Array.isArray(labels)) {
       this.labels = labels;
     } else {
-      this.labels = labels ? [ labels ] : [ new DropDownLabel("") ];
+      this.labels = labels ? [labels] : [new DropDownLabel("")];
     }
     this.currentLabelIndex = 0;
     const currentLabel = this.labels[this.currentLabelIndex];
@@ -104,7 +104,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
       this.toggle = globalScene.add.sprite(0, 0, "cursor");
       this.toggle.setScale(0.5);
       this.toggle.setOrigin(0, 0.5);
-      this.toggle.setRotation(Math.PI / 180 * -90);
+      this.toggle.setRotation((Math.PI / 180) * -90);
     } else {
       this.toggle = globalScene.add.sprite(0, 0, "candy");
       this.toggle.setScale(0.3);
@@ -278,44 +278,79 @@ export class DropDownOption extends Phaser.GameObjects.Container {
     this.text.setText(currentText);
     return w;
   }
-
 }
-
 
 export class DropDown extends Phaser.GameObjects.Container {
   public options: DropDownOption[];
   private window: Phaser.GameObjects.NineSlice;
   private cursorObj: Phaser.GameObjects.Image;
   public dropDownType: DropDownType = DropDownType.MULTI;
-  public cursor: number = 0;
-  private lastCursor: number = -1;
-  public defaultCursor: number = 0;
+  public cursor = 0;
+  private lastCursor = -1;
+  public defaultCursor = 0;
   private onChange: () => void;
   private lastDir: SortDirection = SortDirection.ASC;
   private defaultSettings: any[];
+  private dropDownScrollBar: ScrollBar;
+  private totalOptions = 0;
+  private maxOptions = 0;
+  private shownOptions = 0;
+  private tooManyOptions = false;
+  private firstShown = 0;
+  private optionHeight = 0;
+  private optionSpacing = 0;
+  private optionPaddingX = 4;
+  private optionPaddingY = 6;
+  private optionWidth = 100;
+  private cursorOffset = 0;
 
-  constructor(x: number, y: number, options: DropDownOption[], onChange: () => void, type: DropDownType = DropDownType.MULTI, optionSpacing: number = 2) {
+  constructor(
+    x: number,
+    y: number,
+    options: DropDownOption[],
+    onChange: () => void,
+    type: DropDownType = DropDownType.MULTI,
+    optionSpacing = 2,
+  ) {
     const windowPadding = 5;
-    const optionHeight = 7;
-    const optionPaddingX = 4;
-    const optionPaddingY = 6;
     const cursorOffset = 7;
-    const optionWidth = 100;
 
     super(globalScene, x - cursorOffset - windowPadding, y);
+
+    this.optionWidth = 100;
+    this.optionHeight = 7;
+    this.optionSpacing = optionSpacing;
+    this.optionPaddingX = 4;
+    this.optionPaddingY = 6;
+    this.cursorOffset = cursorOffset;
+
     this.options = options;
     this.dropDownType = type;
     this.onChange = onChange;
 
-    this.cursorObj = globalScene.add.image(optionPaddingX + 3, 0, "cursor");
+    this.cursorObj = globalScene.add.image(this.optionPaddingX + 3, 0, "cursor");
     this.cursorObj.setScale(0.5);
     this.cursorObj.setOrigin(0, 0.5);
     this.cursorObj.setVisible(false);
 
     // For MULTI and HYBRID filter, add an ALL option at the top
     if (this.dropDownType === DropDownType.MULTI || this.dropDownType === DropDownType.HYBRID) {
-      this.options.unshift(new DropDownOption("ALL", new DropDownLabel(i18next.t("filterBar:all"), undefined, this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF)));
+      this.options.unshift(
+        new DropDownOption(
+          "ALL",
+          new DropDownLabel(
+            i18next.t("filterBar:all"),
+            undefined,
+            this.checkForAllOn() ? DropDownState.ON : DropDownState.OFF,
+          ),
+        ),
+      );
     }
+
+    this.maxOptions = 19;
+    this.totalOptions = this.options.length;
+    this.tooManyOptions = this.totalOptions > this.maxOptions;
+    this.shownOptions = this.tooManyOptions ? this.maxOptions : this.totalOptions;
 
     this.defaultSettings = this.getSettings();
 
@@ -324,24 +359,48 @@ export class DropDown extends Phaser.GameObjects.Container {
       const toggleVisibility = type !== DropDownType.SINGLE || option.state === DropDownState.ON;
       option.setupToggleIcon(type, toggleVisibility);
 
-      option.width = optionWidth;
-      option.y = index * optionHeight + index * optionSpacing + optionPaddingY;
+      option.width = this.optionWidth;
+      option.y = index * this.optionHeight + index * optionSpacing + this.optionPaddingY;
 
-      const baseX = cursorOffset + optionPaddingX + 3;
-      const baseY = optionHeight / 2;
+      const baseX = cursorOffset + this.optionPaddingX + 3;
+      const baseY = this.optionHeight / 2;
       option.setLabelPosition(baseX + 8, baseY);
       if (type === DropDownType.SINGLE) {
         option.setTogglePosition(baseX + 3, baseY + 1);
       } else {
         option.setTogglePosition(baseX, baseY);
       }
+
+      if (index >= this.shownOptions) {
+        option.visible = false;
+      }
+
+      this.firstShown = 0;
     });
 
-    this.window = addWindow(0, 0, optionWidth, options[options.length - 1].y + optionHeight + optionPaddingY, false, false, undefined, undefined, WindowVariant.XTHIN);
+    this.window = addWindow(
+      0,
+      0,
+      this.optionWidth,
+      options[this.shownOptions - 1].y + this.optionHeight + this.optionPaddingY,
+      false,
+      false,
+      undefined,
+      undefined,
+      WindowVariant.XTHIN,
+    );
     this.add(this.window);
     this.add(options);
     this.add(this.cursorObj);
     this.setVisible(false);
+
+    if (this.tooManyOptions) {
+      // Setting the last parameter to 1 turns out to be optimal in all cases.
+      this.dropDownScrollBar = new ScrollBar(this.window.width - 3, 5, 5, this.window.height - 10, 1);
+      this.add(this.dropDownScrollBar);
+      this.dropDownScrollBar.setTotalRows(this.totalOptions);
+      this.dropDownScrollBar.setScrollCursor(0);
+    }
   }
 
   getWidth(): number {
@@ -370,27 +429,64 @@ export class DropDown extends Phaser.GameObjects.Container {
     return this.setCursor(this.defaultCursor);
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: number): boolean {
+    if (this.tooManyOptions) {
+      this.setLabels(cursor);
+    }
+
     this.cursor = cursor;
     if (cursor < 0) {
       cursor = 0;
       this.cursorObj.setVisible(false);
       return false;
-    } else if (cursor >= this.options.length) {
+    }
+    if (cursor >= this.options.length) {
       cursor = this.options.length - 1;
       this.cursorObj.y = this.options[cursor].y + 3.5;
       this.cursorObj.setVisible(true);
       return false;
-    } else {
-      this.cursorObj.y = this.options[cursor].y + 3.5;
-      this.cursorObj.setVisible(true);
-      // If hydrid type, we need to update the filters when going up/down in the list
-      if (this.dropDownType === DropDownType.HYBRID) {
-        this.lastCursor = cursor;
-        this.onChange();
-      }
+    }
+    this.cursorObj.y = this.options[cursor].y + 3.5;
+    this.cursorObj.setVisible(true);
+    // If hydrid type, we need to update the filters when going up/down in the list
+    if (this.dropDownType === DropDownType.HYBRID) {
+      this.lastCursor = cursor;
+      this.onChange();
     }
     return true;
+  }
+
+  setLabels(cursor: number) {
+    if (cursor === 0 && this.lastCursor === this.totalOptions - 1) {
+      this.firstShown = 0;
+    } else if (cursor === this.totalOptions - 1 && this.lastCursor === 0) {
+      this.firstShown = this.totalOptions - this.shownOptions;
+    } else if (cursor - this.firstShown >= this.shownOptions && cursor > this.lastCursor) {
+      this.firstShown += 1;
+    } else if (cursor < this.firstShown && cursor < this.lastCursor) {
+      this.firstShown -= 1;
+    }
+
+    this.options.forEach((option, index) => {
+      option.y = (index - this.firstShown) * (this.optionHeight + this.optionSpacing) + this.optionPaddingY;
+
+      const baseX = this.cursorOffset + this.optionPaddingX + 3;
+      const baseY = this.optionHeight / 2;
+      option.setLabelPosition(baseX + 8, baseY);
+      if (this.dropDownType === DropDownType.SINGLE) {
+        option.setTogglePosition(baseX + 3, baseY + 1);
+      } else {
+        option.setTogglePosition(baseX, baseY);
+      }
+
+      if (index < this.firstShown || index >= this.firstShown + this.shownOptions) {
+        option.visible = false;
+      } else {
+        option.visible = true;
+      }
+    });
+
+    this.dropDownScrollBar.setScrollCursor(cursor);
   }
 
   /**
@@ -417,7 +513,7 @@ export class DropDown extends Phaser.GameObjects.Container {
       }
     } else if (this.dropDownType === DropDownType.SINGLE) {
       if (option.state === DropDownState.OFF) {
-        this.options.forEach((option) => {
+        this.options.forEach(option => {
           option.setOptionState(DropDownState.OFF);
           option.setDirection(SortDirection.ASC);
           option.toggle.setVisible(false);
@@ -460,9 +556,12 @@ export class DropDown extends Phaser.GameObjects.Container {
    */
   getVals(): any[] {
     if (this.dropDownType === DropDownType.MULTI) {
-      return this.options.filter((option, i) => i > 0 && option.state === DropDownState.ON).map((option) => option.val);
-    } else if (this.dropDownType === DropDownType.HYBRID) {
-      const selected = this.options.filter((option, i) => i > 0 && option.state === DropDownState.ON).map((option) => option.val);
+      return this.options.filter((option, i) => i > 0 && option.state === DropDownState.ON).map(option => option.val);
+    }
+    if (this.dropDownType === DropDownType.HYBRID) {
+      const selected = this.options
+        .filter((option, i) => i > 0 && option.state === DropDownState.ON)
+        .map(option => option.val);
       if (selected.length > 0) {
         return selected;
       }
@@ -471,16 +570,18 @@ export class DropDown extends Phaser.GameObjects.Container {
         return this.options.filter((_, i) => i > 0).map(option => option.val);
       }
       // if nothing is selected and a single option is hovered, return that one
-      return [ this.options[this.cursor].val ];
-    } else if (this.dropDownType === DropDownType.RADIAL) {
-      return this.options.map((option) => {
+      return [this.options[this.cursor].val];
+    }
+    if (this.dropDownType === DropDownType.RADIAL) {
+      return this.options.map(option => {
         return { val: option.val, state: option.state };
       });
-    } else {
-      return this.options.filter(option => option.state === DropDownState.ON).map((option) => {
+    }
+    return this.options
+      .filter(option => option.state === DropDownState.ON)
+      .map(option => {
         return { val: option.val, dir: option.dir };
       });
-    }
   }
 
   /**
@@ -489,9 +590,14 @@ export class DropDown extends Phaser.GameObjects.Container {
    * - the settings dictionary is like this { val: any, state: DropDownState, cursor: boolean, dir: SortDirection }
    */
   private getSettings(): any[] {
-    const settings : any[] = [];
+    const settings: any[] = [];
     for (let i = 0; i < this.options.length; i++) {
-      settings.push({ val: this.options[i].val, state: this.options[i].state, cursor: (this.cursor === i), dir: this.options[i].dir });
+      settings.push({
+        val: this.options[i].val,
+        state: this.options[i].state,
+        cursor: this.cursor === i,
+        dir: this.options[i].dir,
+      });
     }
     return settings;
   }
@@ -504,22 +610,22 @@ export class DropDown extends Phaser.GameObjects.Container {
     const currentValues = this.getSettings();
 
     const compareValues = (keys: string[]): boolean => {
-      return currentValues.length === this.defaultSettings.length &&
-               currentValues.every((value, index) =>
-                 keys.every(key => value[key] === this.defaultSettings[index][key])
-               );
+      return (
+        currentValues.length === this.defaultSettings.length &&
+        currentValues.every((value, index) => keys.every(key => value[key] === this.defaultSettings[index][key]))
+      );
     };
 
     switch (this.dropDownType) {
       case DropDownType.MULTI:
       case DropDownType.RADIAL:
-        return compareValues([ "val", "state" ]);
+        return compareValues(["val", "state"]);
 
       case DropDownType.HYBRID:
-        return compareValues([ "val", "state", "cursor" ]);
+        return compareValues(["val", "state", "cursor"]);
 
       case DropDownType.SINGLE:
-        return compareValues([ "val", "state", "dir" ]);
+        return compareValues(["val", "state", "dir"]);
 
       default:
         return false;
@@ -552,6 +658,8 @@ export class DropDown extends Phaser.GameObjects.Container {
           }
         }
       }
+
+      this.onChange();
     }
   }
 
@@ -559,7 +667,7 @@ export class DropDown extends Phaser.GameObjects.Container {
    * Set all options to a specific state
    * @param state the DropDownState to assign to each option
    */
-  private setAllOptions(state: DropDownState) : void {
+  private setAllOptions(state: DropDownState): void {
     // For single type dropdown, setting all options is not relevant
     if (this.dropDownType === DropDownType.SINGLE) {
       return;
@@ -597,11 +705,15 @@ export class DropDown extends Phaser.GameObjects.Container {
         x = this.options[i].getCurrentLabelX() ?? 0;
       }
     }
-    this.window.width = maxWidth + x - this.window.x + 6;
+    this.window.width = maxWidth + x - this.window.x + 9;
+
+    if (this.tooManyOptions) {
+      this.window.width += 6;
+      this.dropDownScrollBar.x = this.window.width - 9;
+    }
 
     if (this.x + this.window.width > this.parentContainer.width) {
       this.x = this.parentContainer.width - this.window.width;
     }
   }
-
 }

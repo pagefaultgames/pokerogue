@@ -1,4 +1,4 @@
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import * as Utils from "#app/utils";
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
@@ -26,11 +26,11 @@ export function getBiomeName(biome: Biome | -1) {
 }
 
 interface BiomeLinks {
-  [key: integer]: Biome | (Biome | [Biome, integer])[]
+  [key: number]: Biome | (Biome | [Biome, number])[]
 }
 
 interface BiomeDepths {
-  [key: integer]: [integer, integer]
+  [key: number]: [number, number]
 }
 
 export const biomeLinks: BiomeLinks = {
@@ -87,27 +87,39 @@ export enum BiomePoolTier {
 export const uncatchableSpecies: Species[] = [];
 
 export interface SpeciesTree {
-  [key: integer]: Species[]
+  [key: number]: Species[]
 }
 
 export interface PokemonPools {
-  [key: integer]: (Species | SpeciesTree)[]
+  [key: number]: (Species | SpeciesTree)[]
 }
 
 export interface BiomeTierPokemonPools {
-  [key: integer]: PokemonPools
+  [key: number]: PokemonPools
 }
 
 export interface BiomePokemonPools {
-  [key: integer]: BiomeTierPokemonPools
+  [key: number]: BiomeTierPokemonPools
 }
 
+export interface BiomeTierTod {
+  biome: Biome,
+  tier: BiomePoolTier,
+  tod: TimeOfDay[]
+}
+
+export interface CatchableSpecies{
+  [key: number]: BiomeTierTod[]
+}
+
+export const catchableSpecies: CatchableSpecies = {};
+
 export interface BiomeTierTrainerPools {
-  [key: integer]: TrainerType[]
+  [key: number]: TrainerType[]
 }
 
 export interface BiomeTrainerPools {
-  [key: integer]: BiomeTierTrainerPools
+  [key: number]: BiomeTierTrainerPools
 }
 
 export const biomePokemonPools: BiomePokemonPools = {
@@ -2010,450 +2022,451 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   }
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: init methods are expected to have many lines.
 export function initBiomes() {
   const pokemonBiomes = [
-    [ Species.BULBASAUR, Type.GRASS, Type.POISON, [
+    [ Species.BULBASAUR, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.GRASS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.IVYSAUR, Type.GRASS, Type.POISON, [
+    [ Species.IVYSAUR, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.GRASS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.VENUSAUR, Type.GRASS, Type.POISON, [
+    [ Species.VENUSAUR, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.GRASS, BiomePoolTier.RARE ],
       [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.CHARMANDER, Type.FIRE, -1, [
+    [ Species.CHARMANDER, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.CHARMELEON, Type.FIRE, -1, [
+    [ Species.CHARMELEON, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.CHARIZARD, Type.FIRE, Type.FLYING, [
+    [ Species.CHARIZARD, PokemonType.FIRE, PokemonType.FLYING, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SQUIRTLE, Type.WATER, -1, [
+    [ Species.SQUIRTLE, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.WARTORTLE, Type.WATER, -1, [
+    [ Species.WARTORTLE, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.BLASTOISE, Type.WATER, -1, [
+    [ Species.BLASTOISE, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ],
       [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.CATERPIE, Type.BUG, -1, [
+    [ Species.CATERPIE, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.METAPOD, Type.BUG, -1, [
+    [ Species.METAPOD, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.BUTTERFREE, Type.BUG, Type.FLYING, [
+    [ Species.BUTTERFREE, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.WEEDLE, Type.BUG, Type.POISON, [
+    [ Species.WEEDLE, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.KAKUNA, Type.BUG, Type.POISON, [
+    [ Species.KAKUNA, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.BEEDRILL, Type.BUG, Type.POISON, [
+    [ Species.BEEDRILL, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PIDGEY, Type.NORMAL, Type.FLYING, [
+    [ Species.PIDGEY, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.PIDGEOTTO, Type.NORMAL, Type.FLYING, [
+    [ Species.PIDGEOTTO, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.PIDGEOT, Type.NORMAL, Type.FLYING, [
+    [ Species.PIDGEOT, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.RATTATA, Type.NORMAL, -1, [
+    [ Species.RATTATA, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
       [ Biome.SLUM, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.RATICATE, Type.NORMAL, -1, [
+    [ Species.RATICATE, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
       [ Biome.SLUM, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SPEAROW, Type.NORMAL, Type.FLYING, [
+    [ Species.SPEAROW, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FEAROW, Type.NORMAL, Type.FLYING, [
+    [ Species.FEAROW, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.EKANS, Type.POISON, -1, [
+    [ Species.EKANS, PokemonType.POISON, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ARBOK, Type.POISON, -1, [
+    [ Species.ARBOK, PokemonType.POISON, -1, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PIKACHU, Type.ELECTRIC, -1, [
+    [ Species.PIKACHU, PokemonType.ELECTRIC, -1, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.RAICHU, Type.ELECTRIC, -1, [
+    [ Species.RAICHU, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SANDSHREW, Type.GROUND, -1, [
+    [ Species.SANDSHREW, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SANDSLASH, Type.GROUND, -1, [
+    [ Species.SANDSLASH, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
       [ Biome.DESERT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.NIDORAN_F, Type.POISON, -1, [
+    [ Species.NIDORAN_F, PokemonType.POISON, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.NIDORINA, Type.POISON, -1, [
+    [ Species.NIDORINA, PokemonType.POISON, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.NIDOQUEEN, Type.POISON, Type.GROUND, [
+    [ Species.NIDOQUEEN, PokemonType.POISON, PokemonType.GROUND, [
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.NIDORAN_M, Type.POISON, -1, [
+    [ Species.NIDORAN_M, PokemonType.POISON, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.NIDORINO, Type.POISON, -1, [
+    [ Species.NIDORINO, PokemonType.POISON, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.NIDOKING, Type.POISON, Type.GROUND, [
+    [ Species.NIDOKING, PokemonType.POISON, PokemonType.GROUND, [
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.CLEFAIRY, Type.FAIRY, -1, [
+    [ Species.CLEFAIRY, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.SPACE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CLEFABLE, Type.FAIRY, -1, [
+    [ Species.CLEFABLE, PokemonType.FAIRY, -1, [
       [ Biome.SPACE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.VULPIX, Type.FIRE, -1, [
+    [ Species.VULPIX, PokemonType.FIRE, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.NINETALES, Type.FIRE, -1, [
+    [ Species.NINETALES, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.JIGGLYPUFF, Type.NORMAL, Type.FAIRY, [
+    [ Species.JIGGLYPUFF, PokemonType.NORMAL, PokemonType.FAIRY, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.WIGGLYTUFF, Type.NORMAL, Type.FAIRY, [
+    [ Species.WIGGLYTUFF, PokemonType.NORMAL, PokemonType.FAIRY, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ZUBAT, Type.POISON, Type.FLYING, [
+    [ Species.ZUBAT, PokemonType.POISON, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GOLBAT, Type.POISON, Type.FLYING, [
+    [ Species.GOLBAT, PokemonType.POISON, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ODDISH, Type.GRASS, Type.POISON, [
+    [ Species.ODDISH, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.GLOOM, Type.GRASS, Type.POISON, [
+    [ Species.GLOOM, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.VILEPLUME, Type.GRASS, Type.POISON, [
+    [ Species.VILEPLUME, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PARAS, Type.BUG, Type.GRASS, [
+    [ Species.PARAS, PokemonType.BUG, PokemonType.GRASS, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.PARASECT, Type.BUG, Type.GRASS, [
+    [ Species.PARASECT, PokemonType.BUG, PokemonType.GRASS, [
       [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.CAVE, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.VENONAT, Type.BUG, Type.POISON, [
+    [ Species.VENONAT, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.VENOMOTH, Type.BUG, Type.POISON, [
+    [ Species.VENOMOTH, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.DIGLETT, Type.GROUND, -1, [
+    [ Species.DIGLETT, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DUGTRIO, Type.GROUND, -1, [
+    [ Species.DUGTRIO, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
       [ Biome.BADLANDS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MEOWTH, Type.NORMAL, -1, [
+    [ Species.MEOWTH, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PERSIAN, Type.NORMAL, -1, [
+    [ Species.PERSIAN, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PSYDUCK, Type.WATER, -1, [
+    [ Species.PSYDUCK, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.LAKE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GOLDUCK, Type.WATER, -1, [
+    [ Species.GOLDUCK, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.LAKE, BiomePoolTier.COMMON ],
       [ Biome.LAKE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MANKEY, Type.FIGHTING, -1, [
+    [ Species.MANKEY, PokemonType.FIGHTING, -1, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.DOJO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.PRIMEAPE, Type.FIGHTING, -1, [
+    [ Species.PRIMEAPE, PokemonType.FIGHTING, -1, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.DOJO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GROWLITHE, Type.FIRE, -1, [
+    [ Species.GROWLITHE, PokemonType.FIRE, -1, [
       [ Biome.GRASS, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ARCANINE, Type.FIRE, -1, [
+    [ Species.ARCANINE, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.POLIWAG, Type.WATER, -1, [
+    [ Species.POLIWAG, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.POLIWHIRL, Type.WATER, -1, [
+    [ Species.POLIWHIRL, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.POLIWRATH, Type.WATER, Type.FIGHTING, [
+    [ Species.POLIWRATH, PokemonType.WATER, PokemonType.FIGHTING, [
       [ Biome.SWAMP, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ABRA, Type.PSYCHIC, -1, [
+    [ Species.ABRA, PokemonType.PSYCHIC, -1, [
       [ Biome.TOWN, BiomePoolTier.RARE ],
       [ Biome.PLAINS, BiomePoolTier.RARE ],
       [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.KADABRA, Type.PSYCHIC, -1, [
+    [ Species.KADABRA, PokemonType.PSYCHIC, -1, [
       [ Biome.PLAINS, BiomePoolTier.RARE ],
       [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.ALAKAZAM, Type.PSYCHIC, -1, [
+    [ Species.ALAKAZAM, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MACHOP, Type.FIGHTING, -1, [
+    [ Species.MACHOP, PokemonType.FIGHTING, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MACHOKE, Type.FIGHTING, -1, [
+    [ Species.MACHOKE, PokemonType.FIGHTING, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MACHAMP, Type.FIGHTING, -1, [
+    [ Species.MACHAMP, PokemonType.FIGHTING, -1, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BELLSPROUT, Type.GRASS, Type.POISON, [
+    [ Species.BELLSPROUT, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.WEEPINBELL, Type.GRASS, Type.POISON, [
+    [ Species.WEEPINBELL, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.VICTREEBEL, Type.GRASS, Type.POISON, [
+    [ Species.VICTREEBEL, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TENTACOOL, Type.WATER, Type.POISON, [
+    [ Species.TENTACOOL, PokemonType.WATER, PokemonType.POISON, [
       [ Biome.SEA, BiomePoolTier.COMMON ],
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.TENTACRUEL, Type.WATER, Type.POISON, [
+    [ Species.TENTACRUEL, PokemonType.WATER, PokemonType.POISON, [
       [ Biome.SEA, BiomePoolTier.COMMON ],
       [ Biome.SEA, BiomePoolTier.BOSS ],
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GEODUDE, Type.ROCK, Type.GROUND, [
+    [ Species.GEODUDE, PokemonType.ROCK, PokemonType.GROUND, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GRAVELER, Type.ROCK, Type.GROUND, [
+    [ Species.GRAVELER, PokemonType.ROCK, PokemonType.GROUND, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GOLEM, Type.ROCK, Type.GROUND, [
+    [ Species.GOLEM, PokemonType.ROCK, PokemonType.GROUND, [
       [ Biome.BADLANDS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PONYTA, Type.FIRE, -1, [
+    [ Species.PONYTA, PokemonType.FIRE, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.RAPIDASH, Type.FIRE, -1, [
+    [ Species.RAPIDASH, PokemonType.FIRE, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.VOLCANO, BiomePoolTier.COMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SLOWPOKE, Type.WATER, Type.PSYCHIC, [
+    [ Species.SLOWPOKE, PokemonType.WATER, PokemonType.PSYCHIC, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SLOWBRO, Type.WATER, Type.PSYCHIC, [
+    [ Species.SLOWBRO, PokemonType.WATER, PokemonType.PSYCHIC, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
       [ Biome.LAKE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MAGNEMITE, Type.ELECTRIC, Type.STEEL, [
+    [ Species.MAGNEMITE, PokemonType.ELECTRIC, PokemonType.STEEL, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MAGNETON, Type.ELECTRIC, Type.STEEL, [
+    [ Species.MAGNETON, PokemonType.ELECTRIC, PokemonType.STEEL, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FARFETCHD, Type.NORMAL, Type.FLYING, [
+    [ Species.FARFETCHD, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
       [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.DODUO, Type.NORMAL, Type.FLYING, [
+    [ Species.DODUO, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.DODRIO, Type.NORMAL, Type.FLYING, [
+    [ Species.DODRIO, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SEEL, Type.WATER, -1, [
+    [ Species.SEEL, PokemonType.WATER, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DEWGONG, Type.WATER, Type.ICE, [
+    [ Species.DEWGONG, PokemonType.WATER, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GRIMER, Type.POISON, -1, [
+    [ Species.GRIMER, PokemonType.POISON, -1, [
       [ Biome.SLUM, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MUK, Type.POISON, -1, [
+    [ Species.MUK, PokemonType.POISON, -1, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ],
       [ Biome.SLUM, BiomePoolTier.COMMON ],
       [ Biome.SLUM, BiomePoolTier.BOSS ],
@@ -2461,84 +2474,84 @@ export function initBiomes() {
       [ Biome.LABORATORY, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SHELLDER, Type.WATER, -1, [
+    [ Species.SHELLDER, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.CLOYSTER, Type.WATER, Type.ICE, [
+    [ Species.CLOYSTER, PokemonType.WATER, PokemonType.ICE, [
       [ Biome.BEACH, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.GASTLY, Type.GHOST, Type.POISON, [
+    [ Species.GASTLY, PokemonType.GHOST, PokemonType.POISON, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.HAUNTER, Type.GHOST, Type.POISON, [
+    [ Species.HAUNTER, PokemonType.GHOST, PokemonType.POISON, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GENGAR, Type.GHOST, Type.POISON, [
+    [ Species.GENGAR, PokemonType.GHOST, PokemonType.POISON, [
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ONIX, Type.ROCK, Type.GROUND, [
+    [ Species.ONIX, PokemonType.ROCK, PokemonType.GROUND, [
       [ Biome.BADLANDS, BiomePoolTier.RARE ],
       [ Biome.CAVE, BiomePoolTier.RARE ],
       [ Biome.CAVE, BiomePoolTier.BOSS ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DROWZEE, Type.PSYCHIC, -1, [
+    [ Species.DROWZEE, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.HYPNO, Type.PSYCHIC, -1, [
+    [ Species.HYPNO, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.KRABBY, Type.WATER, -1, [
+    [ Species.KRABBY, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.KINGLER, Type.WATER, -1, [
+    [ Species.KINGLER, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.COMMON ],
       [ Biome.BEACH, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.VOLTORB, Type.ELECTRIC, -1, [
+    [ Species.VOLTORB, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ELECTRODE, Type.ELECTRIC, -1, [
+    [ Species.ELECTRODE, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.EXEGGCUTE, Type.GRASS, Type.PSYCHIC, [
+    [ Species.EXEGGCUTE, PokemonType.GRASS, PokemonType.PSYCHIC, [
       [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.EXEGGUTOR, Type.GRASS, Type.PSYCHIC, [
+    [ Species.EXEGGUTOR, PokemonType.GRASS, PokemonType.PSYCHIC, [
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CUBONE, Type.GROUND, -1, [
+    [ Species.CUBONE, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.MAROWAK, Type.GROUND, -1, [
+    [ Species.MAROWAK, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
@@ -2546,143 +2559,143 @@ export function initBiomes() {
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY, TimeOfDay.DUSK ]]
     ]
     ],
-    [ Species.HITMONLEE, Type.FIGHTING, -1, [
+    [ Species.HITMONLEE, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.HITMONCHAN, Type.FIGHTING, -1, [
+    [ Species.HITMONCHAN, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.LICKITUNG, Type.NORMAL, -1, [
+    [ Species.LICKITUNG, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.KOFFING, Type.POISON, -1, [
+    [ Species.KOFFING, PokemonType.POISON, -1, [
       [ Biome.SLUM, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.WEEZING, Type.POISON, -1, [
+    [ Species.WEEZING, PokemonType.POISON, -1, [
       [ Biome.SLUM, BiomePoolTier.COMMON ],
       [ Biome.SLUM, BiomePoolTier.BOSS ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.RHYHORN, Type.GROUND, Type.ROCK, [
+    [ Species.RHYHORN, PokemonType.GROUND, PokemonType.ROCK, [
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.RHYDON, Type.GROUND, Type.ROCK, [
+    [ Species.RHYDON, PokemonType.GROUND, PokemonType.ROCK, [
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.CHANSEY, Type.NORMAL, -1, [
+    [ Species.CHANSEY, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
       [ Biome.MEADOW, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.TANGELA, Type.GRASS, -1, [
+    [ Species.TANGELA, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.KANGASKHAN, Type.NORMAL, -1, [
+    [ Species.KANGASKHAN, PokemonType.NORMAL, -1, [
       [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HORSEA, Type.WATER, -1, [
+    [ Species.HORSEA, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SEADRA, Type.WATER, -1, [
+    [ Species.SEADRA, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GOLDEEN, Type.WATER, -1, [
+    [ Species.GOLDEEN, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.COMMON ],
       [ Biome.SEA, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SEAKING, Type.WATER, -1, [
+    [ Species.SEAKING, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.COMMON ],
       [ Biome.LAKE, BiomePoolTier.BOSS ],
       [ Biome.SEA, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.STARYU, Type.WATER, -1, [
+    [ Species.STARYU, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.STARMIE, Type.WATER, Type.PSYCHIC, [
+    [ Species.STARMIE, PokemonType.WATER, PokemonType.PSYCHIC, [
       [ Biome.BEACH, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.BEACH, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.MR_MIME, Type.PSYCHIC, Type.FAIRY, [
+    [ Species.MR_MIME, PokemonType.PSYCHIC, PokemonType.FAIRY, [
       [ Biome.RUINS, BiomePoolTier.RARE ],
       [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SCYTHER, Type.BUG, Type.FLYING, [
+    [ Species.SCYTHER, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ],
       [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.JUNGLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.JYNX, Type.ICE, Type.PSYCHIC, [
+    [ Species.JYNX, PokemonType.ICE, PokemonType.PSYCHIC, [
       [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ELECTABUZZ, Type.ELECTRIC, -1, [
+    [ Species.ELECTABUZZ, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.MAGMAR, Type.FIRE, -1, [
+    [ Species.MAGMAR, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.PINSIR, Type.BUG, -1, [
+    [ Species.PINSIR, PokemonType.BUG, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.TAUROS, Type.NORMAL, -1, [
+    [ Species.TAUROS, PokemonType.NORMAL, -1, [
       [ Biome.MEADOW, BiomePoolTier.RARE ],
       [ Biome.MEADOW, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MAGIKARP, Type.WATER, -1, [
+    [ Species.MAGIKARP, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.COMMON ],
       [ Biome.LAKE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GYARADOS, Type.WATER, Type.FLYING, [
+    [ Species.GYARADOS, PokemonType.WATER, PokemonType.FLYING, [
       [ Biome.SEA, BiomePoolTier.COMMON ],
       [ Biome.LAKE, BiomePoolTier.COMMON ],
       [ Biome.LAKE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.LAPRAS, Type.WATER, Type.ICE, [
+    [ Species.LAPRAS, PokemonType.WATER, PokemonType.ICE, [
       [ Biome.SEA, BiomePoolTier.RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.DITTO, Type.NORMAL, -1, [
+    [ Species.DITTO, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.ULTRA_RARE ],
       [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ],
@@ -2690,164 +2703,164 @@ export function initBiomes() {
       [ Biome.LABORATORY, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.EEVEE, Type.NORMAL, -1, [
+    [ Species.EEVEE, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.SUPER_RARE ],
       [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
       [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ],
       [ Biome.MEADOW, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.VAPOREON, Type.WATER, -1, [
+    [ Species.VAPOREON, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.SUPER_RARE ],
       [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.JOLTEON, Type.ELECTRIC, -1, [
+    [ Species.JOLTEON, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.SUPER_RARE ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.FLAREON, Type.FIRE, -1, [
+    [ Species.FLAREON, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.PORYGON, Type.NORMAL, -1, [
+    [ Species.PORYGON, PokemonType.NORMAL, -1, [
       [ Biome.FACTORY, BiomePoolTier.RARE ],
       [ Biome.SPACE, BiomePoolTier.SUPER_RARE ],
       [ Biome.LABORATORY, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.OMANYTE, Type.ROCK, Type.WATER, [
+    [ Species.OMANYTE, PokemonType.ROCK, PokemonType.WATER, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.OMASTAR, Type.ROCK, Type.WATER, [
+    [ Species.OMASTAR, PokemonType.ROCK, PokemonType.WATER, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.KABUTO, Type.ROCK, Type.WATER, [
+    [ Species.KABUTO, PokemonType.ROCK, PokemonType.WATER, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.KABUTOPS, Type.ROCK, Type.WATER, [
+    [ Species.KABUTOPS, PokemonType.ROCK, PokemonType.WATER, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.AERODACTYL, Type.ROCK, Type.FLYING, [
+    [ Species.AERODACTYL, PokemonType.ROCK, PokemonType.FLYING, [
       [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SNORLAX, Type.NORMAL, -1, [
+    [ Species.SNORLAX, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
       [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ARTICUNO, Type.ICE, Type.FLYING, [
+    [ Species.ARTICUNO, PokemonType.ICE, PokemonType.FLYING, [
       [ Biome.ICE_CAVE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.ZAPDOS, Type.ELECTRIC, Type.FLYING, [
+    [ Species.ZAPDOS, PokemonType.ELECTRIC, PokemonType.FLYING, [
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.MOLTRES, Type.FIRE, Type.FLYING, [
+    [ Species.MOLTRES, PokemonType.FIRE, PokemonType.FLYING, [
       [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.DRATINI, Type.DRAGON, -1, [
+    [ Species.DRATINI, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DRAGONAIR, Type.DRAGON, -1, [
+    [ Species.DRAGONAIR, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DRAGONITE, Type.DRAGON, Type.FLYING, [
+    [ Species.DRAGONITE, PokemonType.DRAGON, PokemonType.FLYING, [
       [ Biome.WASTELAND, BiomePoolTier.RARE ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MEWTWO, Type.PSYCHIC, -1, [
+    [ Species.MEWTWO, PokemonType.PSYCHIC, -1, [
       [ Biome.LABORATORY, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.MEW, Type.PSYCHIC, -1, [ ]
+    [ Species.MEW, PokemonType.PSYCHIC, -1, [ ]
     ],
-    [ Species.CHIKORITA, Type.GRASS, -1, [
+    [ Species.CHIKORITA, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.BAYLEEF, Type.GRASS, -1, [
+    [ Species.BAYLEEF, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.MEGANIUM, Type.GRASS, -1, [
+    [ Species.MEGANIUM, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.CYNDAQUIL, Type.FIRE, -1, [
+    [ Species.CYNDAQUIL, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.QUILAVA, Type.FIRE, -1, [
+    [ Species.QUILAVA, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.TYPHLOSION, Type.FIRE, -1, [
+    [ Species.TYPHLOSION, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.TOTODILE, Type.WATER, -1, [
+    [ Species.TOTODILE, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.CROCONAW, Type.WATER, -1, [
+    [ Species.CROCONAW, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.FERALIGATR, Type.WATER, -1, [
+    [ Species.FERALIGATR, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.RARE ],
       [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SENTRET, Type.NORMAL, -1, [
+    [ Species.SENTRET, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.FURRET, Type.NORMAL, -1, [
+    [ Species.FURRET, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HOOTHOOT, Type.NORMAL, Type.FLYING, [
+    [ Species.HOOTHOOT, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.NOCTOWL, Type.NORMAL, Type.FLYING, [
+    [ Species.NOCTOWL, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.LEDYBA, Type.BUG, Type.FLYING, [
+    [ Species.LEDYBA, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.DAWN ],
       [ Biome.MEADOW, BiomePoolTier.COMMON, TimeOfDay.DAWN ]
     ]
     ],
-    [ Species.LEDIAN, Type.BUG, Type.FLYING, [
+    [ Species.LEDIAN, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.MEADOW, BiomePoolTier.COMMON, TimeOfDay.DAWN ],
       [ Biome.MEADOW, BiomePoolTier.BOSS, TimeOfDay.DAWN ]
     ]
     ],
-    [ Species.SPINARAK, Type.BUG, Type.POISON, [
+    [ Species.SPINARAK, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
       [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
@@ -2857,7 +2870,7 @@ export function initBiomes() {
       [ Biome.JUNGLE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.ARIADOS, Type.BUG, Type.POISON, [
+    [ Species.ARIADOS, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.TALL_GRASS, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ],
       [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
@@ -2866,227 +2879,227 @@ export function initBiomes() {
       [ Biome.JUNGLE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.CROBAT, Type.POISON, Type.FLYING, [
+    [ Species.CROBAT, PokemonType.POISON, PokemonType.FLYING, [
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CHINCHOU, Type.WATER, Type.ELECTRIC, [
+    [ Species.CHINCHOU, PokemonType.WATER, PokemonType.ELECTRIC, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.SEABED, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.LANTURN, Type.WATER, Type.ELECTRIC, [
+    [ Species.LANTURN, PokemonType.WATER, PokemonType.ELECTRIC, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.SEABED, BiomePoolTier.COMMON ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PICHU, Type.ELECTRIC, -1, [ ]
+    [ Species.PICHU, PokemonType.ELECTRIC, -1, [ ]
     ],
-    [ Species.CLEFFA, Type.FAIRY, -1, [ ]
+    [ Species.CLEFFA, PokemonType.FAIRY, -1, [ ]
     ],
-    [ Species.IGGLYBUFF, Type.NORMAL, Type.FAIRY, [ ]
+    [ Species.IGGLYBUFF, PokemonType.NORMAL, PokemonType.FAIRY, [ ]
     ],
-    [ Species.TOGEPI, Type.FAIRY, -1, [ ]
+    [ Species.TOGEPI, PokemonType.FAIRY, -1, [ ]
     ],
-    [ Species.TOGETIC, Type.FAIRY, Type.FLYING, [
+    [ Species.TOGETIC, PokemonType.FAIRY, PokemonType.FLYING, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.NATU, Type.PSYCHIC, Type.FLYING, [
+    [ Species.NATU, PokemonType.PSYCHIC, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.XATU, Type.PSYCHIC, Type.FLYING, [
+    [ Species.XATU, PokemonType.PSYCHIC, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ],
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MAREEP, Type.ELECTRIC, -1, [
+    [ Species.MAREEP, PokemonType.ELECTRIC, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.FLAAFFY, Type.ELECTRIC, -1, [
+    [ Species.FLAAFFY, PokemonType.ELECTRIC, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.AMPHAROS, Type.ELECTRIC, -1, [
+    [ Species.AMPHAROS, PokemonType.ELECTRIC, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.BELLOSSOM, Type.GRASS, -1, [
+    [ Species.BELLOSSOM, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.MARILL, Type.WATER, Type.FAIRY, [
+    [ Species.MARILL, PokemonType.WATER, PokemonType.FAIRY, [
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.AZUMARILL, Type.WATER, Type.FAIRY, [
+    [ Species.AZUMARILL, PokemonType.WATER, PokemonType.FAIRY, [
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SUDOWOODO, Type.ROCK, -1, [
+    [ Species.SUDOWOODO, PokemonType.ROCK, -1, [
       [ Biome.GRASS, BiomePoolTier.SUPER_RARE ],
       [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.POLITOED, Type.WATER, -1, [
+    [ Species.POLITOED, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.SUPER_RARE ],
       [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HOPPIP, Type.GRASS, Type.FLYING, [
+    [ Species.HOPPIP, PokemonType.GRASS, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SKIPLOOM, Type.GRASS, Type.FLYING, [
+    [ Species.SKIPLOOM, PokemonType.GRASS, PokemonType.FLYING, [
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.JUMPLUFF, Type.GRASS, Type.FLYING, [
+    [ Species.JUMPLUFF, PokemonType.GRASS, PokemonType.FLYING, [
       [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.AIPOM, Type.NORMAL, -1, [
+    [ Species.AIPOM, PokemonType.NORMAL, -1, [
       [ Biome.JUNGLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SUNKERN, Type.GRASS, -1, [
+    [ Species.SUNKERN, PokemonType.GRASS, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SUNFLORA, Type.GRASS, -1, [
+    [ Species.SUNFLORA, PokemonType.GRASS, -1, [
       [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.YANMA, Type.BUG, Type.FLYING, [
+    [ Species.YANMA, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.WOOPER, Type.WATER, Type.GROUND, [
+    [ Species.WOOPER, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.QUAGSIRE, Type.WATER, Type.GROUND, [
+    [ Species.QUAGSIRE, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ESPEON, Type.PSYCHIC, -1, [
+    [ Species.ESPEON, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.SUPER_RARE, TimeOfDay.DAY ],
       [ Biome.RUINS, BiomePoolTier.BOSS_RARE, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.UMBREON, Type.DARK, -1, [
+    [ Species.UMBREON, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.SUPER_RARE ],
       [ Biome.ABYSS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.MURKROW, Type.DARK, Type.FLYING, [
+    [ Species.MURKROW, PokemonType.DARK, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE, TimeOfDay.NIGHT ],
       [ Biome.ABYSS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SLOWKING, Type.WATER, Type.PSYCHIC, [
+    [ Species.SLOWKING, PokemonType.WATER, PokemonType.PSYCHIC, [
       [ Biome.LAKE, BiomePoolTier.SUPER_RARE ],
       [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.MISDREAVUS, Type.GHOST, -1, [
+    [ Species.MISDREAVUS, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.UNOWN, Type.PSYCHIC, -1, [
+    [ Species.UNOWN, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.WOBBUFFET, Type.PSYCHIC, -1, [
+    [ Species.WOBBUFFET, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.RARE ],
       [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.GIRAFARIG, Type.NORMAL, Type.PSYCHIC, [
+    [ Species.GIRAFARIG, PokemonType.NORMAL, PokemonType.PSYCHIC, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.PINECO, Type.BUG, -1, [
+    [ Species.PINECO, PokemonType.BUG, -1, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.FORRETRESS, Type.BUG, Type.STEEL, [
+    [ Species.FORRETRESS, PokemonType.BUG, PokemonType.STEEL, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.DUNSPARCE, Type.NORMAL, -1, [
+    [ Species.DUNSPARCE, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.GLIGAR, Type.GROUND, Type.FLYING, [
+    [ Species.GLIGAR, PokemonType.GROUND, PokemonType.FLYING, [
       [ Biome.BADLANDS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.STEELIX, Type.STEEL, Type.GROUND, [
+    [ Species.STEELIX, PokemonType.STEEL, PokemonType.GROUND, [
       [ Biome.BADLANDS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SNUBBULL, Type.FAIRY, -1, [
+    [ Species.SNUBBULL, PokemonType.FAIRY, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GRANBULL, Type.FAIRY, -1, [
+    [ Species.GRANBULL, PokemonType.FAIRY, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.QWILFISH, Type.WATER, Type.POISON, [
+    [ Species.QWILFISH, PokemonType.WATER, PokemonType.POISON, [
       [ Biome.SEABED, BiomePoolTier.RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SCIZOR, Type.BUG, Type.STEEL, [
+    [ Species.SCIZOR, PokemonType.BUG, PokemonType.STEEL, [
       [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SHUCKLE, Type.BUG, Type.ROCK, [
+    [ Species.SHUCKLE, PokemonType.BUG, PokemonType.ROCK, [
       [ Biome.CAVE, BiomePoolTier.SUPER_RARE ],
       [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HERACROSS, Type.BUG, Type.FIGHTING, [
+    [ Species.HERACROSS, PokemonType.BUG, PokemonType.FIGHTING, [
       [ Biome.FOREST, BiomePoolTier.RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SNEASEL, Type.DARK, Type.ICE, [
+    [ Species.SNEASEL, PokemonType.DARK, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TEDDIURSA, Type.NORMAL, -1, [
+    [ Species.TEDDIURSA, PokemonType.NORMAL, -1, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.URSARING, Type.NORMAL, -1, [
+    [ Species.URSARING, PokemonType.NORMAL, -1, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.BOSS ],
@@ -3094,926 +3107,926 @@ export function initBiomes() {
       [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SLUGMA, Type.FIRE, -1, [
+    [ Species.SLUGMA, PokemonType.FIRE, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MAGCARGO, Type.FIRE, Type.ROCK, [
+    [ Species.MAGCARGO, PokemonType.FIRE, PokemonType.ROCK, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.COMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SWINUB, Type.ICE, Type.GROUND, [
+    [ Species.SWINUB, PokemonType.ICE, PokemonType.GROUND, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.PILOSWINE, Type.ICE, Type.GROUND, [
+    [ Species.PILOSWINE, PokemonType.ICE, PokemonType.GROUND, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CORSOLA, Type.WATER, Type.ROCK, [
+    [ Species.CORSOLA, PokemonType.WATER, PokemonType.ROCK, [
       [ Biome.SEABED, BiomePoolTier.RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.REMORAID, Type.WATER, -1, [
+    [ Species.REMORAID, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.OCTILLERY, Type.WATER, -1, [
+    [ Species.OCTILLERY, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DELIBIRD, Type.ICE, Type.FLYING, [
+    [ Species.DELIBIRD, PokemonType.ICE, PokemonType.FLYING, [
       [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.MANTINE, Type.WATER, Type.FLYING, [
+    [ Species.MANTINE, PokemonType.WATER, PokemonType.FLYING, [
       [ Biome.SEABED, BiomePoolTier.RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SKARMORY, Type.STEEL, Type.FLYING, [
+    [ Species.SKARMORY, PokemonType.STEEL, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.HOUNDOUR, Type.DARK, Type.FIRE, [
+    [ Species.HOUNDOUR, PokemonType.DARK, PokemonType.FIRE, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.ABYSS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.HOUNDOOM, Type.DARK, Type.FIRE, [
+    [ Species.HOUNDOOM, PokemonType.DARK, PokemonType.FIRE, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.ABYSS, BiomePoolTier.COMMON ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.KINGDRA, Type.WATER, Type.DRAGON, [
+    [ Species.KINGDRA, PokemonType.WATER, PokemonType.DRAGON, [
       [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
       [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.PHANPY, Type.GROUND, -1, [
+    [ Species.PHANPY, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.DONPHAN, Type.GROUND, -1, [
+    [ Species.DONPHAN, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.PORYGON2, Type.NORMAL, -1, [
+    [ Species.PORYGON2, PokemonType.NORMAL, -1, [
       [ Biome.FACTORY, BiomePoolTier.RARE ],
       [ Biome.SPACE, BiomePoolTier.SUPER_RARE ],
       [ Biome.LABORATORY, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.STANTLER, Type.NORMAL, -1, [
+    [ Species.STANTLER, PokemonType.NORMAL, -1, [
       [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SMEARGLE, Type.NORMAL, -1, [
+    [ Species.SMEARGLE, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.TYROGUE, Type.FIGHTING, -1, [ ]
+    [ Species.TYROGUE, PokemonType.FIGHTING, -1, [ ]
     ],
-    [ Species.HITMONTOP, Type.FIGHTING, -1, [
+    [ Species.HITMONTOP, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.SUPER_RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS_RARE ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.SMOOCHUM, Type.ICE, Type.PSYCHIC, [ ]
+    [ Species.SMOOCHUM, PokemonType.ICE, PokemonType.PSYCHIC, [ ]
     ],
-    [ Species.ELEKID, Type.ELECTRIC, -1, [ ]
+    [ Species.ELEKID, PokemonType.ELECTRIC, -1, [ ]
     ],
-    [ Species.MAGBY, Type.FIRE, -1, [ ]
+    [ Species.MAGBY, PokemonType.FIRE, -1, [ ]
     ],
-    [ Species.MILTANK, Type.NORMAL, -1, [
+    [ Species.MILTANK, PokemonType.NORMAL, -1, [
       [ Biome.MEADOW, BiomePoolTier.RARE ],
       [ Biome.MEADOW, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BLISSEY, Type.NORMAL, -1, [
+    [ Species.BLISSEY, PokemonType.NORMAL, -1, [
       [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.RAIKOU, Type.ELECTRIC, -1, [
+    [ Species.RAIKOU, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.ENTEI, Type.FIRE, -1, [
+    [ Species.ENTEI, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.SUICUNE, Type.WATER, -1, [
+    [ Species.SUICUNE, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.LAKE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.LARVITAR, Type.ROCK, Type.GROUND, [
+    [ Species.LARVITAR, PokemonType.ROCK, PokemonType.GROUND, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PUPITAR, Type.ROCK, Type.GROUND, [
+    [ Species.PUPITAR, PokemonType.ROCK, PokemonType.GROUND, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.TYRANITAR, Type.ROCK, Type.DARK, [
+    [ Species.TYRANITAR, PokemonType.ROCK, PokemonType.DARK, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.LUGIA, Type.PSYCHIC, Type.FLYING, [
+    [ Species.LUGIA, PokemonType.PSYCHIC, PokemonType.FLYING, [
       [ Biome.SEA, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.HO_OH, Type.FIRE, Type.FLYING, [
+    [ Species.HO_OH, PokemonType.FIRE, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.CELEBI, Type.PSYCHIC, Type.GRASS, [ ]
+    [ Species.CELEBI, PokemonType.PSYCHIC, PokemonType.GRASS, [ ]
     ],
-    [ Species.TREECKO, Type.GRASS, -1, [
+    [ Species.TREECKO, PokemonType.GRASS, -1, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.GROVYLE, Type.GRASS, -1, [
+    [ Species.GROVYLE, PokemonType.GRASS, -1, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SCEPTILE, Type.GRASS, -1, [
+    [ Species.SCEPTILE, PokemonType.GRASS, -1, [
       [ Biome.FOREST, BiomePoolTier.RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.TORCHIC, Type.FIRE, -1, [
+    [ Species.TORCHIC, PokemonType.FIRE, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.COMBUSKEN, Type.FIRE, Type.FIGHTING, [
+    [ Species.COMBUSKEN, PokemonType.FIRE, PokemonType.FIGHTING, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.BLAZIKEN, Type.FIRE, Type.FIGHTING, [
+    [ Species.BLAZIKEN, PokemonType.FIRE, PokemonType.FIGHTING, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.MUDKIP, Type.WATER, -1, [
+    [ Species.MUDKIP, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.MARSHTOMP, Type.WATER, Type.GROUND, [
+    [ Species.MARSHTOMP, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SWAMPERT, Type.WATER, Type.GROUND, [
+    [ Species.SWAMPERT, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.RARE ],
       [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.POOCHYENA, Type.DARK, -1, [
+    [ Species.POOCHYENA, PokemonType.DARK, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.MIGHTYENA, Type.DARK, -1, [
+    [ Species.MIGHTYENA, PokemonType.DARK, -1, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ZIGZAGOON, Type.NORMAL, -1, [
+    [ Species.ZIGZAGOON, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.COMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.LINOONE, Type.NORMAL, -1, [
+    [ Species.LINOONE, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.BOSS ],
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.WURMPLE, Type.BUG, -1, [
+    [ Species.WURMPLE, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SILCOON, Type.BUG, -1, [
+    [ Species.SILCOON, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.BEAUTIFLY, Type.BUG, Type.FLYING, [
+    [ Species.BEAUTIFLY, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.DAY ],
       [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.CASCOON, Type.BUG, -1, [
+    [ Species.CASCOON, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.DUSTOX, Type.BUG, Type.POISON, [
+    [ Species.DUSTOX, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.LOTAD, Type.WATER, Type.GRASS, [
+    [ Species.LOTAD, PokemonType.WATER, PokemonType.GRASS, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.LOMBRE, Type.WATER, Type.GRASS, [
+    [ Species.LOMBRE, PokemonType.WATER, PokemonType.GRASS, [
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.LUDICOLO, Type.WATER, Type.GRASS, [
+    [ Species.LUDICOLO, PokemonType.WATER, PokemonType.GRASS, [
       [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SEEDOT, Type.GRASS, -1, [
+    [ Species.SEEDOT, PokemonType.GRASS, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.NUZLEAF, Type.GRASS, Type.DARK, [
+    [ Species.NUZLEAF, PokemonType.GRASS, PokemonType.DARK, [
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.SHIFTRY, Type.GRASS, Type.DARK, [
+    [ Species.SHIFTRY, PokemonType.GRASS, PokemonType.DARK, [
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.TAILLOW, Type.NORMAL, Type.FLYING, [
+    [ Species.TAILLOW, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SWELLOW, Type.NORMAL, Type.FLYING, [
+    [ Species.SWELLOW, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.WINGULL, Type.WATER, Type.FLYING, [
+    [ Species.WINGULL, PokemonType.WATER, PokemonType.FLYING, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.PELIPPER, Type.WATER, Type.FLYING, [
+    [ Species.PELIPPER, PokemonType.WATER, PokemonType.FLYING, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.RALTS, Type.PSYCHIC, Type.FAIRY, [
+    [ Species.RALTS, PokemonType.PSYCHIC, PokemonType.FAIRY, [
       [ Biome.TOWN, BiomePoolTier.SUPER_RARE ],
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.KIRLIA, Type.PSYCHIC, Type.FAIRY, [
+    [ Species.KIRLIA, PokemonType.PSYCHIC, PokemonType.FAIRY, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GARDEVOIR, Type.PSYCHIC, Type.FAIRY, [
+    [ Species.GARDEVOIR, PokemonType.PSYCHIC, PokemonType.FAIRY, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.MEADOW, BiomePoolTier.BOSS ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SURSKIT, Type.BUG, Type.WATER, [
+    [ Species.SURSKIT, PokemonType.BUG, PokemonType.WATER, [
       [ Biome.TOWN, BiomePoolTier.RARE ],
       [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.MASQUERAIN, Type.BUG, Type.FLYING, [
+    [ Species.MASQUERAIN, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
       [ Biome.LAKE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SHROOMISH, Type.GRASS, -1, [
+    [ Species.SHROOMISH, PokemonType.GRASS, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.BRELOOM, Type.GRASS, Type.FIGHTING, [
+    [ Species.BRELOOM, PokemonType.GRASS, PokemonType.FIGHTING, [
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.SLAKOTH, Type.NORMAL, -1, [
+    [ Species.SLAKOTH, PokemonType.NORMAL, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.VIGOROTH, Type.NORMAL, -1, [
+    [ Species.VIGOROTH, PokemonType.NORMAL, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SLAKING, Type.NORMAL, -1, [
+    [ Species.SLAKING, PokemonType.NORMAL, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.NINCADA, Type.BUG, Type.GROUND, [
+    [ Species.NINCADA, PokemonType.BUG, PokemonType.GROUND, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.NINJASK, Type.BUG, Type.FLYING, [
+    [ Species.NINJASK, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SHEDINJA, Type.BUG, Type.GHOST, [
+    [ Species.SHEDINJA, PokemonType.BUG, PokemonType.GHOST, [
       [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.WHISMUR, Type.NORMAL, -1, [
+    [ Species.WHISMUR, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.LOUDRED, Type.NORMAL, -1, [
+    [ Species.LOUDRED, PokemonType.NORMAL, -1, [
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.EXPLOUD, Type.NORMAL, -1, [
+    [ Species.EXPLOUD, PokemonType.NORMAL, -1, [
       [ Biome.CAVE, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MAKUHITA, Type.FIGHTING, -1, [
+    [ Species.MAKUHITA, PokemonType.FIGHTING, -1, [
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.DOJO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.HARIYAMA, Type.FIGHTING, -1, [
+    [ Species.HARIYAMA, PokemonType.FIGHTING, -1, [
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.DOJO, BiomePoolTier.COMMON ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.AZURILL, Type.NORMAL, Type.FAIRY, [ ]
+    [ Species.AZURILL, PokemonType.NORMAL, PokemonType.FAIRY, [ ]
     ],
-    [ Species.NOSEPASS, Type.ROCK, -1, [
+    [ Species.NOSEPASS, PokemonType.ROCK, -1, [
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SKITTY, Type.NORMAL, -1, [
+    [ Species.SKITTY, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.DELCATTY, Type.NORMAL, -1, [
+    [ Species.DELCATTY, PokemonType.NORMAL, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SABLEYE, Type.DARK, Type.GHOST, [
+    [ Species.SABLEYE, PokemonType.DARK, PokemonType.GHOST, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MAWILE, Type.STEEL, Type.FAIRY, [
+    [ Species.MAWILE, PokemonType.STEEL, PokemonType.FAIRY, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ARON, Type.STEEL, Type.ROCK, [
+    [ Species.ARON, PokemonType.STEEL, PokemonType.ROCK, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.LAIRON, Type.STEEL, Type.ROCK, [
+    [ Species.LAIRON, PokemonType.STEEL, PokemonType.ROCK, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.AGGRON, Type.STEEL, Type.ROCK, [
+    [ Species.AGGRON, PokemonType.STEEL, PokemonType.ROCK, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MEDITITE, Type.FIGHTING, Type.PSYCHIC, [
+    [ Species.MEDITITE, PokemonType.FIGHTING, PokemonType.PSYCHIC, [
       [ Biome.DOJO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MEDICHAM, Type.FIGHTING, Type.PSYCHIC, [
+    [ Species.MEDICHAM, PokemonType.FIGHTING, PokemonType.PSYCHIC, [
       [ Biome.DOJO, BiomePoolTier.COMMON ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ELECTRIKE, Type.ELECTRIC, -1, [
+    [ Species.ELECTRIKE, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MANECTRIC, Type.ELECTRIC, -1, [
+    [ Species.MANECTRIC, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PLUSLE, Type.ELECTRIC, -1, [
+    [ Species.PLUSLE, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.MINUN, Type.ELECTRIC, -1, [
+    [ Species.MINUN, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.VOLBEAT, Type.BUG, -1, [
+    [ Species.VOLBEAT, PokemonType.BUG, -1, [
       [ Biome.MEADOW, BiomePoolTier.RARE, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.ILLUMISE, Type.BUG, -1, [
+    [ Species.ILLUMISE, PokemonType.BUG, -1, [
       [ Biome.MEADOW, BiomePoolTier.RARE, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.ROSELIA, Type.GRASS, Type.POISON, [
+    [ Species.ROSELIA, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GULPIN, Type.POISON, -1, [
+    [ Species.GULPIN, PokemonType.POISON, -1, [
       [ Biome.SWAMP, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SWALOT, Type.POISON, -1, [
+    [ Species.SWALOT, PokemonType.POISON, -1, [
       [ Biome.SWAMP, BiomePoolTier.COMMON ],
       [ Biome.SWAMP, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CARVANHA, Type.WATER, Type.DARK, [
+    [ Species.CARVANHA, PokemonType.WATER, PokemonType.DARK, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.SHARPEDO, Type.WATER, Type.DARK, [
+    [ Species.SHARPEDO, PokemonType.WATER, PokemonType.DARK, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.WAILMER, Type.WATER, -1, [
+    [ Species.WAILMER, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ],
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.WAILORD, Type.WATER, -1, [
+    [ Species.WAILORD, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ],
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.NUMEL, Type.FIRE, Type.GROUND, [
+    [ Species.NUMEL, PokemonType.FIRE, PokemonType.GROUND, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CAMERUPT, Type.FIRE, Type.GROUND, [
+    [ Species.CAMERUPT, PokemonType.FIRE, PokemonType.GROUND, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.COMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TORKOAL, Type.FIRE, -1, [
+    [ Species.TORKOAL, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SPOINK, Type.PSYCHIC, -1, [
+    [ Species.SPOINK, PokemonType.PSYCHIC, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
       [ Biome.RUINS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GRUMPIG, Type.PSYCHIC, -1, [
+    [ Species.GRUMPIG, PokemonType.PSYCHIC, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SPINDA, Type.NORMAL, -1, [
+    [ Species.SPINDA, PokemonType.NORMAL, -1, [
       [ Biome.MEADOW, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.TRAPINCH, Type.GROUND, -1, [
+    [ Species.TRAPINCH, PokemonType.GROUND, -1, [
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.VIBRAVA, Type.GROUND, Type.DRAGON, [
+    [ Species.VIBRAVA, PokemonType.GROUND, PokemonType.DRAGON, [
       [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FLYGON, Type.GROUND, Type.DRAGON, [
+    [ Species.FLYGON, PokemonType.GROUND, PokemonType.DRAGON, [
       [ Biome.DESERT, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CACNEA, Type.GRASS, -1, [
+    [ Species.CACNEA, PokemonType.GRASS, -1, [
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.CACTURNE, Type.GRASS, Type.DARK, [
+    [ Species.CACTURNE, PokemonType.GRASS, PokemonType.DARK, [
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.SWABLU, Type.NORMAL, Type.FLYING, [
+    [ Species.SWABLU, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.ALTARIA, Type.DRAGON, Type.FLYING, [
+    [ Species.ALTARIA, PokemonType.DRAGON, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.ZANGOOSE, Type.NORMAL, -1, [
+    [ Species.ZANGOOSE, PokemonType.NORMAL, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SEVIPER, Type.POISON, -1, [
+    [ Species.SEVIPER, PokemonType.POISON, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.LUNATONE, Type.ROCK, Type.PSYCHIC, [
+    [ Species.LUNATONE, PokemonType.ROCK, PokemonType.PSYCHIC, [
       [ Biome.SPACE, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.SPACE, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.SOLROCK, Type.ROCK, Type.PSYCHIC, [
+    [ Species.SOLROCK, PokemonType.ROCK, PokemonType.PSYCHIC, [
       [ Biome.SPACE, BiomePoolTier.COMMON, TimeOfDay.DAY ],
       [ Biome.SPACE, BiomePoolTier.BOSS, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.BARBOACH, Type.WATER, Type.GROUND, [
+    [ Species.BARBOACH, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.WHISCASH, Type.WATER, Type.GROUND, [
+    [ Species.WHISCASH, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CORPHISH, Type.WATER, -1, [
+    [ Species.CORPHISH, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CRAWDAUNT, Type.WATER, Type.DARK, [
+    [ Species.CRAWDAUNT, PokemonType.WATER, PokemonType.DARK, [
       [ Biome.BEACH, BiomePoolTier.COMMON ],
       [ Biome.BEACH, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BALTOY, Type.GROUND, Type.PSYCHIC, [
+    [ Species.BALTOY, PokemonType.GROUND, PokemonType.PSYCHIC, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.CLAYDOL, Type.GROUND, Type.PSYCHIC, [
+    [ Species.CLAYDOL, PokemonType.GROUND, PokemonType.PSYCHIC, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ],
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.LILEEP, Type.ROCK, Type.GRASS, [
+    [ Species.LILEEP, PokemonType.ROCK, PokemonType.GRASS, [
       [ Biome.DESERT, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.CRADILY, Type.ROCK, Type.GRASS, [
+    [ Species.CRADILY, PokemonType.ROCK, PokemonType.GRASS, [
       [ Biome.DESERT, BiomePoolTier.SUPER_RARE ],
       [ Biome.DESERT, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ANORITH, Type.ROCK, Type.BUG, [
+    [ Species.ANORITH, PokemonType.ROCK, PokemonType.BUG, [
       [ Biome.DESERT, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.ARMALDO, Type.ROCK, Type.BUG, [
+    [ Species.ARMALDO, PokemonType.ROCK, PokemonType.BUG, [
       [ Biome.DESERT, BiomePoolTier.SUPER_RARE ],
       [ Biome.DESERT, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.FEEBAS, Type.WATER, -1, [
+    [ Species.FEEBAS, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.ULTRA_RARE ]
     ]
     ],
-    [ Species.MILOTIC, Type.WATER, -1, [
+    [ Species.MILOTIC, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.CASTFORM, Type.NORMAL, -1, [
+    [ Species.CASTFORM, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.KECLEON, Type.NORMAL, -1, [
+    [ Species.KECLEON, PokemonType.NORMAL, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SHUPPET, Type.GHOST, -1, [
+    [ Species.SHUPPET, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BANETTE, Type.GHOST, -1, [
+    [ Species.BANETTE, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DUSKULL, Type.GHOST, -1, [
+    [ Species.DUSKULL, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DUSCLOPS, Type.GHOST, -1, [
+    [ Species.DUSCLOPS, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.TROPIUS, Type.GRASS, Type.FLYING, [
+    [ Species.TROPIUS, PokemonType.GRASS, PokemonType.FLYING, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
       [ Biome.FOREST, BiomePoolTier.RARE ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CHIMECHO, Type.PSYCHIC, -1, [
+    [ Species.CHIMECHO, PokemonType.PSYCHIC, -1, [
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ],
       [ Biome.TEMPLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ABSOL, Type.DARK, -1, [
+    [ Species.ABSOL, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.RARE ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.WYNAUT, Type.PSYCHIC, -1, [ ]
+    [ Species.WYNAUT, PokemonType.PSYCHIC, -1, [ ]
     ],
-    [ Species.SNORUNT, Type.ICE, -1, [
+    [ Species.SNORUNT, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GLALIE, Type.ICE, -1, [
+    [ Species.GLALIE, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SPHEAL, Type.ICE, Type.WATER, [
+    [ Species.SPHEAL, PokemonType.ICE, PokemonType.WATER, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SEALEO, Type.ICE, Type.WATER, [
+    [ Species.SEALEO, PokemonType.ICE, PokemonType.WATER, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.WALREIN, Type.ICE, Type.WATER, [
+    [ Species.WALREIN, PokemonType.ICE, PokemonType.WATER, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CLAMPERL, Type.WATER, -1, [
+    [ Species.CLAMPERL, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.HUNTAIL, Type.WATER, -1, [
+    [ Species.HUNTAIL, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GOREBYSS, Type.WATER, -1, [
+    [ Species.GOREBYSS, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.RELICANTH, Type.WATER, Type.ROCK, [
+    [ Species.RELICANTH, PokemonType.WATER, PokemonType.ROCK, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.LUVDISC, Type.WATER, -1, [
+    [ Species.LUVDISC, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BAGON, Type.DRAGON, -1, [
+    [ Species.BAGON, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SHELGON, Type.DRAGON, -1, [
+    [ Species.SHELGON, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SALAMENCE, Type.DRAGON, Type.FLYING, [
+    [ Species.SALAMENCE, PokemonType.DRAGON, PokemonType.FLYING, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.BELDUM, Type.STEEL, Type.PSYCHIC, [
+    [ Species.BELDUM, PokemonType.STEEL, PokemonType.PSYCHIC, [
       [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
       [ Biome.SPACE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.METANG, Type.STEEL, Type.PSYCHIC, [
+    [ Species.METANG, PokemonType.STEEL, PokemonType.PSYCHIC, [
       [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
       [ Biome.SPACE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.METAGROSS, Type.STEEL, Type.PSYCHIC, [
+    [ Species.METAGROSS, PokemonType.STEEL, PokemonType.PSYCHIC, [
       [ Biome.FACTORY, BiomePoolTier.SUPER_RARE ],
       [ Biome.SPACE, BiomePoolTier.RARE ],
       [ Biome.SPACE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.REGIROCK, Type.ROCK, -1, [
+    [ Species.REGIROCK, PokemonType.ROCK, -1, [
       [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
       [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.REGICE, Type.ICE, -1, [
+    [ Species.REGICE, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.REGISTEEL, Type.STEEL, -1, [
+    [ Species.REGISTEEL, PokemonType.STEEL, -1, [
       [ Biome.RUINS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.RUINS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.LATIAS, Type.DRAGON, Type.PSYCHIC, [
+    [ Species.LATIAS, PokemonType.DRAGON, PokemonType.PSYCHIC, [
       [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.PLAINS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.LATIOS, Type.DRAGON, Type.PSYCHIC, [
+    [ Species.LATIOS, PokemonType.DRAGON, PokemonType.PSYCHIC, [
       [ Biome.PLAINS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.PLAINS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.KYOGRE, Type.WATER, -1, [
+    [ Species.KYOGRE, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.GROUDON, Type.GROUND, -1, [
+    [ Species.GROUDON, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.RAYQUAZA, Type.DRAGON, Type.FLYING, [
+    [ Species.RAYQUAZA, PokemonType.DRAGON, PokemonType.FLYING, [
       [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.JIRACHI, Type.STEEL, Type.PSYCHIC, [ ]
+    [ Species.JIRACHI, PokemonType.STEEL, PokemonType.PSYCHIC, [ ]
     ],
-    [ Species.DEOXYS, Type.PSYCHIC, -1, [ ]
+    [ Species.DEOXYS, PokemonType.PSYCHIC, -1, [ ]
     ],
-    [ Species.TURTWIG, Type.GRASS, -1, [
+    [ Species.TURTWIG, PokemonType.GRASS, -1, [
       [ Biome.GRASS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.GROTLE, Type.GRASS, -1, [
+    [ Species.GROTLE, PokemonType.GRASS, -1, [
       [ Biome.GRASS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.TORTERRA, Type.GRASS, Type.GROUND, [
+    [ Species.TORTERRA, PokemonType.GRASS, PokemonType.GROUND, [
       [ Biome.GRASS, BiomePoolTier.RARE ],
       [ Biome.GRASS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.CHIMCHAR, Type.FIRE, -1, [
+    [ Species.CHIMCHAR, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.MONFERNO, Type.FIRE, Type.FIGHTING, [
+    [ Species.MONFERNO, PokemonType.FIRE, PokemonType.FIGHTING, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.INFERNAPE, Type.FIRE, Type.FIGHTING, [
+    [ Species.INFERNAPE, PokemonType.FIRE, PokemonType.FIGHTING, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.PIPLUP, Type.WATER, -1, [
+    [ Species.PIPLUP, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.PRINPLUP, Type.WATER, -1, [
+    [ Species.PRINPLUP, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.EMPOLEON, Type.WATER, Type.STEEL, [
+    [ Species.EMPOLEON, PokemonType.WATER, PokemonType.STEEL, [
       [ Biome.SEA, BiomePoolTier.RARE ],
       [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.STARLY, Type.NORMAL, Type.FLYING, [
+    [ Species.STARLY, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.STARAVIA, Type.NORMAL, Type.FLYING, [
+    [ Species.STARAVIA, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.STARAPTOR, Type.NORMAL, Type.FLYING, [
+    [ Species.STARAPTOR, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.BIDOOF, Type.NORMAL, -1, [
+    [ Species.BIDOOF, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BIBAREL, Type.NORMAL, Type.WATER, [
+    [ Species.BIBAREL, PokemonType.NORMAL, PokemonType.WATER, [
       [ Biome.PLAINS, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.KRICKETOT, Type.BUG, -1, [
+    [ Species.KRICKETOT, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.KRICKETUNE, Type.BUG, -1, [
+    [ Species.KRICKETUNE, PokemonType.BUG, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.SHINX, Type.ELECTRIC, -1, [
+    [ Species.SHINX, PokemonType.ELECTRIC, -1, [
       [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.LUXIO, Type.ELECTRIC, -1, [
+    [ Species.LUXIO, PokemonType.ELECTRIC, -1, [
       [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.LUXRAY, Type.ELECTRIC, -1, [
+    [ Species.LUXRAY, PokemonType.ELECTRIC, -1, [
       [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BUDEW, Type.GRASS, Type.POISON, [ ]
+    [ Species.BUDEW, PokemonType.GRASS, PokemonType.POISON, [ ]
     ],
-    [ Species.ROSERADE, Type.GRASS, Type.POISON, [
+    [ Species.ROSERADE, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CRANIDOS, Type.ROCK, -1, [
+    [ Species.CRANIDOS, PokemonType.ROCK, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.RAMPARDOS, Type.ROCK, -1, [
+    [ Species.RAMPARDOS, PokemonType.ROCK, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SHIELDON, Type.ROCK, Type.STEEL, [
+    [ Species.SHIELDON, PokemonType.ROCK, PokemonType.STEEL, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.BASTIODON, Type.ROCK, Type.STEEL, [
+    [ Species.BASTIODON, PokemonType.ROCK, PokemonType.STEEL, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.BURMY, Type.BUG, -1, [
+    [ Species.BURMY, PokemonType.BUG, -1, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
       [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
       [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.WORMADAM, Type.BUG, Type.GRASS, [
+    [ Species.WORMADAM, PokemonType.BUG, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
       [ Biome.FOREST, BiomePoolTier.BOSS ],
       [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
@@ -4022,122 +4035,122 @@ export function initBiomes() {
       [ Biome.SLUM, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MOTHIM, Type.BUG, Type.FLYING, [
+    [ Species.MOTHIM, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.COMBEE, Type.BUG, Type.FLYING, [
+    [ Species.COMBEE, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.VESPIQUEN, Type.BUG, Type.FLYING, [
+    [ Species.VESPIQUEN, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.PACHIRISU, Type.ELECTRIC, -1, [
+    [ Species.PACHIRISU, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.BUIZEL, Type.WATER, -1, [
+    [ Species.BUIZEL, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FLOATZEL, Type.WATER, -1, [
+    [ Species.FLOATZEL, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.COMMON ],
       [ Biome.SEA, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CHERUBI, Type.GRASS, -1, [
+    [ Species.CHERUBI, PokemonType.GRASS, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CHERRIM, Type.GRASS, -1, [
+    [ Species.CHERRIM, PokemonType.GRASS, -1, [
       [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SHELLOS, Type.WATER, -1, [
+    [ Species.SHELLOS, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.COMMON ],
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GASTRODON, Type.WATER, Type.GROUND, [
+    [ Species.GASTRODON, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.COMMON ],
       [ Biome.SWAMP, BiomePoolTier.BOSS ],
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.AMBIPOM, Type.NORMAL, -1, [
+    [ Species.AMBIPOM, PokemonType.NORMAL, -1, [
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DRIFLOON, Type.GHOST, Type.FLYING, [
+    [ Species.DRIFLOON, PokemonType.GHOST, PokemonType.FLYING, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DRIFBLIM, Type.GHOST, Type.FLYING, [
+    [ Species.DRIFBLIM, PokemonType.GHOST, PokemonType.FLYING, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BUNEARY, Type.NORMAL, -1, [
+    [ Species.BUNEARY, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.LOPUNNY, Type.NORMAL, -1, [
+    [ Species.LOPUNNY, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.RARE ],
       [ Biome.PLAINS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MISMAGIUS, Type.GHOST, -1, [
+    [ Species.MISMAGIUS, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.HONCHKROW, Type.DARK, Type.FLYING, [
+    [ Species.HONCHKROW, PokemonType.DARK, PokemonType.FLYING, [
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GLAMEOW, Type.NORMAL, -1, [
+    [ Species.GLAMEOW, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.PURUGLY, Type.NORMAL, -1, [
+    [ Species.PURUGLY, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.MEADOW, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CHINGLING, Type.PSYCHIC, -1, [
+    [ Species.CHINGLING, PokemonType.PSYCHIC, -1, [
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.STUNKY, Type.POISON, Type.DARK, [
+    [ Species.STUNKY, PokemonType.POISON, PokemonType.DARK, [
       [ Biome.SLUM, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.SKUNTANK, Type.POISON, Type.DARK, [
+    [ Species.SKUNTANK, PokemonType.POISON, PokemonType.DARK, [
       [ Biome.SLUM, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SLUM, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.BRONZOR, Type.STEEL, Type.PSYCHIC, [
+    [ Species.BRONZOR, PokemonType.STEEL, PokemonType.PSYCHIC, [
       [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
       [ Biome.SPACE, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BRONZONG, Type.STEEL, Type.PSYCHIC, [
+    [ Species.BRONZONG, PokemonType.STEEL, PokemonType.PSYCHIC, [
       [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
       [ Biome.SPACE, BiomePoolTier.COMMON ],
       [ Biome.SPACE, BiomePoolTier.BOSS ],
@@ -4145,186 +4158,186 @@ export function initBiomes() {
       [ Biome.LABORATORY, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BONSLY, Type.ROCK, -1, [ ]
+    [ Species.BONSLY, PokemonType.ROCK, -1, [ ]
     ],
-    [ Species.MIME_JR, Type.PSYCHIC, Type.FAIRY, [ ]
+    [ Species.MIME_JR, PokemonType.PSYCHIC, PokemonType.FAIRY, [ ]
     ],
-    [ Species.HAPPINY, Type.NORMAL, -1, [ ]
+    [ Species.HAPPINY, PokemonType.NORMAL, -1, [ ]
     ],
-    [ Species.CHATOT, Type.NORMAL, Type.FLYING, [
+    [ Species.CHATOT, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.SPIRITOMB, Type.GHOST, Type.DARK, [
+    [ Species.SPIRITOMB, PokemonType.GHOST, PokemonType.DARK, [
       [ Biome.GRAVEYARD, BiomePoolTier.SUPER_RARE ],
       [ Biome.ABYSS, BiomePoolTier.RARE ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GIBLE, Type.DRAGON, Type.GROUND, [
+    [ Species.GIBLE, PokemonType.DRAGON, PokemonType.GROUND, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GABITE, Type.DRAGON, Type.GROUND, [
+    [ Species.GABITE, PokemonType.DRAGON, PokemonType.GROUND, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GARCHOMP, Type.DRAGON, Type.GROUND, [
+    [ Species.GARCHOMP, PokemonType.DRAGON, PokemonType.GROUND, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MUNCHLAX, Type.NORMAL, -1, [ ]
+    [ Species.MUNCHLAX, PokemonType.NORMAL, -1, [ ]
     ],
-    [ Species.RIOLU, Type.FIGHTING, -1, [ ]
+    [ Species.RIOLU, PokemonType.FIGHTING, -1, [ ]
     ],
-    [ Species.LUCARIO, Type.FIGHTING, Type.STEEL, [
+    [ Species.LUCARIO, PokemonType.FIGHTING, PokemonType.STEEL, [
       [ Biome.DOJO, BiomePoolTier.RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.HIPPOPOTAS, Type.GROUND, -1, [
+    [ Species.HIPPOPOTAS, PokemonType.GROUND, -1, [
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HIPPOWDON, Type.GROUND, -1, [
+    [ Species.HIPPOWDON, PokemonType.GROUND, -1, [
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SKORUPI, Type.POISON, Type.BUG, [
+    [ Species.SKORUPI, PokemonType.POISON, PokemonType.BUG, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.DRAPION, Type.POISON, Type.DARK, [
+    [ Species.DRAPION, PokemonType.POISON, PokemonType.DARK, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.COMMON ],
       [ Biome.DESERT, BiomePoolTier.BOSS ],
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.CROAGUNK, Type.POISON, Type.FIGHTING, [
+    [ Species.CROAGUNK, PokemonType.POISON, PokemonType.FIGHTING, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.DOJO, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.TOXICROAK, Type.POISON, Type.FIGHTING, [
+    [ Species.TOXICROAK, PokemonType.POISON, PokemonType.FIGHTING, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CARNIVINE, Type.GRASS, -1, [
+    [ Species.CARNIVINE, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.FINNEON, Type.WATER, -1, [
+    [ Species.FINNEON, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.COMMON, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.LUMINEON, Type.WATER, -1, [
+    [ Species.LUMINEON, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
       [ Biome.SEA, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.MANTYKE, Type.WATER, Type.FLYING, [
+    [ Species.MANTYKE, PokemonType.WATER, PokemonType.FLYING, [
       [ Biome.SEABED, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SNOVER, Type.GRASS, Type.ICE, [
+    [ Species.SNOVER, PokemonType.GRASS, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ABOMASNOW, Type.GRASS, Type.ICE, [
+    [ Species.ABOMASNOW, PokemonType.GRASS, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.WEAVILE, Type.DARK, Type.ICE, [
+    [ Species.WEAVILE, PokemonType.DARK, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MAGNEZONE, Type.ELECTRIC, Type.STEEL, [
+    [ Species.MAGNEZONE, PokemonType.ELECTRIC, PokemonType.STEEL, [
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ],
       [ Biome.LABORATORY, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.LICKILICKY, Type.NORMAL, -1, [
+    [ Species.LICKILICKY, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.RHYPERIOR, Type.GROUND, Type.ROCK, [
+    [ Species.RHYPERIOR, PokemonType.GROUND, PokemonType.ROCK, [
       [ Biome.BADLANDS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TANGROWTH, Type.GRASS, -1, [
+    [ Species.TANGROWTH, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ELECTIVIRE, Type.ELECTRIC, -1, [
+    [ Species.ELECTIVIRE, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MAGMORTAR, Type.FIRE, -1, [
+    [ Species.MAGMORTAR, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TOGEKISS, Type.FAIRY, Type.FLYING, [
+    [ Species.TOGEKISS, PokemonType.FAIRY, PokemonType.FLYING, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.YANMEGA, Type.BUG, Type.FLYING, [
+    [ Species.YANMEGA, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.LEAFEON, Type.GRASS, -1, [
+    [ Species.LEAFEON, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.GLACEON, Type.ICE, -1, [
+    [ Species.GLACEON, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.GLISCOR, Type.GROUND, Type.FLYING, [
+    [ Species.GLISCOR, PokemonType.GROUND, PokemonType.FLYING, [
       [ Biome.BADLANDS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MAMOSWINE, Type.ICE, Type.GROUND, [
+    [ Species.MAMOSWINE, PokemonType.ICE, PokemonType.GROUND, [
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PORYGON_Z, Type.NORMAL, -1, [
+    [ Species.PORYGON_Z, PokemonType.NORMAL, -1, [
       [ Biome.SPACE, BiomePoolTier.BOSS_RARE ],
       [ Biome.LABORATORY, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GALLADE, Type.PSYCHIC, Type.FIGHTING, [
+    [ Species.GALLADE, PokemonType.PSYCHIC, PokemonType.FIGHTING, [
       [ Biome.DOJO, BiomePoolTier.SUPER_RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.PROBOPASS, Type.ROCK, Type.STEEL, [
+    [ Species.PROBOPASS, PokemonType.ROCK, PokemonType.STEEL, [
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DUSKNOIR, Type.GHOST, -1, [
+    [ Species.DUSKNOIR, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.FROSLASS, Type.ICE, Type.GHOST, [
+    [ Species.FROSLASS, PokemonType.ICE, PokemonType.GHOST, [
       [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ROTOM, Type.ELECTRIC, Type.GHOST, [
+    [ Species.ROTOM, PokemonType.ELECTRIC, PokemonType.GHOST, [
       [ Biome.LABORATORY, BiomePoolTier.SUPER_RARE ],
       [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ],
       [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
@@ -4339,104 +4352,104 @@ export function initBiomes() {
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.UXIE, Type.PSYCHIC, -1, [
+    [ Species.UXIE, PokemonType.PSYCHIC, -1, [
       [ Biome.CAVE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.MESPRIT, Type.PSYCHIC, -1, [
+    [ Species.MESPRIT, PokemonType.PSYCHIC, -1, [
       [ Biome.LAKE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.LAKE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.AZELF, Type.PSYCHIC, -1, [
+    [ Species.AZELF, PokemonType.PSYCHIC, -1, [
       [ Biome.SWAMP, BiomePoolTier.ULTRA_RARE ],
       [ Biome.SWAMP, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.DIALGA, Type.STEEL, Type.DRAGON, [
+    [ Species.DIALGA, PokemonType.STEEL, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.PALKIA, Type.WATER, Type.DRAGON, [
+    [ Species.PALKIA, PokemonType.WATER, PokemonType.DRAGON, [
       [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.HEATRAN, Type.FIRE, Type.STEEL, [
+    [ Species.HEATRAN, PokemonType.FIRE, PokemonType.STEEL, [
       [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.REGIGIGAS, Type.NORMAL, -1, [
+    [ Species.REGIGIGAS, PokemonType.NORMAL, -1, [
       [ Biome.TEMPLE, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.GIRATINA, Type.GHOST, Type.DRAGON, [
+    [ Species.GIRATINA, PokemonType.GHOST, PokemonType.DRAGON, [
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.CRESSELIA, Type.PSYCHIC, -1, [
+    [ Species.CRESSELIA, PokemonType.PSYCHIC, -1, [
       [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
       [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.PHIONE, Type.WATER, -1, [ ]
+    [ Species.PHIONE, PokemonType.WATER, -1, [ ]
     ],
-    [ Species.MANAPHY, Type.WATER, -1, [ ]
+    [ Species.MANAPHY, PokemonType.WATER, -1, [ ]
     ],
-    [ Species.DARKRAI, Type.DARK, -1, [
+    [ Species.DARKRAI, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.ABYSS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.SHAYMIN, Type.GRASS, -1, [
+    [ Species.SHAYMIN, PokemonType.GRASS, -1, [
       [ Biome.MEADOW, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.ARCEUS, Type.NORMAL, -1, [ ]
+    [ Species.ARCEUS, PokemonType.NORMAL, -1, [ ]
     ],
-    [ Species.VICTINI, Type.PSYCHIC, Type.FIRE, [ ]
+    [ Species.VICTINI, PokemonType.PSYCHIC, PokemonType.FIRE, [ ]
     ],
-    [ Species.SNIVY, Type.GRASS, -1, [
+    [ Species.SNIVY, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SERVINE, Type.GRASS, -1, [
+    [ Species.SERVINE, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SERPERIOR, Type.GRASS, -1, [
+    [ Species.SERPERIOR, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.TEPIG, Type.FIRE, -1, [
+    [ Species.TEPIG, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.PIGNITE, Type.FIRE, Type.FIGHTING, [
+    [ Species.PIGNITE, PokemonType.FIRE, PokemonType.FIGHTING, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.EMBOAR, Type.FIRE, Type.FIGHTING, [
+    [ Species.EMBOAR, PokemonType.FIRE, PokemonType.FIGHTING, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.OSHAWOTT, Type.WATER, -1, [
+    [ Species.OSHAWOTT, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DEWOTT, Type.WATER, -1, [
+    [ Species.DEWOTT, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SAMUROTT, Type.WATER, -1, [
+    [ Species.SAMUROTT, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ],
       [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.PATRAT, Type.NORMAL, -1, [
+    [ Species.PATRAT, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
@@ -4444,437 +4457,437 @@ export function initBiomes() {
       [ Biome.SLUM, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.WATCHOG, Type.NORMAL, -1, [
+    [ Species.WATCHOG, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SLUM, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SLUM, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.LILLIPUP, Type.NORMAL, -1, [
+    [ Species.LILLIPUP, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.HERDIER, Type.NORMAL, -1, [
+    [ Species.HERDIER, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.STOUTLAND, Type.NORMAL, -1, [
+    [ Species.STOUTLAND, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PURRLOIN, Type.DARK, -1, [
+    [ Species.PURRLOIN, PokemonType.DARK, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.ABYSS, BiomePoolTier.COMMON ],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.LIEPARD, Type.DARK, -1, [
+    [ Species.LIEPARD, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PANSAGE, Type.GRASS, -1, [
+    [ Species.PANSAGE, PokemonType.GRASS, -1, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SIMISAGE, Type.GRASS, -1, [
+    [ Species.SIMISAGE, PokemonType.GRASS, -1, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
       [ Biome.FOREST, BiomePoolTier.BOSS ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.PANSEAR, Type.FIRE, -1, [
+    [ Species.PANSEAR, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SIMISEAR, Type.FIRE, -1, [
+    [ Species.SIMISEAR, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.PANPOUR, Type.WATER, -1, [
+    [ Species.PANPOUR, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SIMIPOUR, Type.WATER, -1, [
+    [ Species.SIMIPOUR, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ],
       [ Biome.SEA, BiomePoolTier.BOSS ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.MUNNA, Type.PSYCHIC, -1, [
+    [ Species.MUNNA, PokemonType.PSYCHIC, -1, [
       [ Biome.SPACE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MUSHARNA, Type.PSYCHIC, -1, [
+    [ Species.MUSHARNA, PokemonType.PSYCHIC, -1, [
       [ Biome.SPACE, BiomePoolTier.COMMON ],
       [ Biome.SPACE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PIDOVE, Type.NORMAL, Type.FLYING, [
+    [ Species.PIDOVE, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TRANQUILL, Type.NORMAL, Type.FLYING, [
+    [ Species.TRANQUILL, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.UNFEZANT, Type.NORMAL, Type.FLYING, [
+    [ Species.UNFEZANT, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.BLITZLE, Type.ELECTRIC, -1, [
+    [ Species.BLITZLE, PokemonType.ELECTRIC, -1, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ],
       [ Biome.JUNGLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ZEBSTRIKA, Type.ELECTRIC, -1, [
+    [ Species.ZEBSTRIKA, PokemonType.ELECTRIC, -1, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ],
       [ Biome.MEADOW, BiomePoolTier.BOSS ],
       [ Biome.JUNGLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ROGGENROLA, Type.ROCK, -1, [
+    [ Species.ROGGENROLA, PokemonType.ROCK, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BOLDORE, Type.ROCK, -1, [
+    [ Species.BOLDORE, PokemonType.ROCK, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GIGALITH, Type.ROCK, -1, [
+    [ Species.GIGALITH, PokemonType.ROCK, -1, [
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.WOOBAT, Type.PSYCHIC, Type.FLYING, [
+    [ Species.WOOBAT, PokemonType.PSYCHIC, PokemonType.FLYING, [
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SWOOBAT, Type.PSYCHIC, Type.FLYING, [
+    [ Species.SWOOBAT, PokemonType.PSYCHIC, PokemonType.FLYING, [
       [ Biome.CAVE, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DRILBUR, Type.GROUND, -1, [
+    [ Species.DRILBUR, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.EXCADRILL, Type.GROUND, Type.STEEL, [
+    [ Species.EXCADRILL, PokemonType.GROUND, PokemonType.STEEL, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
       [ Biome.BADLANDS, BiomePoolTier.BOSS ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.AUDINO, Type.NORMAL, -1, [
+    [ Species.AUDINO, PokemonType.NORMAL, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.RARE ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TIMBURR, Type.FIGHTING, -1, [
+    [ Species.TIMBURR, PokemonType.FIGHTING, -1, [
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GURDURR, Type.FIGHTING, -1, [
+    [ Species.GURDURR, PokemonType.FIGHTING, -1, [
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CONKELDURR, Type.FIGHTING, -1, [
+    [ Species.CONKELDURR, PokemonType.FIGHTING, -1, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TYMPOLE, Type.WATER, -1, [
+    [ Species.TYMPOLE, PokemonType.WATER, -1, [
       [ Biome.SWAMP, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.PALPITOAD, Type.WATER, Type.GROUND, [
+    [ Species.PALPITOAD, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SEISMITOAD, Type.WATER, Type.GROUND, [
+    [ Species.SEISMITOAD, PokemonType.WATER, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.COMMON ],
       [ Biome.SWAMP, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.THROH, Type.FIGHTING, -1, [
+    [ Species.THROH, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SAWK, Type.FIGHTING, -1, [
+    [ Species.SAWK, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SEWADDLE, Type.BUG, Type.GRASS, [
+    [ Species.SEWADDLE, PokemonType.BUG, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SWADLOON, Type.BUG, Type.GRASS, [
+    [ Species.SWADLOON, PokemonType.BUG, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.LEAVANNY, Type.BUG, Type.GRASS, [
+    [ Species.LEAVANNY, PokemonType.BUG, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.VENIPEDE, Type.BUG, Type.POISON, [
+    [ Species.VENIPEDE, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.WHIRLIPEDE, Type.BUG, Type.POISON, [
+    [ Species.WHIRLIPEDE, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.SCOLIPEDE, Type.BUG, Type.POISON, [
+    [ Species.SCOLIPEDE, PokemonType.BUG, PokemonType.POISON, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.COTTONEE, Type.GRASS, Type.FAIRY, [
+    [ Species.COTTONEE, PokemonType.GRASS, PokemonType.FAIRY, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.WHIMSICOTT, Type.GRASS, Type.FAIRY, [
+    [ Species.WHIMSICOTT, PokemonType.GRASS, PokemonType.FAIRY, [
       [ Biome.GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.PETILIL, Type.GRASS, -1, [
+    [ Species.PETILIL, PokemonType.GRASS, -1, [
       [ Biome.GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.LILLIGANT, Type.GRASS, -1, [
+    [ Species.LILLIGANT, PokemonType.GRASS, -1, [
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.BASCULIN, Type.WATER, -1, [
+    [ Species.BASCULIN, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SANDILE, Type.GROUND, Type.DARK, [
+    [ Species.SANDILE, PokemonType.GROUND, PokemonType.DARK, [
       [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.KROKOROK, Type.GROUND, Type.DARK, [
+    [ Species.KROKOROK, PokemonType.GROUND, PokemonType.DARK, [
       [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.KROOKODILE, Type.GROUND, Type.DARK, [
+    [ Species.KROOKODILE, PokemonType.GROUND, PokemonType.DARK, [
       [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.DARUMAKA, Type.FIRE, -1, [
+    [ Species.DARUMAKA, PokemonType.FIRE, -1, [
       [ Biome.DESERT, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DARMANITAN, Type.FIRE, -1, [
+    [ Species.DARMANITAN, PokemonType.FIRE, -1, [
       [ Biome.DESERT, BiomePoolTier.RARE ],
       [ Biome.DESERT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MARACTUS, Type.GRASS, -1, [
+    [ Species.MARACTUS, PokemonType.GRASS, -1, [
       [ Biome.DESERT, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DWEBBLE, Type.BUG, Type.ROCK, [
+    [ Species.DWEBBLE, PokemonType.BUG, PokemonType.ROCK, [
       [ Biome.BEACH, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CRUSTLE, Type.BUG, Type.ROCK, [
+    [ Species.CRUSTLE, PokemonType.BUG, PokemonType.ROCK, [
       [ Biome.BEACH, BiomePoolTier.COMMON ],
       [ Biome.BEACH, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SCRAGGY, Type.DARK, Type.FIGHTING, [
+    [ Species.SCRAGGY, PokemonType.DARK, PokemonType.FIGHTING, [
       [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SCRAFTY, Type.DARK, Type.FIGHTING, [
+    [ Species.SCRAFTY, PokemonType.DARK, PokemonType.FIGHTING, [
       [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
       [ Biome.DOJO, BiomePoolTier.BOSS ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SIGILYPH, Type.PSYCHIC, Type.FLYING, [
+    [ Species.SIGILYPH, PokemonType.PSYCHIC, PokemonType.FLYING, [
       [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ],
       [ Biome.SPACE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.YAMASK, Type.GHOST, -1, [
+    [ Species.YAMASK, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.COFAGRIGUS, Type.GHOST, -1, [
+    [ Species.COFAGRIGUS, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
       [ Biome.TEMPLE, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TIRTOUGA, Type.WATER, Type.ROCK, [
+    [ Species.TIRTOUGA, PokemonType.WATER, PokemonType.ROCK, [
       [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
       [ Biome.BEACH, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.CARRACOSTA, Type.WATER, Type.ROCK, [
+    [ Species.CARRACOSTA, PokemonType.WATER, PokemonType.ROCK, [
       [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
       [ Biome.BEACH, BiomePoolTier.SUPER_RARE ],
       [ Biome.BEACH, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ARCHEN, Type.ROCK, Type.FLYING, [
+    [ Species.ARCHEN, PokemonType.ROCK, PokemonType.FLYING, [
       [ Biome.RUINS, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.ARCHEOPS, Type.ROCK, Type.FLYING, [
+    [ Species.ARCHEOPS, PokemonType.ROCK, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.RUINS, BiomePoolTier.SUPER_RARE ],
       [ Biome.RUINS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.TRUBBISH, Type.POISON, -1, [
+    [ Species.TRUBBISH, PokemonType.POISON, -1, [
       [ Biome.SLUM, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GARBODOR, Type.POISON, -1, [
+    [ Species.GARBODOR, PokemonType.POISON, -1, [
       [ Biome.SLUM, BiomePoolTier.COMMON ],
       [ Biome.SLUM, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ZORUA, Type.DARK, -1, [
+    [ Species.ZORUA, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ZOROARK, Type.DARK, -1, [
+    [ Species.ZOROARK, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.RARE ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MINCCINO, Type.NORMAL, -1, [
+    [ Species.MINCCINO, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MEADOW, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CINCCINO, Type.NORMAL, -1, [
+    [ Species.CINCCINO, PokemonType.NORMAL, -1, [
       [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GOTHITA, Type.PSYCHIC, -1, [
+    [ Species.GOTHITA, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.GOTHORITA, Type.PSYCHIC, -1, [
+    [ Species.GOTHORITA, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.GOTHITELLE, Type.PSYCHIC, -1, [
+    [ Species.GOTHITELLE, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.RARE ],
       [ Biome.RUINS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SOLOSIS, Type.PSYCHIC, -1, [
+    [ Species.SOLOSIS, PokemonType.PSYCHIC, -1, [
       [ Biome.SPACE, BiomePoolTier.RARE ],
       [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.DUOSION, Type.PSYCHIC, -1, [
+    [ Species.DUOSION, PokemonType.PSYCHIC, -1, [
       [ Biome.SPACE, BiomePoolTier.RARE ],
       [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.REUNICLUS, Type.PSYCHIC, -1, [
+    [ Species.REUNICLUS, PokemonType.PSYCHIC, -1, [
       [ Biome.SPACE, BiomePoolTier.RARE ],
       [ Biome.SPACE, BiomePoolTier.BOSS ],
       [ Biome.LABORATORY, BiomePoolTier.UNCOMMON ],
       [ Biome.LABORATORY, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DUCKLETT, Type.WATER, Type.FLYING, [
+    [ Species.DUCKLETT, PokemonType.WATER, PokemonType.FLYING, [
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SWANNA, Type.WATER, Type.FLYING, [
+    [ Species.SWANNA, PokemonType.WATER, PokemonType.FLYING, [
       [ Biome.LAKE, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.VANILLITE, Type.ICE, -1, [
+    [ Species.VANILLITE, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.VANILLISH, Type.ICE, -1, [
+    [ Species.VANILLISH, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.VANILLUXE, Type.ICE, -1, [
+    [ Species.VANILLUXE, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DEERLING, Type.NORMAL, Type.GRASS, [
+    [ Species.DEERLING, PokemonType.NORMAL, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SAWSBUCK, Type.NORMAL, Type.GRASS, [
+    [ Species.SAWSBUCK, PokemonType.NORMAL, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.EMOLGA, Type.ELECTRIC, Type.FLYING, [
+    [ Species.EMOLGA, PokemonType.ELECTRIC, PokemonType.FLYING, [
       [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.KARRABLAST, Type.BUG, -1, [
+    [ Species.KARRABLAST, PokemonType.BUG, -1, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ESCAVALIER, Type.BUG, Type.STEEL, [
+    [ Species.ESCAVALIER, PokemonType.BUG, PokemonType.STEEL, [
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.FOONGUS, Type.GRASS, Type.POISON, [
+    [ Species.FOONGUS, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.AMOONGUSS, Type.GRASS, Type.POISON, [
+    [ Species.AMOONGUSS, PokemonType.GRASS, PokemonType.POISON, [
       [ Biome.GRASS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
@@ -4882,712 +4895,712 @@ export function initBiomes() {
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.FRILLISH, Type.WATER, Type.GHOST, [
+    [ Species.FRILLISH, PokemonType.WATER, PokemonType.GHOST, [
       [ Biome.SEABED, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.JELLICENT, Type.WATER, Type.GHOST, [
+    [ Species.JELLICENT, PokemonType.WATER, PokemonType.GHOST, [
       [ Biome.SEABED, BiomePoolTier.COMMON ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ALOMOMOLA, Type.WATER, -1, [
+    [ Species.ALOMOMOLA, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.JOLTIK, Type.BUG, Type.ELECTRIC, [
+    [ Species.JOLTIK, PokemonType.BUG, PokemonType.ELECTRIC, [
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GALVANTULA, Type.BUG, Type.ELECTRIC, [
+    [ Species.GALVANTULA, PokemonType.BUG, PokemonType.ELECTRIC, [
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.FERROSEED, Type.GRASS, Type.STEEL, [
+    [ Species.FERROSEED, PokemonType.GRASS, PokemonType.STEEL, [
       [ Biome.CAVE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.FERROTHORN, Type.GRASS, Type.STEEL, [
+    [ Species.FERROTHORN, PokemonType.GRASS, PokemonType.STEEL, [
       [ Biome.CAVE, BiomePoolTier.RARE ],
       [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.KLINK, Type.STEEL, -1, [
+    [ Species.KLINK, PokemonType.STEEL, -1, [
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.KLANG, Type.STEEL, -1, [
+    [ Species.KLANG, PokemonType.STEEL, -1, [
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.KLINKLANG, Type.STEEL, -1, [
+    [ Species.KLINKLANG, PokemonType.STEEL, -1, [
       [ Biome.FACTORY, BiomePoolTier.COMMON ],
       [ Biome.FACTORY, BiomePoolTier.BOSS ],
       [ Biome.LABORATORY, BiomePoolTier.COMMON ],
       [ Biome.LABORATORY, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TYNAMO, Type.ELECTRIC, -1, [
+    [ Species.TYNAMO, PokemonType.ELECTRIC, -1, [
       [ Biome.SEABED, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.EELEKTRIK, Type.ELECTRIC, -1, [
+    [ Species.EELEKTRIK, PokemonType.ELECTRIC, -1, [
       [ Biome.SEABED, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.EELEKTROSS, Type.ELECTRIC, -1, [
+    [ Species.EELEKTROSS, PokemonType.ELECTRIC, -1, [
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ELGYEM, Type.PSYCHIC, -1, [
+    [ Species.ELGYEM, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.BEHEEYEM, Type.PSYCHIC, -1, [
+    [ Species.BEHEEYEM, PokemonType.PSYCHIC, -1, [
       [ Biome.RUINS, BiomePoolTier.COMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ],
       [ Biome.SPACE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.LITWICK, Type.GHOST, Type.FIRE, [
+    [ Species.LITWICK, PokemonType.GHOST, PokemonType.FIRE, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.LAMPENT, Type.GHOST, Type.FIRE, [
+    [ Species.LAMPENT, PokemonType.GHOST, PokemonType.FIRE, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.CHANDELURE, Type.GHOST, Type.FIRE, [
+    [ Species.CHANDELURE, PokemonType.GHOST, PokemonType.FIRE, [
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.AXEW, Type.DRAGON, -1, [
+    [ Species.AXEW, PokemonType.DRAGON, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FRAXURE, Type.DRAGON, -1, [
+    [ Species.FRAXURE, PokemonType.DRAGON, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.HAXORUS, Type.DRAGON, -1, [
+    [ Species.HAXORUS, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CUBCHOO, Type.ICE, -1, [
+    [ Species.CUBCHOO, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BEARTIC, Type.ICE, -1, [
+    [ Species.BEARTIC, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CRYOGONAL, Type.ICE, -1, [
+    [ Species.CRYOGONAL, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SHELMET, Type.BUG, -1, [
+    [ Species.SHELMET, PokemonType.BUG, -1, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ACCELGOR, Type.BUG, -1, [
+    [ Species.ACCELGOR, PokemonType.BUG, -1, [
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.STUNFISK, Type.GROUND, Type.ELECTRIC, [
+    [ Species.STUNFISK, PokemonType.GROUND, PokemonType.ELECTRIC, [
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MIENFOO, Type.FIGHTING, -1, [
+    [ Species.MIENFOO, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.MIENSHAO, Type.FIGHTING, -1, [
+    [ Species.MIENSHAO, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.UNCOMMON ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DRUDDIGON, Type.DRAGON, -1, [
+    [ Species.DRUDDIGON, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.GOLETT, Type.GROUND, Type.GHOST, [
+    [ Species.GOLETT, PokemonType.GROUND, PokemonType.GHOST, [
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GOLURK, Type.GROUND, Type.GHOST, [
+    [ Species.GOLURK, PokemonType.GROUND, PokemonType.GHOST, [
       [ Biome.TEMPLE, BiomePoolTier.COMMON ],
       [ Biome.TEMPLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PAWNIARD, Type.DARK, Type.STEEL, [
+    [ Species.PAWNIARD, PokemonType.DARK, PokemonType.STEEL, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BISHARP, Type.DARK, Type.STEEL, [
+    [ Species.BISHARP, PokemonType.DARK, PokemonType.STEEL, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BOUFFALANT, Type.NORMAL, -1, [
+    [ Species.BOUFFALANT, PokemonType.NORMAL, -1, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.RUFFLET, Type.NORMAL, Type.FLYING, [
+    [ Species.RUFFLET, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.BRAVIARY, Type.NORMAL, Type.FLYING, [
+    [ Species.BRAVIARY, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.VULLABY, Type.DARK, Type.FLYING, [
+    [ Species.VULLABY, PokemonType.DARK, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.MANDIBUZZ, Type.DARK, Type.FLYING, [
+    [ Species.MANDIBUZZ, PokemonType.DARK, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.HEATMOR, Type.FIRE, -1, [
+    [ Species.HEATMOR, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DURANT, Type.BUG, Type.STEEL, [
+    [ Species.DURANT, PokemonType.BUG, PokemonType.STEEL, [
       [ Biome.FOREST, BiomePoolTier.SUPER_RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.DEINO, Type.DARK, Type.DRAGON, [
+    [ Species.DEINO, PokemonType.DARK, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.ABYSS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ZWEILOUS, Type.DARK, Type.DRAGON, [
+    [ Species.ZWEILOUS, PokemonType.DARK, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.ABYSS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.HYDREIGON, Type.DARK, Type.DRAGON, [
+    [ Species.HYDREIGON, PokemonType.DARK, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.ABYSS, BiomePoolTier.RARE ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.LARVESTA, Type.BUG, Type.FIRE, [
+    [ Species.LARVESTA, PokemonType.BUG, PokemonType.FIRE, [
       [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.VOLCARONA, Type.BUG, Type.FIRE, [
+    [ Species.VOLCARONA, PokemonType.BUG, PokemonType.FIRE, [
       [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.COBALION, Type.STEEL, Type.FIGHTING, [
+    [ Species.COBALION, PokemonType.STEEL, PokemonType.FIGHTING, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.TERRAKION, Type.ROCK, Type.FIGHTING, [
+    [ Species.TERRAKION, PokemonType.ROCK, PokemonType.FIGHTING, [
       [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.VIRIZION, Type.GRASS, Type.FIGHTING, [
+    [ Species.VIRIZION, PokemonType.GRASS, PokemonType.FIGHTING, [
       [ Biome.GRASS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.GRASS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.TORNADUS, Type.FLYING, -1, [
+    [ Species.TORNADUS, PokemonType.FLYING, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.THUNDURUS, Type.ELECTRIC, Type.FLYING, [
+    [ Species.THUNDURUS, PokemonType.ELECTRIC, PokemonType.FLYING, [
       [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.RESHIRAM, Type.DRAGON, Type.FIRE, [
+    [ Species.RESHIRAM, PokemonType.DRAGON, PokemonType.FIRE, [
       [ Biome.VOLCANO, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.ZEKROM, Type.DRAGON, Type.ELECTRIC, [
+    [ Species.ZEKROM, PokemonType.DRAGON, PokemonType.ELECTRIC, [
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.LANDORUS, Type.GROUND, Type.FLYING, [
+    [ Species.LANDORUS, PokemonType.GROUND, PokemonType.FLYING, [
       [ Biome.BADLANDS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.BADLANDS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.KYUREM, Type.DRAGON, Type.ICE, [
+    [ Species.KYUREM, PokemonType.DRAGON, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.KELDEO, Type.WATER, Type.FIGHTING, [
+    [ Species.KELDEO, PokemonType.WATER, PokemonType.FIGHTING, [
       [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
       [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.MELOETTA, Type.NORMAL, Type.PSYCHIC, [
+    [ Species.MELOETTA, PokemonType.NORMAL, PokemonType.PSYCHIC, [
       [ Biome.MEADOW, BiomePoolTier.ULTRA_RARE ],
       [ Biome.MEADOW, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.GENESECT, Type.BUG, Type.STEEL, [
+    [ Species.GENESECT, PokemonType.BUG, PokemonType.STEEL, [
       [ Biome.FACTORY, BiomePoolTier.ULTRA_RARE ],
       [ Biome.FACTORY, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.CHESPIN, Type.GRASS, -1, [
+    [ Species.CHESPIN, PokemonType.GRASS, -1, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.QUILLADIN, Type.GRASS, -1, [
+    [ Species.QUILLADIN, PokemonType.GRASS, -1, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.CHESNAUGHT, Type.GRASS, Type.FIGHTING, [
+    [ Species.CHESNAUGHT, PokemonType.GRASS, PokemonType.FIGHTING, [
       [ Biome.FOREST, BiomePoolTier.RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.FENNEKIN, Type.FIRE, -1, [
+    [ Species.FENNEKIN, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.BRAIXEN, Type.FIRE, -1, [
+    [ Species.BRAIXEN, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DELPHOX, Type.FIRE, Type.PSYCHIC, [
+    [ Species.DELPHOX, PokemonType.FIRE, PokemonType.PSYCHIC, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.FROAKIE, Type.WATER, -1, [
+    [ Species.FROAKIE, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.FROGADIER, Type.WATER, -1, [
+    [ Species.FROGADIER, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.GRENINJA, Type.WATER, Type.DARK, [
+    [ Species.GRENINJA, PokemonType.WATER, PokemonType.DARK, [
       [ Biome.LAKE, BiomePoolTier.RARE ],
       [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.BUNNELBY, Type.NORMAL, -1, [
+    [ Species.BUNNELBY, PokemonType.NORMAL, -1, [
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DIGGERSBY, Type.NORMAL, Type.GROUND, [
+    [ Species.DIGGERSBY, PokemonType.NORMAL, PokemonType.GROUND, [
       [ Biome.CAVE, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.FLETCHLING, Type.NORMAL, Type.FLYING, [
+    [ Species.FLETCHLING, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.FLETCHINDER, Type.FIRE, Type.FLYING, [
+    [ Species.FLETCHINDER, PokemonType.FIRE, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TALONFLAME, Type.FIRE, Type.FLYING, [
+    [ Species.TALONFLAME, PokemonType.FIRE, PokemonType.FLYING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SCATTERBUG, Type.BUG, -1, [
+    [ Species.SCATTERBUG, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SPEWPA, Type.BUG, -1, [
+    [ Species.SPEWPA, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.VIVILLON, Type.BUG, Type.FLYING, [
+    [ Species.VIVILLON, PokemonType.BUG, PokemonType.FLYING, [
       [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.LITLEO, Type.FIRE, Type.NORMAL, [
+    [ Species.LITLEO, PokemonType.FIRE, PokemonType.NORMAL, [
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.PYROAR, Type.FIRE, Type.NORMAL, [
+    [ Species.PYROAR, PokemonType.FIRE, PokemonType.NORMAL, [
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.FLABEBE, Type.FAIRY, -1, [
+    [ Species.FLABEBE, PokemonType.FAIRY, -1, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FLOETTE, Type.FAIRY, -1, [
+    [ Species.FLOETTE, PokemonType.FAIRY, -1, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FLORGES, Type.FAIRY, -1, [
+    [ Species.FLORGES, PokemonType.FAIRY, -1, [
       [ Biome.MEADOW, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SKIDDO, Type.GRASS, -1, [
+    [ Species.SKIDDO, PokemonType.GRASS, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GOGOAT, Type.GRASS, -1, [
+    [ Species.GOGOAT, PokemonType.GRASS, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PANCHAM, Type.FIGHTING, -1, [
+    [ Species.PANCHAM, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.RARE ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PANGORO, Type.FIGHTING, Type.DARK, [
+    [ Species.PANGORO, PokemonType.FIGHTING, PokemonType.DARK, [
       [ Biome.DOJO, BiomePoolTier.RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.FURFROU, Type.NORMAL, -1, [
+    [ Species.FURFROU, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ESPURR, Type.PSYCHIC, -1, [
+    [ Species.ESPURR, PokemonType.PSYCHIC, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.MEOWSTIC, Type.PSYCHIC, -1, [
+    [ Species.MEOWSTIC, PokemonType.PSYCHIC, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.HONEDGE, Type.STEEL, Type.GHOST, [
+    [ Species.HONEDGE, PokemonType.STEEL, PokemonType.GHOST, [
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DOUBLADE, Type.STEEL, Type.GHOST, [
+    [ Species.DOUBLADE, PokemonType.STEEL, PokemonType.GHOST, [
       [ Biome.TEMPLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.AEGISLASH, Type.STEEL, Type.GHOST, [
+    [ Species.AEGISLASH, PokemonType.STEEL, PokemonType.GHOST, [
       [ Biome.TEMPLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SPRITZEE, Type.FAIRY, -1, [
+    [ Species.SPRITZEE, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.AROMATISSE, Type.FAIRY, -1, [
+    [ Species.AROMATISSE, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SWIRLIX, Type.FAIRY, -1, [
+    [ Species.SWIRLIX, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SLURPUFF, Type.FAIRY, -1, [
+    [ Species.SLURPUFF, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.INKAY, Type.DARK, Type.PSYCHIC, [
+    [ Species.INKAY, PokemonType.DARK, PokemonType.PSYCHIC, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.MALAMAR, Type.DARK, Type.PSYCHIC, [
+    [ Species.MALAMAR, PokemonType.DARK, PokemonType.PSYCHIC, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.BINACLE, Type.ROCK, Type.WATER, [
+    [ Species.BINACLE, PokemonType.ROCK, PokemonType.WATER, [
       [ Biome.BEACH, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BARBARACLE, Type.ROCK, Type.WATER, [
+    [ Species.BARBARACLE, PokemonType.ROCK, PokemonType.WATER, [
       [ Biome.BEACH, BiomePoolTier.COMMON ],
       [ Biome.BEACH, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SKRELP, Type.POISON, Type.WATER, [
+    [ Species.SKRELP, PokemonType.POISON, PokemonType.WATER, [
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.DRAGALGE, Type.POISON, Type.DRAGON, [
+    [ Species.DRAGALGE, PokemonType.POISON, PokemonType.DRAGON, [
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CLAUNCHER, Type.WATER, -1, [
+    [ Species.CLAUNCHER, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.CLAWITZER, Type.WATER, -1, [
+    [ Species.CLAWITZER, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
       [ Biome.BEACH, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.HELIOPTILE, Type.ELECTRIC, Type.NORMAL, [
+    [ Species.HELIOPTILE, PokemonType.ELECTRIC, PokemonType.NORMAL, [
       [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HELIOLISK, Type.ELECTRIC, Type.NORMAL, [
+    [ Species.HELIOLISK, PokemonType.ELECTRIC, PokemonType.NORMAL, [
       [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TYRUNT, Type.ROCK, Type.DRAGON, [
+    [ Species.TYRUNT, PokemonType.ROCK, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.TYRANTRUM, Type.ROCK, Type.DRAGON, [
+    [ Species.TYRANTRUM, PokemonType.ROCK, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.AMAURA, Type.ROCK, Type.ICE, [
+    [ Species.AMAURA, PokemonType.ROCK, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.AURORUS, Type.ROCK, Type.ICE, [
+    [ Species.AURORUS, PokemonType.ROCK, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SYLVEON, Type.FAIRY, -1, [
+    [ Species.SYLVEON, PokemonType.FAIRY, -1, [
       [ Biome.MEADOW, BiomePoolTier.SUPER_RARE ],
       [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HAWLUCHA, Type.FIGHTING, Type.FLYING, [
+    [ Species.HAWLUCHA, PokemonType.FIGHTING, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.DEDENNE, Type.ELECTRIC, Type.FAIRY, [
+    [ Species.DEDENNE, PokemonType.ELECTRIC, PokemonType.FAIRY, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CARBINK, Type.ROCK, Type.FAIRY, [
+    [ Species.CARBINK, PokemonType.ROCK, PokemonType.FAIRY, [
       [ Biome.CAVE, BiomePoolTier.RARE ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GOOMY, Type.DRAGON, -1, [
+    [ Species.GOOMY, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SLIGGOO, Type.DRAGON, -1, [
+    [ Species.SLIGGOO, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GOODRA, Type.DRAGON, -1, [
+    [ Species.GOODRA, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.KLEFKI, Type.STEEL, Type.FAIRY, [
+    [ Species.KLEFKI, PokemonType.STEEL, PokemonType.FAIRY, [
       [ Biome.FACTORY, BiomePoolTier.UNCOMMON ],
       [ Biome.FACTORY, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PHANTUMP, Type.GHOST, Type.GRASS, [
+    [ Species.PHANTUMP, PokemonType.GHOST, PokemonType.GRASS, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.TREVENANT, Type.GHOST, Type.GRASS, [
+    [ Species.TREVENANT, PokemonType.GHOST, PokemonType.GRASS, [
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PUMPKABOO, Type.GHOST, Type.GRASS, [
+    [ Species.PUMPKABOO, PokemonType.GHOST, PokemonType.GRASS, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GOURGEIST, Type.GHOST, Type.GRASS, [
+    [ Species.GOURGEIST, PokemonType.GHOST, PokemonType.GRASS, [
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BERGMITE, Type.ICE, -1, [
+    [ Species.BERGMITE, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.AVALUGG, Type.ICE, -1, [
+    [ Species.AVALUGG, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.NOIBAT, Type.FLYING, Type.DRAGON, [
+    [ Species.NOIBAT, PokemonType.FLYING, PokemonType.DRAGON, [
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.NOIVERN, Type.FLYING, Type.DRAGON, [
+    [ Species.NOIVERN, PokemonType.FLYING, PokemonType.DRAGON, [
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.XERNEAS, Type.FAIRY, -1, [
+    [ Species.XERNEAS, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.YVELTAL, Type.DARK, Type.FLYING, [
+    [ Species.YVELTAL, PokemonType.DARK, PokemonType.FLYING, [
       [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.ZYGARDE, Type.DRAGON, Type.GROUND, [
+    [ Species.ZYGARDE, PokemonType.DRAGON, PokemonType.GROUND, [
       [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.DIANCIE, Type.ROCK, Type.FAIRY, [
+    [ Species.DIANCIE, PokemonType.ROCK, PokemonType.FAIRY, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.HOOPA, Type.PSYCHIC, Type.GHOST, [
+    [ Species.HOOPA, PokemonType.PSYCHIC, PokemonType.GHOST, [
       [ Biome.TEMPLE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.TEMPLE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.VOLCANION, Type.FIRE, Type.WATER, [
+    [ Species.VOLCANION, PokemonType.FIRE, PokemonType.WATER, [
       [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.ROWLET, Type.GRASS, Type.FLYING, [
+    [ Species.ROWLET, PokemonType.GRASS, PokemonType.FLYING, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DARTRIX, Type.GRASS, Type.FLYING, [
+    [ Species.DARTRIX, PokemonType.GRASS, PokemonType.FLYING, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DECIDUEYE, Type.GRASS, Type.GHOST, [
+    [ Species.DECIDUEYE, PokemonType.GRASS, PokemonType.GHOST, [
       [ Biome.FOREST, BiomePoolTier.RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.LITTEN, Type.FIRE, -1, [
+    [ Species.LITTEN, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.TORRACAT, Type.FIRE, -1, [
+    [ Species.TORRACAT, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.INCINEROAR, Type.FIRE, Type.DARK, [
+    [ Species.INCINEROAR, PokemonType.FIRE, PokemonType.DARK, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.POPPLIO, Type.WATER, -1, [
+    [ Species.POPPLIO, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.BRIONNE, Type.WATER, -1, [
+    [ Species.BRIONNE, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.PRIMARINA, Type.WATER, Type.FAIRY, [
+    [ Species.PRIMARINA, PokemonType.WATER, PokemonType.FAIRY, [
       [ Biome.SEA, BiomePoolTier.RARE ],
       [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.PIKIPEK, Type.NORMAL, Type.FLYING, [
+    [ Species.PIKIPEK, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.JUNGLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.TRUMBEAK, Type.NORMAL, Type.FLYING, [
+    [ Species.TRUMBEAK, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.JUNGLE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.TOUCANNON, Type.NORMAL, Type.FLYING, [
+    [ Species.TOUCANNON, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.JUNGLE, BiomePoolTier.COMMON ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.YUNGOOS, Type.NORMAL, -1, [
+    [ Species.YUNGOOS, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GUMSHOOS, Type.NORMAL, -1, [
+    [ Species.GUMSHOOS, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GRUBBIN, Type.BUG, -1, [
+    [ Species.GRUBBIN, PokemonType.BUG, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CHARJABUG, Type.BUG, Type.ELECTRIC, [
+    [ Species.CHARJABUG, PokemonType.BUG, PokemonType.ELECTRIC, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.VIKAVOLT, Type.BUG, Type.ELECTRIC, [
+    [ Species.VIKAVOLT, PokemonType.BUG, PokemonType.ELECTRIC, [
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CRABRAWLER, Type.FIGHTING, -1, [
+    [ Species.CRABRAWLER, PokemonType.FIGHTING, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CRABOMINABLE, Type.FIGHTING, Type.ICE, [
+    [ Species.CRABOMINABLE, PokemonType.FIGHTING, PokemonType.ICE, [
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ORICORIO, Type.FIRE, Type.FLYING, [
+    [ Species.ORICORIO, PokemonType.FIRE, PokemonType.FLYING, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON ],
       [ Biome.ISLAND, BiomePoolTier.COMMON ],
       [ Biome.ISLAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CUTIEFLY, Type.BUG, Type.FAIRY, [
+    [ Species.CUTIEFLY, PokemonType.BUG, PokemonType.FAIRY, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.RIBOMBEE, Type.BUG, Type.FAIRY, [
+    [ Species.RIBOMBEE, PokemonType.BUG, PokemonType.FAIRY, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ],
       [ Biome.MEADOW, BiomePoolTier.BOSS ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ROCKRUFF, Type.ROCK, -1, [
+    [ Species.ROCKRUFF, PokemonType.ROCK, -1, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
       [ Biome.CAVE, BiomePoolTier.UNCOMMON, TimeOfDay.DUSK ]
     ]
     ],
-    [ Species.LYCANROC, Type.ROCK, -1, [
+    [ Species.LYCANROC, PokemonType.ROCK, -1, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, TimeOfDay.DAY ],
       [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, TimeOfDay.DAY ],
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
@@ -5596,1529 +5609,1529 @@ export function initBiomes() {
       [ Biome.CAVE, BiomePoolTier.BOSS_RARE, TimeOfDay.DUSK ]
     ]
     ],
-    [ Species.WISHIWASHI, Type.WATER, -1, [
+    [ Species.WISHIWASHI, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.UNCOMMON ],
       [ Biome.LAKE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MAREANIE, Type.POISON, Type.WATER, [
+    [ Species.MAREANIE, PokemonType.POISON, PokemonType.WATER, [
       [ Biome.BEACH, BiomePoolTier.COMMON ],
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.TOXAPEX, Type.POISON, Type.WATER, [
+    [ Species.TOXAPEX, PokemonType.POISON, PokemonType.WATER, [
       [ Biome.BEACH, BiomePoolTier.COMMON ],
       [ Biome.BEACH, BiomePoolTier.BOSS ],
       [ Biome.SWAMP, BiomePoolTier.UNCOMMON ],
       [ Biome.SWAMP, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MUDBRAY, Type.GROUND, -1, [
+    [ Species.MUDBRAY, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MUDSDALE, Type.GROUND, -1, [
+    [ Species.MUDSDALE, PokemonType.GROUND, -1, [
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
       [ Biome.BADLANDS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DEWPIDER, Type.WATER, Type.BUG, [
+    [ Species.DEWPIDER, PokemonType.WATER, PokemonType.BUG, [
       [ Biome.LAKE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ARAQUANID, Type.WATER, Type.BUG, [
+    [ Species.ARAQUANID, PokemonType.WATER, PokemonType.BUG, [
       [ Biome.LAKE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.LAKE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.FOMANTIS, Type.GRASS, -1, [
+    [ Species.FOMANTIS, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.LURANTIS, Type.GRASS, -1, [
+    [ Species.LURANTIS, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS ],
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MORELULL, Type.GRASS, Type.FAIRY, [
+    [ Species.MORELULL, PokemonType.GRASS, PokemonType.FAIRY, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SHIINOTIC, Type.GRASS, Type.FAIRY, [
+    [ Species.SHIINOTIC, PokemonType.GRASS, PokemonType.FAIRY, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SALANDIT, Type.POISON, Type.FIRE, [
+    [ Species.SALANDIT, PokemonType.POISON, PokemonType.FIRE, [
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SALAZZLE, Type.POISON, Type.FIRE, [
+    [ Species.SALAZZLE, PokemonType.POISON, PokemonType.FIRE, [
       [ Biome.VOLCANO, BiomePoolTier.COMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.STUFFUL, Type.NORMAL, Type.FIGHTING, [
+    [ Species.STUFFUL, PokemonType.NORMAL, PokemonType.FIGHTING, [
       [ Biome.DOJO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BEWEAR, Type.NORMAL, Type.FIGHTING, [
+    [ Species.BEWEAR, PokemonType.NORMAL, PokemonType.FIGHTING, [
       [ Biome.DOJO, BiomePoolTier.COMMON ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BOUNSWEET, Type.GRASS, -1, [
+    [ Species.BOUNSWEET, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.STEENEE, Type.GRASS, -1, [
+    [ Species.STEENEE, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TSAREENA, Type.GRASS, -1, [
+    [ Species.TSAREENA, PokemonType.GRASS, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.COMFEY, Type.FAIRY, -1, [
+    [ Species.COMFEY, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ORANGURU, Type.NORMAL, Type.PSYCHIC, [
+    [ Species.ORANGURU, PokemonType.NORMAL, PokemonType.PSYCHIC, [
       [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PASSIMIAN, Type.FIGHTING, -1, [
+    [ Species.PASSIMIAN, PokemonType.FIGHTING, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.WIMPOD, Type.BUG, Type.WATER, [
+    [ Species.WIMPOD, PokemonType.BUG, PokemonType.WATER, [
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GOLISOPOD, Type.BUG, Type.WATER, [
+    [ Species.GOLISOPOD, PokemonType.BUG, PokemonType.WATER, [
       [ Biome.CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SANDYGAST, Type.GHOST, Type.GROUND, [
+    [ Species.SANDYGAST, PokemonType.GHOST, PokemonType.GROUND, [
       [ Biome.BEACH, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.PALOSSAND, Type.GHOST, Type.GROUND, [
+    [ Species.PALOSSAND, PokemonType.GHOST, PokemonType.GROUND, [
       [ Biome.BEACH, BiomePoolTier.UNCOMMON ],
       [ Biome.BEACH, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PYUKUMUKU, Type.WATER, -1, [
+    [ Species.PYUKUMUKU, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.TYPE_NULL, Type.NORMAL, -1, [
+    [ Species.TYPE_NULL, PokemonType.NORMAL, -1, [
       [ Biome.LABORATORY, BiomePoolTier.ULTRA_RARE ]
     ]
     ],
-    [ Species.SILVALLY, Type.NORMAL, -1, [
+    [ Species.SILVALLY, PokemonType.NORMAL, -1, [
       [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.MINIOR, Type.ROCK, Type.FLYING, [
+    [ Species.MINIOR, PokemonType.ROCK, PokemonType.FLYING, [
       [ Biome.SPACE, BiomePoolTier.COMMON ],
       [ Biome.SPACE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.KOMALA, Type.NORMAL, -1, [
+    [ Species.KOMALA, PokemonType.NORMAL, -1, [
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.JUNGLE, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TURTONATOR, Type.FIRE, Type.DRAGON, [
+    [ Species.TURTONATOR, PokemonType.FIRE, PokemonType.DRAGON, [
       [ Biome.VOLCANO, BiomePoolTier.UNCOMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TOGEDEMARU, Type.ELECTRIC, Type.STEEL, [
+    [ Species.TOGEDEMARU, PokemonType.ELECTRIC, PokemonType.STEEL, [
       [ Biome.POWER_PLANT, BiomePoolTier.UNCOMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MIMIKYU, Type.GHOST, Type.FAIRY, [
+    [ Species.MIMIKYU, PokemonType.GHOST, PokemonType.FAIRY, [
       [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BRUXISH, Type.WATER, Type.PSYCHIC, [
+    [ Species.BRUXISH, PokemonType.WATER, PokemonType.PSYCHIC, [
       [ Biome.ISLAND, BiomePoolTier.UNCOMMON ],
       [ Biome.ISLAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DRAMPA, Type.NORMAL, Type.DRAGON, [
+    [ Species.DRAMPA, PokemonType.NORMAL, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DHELMISE, Type.GHOST, Type.GRASS, [
+    [ Species.DHELMISE, PokemonType.GHOST, PokemonType.GRASS, [
       [ Biome.SEABED, BiomePoolTier.RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.JANGMO_O, Type.DRAGON, -1, [
+    [ Species.JANGMO_O, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HAKAMO_O, Type.DRAGON, Type.FIGHTING, [
+    [ Species.HAKAMO_O, PokemonType.DRAGON, PokemonType.FIGHTING, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.KOMMO_O, Type.DRAGON, Type.FIGHTING, [
+    [ Species.KOMMO_O, PokemonType.DRAGON, PokemonType.FIGHTING, [
       [ Biome.WASTELAND, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TAPU_KOKO, Type.ELECTRIC, Type.FAIRY, [
+    [ Species.TAPU_KOKO, PokemonType.ELECTRIC, PokemonType.FAIRY, [
       [ Biome.TEMPLE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.TEMPLE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.TAPU_LELE, Type.PSYCHIC, Type.FAIRY, [
+    [ Species.TAPU_LELE, PokemonType.PSYCHIC, PokemonType.FAIRY, [
       [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.TAPU_BULU, Type.GRASS, Type.FAIRY, [
+    [ Species.TAPU_BULU, PokemonType.GRASS, PokemonType.FAIRY, [
       [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
       [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.TAPU_FINI, Type.WATER, Type.FAIRY, [
+    [ Species.TAPU_FINI, PokemonType.WATER, PokemonType.FAIRY, [
       [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
       [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.COSMOG, Type.PSYCHIC, -1, [
+    [ Species.COSMOG, PokemonType.PSYCHIC, -1, [
       [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ]
     ]
     ],
-    [ Species.COSMOEM, Type.PSYCHIC, -1, [
+    [ Species.COSMOEM, PokemonType.PSYCHIC, -1, [
       [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ]
     ]
     ],
-    [ Species.SOLGALEO, Type.PSYCHIC, Type.STEEL, [
+    [ Species.SOLGALEO, PokemonType.PSYCHIC, PokemonType.STEEL, [
       [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE, TimeOfDay.DAY ]
     ]
     ],
-    [ Species.LUNALA, Type.PSYCHIC, Type.GHOST, [
+    [ Species.LUNALA, PokemonType.PSYCHIC, PokemonType.GHOST, [
       [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE, TimeOfDay.NIGHT ]
     ]
     ],
-    [ Species.NIHILEGO, Type.ROCK, Type.POISON, [
+    [ Species.NIHILEGO, PokemonType.ROCK, PokemonType.POISON, [
       [ Biome.SEABED, BiomePoolTier.ULTRA_RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.BUZZWOLE, Type.BUG, Type.FIGHTING, [
+    [ Species.BUZZWOLE, PokemonType.BUG, PokemonType.FIGHTING, [
       [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.PHEROMOSA, Type.BUG, Type.FIGHTING, [
+    [ Species.PHEROMOSA, PokemonType.BUG, PokemonType.FIGHTING, [
       [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
       [ Biome.DESERT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.XURKITREE, Type.ELECTRIC, -1, [
+    [ Species.XURKITREE, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.CELESTEELA, Type.STEEL, Type.FLYING, [
+    [ Species.CELESTEELA, PokemonType.STEEL, PokemonType.FLYING, [
       [ Biome.SPACE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.SPACE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.KARTANA, Type.GRASS, Type.STEEL, [
+    [ Species.KARTANA, PokemonType.GRASS, PokemonType.STEEL, [
       [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.GUZZLORD, Type.DARK, Type.DRAGON, [
+    [ Species.GUZZLORD, PokemonType.DARK, PokemonType.DRAGON, [
       [ Biome.SLUM, BiomePoolTier.ULTRA_RARE ],
       [ Biome.SLUM, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.NECROZMA, Type.PSYCHIC, -1, [
+    [ Species.NECROZMA, PokemonType.PSYCHIC, -1, [
       [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.MAGEARNA, Type.STEEL, Type.FAIRY, [
+    [ Species.MAGEARNA, PokemonType.STEEL, PokemonType.FAIRY, [
       [ Biome.FACTORY, BiomePoolTier.ULTRA_RARE ],
       [ Biome.FACTORY, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.MARSHADOW, Type.FIGHTING, Type.GHOST, [
+    [ Species.MARSHADOW, PokemonType.FIGHTING, PokemonType.GHOST, [
       [ Biome.GRAVEYARD, BiomePoolTier.ULTRA_RARE ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.POIPOLE, Type.POISON, -1, [
+    [ Species.POIPOLE, PokemonType.POISON, -1, [
       [ Biome.SWAMP, BiomePoolTier.ULTRA_RARE ]
     ]
     ],
-    [ Species.NAGANADEL, Type.POISON, Type.DRAGON, [
+    [ Species.NAGANADEL, PokemonType.POISON, PokemonType.DRAGON, [
       [ Biome.SWAMP, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.STAKATAKA, Type.ROCK, Type.STEEL, [
+    [ Species.STAKATAKA, PokemonType.ROCK, PokemonType.STEEL, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.BLACEPHALON, Type.FIRE, Type.GHOST, [
+    [ Species.BLACEPHALON, PokemonType.FIRE, PokemonType.GHOST, [
       [ Biome.ISLAND, BiomePoolTier.ULTRA_RARE ],
       [ Biome.ISLAND, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.ZERAORA, Type.ELECTRIC, -1, [
+    [ Species.ZERAORA, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.MELTAN, Type.STEEL, -1, [ ]
+    [ Species.MELTAN, PokemonType.STEEL, -1, [ ]
     ],
-    [ Species.MELMETAL, Type.STEEL, -1, [ ]
+    [ Species.MELMETAL, PokemonType.STEEL, -1, [ ]
     ],
-    [ Species.GROOKEY, Type.GRASS, -1, [
+    [ Species.GROOKEY, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.THWACKEY, Type.GRASS, -1, [
+    [ Species.THWACKEY, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.RILLABOOM, Type.GRASS, -1, [
+    [ Species.RILLABOOM, PokemonType.GRASS, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SCORBUNNY, Type.FIRE, -1, [
+    [ Species.SCORBUNNY, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.RABOOT, Type.FIRE, -1, [
+    [ Species.RABOOT, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.CINDERACE, Type.FIRE, -1, [
+    [ Species.CINDERACE, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SOBBLE, Type.WATER, -1, [
+    [ Species.SOBBLE, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DRIZZILE, Type.WATER, -1, [
+    [ Species.DRIZZILE, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.INTELEON, Type.WATER, -1, [
+    [ Species.INTELEON, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.RARE ],
       [ Biome.LAKE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SKWOVET, Type.NORMAL, -1, [
+    [ Species.SKWOVET, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GREEDENT, Type.NORMAL, -1, [
+    [ Species.GREEDENT, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ROOKIDEE, Type.FLYING, -1, [
+    [ Species.ROOKIDEE, PokemonType.FLYING, -1, [
       [ Biome.TOWN, BiomePoolTier.RARE ],
       [ Biome.PLAINS, BiomePoolTier.RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CORVISQUIRE, Type.FLYING, -1, [
+    [ Species.CORVISQUIRE, PokemonType.FLYING, -1, [
       [ Biome.PLAINS, BiomePoolTier.RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CORVIKNIGHT, Type.FLYING, Type.STEEL, [
+    [ Species.CORVIKNIGHT, PokemonType.FLYING, PokemonType.STEEL, [
       [ Biome.PLAINS, BiomePoolTier.RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.BLIPBUG, Type.BUG, -1, [
+    [ Species.BLIPBUG, PokemonType.BUG, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.DOTTLER, Type.BUG, Type.PSYCHIC, [
+    [ Species.DOTTLER, PokemonType.BUG, PokemonType.PSYCHIC, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ORBEETLE, Type.BUG, Type.PSYCHIC, [
+    [ Species.ORBEETLE, PokemonType.BUG, PokemonType.PSYCHIC, [
       [ Biome.FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.NICKIT, Type.DARK, -1, [
+    [ Species.NICKIT, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.THIEVUL, Type.DARK, -1, [
+    [ Species.THIEVUL, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GOSSIFLEUR, Type.GRASS, -1, [
+    [ Species.GOSSIFLEUR, PokemonType.GRASS, -1, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ELDEGOSS, Type.GRASS, -1, [
+    [ Species.ELDEGOSS, PokemonType.GRASS, -1, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.WOOLOO, Type.NORMAL, -1, [
+    [ Species.WOOLOO, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.MEADOW, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DUBWOOL, Type.NORMAL, -1, [
+    [ Species.DUBWOOL, PokemonType.NORMAL, -1, [
       [ Biome.MEADOW, BiomePoolTier.COMMON ],
       [ Biome.MEADOW, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CHEWTLE, Type.WATER, -1, [
+    [ Species.CHEWTLE, PokemonType.WATER, -1, [
       [ Biome.LAKE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DREDNAW, Type.WATER, Type.ROCK, [
+    [ Species.DREDNAW, PokemonType.WATER, PokemonType.ROCK, [
       [ Biome.LAKE, BiomePoolTier.COMMON ],
       [ Biome.LAKE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.YAMPER, Type.ELECTRIC, -1, [
+    [ Species.YAMPER, PokemonType.ELECTRIC, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.BOLTUND, Type.ELECTRIC, -1, [
+    [ Species.BOLTUND, PokemonType.ELECTRIC, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ROLYCOLY, Type.ROCK, -1, [
+    [ Species.ROLYCOLY, PokemonType.ROCK, -1, [
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.CARKOL, Type.ROCK, Type.FIRE, [
+    [ Species.CARKOL, PokemonType.ROCK, PokemonType.FIRE, [
       [ Biome.VOLCANO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.COALOSSAL, Type.ROCK, Type.FIRE, [
+    [ Species.COALOSSAL, PokemonType.ROCK, PokemonType.FIRE, [
       [ Biome.VOLCANO, BiomePoolTier.COMMON ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.APPLIN, Type.GRASS, Type.DRAGON, [
+    [ Species.APPLIN, PokemonType.GRASS, PokemonType.DRAGON, [
       [ Biome.MEADOW, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.FLAPPLE, Type.GRASS, Type.DRAGON, [
+    [ Species.FLAPPLE, PokemonType.GRASS, PokemonType.DRAGON, [
       [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.APPLETUN, Type.GRASS, Type.DRAGON, [
+    [ Species.APPLETUN, PokemonType.GRASS, PokemonType.DRAGON, [
       [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SILICOBRA, Type.GROUND, -1, [
+    [ Species.SILICOBRA, PokemonType.GROUND, -1, [
       [ Biome.DESERT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SANDACONDA, Type.GROUND, -1, [
+    [ Species.SANDACONDA, PokemonType.GROUND, -1, [
       [ Biome.DESERT, BiomePoolTier.COMMON ],
       [ Biome.DESERT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CRAMORANT, Type.FLYING, Type.WATER, [
+    [ Species.CRAMORANT, PokemonType.FLYING, PokemonType.WATER, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ARROKUDA, Type.WATER, -1, [
+    [ Species.ARROKUDA, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BARRASKEWDA, Type.WATER, -1, [
+    [ Species.BARRASKEWDA, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.COMMON ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TOXEL, Type.ELECTRIC, Type.POISON, [ ]
+    [ Species.TOXEL, PokemonType.ELECTRIC, PokemonType.POISON, [ ]
     ],
-    [ Species.TOXTRICITY, Type.ELECTRIC, Type.POISON, [
+    [ Species.TOXTRICITY, PokemonType.ELECTRIC, PokemonType.POISON, [
       [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SLUM, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.SIZZLIPEDE, Type.FIRE, Type.BUG, [
+    [ Species.SIZZLIPEDE, PokemonType.FIRE, PokemonType.BUG, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CENTISKORCH, Type.FIRE, Type.BUG, [
+    [ Species.CENTISKORCH, PokemonType.FIRE, PokemonType.BUG, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.CLOBBOPUS, Type.FIGHTING, -1, [
+    [ Species.CLOBBOPUS, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GRAPPLOCT, Type.FIGHTING, -1, [
+    [ Species.GRAPPLOCT, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.COMMON ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SINISTEA, Type.GHOST, -1, [
+    [ Species.SINISTEA, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.POLTEAGEIST, Type.GHOST, -1, [
+    [ Species.POLTEAGEIST, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.HATENNA, Type.PSYCHIC, -1, [
+    [ Species.HATENNA, PokemonType.PSYCHIC, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.HATTREM, Type.PSYCHIC, -1, [
+    [ Species.HATTREM, PokemonType.PSYCHIC, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.HATTERENE, Type.PSYCHIC, Type.FAIRY, [
+    [ Species.HATTERENE, PokemonType.PSYCHIC, PokemonType.FAIRY, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.IMPIDIMP, Type.DARK, Type.FAIRY, [
+    [ Species.IMPIDIMP, PokemonType.DARK, PokemonType.FAIRY, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MORGREM, Type.DARK, Type.FAIRY, [
+    [ Species.MORGREM, PokemonType.DARK, PokemonType.FAIRY, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GRIMMSNARL, Type.DARK, Type.FAIRY, [
+    [ Species.GRIMMSNARL, PokemonType.DARK, PokemonType.FAIRY, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.OBSTAGOON, Type.DARK, Type.NORMAL, [
+    [ Species.OBSTAGOON, PokemonType.DARK, PokemonType.NORMAL, [
       [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SLUM, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.PERRSERKER, Type.STEEL, -1, [
+    [ Species.PERRSERKER, PokemonType.STEEL, -1, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE, TimeOfDay.DUSK ],
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_RARE, TimeOfDay.DUSK ]
     ]
     ],
-    [ Species.CURSOLA, Type.GHOST, -1, [
+    [ Species.CURSOLA, PokemonType.GHOST, -1, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SIRFETCHD, Type.FIGHTING, -1, [
+    [ Species.SIRFETCHD, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.MR_RIME, Type.ICE, Type.PSYCHIC, [
+    [ Species.MR_RIME, PokemonType.ICE, PokemonType.PSYCHIC, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.RUNERIGUS, Type.GROUND, Type.GHOST, [
+    [ Species.RUNERIGUS, PokemonType.GROUND, PokemonType.GHOST, [
       [ Biome.RUINS, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.RUINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.MILCERY, Type.FAIRY, -1, [
+    [ Species.MILCERY, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ALCREMIE, Type.FAIRY, -1, [
+    [ Species.ALCREMIE, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.FALINKS, Type.FIGHTING, -1, [
+    [ Species.FALINKS, PokemonType.FIGHTING, -1, [
       [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PINCURCHIN, Type.ELECTRIC, -1, [
+    [ Species.PINCURCHIN, PokemonType.ELECTRIC, -1, [
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.SNOM, Type.ICE, Type.BUG, [
+    [ Species.SNOM, PokemonType.ICE, PokemonType.BUG, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.FROSMOTH, Type.ICE, Type.BUG, [
+    [ Species.FROSMOTH, PokemonType.ICE, PokemonType.BUG, [
       [ Biome.ICE_CAVE, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.STONJOURNER, Type.ROCK, -1, [
+    [ Species.STONJOURNER, PokemonType.ROCK, -1, [
       [ Biome.RUINS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.EISCUE, Type.ICE, -1, [
+    [ Species.EISCUE, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.INDEEDEE, Type.PSYCHIC, Type.NORMAL, [
+    [ Species.INDEEDEE, PokemonType.PSYCHIC, PokemonType.NORMAL, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.MORPEKO, Type.ELECTRIC, Type.DARK, [
+    [ Species.MORPEKO, PokemonType.ELECTRIC, PokemonType.DARK, [
       [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.CUFANT, Type.STEEL, -1, [
+    [ Species.CUFANT, PokemonType.STEEL, -1, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.COPPERAJAH, Type.STEEL, -1, [
+    [ Species.COPPERAJAH, PokemonType.STEEL, -1, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
       [ Biome.BADLANDS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.DRACOZOLT, Type.ELECTRIC, Type.DRAGON, [
+    [ Species.DRACOZOLT, PokemonType.ELECTRIC, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ARCTOZOLT, Type.ELECTRIC, Type.ICE, [
+    [ Species.ARCTOZOLT, PokemonType.ELECTRIC, PokemonType.ICE, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.DRACOVISH, Type.WATER, Type.DRAGON, [
+    [ Species.DRACOVISH, PokemonType.WATER, PokemonType.DRAGON, [
       [ Biome.WASTELAND, BiomePoolTier.SUPER_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ARCTOVISH, Type.WATER, Type.ICE, [
+    [ Species.ARCTOVISH, PokemonType.WATER, PokemonType.ICE, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ],
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.DURALUDON, Type.STEEL, Type.DRAGON, [
+    [ Species.DURALUDON, PokemonType.STEEL, PokemonType.DRAGON, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DREEPY, Type.DRAGON, Type.GHOST, [
+    [ Species.DREEPY, PokemonType.DRAGON, PokemonType.GHOST, [
       [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.DRAKLOAK, Type.DRAGON, Type.GHOST, [
+    [ Species.DRAKLOAK, PokemonType.DRAGON, PokemonType.GHOST, [
       [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.DRAGAPULT, Type.DRAGON, Type.GHOST, [
+    [ Species.DRAGAPULT, PokemonType.DRAGON, PokemonType.GHOST, [
       [ Biome.WASTELAND, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.WASTELAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ZACIAN, Type.FAIRY, -1, [
+    [ Species.ZACIAN, PokemonType.FAIRY, -1, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.ZAMAZENTA, Type.FIGHTING, -1, [
+    [ Species.ZAMAZENTA, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.ETERNATUS, Type.POISON, Type.DRAGON, [
+    [ Species.ETERNATUS, PokemonType.POISON, PokemonType.DRAGON, [
       [ Biome.END, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.KUBFU, Type.FIGHTING, -1, [
+    [ Species.KUBFU, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ]
     ]
     ],
-    [ Species.URSHIFU, Type.FIGHTING, Type.DARK, [
+    [ Species.URSHIFU, PokemonType.FIGHTING, PokemonType.DARK, [
       [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.ZARUDE, Type.DARK, Type.GRASS, [
+    [ Species.ZARUDE, PokemonType.DARK, PokemonType.GRASS, [
       [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.REGIELEKI, Type.ELECTRIC, -1, [
+    [ Species.REGIELEKI, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.ULTRA_RARE ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.REGIDRAGO, Type.DRAGON, -1, [
+    [ Species.REGIDRAGO, PokemonType.DRAGON, -1, [
       [ Biome.WASTELAND, BiomePoolTier.ULTRA_RARE ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.GLASTRIER, Type.ICE, -1, [
+    [ Species.GLASTRIER, PokemonType.ICE, -1, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.SPECTRIER, Type.GHOST, -1, [
+    [ Species.SPECTRIER, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.ULTRA_RARE ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.CALYREX, Type.PSYCHIC, Type.GRASS, [
+    [ Species.CALYREX, PokemonType.PSYCHIC, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.WYRDEER, Type.NORMAL, Type.PSYCHIC, [
+    [ Species.WYRDEER, PokemonType.NORMAL, PokemonType.PSYCHIC, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.KLEAVOR, Type.BUG, Type.ROCK, [
+    [ Species.KLEAVOR, PokemonType.BUG, PokemonType.ROCK, [
       [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.URSALUNA, Type.GROUND, Type.NORMAL, [
+    [ Species.URSALUNA, PokemonType.GROUND, PokemonType.NORMAL, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BASCULEGION, Type.WATER, Type.GHOST, [
+    [ Species.BASCULEGION, PokemonType.WATER, PokemonType.GHOST, [
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.SNEASLER, Type.FIGHTING, Type.POISON, [
+    [ Species.SNEASLER, PokemonType.FIGHTING, PokemonType.POISON, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.OVERQWIL, Type.DARK, Type.POISON, [
+    [ Species.OVERQWIL, PokemonType.DARK, PokemonType.POISON, [
       [ Biome.SEABED, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ENAMORUS, Type.FAIRY, Type.FLYING, [
+    [ Species.ENAMORUS, PokemonType.FAIRY, PokemonType.FLYING, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.SPRIGATITO, Type.GRASS, -1, [
+    [ Species.SPRIGATITO, PokemonType.GRASS, -1, [
       [ Biome.MEADOW, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.FLORAGATO, Type.GRASS, -1, [
+    [ Species.FLORAGATO, PokemonType.GRASS, -1, [
       [ Biome.MEADOW, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.MEOWSCARADA, Type.GRASS, Type.DARK, [
+    [ Species.MEOWSCARADA, PokemonType.GRASS, PokemonType.DARK, [
       [ Biome.MEADOW, BiomePoolTier.RARE ],
       [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.FUECOCO, Type.FIRE, -1, [
+    [ Species.FUECOCO, PokemonType.FIRE, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.CROCALOR, Type.FIRE, -1, [
+    [ Species.CROCALOR, PokemonType.FIRE, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SKELEDIRGE, Type.FIRE, Type.GHOST, [
+    [ Species.SKELEDIRGE, PokemonType.FIRE, PokemonType.GHOST, [
       [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.QUAXLY, Type.WATER, -1, [
+    [ Species.QUAXLY, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.QUAXWELL, Type.WATER, -1, [
+    [ Species.QUAXWELL, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.QUAQUAVAL, Type.WATER, Type.FIGHTING, [
+    [ Species.QUAQUAVAL, PokemonType.WATER, PokemonType.FIGHTING, [
       [ Biome.BEACH, BiomePoolTier.RARE ],
       [ Biome.BEACH, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.LECHONK, Type.NORMAL, -1, [
+    [ Species.LECHONK, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.OINKOLOGNE, Type.NORMAL, -1, [
+    [ Species.OINKOLOGNE, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.COMMON ],
       [ Biome.PLAINS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TAROUNTULA, Type.BUG, -1, [
+    [ Species.TAROUNTULA, PokemonType.BUG, -1, [
       [ Biome.FOREST, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SPIDOPS, Type.BUG, -1, [
+    [ Species.SPIDOPS, PokemonType.BUG, -1, [
       [ Biome.FOREST, BiomePoolTier.COMMON ],
       [ Biome.FOREST, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.NYMBLE, Type.BUG, -1, [
+    [ Species.NYMBLE, PokemonType.BUG, -1, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
       [ Biome.FOREST, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.LOKIX, Type.BUG, Type.DARK, [
+    [ Species.LOKIX, PokemonType.BUG, PokemonType.DARK, [
       [ Biome.TALL_GRASS, BiomePoolTier.COMMON ],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS ],
       [ Biome.FOREST, BiomePoolTier.COMMON ],
       [ Biome.FOREST, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.PAWMI, Type.ELECTRIC, -1, [
+    [ Species.PAWMI, PokemonType.ELECTRIC, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.PAWMO, Type.ELECTRIC, Type.FIGHTING, [
+    [ Species.PAWMO, PokemonType.ELECTRIC, PokemonType.FIGHTING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.PAWMOT, Type.ELECTRIC, Type.FIGHTING, [
+    [ Species.PAWMOT, PokemonType.ELECTRIC, PokemonType.FIGHTING, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TANDEMAUS, Type.NORMAL, -1, [
+    [ Species.TANDEMAUS, PokemonType.NORMAL, -1, [
       [ Biome.TOWN, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.MAUSHOLD, Type.NORMAL, -1, [
+    [ Species.MAUSHOLD, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.FIDOUGH, Type.FAIRY, -1, [
+    [ Species.FIDOUGH, PokemonType.FAIRY, -1, [
       [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.DACHSBUN, Type.FAIRY, -1, [
+    [ Species.DACHSBUN, PokemonType.FAIRY, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SMOLIV, Type.GRASS, Type.NORMAL, [
+    [ Species.SMOLIV, PokemonType.GRASS, PokemonType.NORMAL, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.DOLLIV, Type.GRASS, Type.NORMAL, [
+    [ Species.DOLLIV, PokemonType.GRASS, PokemonType.NORMAL, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ARBOLIVA, Type.GRASS, Type.NORMAL, [
+    [ Species.ARBOLIVA, PokemonType.GRASS, PokemonType.NORMAL, [
       [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SQUAWKABILLY, Type.NORMAL, Type.FLYING, [
+    [ Species.SQUAWKABILLY, PokemonType.NORMAL, PokemonType.FLYING, [
       [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON ],
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.NACLI, Type.ROCK, -1, [
+    [ Species.NACLI, PokemonType.ROCK, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.NACLSTACK, Type.ROCK, -1, [
+    [ Species.NACLSTACK, PokemonType.ROCK, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.CAVE, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GARGANACL, Type.ROCK, -1, [
+    [ Species.GARGANACL, PokemonType.ROCK, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS ],
       [ Biome.CAVE, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CHARCADET, Type.FIRE, -1, [
+    [ Species.CHARCADET, PokemonType.FIRE, -1, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ARMAROUGE, Type.FIRE, Type.PSYCHIC, [
+    [ Species.ARMAROUGE, PokemonType.FIRE, PokemonType.PSYCHIC, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.CERULEDGE, Type.FIRE, Type.GHOST, [
+    [ Species.CERULEDGE, PokemonType.FIRE, PokemonType.GHOST, [
       [ Biome.GRAVEYARD, BiomePoolTier.RARE ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.TADBULB, Type.ELECTRIC, -1, [
+    [ Species.TADBULB, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BELLIBOLT, Type.ELECTRIC, -1, [
+    [ Species.BELLIBOLT, PokemonType.ELECTRIC, -1, [
       [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.WATTREL, Type.ELECTRIC, Type.FLYING, [
+    [ Species.WATTREL, PokemonType.ELECTRIC, PokemonType.FLYING, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.KILOWATTREL, Type.ELECTRIC, Type.FLYING, [
+    [ Species.KILOWATTREL, PokemonType.ELECTRIC, PokemonType.FLYING, [
       [ Biome.SEA, BiomePoolTier.UNCOMMON ],
       [ Biome.SEA, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.MASCHIFF, Type.DARK, -1, [
+    [ Species.MASCHIFF, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.MABOSSTIFF, Type.DARK, -1, [
+    [ Species.MABOSSTIFF, PokemonType.DARK, -1, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.SHROODLE, Type.POISON, Type.NORMAL, [
+    [ Species.SHROODLE, PokemonType.POISON, PokemonType.NORMAL, [
       [ Biome.FOREST, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.GRAFAIAI, Type.POISON, Type.NORMAL, [
+    [ Species.GRAFAIAI, PokemonType.POISON, PokemonType.NORMAL, [
       [ Biome.FOREST, BiomePoolTier.COMMON ],
       [ Biome.FOREST, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.BRAMBLIN, Type.GRASS, Type.GHOST, [
+    [ Species.BRAMBLIN, PokemonType.GRASS, PokemonType.GHOST, [
       [ Biome.DESERT, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.BRAMBLEGHAST, Type.GRASS, Type.GHOST, [
+    [ Species.BRAMBLEGHAST, PokemonType.GRASS, PokemonType.GHOST, [
       [ Biome.DESERT, BiomePoolTier.UNCOMMON ],
       [ Biome.DESERT, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TOEDSCOOL, Type.GROUND, Type.GRASS, [
+    [ Species.TOEDSCOOL, PokemonType.GROUND, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.TOEDSCRUEL, Type.GROUND, Type.GRASS, [
+    [ Species.TOEDSCRUEL, PokemonType.GROUND, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.KLAWF, Type.ROCK, -1, [
+    [ Species.KLAWF, PokemonType.ROCK, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.CAPSAKID, Type.GRASS, -1, [
+    [ Species.CAPSAKID, PokemonType.GRASS, -1, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.SCOVILLAIN, Type.GRASS, Type.FIRE, [
+    [ Species.SCOVILLAIN, PokemonType.GRASS, PokemonType.FIRE, [
       [ Biome.BADLANDS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.BADLANDS, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.RELLOR, Type.BUG, -1, [
+    [ Species.RELLOR, PokemonType.BUG, -1, [
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.RABSCA, Type.BUG, Type.PSYCHIC, [
+    [ Species.RABSCA, PokemonType.BUG, PokemonType.PSYCHIC, [
       [ Biome.DESERT, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.FLITTLE, Type.PSYCHIC, -1, [
+    [ Species.FLITTLE, PokemonType.PSYCHIC, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ESPATHRA, Type.PSYCHIC, -1, [
+    [ Species.ESPATHRA, PokemonType.PSYCHIC, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.TINKATINK, Type.FAIRY, Type.STEEL, [
+    [ Species.TINKATINK, PokemonType.FAIRY, PokemonType.STEEL, [
       [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.TINKATUFF, Type.FAIRY, Type.STEEL, [
+    [ Species.TINKATUFF, PokemonType.FAIRY, PokemonType.STEEL, [
       [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.TINKATON, Type.FAIRY, Type.STEEL, [
+    [ Species.TINKATON, PokemonType.FAIRY, PokemonType.STEEL, [
       [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
       [ Biome.RUINS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.WIGLETT, Type.WATER, -1, [
+    [ Species.WIGLETT, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.WUGTRIO, Type.WATER, -1, [
+    [ Species.WUGTRIO, PokemonType.WATER, -1, [
       [ Biome.BEACH, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BOMBIRDIER, Type.FLYING, Type.DARK, [
+    [ Species.BOMBIRDIER, PokemonType.FLYING, PokemonType.DARK, [
       [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.FINIZEN, Type.WATER, -1, [
+    [ Species.FINIZEN, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.PALAFIN, Type.WATER, -1, [
+    [ Species.PALAFIN, PokemonType.WATER, -1, [
       [ Biome.SEA, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SEA, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.VAROOM, Type.STEEL, Type.POISON, [
+    [ Species.VAROOM, PokemonType.STEEL, PokemonType.POISON, [
       [ Biome.METROPOLIS, BiomePoolTier.RARE ],
       [ Biome.SLUM, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.REVAVROOM, Type.STEEL, Type.POISON, [
+    [ Species.REVAVROOM, PokemonType.STEEL, PokemonType.POISON, [
       [ Biome.METROPOLIS, BiomePoolTier.RARE ],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE ],
       [ Biome.SLUM, BiomePoolTier.RARE ],
       [ Biome.SLUM, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.CYCLIZAR, Type.DRAGON, Type.NORMAL, [
+    [ Species.CYCLIZAR, PokemonType.DRAGON, PokemonType.NORMAL, [
       [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.ORTHWORM, Type.STEEL, -1, [
+    [ Species.ORTHWORM, PokemonType.STEEL, -1, [
       [ Biome.DESERT, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.GLIMMET, Type.ROCK, Type.POISON, [
+    [ Species.GLIMMET, PokemonType.ROCK, PokemonType.POISON, [
       [ Biome.CAVE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.GLIMMORA, Type.ROCK, Type.POISON, [
+    [ Species.GLIMMORA, PokemonType.ROCK, PokemonType.POISON, [
       [ Biome.CAVE, BiomePoolTier.RARE ],
       [ Biome.CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.GREAVARD, Type.GHOST, -1, [
+    [ Species.GREAVARD, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.HOUNDSTONE, Type.GHOST, -1, [
+    [ Species.HOUNDSTONE, PokemonType.GHOST, -1, [
       [ Biome.GRAVEYARD, BiomePoolTier.COMMON ],
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.FLAMIGO, Type.FLYING, Type.FIGHTING, [
+    [ Species.FLAMIGO, PokemonType.FLYING, PokemonType.FIGHTING, [
       [ Biome.LAKE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.CETODDLE, Type.ICE, -1, [
+    [ Species.CETODDLE, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.CETITAN, Type.ICE, -1, [
+    [ Species.CETITAN, PokemonType.ICE, -1, [
       [ Biome.ICE_CAVE, BiomePoolTier.UNCOMMON ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.VELUZA, Type.WATER, Type.PSYCHIC, [
+    [ Species.VELUZA, PokemonType.WATER, PokemonType.PSYCHIC, [
       [ Biome.SEABED, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.DONDOZO, Type.WATER, -1, [
+    [ Species.DONDOZO, PokemonType.WATER, -1, [
       [ Biome.SEABED, BiomePoolTier.UNCOMMON ],
       [ Biome.SEABED, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.TATSUGIRI, Type.DRAGON, Type.WATER, [
+    [ Species.TATSUGIRI, PokemonType.DRAGON, PokemonType.WATER, [
       [ Biome.BEACH, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ANNIHILAPE, Type.FIGHTING, Type.GHOST, [
+    [ Species.ANNIHILAPE, PokemonType.FIGHTING, PokemonType.GHOST, [
       [ Biome.PLAINS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.DOJO, BiomePoolTier.COMMON ],
       [ Biome.DOJO, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.CLODSIRE, Type.POISON, Type.GROUND, [
+    [ Species.CLODSIRE, PokemonType.POISON, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.FARIGIRAF, Type.NORMAL, Type.PSYCHIC, [
+    [ Species.FARIGIRAF, PokemonType.NORMAL, PokemonType.PSYCHIC, [
       [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
       [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.DUDUNSPARCE, Type.NORMAL, -1, [
+    [ Species.DUDUNSPARCE, PokemonType.NORMAL, -1, [
       [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
       [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.KINGAMBIT, Type.DARK, Type.STEEL, [
+    [ Species.KINGAMBIT, PokemonType.DARK, PokemonType.STEEL, [
       [ Biome.ABYSS, BiomePoolTier.COMMON ],
       [ Biome.ABYSS, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GREAT_TUSK, Type.GROUND, Type.FIGHTING, [
+    [ Species.GREAT_TUSK, PokemonType.GROUND, PokemonType.FIGHTING, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SCREAM_TAIL, Type.FAIRY, Type.PSYCHIC, [
+    [ Species.SCREAM_TAIL, PokemonType.FAIRY, PokemonType.PSYCHIC, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.BRUTE_BONNET, Type.GRASS, Type.DARK, [
+    [ Species.BRUTE_BONNET, PokemonType.GRASS, PokemonType.DARK, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FLUTTER_MANE, Type.GHOST, Type.FAIRY, [
+    [ Species.FLUTTER_MANE, PokemonType.GHOST, PokemonType.FAIRY, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SLITHER_WING, Type.BUG, Type.FIGHTING, [
+    [ Species.SLITHER_WING, PokemonType.BUG, PokemonType.FIGHTING, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.SANDY_SHOCKS, Type.ELECTRIC, Type.GROUND, [
+    [ Species.SANDY_SHOCKS, PokemonType.ELECTRIC, PokemonType.GROUND, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.IRON_TREADS, Type.GROUND, Type.STEEL, [
+    [ Species.IRON_TREADS, PokemonType.GROUND, PokemonType.STEEL, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.IRON_BUNDLE, Type.ICE, Type.WATER, [
+    [ Species.IRON_BUNDLE, PokemonType.ICE, PokemonType.WATER, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.IRON_HANDS, Type.FIGHTING, Type.ELECTRIC, [
+    [ Species.IRON_HANDS, PokemonType.FIGHTING, PokemonType.ELECTRIC, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.IRON_JUGULIS, Type.DARK, Type.FLYING, [
+    [ Species.IRON_JUGULIS, PokemonType.DARK, PokemonType.FLYING, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.IRON_MOTH, Type.FIRE, Type.POISON, [
+    [ Species.IRON_MOTH, PokemonType.FIRE, PokemonType.POISON, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.IRON_THORNS, Type.ROCK, Type.ELECTRIC, [
+    [ Species.IRON_THORNS, PokemonType.ROCK, PokemonType.ELECTRIC, [
       [ Biome.END, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.FRIGIBAX, Type.DRAGON, Type.ICE, [
+    [ Species.FRIGIBAX, PokemonType.DRAGON, PokemonType.ICE, [
       [ Biome.WASTELAND, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ARCTIBAX, Type.DRAGON, Type.ICE, [
+    [ Species.ARCTIBAX, PokemonType.DRAGON, PokemonType.ICE, [
       [ Biome.WASTELAND, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.BAXCALIBUR, Type.DRAGON, Type.ICE, [
+    [ Species.BAXCALIBUR, PokemonType.DRAGON, PokemonType.ICE, [
       [ Biome.WASTELAND, BiomePoolTier.RARE ],
       [ Biome.WASTELAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.GIMMIGHOUL, Type.GHOST, -1, [
+    [ Species.GIMMIGHOUL, PokemonType.GHOST, -1, [
       [ Biome.TEMPLE, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.GHOLDENGO, Type.STEEL, Type.GHOST, [
+    [ Species.GHOLDENGO, PokemonType.STEEL, PokemonType.GHOST, [
       [ Biome.TEMPLE, BiomePoolTier.RARE ],
       [ Biome.TEMPLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.WO_CHIEN, Type.DARK, Type.GRASS, [
+    [ Species.WO_CHIEN, PokemonType.DARK, PokemonType.GRASS, [
       [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.CHIEN_PAO, Type.DARK, Type.ICE, [
+    [ Species.CHIEN_PAO, PokemonType.DARK, PokemonType.ICE, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.TING_LU, Type.DARK, Type.GROUND, [
+    [ Species.TING_LU, PokemonType.DARK, PokemonType.GROUND, [
       [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.CHI_YU, Type.DARK, Type.FIRE, [
+    [ Species.CHI_YU, PokemonType.DARK, PokemonType.FIRE, [
       [ Biome.VOLCANO, BiomePoolTier.ULTRA_RARE ],
       [ Biome.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.ROARING_MOON, Type.DRAGON, Type.DARK, [
+    [ Species.ROARING_MOON, PokemonType.DRAGON, PokemonType.DARK, [
       [ Biome.END, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.IRON_VALIANT, Type.FAIRY, Type.FIGHTING, [
+    [ Species.IRON_VALIANT, PokemonType.FAIRY, PokemonType.FIGHTING, [
       [ Biome.END, BiomePoolTier.UNCOMMON ]
     ]
     ],
-    [ Species.KORAIDON, Type.FIGHTING, Type.DRAGON, [
+    [ Species.KORAIDON, PokemonType.FIGHTING, PokemonType.DRAGON, [
       [ Biome.RUINS, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.MIRAIDON, Type.ELECTRIC, Type.DRAGON, [
+    [ Species.MIRAIDON, PokemonType.ELECTRIC, PokemonType.DRAGON, [
       [ Biome.LABORATORY, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.WALKING_WAKE, Type.WATER, Type.DRAGON, [
+    [ Species.WALKING_WAKE, PokemonType.WATER, PokemonType.DRAGON, [
       [ Biome.END, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.IRON_LEAVES, Type.GRASS, Type.PSYCHIC, [
+    [ Species.IRON_LEAVES, PokemonType.GRASS, PokemonType.PSYCHIC, [
       [ Biome.END, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.DIPPLIN, Type.GRASS, Type.DRAGON, [
+    [ Species.DIPPLIN, PokemonType.GRASS, PokemonType.DRAGON, [
       [ Biome.MEADOW, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.POLTCHAGEIST, Type.GRASS, Type.GHOST, [
+    [ Species.POLTCHAGEIST, PokemonType.GRASS, PokemonType.GHOST, [
       [ Biome.BADLANDS, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.SINISTCHA, Type.GRASS, Type.GHOST, [
+    [ Species.SINISTCHA, PokemonType.GRASS, PokemonType.GHOST, [
       [ Biome.BADLANDS, BiomePoolTier.RARE ],
       [ Biome.BADLANDS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.OKIDOGI, Type.POISON, Type.FIGHTING, [
+    [ Species.OKIDOGI, PokemonType.POISON, PokemonType.FIGHTING, [
       [ Biome.BADLANDS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.BADLANDS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.MUNKIDORI, Type.POISON, Type.PSYCHIC, [
+    [ Species.MUNKIDORI, PokemonType.POISON, PokemonType.PSYCHIC, [
       [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.FEZANDIPITI, Type.POISON, Type.FAIRY, [
+    [ Species.FEZANDIPITI, PokemonType.POISON, PokemonType.FAIRY, [
       [ Biome.RUINS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.RUINS, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.OGERPON, Type.GRASS, -1, [
+    [ Species.OGERPON, PokemonType.GRASS, -1, [
       [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
-    [ Species.ARCHALUDON, Type.STEEL, Type.DRAGON, [
+    [ Species.ARCHALUDON, PokemonType.STEEL, PokemonType.DRAGON, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HYDRAPPLE, Type.GRASS, Type.DRAGON, [
+    [ Species.HYDRAPPLE, PokemonType.GRASS, PokemonType.DRAGON, [
       [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.GOUGING_FIRE, Type.FIRE, Type.DRAGON, [
+    [ Species.GOUGING_FIRE, PokemonType.FIRE, PokemonType.DRAGON, [
       [ Biome.END, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.RAGING_BOLT, Type.ELECTRIC, Type.DRAGON, [
+    [ Species.RAGING_BOLT, PokemonType.ELECTRIC, PokemonType.DRAGON, [
       [ Biome.END, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.IRON_BOULDER, Type.ROCK, Type.PSYCHIC, [
+    [ Species.IRON_BOULDER, PokemonType.ROCK, PokemonType.PSYCHIC, [
       [ Biome.END, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.IRON_CROWN, Type.STEEL, Type.PSYCHIC, [
+    [ Species.IRON_CROWN, PokemonType.STEEL, PokemonType.PSYCHIC, [
       [ Biome.END, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.TERAPAGOS, Type.NORMAL, -1, [
+    [ Species.TERAPAGOS, PokemonType.NORMAL, -1, [
       [ Biome.CAVE, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.PECHARUNT, Type.POISON, Type.GHOST, [ ]
+    [ Species.PECHARUNT, PokemonType.POISON, PokemonType.GHOST, [ ]
     ],
-    [ Species.ALOLA_RATTATA, Type.DARK, Type.NORMAL, [
+    [ Species.ALOLA_RATTATA, PokemonType.DARK, PokemonType.NORMAL, [
       [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ALOLA_RATICATE, Type.DARK, Type.NORMAL, [
+    [ Species.ALOLA_RATICATE, PokemonType.DARK, PokemonType.NORMAL, [
       [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ALOLA_RAICHU, Type.ELECTRIC, Type.PSYCHIC, [
+    [ Species.ALOLA_RAICHU, PokemonType.ELECTRIC, PokemonType.PSYCHIC, [
       [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ALOLA_SANDSHREW, Type.ICE, Type.STEEL, [
+    [ Species.ALOLA_SANDSHREW, PokemonType.ICE, PokemonType.STEEL, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ALOLA_SANDSLASH, Type.ICE, Type.STEEL, [
+    [ Species.ALOLA_SANDSLASH, PokemonType.ICE, PokemonType.STEEL, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ],
       [ Biome.ISLAND, BiomePoolTier.BOSS ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ALOLA_VULPIX, Type.ICE, -1, [
+    [ Species.ALOLA_VULPIX, PokemonType.ICE, -1, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ]
     ]
     ],
-    [ Species.ALOLA_NINETALES, Type.ICE, Type.FAIRY, [
+    [ Species.ALOLA_NINETALES, PokemonType.ICE, PokemonType.FAIRY, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ],
       [ Biome.ISLAND, BiomePoolTier.BOSS ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.RARE ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.ALOLA_DIGLETT, Type.GROUND, Type.STEEL, [
+    [ Species.ALOLA_DIGLETT, PokemonType.GROUND, PokemonType.STEEL, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ALOLA_DUGTRIO, Type.GROUND, Type.STEEL, [
+    [ Species.ALOLA_DUGTRIO, PokemonType.GROUND, PokemonType.STEEL, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ],
       [ Biome.ISLAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ALOLA_MEOWTH, Type.DARK, -1, [
+    [ Species.ALOLA_MEOWTH, PokemonType.DARK, -1, [
       [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ALOLA_PERSIAN, Type.DARK, -1, [
+    [ Species.ALOLA_PERSIAN, PokemonType.DARK, -1, [
       [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ALOLA_GEODUDE, Type.ROCK, Type.ELECTRIC, [
+    [ Species.ALOLA_GEODUDE, PokemonType.ROCK, PokemonType.ELECTRIC, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ALOLA_GRAVELER, Type.ROCK, Type.ELECTRIC, [
+    [ Species.ALOLA_GRAVELER, PokemonType.ROCK, PokemonType.ELECTRIC, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ALOLA_GOLEM, Type.ROCK, Type.ELECTRIC, [
+    [ Species.ALOLA_GOLEM, PokemonType.ROCK, PokemonType.ELECTRIC, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ],
       [ Biome.ISLAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ALOLA_GRIMER, Type.POISON, Type.DARK, [
+    [ Species.ALOLA_GRIMER, PokemonType.POISON, PokemonType.DARK, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ]
     ]
     ],
-    [ Species.ALOLA_MUK, Type.POISON, Type.DARK, [
+    [ Species.ALOLA_MUK, PokemonType.POISON, PokemonType.DARK, [
       [ Biome.ISLAND, BiomePoolTier.COMMON ],
       [ Biome.ISLAND, BiomePoolTier.BOSS ]
     ]
     ],
-    [ Species.ALOLA_EXEGGUTOR, Type.GRASS, Type.DRAGON, [
+    [ Species.ALOLA_EXEGGUTOR, PokemonType.GRASS, PokemonType.DRAGON, [
       [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.ALOLA_MAROWAK, Type.FIRE, Type.GHOST, [
+    [ Species.ALOLA_MAROWAK, PokemonType.FIRE, PokemonType.GHOST, [
       [ Biome.ISLAND, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.ETERNAL_FLOETTE, Type.FAIRY, -1, [
+    [ Species.ETERNAL_FLOETTE, PokemonType.FAIRY, -1, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.RARE ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.GALAR_MEOWTH, Type.STEEL, -1, [
+    [ Species.GALAR_MEOWTH, PokemonType.STEEL, -1, [
       [ Biome.CONSTRUCTION_SITE, BiomePoolTier.RARE, TimeOfDay.DUSK ]
     ]
     ],
-    [ Species.GALAR_PONYTA, Type.PSYCHIC, -1, [
+    [ Species.GALAR_PONYTA, PokemonType.PSYCHIC, -1, [
       [ Biome.JUNGLE, BiomePoolTier.RARE, TimeOfDay.DAWN ]
     ]
     ],
-    [ Species.GALAR_RAPIDASH, Type.PSYCHIC, Type.FAIRY, [
+    [ Species.GALAR_RAPIDASH, PokemonType.PSYCHIC, PokemonType.FAIRY, [
       [ Biome.JUNGLE, BiomePoolTier.RARE, TimeOfDay.DAWN ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE, TimeOfDay.DAWN ]
     ]
     ],
-    [ Species.GALAR_SLOWPOKE, Type.PSYCHIC, -1, [
+    [ Species.GALAR_SLOWPOKE, PokemonType.PSYCHIC, -1, [
       [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GALAR_SLOWBRO, Type.POISON, Type.PSYCHIC, [
+    [ Species.GALAR_SLOWBRO, PokemonType.POISON, PokemonType.PSYCHIC, [
       [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GALAR_FARFETCHD, Type.FIGHTING, -1, [
+    [ Species.GALAR_FARFETCHD, PokemonType.FIGHTING, -1, [
       [ Biome.DOJO, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.GALAR_WEEZING, Type.POISON, Type.FAIRY, [
+    [ Species.GALAR_WEEZING, PokemonType.POISON, PokemonType.FAIRY, [
       [ Biome.SLUM, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.GALAR_MR_MIME, Type.ICE, Type.PSYCHIC, [
+    [ Species.GALAR_MR_MIME, PokemonType.ICE, PokemonType.PSYCHIC, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.GALAR_ARTICUNO, Type.PSYCHIC, Type.FLYING, [
+    [ Species.GALAR_ARTICUNO, PokemonType.PSYCHIC, PokemonType.FLYING, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.ULTRA_RARE ],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.GALAR_ZAPDOS, Type.FIGHTING, Type.FLYING, [
+    [ Species.GALAR_ZAPDOS, PokemonType.FIGHTING, PokemonType.FLYING, [
       [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
       [ Biome.DOJO, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.GALAR_MOLTRES, Type.DARK, Type.FLYING, [
+    [ Species.GALAR_MOLTRES, PokemonType.DARK, PokemonType.FLYING, [
       [ Biome.ABYSS, BiomePoolTier.ULTRA_RARE ],
       [ Biome.ABYSS, BiomePoolTier.BOSS_ULTRA_RARE ]
     ]
     ],
-    [ Species.GALAR_SLOWKING, Type.POISON, Type.PSYCHIC, [
+    [ Species.GALAR_SLOWKING, PokemonType.POISON, PokemonType.PSYCHIC, [
       [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GALAR_CORSOLA, Type.GHOST, -1, [
+    [ Species.GALAR_CORSOLA, PokemonType.GHOST, -1, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.GALAR_ZIGZAGOON, Type.DARK, Type.NORMAL, [
+    [ Species.GALAR_ZIGZAGOON, PokemonType.DARK, PokemonType.NORMAL, [
       [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.GALAR_LINOONE, Type.DARK, Type.NORMAL, [
+    [ Species.GALAR_LINOONE, PokemonType.DARK, PokemonType.NORMAL, [
       [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.GALAR_DARUMAKA, Type.ICE, -1, [
+    [ Species.GALAR_DARUMAKA, PokemonType.ICE, -1, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GALAR_DARMANITAN, Type.ICE, -1, [
+    [ Species.GALAR_DARMANITAN, PokemonType.ICE, -1, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.GALAR_YAMASK, Type.GROUND, Type.GHOST, [
+    [ Species.GALAR_YAMASK, PokemonType.GROUND, PokemonType.GHOST, [
       [ Biome.RUINS, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.GALAR_STUNFISK, Type.GROUND, Type.STEEL, [
+    [ Species.GALAR_STUNFISK, PokemonType.GROUND, PokemonType.STEEL, [
       [ Biome.SWAMP, BiomePoolTier.SUPER_RARE ],
       [ Biome.SWAMP, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HISUI_GROWLITHE, Type.FIRE, Type.ROCK, [
+    [ Species.HISUI_GROWLITHE, PokemonType.FIRE, PokemonType.ROCK, [
       [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.HISUI_ARCANINE, Type.FIRE, Type.ROCK, [
+    [ Species.HISUI_ARCANINE, PokemonType.FIRE, PokemonType.ROCK, [
       [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HISUI_VOLTORB, Type.ELECTRIC, Type.GRASS, [
+    [ Species.HISUI_VOLTORB, PokemonType.ELECTRIC, PokemonType.GRASS, [
       [ Biome.POWER_PLANT, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.HISUI_ELECTRODE, Type.ELECTRIC, Type.GRASS, [
+    [ Species.HISUI_ELECTRODE, PokemonType.ELECTRIC, PokemonType.GRASS, [
       [ Biome.POWER_PLANT, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HISUI_TYPHLOSION, Type.FIRE, Type.GHOST, [
+    [ Species.HISUI_TYPHLOSION, PokemonType.FIRE, PokemonType.GHOST, [
       [ Biome.GRAVEYARD, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HISUI_QWILFISH, Type.DARK, Type.POISON, [
+    [ Species.HISUI_QWILFISH, PokemonType.DARK, PokemonType.POISON, [
       [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.HISUI_SNEASEL, Type.FIGHTING, Type.POISON, [
+    [ Species.HISUI_SNEASEL, PokemonType.FIGHTING, PokemonType.POISON, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HISUI_SAMUROTT, Type.WATER, Type.DARK, [
+    [ Species.HISUI_SAMUROTT, PokemonType.WATER, PokemonType.DARK, [
       [ Biome.ABYSS, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.HISUI_LILLIGANT, Type.GRASS, Type.FIGHTING, [
+    [ Species.HISUI_LILLIGANT, PokemonType.GRASS, PokemonType.FIGHTING, [
       [ Biome.MEADOW, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HISUI_ZORUA, Type.NORMAL, Type.GHOST, [
+    [ Species.HISUI_ZORUA, PokemonType.NORMAL, PokemonType.GHOST, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.HISUI_ZOROARK, Type.NORMAL, Type.GHOST, [
+    [ Species.HISUI_ZOROARK, PokemonType.NORMAL, PokemonType.GHOST, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]],
       [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.HISUI_BRAVIARY, Type.PSYCHIC, Type.FLYING, [
+    [ Species.HISUI_BRAVIARY, PokemonType.PSYCHIC, PokemonType.FLYING, [
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HISUI_SLIGGOO, Type.STEEL, Type.DRAGON, [
+    [ Species.HISUI_SLIGGOO, PokemonType.STEEL, PokemonType.DRAGON, [
       [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HISUI_GOODRA, Type.STEEL, Type.DRAGON, [
+    [ Species.HISUI_GOODRA, PokemonType.STEEL, PokemonType.DRAGON, [
       [ Biome.SWAMP, BiomePoolTier.SUPER_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.SWAMP, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.HISUI_AVALUGG, Type.ICE, Type.ROCK, [
+    [ Species.HISUI_AVALUGG, PokemonType.ICE, PokemonType.ROCK, [
       [ Biome.SNOWY_FOREST, BiomePoolTier.SUPER_RARE ]
     ]
     ],
-    [ Species.HISUI_DECIDUEYE, Type.GRASS, Type.FIGHTING, [
+    [ Species.HISUI_DECIDUEYE, PokemonType.GRASS, PokemonType.FIGHTING, [
       [ Biome.DOJO, BiomePoolTier.BOSS_RARE ]
     ]
     ],
-    [ Species.PALDEA_TAUROS, Type.FIGHTING, -1, [
+    [ Species.PALDEA_TAUROS, PokemonType.FIGHTING, -1, [
       [ Biome.PLAINS, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]],
       [ Biome.PLAINS, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ]]
     ]
     ],
-    [ Species.PALDEA_WOOPER, Type.POISON, Type.GROUND, [
+    [ Species.PALDEA_WOOPER, PokemonType.POISON, PokemonType.GROUND, [
       [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ]]
     ]
     ],
-    [ Species.BLOODMOON_URSALUNA, Type.GROUND, Type.NORMAL, [
+    [ Species.BLOODMOON_URSALUNA, PokemonType.GROUND, PokemonType.NORMAL, [
       [ Biome.FOREST, BiomePoolTier.SUPER_RARE, TimeOfDay.NIGHT ],
       [ Biome.FOREST, BiomePoolTier.BOSS_RARE, TimeOfDay.NIGHT ]
     ]
@@ -7663,15 +7676,15 @@ export function initBiomes() {
 
   biomeDepths[Biome.TOWN] = [ 0, 1 ];
 
-  const traverseBiome = (biome: Biome, depth: integer) => {
+  const traverseBiome = (biome: Biome, depth: number) => {
     if (biome === Biome.END) {
-      const biomeList = Object.keys(Biome).filter(key => !isNaN(Number(key)));
+      const biomeList = Object.keys(Biome).filter(key => !Number.isNaN(Number(key)));
       biomeList.pop(); // Removes Biome.END from the list
       const randIndex = Utils.randSeedInt(biomeList.length, 1); // Will never be Biome.TOWN
       biome = Biome[biomeList[randIndex]];
     }
-    const linkedBiomes: (Biome | [ Biome, integer ])[] = Array.isArray(biomeLinks[biome])
-      ? biomeLinks[biome] as (Biome | [ Biome, integer ])[]
+    const linkedBiomes: (Biome | [ Biome, number ])[] = Array.isArray(biomeLinks[biome])
+      ? biomeLinks[biome] as (Biome | [ Biome, number ])[]
       : [ biomeLinks[biome] as Biome ];
     for (const linkedBiomeEntry of linkedBiomes) {
       const linkedBiome = !Array.isArray(linkedBiomeEntry)
@@ -7688,7 +7701,7 @@ export function initBiomes() {
   };
 
   traverseBiome(Biome.TOWN, 0);
-  biomeDepths[Biome.END] = [ Object.values(biomeDepths).map(d => d[0]).reduce((max: integer, value: integer) => Math.max(max, value), 0) + 1, 1 ];
+  biomeDepths[Biome.END] = [ Object.values(biomeDepths).map(d => d[0]).reduce((max: number, value: number) => Math.max(max, value), 0) + 1, 1 ];
 
   for (const biome of Utils.getEnumValues(Biome)) {
     biomePokemonPools[biome] = {};
@@ -7716,6 +7729,9 @@ export function initBiomes() {
       uncatchableSpecies.push(speciesId);
     }
 
+    // array of biome options for the current species
+    catchableSpecies[speciesId] = [];
+
     for (const b of biomeEntries) {
       const biome = b[0];
       const tier = b[1];
@@ -7724,6 +7740,12 @@ export function initBiomes() {
           ? b[2]
           : [ b[2] ]
         : [ TimeOfDay.ALL ];
+
+      catchableSpecies[speciesId].push({
+        biome: biome as Biome,
+        tier: tier as BiomePoolTier,
+        tod: timesOfDay as TimeOfDay[]
+      });
 
       for (const tod of timesOfDay) {
         if (!biomePokemonPools.hasOwnProperty(biome) || !biomePokemonPools[biome].hasOwnProperty(tier) || !biomePokemonPools[biome][tier].hasOwnProperty(tod)) {
@@ -7743,7 +7765,8 @@ export function initBiomes() {
               treeIndex = t;
               arrayIndex = es + 1;
               break;
-            } else if (speciesEvolutions && speciesEvolutions.find(se => se.speciesId === existingSpeciesId)) {
+            }
+            if (speciesEvolutions?.find(se => se.speciesId === existingSpeciesId)) {
               treeIndex = t;
               arrayIndex = es;
               break;
@@ -7765,7 +7788,7 @@ export function initBiomes() {
 
   for (const b of Object.keys(biomePokemonPools)) {
     for (const t of Object.keys(biomePokemonPools[b])) {
-      const tier = parseInt(t) as BiomePoolTier;
+      const tier = Number.parseInt(t) as BiomePoolTier;
       for (const tod of Object.keys(biomePokemonPools[b][t])) {
         const biomeTierTimePool = biomePokemonPools[b][t][tod];
         for (let e = 0; e < biomeTierTimePool.length; e++) {
@@ -7778,7 +7801,7 @@ export function initBiomes() {
             };
             for (let s = 1; s < entry.length; s++) {
               const speciesId = entry[s];
-              const prevolution = entry.map(s => pokemonEvolutions[s]).flat().find(e => e && e.speciesId === speciesId);
+              const prevolution = entry.flatMap((s: string | number) => pokemonEvolutions[s]).find(e => e && e.speciesId === speciesId);
               const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
               if (!newEntry.hasOwnProperty(level)) {
                 newEntry[level] = [ speciesId ];

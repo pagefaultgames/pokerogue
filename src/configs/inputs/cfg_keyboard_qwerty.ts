@@ -77,7 +77,7 @@ const cfg_keyboard_qwerty = {
     KEY_RIGHT_BRACKET: Phaser.Input.Keyboard.KeyCodes.CLOSED_BRACKET,
     KEY_SEMICOLON: Phaser.Input.Keyboard.KeyCodes.SEMICOLON,
     KEY_BACKSPACE: Phaser.Input.Keyboard.KeyCodes.BACKSPACE,
-    KEY_ALT: Phaser.Input.Keyboard.KeyCodes.ALT
+    KEY_ALT: Phaser.Input.Keyboard.KeyCodes.ALT,
   },
   icons: {
     KEY_A: "A.png",
@@ -131,7 +131,6 @@ const cfg_keyboard_qwerty = {
     KEY_F11: "F11.png",
     KEY_F12: "F12.png",
 
-
     KEY_PAGE_DOWN: "PAGE_DOWN.png",
     KEY_PAGE_UP: "PAGE_UP.png",
 
@@ -163,7 +162,7 @@ const cfg_keyboard_qwerty = {
     KEY_SEMICOLON: "SEMICOLON.png",
 
     KEY_BACKSPACE: "BACK.png",
-    KEY_ALT: "ALT.png"
+    KEY_ALT: "ALT.png",
   },
   settings: {
     [SettingKeyboard.Button_Up]: Button.UP,
@@ -180,9 +179,9 @@ const cfg_keyboard_qwerty = {
     [SettingKeyboard.Button_Cycle_Gender]: Button.CYCLE_GENDER,
     [SettingKeyboard.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
     [SettingKeyboard.Button_Cycle_Nature]: Button.CYCLE_NATURE,
-    [SettingKeyboard.Button_Cycle_Variant]: Button.V,
     [SettingKeyboard.Button_Speed_Up]: Button.SPEED_UP,
     [SettingKeyboard.Button_Slow_Down]: Button.SLOW_DOWN,
+    [SettingKeyboard.Button_Cycle_Tera]: Button.CYCLE_TERA,
     [SettingKeyboard.Alt_Button_Up]: Button.UP,
     [SettingKeyboard.Alt_Button_Down]: Button.DOWN,
     [SettingKeyboard.Alt_Button_Left]: Button.LEFT,
@@ -197,9 +196,9 @@ const cfg_keyboard_qwerty = {
     [SettingKeyboard.Alt_Button_Cycle_Gender]: Button.CYCLE_GENDER,
     [SettingKeyboard.Alt_Button_Cycle_Ability]: Button.CYCLE_ABILITY,
     [SettingKeyboard.Alt_Button_Cycle_Nature]: Button.CYCLE_NATURE,
-    [SettingKeyboard.Alt_Button_Cycle_Variant]: Button.V,
     [SettingKeyboard.Alt_Button_Speed_Up]: Button.SPEED_UP,
     [SettingKeyboard.Alt_Button_Slow_Down]: Button.SLOW_DOWN,
+    [SettingKeyboard.Alt_Button_Cycle_Tera]: Button.CYCLE_TERA,
   },
   default: {
     KEY_ARROW_UP: SettingKeyboard.Button_Up,
@@ -216,7 +215,7 @@ const cfg_keyboard_qwerty = {
     KEY_G: SettingKeyboard.Button_Cycle_Gender,
     KEY_E: SettingKeyboard.Button_Cycle_Ability,
     KEY_N: SettingKeyboard.Button_Cycle_Nature,
-    KEY_V: SettingKeyboard.Button_Cycle_Variant,
+    KEY_V: SettingKeyboard.Button_Cycle_Tera,
     KEY_PLUS: -1,
     KEY_MINUS: -1,
     KEY_A: SettingKeyboard.Alt_Button_Left,
@@ -274,7 +273,7 @@ const cfg_keyboard_qwerty = {
     KEY_LEFT_BRACKET: -1,
     KEY_RIGHT_BRACKET: -1,
     KEY_SEMICOLON: -1,
-    KEY_ALT: -1
+    KEY_ALT: -1,
   },
   blacklist: [
     "KEY_ENTER",
@@ -287,7 +286,7 @@ const cfg_keyboard_qwerty = {
     "KEY_ARROW_RIGHT",
     "KEY_DEL",
     "KEY_HOME",
-  ]
+  ],
 };
 
 export default cfg_keyboard_qwerty;

@@ -9,28 +9,44 @@ import { globalScene } from "#app/global-scene";
 export enum DropDownColumn {
   GEN,
   TYPES,
+  BIOME,
   CAUGHT,
   UNLOCKS,
   MISC,
-  SORT
+  SORT,
 }
 
 export class FilterBar extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
-  private labels:  Phaser.GameObjects.Text[] = [];
+  private labels: Phaser.GameObjects.Text[] = [];
   private dropDowns: DropDown[] = [];
   private columns: DropDownColumn[] = [];
   public cursorObj: Phaser.GameObjects.Image;
-  public numFilters: number = 0;
-  public openDropDown: boolean = false;
-  private lastCursor: number = -1;
+  public numFilters = 0;
+  public openDropDown = false;
+  private lastCursor = -1;
   private uiTheme: UiTheme;
+  private leftPaddingX: number;
+  private rightPaddingX: number;
+  private cursorOffset: number;
 
-  constructor(x: number, y: number, width: number, height: number) {
+  constructor(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    leftPaddingX = 6,
+    rightPaddingX = 6,
+    cursorOffset = 8,
+  ) {
     super(globalScene, x, y);
 
     this.width = width;
     this.height = height;
+
+    this.leftPaddingX = leftPaddingX;
+    this.rightPaddingX = rightPaddingX;
+    this.cursorOffset = cursorOffset;
 
     this.window = addWindow(0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
     this.add(this.window);
@@ -40,8 +56,6 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.cursorObj.setVisible(false);
     this.cursorObj.setOrigin(0, 0);
     this.add(this.cursorObj);
-
-    this.uiTheme = globalScene.uiTheme;
   }
 
   /**
@@ -76,8 +90,17 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * @param col the DropDownColumn used to register the filter to retrieve
    * @returns the associated DropDown if it exists, undefined otherwise
    */
-  getFilter(col: DropDownColumn) : DropDown {
+  getFilter(col: DropDownColumn): DropDown {
     return this.dropDowns[this.columns.indexOf(col)];
+  }
+
+  /**
+   * Get the DropDownColumn associated to a given index
+   * @param index the index of the column to retrieve
+   * @returns the associated DropDownColumn if it exists, undefined otherwise
+   */
+  public getColumn(index: number): DropDownColumn {
+    return this.columns[index];
   }
 
   /**
@@ -86,9 +109,9 @@ export class FilterBar extends Phaser.GameObjects.Container {
   updateFilterLabels(): void {
     for (let i = 0; i < this.numFilters; i++) {
       if (this.dropDowns[i].hasDefaultValues()) {
-        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false, this.uiTheme));
+        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false, globalScene.uiTheme));
       } else {
-        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false, this.uiTheme));
+        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false, globalScene.uiTheme));
       }
     }
   }
@@ -97,23 +120,20 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * Position the filter dropdowns evenly across the width of the container
    */
   private calcFilterPositions(): void {
-    const paddingX = 6;
-    const cursorOffset = 8;
-
-    let totalWidth = paddingX * 2 + cursorOffset;
+    let totalWidth = this.leftPaddingX + this.rightPaddingX + this.cursorOffset;
     this.labels.forEach(label => {
-      totalWidth += label.displayWidth + cursorOffset;
+      totalWidth += label.displayWidth + this.cursorOffset;
     });
     const spacing = (this.width - totalWidth) / (this.labels.length - 1);
     for (let i = 0; i < this.labels.length; i++) {
       if (i === 0) {
-        this.labels[i].x = paddingX + cursorOffset;
+        this.labels[i].x = this.leftPaddingX + this.cursorOffset;
       } else {
         const lastRight = this.labels[i - 1].x + this.labels[i - 1].displayWidth;
-        this.labels[i].x = lastRight + spacing + cursorOffset;
+        this.labels[i].x = lastRight + spacing + this.cursorOffset;
       }
 
-      this.dropDowns[i].x = this.labels[i].x - cursorOffset - paddingX;
+      this.dropDowns[i].x = this.labels[i].x - this.cursorOffset - this.leftPaddingX;
       this.dropDowns[i].y = this.height;
     }
   }
@@ -125,7 +145,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
     for (let i = 0; i < this.dropDowns.length; i++) {
       if (this.dropDowns[i].dropDownType === DropDownType.HYBRID) {
         this.dropDowns[i].autoSize();
-        this.dropDowns[i].x = - this.dropDowns[i].getWidth();
+        this.dropDowns[i].x = -this.dropDowns[i].getWidth();
         this.dropDowns[i].y = 0;
       }
     }
@@ -140,8 +160,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
       }
     }
 
-    const cursorOffset = 8;
-    this.cursorObj.setPosition(this.labels[cursor].x - cursorOffset + 2, 6);
+    this.cursorObj.setPosition(this.labels[cursor].x - this.cursorOffset + 2, 6);
     this.lastCursor = cursor;
   }
 
@@ -159,19 +178,19 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   incDropDownCursor(): boolean {
-    if (this.dropDowns[this.lastCursor].cursor === this.dropDowns[this.lastCursor].options.length - 1) {// if at the bottom of the list, wrap around
+    if (this.dropDowns[this.lastCursor].cursor === this.dropDowns[this.lastCursor].options.length - 1) {
+      // if at the bottom of the list, wrap around
       return this.dropDowns[this.lastCursor].setCursor(0);
-    } else {
-      return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor + 1);
     }
+    return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor + 1);
   }
 
   decDropDownCursor(): boolean {
-    if (this.dropDowns[this.lastCursor].cursor === 0) {// if at the top of the list, wrap around
+    if (this.dropDowns[this.lastCursor].cursor === 0) {
+      // if at the top of the list, wrap around
       return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].options.length - 1);
-    } else {
-      return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor - 1);
     }
+    return this.dropDowns[this.lastCursor].setCursor(this.dropDowns[this.lastCursor].cursor - 1);
   }
 
   toggleOptionState(): void {
@@ -180,6 +199,11 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
   getVals(col: DropDownColumn): any[] {
     return this.getFilter(col).getVals();
+  }
+
+  public resetSelection(col: DropDownColumn): void {
+    this.dropDowns[col].resetToDefault();
+    this.updateFilterLabels();
   }
 
   setValsToDefault(): void {
@@ -194,7 +218,6 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * @returns the index of the closest filter
    */
   getNearestFilter(container: StarterContainer): number {
-
     const midx = container.x + container.icon.displayWidth / 2;
     let nearest = 0;
     let nearestDist = 1000;
@@ -208,5 +231,4 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
     return nearest;
   }
-
 }

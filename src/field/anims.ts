@@ -24,31 +24,35 @@ export function addPokeballOpenParticles(x: number, y: number, pokeballType: Pok
 }
 
 function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
-  const pbOpenParticlesFrameNames = globalScene.anims.generateFrameNames("pb_particles", { start: 0, end: 3, suffix: ".png" });
-  if (!(globalScene.anims.exists("pb_open_particle"))) {
+  const pbOpenParticlesFrameNames = globalScene.anims.generateFrameNames("pb_particles", {
+    start: 0,
+    end: 3,
+    suffix: ".png",
+  });
+  if (!globalScene.anims.exists("pb_open_particle")) {
     globalScene.anims.create({
       key: "pb_open_particle",
       frames: pbOpenParticlesFrameNames,
       frameRate: 16,
-      repeat: -1
+      repeat: -1,
     });
   }
 
-  const addParticle = (index: integer) => {
+  const addParticle = (index: number) => {
     const particle = globalScene.add.sprite(x, y, "pb_open_particle");
     globalScene.field.add(particle);
     const angle = index * 45;
-    const [ xCoord, yCoord ] = [ radius * Math.cos(angle * Math.PI / 180), radius * Math.sin(angle * Math.PI / 180) ];
+    const [xCoord, yCoord] = [radius * Math.cos((angle * Math.PI) / 180), radius * Math.sin((angle * Math.PI) / 180)];
     globalScene.tweens.add({
       targets: particle,
       x: x + xCoord,
       y: y + yCoord,
-      duration: 575
+      duration: 575,
     });
     particle.play({
       key: "pb_open_particle",
       startFrame: (index + 3) % 4,
-      frameRate: Math.floor(16 * globalScene.gameSpeed)
+      frameRate: Math.floor(16 * globalScene.gameSpeed),
     });
     globalScene.tweens.add({
       targets: particle,
@@ -56,7 +60,7 @@ function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
       duration: 75,
       alpha: 0,
       ease: "Sine.easeIn",
-      onComplete: () => particle.destroy()
+      onComplete: () => particle.destroy(),
     });
   };
 
@@ -64,11 +68,11 @@ function doDefaultPbOpenParticles(x: number, y: number, radius: number) {
   globalScene.time.addEvent({
     delay: 20,
     repeat: 16,
-    callback: () => addParticle(++particleCount)
+    callback: () => addParticle(++particleCount),
   });
 }
 
-function doUbOpenParticles(x: number, y: number, frameIndex: integer) {
+function doUbOpenParticles(x: number, y: number, frameIndex: number) {
   const particles: Phaser.GameObjects.Image[] = [];
   for (let i = 0; i < 10; i++) {
     particles.push(doFanOutParticle(i * 25, x, y, 1, 1, 5, frameIndex));
@@ -84,7 +88,7 @@ function doUbOpenParticles(x: number, y: number, frameIndex: integer) {
       for (const particle of particles) {
         particle.destroy();
       }
-    }
+    },
   });
 }
 
@@ -105,12 +109,20 @@ function doMbOpenParticles(x: number, y: number) {
         for (const particle of particles) {
           particle.destroy();
         }
-      }
+      },
     });
   }
 }
 
-function doFanOutParticle(trigIndex: integer, x: integer, y: integer, xSpeed: integer, ySpeed: integer, angle: integer, frameIndex: integer): Phaser.GameObjects.Image {
+function doFanOutParticle(
+  trigIndex: number,
+  x: number,
+  y: number,
+  xSpeed: number,
+  ySpeed: number,
+  angle: number,
+  frameIndex: number,
+): Phaser.GameObjects.Image {
   let f = 0;
 
   const particle = globalScene.add.image(x, y, "pb_particles", `${frameIndex}.png`);
@@ -122,7 +134,7 @@ function doFanOutParticle(trigIndex: integer, x: integer, y: integer, xSpeed: in
     }
     particle.x = x + sin(trigIndex, f * xSpeed);
     particle.y = y + cos(trigIndex, f * ySpeed);
-    trigIndex = (trigIndex + angle);
+    trigIndex = trigIndex + angle;
     f++;
   };
 
@@ -131,7 +143,7 @@ function doFanOutParticle(trigIndex: integer, x: integer, y: integer, xSpeed: in
     duration: getFrameMs(1),
     onRepeat: () => {
       updateParticle();
-    }
+    },
   });
 
   return particle;
@@ -155,16 +167,16 @@ export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): vo
           y: pokeball.y,
           alpha: 0,
           ease: "Sine.easeIn",
-          duration: 250
+          duration: 250,
         });
-      }
+      },
     });
 
     const dist = randGauss(25);
     globalScene.tweens.add({
       targets: particle,
       x: pokeball.x + dist,
-      duration: 500
+      duration: 500,
     });
 
     globalScene.tweens.add({
@@ -172,18 +184,18 @@ export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): vo
       alpha: 0,
       delay: 425,
       duration: 75,
-      onComplete: () => particle.destroy()
+      onComplete: () => particle.destroy(),
     });
   };
 
   new Array(3).fill(null).map(() => addParticle());
 }
 
-export function sin(index: integer, amplitude: integer): number {
+export function sin(index: number, amplitude: number): number {
   return amplitude * Math.sin(index * (Math.PI / 128));
 }
 
-export function cos(index: integer, amplitude: integer): number {
+export function cos(index: number, amplitude: number): number {
   return amplitude * Math.cos(index * (Math.PI / 128));
 }
 
@@ -200,7 +212,10 @@ export function doShinySparkleAnim(sparkleSprite: Phaser.GameObjects.Sprite, var
 
   // Make sure the animation exists, and create it if not
   if (!globalScene.anims.exists(animationKey)) {
-    const frameNames = globalScene.anims.generateFrameNames(spriteKey, { suffix: ".png", end: 34 });
+    const frameNames = globalScene.anims.generateFrameNames(spriteKey, {
+      suffix: ".png",
+      end: 34,
+    });
     globalScene.anims.create({
       key: `sparkle${keySuffix}`,
       frames: frameNames,

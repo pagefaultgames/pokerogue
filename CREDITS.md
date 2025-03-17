@@ -343,34 +343,41 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 
 # 💻 Development
 
-## Server Owner/Administrator
+## Server Developers
 - pancakes aka patapancakes
 
-## Senior Developers
-- Walker
-- NightKev
-- Moka
-- Temp aka Tempo-anon
-- Madmadness65
-
-## Developers
+## Current and former Development Team members
+- bennybroseph
+- Brain Frog
 - CodeTappert
+- Dakurei
 - flx-sta
-- innerthunder
 - frutescens
+- Greenlamp
+- ImperialSympathizer
+- innerthunder
+- KimJeongSun
+- Madmadness65
+- Moka
+- Navori
+- NightKev
 - Opaquer
+- OrangeRed
+- Sam aka Flashfyre (initial developer, started PokéRogue)
+- SirzBenjie
+- sirzento
 - SN34KZ
 - Swain aka torranx
-
-## Junior Developers
-- KimJeongSun
-- ImperialSympathizer
+- Temp aka Tempo-anon
+- Walker
+- Wlowscha (aka Curbio)
+- Xavion
 
 ## Bug/Issue Managers
-- Snailman
 - Daleks
 - Lily
 - PigeonBar
+- Snailman
 
 ## Other Code Contributors
 - Admiral-Billy
@@ -378,10 +385,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - arColm
 - Arxalc
 - AsdarDevelops
-- bennybroseph
-- Brain Frog
 - Corrade
-- Dakurei
 - DustinLin
 - ElizaAlex
 - EmberCM
@@ -391,7 +395,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - francktrouillez
 - FredeX
 - geeilhan
-- Greenlamp
 - happinyz
 - hayuna
 - InfernoVulpix
@@ -411,7 +414,6 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Neverblade
 - NxKarim
 - okimin
-- OrangeRed
 - PigeonBar
 - PrabbyDD
 - prateau
@@ -421,10 +423,8 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - RedstonewolfX
 - ReneGV
 - rnicar245
-- Sam aka Flashfyre (initial developer, started PokéRogue)
 - schmidtc1
 - shayebeadling
-- sirzento
 - snoozbuster
 - sodaMelon
 - td76099

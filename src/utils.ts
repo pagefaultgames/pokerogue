@@ -8,10 +8,14 @@ export type nil = null | undefined;
 export const MissingTextureKey = "__MISSING";
 
 export function toReadableString(str: string): string {
-  return str.replace(/\_/g, " ").split(" ").map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`).join(" ");
+  return str
+    .replace(/\_/g, " ")
+    .split(" ")
+    .map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`)
+    .join(" ");
 }
 
-export function randomString(length: integer, seeded: boolean = false) {
+export function randomString(length: number, seeded = false) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
 
@@ -23,7 +27,7 @@ export function randomString(length: integer, seeded: boolean = false) {
   return result;
 }
 
-export function shiftCharCodes(str: string, shiftCount: integer) {
+export function shiftCharCodes(str: string, shiftCount: number) {
   if (!shiftCount) {
     shiftCount = 0;
   }
@@ -39,7 +43,7 @@ export function shiftCharCodes(str: string, shiftCount: integer) {
   return newStr;
 }
 
-export function randGauss(stdev: number, mean: number = 0): number {
+export function randGauss(stdev: number, mean = 0): number {
   if (!stdev) {
     return 0;
   }
@@ -49,7 +53,7 @@ export function randGauss(stdev: number, mean: number = 0): number {
   return z * stdev + mean;
 }
 
-export function randSeedGauss(stdev: number, mean: number = 0): number {
+export function randSeedGauss(stdev: number, mean = 0): number {
   if (!stdev) {
     return 0;
   }
@@ -59,7 +63,7 @@ export function randSeedGauss(stdev: number, mean: number = 0): number {
   return z * stdev + mean;
 }
 
-export function padInt(value: integer, length: integer, padWith?: string): string {
+export function padInt(value: number, length: number, padWith?: string): string {
   if (!padWith) {
     padWith = "0";
   }
@@ -71,11 +75,11 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
 }
 
 /**
-* Returns a random integer between min and min + range
-* @param range The amount of possible numbers
-* @param min The starting number
-*/
-export function randInt(range: integer, min: integer = 0): integer {
+ * Returns a random integer between min and min + range
+ * @param range The amount of possible numbers
+ * @param min The starting number
+ */
+export function randInt(range: number, min = 0): number {
   if (range === 1) {
     return min;
   }
@@ -88,38 +92,32 @@ export function randInt(range: integer, min: integer = 0): integer {
  * @param min The minimum integer to pick, default `0`
  * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
  */
-export function randSeedInt(range: integer, min: integer = 0): integer {
+export function randSeedInt(range: number, min = 0): number {
   if (range <= 1) {
     return min;
   }
-  return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
+  return Phaser.Math.RND.integerInRange(min, range - 1 + min);
 }
 
 /**
-* Returns a random integer between min and max (non-inclusive)
-* @param min The lowest number
-* @param max The highest number
-*/
-export function randIntRange(min: integer, max: integer): integer {
+ * Returns a random integer between min and max (non-inclusive)
+ * @param min The lowest number
+ * @param max The highest number
+ */
+export function randIntRange(min: number, max: number): number {
   return randInt(max - min, min);
 }
 
 export function randItem<T>(items: T[]): T {
-  return items.length === 1
-    ? items[0]
-    : items[randInt(items.length)];
+  return items.length === 1 ? items[0] : items[randInt(items.length)];
 }
 
 export function randSeedItem<T>(items: T[]): T {
-  return items.length === 1
-    ? items[0]
-    : Phaser.Math.RND.pick(items);
+  return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 
 export function randSeedWeightedItem<T>(items: T[]): T {
-  return items.length === 1
-    ? items[0]
-    : Phaser.Math.RND.weightedPick(items);
+  return items.length === 1 ? items[0] : Phaser.Math.RND.weightedPick(items);
 }
 
 /**
@@ -134,26 +132,26 @@ export function randSeedShuffle<T>(items: T[]): T[] {
   const newArray = items.slice(0);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Phaser.Math.RND.integerInRange(0, i);
-    [ newArray[i], newArray[j] ] = [ newArray[j], newArray[i] ];
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
   }
   return newArray;
 }
 
-export function getFrameMs(frameCount: integer): integer {
+export function getFrameMs(frameCount: number): number {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }
 
 export function getCurrentTime(): number {
   const date = new Date();
-  return (((date.getHours() * 60 + date.getMinutes()) / 1440) + 0.675) % 1;
+  return ((date.getHours() * 60 + date.getMinutes()) / 1440 + 0.675) % 1;
 }
 
 const secondsInHour = 3600;
 
-export function getPlayTimeString(totalSeconds: integer): string {
+export function getPlayTimeString(totalSeconds: number): string {
   const days = `${Math.floor(totalSeconds / (secondsInHour * 24))}`;
-  const hours = `${Math.floor(totalSeconds % (secondsInHour * 24) / secondsInHour)}`;
-  const minutes = `${Math.floor(totalSeconds % secondsInHour / 60)}`;
+  const hours = `${Math.floor((totalSeconds % (secondsInHour * 24)) / secondsInHour)}`;
+  const minutes = `${Math.floor((totalSeconds % secondsInHour) / 60)}`;
   const seconds = `${Math.floor(totalSeconds % 60)}`;
 
   return `${days.padStart(2, "0")}:${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
@@ -167,16 +165,16 @@ export function getPlayTimeString(totalSeconds: integer): string {
  */
 export function getIvsFromId(id: number): number[] {
   return [
-    (id & 0x3E000000) >>> 25,
-    (id & 0x01F00000) >>> 20,
-    (id & 0x000F8000) >>> 15,
-    (id & 0x00007C00) >>> 10,
-    (id & 0x000003E0) >>> 5,
-    (id & 0x0000001F)
+    (id & 0x3e000000) >>> 25,
+    (id & 0x01f00000) >>> 20,
+    (id & 0x000f8000) >>> 15,
+    (id & 0x00007c00) >>> 10,
+    (id & 0x000003e0) >>> 5,
+    id & 0x0000001f,
   ];
 }
 
-export function formatLargeNumber(count: integer, threshold: integer): string {
+export function formatLargeNumber(count: number, threshold: number): string {
   if (count < threshold) {
     return count.toString();
   }
@@ -210,9 +208,9 @@ export function formatLargeNumber(count: integer, threshold: integer): string {
 }
 
 // Abbreviations from 10^0 to 10^33
-const AbbreviationsLargeNumber: string[] = [ "", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d" ];
+const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
 
-export function formatFancyLargeNumber(number: number, rounded: number = 3): string {
+export function formatFancyLargeNumber(number: number, rounded = 3): string {
   let exponent: number;
 
   if (number < 1000) {
@@ -236,16 +234,20 @@ export function formatMoney(format: MoneyFormat, amount: number) {
   return amount.toLocaleString();
 }
 
-export function formatStat(stat: integer, forHp: boolean = false): string {
+export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
 export function getEnumKeys(enumType: any): string[] {
-  return Object.values(enumType).filter(v => isNaN(parseInt(v!.toString()))).map(v => v!.toString());
+  return Object.values(enumType)
+    .filter(v => Number.isNaN(Number.parseInt(v!.toString())))
+    .map(v => v!.toString());
 }
 
-export function getEnumValues(enumType: any): integer[] {
-  return Object.values(enumType).filter(v => !isNaN(parseInt(v!.toString()))).map(v => parseInt(v!.toString()));
+export function getEnumValues(enumType: any): number[] {
+  return Object.values(enumType)
+    .filter(v => !Number.isNaN(Number.parseInt(v!.toString())))
+    .map(v => Number.parseInt(v!.toString()));
 }
 
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
@@ -254,15 +256,16 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 
 export const sessionIdKey = "pokerogue_sessionId";
 // Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
-export const isLocal = (
-  (window.location.hostname === "localhost" ||
-   /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
-  window.location.port !== "") || window.location.hostname === "";
+export const isLocal =
+  ((window.location.hostname === "localhost" || /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
+    window.location.port !== "") ||
+  window.location.hostname === "";
 
 /**
  * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
  */
-export const localServerUrl = import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
+export const localServerUrl =
+  import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
 
 /**
  * Set the server URL based on whether it's local or not
@@ -277,7 +280,7 @@ export const isBeta = import.meta.env.MODE === "beta"; // this checks to see if 
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
-  expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
+  expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3 /*7*/);
   document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
 }
 
@@ -324,7 +327,7 @@ export async function localPing() {
 }
 
 /** Alias for the constructor of a class */
-export type Constructor<T> = new(...args: unknown[]) => T;
+export type Constructor<T> = new (...args: unknown[]) => T;
 
 export class BooleanHolder {
   public value: boolean;
@@ -342,13 +345,6 @@ export class NumberHolder {
   }
 }
 
-/** @deprecated Use {@linkcode NumberHolder} */
-export class IntegerHolder extends NumberHolder {
-  constructor(value: integer) {
-    super(value);
-  }
-}
-
 export class FixedInt {
   public readonly value: number;
 
@@ -357,8 +353,8 @@ export class FixedInt {
   }
 }
 
-export function fixedInt(value: integer): integer {
-  return new FixedInt(value) as unknown as integer;
+export function fixedInt(value: number): number {
+  return new FixedInt(value) as unknown as number;
 }
 
 /**
@@ -379,14 +375,18 @@ export function toCamelCaseString(unformattedText: string): string {
   if (!unformattedText) {
     return "";
   }
-  return unformattedText.split(/[_ ]/).filter(f => f).map((f, i) => i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
+  return unformattedText
+    .split(/[_ ]/)
+    .filter(f => f)
+    .map((f, i) => (i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
+    .join("");
 }
 
-export function rgbToHsv(r: integer, g: integer, b: integer) {
+export function rgbToHsv(r: number, g: number, b: number) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
-  const h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c));
-  return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v ];
+  const h = c && (v === r ? (g - b) / c : v === g ? 2 + (b - r) / c : 4 + (r - g) / c);
+  return [60 * (h < 0 ? h + 6 : h), v && c / v, v];
 }
 
 /**
@@ -394,28 +394,28 @@ export function rgbToHsv(r: integer, g: integer, b: integer) {
  * @param {Array} rgb1 First RGB color in array
  * @param {Array} rgb2 Second RGB color in array
  */
-export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
-  const [ r1, g1, b1 ] = rgb1;
-  const [ r2, g2, b2 ] = rgb2;
+export function deltaRgb(rgb1: number[], rgb2: number[]): number {
+  const [r1, g1, b1] = rgb1;
+  const [r2, g2, b2] = rgb2;
   const drp2 = Math.pow(r1 - r2, 2);
   const dgp2 = Math.pow(g1 - g2, 2);
   const dbp2 = Math.pow(b1 - b2, 2);
   const t = (r1 + r2) / 2;
 
-  return Math.ceil(Math.sqrt(2 * drp2 + 4 * dgp2 + 3 * dbp2 + t * (drp2 - dbp2) / 256));
+  return Math.ceil(Math.sqrt(2 * drp2 + 4 * dgp2 + 3 * dbp2 + (t * (drp2 - dbp2)) / 256));
 }
 
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i) ?? [ "000000", "00", "00", "00" ];
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i) ?? ["000000", "00", "00", "00"];
   return {
-    r: parseInt(color[1], 16),
-    g: parseInt(color[2], 16),
-    b: parseInt(color[3], 16),
-    a: 255
+    r: Number.parseInt(color[1], 16),
+    g: Number.parseInt(color[2], 16),
+    b: Number.parseInt(color[3], 16),
+    a: 255,
   };
 }
 
-export function rgbaToInt(rgba: integer[]): integer {
+export function rgbaToInt(rgba: number[]): number {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
 
@@ -434,7 +434,9 @@ export function hslToHex(h: number, s: number, l: number): string {
   const f = (n: number) => {
     const k = (n + h / 30) % 12;
     const rgb = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
-    return Math.round(rgb * 255).toString(16).padStart(2, "0");
+    return Math.round(rgb * 255)
+      .toString(16)
+      .padStart(2, "0");
   };
   return `#${f(0)}${f(8)}${f(4)}`;
 }
@@ -445,7 +447,7 @@ export function hslToHex(h: number, s: number, l: number): string {
  * If the lang is not in the function, it usually means that lang is going to use the default english version
  *
  * English itself counts as not available
-*/
+ */
 export function hasAllLocalizedSprites(lang?: string): boolean {
   // IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
   if (!lang) {
@@ -473,11 +475,12 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
  * @param container container with game objects inside it
  */
 export function printContainerList(container: Phaser.GameObjects.Container): void {
-  console.log(container.list.map(go => {
-    return { type: go.type, name: go.name };
-  }));
+  console.log(
+    container.list.map(go => {
+      return { type: go.type, name: go.name };
+    }),
+  );
 }
-
 
 /**
  * Truncate a string to a specified maximum length and add an ellipsis if it exceeds that length.
@@ -486,7 +489,7 @@ export function printContainerList(container: Phaser.GameObjects.Container): voi
  * @param maxLength - The maximum length of the truncated string, defaults to 10.
  * @returns The truncated string with an ellipsis if it was longer than maxLength.
  */
-export function truncateString(str: String, maxLength: number = 10) {
+export function truncateString(str: string, maxLength = 10) {
   // Check if the string length exceeds the maximum length
   if (str.length > maxLength) {
     // Truncate the string and add an ellipsis
@@ -531,7 +534,7 @@ export function reverseValueToKeySetting(input) {
  * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
  * @returns The capitalized string.
  */
-export function capitalizeString(str: string, sep: string, lowerFirstChar: boolean = true, returnWithSpaces: boolean = false) {
+export function capitalizeString(str: string, sep: string, lowerFirstChar = true, returnWithSpaces = false) {
   if (str) {
     const splitedStr = str.toLowerCase().split(sep);
 
@@ -565,7 +568,7 @@ export function capitalizeFirstLetter(str: string) {
  * @param minValue - The minimum integer value to return. Defaults to 1.
  * @returns The converted value as an integer.
  */
-export function toDmgValue(value: number, minValue: number = 1) {
+export function toDmgValue(value: number, minValue = 1) {
   return Math.max(Math.floor(value), minValue);
 }
 
