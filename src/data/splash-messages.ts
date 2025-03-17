@@ -261,11 +261,11 @@ const seasonalSplashMessages: Season[] = [
       "aprilFools.helloKyleAmber",
       "aprilFools.watchOutForShadowPokemon",
       "aprilFools.nowWithDarkTypeLuxray",
-      "onlyOnPokerogueNetAGAIN",
-      "noFreeVouchers",
-      "altffourAchievementPoints",
-      "rokePogue",
-      "readMe"
+      "aprilFools.onlyOnPokerogueNetAGAIN",
+      "aprilFools.noFreeVouchers",
+      "aprilFools.altffourAchievementPoints",
+      "aprilFools.rokePogue",
+      "aprilFools.readMe"
     ],
   },
   {
