@@ -160,15 +160,16 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
             return onFail(i18next.t("menu:emptyUsername"));
           }
 
-        const [usernameInput, passwordInput] = this.inputs;
+          const [usernameInput, passwordInput] = this.inputs;
 
-        pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
-          if (!error && originalLoginAction) {
-            originalLoginAction();
-          } else {
-            onFail(error);
-          }
-        });
+          pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
+            if (!error && originalLoginAction) {
+              originalLoginAction();
+            } else {
+              onFail(error);
+            }
+          });
+        }
       };
 
       return true;

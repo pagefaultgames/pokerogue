@@ -122,17 +122,17 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
           }
           const [usernameInput, passwordInput] = this.inputs;
           pokerogueApi.account
-          .register({
-            username: usernameInput.text,
-            password: passwordInput.text,
-          })
+            .register({
+              username: usernameInput.text,
+              password: passwordInput.text,
+            })
             .then(registerError => {
               if (!registerError) {
                 pokerogueApi.account
-                .login({
-                  username: usernameInput.text,
-                  password: passwordInput.text,
-                })
+                  .login({
+                    username: usernameInput.text,
+                    password: passwordInput.text,
+                  })
                   .then(loginError => {
                     if (!loginError) {
                       originalRegistrationAction?.();
