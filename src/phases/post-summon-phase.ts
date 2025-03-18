@@ -6,42 +6,12 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { PokemonPhase } from "./pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Stat } from "#enums/stat";
-import { PostSummonActivateAbilityPhase } from "#app/phases/post-summon-activate-ability-phase";
 
 export class PostSummonPhase extends PokemonPhase {
-  /** Represents whether or not this phase has already been placed in the correct (speed) order */
-  private ordered: boolean;
-
-  constructor(battlerIndex?: BattlerIndex, ordered = false) {
-    super(battlerIndex);
-
-    this.ordered = ordered;
-  }
-
   start() {
     super.start();
 
     const pokemon = this.getPokemon();
-    let indexAfterPostSummon = globalScene.phaseQueue.findIndex(phase => !(phase instanceof PostSummonPhase));
-    indexAfterPostSummon = indexAfterPostSummon === -1 ? globalScene.phaseQueue.length : indexAfterPostSummon;
-
-    if (
-      !this.ordered &&
-      globalScene.findPhase(phase => phase instanceof PostSummonPhase && phase.getPokemon() !== pokemon)
-    ) {
-      globalScene.phaseQueue.splice(indexAfterPostSummon++, 0, new PostSummonPhase(pokemon.getBattlerIndex(), true));
-
-      this.orderPostSummonPhases();
-      this.queueAbilityActivationPhases(indexAfterPostSummon);
-
-      this.end();
-      return;
-    }
-
-    if (!this.ordered) {
-      applyPostSummonAbAttrs(PostSummonAbAttr, pokemon, false, (p: number) => p > 0);
-    }
 
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
@@ -56,10 +26,6 @@ export class PostSummonPhase extends PokemonPhase {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
 
-    if (!this.ordered) {
-      applyPostSummonAbAttrs(PostSummonAbAttr, pokemon, false, (p: number) => p <= 0);
-    }
-
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     for (const p of field) {
       applyAbAttrs(CommanderAbAttr, p, null, false);
@@ -68,47 +34,33 @@ export class PostSummonPhase extends PokemonPhase {
     this.end();
   }
 
-  /**
-   * Sorts the {@linkcode PostSummonPhase}s in the queue by effective speed
-   */
-  private orderPostSummonPhases() {
-    globalScene.sortPhaseType(
-      PostSummonPhase,
-      (phaseA: PostSummonPhase, phaseB: PostSummonPhase) =>
-        phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD),
-    );
+  public getPriority() {
+    return 0;
+  }
+}
 
-    for (let i = 0; i < globalScene.phaseQueue.length && globalScene.phaseQueue[i] instanceof PostSummonPhase; i++) {
-      (globalScene.phaseQueue[i] as PostSummonPhase).ordered = true;
-    }
+/**
+ * Phase to apply (post-summon) ability attributes for abilities with nonzero priority
+ *
+ * Priority abilities activate before others and before hazards
+ *
+ * @see Example - {@link https://bulbapedia.bulbagarden.net/wiki/Neutralizing_Gas_(Ability) | Neutralizing Gas}
+ */
+export class PostSummonActivateAbilityPhase extends PostSummonPhase {
+  private priority: number;
+
+  constructor(battlerIndex: BattlerIndex, priority: number) {
+    super(battlerIndex);
+    this.priority = priority;
   }
 
-  /**
-   * Adds {@linkcode PostSummonActivateAbilityPhase}s for all {@linkcode PostSummonPhase}s in the queue
-   * @param endIndex The index of the first non-{@linkcode PostSummonPhase} Phase in the queue, or the length if none exists
-   */
-  private queueAbilityActivationPhases(endIndex: number) {
-    const abilityPhases: PostSummonActivateAbilityPhase[] = [];
+  start() {
+    applyPostSummonAbAttrs(PostSummonAbAttr, this.getPokemon(), false, (p: number) => p === this.priority);
 
-    globalScene.phaseQueue.slice(0, endIndex).forEach((phase: PostSummonPhase) => {
-      const phasePokemon = phase.getPokemon();
+    this.end();
+  }
 
-      phasePokemon
-        .getAbilityPriorities()
-        .forEach(priority =>
-          abilityPhases.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority)),
-        );
-    });
-
-    abilityPhases.sort(
-      (phaseA: PostSummonActivateAbilityPhase, phaseB: PostSummonActivateAbilityPhase) =>
-        phaseB.getPriority() - phaseA.getPriority(),
-    );
-
-    let zeroIndex = abilityPhases.findIndex(phase => phase.getPriority() === 0);
-    zeroIndex = zeroIndex === -1 ? abilityPhases.length : zeroIndex;
-
-    globalScene.unshiftPhase(...abilityPhases.slice(0, zeroIndex));
-    globalScene.phaseQueue.splice(endIndex, 0, ...abilityPhases.slice(zeroIndex));
+  public override getPriority() {
+    return this.priority;
   }
 }
