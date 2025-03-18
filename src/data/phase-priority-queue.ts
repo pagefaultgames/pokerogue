@@ -3,6 +3,8 @@ import type { Phase } from "#app/phase";
 import { ActivatePriorityQueuePhase } from "#app/phases/activate-priority-queue-phase";
 import { type PostSummonPhase, PostSummonActivateAbilityPhase } from "#app/phases/post-summon-phase";
 import { Stat } from "#enums/stat";
+import { BooleanHolder } from "#app/utils";
+import { TrickRoomTag } from "#app/data/arena-tag";
 
 /**
  * Stores a list of {@linkcode Phase}s
@@ -46,7 +48,10 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
   public override reorder(): void {
     this.queue.sort((phaseA: PostSummonPhase, phaseB: PostSummonPhase) => {
       if (phaseA.getPriority() === phaseB.getPriority()) {
-        return phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD);
+        return (
+          (phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD)) *
+          (isTrickRoom() ? -1 : 1)
+        );
       }
 
       return phaseB.getPriority() - phaseA.getPriority();
@@ -66,7 +71,8 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
     const phasePokemon = phase.getPokemon();
 
     phasePokemon.getAbilityPriorities().forEach(priority => {
-      this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority));
+      // Treat all activation phases of zero or lower priority as one stage lower to ensure that they activate after the normal PostSummonPhase
+      this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority - +(priority <= 0)));
       globalScene.appendToPhase(
         new ActivatePriorityQueuePhase(DynamicPhaseType.POST_SUMMON),
         ActivatePriorityQueuePhase,
@@ -74,6 +80,12 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
       );
     });
   }
+}
+
+function isTrickRoom(): boolean {
+  const speedReversed = new BooleanHolder(false);
+  globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
+  return speedReversed.value;
 }
 
 /**
