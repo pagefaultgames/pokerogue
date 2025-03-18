@@ -794,7 +794,7 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
 
   override applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): void {
     const cancelled = new Utils.BooleanHolder(false);
-    applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
     if (!cancelled.value) {
       const damageAmount = move.getAttrs<HitHealAttr>(HitHealAttr)[0].getHealAmount(attacker, pokemon);
       pokemon.turnData.damageTaken += damageAmount;
