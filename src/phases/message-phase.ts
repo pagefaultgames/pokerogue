@@ -28,17 +28,28 @@ export class MessagePhase extends Phase {
     super.start();
 
     if (this.text.indexOf("$") > -1) {
+      let pokename: string[] = [];
+      let repname = [ "#POKEMON1", "#POKEMON2" ];
+      for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+        pokename.push(globalScene.getPlayerField()[p].getNameToRender());
+        this.text = this.text.split(pokename[p]).join(repname[p]);
+      }
       const pageIndex = this.text.indexOf("$");
-      globalScene.unshiftPhase(
-        new MessagePhase(
-          this.text.slice(pageIndex + 1),
-          this.callbackDelay,
-          this.prompt,
-          this.promptDelay,
-          this.speaker,
-        ),
-      );
-      this.text = this.text.slice(0, pageIndex).trim();
+      for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+        this.text = this.text.split(repname[p]).join(pokename[p]);
+      }
+      if (pageIndex !== -1) {
+        globalScene.unshiftPhase(
+          new MessagePhase(
+            this.text.slice(pageIndex + 1),
+            this.callbackDelay,
+            this.prompt,
+            this.promptDelay,
+            this.speaker,
+          ),
+        );
+        this.text = this.text.slice(0, pageIndex).trim();
+      }
     }
 
     if (this.speaker) {

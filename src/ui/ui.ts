@@ -328,17 +328,28 @@ export default class UI extends Phaser.GameObjects.Container {
     prompt?: boolean | null,
     promptDelay?: number | null,
   ): void {
+    let pokename: string[] = [];
+    let repname = [ "#POKEMON1", "#POKEMON2" ];
+    for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+      pokename.push(globalScene.getPlayerField()[p].getNameToRender());
+      text = text.split(pokename[p]).join(repname[p]);
+    }
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
       // biome-ignore lint/complexity/useOptionalChain: optional chain would change this to be null instead of undefined.
       let showMessageAndCallback = () => callback && callback();
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
+        messagePages[p] = messagePages[p].split(repname[0]).join(pokename[0]);
+        messagePages[p] = messagePages[p].split(repname[1]).join(pokename[1]);
         showMessageAndCallback = () => this.showText(messagePages[p], null, originalFunc, null, true);
       }
       showMessageAndCallback();
     } else {
       const handler = this.getHandler();
+      for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+        text = text.split(repname[p]).join(pokename[p]);
+      }
       if (handler instanceof MessageUiHandler) {
         (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt, promptDelay);
       } else {

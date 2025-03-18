@@ -76,6 +76,12 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const fadeMap = new Map<number, number>();
     const actionPattern = /@(c|d|s|f)\{(.*?)\}/;
     let actionMatch: RegExpExecArray | null;
+    let pokename: string[] = [];
+    let repname = [ "#POKEMON1", "#POKEMON2" ];
+    for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+      pokename.push(globalScene.getPlayerField()[p].getNameToRender());
+      text = text.split(pokename[p]).join(repname[p]);
+    }
     while ((actionMatch = actionPattern.exec(text))) {
       switch (actionMatch[1]) {
         case "c":
@@ -94,6 +100,9 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       text = text.slice(0, actionMatch.index) + text.slice(actionMatch.index + actionMatch[2].length + 4);
     }
 
+    for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+      text = text.split(repname[p]).join(pokename[p]);
+    }
     if (text) {
       // Predetermine overflow line breaks to avoid words breaking while displaying
       const textWords = text.split(" ");
