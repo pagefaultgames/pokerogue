@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/consistent-type-imports */
 import { type PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
 import { Gender } from "#app/data/gender";
