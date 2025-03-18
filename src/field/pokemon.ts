@@ -2265,8 +2265,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  public getAbilityPriorities(): Set<number> {
-    return new Set([ this.getAbility().postSummonPriority, this.getPassiveAbility().postSummonPriority ]);
+  public getAbilityPriorities(): number[] {
+    return [this.getAbility().postSummonPriority, this.getPassiveAbility().postSummonPriority];
   }
 
   /**

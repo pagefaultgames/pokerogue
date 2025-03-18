@@ -70,8 +70,8 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
   private queueAbilityPhase(phase: PostSummonPhase): void {
     const phasePokemon = phase.getPokemon();
 
-    phasePokemon.getAbilityPriorities().forEach(priority => {
-      this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority));
+    phasePokemon.getAbilityPriorities().forEach((priority, idx) => {
+      this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority, !!idx));
       globalScene.appendToPhase(
         new ActivatePriorityQueuePhase(DynamicPhaseType.POST_SUMMON),
         ActivatePriorityQueuePhase,

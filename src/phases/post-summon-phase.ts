@@ -40,22 +40,20 @@ export class PostSummonPhase extends PokemonPhase {
 }
 
 /**
- * Phase to apply (post-summon) ability attributes for abilities with nonzero priority
- *
- * Priority abilities activate before others and before hazards
- *
- * @see Example - {@link https://bulbapedia.bulbagarden.net/wiki/Neutralizing_Gas_(Ability) | Neutralizing Gas}
+ * Helper to {@linkcode PostSummonPhase} which applies abilities
  */
 export class PostSummonActivateAbilityPhase extends PostSummonPhase {
   private priority: number;
+  private passive: boolean;
 
-  constructor(battlerIndex: BattlerIndex, priority: number) {
+  constructor(battlerIndex: BattlerIndex, priority: number, passive: boolean) {
     super(battlerIndex);
     this.priority = priority;
+    this.passive = passive;
   }
 
   start() {
-    applyPostSummonAbAttrs(PostSummonAbAttr, this.getPokemon(), false, (p: number) => p === this.priority);
+    applyPostSummonAbAttrs(PostSummonAbAttr, this.getPokemon(), this.passive, false);
 
     this.end();
   }

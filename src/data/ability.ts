@@ -5172,7 +5172,6 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   args: any[],
   gainedMidTurn = false,
   simulated = false,
-  priorityCondition?: (p: number) => boolean,
   messages: string[] = []
 ) {
   if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
@@ -5180,10 +5179,7 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   }
 
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
-  if (
-    gainedMidTurn && ability.getAttrs(attrType).some(attr => attr instanceof PostSummonAbAttr && !attr.shouldActivateOnGain())
-    || (priorityCondition && !priorityCondition(ability.postSummonPriority))
-      ) {
+  if (gainedMidTurn && ability.getAttrs(attrType).some(attr => attr instanceof PostSummonAbAttr && !attr.shouldActivateOnGain())) {
     return;
   }
 
@@ -5485,7 +5481,6 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
  * @param simulated `true` if the call is simulated and the battle state should not be changes
  * @param messages Array of messages which will be added to if the ability displays a message
  * @param gainedMidTurn `true` if the ability is activating because it was gained during the battle
- * @param priorityCondition If defined, only abilities with priority that meets the condition will be applied
  */
 function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
@@ -5496,11 +5491,10 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(
   simulated: boolean = false,
   messages: string[] = [],
   gainedMidTurn = false,
-  priorityCondition?: (p: number) => boolean
 ) {
   for (const passive of [ false, true ]) {
     if (pokemon) {
-      applySingleAbAttrs(pokemon, passive, attrType, applyFunc, successFunc, args, gainedMidTurn, simulated, priorityCondition, messages);
+      applySingleAbAttrs(pokemon, passive, attrType, applyFunc, successFunc, args, gainedMidTurn, simulated, messages);
       globalScene.clearPhaseQueueSplice();
     }
   }
@@ -5746,20 +5740,19 @@ export function applyPostVictoryAbAttrs(
 export function applyPostSummonAbAttrs(
   attrType: Constructor<PostSummonAbAttr>,
   pokemon: Pokemon,
+  passive = false,
   simulated = false,
-  priorityCondition?: (p: number) => boolean,
   ...args: any[]
 ): void {
-  applyAbAttrsInternal<PostSummonAbAttr>(
-    attrType,
+  applySingleAbAttrs<PostSummonAbAttr>(
     pokemon,
+    passive,
+    attrType,
     (attr, passive) => attr.applyPostSummon(pokemon, passive, simulated, args),
     (attr, passive) => attr.canApplyPostSummon(pokemon, passive, simulated, args),
     args,
-    simulated,
-    [],
     false,
-    priorityCondition
+    simulated
   );
 }
 
