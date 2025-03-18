@@ -71,8 +71,7 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
     const phasePokemon = phase.getPokemon();
 
     phasePokemon.getAbilityPriorities().forEach(priority => {
-      // Treat all activation phases of zero or lower priority as one stage lower to ensure that they activate after the normal PostSummonPhase
-      this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority - +(priority <= 0)));
+      this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority));
       globalScene.appendToPhase(
         new ActivatePriorityQueuePhase(DynamicPhaseType.POST_SUMMON),
         ActivatePriorityQueuePhase,
