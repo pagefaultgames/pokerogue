@@ -2174,29 +2174,18 @@ export class HitHealAttr extends MoveEffectAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let healAmount = 0;
+    if (target.hasAbilityWithAttr(ReverseDrainAbAttr)) {
+      return false;
+    }
+
+    const healAmount = this.getHealAmount(user, target);
     let message = "";
-    const reverseDrain = new Utils.BooleanHolder(false);
-    applyPreDefendAbAttrs(ReverseDrainAbAttr, target, user, move, reverseDrain);
     if (this.healStat !== null) {
-      // Strength Sap formula
-      healAmount = target.getEffectiveStat(this.healStat);
       message = i18next.t("battle:drainMessage", { pokemonName: getPokemonNameWithAffix(target) });
     } else {
-      // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
-      healAmount = Utils.toDmgValue(user.turnData.singleHitDamageDealt * this.healRatio);
       message = i18next.t("battle:regainHealth", { pokemonName: getPokemonNameWithAffix(user) });
     }
-    if (reverseDrain.value) {
-      if (user.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-        healAmount = 0;
-        message = "";
-      } else {
-        user.turnData.damageTaken += healAmount;
-        healAmount = healAmount * -1;
-        message = "";
-      }
-    }
+
     globalScene.unshiftPhase(new PokemonHealPhase(user.getBattlerIndex(), healAmount, message, false, true));
     return true;
   }
@@ -2214,6 +2203,10 @@ export class HitHealAttr extends MoveEffectAttr {
       return Math.floor(Math.max(0, (Math.min(1, (healAmount + user.hp) / user.getMaxHp() - 0.33))) / user.getHpRatio());
     }
     return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * (move.power / 4));
+  }
+
+  public getHealAmount(user: Pokemon, target: Pokemon): number {
+    return (this.healStat) ? target.getEffectiveStat(this.healStat) : Utils.toDmgValue(user.turnData.singleHitDamageDealt * this.healRatio);
   }
 }
 

@@ -776,9 +776,9 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
 /**
  * Class for abilities that make drain moves deal damage to user instead of healing them.
  * @extends PostDefendAbAttr
- * @see {@linkcode applyPreDefend}
+ * @see {@linkcode applyPostDefend}
  */
-export class ReverseDrainAbAttr extends PreDefendAbAttr {
+export class ReverseDrainAbAttr extends PostDefendAbAttr {
   private attacker: Pokemon;
 
     /**
@@ -787,13 +787,19 @@ export class ReverseDrainAbAttr extends PreDefendAbAttr {
    * 
    * If so, this ability should cause the move user should be damaged instead of healed
    */
-  override canApplyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
     this.attacker = attacker;
     return move.hasAttr(HitHealAttr) && !move.hitsSubstitute(attacker, pokemon);
   }
 
-  override applyPreDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): void {
-    cancelled.value = true;
+  override applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): void {
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+    if (!cancelled.value) {
+      const damageAmount = move.getAttrs<HitHealAttr>(HitHealAttr)[0].getHealAmount(attacker, pokemon);
+      pokemon.turnData.damageTaken += damageAmount;
+      globalScene.unshiftPhase(new PokemonHealPhase(attacker.getBattlerIndex(), -damageAmount, null, false, true));
+    }
   }
 
   public override getTriggerMessage(pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
