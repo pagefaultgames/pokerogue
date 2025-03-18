@@ -1814,7 +1814,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(1.35)
     .setSpeciesFilter(
       s =>
-        !![s.ability1, s.ability2, s.abilityHidden].find(
+        [s.ability1, s.ability2, s.abilityHidden].some(
           a =>
             !!a &&
             [
@@ -1831,9 +1831,9 @@ export const trainerConfigs: TrainerConfigs = {
               Abilities.HOSPITALITY,
             ].includes(a),
         ) ||
-        !!s
+        s
           .getLevelMoves()
-          .find(plm =>
+          .some(plm =>
             [Moves.SOFT_BOILED, Moves.SPORE, Moves.MILK_DRINK, Moves.OVERHEAT, Moves.TEATIME].includes(plm[1]),
           ),
     ), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
@@ -2200,7 +2200,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setSpeciesFilter(
       s =>
-        !![s.ability1, s.ability2, s.abilityHidden].find(
+        [s.ability1, s.ability2, s.abilityHidden].some(
           a =>
             !!a &&
             [
@@ -2211,7 +2211,7 @@ export const trainerConfigs: TrainerConfigs = {
               Abilities.DRY_SKIN,
               Abilities.WIND_POWER,
             ].includes(a),
-        ) || !!s.getLevelMoves().find(plm => plm[1] === Moves.RAIN_DANCE),
+        ) || s.getLevelMoves().some(plm => plm[1] === Moves.RAIN_DANCE),
     ), // Mons with rain abilities or who learn Rain Dance by level
   [TrainerType.PILOT]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.CLERK)
