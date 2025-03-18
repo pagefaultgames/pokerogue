@@ -2176,7 +2176,8 @@ export class HitHealAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let healAmount = 0;
     let message = "";
-    const reverseDrain = target.hasAbilityWithAttr(ReverseDrainAbAttr, false);
+    const reverseDrain = new Utils.BooleanHolder(false);
+    applyPreDefendAbAttrs(ReverseDrainAbAttr, target, user, move, reverseDrain);
     if (this.healStat !== null) {
       // Strength Sap formula
       healAmount = target.getEffectiveStat(this.healStat);
@@ -2186,7 +2187,7 @@ export class HitHealAttr extends MoveEffectAttr {
       healAmount = Utils.toDmgValue(user.turnData.singleHitDamageDealt * this.healRatio);
       message = i18next.t("battle:regainHealth", { pokemonName: getPokemonNameWithAffix(user) });
     }
-    if (reverseDrain) {
+    if (reverseDrain.value) {
       if (user.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
         healAmount = 0;
         message = "";

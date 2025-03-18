@@ -776,29 +776,28 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
 /**
  * Class for abilities that make drain moves deal damage to user instead of healing them.
  * @extends PostDefendAbAttr
- * @see {@linkcode applyPostDefend}
+ * @see {@linkcode applyPreDefend}
  */
-export class ReverseDrainAbAttr extends PostDefendAbAttr {
+export class ReverseDrainAbAttr extends PreDefendAbAttr {
+  private attacker: Pokemon;
 
-  override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
+    /**
+   * Determines if a damage and draining move was used
+   * Examples include: Absorb, Draining Kiss, Bitter Blade, etc.
+   * 
+   * If so, this ability should cause the move user should be damaged instead of healed
+   */
+  override canApplyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    this.attacker = attacker;
     return move.hasAttr(HitHealAttr) && !move.hitsSubstitute(attacker, pokemon);
   }
 
-  /**
-   * Determines if a damage and draining move was used to check if this ability should stop the healing.
-   * Examples include: Absorb, Draining Kiss, Bitter Blade, etc.
-   * Also displays a message to show this ability was activated.
-   * @param pokemon {@linkcode Pokemon} with this ability
-   * @param _passive N/A
-   * @param attacker {@linkcode Pokemon} that is attacking this Pokemon
-   * @param move {@linkcode PokemonMove} that is being used
-   * @param _hitResult N/A
-   * @param _args N/A
-   */
-  override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): void {
-    if (!simulated) {
-      globalScene.queueMessage(i18next.t("abilityTriggers:reverseDrain", { pokemonNameWithAffix: getPokemonNameWithAffix(attacker) }));
-    }
+  override applyPreDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: Utils.BooleanHolder, args: any[]): void {
+    cancelled.value = true;
+  }
+
+  public override getTriggerMessage(pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
+    return i18next.t("abilityTriggers:reverseDrain", { pokemonNameWithAffix: getPokemonNameWithAffix(this.attacker) });
   }
 }
 
