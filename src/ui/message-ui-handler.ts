@@ -76,8 +76,8 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const fadeMap = new Map<number, number>();
     const actionPattern = /@(c|d|s|f)\{(.*?)\}/;
     let actionMatch: RegExpExecArray | null;
-    let pokename: string[] = [];
-    let repname = [ "#POKEMON1", "#POKEMON2" ];
+    const pokename: string[] = [];
+    const repname = [ "#POKEMON1", "#POKEMON2" ];
     for (let p = 0; p < globalScene.getPlayerField().length; p++) {
       pokename.push(globalScene.getPlayerField()[p].getNameToRender());
       text = text.split(pokename[p]).join(repname[p]);
