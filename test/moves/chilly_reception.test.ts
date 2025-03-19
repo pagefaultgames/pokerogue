@@ -27,8 +27,8 @@ describe("Moves - Chilly Reception", () => {
       .battleType("single")
       .moveset([Moves.CHILLY_RECEPTION, Moves.SNOWSCAPE])
       .enemyMoveset(Array(4).fill(Moves.SPLASH))
-      .enemyAbility(Abilities.NONE)
-      .ability(Abilities.NONE);
+      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(Abilities.BALL_FETCH);
   });
 
   it("should still change the weather if user can't switch out", async () => {
