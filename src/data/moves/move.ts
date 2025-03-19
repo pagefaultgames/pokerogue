@@ -323,7 +323,7 @@ export default class Move implements Localizable {
    * @param {PokemonType} type the type of the move's target
    * @returns boolean
    */
-  isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType, move: Move): boolean {
+  isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
     if (this.moveTarget === MoveTarget.USER) {
       return false;
     }
@@ -336,26 +336,6 @@ export default class Move implements Localizable {
         break;
       case PokemonType.DARK:
         if (user.hasAbility(Abilities.PRANKSTER) && this.category === MoveCategory.STATUS && (user.isPlayer() !== target.isPlayer())) {
-          return true;
-        }
-        break;
-      case PokemonType.FIRE:
-        if (move.id === Moves.WILL_O_WISP) {
-          return true;
-        }
-        break;
-      case PokemonType.ELECTRIC:
-        if (move.id === Moves.THUNDER_WAVE) {
-          return true;
-        }
-        break;
-      case PokemonType.POISON:
-        if (move.id === Moves.TOXIC) {
-          return true;
-        }
-        break;
-      case PokemonType.STEEL:
-        if (move.id === Moves.POISON_GAS) {
           return true;
         }
         break;
@@ -2457,8 +2437,23 @@ export class StatusEffectAttr extends MoveEffectAttr {
         }
         return false;
       }
-      if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining)) {
+      if (!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0)){ 
+        const statusApplied = pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining);
+        if (!statusApplied) {
+          const isImmune = 
+            (this.effect === StatusEffect.POISON || this.effect === StatusEffect.TOXIC)
+              && (pokemon.isOfType(PokemonType.POISON) || pokemon.isOfType(PokemonType.STEEL) || pokemon.hasAbility(Abilities.IMMUNITY)) 
+            || (this.effect === StatusEffect.PARALYSIS
+              && (pokemon.isOfType(PokemonType.ELECTRIC) || pokemon.hasAbility(Abilities.LIMBER)))
+            || (this.effect === StatusEffect.BURN 
+              && (pokemon.isOfType(PokemonType.FIRE) || pokemon.hasAbility(Abilities.WATER_VEIL))) 
+            || (this.effect === StatusEffect.FREEZE 
+              && (pokemon.isOfType(PokemonType.ICE) || pokemon.hasAbility(Abilities.MAGMA_ARMOR)));
+          if (isImmune) {
+            globalScene.queueMessage(i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
+          }
+          return false;
+        }
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
