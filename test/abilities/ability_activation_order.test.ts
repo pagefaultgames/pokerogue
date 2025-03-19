@@ -1,3 +1,4 @@
+import { PreventBerryUseAbAttr, TerrainEventTypeChangeAbAttr } from "#app/data/ability";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -5,7 +6,7 @@ import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Ability Activation Order", () => {
   let phaserGame: Phaser.Game;
@@ -77,5 +78,19 @@ describe("Ability Activation Order", () => {
 
     await game.classicMode.startBattle([Species.SLOWPOKE]);
     expect(game.scene.arena.weather).toBeUndefined();
+  });
+
+  it("should update dynamically based on speed order", async () => {
+    game.override
+      .startingLevel(35)
+      .enemyLevel(50)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.SLOW_START)
+      .enemyPassiveAbility(Abilities.DROUGHT)
+      .ability(Abilities.DRIZZLE);
+
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    // Slow start activates and makes enemy slower, so drought activates after drizzle
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
 });
