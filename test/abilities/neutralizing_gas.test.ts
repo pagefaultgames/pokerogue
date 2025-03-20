@@ -1,4 +1,5 @@
 import { BattlerIndex } from "#app/battle";
+import { PostSummonWeatherChangeAbAttr } from "#app/data/ability";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
@@ -7,7 +8,7 @@ import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Neutralizing Gas", () => {
   let phaserGame: Phaser.Game;
@@ -154,5 +155,26 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+  });
+
+  it("should not activate abilities of pokemon no longer on the field", async () => {
+    game.override
+      .battleType("single")
+      .ability(Abilities.NEUTRALIZING_GAS)
+      .enemyAbility(Abilities.DELTA_STREAM);
+    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    const weatherChangeAttr = enemy.getAbilityAttrs(PostSummonWeatherChangeAbAttr, false)[0];
+    vi.spyOn(weatherChangeAttr, "applyPostSummon");
+
+    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
+
+    game.move.select(Moves.SPLASH);
+    await game.killPokemon(enemy);
+    await game.killPokemon(game.scene.getPlayerPokemon()!);
+
+    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+    expect(weatherChangeAttr.applyPostSummon).not.toHaveBeenCalled();
   });
 });
