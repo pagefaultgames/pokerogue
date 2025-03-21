@@ -303,6 +303,11 @@ export class Arena {
     return true;
   }
 
+  /** Returns weather or not the weather can be changed to {@linkcode weather} */
+  canSetWeather(weather: WeatherType): boolean {
+    return !(this.weather?.weatherType === (weather || undefined));
+  }
+
   /**
    * Attempts to set a new weather to the battle
    * @param weather {@linkcode WeatherType} new {@linkcode WeatherType} to set
@@ -314,7 +319,7 @@ export class Arena {
       return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     }
 
-    if (this.weather?.weatherType === (weather || undefined)) {
+    if (!this.canSetWeather(weather)) {
       return false;
     }
 
@@ -388,8 +393,13 @@ export class Arena {
     });
   }
 
+  /** Returns whether or not the terrain can be set to {@linkcode terrain} */
+  canSetTerrain(terrain: TerrainType): boolean {
+    return !(this.terrain?.terrainType === (terrain || undefined));
+  }
+
   trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim = false): boolean {
-    if (this.terrain?.terrainType === (terrain || undefined)) {
+    if (!this.canSetTerrain(terrain)) {
       return false;
     }
 
@@ -663,7 +673,7 @@ export class Arena {
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
-      existingTag.onOverlap(this);
+      existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 
       if (existingTag instanceof ArenaTrapTag) {
         const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
