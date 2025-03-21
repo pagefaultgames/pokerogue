@@ -10,17 +10,39 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor(player: boolean) {
-    super(globalScene, player ? (globalScene.game.canvas.width / 6) : 0, player ? -72 : -144);
+    super(globalScene, player ? globalScene.game.canvas.width / 6 : 0, player ? -72 : -144);
     this.player = player;
   }
 
   setup(): void {
-    this.bg = globalScene.add.nineslice(0, 0, `pb_tray_overlay_${this.player ? "player" : "enemy"}`, undefined, 104, 4, 48, 8, 0, 0);
+    this.bg = globalScene.add.nineslice(
+      0,
+      0,
+      `pb_tray_overlay_${this.player ? "player" : "enemy"}`,
+      undefined,
+      104,
+      4,
+      48,
+      8,
+      0,
+      0,
+    );
     this.bg.setOrigin(this.player ? 1 : 0, 0);
 
     this.add(this.bg);
 
-    this.balls = new Array(6).fill(null).map((_, i) => globalScene.add.sprite((this.player ? -83 : 76) + (globalScene.game.canvas.width / 6) * (this.player ? -1 : 1) + 10 * i * (this.player ? 1 : -1), -8, "pb_tray_ball", "empty"));
+    this.balls = new Array(6)
+      .fill(null)
+      .map((_, i) =>
+        globalScene.add.sprite(
+          (this.player ? -83 : 76) +
+            (globalScene.game.canvas.width / 6) * (this.player ? -1 : 1) +
+            10 * i * (this.player ? 1 : -1),
+          -8,
+          "pb_tray_ball",
+          "empty",
+        ),
+      );
 
     for (const ball of this.balls) {
       ball.setOrigin(0, 0);
@@ -71,10 +93,10 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
               x: `${this.player ? "-" : "+"}=104`,
               duration: b * 100,
               ease: "Sine.easeIn",
-              onComplete: () => globalScene.playSound(`se/${(b < party.length ? "pb_tray_ball" : "pb_tray_empty")}`)
+              onComplete: () => globalScene.playSound(`se/${b < party.length ? "pb_tray_ball" : "pb_tray_empty"}`),
             });
           });
-        }
+        },
       });
 
       this.setVisible(true);
@@ -96,7 +118,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
           x: `${this.player ? "-" : "+"}=${globalScene.game.canvas.width / 6}`,
           duration: 250,
           delay: b * 100,
-          ease: "Sine.easeIn"
+          ease: "Sine.easeIn",
         });
       });
 
@@ -105,7 +127,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
         width: 144,
         alpha: 0,
         duration: 500,
-        ease: "Sine.easeIn"
+        ease: "Sine.easeIn",
       });
 
       globalScene.time.delayedCall(850, () => {

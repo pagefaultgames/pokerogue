@@ -38,14 +38,12 @@ describe("Abilities - Desolate Land", () => {
    * is forcefully moved out of the field from moves such as Roar {@linkcode Moves.ROAR}
    */
   it("should lift only when all pokemon with this ability leave the field", async () => {
-    game.override
-      .battleType("double")
-      .enemyMoveset([ Moves.SPLASH, Moves.ROAR ]);
-    await game.classicMode.startBattle([ Species.MAGCARGO, Species.MAGCARGO, Species.MAGIKARP, Species.MAGIKARP ]);
+    game.override.battleType("double").enemyMoveset([Moves.SPLASH, Moves.ROAR]);
+    await game.classicMode.startBattle([Species.MAGCARGO, Species.MAGCARGO, Species.MAGIKARP, Species.MAGIKARP]);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
-    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((range, min: number = 0) => {
+    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
       return min;
     });
 
@@ -61,7 +59,7 @@ describe("Abilities - Desolate Land", () => {
 
     await game.toNextTurn();
 
-    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((range, min: number = 0) => {
+    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
       return min + 1;
     });
 
@@ -79,14 +77,14 @@ describe("Abilities - Desolate Land", () => {
   it("should lift when enemy faints", async () => {
     game.override
       .battleType("single")
-      .moveset([ Moves.SHEER_COLD ])
+      .moveset([Moves.SHEER_COLD])
       .ability(Abilities.NO_GUARD)
       .startingLevel(100)
       .enemyLevel(1)
-      .enemyMoveset([ Moves.SPLASH ])
+      .enemyMoveset([Moves.SPLASH])
       .enemySpecies(Species.MAGCARGO)
       .enemyHasPassiveAbility(true);
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
@@ -98,11 +96,8 @@ describe("Abilities - Desolate Land", () => {
   });
 
   it("should lift when pokemon returns upon switching from double to single battle", async () => {
-    game.override
-      .battleType("even-doubles")
-      .enemyMoveset([ Moves.SPLASH, Moves.MEMENTO ])
-      .startingWave(12);
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.MAGCARGO ]);
+    game.override.battleType("even-doubles").enemyMoveset([Moves.SPLASH, Moves.MEMENTO]).startingWave(12);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGCARGO]);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
@@ -123,10 +118,10 @@ describe("Abilities - Desolate Land", () => {
   it("should lift when enemy is captured", async () => {
     game.override
       .battleType("single")
-      .enemyMoveset([ Moves.SPLASH ])
+      .enemyMoveset([Moves.SPLASH])
       .enemySpecies(Species.MAGCARGO)
       .enemyHasPassiveAbility(true);
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 

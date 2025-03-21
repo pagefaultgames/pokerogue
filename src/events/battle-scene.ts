@@ -34,7 +34,7 @@ export enum BattleSceneEventType {
    * Triggers after a turn ends in battle
    * @see {@linkcode TurnEndEvent}
    */
-  TURN_END  = "onTurnEnd",
+  TURN_END = "onTurnEnd",
 
   /**
    * Triggers when a new {@linkcode Arena} is created during initialization
@@ -46,7 +46,7 @@ export enum BattleSceneEventType {
 /**
  * Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events
  * @extends Event
-*/
+ */
 export class CandyUpgradeNotificationChangedEvent extends Event {
   /** The new value the setting was changed to */
   public newValue: number;
@@ -60,7 +60,7 @@ export class CandyUpgradeNotificationChangedEvent extends Event {
 /**
  * Container class for {@linkcode BattleSceneEventType.MOVE_USED} events
  * @extends Event
-*/
+ */
 export class MoveUsedEvent extends Event {
   /** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
   public pokemonId: number;
@@ -79,7 +79,7 @@ export class MoveUsedEvent extends Event {
 /**
  * Container class for {@linkcode BattleSceneEventType.BERRY_USED} events
  * @extends Event
-*/
+ */
 export class BerryUsedEvent extends Event {
   /** The {@linkcode BerryModifier} being used */
   public berryModifier: BerryModifier;
@@ -93,7 +93,7 @@ export class BerryUsedEvent extends Event {
 /**
  * Container class for {@linkcode BattleSceneEventType.ENCOUNTER_PHASE} events
  * @extends Event
-*/
+ */
 export class EncounterPhaseEvent extends Event {
   constructor() {
     super(BattleSceneEventType.ENCOUNTER_PHASE);
@@ -102,7 +102,7 @@ export class EncounterPhaseEvent extends Event {
 /**
  * Container class for {@linkcode BattleSceneEventType.TURN_INIT} events
  * @extends Event
-*/
+ */
 export class TurnInitEvent extends Event {
   constructor() {
     super(BattleSceneEventType.TURN_INIT);
@@ -111,7 +111,7 @@ export class TurnInitEvent extends Event {
 /**
  * Container class for {@linkcode BattleSceneEventType.TURN_END} events
  * @extends Event
-*/
+ */
 export class TurnEndEvent extends Event {
   /** The amount of turns in the current battle */
   public turnCount: number;
@@ -124,7 +124,7 @@ export class TurnEndEvent extends Event {
 /**
  * Container class for {@linkcode BattleSceneEventType.NEW_ARENA} events
  * @extends Event
-*/
+ */
 export class NewArenaEvent extends Event {
   constructor() {
     super(BattleSceneEventType.NEW_ARENA);

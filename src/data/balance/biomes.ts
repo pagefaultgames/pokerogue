@@ -1680,7 +1680,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.METROPOLIS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.CLERK, TrainerType.CYCLIST, TrainerType.OFFICER, TrainerType.WAITER ],
+    [BiomePoolTier.COMMON]: [ TrainerType.CLERK, TrainerType.CYCLIST, TrainerType.OFFICER, TrainerType.WAITER, TrainerType.BEAUTY ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.BREEDER, TrainerType.DEPOT_AGENT, TrainerType.GUITARIST ],
     [BiomePoolTier.RARE]: [ TrainerType.ARTIST ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1713,7 +1713,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.SWAMP]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.PARASOL_LADY ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1724,7 +1724,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.BEACH]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.FISHERMAN, TrainerType.PARASOL_LADY, TrainerType.SAILOR ],
+    [BiomePoolTier.COMMON]: [ TrainerType.FISHERMAN, TrainerType.SAILOR ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BREEDER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1735,7 +1735,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.LAKE]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.FISHERMAN ],
+    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.FISHERMAN, TrainerType.PARASOL_LADY ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1790,7 +1790,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.DESERT]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.SCIENTIST ],
+    [BiomePoolTier.COMMON]: [ TrainerType.SCIENTIST, TrainerType.BACKPACKER ],
     [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1812,8 +1812,8 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.MEADOW]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.PARASOL_LADY ],
-    [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BREEDER ],
+    [BiomePoolTier.COMMON]: [ TrainerType.PARASOL_LADY, TrainerType.BEAUTY ],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BREEDER, TrainerType.BAKER ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -1879,7 +1879,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   },
   [Biome.RUINS]: {
     [BiomePoolTier.COMMON]: [ TrainerType.PSYCHIC, TrainerType.SCIENTIST ],
-    [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BLACK_BELT ],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER, TrainerType.BLACK_BELT, TrainerType.HEX_MANIAC ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -2022,6 +2022,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   }
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: init methods are expected to have many lines.
 export function initBiomes() {
   const pokemonBiomes = [
     [ Species.BULBASAUR, PokemonType.GRASS, PokemonType.POISON, [
@@ -7164,14 +7165,18 @@ export function initBiomes() {
       [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
       [ Biome.CAVE, BiomePoolTier.COMMON ],
       [ Biome.BADLANDS, BiomePoolTier.COMMON ],
-      [ Biome.JUNGLE, BiomePoolTier.COMMON ]
+      [ Biome.JUNGLE, BiomePoolTier.COMMON ],
+      [ Biome.DESERT, BiomePoolTier.COMMON ]
     ]
     ],
     [ TrainerType.BAKER, [
-      [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
+      [ Biome.SLUM, BiomePoolTier.UNCOMMON ],
+      [ Biome.MEADOW, BiomePoolTier.UNCOMMON ]
     ]
     ],
     [ TrainerType.BEAUTY, [
+      [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
+      [ Biome.MEADOW, BiomePoolTier.COMMON ],
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ]],
     [ TrainerType.BIKER, [
@@ -7246,7 +7251,8 @@ export function initBiomes() {
     ]
     ],
     [ TrainerType.PARASOL_LADY, [
-      [ Biome.BEACH, BiomePoolTier.COMMON ],
+      [ Biome.SWAMP, BiomePoolTier.COMMON ],
+      [ Biome.LAKE, BiomePoolTier.COMMON ],
       [ Biome.MEADOW, BiomePoolTier.COMMON ]
     ]
     ],
@@ -7312,6 +7318,7 @@ export function initBiomes() {
     ]
     ],
     [ TrainerType.HEX_MANIAC, [
+      [ Biome.RUINS, BiomePoolTier.UNCOMMON ],
       [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
     ]
     ],
@@ -7677,7 +7684,7 @@ export function initBiomes() {
 
   const traverseBiome = (biome: Biome, depth: number) => {
     if (biome === Biome.END) {
-      const biomeList = Object.keys(Biome).filter(key => !isNaN(Number(key)));
+      const biomeList = Object.keys(Biome).filter(key => !Number.isNaN(Number(key)));
       biomeList.pop(); // Removes Biome.END from the list
       const randIndex = Utils.randSeedInt(biomeList.length, 1); // Will never be Biome.TOWN
       biome = Biome[biomeList[randIndex]];
@@ -7764,7 +7771,8 @@ export function initBiomes() {
               treeIndex = t;
               arrayIndex = es + 1;
               break;
-            } else if (speciesEvolutions && speciesEvolutions.find(se => se.speciesId === existingSpeciesId)) {
+            }
+            if (speciesEvolutions?.find(se => se.speciesId === existingSpeciesId)) {
               treeIndex = t;
               arrayIndex = es;
               break;
@@ -7786,7 +7794,7 @@ export function initBiomes() {
 
   for (const b of Object.keys(biomePokemonPools)) {
     for (const t of Object.keys(biomePokemonPools[b])) {
-      const tier = parseInt(t) as BiomePoolTier;
+      const tier = Number.parseInt(t) as BiomePoolTier;
       for (const tod of Object.keys(biomePokemonPools[b][t])) {
         const biomeTierTimePool = biomePokemonPools[b][t][tod];
         for (let e = 0; e < biomeTierTimePool.length; e++) {
@@ -7799,7 +7807,7 @@ export function initBiomes() {
             };
             for (let s = 1; s < entry.length; s++) {
               const speciesId = entry[s];
-              const prevolution = entry.map(s => pokemonEvolutions[s]).flat().find(e => e && e.speciesId === speciesId);
+              const prevolution = entry.flatMap((s: string | number) => pokemonEvolutions[s]).find(e => e && e.speciesId === speciesId);
               const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
               if (!newEntry.hasOwnProperty(level)) {
                 newEntry[level] = [ speciesId ];
