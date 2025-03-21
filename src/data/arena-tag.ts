@@ -64,7 +64,7 @@ export abstract class ArenaTag {
     }
   }
 
-  onOverlap(_arena: Arena): void {}
+  onOverlap(_arena: Arena, _source: Pokemon | null): void {}
 
   lapse(_arena: Arena): boolean {
     return this.turnCount < 1 || !!--this.turnCount;
@@ -706,7 +706,7 @@ export class ArenaTrapTag extends ArenaTag {
     this.maxLayers = maxLayers;
   }
 
-  onOverlap(arena: Arena): void {
+  onOverlap(arena: Arena, _source: Pokemon | null): void {
     if (this.layers < this.maxLayers) {
       this.layers++;
 
@@ -1427,11 +1427,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
   public override onAdd(_arena: Arena): void {
     const pokemon = this.getSourcePokemon();
     if (pokemon) {
-      globalScene.queueMessage(
-        i18next.t("arenaTag:neutralizingGasOnAdd", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
+      this.playActivationMessage(pokemon);
 
       for (const fieldPokemon of globalScene.getField(true)) {
         if (fieldPokemon && fieldPokemon.id !== pokemon.id) {
@@ -1441,8 +1437,9 @@ export class SuppressAbilitiesTag extends ArenaTag {
     }
   }
 
-  public override onOverlap(_arena: Arena): void {
+  public override onOverlap(_arena: Arena, source: Pokemon | null): void {
     this.sourceCount++;
+    this.playActivationMessage(source);
   }
 
   public onSourceLeave(arena: Arena): void {
@@ -1480,6 +1477,16 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
   public isBeingRemoved() {
     return this.beingRemoved;
+  }
+
+  private playActivationMessage(pokemon: Pokemon | null) {
+    if (pokemon) {
+      globalScene.queueMessage(
+        i18next.t("arenaTag:neutralizingGasOnAdd", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        }),
+      );
+    }
   }
 }
 

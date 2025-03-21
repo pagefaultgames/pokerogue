@@ -1922,10 +1922,6 @@ export class SlowStartTag extends AbilityBattlerTag {
       i18next.t("battlerTags:slowStartOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
-      null,
-      false,
-      null,
-      true,
     );
   }
 
