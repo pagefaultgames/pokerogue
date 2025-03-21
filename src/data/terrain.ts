@@ -1,7 +1,7 @@
 import type Pokemon from "../field/pokemon";
-import type Move from "./move";
-import { Type } from "#enums/type";
-import { ProtectAttr } from "./move";
+import type Move from "./moves/move";
+import { PokemonType } from "#enums/pokemon-type";
+import { ProtectAttr } from "./moves/move";
 import type { BattlerIndex } from "#app/battle";
 import i18next from "i18next";
 
@@ -10,7 +10,7 @@ export enum TerrainType {
   MISTY,
   ELECTRIC,
   GRASSY,
-  PSYCHIC
+  PSYCHIC,
 }
 
 export class Terrain {
@@ -30,20 +30,20 @@ export class Terrain {
     return true;
   }
 
-  getAttackTypeMultiplier(attackType: Type): number {
+  getAttackTypeMultiplier(attackType: PokemonType): number {
     switch (this.terrainType) {
       case TerrainType.ELECTRIC:
-        if (attackType === Type.ELECTRIC) {
+        if (attackType === PokemonType.ELECTRIC) {
           return 1.3;
         }
         break;
       case TerrainType.GRASSY:
-        if (attackType === Type.GRASS) {
+        if (attackType === PokemonType.GRASS) {
           return 1.3;
         }
         break;
       case TerrainType.PSYCHIC:
-        if (attackType === Type.PSYCHIC) {
+        if (attackType === PokemonType.PSYCHIC) {
           return 1.3;
         }
         break;
@@ -57,7 +57,10 @@ export class Terrain {
       case TerrainType.PSYCHIC:
         if (!move.hasAttr(ProtectAttr)) {
           // Cancels move if the move has positive priority and targets a Pokemon grounded on the Psychic Terrain
-          return move.getPriority(user) > 0 && user.getOpponents().some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded());
+          return (
+            move.getPriority(user) > 0 &&
+            user.getOpponents().some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
+          );
         }
     }
 
@@ -80,18 +83,17 @@ export function getTerrainName(terrainType: TerrainType): string {
   return "";
 }
 
-
-export function getTerrainColor(terrainType: TerrainType): [ number, number, number ] {
+export function getTerrainColor(terrainType: TerrainType): [number, number, number] {
   switch (terrainType) {
     case TerrainType.MISTY:
-      return [ 232, 136, 200 ];
+      return [232, 136, 200];
     case TerrainType.ELECTRIC:
-      return [ 248, 248, 120 ];
+      return [248, 248, 120];
     case TerrainType.GRASSY:
-      return [ 120, 200, 80 ];
+      return [120, 200, 80];
     case TerrainType.PSYCHIC:
-      return [ 160, 64, 160 ];
+      return [160, 64, 160];
   }
 
-  return [ 0, 0, 0 ];
+  return [0, 0, 0];
 }

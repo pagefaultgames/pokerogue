@@ -13,7 +13,7 @@ import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
 export enum EventType {
   SHINY,
   NO_TIMER_DISPLAY,
-  LUCK
+  LUCK,
 }
 
 interface EventBanner {
@@ -63,7 +63,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "winter_holidays2024-event-",
     scale: 0.21,
-    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
       { species: Species.GIMMIGHOUL, blockEvolution: true },
       { species: Species.DELIBIRD },
@@ -84,17 +84,26 @@ const timedEvents: TimedEvent[] = [
       { species: Species.SMOLIV },
       { species: Species.ALOLA_VULPIX },
       { species: Species.GALAR_DARUMAKA },
-      { species: Species.IRON_BUNDLE }
+      { species: Species.IRON_BUNDLE },
     ],
-    delibirdyBuff: [ "CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM" ],
+    delibirdyBuff: ["CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM"],
     weather: [{ weatherType: WeatherType.SNOW, weight: 1 }],
     mysteryEncounterTierChanges: [
-      { mysteryEncounter: MysteryEncounterType.DELIBIRDY, tier: MysteryEncounterTier.COMMON },
+      {
+        mysteryEncounter: MysteryEncounterType.DELIBIRDY,
+        tier: MysteryEncounterTier.COMMON,
+      },
       { mysteryEncounter: MysteryEncounterType.PART_TIMER, disable: true },
-      { mysteryEncounter: MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, disable: true },
+      {
+        mysteryEncounter: MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE,
+        disable: true,
+      },
       { mysteryEncounter: MysteryEncounterType.FIELD_TRIP, disable: true },
-      { mysteryEncounter: MysteryEncounterType.DEPARTMENT_STORE_SALE, disable: true }
-    ]
+      {
+        mysteryEncounter: MysteryEncounterType.DEPARTMENT_STORE_SALE,
+        disable: true,
+      },
+    ],
   },
   {
     name: "Year of the Snake",
@@ -104,7 +113,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 1, 3, 0)),
     bannerKey: "yearofthesnakeevent-",
     scale: 0.21,
-    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
       { species: Species.EKANS },
       { species: Species.ONIX },
@@ -120,32 +129,46 @@ const timedEvents: TimedEvent[] = [
       { species: Species.DARUMAKA },
       { species: Species.DRAMPA },
       { species: Species.SILICOBRA },
-      { species: Species.BLOODMOON_URSALUNA }
+      { species: Species.BLOODMOON_URSALUNA },
     ],
     luckBoostedSpecies: [
-      Species.EKANS, Species.ARBOK,
-      Species.ONIX, Species.STEELIX,
-      Species.DRATINI, Species.DRAGONAIR, Species.DRAGONITE,
-      Species.CLEFFA, Species.CLEFAIRY, Species.CLEFABLE,
+      Species.EKANS,
+      Species.ARBOK,
+      Species.ONIX,
+      Species.STEELIX,
+      Species.DRATINI,
+      Species.DRAGONAIR,
+      Species.DRAGONITE,
+      Species.CLEFFA,
+      Species.CLEFAIRY,
+      Species.CLEFABLE,
       Species.UMBREON,
-      Species.DUNSPARCE, Species.DUDUNSPARCE,
-      Species.TEDDIURSA, Species.URSARING, Species.URSALUNA,
+      Species.DUNSPARCE,
+      Species.DUDUNSPARCE,
+      Species.TEDDIURSA,
+      Species.URSARING,
+      Species.URSALUNA,
       Species.SEVIPER,
       Species.LUNATONE,
       Species.RAYQUAZA,
-      Species.CHINGLING, Species.CHIMECHO,
+      Species.CHINGLING,
+      Species.CHIMECHO,
       Species.CRESSELIA,
       Species.DARKRAI,
-      Species.SNIVY, Species.SERVINE, Species.SERPERIOR,
-      Species.DARUMAKA, Species.DARMANITAN,
+      Species.SNIVY,
+      Species.SERVINE,
+      Species.SERPERIOR,
+      Species.DARUMAKA,
+      Species.DARMANITAN,
       Species.ZYGARDE,
       Species.DRAMPA,
       Species.LUNALA,
       Species.BLACEPHALON,
-      Species.SILICOBRA, Species.SANDACONDA,
+      Species.SILICOBRA,
+      Species.SANDACONDA,
       Species.ROARING_MOON,
-      Species.BLOODMOON_URSALUNA
-    ]
+      Species.BLOODMOON_URSALUNA,
+    ],
   },
   {
     name: "Valentine",
@@ -156,7 +179,7 @@ const timedEvents: TimedEvent[] = [
     shinyMultiplier: 2,
     bannerKey: "valentines2025event-",
     scale: 0.21,
-    availableLangs: [ "en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN" ],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
       { species: Species.NIDORAN_F },
       { species: Species.NIDORAN_M },
@@ -169,7 +192,7 @@ const timedEvents: TimedEvent[] = [
       { species: Species.WOOBAT },
       { species: Species.FRILLISH },
       { species: Species.ALOMOMOLA },
-      { species: Species.FURFROU, formIndex: 1 }, // Heart trim
+      { species: Species.FURFROU, formIndex: 1 }, // Heart Trim
       { species: Species.ESPURR },
       { species: Species.SPRITZEE },
       { species: Species.SWIRLIX },
@@ -177,20 +200,60 @@ const timedEvents: TimedEvent[] = [
       { species: Species.MILCERY },
       { species: Species.INDEEDEE },
       { species: Species.TANDEMAUS },
-      { species: Species.ENAMORUS }
+      { species: Species.ENAMORUS },
     ],
-    luckBoostedSpecies: [ Species.LUVDISC ]
-  }
+    luckBoostedSpecies: [Species.LUVDISC],
+  },
+  {
+    name: "PKMNDAY2025",
+    eventType: EventType.LUCK,
+    startDate: new Date(Date.UTC(2025, 1, 27)),
+    endDate: new Date(Date.UTC(2025, 2, 4)),
+    classicFriendshipMultiplier: 4,
+    bannerKey: "pkmnday2025event-",
+    scale: 0.21,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    eventEncounters: [
+      { species: Species.PIKACHU, formIndex: 1, blockEvolution: true }, // Partner Form
+      { species: Species.EEVEE, formIndex: 1, blockEvolution: true }, // Partner Form
+      { species: Species.CHIKORITA },
+      { species: Species.TOTODILE },
+      { species: Species.TEPIG },
+    ],
+    luckBoostedSpecies: [
+      Species.PICHU,
+      Species.PIKACHU,
+      Species.RAICHU,
+      Species.ALOLA_RAICHU,
+      Species.PSYDUCK,
+      Species.GOLDUCK,
+      Species.EEVEE,
+      Species.FLAREON,
+      Species.JOLTEON,
+      Species.VAPOREON,
+      Species.ESPEON,
+      Species.UMBREON,
+      Species.LEAFEON,
+      Species.GLACEON,
+      Species.SYLVEON,
+      Species.CHIKORITA,
+      Species.BAYLEEF,
+      Species.MEGANIUM,
+      Species.TOTODILE,
+      Species.CROCONAW,
+      Species.FERALIGATR,
+      Species.TEPIG,
+      Species.PIGNITE,
+      Species.EMBOAR,
+      Species.ZYGARDE,
+      Species.ETERNAL_FLOETTE,
+    ],
+  },
 ];
 
 export class TimedEventManager {
-  constructor() {}
-
   isActive(event: TimedEvent) {
-    return (
-      event.startDate < new Date() &&
-        new Date() < event.endDate
-    );
+    return event.startDate < new Date() && new Date() < event.endDate;
   }
 
   activeEvent(): TimedEvent | undefined {
@@ -202,16 +265,16 @@ export class TimedEventManager {
   }
 
   activeEventHasBanner(): boolean {
-    const activeEvents = timedEvents.filter((te) => this.isActive(te) && te.hasOwnProperty("bannerFilename"));
+    const activeEvents = timedEvents.filter(te => this.isActive(te) && te.hasOwnProperty("bannerFilename"));
     return activeEvents.length > 0;
   }
 
   getShinyMultiplier(): number {
     let multiplier = 1;
-    const shinyEvents = timedEvents.filter((te) => te.eventType === EventType.SHINY && this.isActive(te));
-    shinyEvents.forEach((se) => {
+    const shinyEvents = timedEvents.filter(te => te.eventType === EventType.SHINY && this.isActive(te));
+    for (const se of shinyEvents) {
       multiplier *= se.shinyMultiplier ?? 1;
-    });
+    }
 
     return multiplier;
   }
@@ -222,11 +285,13 @@ export class TimedEventManager {
 
   getEventEncounters(): EventEncounter[] {
     const ret: EventEncounter[] = [];
-    timedEvents.filter((te) => this.isActive(te)).map((te) => {
-      if (!isNullOrUndefined(te.eventEncounters)) {
-        ret.push(...te.eventEncounters);
-      }
-    });
+    timedEvents
+      .filter(te => this.isActive(te))
+      .map(te => {
+        if (!isNullOrUndefined(te.eventEncounters)) {
+          ret.push(...te.eventEncounters);
+        }
+      });
     return ret;
   }
 
@@ -236,12 +301,12 @@ export class TimedEventManager {
    */
   getClassicFriendshipMultiplier(): number {
     let multiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
-    const classicFriendshipEvents = timedEvents.filter((te) => this.isActive(te));
-    classicFriendshipEvents.forEach((fe) => {
+    const classicFriendshipEvents = timedEvents.filter(te => this.isActive(te));
+    for (const fe of classicFriendshipEvents) {
       if (!isNullOrUndefined(fe.classicFriendshipMultiplier) && fe.classicFriendshipMultiplier > multiplier) {
         multiplier = fe.classicFriendshipMultiplier;
       }
-    });
+    }
     return multiplier;
   }
 
@@ -250,7 +315,7 @@ export class TimedEventManager {
    * @returns Whether vouchers should be upgraded
    */
   getUpgradeUnlockedVouchers(): boolean {
-    return timedEvents.some((te) => this.isActive(te) && (te.upgradeUnlockedVouchers ?? false));
+    return timedEvents.some(te => this.isActive(te) && (te.upgradeUnlockedVouchers ?? false));
   }
 
   /**
@@ -259,11 +324,13 @@ export class TimedEventManager {
    */
   getDelibirdyBuff(): string[] {
     const ret: string[] = [];
-    timedEvents.filter((te) => this.isActive(te)).map((te) => {
-      if (!isNullOrUndefined(te.delibirdyBuff)) {
-        ret.push(...te.delibirdyBuff);
-      }
-    });
+    timedEvents
+      .filter(te => this.isActive(te))
+      .map(te => {
+        if (!isNullOrUndefined(te.delibirdyBuff)) {
+          ret.push(...te.delibirdyBuff);
+        }
+      });
     return ret;
   }
 
@@ -273,69 +340,82 @@ export class TimedEventManager {
    */
   getWeather(): WeatherPoolEntry[] {
     const ret: WeatherPoolEntry[] = [];
-    timedEvents.filter((te) => this.isActive(te)).map((te) => {
-      if (!isNullOrUndefined(te.weather)) {
-        ret.push(...te.weather);
-      }
-    });
+    timedEvents
+      .filter(te => this.isActive(te))
+      .map(te => {
+        if (!isNullOrUndefined(te.weather)) {
+          ret.push(...te.weather);
+        }
+      });
     return ret;
   }
 
   getAllMysteryEncounterChanges(): EventMysteryEncounterTier[] {
     const ret: EventMysteryEncounterTier[] = [];
-    timedEvents.filter((te) => this.isActive(te)).map((te) => {
-      if (!isNullOrUndefined(te.mysteryEncounterTierChanges)) {
-        ret.push(...te.mysteryEncounterTierChanges);
-      }
-    });
+    timedEvents
+      .filter(te => this.isActive(te))
+      .map(te => {
+        if (!isNullOrUndefined(te.mysteryEncounterTierChanges)) {
+          ret.push(...te.mysteryEncounterTierChanges);
+        }
+      });
     return ret;
   }
 
   getEventMysteryEncountersDisabled(): MysteryEncounterType[] {
     const ret: MysteryEncounterType[] = [];
-    timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges)).map((te) => {
-      te.mysteryEncounterTierChanges?.map((metc) => {
-        if (metc.disable) {
-          ret.push(metc.mysteryEncounter);
-        }
+    timedEvents
+      .filter(te => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges))
+      .map(te => {
+        te.mysteryEncounterTierChanges?.map(metc => {
+          if (metc.disable) {
+            ret.push(metc.mysteryEncounter);
+          }
+        });
       });
-    });
     return ret;
   }
 
-  getMysteryEncounterTierForEvent(encounterType: MysteryEncounterType, normal: MysteryEncounterTier): MysteryEncounterTier {
+  getMysteryEncounterTierForEvent(
+    encounterType: MysteryEncounterType,
+    normal: MysteryEncounterTier,
+  ): MysteryEncounterTier {
     let ret = normal;
-    timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges)).map((te) => {
-      te.mysteryEncounterTierChanges?.map((metc) => {
-        if (metc.mysteryEncounter === encounterType) {
-          ret = metc.tier ?? normal;
-        }
+    timedEvents
+      .filter(te => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges))
+      .map(te => {
+        te.mysteryEncounterTierChanges?.map(metc => {
+          if (metc.mysteryEncounter === encounterType) {
+            ret = metc.tier ?? normal;
+          }
+        });
       });
-    });
     return ret;
   }
 
   getEventLuckBoost(): number {
     let ret = 0;
-    const luckEvents = timedEvents.filter((te) => this.isActive(te) && !isNullOrUndefined(te.luckBoost));
-    luckEvents.forEach((le) => {
+    const luckEvents = timedEvents.filter(te => this.isActive(te) && !isNullOrUndefined(te.luckBoost));
+    for (const le of luckEvents) {
       ret += le.luckBoost!;
-    });
+    }
     return ret;
   }
 
   getEventLuckBoostedSpecies(): Species[] {
     const ret: Species[] = [];
-    timedEvents.filter((te) => this.isActive(te)).map((te) => {
-      if (!isNullOrUndefined(te.luckBoostedSpecies)) {
-        ret.push(...te.luckBoostedSpecies.filter(s => !ret.includes(s)));
-      }
-    });
+    timedEvents
+      .filter(te => this.isActive(te))
+      .map(te => {
+        if (!isNullOrUndefined(te.luckBoostedSpecies)) {
+          ret.push(...te.luckBoostedSpecies.filter(s => !ret.includes(s)));
+        }
+      });
     return ret;
   }
 
   areFusionsBoosted(): boolean {
-    return timedEvents.some((te) => this.isActive(te) && te.boostFusions);
+    return timedEvents.some(te => this.isActive(te) && te.boostFusions);
   }
 }
 
@@ -372,7 +452,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
 
   setup() {
     const lang = i18next.resolvedLanguage;
-    if (this.event && this.event.bannerKey) {
+    if (this.event?.bannerKey) {
       let key = this.event.bannerKey;
       if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
         if (this.event.availableLangs.includes(lang)) {
@@ -394,7 +474,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
           this.banner.x,
           this.banner.y + 2,
           this.timeToGo(this.event.endDate),
-          TextStyle.WINDOW
+          TextStyle.WINDOW,
         );
         this.eventTimerText.setName("text-event-timer");
         this.eventTimerText.setScale(0.15);
@@ -422,7 +502,6 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   private timeToGo(date: Date) {
-
     // Utility to add leading zero
     function z(n) {
       return (n < 10 ? "0" : "") + n;
@@ -434,13 +513,18 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     diff = Math.abs(diff);
 
     // Get time components
-    const days = diff / 8.64e7 | 0;
-    const hours = diff % 8.64e7 / 3.6e6 | 0;
-    const mins  = diff % 3.6e6 / 6e4 | 0;
-    const secs  = Math.round(diff % 6e4 / 1e3);
+    const days = (diff / 8.64e7) | 0;
+    const hours = ((diff % 8.64e7) / 3.6e6) | 0;
+    const mins = ((diff % 3.6e6) / 6e4) | 0;
+    const secs = Math.round((diff % 6e4) / 1e3);
 
     // Return formatted string
-    return i18next.t("menu:eventTimer", { days: z(days), hours: z(hours), mins: z(mins), secs: z(secs) });
+    return i18next.t("menu:eventTimer", {
+      days: z(days),
+      hours: z(hours),
+      mins: z(mins),
+      secs: z(secs),
+    });
   }
 
   updateCountdown() {

@@ -23,7 +23,7 @@ describe("Abilities - Wandering Spirit", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.WANDERING_SPIRIT)
       .battleType("single")
       .disableCrits()
@@ -33,7 +33,7 @@ describe("Abilities - Wandering Spirit", () => {
   });
 
   it("should exchange abilities when hit with a contact move", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -44,7 +44,7 @@ describe("Abilities - Wandering Spirit", () => {
 
   it("should not exchange abilities when hit with a non-contact move", async () => {
     game.override.enemyMoveset(Moves.EARTHQUAKE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -55,7 +55,7 @@ describe("Abilities - Wandering Spirit", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.enemyAbility(Abilities.INTIMIDATE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");

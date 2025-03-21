@@ -7,10 +7,10 @@ import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { getTypeRgb } from "#app/data/type";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
-import type Move from "#app/data/move";
-import { MoveCategory } from "#app/data/move";
+import type Move from "#app/data/moves/move";
+import { MoveCategory } from "#enums/MoveCategory";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
@@ -28,28 +28,29 @@ import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 import { Nature } from "#enums/nature";
+import { achvs } from "#app/system/achv";
 
 enum Page {
   PROFILE,
   STATS,
-  MOVES
+  MOVES,
 }
 
 export enum SummaryUiMode {
   DEFAULT,
-  LEARN_MOVE
+  LEARN_MOVE,
 }
 
 /** Holds all objects related to an ability for each iteration */
 interface abilityContainer {
   /** An image displaying the summary label */
-  labelImage: Phaser.GameObjects.Image,
+  labelImage: Phaser.GameObjects.Image;
   /** The ability object */
-  ability: Ability | null,
+  ability: Ability | null;
   /** The text object displaying the name of the ability */
-  nameText: Phaser.GameObjects.Text | null,
+  nameText: Phaser.GameObjects.Text | null;
   /** The text object displaying the description of the ability */
-  descriptionText: Phaser.GameObjects.Text | null,
+  descriptionText: Phaser.GameObjects.Text | null;
 }
 
 export default class SummaryUiHandler extends UiHandler {
@@ -132,7 +133,7 @@ export default class SummaryUiHandler extends UiHandler {
     summaryBg.setOrigin(0, 1);
     this.summaryContainer.add(summaryBg);
 
-    this.tabSprite = globalScene.add.sprite(134, (-summaryBg.displayHeight) + 16, "summary_tabs_1");
+    this.tabSprite = globalScene.add.sprite(134, -summaryBg.displayHeight + 16, "summary_tabs_1");
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
 
@@ -149,7 +150,12 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setOrigin(0, 1);
     this.summaryContainer.add(this.numberText);
 
-    this.pokemonSprite = globalScene.initPokemonSprite(globalScene.add.sprite(56, -106, "pkmn__sub"), undefined, false, true);
+    this.pokemonSprite = globalScene.initPokemonSprite(
+      globalScene.add.sprite(56, -106, "pkmn__sub"),
+      undefined,
+      false,
+      true,
+    );
     this.summaryContainer.add(this.pokemonSprite);
 
     this.nameText = addTextObject(6, -54, "", TextStyle.SUMMARY);
@@ -190,12 +196,14 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.candyShadow = globalScene.add.sprite(13, -140, "candy");
     this.candyShadow.setTint(0x000000);
-    this.candyShadow.setAlpha(0.50);
+    this.candyShadow.setAlpha(0.5);
     this.candyShadow.setScale(0.8);
     this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.candyShadow);
 
-    this.candyCountText = addTextObject(20, -146, "x0", TextStyle.WINDOW_ALT, { fontSize: "76px" });
+    this.candyCountText = addTextObject(20, -146, "x0", TextStyle.WINDOW_ALT, {
+      fontSize: "76px",
+    });
     this.candyCountText.setOrigin(0, 0);
     this.summaryContainer.add(this.candyCountText);
 
@@ -209,12 +217,14 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.friendshipShadow = globalScene.add.sprite(13, -60, "friendship");
     this.friendshipShadow.setTint(0x000000);
-    this.friendshipShadow.setAlpha(0.50);
+    this.friendshipShadow.setAlpha(0.5);
     this.friendshipShadow.setScale(0.8);
     this.friendshipShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.friendshipShadow);
 
-    this.friendshipText = addTextObject(20, -66, "x0", TextStyle.WINDOW_ALT, { fontSize: "76px" });
+    this.friendshipText = addTextObject(20, -66, "x0", TextStyle.WINDOW_ALT, {
+      fontSize: "76px",
+    });
     this.friendshipText.setOrigin(0, 0);
     this.summaryContainer.add(this.friendshipText);
 
@@ -303,14 +313,14 @@ export default class SummaryUiHandler extends UiHandler {
     super.show(args);
 
     /* args[] information
-    * args[0] : the Pokemon displayed in the Summary-UI
-    * args[1] : the summaryUiMode (defaults to 0)
-    * args[2] : the start page (defaults to Page.PROFILE)
-    * args[3] : contains the function executed when the user exits out of Summary UI
-    * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
-    */
+     * args[0] : the Pokemon displayed in the Summary-UI
+     * args[1] : the summaryUiMode (defaults to 0)
+     * args[2] : the start page (defaults to Page.PROFILE)
+     * args[3] : contains the function executed when the user exits out of Summary UI
+     * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
+     */
     this.pokemon = args[0] as PlayerPokemon;
-    this.summaryUiMode = args.length > 1 ? args[1] as SummaryUiMode : SummaryUiMode.DEFAULT;
+    this.summaryUiMode = args.length > 1 ? (args[1] as SummaryUiMode) : SummaryUiMode.DEFAULT;
     this.playerParty = args[4] ?? true;
     globalScene.ui.bringToTop(this.summaryContainer);
 
@@ -323,10 +333,11 @@ export default class SummaryUiHandler extends UiHandler {
     this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
     this.candyOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
 
-
     this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 4));
     this.numberText.setColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
-    this.numberText.setShadowColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
+    this.numberText.setShadowColor(
+      this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true),
+    );
     const spriteKey = this.pokemon.getSpriteKey(true);
     try {
       this.pokemonSprite.play(spriteKey);
@@ -339,7 +350,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
     this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
     this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
-    [ "spriteColors", "fusionSpriteColors" ].map(k => {
+    ["spriteColors", "fusionSpriteColors"].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData?.speciesForm) {
         k += "Base";
@@ -355,11 +366,20 @@ export default class SummaryUiHandler extends UiHandler {
     this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + 2, 3);
     this.splicedIcon.setVisible(isFusion);
     if (this.splicedIcon.visible) {
-      this.splicedIcon.on("pointerover", () => globalScene.ui.showTooltip("", `${this.pokemon?.species.getName(this.pokemon.formIndex)}/${this.pokemon?.fusionSpecies?.getName(this.pokemon?.fusionFormIndex)}`, true));
+      this.splicedIcon.on("pointerover", () =>
+        globalScene.ui.showTooltip(
+          "",
+          `${this.pokemon?.species.getName(this.pokemon.formIndex)}/${this.pokemon?.fusionSpecies?.getName(this.pokemon?.fusionFormIndex)}`,
+          true,
+        ),
+      );
       this.splicedIcon.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
-    if (globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0) {
+    if (
+      globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
+      globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
+    ) {
       this.championRibbon.setVisible(true);
     } else {
       this.championRibbon.setVisible(false);
@@ -371,38 +391,55 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.pokemon.species.getRootSpeciesId()]);
-    const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
+    const candyCropY = 16 - 16 * (currentFriendship / friendshipCap);
 
     if (this.candyShadow.visible) {
-      this.candyShadow.on("pointerover", () => globalScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true));
+      this.candyShadow.on("pointerover", () =>
+        globalScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true),
+      );
       this.candyShadow.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
-    this.candyCountText.setText(`x${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`);
+    this.candyCountText.setText(
+      `x${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`,
+    );
 
     this.candyShadow.setCrop(0, 0, 16, candyCropY);
 
     if (this.friendshipShadow.visible) {
-      this.friendshipShadow.on("pointerover", () => globalScene.ui.showTooltip("", `${i18next.t("pokemonSummary:friendship")}`, true));
+      this.friendshipShadow.on("pointerover", () =>
+        globalScene.ui.showTooltip("", `${i18next.t("pokemonSummary:friendship")}`, true),
+      );
       this.friendshipShadow.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
     this.friendshipText.setText(`${this.pokemon?.friendship || "0"} / 255`);
 
-    this.friendshipShadow.setCrop(0, 0, 16, 16 - (16 * ((this.pokemon?.friendship || 0) / 255)));
+    this.friendshipShadow.setCrop(0, 0, 16, 16 - 16 * ((this.pokemon?.friendship || 0) / 255));
 
     const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
     const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
 
-    this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1, 3);
+    this.shinyIcon.setPositionRelative(
+      this.nameText,
+      this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1,
+      3,
+    );
     this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
     this.shinyIcon.setVisible(this.pokemon.isShiny());
     this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
-      const shinyDescriptor = doubleShiny || baseVariant ?
-        `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : this.pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
-        : "";
-      this.shinyIcon.on("pointerover", () => globalScene.ui.showTooltip("", `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`, true));
+      const shinyDescriptor =
+        doubleShiny || baseVariant
+          ? `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : this.pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
+          : "";
+      this.shinyIcon.on("pointerover", () =>
+        globalScene.ui.showTooltip(
+          "",
+          `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`,
+          true,
+        ),
+      );
       this.shinyIcon.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
@@ -419,14 +456,15 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
 
     switch (this.summaryUiMode) {
-      case SummaryUiMode.DEFAULT:
-        const page = args.length < 2 ? Page.PROFILE : args[2] as Page;
+      case SummaryUiMode.DEFAULT: {
+        const page = args.length < 2 ? Page.PROFILE : (args[2] as Page);
         this.hideMoveEffect(true);
         this.setCursor(page);
         if (args.length > 3) {
           this.selectCallback = args[3];
         }
         break;
+      }
       case SummaryUiMode.LEARN_MOVE:
         this.newMove = args[2] as Move;
         this.moveSelectFunction = args[3] as Function;
@@ -463,7 +501,7 @@ export default class SummaryUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         if (this.pokemon && this.moveCursor < this.pokemon.moveset.length) {
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
-            this.moveSelectFunction && this.moveSelectFunction(this.moveCursor);
+            this.moveSelectFunction?.(this.moveCursor);
           } else {
             if (this.selectedMoveIndex === -1) {
               this.selectedMoveIndex = this.moveCursor;
@@ -474,7 +512,9 @@ export default class SummaryUiHandler extends UiHandler {
                 this.pokemon.moveset[this.selectedMoveIndex] = this.pokemon.moveset[this.moveCursor];
                 this.pokemon.moveset[this.moveCursor] = tempMove;
 
-                const selectedMoveRow = this.moveRowsContainer.getAt(this.selectedMoveIndex) as Phaser.GameObjects.Container;
+                const selectedMoveRow = this.moveRowsContainer.getAt(
+                  this.selectedMoveIndex,
+                ) as Phaser.GameObjects.Container;
                 const switchMoveRow = this.moveRowsContainer.getAt(this.moveCursor) as Phaser.GameObjects.Container;
 
                 this.moveRowsContainer.moveTo(selectedMoveRow, this.moveCursor);
@@ -516,11 +556,10 @@ export default class SummaryUiHandler extends UiHandler {
               this.destroyBlinkCursor();
               success = true;
               break;
-            } else {
-              this.hideMoveSelect();
-              success = true;
-              break;
             }
+            this.hideMoveSelect();
+            success = true;
+            break;
         }
       }
     } else {
@@ -564,10 +603,11 @@ export default class SummaryUiHandler extends UiHandler {
         const pages = Utils.getEnumValues(Page);
         switch (button) {
           case Button.UP:
-          case Button.DOWN:
+          case Button.DOWN: {
             if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
               break;
-            } else if (!fromPartyMode) {
+            }
+            if (!fromPartyMode) {
               break;
             }
             const isDown = button === Button.DOWN;
@@ -576,9 +616,10 @@ export default class SummaryUiHandler extends UiHandler {
             if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
               const page = this.cursor;
               this.clear();
-              this.show([ party[partyMemberIndex + (isDown ? 1 : -1)], this.summaryUiMode, page ]);
+              this.show([party[partyMemberIndex + (isDown ? 1 : -1)], this.summaryUiMode, page]);
             }
             break;
+          }
           case Button.LEFT:
             if (this.cursor) {
               success = this.setCursor(this.cursor - 1);
@@ -605,7 +646,7 @@ export default class SummaryUiHandler extends UiHandler {
     return success || error;
   }
 
-  setCursor(cursor: number, overrideChanged: boolean = false): boolean {
+  setCursor(cursor: number, overrideChanged = false): boolean {
     let changed: boolean = overrideChanged || this.moveCursor !== cursor;
 
     if (this.moveSelect) {
@@ -638,7 +679,7 @@ export default class SummaryUiHandler extends UiHandler {
           loop: -1,
           hold: Utils.fixedInt(2000),
           duration: Utils.fixedInt((moveDescriptionLineCount - 3) * 2000),
-          y: `-=${14.83 * (moveDescriptionLineCount - 3)}`
+          y: `-=${14.83 * (moveDescriptionLineCount - 3)}`,
         });
       }
 
@@ -665,7 +706,7 @@ export default class SummaryUiHandler extends UiHandler {
             }
             this.moveCursorObj.setVisible(true);
           });
-        }
+        },
       });
       if (this.selectedMoveIndex > -1) {
         if (!this.selectedMoveCursorObj) {
@@ -712,7 +753,7 @@ export default class SummaryUiHandler extends UiHandler {
               }
               this.summaryPageTransitionContainer.setVisible(false);
               this.transitioning = false;
-            }
+            },
           });
           this.summaryPageTransitionContainer.setVisible(true);
         } else {
@@ -738,7 +779,7 @@ export default class SummaryUiHandler extends UiHandler {
       });
       pageContainer.removeBetween(1, undefined, true);
     }
-    const pageBg =  (pageContainer.getAt(0) as Phaser.GameObjects.Sprite);
+    const pageBg = pageContainer.getAt(0) as Phaser.GameObjects.Sprite;
     pageBg.setTexture(this.getPageKey(page));
 
     if (this.descriptionScrollTween) {
@@ -747,16 +788,26 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     switch (page) {
-      case Page.PROFILE:
+      case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
-        const trainerText = addBBCodeTextObject(7, 12, `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`, TextStyle.SUMMARY_ALT);
+        const trainerText = addBBCodeTextObject(
+          7,
+          12,
+          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`,
+          TextStyle.SUMMARY_ALT,
+        );
         trainerText.setOrigin(0, 0);
         profileContainer.add(trainerText);
 
-        const trainerIdText = addTextObject(141, 12, `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`, TextStyle.SUMMARY_ALT);
+        const trainerIdText = addTextObject(
+          141,
+          12,
+          `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`,
+          TextStyle.SUMMARY_ALT,
+        );
         trainerIdText.setOrigin(0, 0);
         profileContainer.add(trainerIdText);
 
@@ -764,10 +815,10 @@ export default class SummaryUiHandler extends UiHandler {
         typeLabel.setOrigin(0, 0);
         profileContainer.add(typeLabel);
 
-        const getTypeIcon = (index: number, type: Type, tera: boolean = false) => {
+        const getTypeIcon = (index: number, type: PokemonType, tera = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
           const typeIcon = !tera
-            ? globalScene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), Type[type].toLowerCase())
+            ? globalScene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase())
             : globalScene.add.sprite(xCoord, 42, "type_tera");
           if (tera) {
             typeIcon.setScale(0.5);
@@ -783,39 +834,57 @@ export default class SummaryUiHandler extends UiHandler {
         if (types.length > 1) {
           profileContainer.add(getTypeIcon(1, types[1]));
         }
-        if (this.pokemon?.isTerastallized) {
-          profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
-        }
 
         if (this.pokemon?.getLuck()) {
           const luckLabelText = addTextObject(141, 28, i18next.t("common:luckIndicator"), TextStyle.SUMMARY_ALT);
           luckLabelText.setOrigin(0, 0);
           profileContainer.add(luckLabelText);
 
-          const luckText = addTextObject(141 + luckLabelText.displayWidth + 2, 28, this.pokemon.getLuck().toString(), TextStyle.SUMMARY);
+          const luckText = addTextObject(
+            141 + luckLabelText.displayWidth + 2,
+            28,
+            this.pokemon.getLuck().toString(),
+            TextStyle.SUMMARY,
+          );
           luckText.setOrigin(0, 0);
-          luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
+          luckText.setTint(getVariantTint(Math.min(this.pokemon.getLuck() - 1, 2) as Variant));
           profileContainer.add(luckText);
+        }
+
+        if (
+          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
+          !Utils.isNullOrUndefined(this.pokemon)
+        ) {
+          const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
+          teraIcon.setName("terrastallize-icon");
+          teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());
+          profileContainer.add(teraIcon);
         }
 
         this.abilityContainer = {
           labelImage: globalScene.add.image(0, 0, "summary_profile_ability"),
           ability: this.pokemon?.getAbility(true)!, // TODO: is this bang correct?
           nameText: null,
-          descriptionText: null };
+          descriptionText: null,
+        };
 
-        const allAbilityInfo = [ this.abilityContainer ]; // Creates an array to iterate through
+        const allAbilityInfo = [this.abilityContainer]; // Creates an array to iterate through
         // Only add to the array and set up displaying a passive if it's unlocked
         if (this.pokemon?.hasPassive()) {
           this.passiveContainer = {
             labelImage: globalScene.add.image(0, 0, "summary_profile_passive"),
             ability: this.pokemon.getPassiveAbility(),
             nameText: null,
-            descriptionText: null };
+            descriptionText: null,
+          };
           allAbilityInfo.push(this.passiveContainer);
 
           // Sets up the pixel button prompt image
-          this.abilityPrompt = globalScene.add.image(0, 0, !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
+          this.abilityPrompt = globalScene.add.image(
+            0,
+            0,
+            !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a",
+          );
           this.abilityPrompt.setPosition(8, 43);
           this.abilityPrompt.setVisible(true);
           this.abilityPrompt.setOrigin(0, 0);
@@ -832,14 +901,16 @@ export default class SummaryUiHandler extends UiHandler {
           abilityInfo.nameText.setOrigin(0, 1);
           profileContainer.add(abilityInfo.nameText);
 
-          abilityInfo.descriptionText = addTextObject(7, 69, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 }}); // TODO: is this bang correct?
+          abilityInfo.descriptionText = addTextObject(7, 69, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
+            wordWrap: { width: 1224 },
+          }); // TODO: is this bang correct?
           abilityInfo.descriptionText.setOrigin(0, 0);
           profileContainer.add(abilityInfo.descriptionText);
 
           // Sets up the mask that hides the description text to give an illusion of scrolling
           const descriptionTextMaskRect = globalScene.make.graphics({});
           descriptionTextMaskRect.setScale(6);
-          descriptionTextMaskRect.fillStyle(0xFFFFFF);
+          descriptionTextMaskRect.fillStyle(0xffffff);
           descriptionTextMaskRect.beginPath();
           descriptionTextMaskRect.fillRect(110, 90.5, 206, 31);
 
@@ -858,7 +929,7 @@ export default class SummaryUiHandler extends UiHandler {
               loop: -1,
               hold: Utils.fixedInt(2000),
               duration: Utils.fixedInt((abilityDescriptionLineCount - 2) * 2000),
-              y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`
+              y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`,
             });
           }
         });
@@ -872,19 +943,23 @@ export default class SummaryUiHandler extends UiHandler {
         const nature = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
         const memoString = i18next.t("pokemonSummary:memoString", {
-          metFragment: i18next.t(`pokemonSummary:metFragment.${this.pokemon?.metBiome === -1 ? "apparently" : "normal"}`, {
-            biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
-            level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
-            wave: `${getBBCodeFrag((this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer")), TextStyle.SUMMARY_RED)}${closeFragment}`,
-          }),
-          natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature })
+          metFragment: i18next.t(
+            `pokemonSummary:metFragment.${this.pokemon?.metBiome === -1 ? "apparently" : "normal"}`,
+            {
+              biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
+              level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
+              wave: `${getBBCodeFrag(this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer"), TextStyle.SUMMARY_RED)}${closeFragment}`,
+            },
+          ),
+          natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature }),
         });
 
         const memoText = addBBCodeTextObject(7, 113, String(memoString), TextStyle.WINDOW_ALT);
         memoText.setOrigin(0, 0);
         profileContainer.add(memoText);
         break;
-      case Page.STATS:
+      }
+      case Page.STATS: {
         this.statsContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(this.statsContainer);
         this.permStatsContainer = globalScene.add.container(27, 56);
@@ -900,17 +975,32 @@ export default class SummaryUiHandler extends UiHandler {
 
           const natureStatMultiplier = getNatureStatMultiplier(this.pokemon?.getNature()!, s); // TODO: is this bang correct?
 
-          const statLabel = addTextObject(115 * colIndex + (colIndex === 1 ?  5 : 0), 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
-          const ivLabel = addTextObject(115 * colIndex + (colIndex === 1 ?  5 : 0), 16 * rowIndex, statName, this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY);
+          const statLabel = addTextObject(
+            115 * colIndex + (colIndex === 1 ? 5 : 0),
+            16 * rowIndex,
+            statName,
+            natureStatMultiplier === 1
+              ? TextStyle.SUMMARY
+              : natureStatMultiplier > 1
+                ? TextStyle.SUMMARY_PINK
+                : TextStyle.SUMMARY_BLUE,
+          );
+          const ivLabel = addTextObject(
+            115 * colIndex + (colIndex === 1 ? 5 : 0),
+            16 * rowIndex,
+            statName,
+            this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY,
+          );
 
           statLabel.setOrigin(0.5, 0);
           ivLabel.setOrigin(0.5, 0);
           this.permStatsContainer.add(statLabel);
           this.ivContainer.add(ivLabel);
 
-          const statValueText = stat !== Stat.HP
-            ? Utils.formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
-            : `${Utils.formatStat(this.pokemon?.hp!, true)}/${Utils.formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
+          const statValueText =
+            stat !== Stat.HP
+              ? Utils.formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
+              : `${Utils.formatStat(this.pokemon?.hp!, true)}/${Utils.formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
           const ivText = `${this.pokemon?.ivs[stat]}/31`;
 
           const statValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
@@ -922,9 +1012,12 @@ export default class SummaryUiHandler extends UiHandler {
         });
         this.ivContainer.setVisible(false);
 
-        const itemModifiers = (globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && m.pokemonId === this.pokemon?.id, this.playerParty) as PokemonHeldItemModifier[])
-          .sort(modifierSortFunc);
+        const itemModifiers = (
+          globalScene.findModifiers(
+            m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.pokemon?.id,
+            this.playerParty,
+          ) as PokemonHeldItemModifier[]
+        ).sort(modifierSortFunc);
 
         itemModifiers.forEach((item, i) => {
           const icon = item.getIcon(true);
@@ -956,9 +1049,8 @@ export default class SummaryUiHandler extends UiHandler {
         expText.setOrigin(1, 0);
         this.statsContainer.add(expText);
 
-        const nextLvExp = pkmLvl < globalScene.getMaxExpLevel()
-          ? getLevelTotalExp(pkmLvl + 1, pkmSpeciesGrowthRate) - pkmExp
-          : 0;
+        const nextLvExp =
+          pkmLvl < globalScene.getMaxExpLevel() ? getLevelTotalExp(pkmLvl + 1, pkmSpeciesGrowthRate) - pkmExp : 0;
         const nextLvExpText = addTextObject(208, 128, nextLvExp.toString(), TextStyle.WINDOW_ALT);
         nextLvExpText.setOrigin(1, 0);
         this.statsContainer.add(nextLvExpText);
@@ -969,20 +1061,25 @@ export default class SummaryUiHandler extends UiHandler {
 
         const expMaskRect = globalScene.make.graphics({});
         expMaskRect.setScale(6);
-        expMaskRect.fillStyle(0xFFFFFF);
+        expMaskRect.fillStyle(0xffffff);
         expMaskRect.beginPath();
         expMaskRect.fillRect(140 + pageContainer.x, 145 + pageContainer.y + 21, Math.floor(expRatio * 64), 3);
 
         const expMask = expMaskRect.createGeometryMask();
 
         expOverlay.setMask(expMask);
-        this.abilityPrompt = globalScene.add.image(0, 0, !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a");
+        this.abilityPrompt = globalScene.add.image(
+          0,
+          0,
+          !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a",
+        );
         this.abilityPrompt.setPosition(8, 47);
         this.abilityPrompt.setVisible(true);
         this.abilityPrompt.setOrigin(0, 0);
         this.statsContainer.add(this.abilityPrompt);
         break;
-      case Page.MOVES:
+      }
+      case Page.MOVES: {
         this.movesContainer = globalScene.add.container(5, -pageBg.height + 26);
         pageContainer.add(this.movesContainer);
 
@@ -994,8 +1091,14 @@ export default class SummaryUiHandler extends UiHandler {
         extraRowOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowOverlay);
 
-        const extraRowText = addTextObject(35, 0, this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.newMove ? this.newMove.name : i18next.t("pokemonSummary:cancel"),
-          this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY);
+        const extraRowText = addTextObject(
+          35,
+          0,
+          this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.newMove
+            ? this.newMove.name
+            : i18next.t("pokemonSummary:cancel"),
+          this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY,
+        );
         extraRowText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowText);
 
@@ -1005,7 +1108,7 @@ export default class SummaryUiHandler extends UiHandler {
           if (this.newMove && this.pokemon) {
             const spriteKey = Utils.getLocalizedSpriteKey("types");
             const moveType = this.pokemon.getMoveType(this.newMove);
-            const newMoveTypeIcon = globalScene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+            const newMoveTypeIcon = globalScene.add.sprite(0, 0, spriteKey, PokemonType[moveType].toLowerCase());
             newMoveTypeIcon.setOrigin(0, 1);
             this.extraMoveRowContainer.add(newMoveTypeIcon);
           }
@@ -1023,14 +1126,15 @@ export default class SummaryUiHandler extends UiHandler {
         this.movesContainer.add(this.moveRowsContainer);
 
         for (let m = 0; m < 4; m++) {
-          const move: PokemonMove | null = this.pokemon && this.pokemon.moveset.length > m ? this.pokemon?.moveset[m] : null;
+          const move: PokemonMove | null =
+            this.pokemon && this.pokemon.moveset.length > m ? this.pokemon?.moveset[m] : null;
           const moveRowContainer = globalScene.add.container(0, 16 * m);
           this.moveRowsContainer.add(moveRowContainer);
 
           if (move && this.pokemon) {
             const spriteKey = Utils.getLocalizedSpriteKey("types");
             const moveType = this.pokemon.getMoveType(move.getMove());
-            const typeIcon = globalScene.add.sprite(0, 0, spriteKey, Type[moveType].toLowerCase());
+            const typeIcon = globalScene.add.sprite(0, 0, spriteKey, PokemonType[moveType].toLowerCase());
             typeIcon.setOrigin(0, 1);
             moveRowContainer.add(typeIcon);
           }
@@ -1055,12 +1159,12 @@ export default class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(ppText);
         }
 
-        this.moveDescriptionText = addTextObject(2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 }});
+        this.moveDescriptionText = addTextObject(2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 } });
         this.movesContainer.add(this.moveDescriptionText);
 
         const moveDescriptionTextMaskRect = globalScene.make.graphics({});
         moveDescriptionTextMaskRect.setScale(6);
-        moveDescriptionTextMaskRect.fillStyle(0xFFFFFF);
+        moveDescriptionTextMaskRect.fillStyle(0xffffff);
         moveDescriptionTextMaskRect.beginPath();
         moveDescriptionTextMaskRect.fillRect(112, 130, 202, 46);
 
@@ -1068,6 +1172,7 @@ export default class SummaryUiHandler extends UiHandler {
 
         this.moveDescriptionText.setMask(moveDescriptionTextMask);
         break;
+      }
     }
   }
 
@@ -1080,7 +1185,7 @@ export default class SummaryUiHandler extends UiHandler {
       targets: this.statusContainer,
       x: 0,
       duration: instant ? 0 : 250,
-      ease: "Sine.easeOut"
+      ease: "Sine.easeOut",
     });
   }
 
@@ -1093,7 +1198,7 @@ export default class SummaryUiHandler extends UiHandler {
       targets: this.statusContainer,
       x: -106,
       duration: instant ? 0 : 250,
-      ease: "Sine.easeIn"
+      ease: "Sine.easeIn",
     });
   }
 
@@ -1104,7 +1209,8 @@ export default class SummaryUiHandler extends UiHandler {
 
     if (this.moveCursor < 4 && this.pokemon && this.moveCursor < this.pokemon.moveset.length) {
       return this.pokemon.moveset[this.moveCursor]!.getMove(); // TODO: is this bang correct?
-    } else if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.moveCursor === 4) {
+    }
+    if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.moveCursor === 4) {
       return this.newMove;
     }
     return null;
@@ -1120,7 +1226,7 @@ export default class SummaryUiHandler extends UiHandler {
 
   hideMoveSelect() {
     if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
-      this.moveSelectFunction && this.moveSelectFunction(4);
+      this.moveSelectFunction?.(4);
       return;
     }
 
@@ -1156,7 +1262,7 @@ export default class SummaryUiHandler extends UiHandler {
       targets: this.moveEffectContainer,
       x: 6,
       duration: instant ? 0 : 250,
-      ease: "Sine.easeOut"
+      ease: "Sine.easeOut",
     });
   }
 
@@ -1169,7 +1275,7 @@ export default class SummaryUiHandler extends UiHandler {
       targets: this.moveEffectContainer,
       x: 106,
       duration: instant ? 0 : 250,
-      ease: "Sine.easeIn"
+      ease: "Sine.easeIn",
     });
   }
 

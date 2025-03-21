@@ -299,6 +299,7 @@ const seasonalSplashMessages: Season[] = [
   {
     name: "Winter Holiday",
     start: "12-01",
+
     end: "12-31",
     messages: [
       "winterHoliday.happyHolidays",
@@ -324,7 +325,7 @@ const seasonalSplashMessages: Season[] = [
 //#endregion
 
 export function getSplashMessages(): string[] {
-  const splashMessages: string[] = [ ...commonSplashMessages ];
+  const splashMessages: string[] = [...commonSplashMessages];
   console.log("use seasonal splash messages", USE_SEASONAL_SPLASH_MESSAGES);
   if (USE_SEASONAL_SPLASH_MESSAGES) {
     // add seasonal splash messages if the season is active
@@ -335,13 +336,13 @@ export function getSplashMessages(): string[] {
 
       if (now >= startDate && now <= endDate) {
         console.log(`Adding ${messages.length} ${name} splash messages (weight: x${SEASONAL_WEIGHT_MULTIPLIER})`);
-        messages.forEach((message) => {
+        for (const message of messages) {
           const weightedMessage = Array(SEASONAL_WEIGHT_MULTIPLIER).fill(message);
           splashMessages.push(...weightedMessage);
-        });
+        }
       }
     }
   }
 
-  return splashMessages.map((message) => `splashMessages:${message}`);
+  return splashMessages.map(message => `splashMessages:${message}`);
 }

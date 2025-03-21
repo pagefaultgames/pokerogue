@@ -1,10 +1,21 @@
 import type BattleScene from "#app/battle-scene";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { getEncounterText, queueEncounterMessage, showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { getHighestLevelPlayerPokemon, getLowestLevelPlayerPokemon, getRandomPlayerPokemon, getRandomSpeciesByStarterCost, koPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import {
+  getEncounterText,
+  queueEncounterMessage,
+  showEncounterDialogue,
+  showEncounterText,
+} from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import {
+  getHighestLevelPlayerPokemon,
+  getLowestLevelPlayerPokemon,
+  getRandomPlayerPokemon,
+  getRandomSpeciesByStarterCost,
+  koPlayerPokemon,
+} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Type } from "#enums/type";
+import { PokemonType } from "#enums/pokemon-type";
 import { MessagePhase } from "#app/phases/message-phase";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
@@ -31,7 +42,7 @@ describe("Mystery Encounter Utils", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    initSceneWithoutEncounterPhase(game.scene, [ Species.ARCEUS, Species.MANAPHY ]);
+    initSceneWithoutEncounterPhase(game.scene, [Species.ARCEUS, Species.MANAPHY]);
   });
 
   describe("getRandomPlayerPokemon", () => {
@@ -214,7 +225,7 @@ describe("Mystery Encounter Utils", () => {
     });
 
     it("gets species for a starter tier range", () => {
-      const result = getRandomSpeciesByStarterCost([ 5, 8 ]);
+      const result = getRandomSpeciesByStarterCost([5, 8]);
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
@@ -223,15 +234,23 @@ describe("Mystery Encounter Utils", () => {
     });
 
     it("excludes species from search", () => {
-      // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
-      const result = getRandomSpeciesByStarterCost(9, [ Species.KORAIDON, Species.MIRAIDON, Species.ARCEUS, Species.RAYQUAZA, Species.KYOGRE, Species.GROUDON ]);
+      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      const result = getRandomSpeciesByStarterCost(9, [
+        Species.KYOGRE,
+        Species.GROUDON,
+        Species.RAYQUAZA,
+        Species.ARCEUS,
+        Species.KORAIDON,
+        Species.MIRAIDON,
+        Species.TERAPAGOS,
+      ]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.ZACIAN);
     });
 
     it("gets species of specified types", () => {
-      // Only 9 tiers are: Koraidon, Miraidon, Arceus, Rayquaza, Kyogre, Groudon, Zacian
-      const result = getRandomSpeciesByStarterCost(9, undefined, [ Type.GROUND ]);
+      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      const result = getRandomSpeciesByStarterCost(9, undefined, [PokemonType.GROUND]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.GROUDON);
     });
@@ -288,7 +307,14 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showText");
 
       await showEncounterText("mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", null, expect.any(Function), 0, true, null);
+      expect(spy).toHaveBeenCalledWith(
+        "mysteryEncounter:unit_test_dialogue",
+        null,
+        expect.any(Function),
+        0,
+        true,
+        null,
+      );
     });
   });
 
@@ -299,8 +325,13 @@ describe("Mystery Encounter Utils", () => {
       const spy = vi.spyOn(game.scene.ui, "showDialogue");
 
       await showEncounterDialogue("mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue");
-      expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", "mysteryEncounter:unit_test_dialogue", null, expect.any(Function), 0);
+      expect(spy).toHaveBeenCalledWith(
+        "mysteryEncounter:unit_test_dialogue",
+        "mysteryEncounter:unit_test_dialogue",
+        null,
+        expect.any(Function),
+        0,
+      );
     });
   });
 });
-
