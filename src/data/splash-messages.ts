@@ -207,7 +207,13 @@ const commonSplashMessages = [
   "isThisThingOn",
   "needsMoreTesting",
   "whoChecksStatChanges",
-  "whenTwoTrainerseyesMeet
+  "whenTwoTrainerseyesMeet",
+  "notOfficiallyOnSteam",
+  "fiftyFifty",
+  "metaNotIncluded",
+  "bornToBeAWinner",
+  "onARollout",
+  "itsAlwaysNightDeepInTheAbyss"
 ];
 
 //#region Seasonal Messages
@@ -242,6 +248,8 @@ const seasonalSplashMessages: Season[] = [
     messages: [
       "aprilFools.battlesOne",
       "aprilFools.aprilFools",
+      "aprilFools.removedPokemon",
+      "aprilFools.helloKyleAmber",
       "aprilFools.gotcha",
       "aprilFools.alsoTryPokerogueTwo",
       "aprilFools.nowWithSameScumCountermeasures",
@@ -252,20 +260,26 @@ const seasonalSplashMessages: Season[] = [
       "aprilFools.newLightType",
       "aprilFools.removedMegas",
       "aprilFools.nerfedYourFavorites",
-      "aprilFools.removedPokemon",
       "aprilFools.grrr",
       "aprilFools.enabledEternatusPassiveGoodLuck",
       "aprilFools.theDarkestDaySoundsLikeAFutureProblem",
       "aprilFools.tmShopWhen",
       "aprilFools.whoIsFinn",
-      "aprilFools.helloKyleAmber",
       "aprilFools.watchOutForShadowPokemon",
       "aprilFools.nowWithDarkTypeLuxray",
       "aprilFools.onlyOnPokerogueNetAGAIN",
       "aprilFools.noFreeVouchers",
       "aprilFools.altffourAchievementPoints",
       "aprilFools.rokePogue",
-      "aprilFools.readMe"
+      "aprilFools.readMe",
+      "aprilFools.winningNotIncluded",
+      "aprilFools.timeForYourSoloUnownRun",
+      "aprilFools.nowARealTimeStrategyGame",
+      "aprilFools.nowWithQuickTimeEncounters",
+      "aprilFools.timeYourInputsForHigherCatchrate",
+      "aprilFools.certifiedButtonSimulator",
+      "aprilFools.folksTodayIsInsane",
+      "aprilFools.iHopeYouGetSuckerPunched"
     ],
   },
   {
