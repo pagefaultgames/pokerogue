@@ -64,9 +64,6 @@ import {
   PostDamageForceSwitchAbAttr,
   PostItemLostAbAttr,
   ReverseDrainAbAttr,
-  UncopiableAbilityAbAttr,
-  UnsuppressableAbilityAbAttr,
-  UnswappableAbilityAbAttr,
   UserFieldMoveTypePowerBoostAbAttr,
   VariableMovePowerAbAttr,
   WonderSkinAbAttr,
@@ -6746,7 +6743,7 @@ export class RandomMoveAttr extends CallMoveAttr {
    * This function exists solely to allow tests to override the randomly selected move by mocking this function.
    */
   public getMoveOverride(): Moves | null {
-    return null;
+    return Moves.HOLD_HANDS;
   }
 
   /**
@@ -7383,7 +7380,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !(this.selfTarget ? user : target).getAbility().hasAttr(UnswappableAbilityAbAttr) && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+    return (user, target, move) => (this.selfTarget ? user : target).getAbility().isReplaceable && (this.selfTarget ? user : target).getAbility().id !== this.ability;
   }
 }
 
@@ -7415,9 +7412,9 @@ export class AbilityCopyAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      let ret = !target.getAbility().hasAttr(UncopiableAbilityAbAttr) && !user.getAbility().hasAttr(UnswappableAbilityAbAttr);
+      let ret = target.getAbility().isCopiable && user.getAbility().isReplaceable;
       if (this.copyToPartner && globalScene.currentBattle?.double) {
-        ret = ret && (!user.getAlly().hp || !user.getAlly().getAbility().hasAttr(UnswappableAbilityAbAttr));
+        ret = ret && (!user.getAlly().hp || user.getAlly().getAbility().isReplaceable);
       } else {
         ret = ret && user.getAbility().id !== target.getAbility().id;
       }
@@ -7446,7 +7443,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.getAbility().hasAttr(UncopiableAbilityAbAttr) && !target.getAbility().hasAttr(UnswappableAbilityAbAttr) && user.getAbility().id !== target.getAbility().id;
+    return (user, target, move) => user.getAbility().isCopiable && target.getAbility().isReplaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
@@ -7469,7 +7466,7 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.getAbility().hasAttr(UnswappableAbilityAbAttr) && !target.getAbility().hasAttr(UnswappableAbilityAbAttr);
+    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().isReplaceable && pkmn.getAbility().isCopiable);
   }
 }
 
@@ -7499,7 +7496,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
   /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !target.summonData.abilitySuppressed;
+    return (user, target, move) => target.getAbility().isSuppressable && !target.summonData.abilitySuppressed;
   }
 }
 
