@@ -1000,10 +1000,7 @@ export class MetronomeChallenge extends Challenge {
   }
 
   override applyMovesetModify(pokemon: Pokemon): boolean {
-    pokemon.setMove(0, Moves.METRONOME);
-    pokemon.setMove(1, Moves.NONE);
-    pokemon.setMove(2, Moves.NONE);
-    pokemon.setMove(3, Moves.NONE);
+    pokemon.moveset = [new PokemonMove(Moves.METRONOME)];
     return true;
   }
 
