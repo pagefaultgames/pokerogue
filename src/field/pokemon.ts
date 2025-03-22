@@ -161,7 +161,6 @@ import {
   applyPreAttackAbAttrs,
   applyPreDefendAbAttrs,
   applyPreSetStatusAbAttrs,
-  UnsuppressableAbilityAbAttr,
   NoFusionAbilityAbAttr,
   MultCritAbAttr,
   IgnoreTypeImmunityAbAttr,
@@ -2166,7 +2165,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (
       this.summonData?.abilitySuppressed &&
-      !ability.hasAttr(UnsuppressableAbilityAbAttr)
+      ability.isSuppressable
     ) {
       return false;
     }
@@ -2189,7 +2188,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       // (Balance decided that the other ability of a neutralizing gas pokemon should not be neutralized)
       // If the ability itself is neutralizing gas, don't suppress it (handled through arena tag)
       const unsuppressable =
-        ability.hasAttr(UnsuppressableAbilityAbAttr) ||
+        !ability.isSuppressable ||
         thisAbilitySuppressing ||
         (hasSuppressingAbility && !suppressAbilitiesTag.shouldApplyToSelf());
       if (!unsuppressable) {
