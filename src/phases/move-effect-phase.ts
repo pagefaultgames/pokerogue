@@ -653,7 +653,7 @@ export class MoveEffectPhase extends PokemonPhase {
       this.applyOnHitEffects(user, target, firstHit, lastHit, firstTarget);
       this.applyOnGetHitAbEffects(user, target, hitResult);
       applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move.getMove(), hitResult);
-      if (this.move.getMove() instanceof AttackMove) {
+      if (this.move.getMove() instanceof AttackMove && hitResult !== HitResult.STATUS) {
         globalScene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
       }
     }
