@@ -16,7 +16,6 @@ export const invalidMetronomeMoves: ReadonlySet<Moves> = new Set([
   Moves.DETECT,
   Moves.ENDURE,
   Moves.FEINT,
-  Moves.FLEUR_CANNON,
   Moves.FOCUS_PUNCH,
   Moves.FOLLOW_ME,
   Moves.HELPING_HAND,
