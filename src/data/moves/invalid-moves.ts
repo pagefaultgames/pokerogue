@@ -176,7 +176,7 @@ export const invalidCopycatMoves: ReadonlySet<Moves> = new Set([
 ]);
 
 export const invalidMirrorMoveMoves: ReadonlySet<Moves> = new Set([
-  Moces.ACUPRESSURE,
+  Moves.ACUPRESSURE,
   Moves.AFTER_YOU,
   Moves.AROMATIC_MIST,
   Moves.BEAK_BLAST,
