@@ -6966,7 +6966,8 @@ export class CopyMoveAttr extends CallMoveAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       if (this.mirrorMove) {
-        return target.getMoveHistory().length !== 0;
+        const lastMove = target.getLastXMoves()[0]?.move;
+        return !!lastMove && !this.invalidMoves.has(lastMove);
       } else {
         const lastMove = globalScene.currentBattle.lastMove;
         return lastMove !== undefined && !this.invalidMoves.has(lastMove);
