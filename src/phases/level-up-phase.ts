@@ -6,8 +6,9 @@ import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#app/system/achv";
-import { NumberHolder } from "#app/utils";
+import { BooleanHolder, NumberHolder } from "#app/utils";
 import i18next from "i18next";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   protected lastLevel: number;
@@ -63,9 +64,13 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   public override end() {
     if (this.lastLevel < 100) {
       // this feels like an unnecessary optimization
-      const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
-      for (const lm of levelMoves) {
-        globalScene.unshiftPhase(new LearnMovePhase(this.partyMemberIndex, lm[1]));
+      const skipMoveLearn = new BooleanHolder(false);
+      applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, skipMoveLearn);
+      if (!skipMoveLearn.value) {
+        const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
+        for (const lm of levelMoves) {
+          globalScene.unshiftPhase(new LearnMovePhase(this.partyMemberIndex, lm[1]));
+        }
       }
     }
     if (!this.pokemon.pauseEvolutions) {

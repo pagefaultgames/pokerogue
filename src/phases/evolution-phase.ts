@@ -17,6 +17,8 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EVOLVE_MOVE } from "#app/data/balance/pokemon-level-moves";
+import { BooleanHolder } from "#app/utils";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
@@ -343,16 +345,20 @@ export class EvolutionPhase extends Phase {
       this.evolutionHandler.canCancel = false;
 
       this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => {
-        const learnSituation: LearnMoveSituation = this.fusionSpeciesEvolved
-          ? LearnMoveSituation.EVOLUTION_FUSED
-          : this.pokemon.fusionSpecies
-            ? LearnMoveSituation.EVOLUTION_FUSED_BASE
-            : LearnMoveSituation.EVOLUTION;
-        const levelMoves = this.pokemon
-          .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
-          .filter(lm => lm[0] === EVOLVE_MOVE);
-        for (const lm of levelMoves) {
-          globalScene.unshiftPhase(new LearnMovePhase(globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]));
+        const skipMoveLearn = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, skipMoveLearn);
+        if (!skipMoveLearn.value) {
+          const learnSituation: LearnMoveSituation = this.fusionSpeciesEvolved
+            ? LearnMoveSituation.EVOLUTION_FUSED
+            : this.pokemon.fusionSpecies
+              ? LearnMoveSituation.EVOLUTION_FUSED_BASE
+              : LearnMoveSituation.EVOLUTION;
+          const levelMoves = this.pokemon
+            .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
+            .filter(lm => lm[0] === EVOLVE_MOVE);
+          for (const lm of levelMoves) {
+            globalScene.unshiftPhase(new LearnMovePhase(globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]));
+          }
         }
         globalScene.unshiftPhase(new EndEvolutionPhase());
 

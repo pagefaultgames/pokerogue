@@ -106,6 +106,7 @@ import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import { getModifierTierTextTint } from "#app/ui/text";
 import {
+  BooleanHolder,
   formatMoney,
   getEnumKeys,
   getEnumValues,
@@ -126,6 +127,7 @@ import type { PermanentStat, TempBattleStat } from "#enums/stat";
 import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -2028,6 +2030,8 @@ export const modifierTypes = {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
         return new BerryModifierType(pregenArgs[0] as BerryType);
       }
+      const noMoveLearning = new BooleanHolder(false);
+      applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning); // Yeah this is kind of dumb
       const berryTypes = getEnumValues(BerryType);
       let randBerryType: BerryType;
       const rand = randSeedInt(12);
@@ -2035,7 +2039,7 @@ export const modifierTypes = {
         randBerryType = BerryType.SITRUS;
       } else if (rand < 4) {
         randBerryType = BerryType.LUM;
-      } else if (rand < 6) {
+      } else if (rand < 6 && !noMoveLearning.value) {
         randBerryType = BerryType.LEPPA;
       } else {
         randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];
@@ -2464,14 +2468,30 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.LURE, lureWeightFunc(10, 2)),
     new WeightedModifierType(modifierTypes.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
-    new WeightedModifierType(modifierTypes.TM_COMMON, 2),
+    new WeightedModifierType(
+      modifierTypes.TM_COMMON,
+      () => {
+        const noMoveLearning = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning);
+        return noMoveLearning.value ? 0 : 2;
+      },
+      2,
+    ),
   ].map(m => {
     m.setTier(ModifierTier.COMMON);
     return m;
   }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), 6),
-    new WeightedModifierType(modifierTypes.PP_UP, 2),
+    new WeightedModifierType(
+      modifierTypes.PP_UP,
+      () => {
+        const noMoveLearning = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, noMoveLearning);
+        return noMoveLearning.value ? 0 : 2;
+      },
+      2,
+    ),
     new WeightedModifierType(
       modifierTypes.FULL_HEAL,
       (party: Pokemon[]) => {
@@ -2567,6 +2587,11 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(
       modifierTypes.ELIXIR,
       (party: Pokemon[]) => {
+        const noMoveLearning = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, noMoveLearning);
+        if (noMoveLearning.value) {
+          return 0;
+        }
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -2586,6 +2611,11 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(
       modifierTypes.MAX_ELIXIR,
       (party: Pokemon[]) => {
+        const noMoveLearning = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, noMoveLearning);
+        if (noMoveLearning.value) {
+          return 0;
+        }
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -2618,11 +2648,21 @@ const modifierPool: ModifierPool = {
       2,
     ),
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, 2),
-    new WeightedModifierType(modifierTypes.TM_GREAT, 3),
+    new WeightedModifierType(
+      modifierTypes.TM_GREAT,
+      () => {
+        const noMoveLearning = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning);
+        return noMoveLearning.value ? 0 : 3;
+      },
+      3,
+    ),
     new WeightedModifierType(
       modifierTypes.MEMORY_MUSHROOM,
       (party: Pokemon[]) => {
-        if (!party.find(p => p.getLearnableLevelMoves().length)) {
+        const noMoveLearning = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning); // Yeah this is kind of dumb
+        if (noMoveLearning.value || !party.find(p => p.getLearnableLevelMoves().length)) {
           return 0;
         }
         const highestPartyLevel = party
@@ -2668,7 +2708,15 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), 15),
     new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
-    new WeightedModifierType(modifierTypes.PP_MAX, 3),
+    new WeightedModifierType(
+      modifierTypes.PP_MAX,
+      () => {
+        const noMoveLearning = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, noMoveLearning); // Yeah this is kind of dumb
+        return noMoveLearning.value ? 0 : 3;
+      },
+      3,
+    ),
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(
       modifierTypes.RARE_EVOLUTION_ITEM,
@@ -2813,7 +2861,15 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
-    new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
+    new WeightedModifierType(
+      modifierTypes.TM_ULTRA,
+      () => {
+        const noMoveLearning = new BooleanHolder(false);
+        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning); // Yeah this is kind of dumb
+        return noMoveLearning.value ? 0 : 11;
+      },
+      11,
+    ),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.IV_SCANNER, skipInLastClassicWaveOrDefault(4)),

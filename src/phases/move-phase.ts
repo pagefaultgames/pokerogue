@@ -43,13 +43,14 @@ import { MoveChargePhase } from "#app/phases/move-charge-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { NumberHolder } from "#app/utils";
+import { BooleanHolder, NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
@@ -104,11 +105,14 @@ export class MovePhase extends BattlePhase {
   ) {
     super();
 
+    const ignorePPChallenge = new BooleanHolder(ignorePp);
+    applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, ignorePPChallenge);
+
     this.pokemon = pokemon;
     this.targets = targets;
     this.move = move;
     this.followUp = followUp;
-    this.ignorePp = ignorePp;
+    this.ignorePp = ignorePPChallenge.value;
     this.reflected = reflected;
     this.forcedLast = forcedLast;
   }

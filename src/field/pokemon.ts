@@ -7024,14 +7024,12 @@ export class EnemyPokemon extends Pokemon {
               new PokemonMove(Moves.FLAMETHROWER),
               new PokemonMove(Moves.COSMIC_POWER),
             ];
-        if (globalScene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
-          this.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
-        }
         break;
       default:
         super.generateAndPopulateMoveset();
         break;
     }
+    applyChallenges(globalScene.gameMode, ChallengeType.MOVESET_MODIFY, this);
   }
 
   /**

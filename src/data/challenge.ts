@@ -16,7 +16,7 @@ import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
-import type { Moves } from "#enums/moves";
+import { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
@@ -93,6 +93,18 @@ export enum ChallengeType {
    * Modifies what the pokemon stats for Flip Stat Mode.
    */
   FLIP_STAT,
+  /**
+   * Modifies movesets of generated enemy mons
+   */
+  MOVESET_MODIFY,
+  /**
+   * Prevents the learning of moves
+   */
+  NO_MOVE_LEARNING,
+  /**
+   * Negates PP Usage
+   */
+  NO_PP_USE,
 }
 
 /**
@@ -431,6 +443,18 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyFlipStat(_pokemon: Pokemon, _baseStats: number[]) {
+    return false;
+  }
+
+  applyMovesetModify(_pokemon: Pokemon) {
+    return false;
+  }
+
+  applyNoMoveLearning(_valid: Utils.BooleanHolder) {
+    return false;
+  }
+
+  applyNoPPUsage(_valid: Utils.BooleanHolder) {
     return false;
   }
 }
@@ -917,6 +941,14 @@ export class InverseBattleChallenge extends Challenge {
     return 0;
   }
 
+  override applyMovesetModify(pokemon: Pokemon): boolean {
+    if (pokemon.species.speciesId === Species.ETERNATUS) {
+      pokemon.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
+      return true;
+    }
+    return false;
+  }
+
   applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
     if (effectiveness.value < 1) {
       effectiveness.value = 2;
@@ -952,6 +984,41 @@ export class FlipStatChallenge extends Challenge {
 
   static loadChallenge(source: FlipStatChallenge | any): FlipStatChallenge {
     const newChallenge = new FlipStatChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+export class MetronomeChallenge extends Challenge {
+  constructor() {
+    super(Challenges.METRONOME, 1);
+  }
+
+  override applyStarterModify(_pokemon: Pokemon): boolean {
+    return this.applyMovesetModify(_pokemon);
+  }
+
+  override applyMovesetModify(pokemon: Pokemon): boolean {
+    pokemon.setMove(0, Moves.METRONOME);
+    pokemon.setMove(1, Moves.NONE);
+    pokemon.setMove(2, Moves.NONE);
+    pokemon.setMove(3, Moves.NONE);
+    return true;
+  }
+
+  override applyNoMoveLearning(valid: Utils.BooleanHolder): boolean {
+    valid.value = true;
+    return true;
+  }
+
+  override applyNoPPUsage(valid: Utils.BooleanHolder): boolean {
+    valid.value = true;
+    return true;
+  }
+
+  static loadChallenge(source: MetronomeChallenge | any): MetronomeChallenge {
+    const newChallenge = new MetronomeChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
     return newChallenge;
@@ -1216,6 +1283,24 @@ export function applyChallenges(
   baseStats: number[],
 ): boolean;
 
+export function applyChallenges(
+  gameMode: GameMode,
+  challengeType: ChallengeType.MOVESET_MODIFY,
+  pokemon: Pokemon,
+): boolean;
+
+export function applyChallenges(
+  gameMode: GameMode,
+  challengeType: ChallengeType.NO_MOVE_LEARNING,
+  valid: Utils.BooleanHolder,
+): boolean;
+
+export function applyChallenges(
+  gameMode: GameMode,
+  challengeType: ChallengeType.NO_PP_USE,
+  valid: Utils.BooleanHolder,
+): boolean;
+
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -1263,6 +1348,15 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         case ChallengeType.FLIP_STAT:
           ret ||= c.applyFlipStat(args[0], args[1]);
           break;
+        case ChallengeType.MOVESET_MODIFY:
+          ret ||= c.applyMovesetModify(args[0]);
+          break;
+        case ChallengeType.NO_MOVE_LEARNING:
+          ret ||= c.applyNoMoveLearning(args[0]);
+          break;
+        case ChallengeType.NO_PP_USE:
+          ret ||= c.applyNoPPUsage(args[0]);
+          break;
       }
     }
   });
@@ -1290,6 +1384,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return InverseBattleChallenge.loadChallenge(source);
     case Challenges.FLIP_STAT:
       return FlipStatChallenge.loadChallenge(source);
+    case Challenges.METRONOME:
+      return MetronomeChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -1303,5 +1399,6 @@ export function initChallenges() {
     new FreshStartChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
+    new MetronomeChallenge(),
   );
 }
