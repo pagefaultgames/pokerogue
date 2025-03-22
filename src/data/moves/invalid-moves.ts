@@ -202,7 +202,6 @@ export const invalidMirrorMoveMoves: ReadonlySet<Moves> = new Set([
   Moves.GRAVITY,
   Moves.GUARD_SPLIT,
   Moves.HAIL,
-  Moves.HAPPY_HOUR,
   Moves.HAZE,
   Moves.HEAL_PULSE,
   Moves.HELPING_HAND,
