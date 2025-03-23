@@ -5580,7 +5580,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.resetBattleSummonData();
     if (this.summonDataPrimer) {
-      for (const k of Object.keys(this.summonData)) {
+      for (const k of Object.keys(this.summonDataPrimer)) {
         if (this.summonDataPrimer[k]) {
           this.summonData[k] = this.summonDataPrimer[k];
         }
