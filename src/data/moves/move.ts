@@ -1647,7 +1647,7 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true, true);
+    user.damageAndUpdate(recoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
     globalScene.queueMessage(i18next.t("moveTriggers:hitWithRecoil", { pokemonName: getPokemonNameWithAffix(user) }));
     user.turnData.damageTaken += recoilDamage;
 
@@ -1679,7 +1679,7 @@ export class SacrificialAttr extends MoveEffectAttr {
    * @returns true if the function succeeds
    **/
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
+    user.damageAndUpdate(user.hp, { result: HitResult.INDIRECT, ignoreSegments: true });
 	  user.turnData.damageTaken += user.hp;
 
     return true;
@@ -1717,7 +1717,7 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
       return false;
     }
 
-    user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
+    user.damageAndUpdate(user.hp, { result: HitResult.INDIRECT, ignoreSegments: true });
     user.turnData.damageTaken += user.hp;
 
     return true;
@@ -1759,7 +1759,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value) {
-      user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), HitResult.OTHER, false, true, true);
+      user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), { result: HitResult.INDIRECT, ignoreSegments: true });
       globalScene.queueMessage(i18next.t("moveTriggers:cutHpPowerUpMove", { pokemonName: getPokemonNameWithAffix(user) })); // Queue recoil message
     }
     return true;
@@ -1806,7 +1806,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
     }
 
     const damageTaken = this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost);
-    user.damageAndUpdate(damageTaken, HitResult.OTHER, false, true, true);
+    user.damageAndUpdate(damageTaken, { result: HitResult.INDIRECT, ignoreSegments: true, ignoreFaintPhase: true });
     user.addTag(BattlerTagType.SUBSTITUTE, 0, move.id, user.id);
     return true;
   }
@@ -1956,7 +1956,7 @@ export class FlameBurstAttr extends MoveEffectAttr {
       return false;
     }
 
-    targetAlly.damageAndUpdate(Math.max(1, Math.floor(1 / 16 * targetAlly.getMaxHp())), HitResult.OTHER);
+    targetAlly.damageAndUpdate(Math.max(1, Math.floor(1 / 16 * targetAlly.getMaxHp())), { result: HitResult.INDIRECT });
     return true;
   }
 
@@ -3435,9 +3435,8 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
     this.cutRatio = cutRatio;
     this.messageCallback = messageCallback;
   }
-
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / this.cutRatio), HitResult.OTHER, false, true);
+    user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / this.cutRatio), { result: HitResult.INDIRECT });
     user.updateInfo();
     const ret = super.apply(user, target, move, args);
     if (this.messageCallback) {
@@ -5329,7 +5328,7 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
     return false;
   }
 
-  user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), HitResult.OTHER, false, true);
+  user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), { result: HitResult.INDIRECT });
   globalScene.queueMessage(i18next.t("moveTriggers:keptGoingAndCrashed", { pokemonName: getPokemonNameWithAffix(user) }));
   user.turnData.damageTaken += Utils.toDmgValue(user.getMaxHp() / 2);
 
@@ -5650,7 +5649,7 @@ export class CurseAttr extends MoveEffectAttr {
         return false;
       }
       const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
-      user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
+      user.damageAndUpdate(curseRecoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
       globalScene.queueMessage(
         i18next.t("battlerTags:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
