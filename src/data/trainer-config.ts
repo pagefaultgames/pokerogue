@@ -23,6 +23,7 @@ import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Gender } from "#app/data/gender";
 import { signatureSpecies } from "./balance/signature-species";
+import { Abilities } from "#enums/abilities";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
@@ -1811,12 +1812,92 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BAKER]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.CLERK)
     .setMoneyMultiplier(1.35)
-    .setSpeciesFilter(s => s.isOfType(PokemonType.GRASS) || s.isOfType(PokemonType.FIRE)),
-  [TrainerType.BEAUTY]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.PARASOL_LADY),
+    .setSpeciesFilter(
+      s =>
+        [s.ability1, s.ability2, s.abilityHidden].some(
+          a =>
+            !!a &&
+            [
+              Abilities.WHITE_SMOKE,
+              Abilities.GLUTTONY,
+              Abilities.HONEY_GATHER,
+              Abilities.HARVEST,
+              Abilities.CHEEK_POUCH,
+              Abilities.SWEET_VEIL,
+              Abilities.RIPEN,
+              Abilities.PURIFYING_SALT,
+              Abilities.WELL_BAKED_BODY,
+              Abilities.SUPERSWEET_SYRUP,
+              Abilities.HOSPITALITY,
+            ].includes(a),
+        ) ||
+        s
+          .getLevelMoves()
+          .some(plm =>
+            [Moves.SOFT_BOILED, Moves.SPORE, Moves.MILK_DRINK, Moves.OVERHEAT, Moves.TEATIME].includes(plm[1]),
+          ),
+    ), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
+  [TrainerType.BEAUTY]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.55)
+    .setEncounterBgm(TrainerType.PARASOL_LADY)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
+      trainerPartyTemplates.THREE_AVG_SAME,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+      trainerPartyTemplates.ONE_STRONG,
+    )
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        Species.MEOWTH,
+        Species.GOLDEEN,
+        Species.MAREEP,
+        Species.MARILL,
+        Species.SKITTY,
+        Species.GLAMEOW,
+        Species.PURRLOIN,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [
+        Species.SMOOCHUM,
+        Species.ROSELIA,
+        Species.LUVDISC,
+        Species.BLITZLE,
+        Species.SEWADDLE,
+        Species.PETILIL,
+        Species.MINCCINO,
+        Species.GOTHITA,
+        Species.SPRITZEE,
+        Species.FLITTLE,
+      ],
+      [TrainerPoolTier.RARE]: [
+        Species.FEEBAS,
+        Species.FURFROU,
+        Species.SALANDIT,
+        Species.BRUXISH,
+        Species.HATENNA,
+        Species.SNOM,
+        Species.ALOLA_VULPIX,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [Species.CLAMPERL, Species.AMAURA, Species.SYLVEON, Species.GOOMY, Species.POPPLIO],
+    }),
   [TrainerType.BIKER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)
-    .setSpeciesFilter(s => s.isOfType(PokemonType.POISON)),
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [Species.EKANS, Species.KOFFING, Species.CROAGUNK, Species.VENIPEDE, Species.SCRAGGY],
+      [TrainerPoolTier.UNCOMMON]: [
+        Species.GRIMER,
+        Species.VOLTORB,
+        Species.TEDDIURSA,
+        Species.MAGBY,
+        Species.SKORUPI,
+        Species.SANDILE,
+        Species.PAWNIARD,
+        Species.SHROODLE,
+      ],
+      [TrainerPoolTier.RARE]: [Species.VAROOM, Species.CYCLIZAR],
+    }),
   [TrainerType.BLACK_BELT]: new TrainerConfig(++t)
     .setHasGenders("Battle Girl", TrainerType.PSYCHIC)
     .setHasDouble("Crush Kin")
@@ -1918,9 +1999,15 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.CYCLIST)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.ONE_AVG)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [Species.PICHU, Species.STARLY, Species.TAILLOW, Species.BOLTUND],
-      [TrainerPoolTier.UNCOMMON]: [Species.DODUO, Species.ELECTRIKE, Species.BLITZLE, Species.WATTREL],
-      [TrainerPoolTier.RARE]: [Species.YANMA, Species.NINJASK, Species.WHIRLIPEDE, Species.EMOLGA],
+      [TrainerPoolTier.COMMON]: [Species.DODUO, Species.PICHU, Species.TAILLOW, Species.STARLY, Species.PONYTA],
+      [TrainerPoolTier.UNCOMMON]: [
+        Species.ELECTRIKE,
+        Species.SHINX,
+        Species.BLITZLE,
+        Species.DUCKLETT,
+        Species.WATTREL,
+      ],
+      [TrainerPoolTier.RARE]: [Species.YANMA, Species.NINJASK, Species.WHIRLIPEDE, Species.EMOLGA, Species.SKIDDO],
       [TrainerPoolTier.SUPER_RARE]: [Species.ACCELGOR, Species.DREEPY],
     }),
   [TrainerType.DANCER]: new TrainerConfig(++t)
@@ -1936,7 +2023,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.COMMON]: [Species.RALTS, Species.SPOINK, Species.LOTAD, Species.BUDEW],
       [TrainerPoolTier.UNCOMMON]: [Species.SPINDA, Species.SWABLU, Species.MARACTUS],
       [TrainerPoolTier.RARE]: [Species.BELLOSSOM, Species.HITMONTOP, Species.MIME_JR, Species.ORICORIO],
-      [TrainerPoolTier.SUPER_RARE]: [Species.POPPLIO],
+      [TrainerPoolTier.SUPER_RARE]: [Species.QUAXLY, Species.JANGMO_O],
     }),
   [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setMoneyMultiplier(1.45).setEncounterBgm(TrainerType.CLERK),
   [TrainerType.DOCTOR]: new TrainerConfig(++t)
@@ -2074,7 +2161,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.THREE_AVG,
       trainerPartyTemplates.TWO_STRONG,
     )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.GHOST)),
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GHOST) || s.isOfType(PokemonType.PSYCHIC)),
   [TrainerType.NURSERY_AIDE]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm("lass"),
   [TrainerType.OFFICER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
@@ -2104,7 +2191,28 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.PARASOL_LADY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
     .setEncounterBgm(TrainerType.PARASOL_LADY)
-    .setSpeciesFilter(s => s.isOfType(PokemonType.WATER)),
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+      trainerPartyTemplates.ONE_STRONG,
+    )
+    .setSpeciesFilter(
+      s =>
+        [s.ability1, s.ability2, s.abilityHidden].some(
+          a =>
+            !!a &&
+            [
+              Abilities.DRIZZLE,
+              Abilities.SWIFT_SWIM,
+              Abilities.HYDRATION,
+              Abilities.RAIN_DISH,
+              Abilities.DRY_SKIN,
+              Abilities.WIND_POWER,
+            ].includes(a),
+        ) || s.getLevelMoves().some(plm => plm[1] === Moves.RAIN_DANCE),
+    ), // Mons with rain abilities or who learn Rain Dance by level
   [TrainerType.PILOT]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.CLERK)
     .setSpeciesFilter(s => tmSpecies[Moves.FLY].indexOf(s.speciesId) > -1),
