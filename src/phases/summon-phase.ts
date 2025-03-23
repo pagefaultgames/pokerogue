@@ -201,6 +201,10 @@ export class SummonPhase extends PartyMemberPokemonPhase {
                 pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
                 pokemon.getSprite().clearTint();
                 pokemon.resetSummonData();
+                // necessary to stay transformed during wild waves
+                if (pokemon.summonData?.speciesForm) {
+                  pokemon.loadAssets(false);
+                }
                 globalScene.time.delayedCall(1000, () => this.end());
               },
             });

@@ -3879,7 +3879,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
   }
 
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return (pokemon.status !== null) && this.effects.includes(pokemon.status.effect) && !pokemon.isFullHp();
+    return !Utils.isNullOrUndefined(pokemon.status) && this.effects.includes(pokemon.status.effect) && !pokemon.isFullHp();
   }
 
   /**
@@ -4122,7 +4122,7 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
   }
 
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return !simulated && globalScene.currentBattle.lastUsedPokeball !== null && !!pokemon.isPlayer;
+    return !simulated && !Utils.isNullOrUndefined(globalScene.currentBattle.lastUsedPokeball) && !!pokemon.isPlayer;
   }
 
   /**
