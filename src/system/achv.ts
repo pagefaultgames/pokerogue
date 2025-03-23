@@ -541,7 +541,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 1 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv(
@@ -554,7 +554,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 2 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GEN_THREE_VICTORY: new ChallengeAchv(
@@ -567,7 +567,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 3 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GEN_FOUR_VICTORY: new ChallengeAchv(
@@ -580,7 +580,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 4 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GEN_FIVE_VICTORY: new ChallengeAchv(
@@ -593,7 +593,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 5 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GEN_SIX_VICTORY: new ChallengeAchv(
@@ -606,7 +606,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 6 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GEN_SEVEN_VICTORY: new ChallengeAchv(
@@ -619,7 +619,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 7 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GEN_EIGHT_VICTORY: new ChallengeAchv(
@@ -632,7 +632,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 8 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GEN_NINE_VICTORY: new ChallengeAchv(
@@ -645,7 +645,7 @@ export const achvs = {
       c instanceof SingleGenerationChallenge &&
       c.value === 9 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_NORMAL: new ChallengeAchv(
@@ -658,7 +658,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 1 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_FIGHTING: new ChallengeAchv(
@@ -671,7 +671,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 2 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_FLYING: new ChallengeAchv(
@@ -684,7 +684,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 3 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_POISON: new ChallengeAchv(
@@ -697,7 +697,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 4 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GROUND: new ChallengeAchv(
@@ -710,7 +710,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 5 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_ROCK: new ChallengeAchv(
@@ -723,7 +723,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 6 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_BUG: new ChallengeAchv(
@@ -736,7 +736,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 7 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GHOST: new ChallengeAchv(
@@ -749,7 +749,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 8 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_STEEL: new ChallengeAchv(
@@ -762,7 +762,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 9 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_FIRE: new ChallengeAchv(
@@ -775,7 +775,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 10 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_WATER: new ChallengeAchv(
@@ -788,7 +788,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 11 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_GRASS: new ChallengeAchv(
@@ -801,7 +801,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 12 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_ELECTRIC: new ChallengeAchv(
@@ -814,7 +814,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 13 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_PSYCHIC: new ChallengeAchv(
@@ -827,7 +827,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 14 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_ICE: new ChallengeAchv(
@@ -840,7 +840,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 15 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_DRAGON: new ChallengeAchv(
@@ -853,7 +853,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 16 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_DARK: new ChallengeAchv(
@@ -866,7 +866,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 17 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   MONO_FAIRY: new ChallengeAchv(
@@ -879,7 +879,7 @@ export const achvs = {
       c instanceof SingleTypeChallenge &&
       c.value === 18 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   FRESH_START: new ChallengeAchv(
@@ -892,7 +892,7 @@ export const achvs = {
       c instanceof FreshStartChallenge &&
       c.value > 0 &&
       !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT, Challenges.METRONOME].includes(c.id) && c.value > 0,
       ),
   ),
   INVERSE_BATTLE: new ChallengeAchv(
@@ -901,7 +901,10 @@ export const achvs = {
     "INVERSE_BATTLE.description",
     "inverse",
     100,
-    c => c instanceof InverseBattleChallenge && c.value > 0,
+    c =>
+      c instanceof InverseBattleChallenge &&
+      c.value > 0 &&
+      !globalScene.gameMode.challenges.some(c => c.id === Challenges.METRONOME && c.value > 0),
   ),
   FLIP_STATS: new ChallengeAchv(
     "FLIP_STATS",
@@ -909,7 +912,10 @@ export const achvs = {
     "FLIP_STATS.description",
     "dubious_disc",
     100,
-    c => c instanceof FlipStatChallenge && c.value > 0,
+    c =>
+      c instanceof FlipStatChallenge &&
+      c.value > 0 &&
+      !globalScene.gameMode.challenges.some(c => c.id === Challenges.METRONOME && c.value > 0),
   ),
   FLIP_INVERSE: new ChallengeAchv(
     "FLIP_INVERSE",
@@ -920,7 +926,8 @@ export const achvs = {
     c =>
       c instanceof FlipStatChallenge &&
       c.value > 0 &&
-      globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0),
+      globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0) &&
+      !globalScene.gameMode.challenges.some(c => c.id === Challenges.METRONOME && c.value > 0),
   ).setSecret(),
   BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 50).setSecret(),
 };
