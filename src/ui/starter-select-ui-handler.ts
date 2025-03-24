@@ -150,7 +150,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
   "ca-ES": {
-    starterInfoTextSize: "56px",
+    starterInfoTextSize: "52px",
     instructionTextSize: "38px",
   },
 };
