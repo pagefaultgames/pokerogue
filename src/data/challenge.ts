@@ -21,6 +21,7 @@ import { TypeColor, TypeShadow } from "#enums/color";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import type { ModifierTypeKeys, RewardTableModification } from "#app/modifier/modifier-type";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -105,6 +106,14 @@ export enum ChallengeType {
    * Negates PP Usage
    */
   NO_PP_USE,
+  /**
+   * Modifies reward table
+   */
+  REWARD_TABLE_MODIFY,
+  /**
+   * Removes items from the shop
+   */
+  SHOP_REMOVAL,
 }
 
 /**
@@ -455,6 +464,14 @@ export abstract class Challenge {
   }
 
   applyNoPPUsage(_valid: Utils.BooleanHolder) {
+    return false;
+  }
+
+  applyRewardTableModify(_modifications: RewardTableModification[]) {
+    return false;
+  }
+
+  applyShopRemovals(_removals: ModifierTypeKeys[]) {
     return false;
   }
 }
@@ -910,6 +927,14 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
+  override applyRewardTableModify(modifications: RewardTableModification[]): boolean {
+    modifications.push(
+      { type: "EVIOLITE", tier: ModifierTier.ULTRA, maxWeight: 0 }, // No Eviolite
+      { type: "MINI_BLACK_HOLE", tier: ModifierTier.MASTER, maxWeight: 0 }, // No MBH
+    );
+    return true;
+  }
+
   override getDifficulty(): number {
     return 0;
   }
@@ -1011,6 +1036,27 @@ export class MetronomeChallenge extends Challenge {
 
   override applyNoPPUsage(valid: Utils.BooleanHolder): boolean {
     valid.value = true;
+    return true;
+  }
+
+  override applyRewardTableModify(modifications: RewardTableModification[]): boolean {
+    modifications.push(
+      { type: "TM_COMMON", tier: ModifierTier.COMMON, maxWeight: 0 }, // Remove TMs
+      { type: "ETHER", tier: ModifierTier.COMMON, maxWeight: 0 }, // Remove PP Restores
+      { type: "MAX_ETHER", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove PP Restores
+      { type: "ELIXIR", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove PP Restores
+      { type: "MAX_ELIXIR", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove PP Restores
+      { type: "PP_UP", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove PP Upgrades
+      { type: "MEMORY_MUSHROOM", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove Mushrooms
+      { type: "TM_GREAT", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove TMs
+      { type: "TM_ULTRA", tier: ModifierTier.ULTRA, maxWeight: 0 }, // Remove TMs
+      { type: "PP_MAX", tier: ModifierTier.ULTRA, maxWeight: 0 }, // Remove PP Upgrades
+    );
+    return true;
+  }
+
+  override applyShopRemovals(removals: ModifierTypeKeys[]): boolean {
+    removals.push("ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "MEMORY_MUSHROOM");
     return true;
   }
 
@@ -1298,6 +1344,18 @@ export function applyChallenges(
   valid: Utils.BooleanHolder,
 ): boolean;
 
+export function applyChallenges(
+  gameMode: GameMode,
+  challengeType: ChallengeType.REWARD_TABLE_MODIFY,
+  modifications: RewardTableModification[],
+): boolean;
+
+export function applyChallenges(
+  gameMode: GameMode,
+  challengeType: ChallengeType.SHOP_REMOVAL,
+  removals: ModifierTypeKeys[],
+): boolean;
+
 export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   gameMode.challenges.forEach(c => {
@@ -1353,6 +1411,12 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
           break;
         case ChallengeType.NO_PP_USE:
           ret ||= c.applyNoPPUsage(args[0]);
+          break;
+        case ChallengeType.REWARD_TABLE_MODIFY:
+          ret ||= c.applyRewardTableModify(args[0]);
+          break;
+        case ChallengeType.SHOP_REMOVAL:
+          ret ||= c.applyShopRemovals(args[0]);
           break;
       }
     }

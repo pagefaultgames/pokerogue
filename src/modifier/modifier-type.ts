@@ -2468,30 +2468,14 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.LURE, lureWeightFunc(10, 2)),
     new WeightedModifierType(modifierTypes.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
-    new WeightedModifierType(
-      modifierTypes.TM_COMMON,
-      () => {
-        const noMoveLearning = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning);
-        return noMoveLearning.value ? 0 : 2;
-      },
-      2,
-    ),
+    new WeightedModifierType(modifierTypes.TM_COMMON, 2),
   ].map(m => {
     m.setTier(ModifierTier.COMMON);
     return m;
   }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), 6),
-    new WeightedModifierType(
-      modifierTypes.PP_UP,
-      () => {
-        const noMoveLearning = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, noMoveLearning);
-        return noMoveLearning.value ? 0 : 2;
-      },
-      2,
-    ),
+    new WeightedModifierType(modifierTypes.PP_UP, 2),
     new WeightedModifierType(
       modifierTypes.FULL_HEAL,
       (party: Pokemon[]) => {
@@ -2587,11 +2571,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(
       modifierTypes.ELIXIR,
       (party: Pokemon[]) => {
-        const noMoveLearning = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, noMoveLearning);
-        if (noMoveLearning.value) {
-          return 0;
-        }
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -2611,11 +2590,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(
       modifierTypes.MAX_ELIXIR,
       (party: Pokemon[]) => {
-        const noMoveLearning = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, noMoveLearning);
-        if (noMoveLearning.value) {
-          return 0;
-        }
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -2648,21 +2622,11 @@ const modifierPool: ModifierPool = {
       2,
     ),
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, 2),
-    new WeightedModifierType(
-      modifierTypes.TM_GREAT,
-      () => {
-        const noMoveLearning = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning);
-        return noMoveLearning.value ? 0 : 3;
-      },
-      3,
-    ),
+    new WeightedModifierType(modifierTypes.TM_GREAT, 3),
     new WeightedModifierType(
       modifierTypes.MEMORY_MUSHROOM,
       (party: Pokemon[]) => {
-        const noMoveLearning = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning); // Yeah this is kind of dumb
-        if (noMoveLearning.value || !party.find(p => p.getLearnableLevelMoves().length)) {
+        if (!party.find(p => p.getLearnableLevelMoves().length)) {
           return 0;
         }
         const highestPartyLevel = party
@@ -2708,15 +2672,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), 15),
     new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
-    new WeightedModifierType(
-      modifierTypes.PP_MAX,
-      () => {
-        const noMoveLearning = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, noMoveLearning); // Yeah this is kind of dumb
-        return noMoveLearning.value ? 0 : 3;
-      },
-      3,
-    ),
+    new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(
       modifierTypes.RARE_EVOLUTION_ITEM,
@@ -2731,7 +2687,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
       const { gameMode, gameData } = globalScene;
-      if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
+      if (gameMode.isDaily || gameData.isUnlocked(Unlockables.EVIOLITE)) {
         return party.some(p => {
           // Check if Pokemon's species (or fusion species, if applicable) can evolve or if they're G-Max'd
           if (
@@ -2861,15 +2817,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
-    new WeightedModifierType(
-      modifierTypes.TM_ULTRA,
-      () => {
-        const noMoveLearning = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning); // Yeah this is kind of dumb
-        return noMoveLearning.value ? 0 : 11;
-      },
-      11,
-    ),
+    new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.IV_SCANNER, skipInLastClassicWaveOrDefault(4)),
@@ -2955,11 +2903,7 @@ const modifierPool: ModifierPool = {
     ),
     new WeightedModifierType(
       modifierTypes.MINI_BLACK_HOLE,
-      () =>
-        globalScene.gameMode.isDaily ||
-        (!globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))
-          ? 1
-          : 0,
+      () => (globalScene.gameMode.isDaily || globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE) ? 1 : 0),
       1,
     ),
   ].map(m => {
@@ -3170,8 +3114,51 @@ const tierWeights = [768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024];
  */
 export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
+export interface RewardTableModification {
+  type: ModifierTypeKeys;
+  tier: ModifierTier;
+  maxWeight: number;
+}
+
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount = 0) {
+  const modifications: RewardTableModification[] = [];
+  applyChallenges(globalScene.gameMode, ChallengeType.REWARD_TABLE_MODIFY, modifications);
   const pool = getModifierPoolForType(poolType);
+  modifications.map(mod => {
+    let t = mod.tier;
+    let dindex = pool[mod.tier].findIndex(wm => wm.modifierType.id === mod.type);
+    if (mod.maxWeight === 0) {
+      // Remove the modifier from the specified tier
+      pool[t].splice(dindex, 1);
+    } else if (dindex < 0) {
+      // Add the modifier to specified tier
+      for (t = ModifierTier.COMMON; t <= ModifierTier.MASTER && dindex < 0; t++) {
+        if (t === mod.tier) {
+          // We know it's not in that tier
+          continue;
+        }
+        dindex = pool[t].findIndex(wm => wm.modifierType.id === mod.type);
+      }
+      if (dindex >= 0) {
+        // Move the existing WMT to the specified tier with same func and specified max weight
+        const wmt = pool[t].splice(dindex, 1)[0];
+        wmt.maxWeight = mod.maxWeight;
+        wmt.setTier(mod.tier);
+        pool[mod.tier].push(wmt);
+      } else {
+        // Item isn't anywhere on the table, make a new WMT and push it
+        const newWMT = new WeightedModifierType(getModifierTypeFuncById(mod.type), mod.maxWeight);
+        newWMT.setTier(mod.tier);
+        pool[mod.tier].push(newWMT);
+      }
+    } else {
+      pool[t].map(wmt => {
+        if (wmt.modifierType.id === mod.type) {
+          wmt.maxWeight = mod.maxWeight;
+        }
+      });
+    }
+  });
   itemPoolChecks.forEach((_v, k) => {
     itemPoolChecks.set(k, false);
   });
@@ -3459,7 +3446,12 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
     [new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)],
     [new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)],
   ];
-  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+  const removeShop: ModifierTypeKeys[] = [];
+  applyChallenges(globalScene.gameMode, ChallengeType.SHOP_REMOVAL, removeShop);
+  return options
+    .slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30))
+    .flat()
+    .filter(s => !removeShop.includes(s.type.id as ModifierTypeKeys));
 }
 
 export function getEnemyBuffModifierForWave(
