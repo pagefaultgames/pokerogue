@@ -20,7 +20,6 @@ import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, normalForm } from
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { PokemonType } from "#enums/pokemon-type";
-import { GameModes } from "#app/game-mode";
 import type { DexEntry, StarterAttributes } from "#app/system/game-data";
 import { AbilityAttr, DexAttr } from "#app/system/game-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -33,7 +32,6 @@ import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
-import * as Challenge from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import PokedexInfoOverlay from "#app/ui/pokedex-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
@@ -51,7 +49,6 @@ import {
   BooleanHolder,
   getLocalizedSpriteKey,
   isNullOrUndefined,
-  NumberHolder,
   padInt,
   rgbHexToRgba,
   toReadableString,
@@ -2156,22 +2153,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
       }
     }
-  }
-
-  getValueLimit(): number {
-    const valueLimit = new NumberHolder(0);
-    switch (globalScene.gameMode.modeId) {
-      case GameModes.ENDLESS:
-      case GameModes.SPLICED_ENDLESS:
-        valueLimit.value = 15;
-        break;
-      default:
-        valueLimit.value = 10;
-    }
-
-    Challenge.applyChallenges(globalScene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
-
-    return valueLimit.value;
   }
 
   setCursor(cursor: number): boolean {
