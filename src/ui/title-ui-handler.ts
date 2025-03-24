@@ -8,6 +8,7 @@ import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import { timedEventManager } from "#app/global-event-manager";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -40,8 +41,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
-    if (globalScene.eventManager.isEventActive()) {
-      this.eventDisplay = new TimedEventDisplay(0, 0, globalScene.eventManager.activeEvent());
+    if (timedEventManager.isEventActive()) {
+      this.eventDisplay = new TimedEventDisplay(0, 0, timedEventManager.activeEvent());
       this.eventDisplay.setup();
       this.titleContainer.add(this.eventDisplay);
     }
@@ -116,7 +117,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       const ui = this.getUi();
 
-      if (globalScene.eventManager.isEventActive()) {
+      if (timedEventManager.isEventActive()) {
         this.eventDisplay.setWidth(globalScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
         this.eventDisplay.show();
       }

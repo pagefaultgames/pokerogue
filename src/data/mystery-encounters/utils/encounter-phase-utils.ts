@@ -64,6 +64,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { timedEventManager } from "#app/global-event-manager";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -1045,7 +1046,7 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
 export function getRandomEncounterSpecies(level: number, isBoss = false, rerollHidden = false): EnemyPokemon {
   let bossSpecies: PokemonSpecies;
   let isEventEncounter = false;
-  const eventEncounters = globalScene.eventManager.getEventEncounters();
+  const eventEncounters = timedEventManager.getEventEncounters();
   let formIndex: number | undefined;
 
   if (eventEncounters.length > 0 && randSeedInt(2) === 1) {

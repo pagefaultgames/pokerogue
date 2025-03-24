@@ -36,6 +36,11 @@ interface EventMysteryEncounterTier {
   disable?: boolean;
 }
 
+interface EventWaveReward {
+  wave: number;
+  type: string;
+}
+
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
@@ -51,6 +56,8 @@ interface TimedEvent extends EventBanner {
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
   luckBoostedSpecies?: Species[];
   boostFusions?: boolean; //MODIFIER REWORK PLEASE
+  classicWaveRewards?: EventWaveReward[]; // Rival battle rewards
+  trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
 }
 
 const timedEvents: TimedEvent[] = [
@@ -61,7 +68,7 @@ const timedEvents: TimedEvent[] = [
     upgradeUnlockedVouchers: true,
     startDate: new Date(Date.UTC(2024, 11, 21, 0)),
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
-    bannerKey: "winter_holidays2024-event-",
+    bannerKey: "winter_holidays2024-event",
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
@@ -104,6 +111,12 @@ const timedEvents: TimedEvent[] = [
         disable: true,
       },
     ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+    ],
   },
   {
     name: "Year of the Snake",
@@ -111,7 +124,7 @@ const timedEvents: TimedEvent[] = [
     luckBoost: 1,
     startDate: new Date(Date.UTC(2025, 0, 29, 0)),
     endDate: new Date(Date.UTC(2025, 1, 3, 0)),
-    bannerKey: "yearofthesnakeevent-",
+    bannerKey: "yearofthesnakeevent",
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
@@ -169,6 +182,12 @@ const timedEvents: TimedEvent[] = [
       Species.ROARING_MOON,
       Species.BLOODMOON_URSALUNA,
     ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+    ],
   },
   {
     name: "Valentine",
@@ -177,7 +196,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 1, 21)),
     boostFusions: true,
     shinyMultiplier: 2,
-    bannerKey: "valentines2025event-",
+    bannerKey: "valentines2025event",
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
@@ -203,6 +222,12 @@ const timedEvents: TimedEvent[] = [
       { species: Species.ENAMORUS },
     ],
     luckBoostedSpecies: [Species.LUVDISC],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+    ],
   },
   {
     name: "PKMNDAY2025",
@@ -210,7 +235,7 @@ const timedEvents: TimedEvent[] = [
     startDate: new Date(Date.UTC(2025, 1, 27)),
     endDate: new Date(Date.UTC(2025, 2, 4)),
     classicFriendshipMultiplier: 4,
-    bannerKey: "pkmnday2025event-",
+    bannerKey: "pkmnday2025event",
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
@@ -248,6 +273,22 @@ const timedEvents: TimedEvent[] = [
       Species.ZYGARDE,
       Species.ETERNAL_FLOETTE,
     ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+    ],
+  },
+  {
+    name: "APRF25",
+    eventType: EventType.NO_TIMER_DISPLAY,
+    startDate: new Date(Date.UTC(2025, 2, 1)),
+    endDate: new Date(Date.UTC(2025, 3, 3)),
+    // bannerKey: "aprf25-",
+    // scale: 0.21,
+    // availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    trainerShinyChance: 32000, // 16384/65536 = 1/4
   },
 ];
 
@@ -281,6 +322,12 @@ export class TimedEventManager {
 
   getEventBannerFilename(): string {
     return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey ?? "";
+  }
+
+  getEventBannerLangs(): string[] {
+    const ret: string[] = [];
+    ret.push(...timedEvents.find(te => this.isActive(te) && !isNullOrUndefined(te.availableLangs))?.availableLangs!);
+    return ret;
   }
 
   getEventEncounters(): EventEncounter[] {
@@ -416,6 +463,30 @@ export class TimedEventManager {
 
   areFusionsBoosted(): boolean {
     return timedEvents.some(te => this.isActive(te) && te.boostFusions);
+  }
+
+  /**
+   * Gets all the modifier types associated with a certain wave during an event
+   * @see EventWaveReward
+   * @param wave the wave to check for associated rewards
+   * @returns array of strings of the event modifier reward types
+   */
+  getFixedBattleEventRewards(wave: number): string[] {
+    const ret: string[] = [];
+    timedEvents
+      .filter(te => this.isActive(te) && !isNullOrUndefined(te.classicWaveRewards))
+      .map(te => {
+        ret.push(...te.classicWaveRewards!.filter(cwr => cwr.wave === wave).map(cwr => cwr.type));
+      });
+    return ret;
+  }
+
+  // Gets the extra shiny chance for trainers due to event (odds/65536)
+  getClassicTrainerShinyChance(): number {
+    let ret = 0;
+    const tsEvents = timedEvents.filter(te => this.isActive(te) && !isNullOrUndefined(te.trainerShinyChance));
+    tsEvents.map(t => (ret += t.trainerShinyChance!));
+    return ret;
   }
 }
 
