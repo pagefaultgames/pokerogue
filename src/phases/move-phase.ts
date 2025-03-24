@@ -368,6 +368,17 @@ export class MovePhase extends BattlePhase {
 
     const move = this.move.getMove();
 
+    // Check if the move is Roar or Whirlwind and if there is a trainer with only Pokémon left.
+    if ([Moves.ROAR, Moves.WHIRLWIND].includes(this.move.moveId) && globalScene.currentBattle.trainer) {
+      const enemyParty = globalScene.getEnemyParty();
+      // Filter out any Pokémon that are not allowed in battle (e.g. fainted ones)
+      const remainingPokemon = enemyParty.filter(pokemon => pokemon.hp > 0 && pokemon.isAllowedInBattle());
+
+      if (remainingPokemon.length <= 1) {
+        success = false;
+      }
+    }
+
     /**
      * Move conditions assume the move has a single target
      * TODO: is this sustainable?
