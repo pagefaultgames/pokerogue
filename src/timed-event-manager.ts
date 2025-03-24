@@ -288,7 +288,7 @@ const timedEvents: TimedEvent[] = [
     // bannerKey: "aprf25-",
     // scale: 0.21,
     // availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
-    trainerShinyChance: 32000, // 16384/65536 = 1/4
+    trainerShinyChance: 16384, // 16384/65536 = 1/4
   },
 ];
 
