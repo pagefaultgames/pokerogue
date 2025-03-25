@@ -213,7 +213,8 @@ const commonSplashMessages = [
   "metaNotIncluded",
   "bornToBeAWinner",
   "onARollout",
-  "itsAlwaysNightDeepInTheAbyss"
+  "itsAlwaysNightDeepInTheAbyss",
+  "folksThisIsInsane"
 ];
 
 //#region Seasonal Messages
@@ -278,7 +279,6 @@ const seasonalSplashMessages: Season[] = [
       "aprilFools.nowWithQuickTimeEncounters",
       "aprilFools.timeYourInputsForHigherCatchrate",
       "aprilFools.certifiedButtonSimulator",
-      "aprilFools.folksTodayIsInsane",
       "aprilFools.iHopeYouGetSuckerPunched"
     ],
   },
