@@ -97,6 +97,7 @@ import {
   type PersistentModifier,
   TempExtraModifierModifier,
   CriticalCatchChanceBoosterModifier,
+  FieldEffectModifier,
 } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
@@ -1997,6 +1998,13 @@ export const modifierTypes = {
       }
       return new PokemonNatureChangeModifierType(randSeedInt(getEnumValues(Nature).length) as Nature);
     }),
+
+  MYSTICAL_ROCK: () =>
+    new ModifierType(
+      "modifierType:ModifierType.MYSTICAL_ROCK",
+      "mystical_rock",
+      (type, args) => new FieldEffectModifier(type, (args[0] as Pokemon).id),
+    ),
 
   TERA_SHARD: () =>
     new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {

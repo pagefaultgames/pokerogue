@@ -42,6 +42,7 @@ import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrig
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { WeatherType } from "#enums/weather-type";
+import { FieldEffectModifier } from "#app/modifier/modifier";
 
 export class Arena {
   public biomeType: Biome;
@@ -314,7 +315,7 @@ export class Arena {
    * @param hasPokemonSource boolean if the new weather is from a pokemon
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
-  trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
+  trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
     if (Overrides.WEATHER_OVERRIDE) {
       return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     }
@@ -336,7 +337,14 @@ export class Arena {
       return false;
     }
 
-    this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
+    const weatherDuration = new Utils.NumberHolder(0);
+
+    if (!Utils.isNullOrUndefined(user)) {
+      weatherDuration.value = 5;
+      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
+    }
+
+    this.weather = weather ? new Weather(weather, weatherDuration.value) : null;
     this.eventTarget.dispatchEvent(
       new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!),
     ); // TODO: is this bang correct?
@@ -398,14 +406,22 @@ export class Arena {
     return !(this.terrain?.terrainType === (terrain || undefined));
   }
 
-  trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim = false): boolean {
+  trySetTerrain(terrain: TerrainType, ignoreAnim = false, user?: Pokemon): boolean {
     if (!this.canSetTerrain(terrain)) {
       return false;
     }
 
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
-    this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
+    const terrainDuration = new Utils.NumberHolder(0);
+
+    if (!Utils.isNullOrUndefined(user)) {
+      terrainDuration.value = 5;
+      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
+    }
+
+    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;
+
     this.eventTarget.dispatchEvent(
       new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!),
     ); // TODO: are those bangs correct?
@@ -802,9 +818,9 @@ export class Arena {
   resetArenaEffects(): void {
     // Don't reset weather if a Biome's permanent weather is active
     if (this.weather?.turnsLeft !== 0) {
-      this.trySetWeather(WeatherType.NONE, false);
+      this.trySetWeather(WeatherType.NONE);
     }
-    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.trySetTerrain(TerrainType.NONE, true);
     this.resetPlayerFaintCount();
     this.removeAllTags();
   }

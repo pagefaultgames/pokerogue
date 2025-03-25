@@ -308,7 +308,7 @@ export class ClearWeatherAbAttr extends AbAttr {
 
   public override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, true);
+      globalScene.arena.trySetWeather(WeatherType.NONE, pokemon);
     }
   }
 }
@@ -334,7 +334,7 @@ export class ClearTerrainAbAttr extends AbAttr {
 
   public override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE, true, true);
+      globalScene.arena.trySetTerrain(TerrainType.NONE, true, pokemon);
     }
   }
 }
@@ -954,7 +954,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, _args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetTerrain(this.terrainType, true);
+      globalScene.arena.trySetTerrain(this.terrainType, false, pokemon);
     }
   }
 }
@@ -1126,7 +1126,7 @@ export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(this.weatherType, true);
+      globalScene.arena.trySetWeather(this.weatherType, pokemon);
     }
   }
 }
@@ -2483,7 +2483,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
 
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(this.weatherType, true);
+      globalScene.arena.trySetWeather(this.weatherType, pokemon);
     }
   }
 }
@@ -2503,7 +2503,7 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
 
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetTerrain(this.terrainType, true);
+      globalScene.arena.trySetTerrain(this.terrainType, false, pokemon);
     }
   }
 }
@@ -2886,7 +2886,7 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
     }
 
     if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
+      globalScene.arena.trySetWeather(WeatherType.NONE);
       return true;
     }
 
@@ -2986,7 +2986,7 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
    */
   override applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
+      globalScene.arena.trySetWeather(WeatherType.NONE);
     }
   }
 }
@@ -4137,7 +4137,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(this.weatherType, true);
+      globalScene.arena.trySetWeather(this.weatherType, pokemon);
     }
   }
 }
@@ -4157,7 +4157,7 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetTerrain(this.terrainType, true);
+      globalScene.arena.trySetTerrain(this.terrainType, false, pokemon);
     }
   }
 }
