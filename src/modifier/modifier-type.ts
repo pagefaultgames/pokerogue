@@ -3451,7 +3451,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
   return options
     .slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30))
     .flat()
-    .filter(s => !removeShop.includes(s.type.id as ModifierTypeKeys));
+    .filter(s => !removeShop.includes(s.type.localeKey.split(".")[1] as ModifierTypeKeys)); // I don't wanna hear it
 }
 
 export function getEnemyBuffModifierForWave(
