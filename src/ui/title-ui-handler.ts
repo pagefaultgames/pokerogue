@@ -14,7 +14,7 @@ import { PlayerGender } from "#enums/player-gender";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
-  private static readonly BATTLES_WON_FALLBACK: number = -99999999;
+  private static readonly BATTLES_WON_FALLBACK: number = -1;
 
   private titleContainer: Phaser.GameObjects.Container;
   private playerCountLabel: Phaser.GameObjects.Text;
