@@ -10,6 +10,7 @@ import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import type { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { PlayerGender } from "#enums/player-gender";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -104,8 +105,22 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   randomPokemon(): void {
     const rand = Utils.randInt(1025, 1);
     const pokemon = getPokemonSpecies(rand as Species);
-    if (this.splashMessage === "splashMessages:underratedPokemon" || "splashMessages:dontTalkAboutThePokemonIncident" || "splashMessages:aWildPokemonAppeared" || "splashMessages:aprilFools.removedPokemon") {
+    if (
+      this.splashMessage === "splashMessages:underratedPokemon" ||
+      this.splashMessage === "splashMessages:dontTalkAboutThePokemonIncident" ||
+      this.splashMessage === "splashMessages:aWildPokemonAppeared" ||
+      this.splashMessage === "splashMessages:aprilFools.removedPokemon"
+    ) {
       this.splashMessageText.setText(i18next.t(this.splashMessage, { pokemonName: pokemon.name }));
+    }
+  }
+
+  /** Used for a specific April Fools splash message. */
+  genderSplash(): void {
+    if (this.splashMessage === "splashMessages:aprilFools.helloKyleAmber") {
+      globalScene.gameData.gender === PlayerGender.MALE
+        ? this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:player_m") }))
+        : this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:player_f") }));
     }
   }
 
@@ -133,6 +148,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       }
 
       this.randomPokemon();
+      this.genderSplash();
 
       this.updateTitleStats();
 
