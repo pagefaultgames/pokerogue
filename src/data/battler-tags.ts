@@ -757,7 +757,7 @@ export class ConfusedTag extends BattlerTag {
           ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randSeedIntRange(85, 100) / 100),
         );
         globalScene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
-        pokemon.damageAndUpdate(damage);
+        pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
         pokemon.battleData.hitCount++;
         (globalScene.getCurrentPhase() as MovePhase).cancel();
       }
@@ -818,7 +818,7 @@ export class DestinyBondTag extends BattlerTag {
         pokemonNameWithAffix2: getPokemonNameWithAffix(pokemon),
       }),
     );
-    pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, false, true);
+    pokemon.damageAndUpdate(pokemon.hp, { result: HitResult.INDIRECT_KO, ignoreSegments: true });
     return false;
   }
 }
@@ -952,7 +952,7 @@ export class SeedTag extends BattlerTag {
             new CommonAnimPhase(source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED),
           );
 
-          const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8));
+          const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
           const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
           globalScene.unshiftPhase(
             new PokemonHealPhase(
@@ -1029,7 +1029,7 @@ export class PowderTag extends BattlerTag {
           const cancelDamage = new BooleanHolder(false);
           applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
           if (!cancelDamage.value) {
-            pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), HitResult.OTHER);
+            pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
           }
 
           // "When the flame touched the powder\non the Pokémon, it exploded!"
@@ -1082,7 +1082,7 @@ export class NightmareTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 4));
+        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
       }
     }
 
@@ -1440,7 +1440,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8));
+        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
       }
     }
 
@@ -1644,7 +1644,7 @@ export class ContactDamageProtectedTag extends ProtectedTag {
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
         if (!attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-          attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+          attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), { result: HitResult.INDIRECT });
         }
       }
     }
@@ -1810,7 +1810,7 @@ export class PerishSongTag extends BattlerTag {
         }),
       );
     } else {
-      pokemon.damageAndUpdate(pokemon.hp, HitResult.ONE_HIT_KO, false, true, true);
+      pokemon.damageAndUpdate(pokemon.hp, { result: HitResult.INDIRECT_KO, ignoreSegments: true });
     }
 
     return ret;
@@ -2240,7 +2240,7 @@ export class SaltCuredTag extends BattlerTag {
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
-        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8));
+        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
 
         globalScene.queueMessage(
           i18next.t("battlerTags:saltCuredLapse", {
@@ -2288,7 +2288,7 @@ export class CursedTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 4));
+        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
         globalScene.queueMessage(
           i18next.t("battlerTags:cursedLapse", {
             pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -2611,7 +2611,7 @@ export class GulpMissileTag extends BattlerTag {
       applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
 
       if (!cancelled.value) {
-        attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), HitResult.OTHER);
+        attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), { result: HitResult.INDIRECT });
       }
 
       if (this.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
