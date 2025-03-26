@@ -673,7 +673,7 @@ export class Arena {
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
-      existingTag.onOverlap(this);
+      existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 
       if (existingTag instanceof ArenaTrapTag) {
         const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
