@@ -312,7 +312,7 @@ export class Arena {
   /**
    * Attempts to set a new weather to the battle
    * @param weather {@linkcode WeatherType} new {@linkcode WeatherType} to set
-   * @param hasPokemonSource boolean if the new weather is from a pokemon
+   * @param user {@linkcode Pokemon} that caused the weather effect
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
   trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
@@ -406,6 +406,13 @@ export class Arena {
     return !(this.terrain?.terrainType === (terrain || undefined));
   }
 
+  /**
+   * Attempts to set a new terrain effect to the battle
+   * @param terrain {@linkcode TerrainType} new {@linkcode TerrainType} to set
+   * @param ignoreAnim boolean if the terrain animation should be ignored
+   * @param user {@linkcode Pokemon} that caused the terrain effect
+   * @returns true if new terrain set, false if no terrain provided or attempting to set the same terrain as currently in use
+   */
   trySetTerrain(terrain: TerrainType, ignoreAnim = false, user?: Pokemon): boolean {
     if (!this.canSetTerrain(terrain)) {
       return false;

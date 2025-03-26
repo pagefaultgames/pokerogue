@@ -2014,7 +2014,20 @@ export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Modifier used for held items, namely Mystical Rock, that extend the
+ * duration of weather and terrain effects.
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
 export class FieldEffectModifier extends PokemonHeldItemModifier {
+  /**
+   * Provides two more turns per stack to any weather or terrain effect caused
+   * by the holder.
+   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * @param fieldDuration {@linkcode NumberHolder} that stores the current field effect duration
+   * @returns `true` if the field effect extension was applied successfully
+   */
   override apply(_pokemon: Pokemon, fieldDuration: NumberHolder): boolean {
     fieldDuration.value += 2 * this.stackCount;
     return true;
