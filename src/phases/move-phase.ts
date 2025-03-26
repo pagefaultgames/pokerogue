@@ -15,6 +15,7 @@ import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
 import {
+  AddArenaTrapTagAttr,
   allMoves,
   applyMoveAttrs,
   BypassRedirectAttr,
@@ -201,7 +202,10 @@ export class MovePhase extends BattlePhase {
     const targets = this.getActiveTargetPokemon();
     const moveQueue = this.pokemon.getMoveQueue();
 
-    if (targets.length === 0 || (moveQueue.length && moveQueue[0].move === Moves.NONE)) {
+    if (
+      (targets.length === 0 && !this.move.getMove().hasAttr(AddArenaTrapTagAttr)) ||
+      (moveQueue.length && moveQueue[0].move === Moves.NONE)
+    ) {
       this.showMoveText();
       this.showFailedText();
       this.cancel();

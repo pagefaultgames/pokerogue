@@ -1428,7 +1428,9 @@ export class MoveAnim extends BattleAnim {
   public move: Moves;
 
   constructor(move: Moves, user: Pokemon, target: BattlerIndex, playOnEmptyField = false) {
-    super(user, globalScene.getField()[target], playOnEmptyField);
+    /** Set target to the user pokemon as a dummy if no target is found to avoid crashes */
+    const dummyPokemon = user;
+    super(user, globalScene.getField()[target] ?? dummyPokemon, playOnEmptyField);
 
     this.move = move;
   }
