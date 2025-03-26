@@ -245,7 +245,7 @@ const seasonalSplashMessages: Season[] = [
   {
     name: "April Fools",
     start: "04-01",
-    end: "04-02",
+    end: "04-03",
     messages: [
       "aprilFools.battlesOne",
       "aprilFools.aprilFools",
