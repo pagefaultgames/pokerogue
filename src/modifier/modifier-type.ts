@@ -2818,6 +2818,50 @@ const modifierPool: ModifierPool = {
       },
       10,
     ),
+    new WeightedModifierType(
+      modifierTypes.MYSTICAL_ROCK,
+      (party: Pokemon[]) => {
+        return party.some(p => {
+          const moveset = p
+            .getMoveset(true)
+            .filter(m => !isNullOrUndefined(m))
+            .map(m => m.moveId);
+
+          const hasAbility = [
+            Abilities.DRIZZLE,
+            Abilities.ORICHALCUM_PULSE,
+            Abilities.DRIZZLE,
+            Abilities.SAND_STREAM,
+            Abilities.SAND_SPIT,
+            Abilities.SNOW_WARNING,
+            Abilities.ELECTRIC_SURGE,
+            Abilities.HADRON_ENGINE,
+            Abilities.PSYCHIC_SURGE,
+            Abilities.GRASSY_SURGE,
+            Abilities.SEED_SOWER,
+            Abilities.MISTY_SURGE,
+          ].some(a => p.hasAbility(a, false, true));
+
+          const hasMoves = [
+            Moves.SUNNY_DAY,
+            Moves.RAIN_DANCE,
+            Moves.SANDSTORM,
+            Moves.SNOWSCAPE,
+            Moves.HAIL,
+            Moves.CHILLY_RECEPTION,
+            Moves.ELECTRIC_TERRAIN,
+            Moves.PSYCHIC_TERRAIN,
+            Moves.GRASSY_TERRAIN,
+            Moves.MISTY_TERRAIN,
+          ].some(m => moveset.includes(m));
+
+          return hasAbility || hasMoves;
+        })
+          ? 10
+          : 0;
+      },
+      10,
+    ),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
