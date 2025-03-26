@@ -1716,7 +1716,7 @@ export function getRandomPartyMemberFunc(
       level,
       trainerSlot,
       undefined,
-      false,
+      true, // Shiny lock all trainer Pokémon #TODO: does this affect Ivy's Ray?
       undefined,
       postProcess,
     );
@@ -1742,7 +1742,7 @@ function getSpeciesFilterRandomPartyMemberFunc(
         .getTrainerSpeciesForLevel(level, true, strength, waveIndex),
     );
 
-    return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
+    return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, true, undefined, postProcess);
   };
 }
 

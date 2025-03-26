@@ -422,6 +422,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
           species,
           level,
           !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+          false,
+          true, // shiny locking all trainer mons
         );
       },
       this.config.hasStaticParty
