@@ -261,6 +261,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private unlockedVariants: boolean[];
 
   private canUseCandies: boolean;
+  private exitCallback;
 
   constructor() {
     super(Mode.POKEDEX_PAGE);
@@ -680,6 +681,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.formIndex = this.savedStarterAttributes.form ?? 0;
     this.filteredIndices = args[2] ?? null;
     this.starterSetup();
+
+    if (args[4] instanceof Function) {
+      this.exitCallback = args[4];
+    }
 
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.infoOverlay.clear();
@@ -1106,7 +1111,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         });
         this.blockInput = false;
       } else {
-        ui.revertMode();
+        ui.revertMode()
+          .then(() => {
+            console.log("exitCallback", this.exitCallback);
+            if (this.exitCallback instanceof Function) {
+              const exitCallback = this.exitCallback;
+              this.exitCallback = null;
+              exitCallback();
+            }
+          });
         success = true;
       }
     } else {
