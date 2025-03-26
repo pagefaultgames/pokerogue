@@ -10,7 +10,7 @@
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "mystical-rock",
+					"filename": "mystical_rock",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
