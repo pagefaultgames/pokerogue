@@ -41,7 +41,7 @@ import type { PassiveAbilities } from "#app/data/balance/passives";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { allMoves } from "#app/data/moves/move";
 import { speciesTmMoves } from "#app/data/balance/tms";
-import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
+import { pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { Biome } from "#enums/biome";
 import { globalScene } from "#app/global-scene";
 
@@ -1404,7 +1404,12 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Ability filter
       const abilities = [species.ability1, species.ability2, species.abilityHidden].map(a => allAbilities[a].name);
-      const passives = starterPassiveAbilities[starterId] ?? ({} as PassiveAbilities);
+      const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId)
+        ? species.speciesId
+        : starterPassiveAbilities.hasOwnProperty(starterId)
+          ? starterId
+          : pokemonPrevolutions[starterId];
+      const passives = starterPassiveAbilities[passiveId];
 
       const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
       const fitsFormAbility1 = species.forms.some(form =>
