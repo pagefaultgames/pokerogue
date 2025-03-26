@@ -41,8 +41,32 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const SPECIES_OVERRIDE: Species | number = 750;
+const GENDER_OVERRIDE: Gender | null = null;
+const SHINY_OVERRIDE: boolean | null = true;
+const VARIANT_OVERRIDE: Variant | null = 0;
+const FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+const FUSION_OVERRIDE: boolean = false;
+const FUSION_SPECIES: Species | number = 0;
+const ARENA_TINT_OVERRIDE: TimeOfDay | null = TimeOfDay.DAY;
 
+const overrides = {
+  ARENA_TINT_OVERRIDE,
+  STARTER_FORM_OVERRIDES: FORM_OVERRIDES,
+  OPP_FORM_OVERRIDES: FORM_OVERRIDES,
+  VARIANT_OVERRIDE: VARIANT_OVERRIDE,
+  OPP_VARIANT_OVERRIDE: VARIANT_OVERRIDE,
+  STARTER_SPECIES_OVERRIDE: SPECIES_OVERRIDE,
+  OPP_SPECIES_OVERRIDE: SPECIES_OVERRIDE,
+  SHINY_OVERRIDE: SHINY_OVERRIDE,
+  OPP_SHINY_OVERRIDE: SHINY_OVERRIDE,
+  STARTER_FUSION_OVERRIDE: FUSION_OVERRIDE,
+  OPP_FUSION_OVERRIDE: FUSION_OVERRIDE,
+  STARTER_FUSION_SPECIES_OVERRIDE: FUSION_SPECIES,
+  OPP_FUSION_SPECIES_OVERRIDE: FUSION_SPECIES,
+  GENDER_OVERRIDE: GENDER_OVERRIDE,
+  OPP_GENDER_OVERRIDE: GENDER_OVERRIDE,
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
  * ---

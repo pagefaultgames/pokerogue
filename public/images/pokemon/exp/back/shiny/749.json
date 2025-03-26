@@ -1029,6 +1029,7 @@
  "meta": {
   "app": "https://www.aseprite.org/",
   "version": "1.3.13-x64",
+  "image": "749.png",
   "format": "I8",
   "size": { "w": 357, "h": 401 },
   "scale": "1"
