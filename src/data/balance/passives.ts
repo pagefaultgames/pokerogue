@@ -930,7 +930,7 @@ export const starterPassiveAbilities: StarterPassiveAbilities = {
   [Species.ARCTOZOLT]: { 0: Abilities.WATER_ABSORB },
   [Species.DRACOVISH]: { 0: Abilities.SWIFT_SWIM },
   [Species.ARCTOVISH]: { 0: Abilities.STRONG_JAW },
-  [Species.DURALUDON]: { 0: Abilities.FILTER, 1: Abilities.MIRROR },
+  [Species.DURALUDON]: { 0: Abilities.FILTER, 1: Abilities.MIRROR_ARMOR },
   [Species.ARCHALUDON]: { 0: Abilities.TRANSISTOR },
   [Species.DREEPY]: { 0: Abilities.TECHNICIAN },
   [Species.DRAKLOAK]: { 0: Abilities.PARENTAL_BOND },
