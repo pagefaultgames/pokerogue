@@ -704,23 +704,23 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   getMenuText(): string {
-    const isFormCaught = this.isFormCaught();
-    const isSeen = this.speciesStarterDexEntry?.seenAttr;
-    if (this.species.speciesId === Species.ODDISH) {
-      console.log(isFormCaught, isSeen);
-    }
+    const isSeen = this.isSeen();
+    const isStarterCaught = !!this.isCaught(this.getStarterSpecies(this.species));
 
     return this.menuOptions
       .map(o => {
         const label = `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`;
-        const isWhite = isFormCaught || (isSeen && o === MenuOptions.BIOMES);
+        const isDark =
+          !isSeen ||
+          (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES)) ||
+          (this.tmMoves.length < 1 && o === MenuOptions.TM_MOVES);
         const color = getTextColor(
-          isWhite ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+          isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE,
           false,
           globalScene.uiTheme,
         );
         const shadow = getTextColor(
-          isWhite ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+          isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE,
           true,
           globalScene.uiTheme,
         );
@@ -924,6 +924,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     return (dexEntry?.caughtAttr ?? 0n) & (starterDexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
   }
+
   /**
    * Check whether a given form is caught for a given species.
    * All forms that can be reached through a form change during battle are considered caught and show up in the dex as such.
@@ -946,6 +947,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const isFormCaught = (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
     return isFormCaught;
+  }
+
+  isSeen(): boolean {
+    if (this.speciesStarterDexEntry?.seenAttr) {
+      return true;
+    }
+    const starterCaughtAttr = this.isCaught(this.getStarterSpecies(this.species));
+    return !!starterCaughtAttr;
   }
 
   /**
@@ -1096,6 +1105,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const isCaught = this.isCaught();
     const isFormCaught = this.isFormCaught();
+    const isSeen = this.isSeen();
+    const isStarterCaught = !!this.isCaught(this.getStarterSpecies(this.species));
 
     if (this.blockInputOverlay) {
       if (button === Button.CANCEL || button === Button.ACTION) {
@@ -1131,7 +1142,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         switch (this.cursor) {
           case MenuOptions.BASE_STATS:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1151,7 +1162,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.LEVEL_MOVES:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1209,7 +1220,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.EGG_MOVES:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1276,7 +1287,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.TM_MOVES:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else if (this.tmMoves.length < 1) {
               ui.showText(i18next.t("pokedexUiHandler:noTmMoves"));
@@ -1327,7 +1338,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.ABILITIES:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1415,7 +1426,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.BIOMES:
-            if (!(isCaught || this.speciesStarterDexEntry?.seenAttr)) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1494,7 +1505,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.EVOLUTIONS:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1673,7 +1684,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.TOGGLE_IVS:
-            if (!isCaught || !isFormCaught) {
+            if (!isStarterCaught) {
               error = true;
             } else {
               this.toggleStatsMode();
@@ -1683,7 +1694,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.NATURES:
-            if (!isCaught || !isFormCaught) {
+            if (!isStarterCaught) {
               error = true;
             } else {
               this.blockInput = true;
@@ -2396,8 +2407,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (species) {
-      const dexEntry = globalScene.gameData.dexData[species.speciesId];
-
       const caughtAttr = this.isCaught(species);
 
       if (!caughtAttr) {
@@ -2418,7 +2427,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
 
       const isFormCaught = this.isFormCaught();
-      const isFormSeen = dexEntry ? (dexEntry.seenAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
+      const isFormSeen = this.isSeen();
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
