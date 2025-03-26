@@ -68,6 +68,10 @@ input:-internal-autofill-selected {
   background-clip: text;
 }
 
+input:-webkit-autofill {
+  -webkit-text-fill-color: #a1a1a1;
+}
+
 /* Need adjust input font-size */
 input {
   font-size: 3.2rem;
