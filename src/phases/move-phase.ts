@@ -105,14 +105,11 @@ export class MovePhase extends BattlePhase {
   ) {
     super();
 
-    const ignorePPChallenge = new BooleanHolder(ignorePp);
-    applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, ignorePPChallenge);
-
     this.pokemon = pokemon;
     this.targets = targets;
     this.move = move;
     this.followUp = followUp;
-    this.ignorePp = ignorePPChallenge.value;
+    this.ignorePp = ignorePp;
     this.reflected = reflected;
     this.forcedLast = forcedLast;
   }
@@ -353,7 +350,13 @@ export class MovePhase extends BattlePhase {
 
     // "commit" to using the move, deducting PP.
     if (!this.ignorePp) {
-      const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
+      let ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
+
+      const ignorePPChallenge = new BooleanHolder(false);
+      applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, ignorePPChallenge);
+      if (ignorePPChallenge.value) {
+        ppUsed = 0;
+      }
 
       this.move.usePp(ppUsed);
       globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
