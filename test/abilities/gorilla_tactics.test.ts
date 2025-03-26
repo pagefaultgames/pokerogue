@@ -73,9 +73,38 @@ describe("Abilities - Gorilla Tactics", () => {
     await game.toNextTurn();
 
     game.move.select(Moves.TACKLE);
+    await game.forceEnemyMove(Moves.SPLASH); //prevent protect from being used by the enemy
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());
+  });
+
+  it("should activate when the opponenet protects", async () => {
+    await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
+
+    const darmanitan = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.TACKLE);
+    await game.forceEnemyMove(Moves.PROTECT);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(darmanitan.isMoveRestricted(Moves.SPLASH)).toBe(true);
+    expect(darmanitan.isMoveRestricted(Moves.TACKLE)).toBe(false);
+  });
+
+  it("should activate when a move is succesfully executed but misses", async () => {
+    await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
+
+    const darmanitan = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.TACKLE);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.move.forceMiss();
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(darmanitan.isMoveRestricted(Moves.SPLASH)).toBe(true);
+    expect(darmanitan.isMoveRestricted(Moves.TACKLE)).toBe(false);
   });
 });
