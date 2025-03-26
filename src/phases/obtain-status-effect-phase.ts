@@ -13,7 +13,13 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
   private sourceText?: string | null;
   private sourcePokemon?: Pokemon | null;
 
-  constructor(battlerIndex: BattlerIndex, statusEffect?: StatusEffect, turnsRemaining?: number, sourceText?: string | null, sourcePokemon?: Pokemon | null) {
+  constructor(
+    battlerIndex: BattlerIndex,
+    statusEffect?: StatusEffect,
+    turnsRemaining?: number,
+    sourceText?: string | null,
+    sourcePokemon?: Pokemon | null,
+  ) {
     super(battlerIndex);
 
     this.statusEffect = statusEffect;
@@ -31,13 +37,21 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(false, () => {
-          globalScene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
+          globalScene.queueMessage(
+            getStatusEffectObtainText(
+              this.statusEffect,
+              getPokemonNameWithAffix(pokemon),
+              this.sourceText ?? undefined,
+            ),
+          );
           this.end();
         });
         return;
       }
     } else if (pokemon.status?.effect === this.statusEffect) {
-      globalScene.queueMessage(getStatusEffectOverlapText(this.statusEffect ?? StatusEffect.NONE, getPokemonNameWithAffix(pokemon)));
+      globalScene.queueMessage(
+        getStatusEffectOverlapText(this.statusEffect ?? StatusEffect.NONE, getPokemonNameWithAffix(pokemon)),
+      );
     }
     this.end();
   }

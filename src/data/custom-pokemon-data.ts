@@ -1,5 +1,5 @@
 import type { Abilities } from "#enums/abilities";
-import type { Type } from "#enums/type";
+import type { PokemonType } from "#enums/pokemon-type";
 import { isNullOrUndefined } from "#app/utils";
 import type { Nature } from "#enums/nature";
 
@@ -13,7 +13,7 @@ export class CustomPokemonData {
   public ability: Abilities | -1;
   public passive: Abilities | -1;
   public nature: Nature | -1;
-  public types: Type[];
+  public types: PokemonType[];
   /** `hitsReceivedCount` aka `hitsRecCount` saves how often the pokemon got hit until a new arena encounter (used for Rage Fist) */
   public hitsRecCount: number;
 
