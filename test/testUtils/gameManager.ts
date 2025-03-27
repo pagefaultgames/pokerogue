@@ -292,7 +292,7 @@ export default class GameManager {
         const move = (this.scene.getCurrentPhase() as SelectTargetPhase)
           .getPokemon()
           .getMoveset()
-          [movePosition]!.getMove(); // TODO: is the bang correct?
+          [movePosition].getMove();
         if (!move.isMultiTarget()) {
           handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
         }
