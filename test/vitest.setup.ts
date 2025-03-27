@@ -1,6 +1,22 @@
 import "vitest-canvas-mock";
+
+import { initLoggedInUser } from "#app/account";
+import { initAbilities } from "#app/data/ability";
+import { initBiomes } from "#app/data/balance/biomes";
+import { initEggMoves } from "#app/data/balance/egg-moves";
+import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { initMoves } from "#app/data/moves/move";
+import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
+import { initPokemonForms } from "#app/data/pokemon-forms";
+import { initSpecies } from "#app/data/pokemon-species";
+import { initAchievements } from "#app/system/achv";
+import { initVouchers } from "#app/system/voucher";
+import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { afterAll, beforeAll, vi } from "vitest";
+
 import { initTestFile } from "./testUtils/testFileInitialization";
+
+/** Set the timezone to UTC for tests. */
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async importOriginal => {
@@ -9,9 +25,8 @@ vi.mock("#app/overrides", async importOriginal => {
 
   return {
     default: defaultOverrides,
-    // Export `defaultOverrides` as a *copy*.
-    // This ensures we can easily reset `overrides` back to its default values after modifying it.
-    defaultOverrides: { ...defaultOverrides },
+    defaultOverrides,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   } satisfies typeof import("#app/overrides");
 });
 
@@ -52,11 +67,7 @@ vi.mock("i18next", async importOriginal => {
 global.testFailed = false;
 
 beforeAll(() => {
-  console.log("=====================================");
-  console.log("Initializing test file...");
   initTestFile();
-  console.log("Test file initialized!");
-  console.log("=====================================");
 });
 
 afterAll(() => {

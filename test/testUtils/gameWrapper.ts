@@ -1,12 +1,21 @@
+/* eslint-disable */
 // @ts-nocheck
 import BattleScene, * as battleScene from "#app/battle-scene";
 import { MoveAnim } from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
+import * as Utils from "#app/utils";
+import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockClock } from "#test/testUtils/mocks/mockClock";
+import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
+import { MockFetch } from "#test/testUtils/mocks/mockFetch";
 import MockLoader from "#test/testUtils/mocks/mockLoader";
+import { mockLocalStorage } from "#test/testUtils/mocks/mockLocalStorage";
+import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
 import MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
 import fs from "node:fs";
 import Phaser from "phaser";
+import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { vi } from "vitest";
 import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 import InputManager = Phaser.Input.InputManager;
@@ -17,6 +26,20 @@ import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
 import { version } from "../../package.json";
 import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
+
+window.URL.createObjectURL = (blob: Blob) => {
+  blobToString(blob).then((data: string) => {
+    localStorage.setItem("toExport", data);
+  });
+  return null;
+};
+navigator.getGamepads = () => [];
+global.fetch = vi.fn(MockFetch);
+Utils.setCookie(Utils.sessionIdKey, "fake_token");
+
+window.matchMedia = () => ({
+  matches: false,
+});
 
 export default class GameWrapper {
   public game: Phaser.Game;
@@ -186,8 +209,6 @@ export default class GameWrapper {
     this.scene.time = new MockClock(this.scene);
     this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
     this.scene.eventManager = new MockTimedEventManager(); // Disable Timed Events
-
-    Pokemon.prototype.updateInfo = async () => {};
   }
 }
 

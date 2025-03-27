@@ -10,11 +10,12 @@ import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import type { SetupServerApi } from "msw/node";
 
 const apiBase = getApiBaseUrl();
 const systemSavedataApi = new PokerogueSystemSavedataApi(getApiBaseUrl());
 
-let server;
+let server: SetupServerApi;
 
 beforeAll(async () => {
   server = await initServerForApiTests();

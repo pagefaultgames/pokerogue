@@ -1,6 +1,7 @@
 import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/moves/move";
+import type Move from "#app/data/moves/move";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
@@ -15,8 +16,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const fusionFlare = allMoves[Moves.FUSION_FLARE];
-  const fusionBolt = allMoves[Moves.FUSION_BOLT];
+  let fusionFlare: Move;
+  let fusionBolt: Move;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -29,6 +30,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   });
 
   beforeEach(() => {
+    fusionFlare = allMoves[Moves.FUSION_FLARE];
+    fusionBolt = allMoves[Moves.FUSION_BOLT];
     game = new GameManager(phaserGame);
     game.override.moveset([fusionFlare.id, fusionBolt.id]);
     game.override.startingLevel(1);

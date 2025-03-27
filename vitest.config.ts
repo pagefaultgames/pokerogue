@@ -3,7 +3,7 @@ import { defaultConfig } from "./vite.config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
 
 function getTestOrder(testName: string): number {
-  if (testName.includes("battle_scene.test.ts")) {
+  if (testName.includes("battle-scene.test.ts")) {
     return 1;
   }
   if (testName.includes("inputs.test.ts")) {
