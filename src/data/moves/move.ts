@@ -16,7 +16,6 @@ import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
 import type Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,
-  FieldPosition,
   HitResult,
   MoveResult,
   PlayerPokemon,
@@ -126,7 +125,7 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
+import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidSleepTalkMoves } from "./invalid-moves";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -1647,7 +1646,7 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.damageAndUpdate(recoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
+    user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true, true);
     globalScene.queueMessage(i18next.t("moveTriggers:hitWithRecoil", { pokemonName: getPokemonNameWithAffix(user) }));
     user.turnData.damageTaken += recoilDamage;
 
@@ -1679,7 +1678,7 @@ export class SacrificialAttr extends MoveEffectAttr {
    * @returns true if the function succeeds
    **/
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.damageAndUpdate(user.hp, { result: HitResult.INDIRECT, ignoreSegments: true });
+    user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
 	  user.turnData.damageTaken += user.hp;
 
     return true;
@@ -1717,7 +1716,7 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
       return false;
     }
 
-    user.damageAndUpdate(user.hp, { result: HitResult.INDIRECT, ignoreSegments: true });
+    user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
     user.turnData.damageTaken += user.hp;
 
     return true;
@@ -1759,7 +1758,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value) {
-      user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), { result: HitResult.INDIRECT, ignoreSegments: true });
+      user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), HitResult.OTHER, false, true, true);
       globalScene.queueMessage(i18next.t("moveTriggers:cutHpPowerUpMove", { pokemonName: getPokemonNameWithAffix(user) })); // Queue recoil message
     }
     return true;
@@ -1806,7 +1805,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
     }
 
     const damageTaken = this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost);
-    user.damageAndUpdate(damageTaken, { result: HitResult.INDIRECT, ignoreSegments: true, ignoreFaintPhase: true });
+    user.damageAndUpdate(damageTaken, HitResult.OTHER, false, true, true);
     user.addTag(BattlerTagType.SUBSTITUTE, 0, move.id, user.id);
     return true;
   }
@@ -1956,7 +1955,7 @@ export class FlameBurstAttr extends MoveEffectAttr {
       return false;
     }
 
-    targetAlly.damageAndUpdate(Math.max(1, Math.floor(1 / 16 * targetAlly.getMaxHp())), { result: HitResult.INDIRECT });
+    targetAlly.damageAndUpdate(Math.max(1, Math.floor(1 / 16 * targetAlly.getMaxHp())), HitResult.OTHER);
     return true;
   }
 
@@ -3435,8 +3434,9 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
     this.cutRatio = cutRatio;
     this.messageCallback = messageCallback;
   }
+
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / this.cutRatio), { result: HitResult.INDIRECT });
+    user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / this.cutRatio), HitResult.OTHER, false, true);
     user.updateInfo();
     const ret = super.apply(user, target, move, args);
     if (this.messageCallback) {
@@ -5328,7 +5328,7 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
     return false;
   }
 
-  user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), { result: HitResult.INDIRECT });
+  user.damageAndUpdate(Utils.toDmgValue(user.getMaxHp() / 2), HitResult.OTHER, false, true);
   globalScene.queueMessage(i18next.t("moveTriggers:keptGoingAndCrashed", { pokemonName: getPokemonNameWithAffix(user) }));
   user.turnData.damageTaken += Utils.toDmgValue(user.getMaxHp() / 2);
 
@@ -5649,7 +5649,7 @@ export class CurseAttr extends MoveEffectAttr {
         return false;
       }
       const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
-      user.damageAndUpdate(curseRecoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
+      user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
       globalScene.queueMessage(
         i18next.t("battlerTags:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
@@ -6158,16 +6158,9 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
 
       if (globalScene.currentBattle.double && globalScene.getEnemyParty().length > 1) {
         const allyPokemon = user.getAlly();
-        // Handle cases where revived pokemon needs to get switched in on same turn
-        if (allyPokemon.isFainted() || allyPokemon === pokemon) {
-          // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-          globalScene.tryRemovePhase((phase: SwitchSummonPhase) => phase instanceof SwitchSummonPhase && phase.getPokemon() === pokemon);
-          // If the pokemon being revived was alive earlier in the turn, cancel its move
-          // (revived pokemon can't move in the turn they're brought back)
-          globalScene.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
-          if (user.fieldPosition === FieldPosition.CENTER) {
-            user.setFieldPosition(FieldPosition.LEFT);
-          }
+        if (slotIndex <= 1) {
+          globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, false));
+        } else if (allyPokemon.isFainted()) {
           globalScene.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false));
         }
       }
@@ -6973,8 +6966,7 @@ export class CopyMoveAttr extends CallMoveAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       if (this.mirrorMove) {
-        const lastMove = target.getLastXMoves()[0]?.move;
-        return !!lastMove && !this.invalidMoves.has(lastMove);
+        return target.getMoveHistory().length !== 0;
       } else {
         const lastMove = globalScene.currentBattle.lastMove;
         return lastMove !== undefined && !this.invalidMoves.has(lastMove);
@@ -8570,7 +8562,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.METRONOME, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr, invalidMetronomeMoves),
     new StatusMove(Moves.MIRROR_MOVE, PokemonType.FLYING, -1, 20, -1, 0, 1)
-      .attr(CopyMoveAttr, true, invalidMirrorMoveMoves),
+      .attr(CopyMoveAttr, true),
     new AttackMove(Moves.SELF_DESTRUCT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)

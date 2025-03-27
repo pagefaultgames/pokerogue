@@ -574,7 +574,9 @@ export default class PartyUiHandler extends MessageUiHandler {
             form: pokemon.formIndex,
             female: pokemon.gender === Gender.FEMALE,
           };
-          ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, attributes).then(() => this.clearOptions());
+          ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, pokemon.formIndex, attributes).then(() =>
+            this.clearOptions(),
+          );
           return true;
         } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
           this.clearOptions();

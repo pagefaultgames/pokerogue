@@ -2141,15 +2141,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.HOOLIGANS]: new TrainerConfig(++t)
     .setDoubleOnly()
-    .setMoneyMultiplier(1.5)
     .setEncounterBgm(TrainerType.ROUGHNECK)
-    .setPartyTemplateFunc(() =>
-      getWavePartyTemplate(
-        trainerPartyTemplates.TWO_WEAK,
-        trainerPartyTemplates.TWO_AVG,
-        trainerPartyTemplates.ONE_AVG_ONE_STRONG,
-      ),
-    )
     .setSpeciesFilter(s => s.isOfType(PokemonType.POISON) || s.isOfType(PokemonType.DARK)),
   [TrainerType.HOOPSTER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.INFIELDER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
@@ -2157,14 +2149,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LINEBACKER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.MAID]: new TrainerConfig(++t).setMoneyMultiplier(1.6).setEncounterBgm(TrainerType.RICH),
   [TrainerType.MUSICIAN]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.1)
-    .setEncounterBgm(TrainerType.POKEFAN)
-    .setPartyTemplates(
-      trainerPartyTemplates.FOUR_WEAKER,
-      trainerPartyTemplates.THREE_WEAK,
-      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
-      trainerPartyTemplates.TWO_AVG,
-    )
+    .setEncounterBgm(TrainerType.ROUGHNECK)
     .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.SING)),
   [TrainerType.HEX_MANIAC]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
@@ -2229,14 +2214,7 @@ export const trainerConfigs: TrainerConfigs = {
         ) || s.getLevelMoves().some(plm => plm[1] === Moves.RAIN_DANCE),
     ), // Mons with rain abilities or who learn Rain Dance by level
   [TrainerType.PILOT]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.75)
     .setEncounterBgm(TrainerType.CLERK)
-    .setPartyTemplates(
-      trainerPartyTemplates.THREE_WEAK,
-      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
-      trainerPartyTemplates.TWO_AVG,
-      trainerPartyTemplates.THREE_AVG,
-    )
     .setSpeciesFilter(s => tmSpecies[Moves.FLY].indexOf(s.speciesId) > -1),
   [TrainerType.POKEFAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
@@ -2252,8 +2230,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.FOUR_WEAK_SAME,
       trainerPartyTemplates.FIVE_WEAK,
       trainerPartyTemplates.SIX_WEAKER_SAME,
-    )
-    .setSpeciesFilter(s => tmSpecies[Moves.HELPING_HAND].indexOf(s.speciesId) > -1),
+    ),
   [TrainerType.PRESCHOOLER]: new TrainerConfig(++t)
     .setMoneyMultiplier(0.2)
     .setEncounterBgm(TrainerType.YOUNGSTER)
@@ -2375,29 +2352,16 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.LARVESTA],
     }),
   [TrainerType.RICH]: new TrainerConfig(++t)
-    .setMoneyMultiplier(3.25)
+    .setMoneyMultiplier(5)
     .setName("Gentleman")
     .setHasGenders("Madame")
-    .setHasDouble("Rich Couple")
-    .setPartyTemplates(
-      trainerPartyTemplates.THREE_WEAK,
-      trainerPartyTemplates.FOUR_WEAK,
-      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
-      trainerPartyTemplates.THREE_AVG,
-    )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.ELECTRIC)),
+    .setHasDouble("Rich Couple"),
   [TrainerType.RICH_KID]: new TrainerConfig(++t)
-    .setMoneyMultiplier(2.5)
+    .setMoneyMultiplier(3.75)
     .setName("Rich Boy")
     .setHasGenders("Lady")
     .setHasDouble("Rich Kids")
-    .setEncounterBgm(TrainerType.RICH)
-    .setPartyTemplates(
-      trainerPartyTemplates.FOUR_WEAKER,
-      trainerPartyTemplates.THREE_WEAK_SAME,
-      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
-    )
-    .setSpeciesFilter(s => s.baseTotal <= 460),
+    .setEncounterBgm(TrainerType.RICH),
   [TrainerType.ROUGHNECK]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)

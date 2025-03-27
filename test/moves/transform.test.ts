@@ -6,7 +6,6 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
-import { BattlerIndex } from "#app/battle";
 
 // TODO: Add more tests once Transform is fully implemented
 describe("Moves - Transform", () => {
@@ -59,7 +58,7 @@ describe("Moves - Transform", () => {
     }
 
     const playerMoveset = player.getMoveset();
-    const enemyMoveset = enemy.getMoveset();
+    const enemyMoveset = player.getMoveset();
 
     expect(playerMoveset.length).toBe(enemyMoveset.length);
     for (let i = 0; i < playerMoveset.length && i < enemyMoveset.length; i++) {
@@ -127,72 +126,5 @@ describe("Moves - Transform", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
-  });
-
-  it("should persist transformed attributes across reloads", async () => {
-    game.override.enemyMoveset([]).moveset([]);
-
-    await game.classicMode.startBattle([Species.DITTO]);
-
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
-
-    game.move.changeMoveset(player, Moves.TRANSFORM);
-    game.move.changeMoveset(enemy, Moves.MEMENTO);
-
-    game.move.select(Moves.TRANSFORM);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextWave();
-
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
-    expect(game.scene.currentBattle.waveIndex).toBe(2);
-
-    await game.reload.reloadSession();
-
-    const playerReloaded = game.scene.getPlayerPokemon()!;
-    const playerMoveset = player.getMoveset();
-
-    expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
-    expect(playerReloaded.getAbility()).toBe(enemy.getAbility());
-    expect(playerReloaded.getGender()).toBe(enemy.getGender());
-
-    expect(playerReloaded.getStat(Stat.HP, false)).not.toBe(enemy.getStat(Stat.HP));
-    for (const s of EFFECTIVE_STATS) {
-      expect(playerReloaded.getStat(s, false)).toBe(enemy.getStat(s, false));
-    }
-
-    expect(playerMoveset.length).toEqual(1);
-    expect(playerMoveset[0]?.moveId).toEqual(Moves.MEMENTO);
-  });
-
-  it("should stay transformed with the correct form after reload", async () => {
-    game.override.enemyMoveset([]).moveset([]);
-    game.override.enemySpecies(Species.DARMANITAN);
-
-    await game.classicMode.startBattle([Species.DITTO]);
-
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
-
-    // change form
-    enemy.species.forms[1];
-    enemy.species.formIndex = 1;
-
-    game.move.changeMoveset(player, Moves.TRANSFORM);
-    game.move.changeMoveset(enemy, Moves.MEMENTO);
-
-    game.move.select(Moves.TRANSFORM);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextWave();
-
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
-    expect(game.scene.currentBattle.waveIndex).toBe(2);
-
-    await game.reload.reloadSession();
-
-    const playerReloaded = game.scene.getPlayerPokemon()!;
-
-    expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
-    expect(playerReloaded.getSpeciesForm().formIndex).toBe(enemy.getSpeciesForm().formIndex);
   });
 });

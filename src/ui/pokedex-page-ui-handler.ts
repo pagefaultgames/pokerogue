@@ -20,6 +20,7 @@ import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, normalForm } from
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { PokemonType } from "#enums/pokemon-type";
+import { GameModes } from "#app/game-mode";
 import type { DexEntry, StarterAttributes } from "#app/system/game-data";
 import { AbilityAttr, DexAttr } from "#app/system/game-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -32,6 +33,7 @@ import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
+import * as Challenge from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import PokedexInfoOverlay from "#app/ui/pokedex-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
@@ -49,6 +51,7 @@ import {
   BooleanHolder,
   getLocalizedSpriteKey,
   isNullOrUndefined,
+  NumberHolder,
   padInt,
   rgbHexToRgba,
   toReadableString,
@@ -239,9 +242,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private starterAttributes: StarterAttributes;
   private savedStarterAttributes: StarterAttributes;
 
-  private previousSpecies: PokemonSpecies[];
-  private previousStarterAttributes: StarterAttributes[];
-
   protected blockInput = false;
   protected blockInputOverlay = false;
 
@@ -261,7 +261,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private unlockedVariants: boolean[];
 
   private canUseCandies: boolean;
-  private exitCallback;
 
   constructor() {
     super(Mode.POKEDEX_PAGE);
@@ -657,9 +656,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     // Filter bar sits above everything, except the message box
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
-
-    this.previousSpecies = [];
-    this.previousStarterAttributes = [];
   }
 
   show(args: any[]): boolean {
@@ -672,19 +668,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return false;
     }
     this.species = args[0];
-    this.savedStarterAttributes = args[1] ?? {
+    this.formIndex = args[1] ?? 0;
+    this.savedStarterAttributes = args[2] ?? {
       shiny: false,
       female: true,
       variant: 0,
       form: 0,
     };
-    this.formIndex = this.savedStarterAttributes.form ?? 0;
-    this.filteredIndices = args[2] ?? null;
+    this.filteredIndices = args[3] ?? null;
     this.starterSetup();
-
-    if (args[4] instanceof Function) {
-      this.exitCallback = args[4];
-    }
 
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.infoOverlay.clear();
@@ -1099,27 +1091,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
-      } else if (this.previousSpecies.length > 0) {
-        this.blockInput = true;
-        ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
-          const species = this.previousSpecies.pop();
-          const starterAttributes = this.previousStarterAttributes.pop();
-          this.moveInfoOverlay.clear();
-          this.clearText();
-          ui.setModeForceTransition(Mode.POKEDEX_PAGE, species, starterAttributes);
-          success = true;
-        });
-        this.blockInput = false;
       } else {
-        ui.revertMode()
-          .then(() => {
-            console.log("exitCallback", this.exitCallback);
-            if (this.exitCallback instanceof Function) {
-              const exitCallback = this.exitCallback;
-              this.exitCallback = null;
-              exitCallback();
-            }
-          });
+        this.getUi().revertMode();
         success = true;
       }
     } else {
@@ -1534,8 +1507,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           ? (preSpecies ?? this.species).getFormNameToDisplay(preFormIndex, true)
                           : (preSpecies ?? this.species).getExpandedSpeciesName(),
                         handler: () => {
-                          this.previousSpecies.push(this.species);
-                          this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
                           const newSpecies = allSpecies.find(
                             species => species.speciesId === pokemonPrevolutions[pre.speciesId],
                           );
@@ -1551,7 +1522,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, this.savedStarterAttributes);
+                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, newFormIndex, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText),
@@ -1587,13 +1558,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           : (evoSpecies ?? this.species).getExpandedSpeciesName(),
                         style: isCaughtEvo && isFormCaughtEvo ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                         handler: () => {
-                          this.previousSpecies.push(this.species);
-                          this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
                           this.starterAttributes.form = newFormIndex;
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, evoSpecies, this.savedStarterAttributes);
+                          ui.setMode(Mode.POKEDEX_PAGE, evoSpecies, newFormIndex, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText),
@@ -1629,8 +1598,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           label: label,
                           style: isFormCaught ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                           handler: () => {
-                            this.previousSpecies.push(this.species);
-                            this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
                             const newSpecies = this.species;
                             const newFormIndex = this.species.forms.find(f => f.formKey === bf.formKey)?.formIndex;
                             this.starterAttributes.form = newFormIndex;
@@ -1640,6 +1607,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                             ui.setMode(
                               Mode.POKEDEX_PAGE,
                               newSpecies,
+                              newFormIndex,
                               this.savedStarterAttributes,
                               this.filteredIndices,
                             );
@@ -1990,11 +1958,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           case Button.LEFT:
             this.blockInput = true;
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
-              // Always go back to first selection after scrolling around
-              if (this.previousSpecies.length === 0) {
-                this.previousSpecies.push(this.species);
-                this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
-              }
               let newSpecies: PokemonSpecies;
               if (this.filteredIndices) {
                 const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
@@ -2016,6 +1979,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               ui.setModeForceTransition(
                 Mode.POKEDEX_PAGE,
                 newSpecies,
+                newFormIndex,
                 this.savedStarterAttributes,
                 this.filteredIndices,
               );
@@ -2024,11 +1988,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
           case Button.RIGHT:
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
-              // Always go back to first selection after scrolling around
-              if (this.previousSpecies.length === 0) {
-                this.previousSpecies.push(this.species);
-                this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
-              }
               let newSpecies: PokemonSpecies;
               if (this.filteredIndices) {
                 const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
@@ -2050,6 +2009,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               ui.setModeForceTransition(
                 Mode.POKEDEX_PAGE,
                 newSpecies,
+                newFormIndex,
                 this.savedStarterAttributes,
                 this.filteredIndices,
               );
@@ -2166,6 +2126,22 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
       }
     }
+  }
+
+  getValueLimit(): number {
+    const valueLimit = new NumberHolder(0);
+    switch (globalScene.gameMode.modeId) {
+      case GameModes.ENDLESS:
+      case GameModes.SPLICED_ENDLESS:
+        valueLimit.value = 15;
+        break;
+      default:
+        valueLimit.value = 10;
+    }
+
+    Challenge.applyChallenges(globalScene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
+
+    return valueLimit.value;
   }
 
   setCursor(cursor: number): boolean {
