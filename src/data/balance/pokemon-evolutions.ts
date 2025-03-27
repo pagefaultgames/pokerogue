@@ -14,6 +14,8 @@ import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifi
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
+import { Challenges } from "#enums/challenges";
+import { Stat } from "#enums/stat";
 
 
 export enum SpeciesWildEvolutionDelay {
@@ -179,7 +181,7 @@ class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
 class MoveEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   constructor(move: Moves) {
-    super(p => p.moveset.filter(m => m?.moveId === move).length > 0);
+    super(p => p.moveset.filter(m => m?.moveId === move).length > 0 || globalScene.gameMode.hasChallenge(Challenges.METRONOME));
     this.move = move;
     const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
     this.description = i18next.t("pokemonEvolutions:move", { move: i18next.t(`move:${moveKey}.name`) });
@@ -218,7 +220,12 @@ class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public amount: number;
   public type: PokemonType;
   constructor(amount: number, type: PokemonType) {
-    super(p => p.friendship >= amount && !!p.getMoveset().find(m => m?.getMove().type === type));
+    super(p =>
+      p.friendship >= amount &&
+      (!!p.getMoveset().find(m => m?.getMove().type === type ||
+      (globalScene.gameMode.hasChallenge(Challenges.METRONOME) &&
+      !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(type) > -1)
+    ))));
     this.amount = amount;
     this.type = type;
     this.description = i18next.t("pokemonEvolutions:friendshipMoveType", { type: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`) });
@@ -262,7 +269,9 @@ class WeatherEvolutionCondition extends SpeciesEvolutionCondition {
 class MoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public type: PokemonType;
   constructor(type: PokemonType) {
-    super(p => p.moveset.filter(m => m?.getMove().type === type).length > 0);
+    super(p => p.moveset.filter(m => m?.getMove().type === type).length > 0 ||
+      (globalScene.gameMode.hasChallenge(Challenges.METRONOME) &&
+      !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(type) > -1)));
     this.type = type;
     this.description = i18next.t("pokemonEvolutions:moveType", { type: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`) });
   }
@@ -282,6 +291,11 @@ class TyrogueEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   constructor(move: Moves) {
     super(p =>
+      (globalScene.gameMode.hasChallenge(Challenges.METRONOME) && ( // Metronome mode = no moves, do it the old fashioned way
+        (move === Moves.LOW_SWEEP && p.stats[Stat.ATK] > p.stats[Stat.DEF]) ||
+        (move === Moves.MACH_PUNCH && p.stats[Stat.DEF] > p.stats[Stat.ATK]) ||
+        (move === Moves.RAPID_SPIN && p.stats[Stat.DEF] === p.stats[Stat.ATK])
+      )) ||
       p.getMoveset(true).find(m => m && [ Moves.LOW_SWEEP, Moves.MACH_PUNCH, Moves.RAPID_SPIN ].includes(m?.moveId))?.moveId === move);
     this.move = move;
     const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
@@ -303,11 +317,17 @@ class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public timesOfDay: TimeOfDay[];
   constructor(move: Moves, tod: "day" | "night") {
     if (tod === "day") {
-      super(p => p.moveset.filter(m => m?.moveId === move).length > 0 && (globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY));
+      super(p =>
+        (p.moveset.filter(m => m?.moveId === move).length > 0 ||
+        globalScene.gameMode.hasChallenge(Challenges.METRONOME)) &&
+        (globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY));
       this.move = move;
       this.timesOfDay = [ TimeOfDay.DAWN, TimeOfDay.DAY ];
     } else if (tod === "night") {
-      super(p => p.moveset.filter(m => m?.moveId === move).length > 0 && (globalScene.arena.getTimeOfDay() === TimeOfDay.DUSK || globalScene.arena.getTimeOfDay() === TimeOfDay.NIGHT));
+      super(p =>
+        (p.moveset.filter(m => m?.moveId === move).length > 0 ||
+        globalScene.gameMode.hasChallenge(Challenges.METRONOME)) &&
+        (globalScene.arena.getTimeOfDay() === TimeOfDay.DUSK || globalScene.arena.getTimeOfDay() === TimeOfDay.NIGHT));
       this.move = move;
       this.timesOfDay = [ TimeOfDay.DUSK, TimeOfDay.NIGHT ];
     } else {
@@ -332,7 +352,7 @@ class DunsparceEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
     super(p => {
       let ret = false;
-      if (p.moveset.filter(m => m?.moveId === Moves.HYPER_DRILL).length > 0) {
+      if (p.moveset.filter(m => m?.moveId === Moves.HYPER_DRILL).length > 0 || globalScene.gameMode.hasChallenge(Challenges.METRONOME)) {
         globalScene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(4), p.id);
       }
       return ret;
