@@ -57,6 +57,7 @@ import fs from "node:fs";
 import { expect, vi } from "vitest";
 import { globalScene } from "#app/global-scene";
 import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
+import { MockFetch } from "./mocks/mockFetch";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -122,9 +123,12 @@ export default class GameManager {
     this.settings = new SettingsHelper(this);
     this.reload = new ReloadHelper(this);
     this.modifiers = new ModifierHelper(this);
+    this.override.sanitizeOverrides();
 
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
+
+    global.fetch = vi.fn(MockFetch) as any;
   }
 
   /**
