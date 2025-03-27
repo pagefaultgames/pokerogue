@@ -1125,7 +1125,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else if (this.showingTray) {
       if (button === Button.ACTION) {
         const formIndex = this.trayForms[this.trayCursor].formIndex;
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, { form: formIndex }, this.filteredIndices);
         success = true;
       } else {
         const numberOfForms = this.trayContainers.length;
@@ -1174,7 +1174,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
     } else {
       if (button === Button.ACTION) {
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, 0, null, this.filteredIndices);
         success = true;
       } else {
         switch (button) {

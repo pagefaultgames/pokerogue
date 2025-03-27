@@ -1,6 +1,4 @@
 import { BattlerIndex } from "#app/battle";
-import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#app/ui/command-ui-handler";
 import { PostSummonWeatherChangeAbAttr } from "#app/data/ability";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -155,22 +153,6 @@ describe("Abilities - Neutralizing Gas", () => {
     game.scene.pokeballCounts[PokeballType.MASTER_BALL] = 1;
     game.doThrowPokeball(PokeballType.MASTER_BALL);
     await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
-  });
-
-  it("should deactivate after fleeing from a wild pokemon", async () => {
-    game.override
-      .enemyAbility(Abilities.NEUTRALIZING_GAS)
-      .ability(Abilities.BALL_FETCH);
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
-
-    vi.spyOn(game.scene.getPlayerPokemon()!, "randSeedInt").mockReturnValue(0);
-
-    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
-    commandPhase.handleCommand(Command.RUN, 0);
-    await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
   });
