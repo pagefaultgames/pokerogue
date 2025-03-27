@@ -227,7 +227,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public disableTrainerWaves(): this {
-    vi.spyOn(Overrides, "DISABLE_STANDARD_TRAINERS_OVERRIDE");
+    vi.spyOn(Overrides, "DISABLE_STANDARD_TRAINERS_OVERRIDE", "get").mockReturnValue(true);
     this.log("Standard trainer waves are disabled!");
     return this;
   }
