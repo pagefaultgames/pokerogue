@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import type { Gender } from "../data/gender";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
-import { getPokemonSpecies } from "../data/pokemon-species";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "../data/trainer-config";
@@ -14,6 +14,7 @@ import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
+import { getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
 
 export default class PokemonData {
   public id: number;
@@ -63,6 +64,7 @@ export default class PokemonData {
   public bossSegments?: number;
 
   public summonData: PokemonSummonData;
+  public summonDataSpeciesFormIndex: number;
 
   /** Data that can customize a Pokemon in non-standard ways from its Species */
   public customPokemonData: CustomPokemonData;
@@ -145,8 +147,9 @@ export default class PokemonData {
       this.moveset = sourcePokemon.moveset;
       if (!forHistory) {
         this.status = sourcePokemon.status;
-        if (this.player) {
+        if (this.player && sourcePokemon.summonData) {
           this.summonData = sourcePokemon.summonData;
+          this.summonDataSpeciesFormIndex = this.getSummonDataSpeciesFormIndex();
         }
       }
     } else {
@@ -170,6 +173,8 @@ export default class PokemonData {
         this.summonData.ability = source.summonData.ability;
         this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
         this.summonData.types = source.summonData.types;
+        this.summonData.speciesForm = source.summonData.speciesForm;
+        this.summonDataSpeciesFormIndex = source.summonDataSpeciesFormIndex;
 
         if (source.summonData.tags) {
           this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
@@ -213,8 +218,28 @@ export default class PokemonData {
           this,
         );
     if (this.summonData) {
+      // when loading from saved session, recover summonData.speciesFrom and form index species object
+      // used to stay transformed on reload session
+      if (this.summonData.speciesForm) {
+        this.summonData.speciesForm = getPokemonSpeciesForm(
+          this.summonData.speciesForm.speciesId,
+          this.summonDataSpeciesFormIndex,
+        );
+      }
       ret.primeSummonData(this.summonData);
     }
     return ret;
+  }
+
+  /**
+   * Method to save summon data species form index
+   * Necessary in case the pokemon is transformed
+   * to reload the correct form
+   */
+  getSummonDataSpeciesFormIndex(): number {
+    if (this.summonData.speciesForm) {
+      return this.summonData.speciesForm.formIndex;
+    }
+    return 0;
   }
 }

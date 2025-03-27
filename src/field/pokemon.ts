@@ -4464,11 +4464,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return result;
     }
 
-    // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
-    const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
-    const grudgeTag = this.getTag(BattlerTagType.GRUDGE);
-
-    const isOneHitKo = result === HitResult.ONE_HIT_KO;
+      // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
+      const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
+      const grudgeTag = this.getTag(BattlerTagType.GRUDGE);
 
     if (dmg) {
       this.lapseTags(BattlerTagLapseType.HIT);
@@ -4483,19 +4481,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         globalScene.applyModifiers(EnemyEndureChanceModifier, false, this);
       }
 
-      /**
-       * We explicitly require to ignore the faint phase here, as we want to show the messages
-       * about the critical hit and the super effective/not very effective messages before the faint phase.
-       */
-      const damage = this.damageAndUpdate(
-        isBlockedBySubstitute ? 0 : dmg,
-        result as DamageResult,
-        isCritical,
-        isOneHitKo,
-        isOneHitKo,
-        true,
-        source,
-      );
+        /**
+         * We explicitly require to ignore the faint phase here, as we want to show the messages
+         * about the critical hit and the super effective/not very effective messages before the faint phase.
+         */
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, 
+          { 
+            result: result as DamageResult, 
+            isCritical, 
+            ignoreFaintPhase: true, 
+            source 
+          });
 
       if (damage > 0) {
         if (source.isPlayer()) {
@@ -4556,7 +4552,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       globalScene.unshiftPhase(
         new FaintPhase(
           this.getBattlerIndex(),
-          isOneHitKo,
+          false,
           destinyTag,
           grudgeTag,
           source,
@@ -4634,28 +4630,37 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
+   * Checks for 'Indirect' HitResults to account for Endure/Reviver Seed applying correctly
    * @param damage integer - passed to damage()
    * @param result an enum if it's super effective, not very, etc.
-   * @param critical boolean if move is a critical hit
+   * @param isCritical boolean if move is a critical hit
    * @param ignoreSegments boolean, passed to damage() and not used currently
    * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
    * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
    * @returns integer of damage done
    */
-  damageAndUpdate(
-    damage: number,
-    result?: DamageResult,
-    critical = false,
-    ignoreSegments = false,
-    preventEndure = false,
-    ignoreFaintPhase = false,
-    source?: Pokemon,
+  damageAndUpdate(damage: number,
+    {
+      result = HitResult.EFFECTIVE, 
+      isCritical = false, 
+      ignoreSegments = false, 
+      ignoreFaintPhase = false, 
+      source = undefined,
+    }:
+    {
+      result?: DamageResult, 
+      isCritical?: boolean, 
+      ignoreSegments?: boolean, 
+      ignoreFaintPhase?: boolean, 
+      source?: Pokemon,
+    } = {}
   ): number {
+    const isIndirectDamage = [ HitResult.INDIRECT, HitResult.INDIRECT_KO ].includes(result);
     const damagePhase = new DamageAnimPhase(
-      this.getBattlerIndex(),
-      damage,
-      result as DamageResult,
-      critical,
+      this.getBattlerIndex(), 
+      damage, 
+      result as DamageResult, 
+      isCritical
     );
     globalScene.unshiftPhase(damagePhase);
     if (this.switchOutStatus && source) {
@@ -4664,7 +4669,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     damage = this.damage(
       damage,
       ignoreSegments,
-      preventEndure,
+      isIndirectDamage,
       ignoreFaintPhase,
     );
     // Damage amount may have changed, but needed to be queued before calling damage function
@@ -5574,7 +5579,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.resetBattleSummonData();
     if (this.summonDataPrimer) {
-      for (const k of Object.keys(this.summonData)) {
+      for (const k of Object.keys(this.summonDataPrimer)) {
         if (this.summonDataPrimer[k]) {
           this.summonData[k] = this.summonDataPrimer[k];
         }
@@ -7676,8 +7681,10 @@ export enum HitResult {
   HEAL,
   FAIL,
   MISS,
-  OTHER,
+  INDIRECT,
   IMMUNE,
+  CONFUSION,
+  INDIRECT_KO,
 }
 
 export type DamageResult =
@@ -7685,7 +7692,9 @@ export type DamageResult =
   | HitResult.SUPER_EFFECTIVE
   | HitResult.NOT_VERY_EFFECTIVE
   | HitResult.ONE_HIT_KO
-  | HitResult.OTHER;
+  | HitResult.CONFUSION 
+  | HitResult.INDIRECT_KO 
+  | HitResult.INDIRECT;
 
 /** Interface containing the results of a damage calculation for a given move */
 export interface DamageCalculationResult {
