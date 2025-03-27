@@ -41,6 +41,7 @@ import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/dancingLessons";
@@ -99,6 +100,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withDisallowedChallenges(Challenges.METRONOME)
   .withIntroSpriteConfigs([]) // Uses a real Pokemon sprite instead of ME Intro Visuals
   .withAnimations(EncounterAnim.DANCE)
   .withHideWildIntroMessage(true)

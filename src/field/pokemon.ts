@@ -6318,8 +6318,8 @@ export class PlayerPokemon extends Pokemon {
     return this.getFieldIndex();
   }
 
-  generateCompatibleTms(): void {
-    this.compatibleTms = [];
+  generateCompatibleTms(alsoSet: boolean = true, applyChal: boolean = true): Moves[] {
+    const ret: Moves[] = [];
 
     const tms = Object.keys(tmSpecies);
     for (const tm of tms) {
@@ -6347,10 +6347,15 @@ export class PlayerPokemon extends Pokemon {
       if (reverseCompatibleTms.indexOf(moveId) > -1) {
         compatible = !compatible;
       }
-      if (compatible && !applyChallenges(ChallengeType.BAN_MOVE_LEARNING, this, moveId)) {
-        this.compatibleTms.push(moveId);
+      if (compatible && (!applyChal || !applyChallenges(ChallengeType.BAN_MOVE_LEARNING, this, moveId))) {
+        ret.push(moveId);
       }
     }
+    if (alsoSet) {
+      this.compatibleTms = ret;
+    }
+
+    return ret;
   }
 
   tryPopulateMoveset(moveset: StarterMoveset): boolean {

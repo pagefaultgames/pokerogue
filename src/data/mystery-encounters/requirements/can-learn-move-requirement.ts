@@ -51,17 +51,23 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
     return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
   }
 
+  /**
+   * Queries party for mons meeting move requirements
+   * @param partyPokemon {@link PlayerPokemon} party to query
+   * @returns list of {@link PlayerPokemon} that match query
+   */
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter(pokemon =>
-        // every required move should be included
-        this.requiredMoves.every(requiredMove => this.getAllPokemonMoves(pokemon).includes(requiredMove)),
+      return partyPokemon.filter(
+        pokemon =>
+          // every required move should be included
+          this.requiredMoves.length === this.getAllPokemonMoves(pokemon).length,
       );
     }
     return partyPokemon.filter(
       pokemon =>
         // none of the "required" moves should be included
-        !this.requiredMoves.some(requiredMove => this.getAllPokemonMoves(pokemon).includes(requiredMove)),
+        this.getAllPokemonMoves(pokemon).length === 0,
     );
   }
 
@@ -73,19 +79,24 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
     return pkm.getLevelMoves().map(([_level, move]) => move);
   }
 
+  /**
+   * Gets all the moves with matching criteria
+   * @param pkm {@link PlayerPokemon} to check
+   * @returns list of {@link Moves} moves matching criteria
+   */
   private getAllPokemonMoves(pkm: PlayerPokemon): Moves[] {
     const allPokemonMoves: Moves[] = [];
 
     if (!this.excludeLevelMoves) {
-      allPokemonMoves.push(...(this.getPokemonLevelMoves(pkm) ?? []));
+      allPokemonMoves.push(...(this.getPokemonLevelMoves(pkm).filter(m => this.requiredMoves.includes(m)) ?? []));
     }
 
     if (!this.excludeTmMoves) {
-      allPokemonMoves.push(...(pkm.compatibleTms ?? []));
+      allPokemonMoves.push(...pkm.generateCompatibleTms(false, false).filter(m => this.requiredMoves.includes(m)));
     }
 
     if (!this.excludeEggMoves) {
-      allPokemonMoves.push(...(pkm.getEggMoves() ?? []));
+      allPokemonMoves.push(...(pkm.getEggMoves()?.filter(m => this.requiredMoves.includes(m)) ?? []));
     }
 
     return allPokemonMoves;

@@ -11,6 +11,10 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { CompatibleMoveRequirement } from "../mystery-encounter-requirements";
+import { Moves } from "#enums/moves";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/departmentStoreSale";
@@ -55,34 +59,37 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
   .withTitle(`${namespace}:title`)
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
-  .withSimpleOption(
-    {
-      buttonLabel: `${namespace}:option.1.label`,
-      buttonTooltip: `${namespace}:option.1.tooltip`,
-    },
-    async () => {
-      // Choose TMs
-      const modifiers: ModifierTypeFunc[] = [];
-      let i = 0;
-      while (i < 5) {
-        // 2/2/1 weight on TM rarity
-        const roll = randSeedInt(5);
-        if (roll < 2) {
-          modifiers.push(modifierTypes.TM_COMMON);
-        } else if (roll < 4) {
-          modifiers.push(modifierTypes.TM_GREAT);
-        } else {
-          modifiers.push(modifierTypes.TM_ULTRA);
+  .withOption(
+    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withPrimaryPokemonRequirement(new CompatibleMoveRequirement(Moves.PROTECT)) // Check Protect in compatible tms yeah this sucks
+      .withDialogue({
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
+      })
+      .withOptionPhase(async () => {
+        // Choose TMs
+        const modifiers: ModifierTypeFunc[] = [];
+        let i = 0;
+        while (i < 5) {
+          // 2/2/1 weight on TM rarity
+          const roll = randSeedInt(5);
+          if (roll < 2) {
+            modifiers.push(modifierTypes.TM_COMMON);
+          } else if (roll < 4) {
+            modifiers.push(modifierTypes.TM_GREAT);
+          } else {
+            modifiers.push(modifierTypes.TM_ULTRA);
+          }
+          i++;
         }
-        i++;
-      }
 
-      setEncounterRewards({
-        guaranteedModifierTypeFuncs: modifiers,
-        fillRemaining: false,
-      });
-      leaveEncounterWithoutBattle();
-    },
+        setEncounterRewards({
+          guaranteedModifierTypeFuncs: modifiers,
+          fillRemaining: false,
+        });
+        leaveEncounterWithoutBattle();
+      })
+      .build(),
   )
   .withSimpleOption(
     {

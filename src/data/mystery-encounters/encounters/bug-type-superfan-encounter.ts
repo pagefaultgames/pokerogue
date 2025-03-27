@@ -57,6 +57,7 @@ import { allMoves } from "#app/data/moves/move";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/bugTypeSuperfan";
@@ -193,6 +194,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
   )
   .withMaxAllowedEncounters(1)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withDisallowedChallenges(Challenges.METRONOME)
   .withIntroSpriteConfigs([]) // These are set in onInit()
   .withAutoHideIntroVisuals(false)
   .withIntroDialogue([
