@@ -2000,7 +2000,7 @@ export const modifierTypes = {
     }),
 
   MYSTICAL_ROCK: () =>
-    new ModifierType(
+    new PokemonHeldItemModifierType(
       "modifierType:ModifierType.MYSTICAL_ROCK",
       "mystical_rock",
       (type, args) => new FieldEffectModifier(type, (args[0] as Pokemon).id),
