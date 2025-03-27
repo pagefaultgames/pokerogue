@@ -97,6 +97,7 @@ import {
   type PersistentModifier,
   TempExtraModifierModifier,
   CriticalCatchChanceBoosterModifier,
+  FieldEffectModifier,
 } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
@@ -1998,6 +1999,13 @@ export const modifierTypes = {
       return new PokemonNatureChangeModifierType(randSeedInt(getEnumValues(Nature).length) as Nature);
     }),
 
+  MYSTICAL_ROCK: () =>
+    new ModifierType(
+      "modifierType:ModifierType.MYSTICAL_ROCK",
+      "mystical_rock",
+      (type, args) => new FieldEffectModifier(type, (args[0] as Pokemon).id),
+    ),
+
   TERA_SHARD: () =>
     new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
@@ -2804,6 +2812,47 @@ const modifierPool: ModifierPool = {
           }
 
           return false;
+        })
+          ? 10
+          : 0;
+      },
+      10,
+    ),
+    new WeightedModifierType(
+      modifierTypes.MYSTICAL_ROCK,
+      (party: Pokemon[]) => {
+        return party.some(p => {
+          const moveset = p.getMoveset(true).map(m => m.moveId);
+
+          const hasAbility = [
+            Abilities.DRIZZLE,
+            Abilities.ORICHALCUM_PULSE,
+            Abilities.DRIZZLE,
+            Abilities.SAND_STREAM,
+            Abilities.SAND_SPIT,
+            Abilities.SNOW_WARNING,
+            Abilities.ELECTRIC_SURGE,
+            Abilities.HADRON_ENGINE,
+            Abilities.PSYCHIC_SURGE,
+            Abilities.GRASSY_SURGE,
+            Abilities.SEED_SOWER,
+            Abilities.MISTY_SURGE,
+          ].some(a => p.hasAbility(a, false, true));
+
+          const hasMoves = [
+            Moves.SUNNY_DAY,
+            Moves.RAIN_DANCE,
+            Moves.SANDSTORM,
+            Moves.SNOWSCAPE,
+            Moves.HAIL,
+            Moves.CHILLY_RECEPTION,
+            Moves.ELECTRIC_TERRAIN,
+            Moves.PSYCHIC_TERRAIN,
+            Moves.GRASSY_TERRAIN,
+            Moves.MISTY_TERRAIN,
+          ].some(m => moveset.includes(m));
+
+          return hasAbility || hasMoves;
         })
           ? 10
           : 0;

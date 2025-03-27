@@ -2851,7 +2851,7 @@ export class WeatherChangeAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return globalScene.arena.trySetWeather(this.weatherType, true);
+    return globalScene.arena.trySetWeather(this.weatherType, user);
   }
 
   getCondition(): MoveConditionFunc {
@@ -2870,7 +2870,7 @@ export class ClearWeatherAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (globalScene.arena.weather?.weatherType === this.weatherType) {
-      return globalScene.arena.trySetWeather(WeatherType.NONE, true);
+      return globalScene.arena.trySetWeather(WeatherType.NONE, user);
     }
 
     return false;
@@ -2887,7 +2887,7 @@ export class TerrainChangeAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return globalScene.arena.trySetTerrain(this.terrainType, true, true);
+    return globalScene.arena.trySetTerrain(this.terrainType, true, user);
   }
 
   getCondition(): MoveConditionFunc {
@@ -2906,7 +2906,7 @@ export class ClearTerrainAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return globalScene.arena.trySetTerrain(TerrainType.NONE, true, true);
+    return globalScene.arena.trySetTerrain(TerrainType.NONE, true, user);
   }
 }
 
@@ -6454,7 +6454,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
 export class ChillyReceptionAttr extends ForceSwitchOutAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    globalScene.arena.trySetWeather(WeatherType.SNOW, true);
+    globalScene.arena.trySetWeather(WeatherType.SNOW, user);
     return super.apply(user, target, move, args);
   }
 
