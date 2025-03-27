@@ -97,6 +97,7 @@ import {
   type PersistentModifier,
   TempExtraModifierModifier,
   CriticalCatchChanceBoosterModifier,
+  FieldEffectModifier,
 } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
@@ -627,7 +628,7 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
       iconImage,
       (_type, args) => new PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.getMoveset().filter(m => m?.ppUsed).length) {
+        if (!pokemon.getMoveset().filter(m => m.ppUsed).length) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -1170,7 +1171,7 @@ export class TmModifierType extends PokemonModifierType {
       (pokemon: PlayerPokemon) => {
         if (
           pokemon.compatibleTms.indexOf(moveId) === -1 ||
-          pokemon.getMoveset().filter(m => m?.moveId === moveId).length
+          pokemon.getMoveset().filter(m => m.moveId === moveId).length
         ) {
           return PartyUiHandler.NoEffectMessage;
         }
@@ -1333,7 +1334,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       const attackMoveTypes = party.flatMap(p =>
         p
           .getMoveset()
-          .map(m => m?.getMove())
+          .map(m => m.getMove())
           .filter(m => m instanceof AttackMove)
           .map(m => m.type),
       );
@@ -1468,7 +1469,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         const speciesId = p.getSpeciesForm(true).speciesId;
         const fusionSpeciesId = p.isFusion() ? p.getFusionSpeciesForm(true).speciesId : null;
         // TODO: Use commented boolean when Fling is implemented
-        const hasFling = false; /* p.getMoveset(true).some(m => m?.moveId === Moves.FLING) */
+        const hasFling = false; /* p.getMoveset(true).some(m => m.moveId === Moves.FLING) */
 
         for (const i in values) {
           const checkedSpecies = values[i].species;
@@ -1529,7 +1530,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       const partyMemberCompatibleTms = party.map(p => {
         const previousLevelMoves = p.getLearnableLevelMoves();
         return (p as PlayerPokemon).compatibleTms.filter(
-          tm => !p.moveset.find(m => m?.moveId === tm) && !previousLevelMoves.find(lm => lm === tm),
+          tm => !p.moveset.find(m => m.moveId === tm) && !previousLevelMoves.find(lm => lm === tm),
         );
       });
       const tierUniqueCompatibleTms = partyMemberCompatibleTms
@@ -1998,6 +1999,13 @@ export const modifierTypes = {
       return new PokemonNatureChangeModifierType(randSeedInt(getEnumValues(Nature).length) as Nature);
     }),
 
+  MYSTICAL_ROCK: () =>
+    new ModifierType(
+      "modifierType:ModifierType.MYSTICAL_ROCK",
+      "mystical_rock",
+      (type, args) => new FieldEffectModifier(type, (args[0] as Pokemon).id),
+    ),
+
   TERA_SHARD: () =>
     new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
@@ -2433,7 +2441,7 @@ const modifierPool: ModifierPool = {
               !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
               p
                 .getMoveset()
-                .filter(m => m?.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
+                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
                 .length,
           ).length,
           3,
@@ -2452,7 +2460,7 @@ const modifierPool: ModifierPool = {
               !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
               p
                 .getMoveset()
-                .filter(m => m?.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
+                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
                 .length,
           ).length,
           3,
@@ -2574,7 +2582,7 @@ const modifierPool: ModifierPool = {
               !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
               p
                 .getMoveset()
-                .filter(m => m?.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
+                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
                 .length,
           ).length,
           3,
@@ -2593,7 +2601,7 @@ const modifierPool: ModifierPool = {
               !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
               p
                 .getMoveset()
-                .filter(m => m?.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
+                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
                 .length,
           ).length,
           3,
@@ -2804,6 +2812,47 @@ const modifierPool: ModifierPool = {
           }
 
           return false;
+        })
+          ? 10
+          : 0;
+      },
+      10,
+    ),
+    new WeightedModifierType(
+      modifierTypes.MYSTICAL_ROCK,
+      (party: Pokemon[]) => {
+        return party.some(p => {
+          const moveset = p.getMoveset(true).map(m => m.moveId);
+
+          const hasAbility = [
+            Abilities.DRIZZLE,
+            Abilities.ORICHALCUM_PULSE,
+            Abilities.DRIZZLE,
+            Abilities.SAND_STREAM,
+            Abilities.SAND_SPIT,
+            Abilities.SNOW_WARNING,
+            Abilities.ELECTRIC_SURGE,
+            Abilities.HADRON_ENGINE,
+            Abilities.PSYCHIC_SURGE,
+            Abilities.GRASSY_SURGE,
+            Abilities.SEED_SOWER,
+            Abilities.MISTY_SURGE,
+          ].some(a => p.hasAbility(a, false, true));
+
+          const hasMoves = [
+            Moves.SUNNY_DAY,
+            Moves.RAIN_DANCE,
+            Moves.SANDSTORM,
+            Moves.SNOWSCAPE,
+            Moves.HAIL,
+            Moves.CHILLY_RECEPTION,
+            Moves.ELECTRIC_TERRAIN,
+            Moves.PSYCHIC_TERRAIN,
+            Moves.GRASSY_TERRAIN,
+            Moves.MISTY_TERRAIN,
+          ].some(m => moveset.includes(m));
+
+          return hasAbility || hasMoves;
         })
           ? 10
           : 0;

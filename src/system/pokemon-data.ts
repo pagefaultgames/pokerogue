@@ -35,7 +35,7 @@ export default class PokemonData {
   public stats: number[];
   public ivs: number[];
   public nature: Nature;
-  public moveset: (PokemonMove | null)[];
+  public moveset: PokemonMove[];
   public status: Status | null;
   public friendship: number;
   public metLevel: number;
