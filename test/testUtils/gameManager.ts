@@ -55,6 +55,8 @@ import TextInterceptor from "#test/testUtils/TextInterceptor";
 import { AES, enc } from "crypto-js";
 import fs from "node:fs";
 import { expect, vi } from "vitest";
+import { globalScene } from "#app/global-scene";
+import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -84,10 +86,34 @@ export default class GameManager {
     ErrorInterceptor.getInstance().clear();
     BattleScene.prototype.randBattleSeedInt = (range, min = 0) => min + range - 1; // This simulates a max roll
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
-    this.scene = new BattleScene();
+
+    let firstTimeScene = false;
+
+    if (globalScene) {
+      this.scene = globalScene;
+    } else {
+      this.scene = new BattleScene();
+      this.gameWrapper.setScene(this.scene);
+      firstTimeScene = true;
+    }
+
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
+
+    if (!firstTimeScene) {
+      this.scene.reset(false, true);
+      (this.scene.ui.handlers[Mode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
+      this.scene.clearAllPhases();
+
+      // Must be run after phase interceptor has been initialized.
+
+      this.scene.pushPhase(new LoginPhase());
+      this.scene.pushPhase(new TitlePhase());
+      this.scene.shiftPhase();
+
+      this.gameWrapper.scene = this.scene;
+    }
+
     this.textInterceptor = new TextInterceptor(this.scene);
-    this.gameWrapper.setScene(this.scene);
     this.override = new OverridesHelper(this);
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
