@@ -181,7 +181,7 @@ describe("Abilities - Forecast", () => {
 
       expect(castform.formIndex).toBe(SNOWY_FORM);
 
-      game.scene.arena.trySetWeather(WeatherType.FOG, false);
+      game.scene.arena.trySetWeather(WeatherType.FOG);
       game.move.select(Moves.SPLASH);
       game.move.select(Moves.SPLASH, 1);
       await game.phaseInterceptor.to("TurnStartPhase");

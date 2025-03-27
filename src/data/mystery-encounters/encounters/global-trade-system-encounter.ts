@@ -306,7 +306,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
             if (eggMoves) {
               // Cannot gen the rare egg move, only 1 of the first 3 common moves
               const eggMove = eggMoves[randSeedInt(3)];
-              if (!tradePokemon.moveset.some(m => m?.moveId === eggMove)) {
+              if (!tradePokemon.moveset.some(m => m.moveId === eggMove)) {
                 if (tradePokemon.moveset.length < 4) {
                   tradePokemon.moveset.push(new PokemonMove(eggMove));
                 } else {

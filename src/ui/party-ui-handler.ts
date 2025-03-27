@@ -478,7 +478,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               filterResult = this.FilterChallengeLegal(pokemon);
             }
             if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
-              filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]!); // TODO: is this bang correct?
+              filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
             }
           } else {
             filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(
@@ -1182,7 +1182,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           case PartyOption.MOVE_2:
           case PartyOption.MOVE_3:
           case PartyOption.MOVE_4:
-            const move = pokemon.moveset[option - PartyOption.MOVE_1]!; // TODO: is the bang correct?
+            const move = pokemon.moveset[option - PartyOption.MOVE_1];
             if (this.showMovePp) {
               const maxPP = move.getMovePp();
               const currPP = maxPP - move.ppUsed;
@@ -1647,7 +1647,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotHpText.setVisible(false);
       let slotTmText: string;
 
-      if (this.pokemon.getMoveset().filter(m => m?.moveId === tmMoveId).length > 0) {
+      if (this.pokemon.getMoveset().filter(m => m.moveId === tmMoveId).length > 0) {
         slotTmText = i18next.t("partyUiHandler:learned");
       } else if (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1) {
         slotTmText = i18next.t("partyUiHandler:notAble");
