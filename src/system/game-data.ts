@@ -98,12 +98,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
   switch (dataType) {
     case GameDataType.SYSTEM:
       return "data";
-    case GameDataType.SESSION:
+    case GameDataType.SESSION: {
       let ret = "sessionData";
       if (slotId) {
         ret += slotId;
       }
       return ret;
+    }
     case GameDataType.SETTINGS:
       return "settings";
     case GameDataType.TUTORIALS:
@@ -1553,16 +1554,18 @@ export class GameData {
           try {
             dataName = GameDataType[dataType].toLowerCase();
             switch (dataType) {
-              case GameDataType.SYSTEM:
+              case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
                 const systemData = this.parseSystemData(dataStr);
                 valid = !!systemData.dexData && !!systemData.timestamp;
                 break;
-              case GameDataType.SESSION:
+              }
+              case GameDataType.SESSION: {
                 const sessionData = this.parseSessionData(dataStr);
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                 break;
-              case GameDataType.RUN_HISTORY:
+              }
+              case GameDataType.RUN_HISTORY: {
                 const data = JSON.parse(dataStr);
                 const keys = Object.keys(data);
                 dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
@@ -1572,6 +1575,7 @@ export class GameData {
                     ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
                 break;
+              }
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:
                 valid = true;
