@@ -1015,12 +1015,12 @@ export class MetronomeChallenge extends Challenge {
   }
 
   override applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.moveset = [new PokemonMove(Moves.METRONOME)];
+    pokemon.moveset = [new PokemonMove(Moves.METRONOME, 0, 3)];
     return true;
   }
 
   override applyEnemyPokemonModify(pokemon: EnemyPokemon): boolean {
-    pokemon.moveset = [new PokemonMove(Moves.METRONOME)];
+    pokemon.moveset = [new PokemonMove(Moves.METRONOME, 0, 3)];
     return true;
   }
 
@@ -1037,38 +1037,26 @@ export class MetronomeChallenge extends Challenge {
     if (poolType !== ModifierPoolType.PLAYER) {
       return false;
     }
-    const common_block = ["TM_COMMON", "ETHER"];
-    const great_block = ["ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "PP_UP", "MEMORY_MUSHROOM", "TM_GREAT"];
+    const common_block = ["TM_COMMON", "ETHER", "MAX_ETHER"];
+    const great_block = ["ELIXIR", "MAX_ELIXIR", "PP_UP", "MEMORY_MUSHROOM", "TM_GREAT"];
     const ultra_block = ["TM_ULTRA", "PP_MAX"];
 
     common_block.map(b => {
-      const idx = modifierPool[ModifierTier.COMMON].findIndex(
-        p => p.modifierType === getModifierType(getModifierTypeFuncById(b)),
-      );
+      const idx = modifierPool[ModifierTier.COMMON].findIndex(p => p.modifierType.id === b);
       if (idx >= 0) {
         modifierPool[ModifierTier.COMMON].splice(idx, 1);
-      } else {
-        console.log(`${b} not found in Common tier!`);
       }
     });
     great_block.map(b => {
-      const idx = modifierPool[ModifierTier.GREAT].findIndex(
-        p => p.modifierType === getModifierType(getModifierTypeFuncById(b)),
-      );
+      const idx = modifierPool[ModifierTier.GREAT].findIndex(p => p.modifierType.id === b);
       if (idx >= 0) {
         modifierPool[ModifierTier.GREAT].splice(idx, 1);
-      } else {
-        console.log(`${b} not found in Great tier!`);
       }
     });
     ultra_block.map(b => {
-      const idx = modifierPool[ModifierTier.ULTRA].findIndex(
-        p => p.modifierType === getModifierType(getModifierTypeFuncById(b)),
-      );
+      const idx = modifierPool[ModifierTier.ULTRA].findIndex(p => p.modifierType.id === b);
       if (idx >= 0) {
         modifierPool[ModifierTier.ULTRA].splice(idx, 1);
-      } else {
-        console.log(`${b} not found in Ultra tier!`);
       }
     });
     return true;
@@ -1078,7 +1066,7 @@ export class MetronomeChallenge extends Challenge {
     const removals = ["ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "MEMORY_MUSHROOM"];
     const opstart = options.length;
     removals.map(r => {
-      const idx = options.findIndex(o => o.type === getModifierType(getModifierTypeFuncById(r)));
+      const idx = options.findIndex(o => o.type.localeKey.split(".")[1] === r); // I don't wanna hear it!
       if (idx >= 0) {
         options.splice(idx, 1);
       }
