@@ -2026,12 +2026,12 @@ export const modifierTypes = {
     }),
 
   BERRY: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+    new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
         return new BerryModifierType(pregenArgs[0] as BerryType);
       }
-      const noMoveLearning = new BooleanHolder(false);
-      applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, noMoveLearning); // Yeah this is kind of dumb
+      const ppCheck = new NumberHolder(1);
+      applyChallenges(ChallengeType.MODIFY_PP_USE, party[0], Moves.NONE, ppCheck);
       const berryTypes = getEnumValues(BerryType);
       let randBerryType: BerryType;
       const rand = randSeedInt(12);
@@ -2039,7 +2039,7 @@ export const modifierTypes = {
         randBerryType = BerryType.SITRUS;
       } else if (rand < 4) {
         randBerryType = BerryType.LUM;
-      } else if (rand < 6 && !noMoveLearning.value) {
+      } else if (rand < 6 && ppCheck.value !== 0) {
         randBerryType = BerryType.LEPPA;
       } else {
         randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];
@@ -2388,7 +2388,7 @@ export const modifierTypes = {
     ),
 };
 
-interface ModifierPool {
+export interface ModifierPool {
   [tier: string]: WeightedModifierType[];
 }
 
@@ -3105,6 +3105,7 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
       pool = dailyStarterModifierPool;
       break;
   }
+  applyChallenges(ChallengeType.MODIFIER_POOL_MODIFY, poolType, pool);
   return pool;
 }
 
@@ -3114,54 +3115,8 @@ const tierWeights = [768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024];
  */
 export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
-export interface RewardTableModification {
-  type: ModifierTypeKeys;
-  tier: ModifierTier;
-  maxWeight: number;
-}
-
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount = 0) {
-  const modifications: RewardTableModification[] = [];
-  applyChallenges(globalScene.gameMode, ChallengeType.REWARD_TABLE_MODIFY, modifications);
   const pool = getModifierPoolForType(poolType);
-  modifications.map(mod => {
-    let t = mod.tier;
-    let dindex = pool[mod.tier].findIndex(wm => wm.modifierType.id === mod.type);
-    if (mod.maxWeight === 0) {
-      // Remove the modifier from the specified tier
-      pool[t].splice(dindex, 1);
-    } else if (dindex < 0) {
-      // Add the modifier to specified tier
-      for (t = ModifierTier.COMMON; t <= ModifierTier.MASTER && dindex < 0; t++) {
-        if (t === mod.tier) {
-          // We know it's not in that tier
-          continue;
-        }
-        dindex = pool[t].findIndex(wm => wm.modifierType.id === mod.type);
-      }
-      if (dindex >= 0) {
-        // Move the existing WMT to the specified tier with same func and specified max weight
-        const wmt = pool[t].splice(dindex, 1)[0];
-        wmt.maxWeight = mod.maxWeight;
-        wmt.setTier(mod.tier);
-        pool[mod.tier].push(wmt);
-      } else {
-        // Item isn't anywhere on the table, make a new WMT and push it
-        const newWMT = new WeightedModifierType(getModifierTypeFuncById(mod.type), mod.maxWeight);
-        newWMT.setTier(mod.tier);
-        pool[mod.tier].push(newWMT);
-      }
-    } else {
-      pool[t].map(wmt => {
-        if (wmt.modifierType.id === mod.type) {
-          wmt.maxWeight = mod.maxWeight;
-        }
-      });
-    }
-  });
-  itemPoolChecks.forEach((_v, k) => {
-    itemPoolChecks.set(k, false);
-  });
 
   const ignoredIndexes = {};
   const modifierTableData = {};
@@ -3446,12 +3401,9 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
     [new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)],
     [new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)],
   ];
-  const removeShop: ModifierTypeKeys[] = [];
-  applyChallenges(globalScene.gameMode, ChallengeType.SHOP_REMOVAL, removeShop);
-  return options
-    .slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30))
-    .flat()
-    .filter(s => !removeShop.includes(s.type.localeKey.split(".")[1] as ModifierTypeKeys)); // I don't wanna hear it
+  const opts = options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+  applyChallenges(ChallengeType.SHOP_MODIFY, opts);
+  return opts;
 }
 
 export function getEnemyBuffModifierForWave(

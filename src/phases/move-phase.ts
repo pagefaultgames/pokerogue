@@ -353,7 +353,7 @@ export class MovePhase extends BattlePhase {
       let ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
 
       const ignorePPChallenge = new BooleanHolder(false);
-      applyChallenges(globalScene.gameMode, ChallengeType.NO_PP_USE, ignorePPChallenge);
+      applyChallenges(ChallengeType.MODIFY_PP_USE, ignorePPChallenge);
       if (ignorePPChallenge.value) {
         ppUsed = 0;
       }

@@ -345,20 +345,16 @@ export class EvolutionPhase extends Phase {
       this.evolutionHandler.canCancel = false;
 
       this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => {
-        const skipMoveLearn = new BooleanHolder(false);
-        applyChallenges(globalScene.gameMode, ChallengeType.NO_MOVE_LEARNING, skipMoveLearn);
-        if (!skipMoveLearn.value) {
-          const learnSituation: LearnMoveSituation = this.fusionSpeciesEvolved
-            ? LearnMoveSituation.EVOLUTION_FUSED
-            : this.pokemon.fusionSpecies
-              ? LearnMoveSituation.EVOLUTION_FUSED_BASE
-              : LearnMoveSituation.EVOLUTION;
-          const levelMoves = this.pokemon
-            .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
-            .filter(lm => lm[0] === EVOLVE_MOVE);
-          for (const lm of levelMoves) {
-            globalScene.unshiftPhase(new LearnMovePhase(globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]));
-          }
+        const learnSituation: LearnMoveSituation = this.fusionSpeciesEvolved
+          ? LearnMoveSituation.EVOLUTION_FUSED
+          : this.pokemon.fusionSpecies
+            ? LearnMoveSituation.EVOLUTION_FUSED_BASE
+            : LearnMoveSituation.EVOLUTION;
+        const levelMoves = this.pokemon
+          .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
+          .filter(lm => lm[0] === EVOLVE_MOVE);
+        for (const lm of levelMoves) {
+          globalScene.unshiftPhase(new LearnMovePhase(globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]));
         }
         globalScene.unshiftPhase(new EndEvolutionPhase());
 

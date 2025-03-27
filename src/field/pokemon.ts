@@ -631,7 +631,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public isAllowedInChallenge(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.POKEMON_IN_BATTLE,
       this,
       challengeAllowed,
@@ -1588,7 +1587,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   calculateBaseStats(): number[] {
     const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.FLIP_STAT,
       this,
       baseStats,
@@ -1610,7 +1608,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion()) {
       const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
       applyChallenges(
-        globalScene.gameMode,
         ChallengeType.FLIP_STAT,
         this,
         fusionBaseStats,
@@ -2586,7 +2583,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           getTypeDamageMultiplier(moveType, defType),
         );
         applyChallenges(
-          globalScene.gameMode,
           ChallengeType.TYPE_EFFECTIVENESS,
           multiplier,
         );
@@ -2638,7 +2634,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       getTypeDamageMultiplier(moveType, PokemonType.FLYING),
     );
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.TYPE_EFFECTIVENESS,
       typeMultiplierAgainstFlying,
     );
@@ -6353,7 +6348,7 @@ export class PlayerPokemon extends Pokemon {
       if (reverseCompatibleTms.indexOf(moveId) > -1) {
         compatible = !compatible;
       }
-      if (compatible) {
+      if (compatible && !applyChallenges(ChallengeType.BAN_MOVE_LEARNING, this, moveId)) {
         this.compatibleTms.push(moveId);
       }
     }
@@ -7034,7 +7029,6 @@ export class EnemyPokemon extends Pokemon {
         super.generateAndPopulateMoveset();
         break;
     }
-    applyChallenges(globalScene.gameMode, ChallengeType.MOVESET_MODIFY, this);
   }
 
   /**

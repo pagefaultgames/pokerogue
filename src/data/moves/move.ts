@@ -8082,7 +8082,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
     const userTypes = user.getTypes();
-    const validTypes = this.getTypeResistances(globalScene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    const validTypes = this.getTypeResistances(moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
     if (!validTypes.length) {
       return false;
     }
@@ -8098,13 +8098,13 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
    * Retrieve the types resisting a given type. Used by Conversion 2
    * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
    */
-  getTypeResistances(gameMode: GameMode, type: number): PokemonType[] {
+  getTypeResistances(type: number): PokemonType[] {
     const typeResistances: PokemonType[] = [];
 
     for (let i = 0; i < Object.keys(PokemonType).length; i++) {
       const multiplier = new NumberHolder(1);
       multiplier.value = getTypeDamageMultiplier(type, i);
-      applyChallenges(gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       if (multiplier.value < 1) {
         typeResistances.push(i);
       }

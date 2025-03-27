@@ -6,11 +6,10 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { type EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type { FixedBattleConfig } from "#app/battle";
 import { ClassicFixedBossWaves, BattleType, getRandomTrainerFunc } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
-import type { GameMode } from "#app/game-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
@@ -22,7 +21,14 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { globalScene } from "#app/global-scene";
 import { pokemonFormChanges } from "./pokemon-forms";
 import { pokemonEvolutions } from "./balance/pokemon-evolutions";
-import type { ModifierTypeKeys, RewardTableModification } from "#app/modifier/modifier-type";
+import {
+  getModifierType,
+  getModifierTypeFuncById,
+  ModifierPoolType,
+  type ModifierPool,
+  type ModifierTypeKeys,
+  type ModifierTypeOption,
+} from "#app/modifier/modifier-type";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -96,25 +102,25 @@ export enum ChallengeType {
    */
   FLIP_STAT,
   /**
-   * Modifies movesets of generated enemy mons
+   * Modifies enemy mons AFTER post process function
    */
-  MOVESET_MODIFY,
+  ENEMY_POKEMON_MODIFY,
   /**
    * Prevents the learning of moves
    */
-  NO_MOVE_LEARNING,
+  BAN_MOVE_LEARNING,
   /**
    * Negates PP Usage
    */
-  NO_PP_USE,
+  MODIFY_PP_USE,
   /**
-   * Modifies reward table
+   * Modifies modifier pools of specified type (PLEASE MODIFIER REWORK PLEASE I'M BEGGING YOU PLEASE PLEASE PLEASE PLEASE)
    */
-  REWARD_TABLE_MODIFY,
+  MODIFIER_POOL_MODIFY,
   /**
-   * Removes items from the shop
+   * Modifies the shop options
    */
-  SHOP_REMOVAL,
+  SHOP_MODIFY,
 }
 
 /**
@@ -404,10 +410,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for GAME_MODE_MODIFY challenges. Derived classes should alter this.
-   * @param gameMode {@link GameMode} The current game mode.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyGameModeModify(_gameMode: GameMode): boolean {
+  applyGameModeModify(): boolean {
     return false;
   }
 
@@ -450,23 +455,52 @@ export abstract class Challenge {
     return false;
   }
 
-  applyMovesetModify(_pokemon: Pokemon) {
+  /**
+   * An apply function for ENEMY_POKEMON_MODIFY. Derived classes should alter this.
+   * @param _pokemon {@link EnemyPokemon} the mon to be modified
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyEnemyPokemonModify(_pokemon: EnemyPokemon) {
     return false;
   }
 
-  applyNoMoveLearning(_valid: Utils.BooleanHolder) {
+  /**
+   * An apply function for BAN_MOVE_LEARNING. Derived classes should alter this.
+   * @param _pokemon {@link Pokemon} Pokemon who wants to learn the move
+   * @param _move {@link Moves} Move being learned
+   * @returns {@link boolean} Whether the move should be restricted from learning
+   */
+  applyBanMoveLearning(_pokemon: Pokemon, _move: Moves) {
     return false;
   }
 
-  applyNoPPUsage(_valid: Utils.BooleanHolder) {
+  /**
+   * An apply function for MODIFY_PP_USE. Derived classes should alter this.
+   * @param _pokemon {@link Pokemon} Pokemon using the move
+   * @param _move {@link Moves} Move being used
+   * @param _usedPP {@link Utils.NumberHolder} Holds the value associated with how much PP should be used
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyModifyPPUsage(_pokemon: Pokemon, _move: Moves, _usedPP: Utils.NumberHolder) {
     return false;
   }
 
-  applyRewardTableModify(_modifications: RewardTableModification[]) {
+  /**
+   * An apply function for MODIFIER_POOL_MODIFY. Derived classes should alter this.
+   * @param _poolType {@link ModifierPoolType} What kind of item pool
+   * @param _modifierPool {@link ModifierPool} Pool to modify
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyModifierPoolModify(_poolType: ModifierPoolType, _modifierPool: ModifierPool) {
     return false;
   }
 
-  applyShopRemovals(_removals: ModifierTypeKeys[]) {
+  /**
+   * An apply function for SHOP_MODIFY. Derived classes should alter this.
+   * @param _options {@link ModifierTypeOption} Array of shop options
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyShopModify(_options: ModifierTypeOption[]) {
     return false;
   }
 }
@@ -876,11 +910,22 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
-  override applyRewardTableModify(modifications: RewardTableModification[]): boolean {
-    modifications.push(
-      { type: "EVIOLITE", tier: ModifierTier.ULTRA, maxWeight: 0 }, // No Eviolite
-      { type: "MINI_BLACK_HOLE", tier: ModifierTier.MASTER, maxWeight: 0 }, // No MBH
+  override applyModifierPoolModify(poolType: ModifierPoolType, modifierPool: ModifierPool): boolean {
+    if (poolType !== ModifierPoolType.PLAYER) {
+      return false;
+    }
+    let idx = modifierPool[ModifierTier.ULTRA].findIndex(
+      p => p.modifierType === getModifierType(getModifierTypeFuncById("EVIOLITE")),
     );
+    if (idx >= 0) {
+      modifierPool[ModifierTier.ULTRA].splice(idx, 1);
+    }
+    idx = modifierPool[ModifierTier.MASTER].findIndex(
+      p => p.modifierType === getModifierType(getModifierTypeFuncById("MINI_BLACK_HOLE")),
+    );
+    if (idx >= 0) {
+      modifierPool[ModifierTier.MASTER].splice(idx, 1);
+    }
     return true;
   }
 
@@ -915,7 +960,7 @@ export class InverseBattleChallenge extends Challenge {
     return 0;
   }
 
-  override applyMovesetModify(pokemon: Pokemon): boolean {
+  override applyEnemyPokemonModify(pokemon: EnemyPokemon): boolean {
     if (pokemon.species.speciesId === Species.ETERNATUS) {
       pokemon.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
       return true;
@@ -969,44 +1014,76 @@ export class MetronomeChallenge extends Challenge {
     super(Challenges.METRONOME, 1);
   }
 
-  override applyStarterModify(_pokemon: Pokemon): boolean {
-    return this.applyMovesetModify(_pokemon);
-  }
-
-  override applyMovesetModify(pokemon: Pokemon): boolean {
+  override applyStarterModify(pokemon: Pokemon): boolean {
     pokemon.moveset = [new PokemonMove(Moves.METRONOME)];
     return true;
   }
 
-  override applyNoMoveLearning(valid: Utils.BooleanHolder): boolean {
-    valid.value = true;
+  override applyEnemyPokemonModify(pokemon: EnemyPokemon): boolean {
+    pokemon.moveset = [new PokemonMove(Moves.METRONOME)];
     return true;
   }
 
-  override applyNoPPUsage(valid: Utils.BooleanHolder): boolean {
-    valid.value = true;
+  override applyBanMoveLearning(_pokemon: Pokemon, _move: Moves): boolean {
     return true;
   }
 
-  override applyRewardTableModify(modifications: RewardTableModification[]): boolean {
-    modifications.push(
-      { type: "TM_COMMON", tier: ModifierTier.COMMON, maxWeight: 0 }, // Remove TMs
-      { type: "ETHER", tier: ModifierTier.COMMON, maxWeight: 0 }, // Remove PP Restores
-      { type: "MAX_ETHER", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove PP Restores
-      { type: "ELIXIR", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove PP Restores
-      { type: "MAX_ELIXIR", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove PP Restores
-      { type: "PP_UP", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove PP Upgrades
-      { type: "MEMORY_MUSHROOM", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove Mushrooms
-      { type: "TM_GREAT", tier: ModifierTier.GREAT, maxWeight: 0 }, // Remove TMs
-      { type: "TM_ULTRA", tier: ModifierTier.ULTRA, maxWeight: 0 }, // Remove TMs
-      { type: "PP_MAX", tier: ModifierTier.ULTRA, maxWeight: 0 }, // Remove PP Upgrades
-    );
+  override applyModifyPPUsage(_pokemon: Pokemon, _move: Moves, usedPP: Utils.NumberHolder): boolean {
+    usedPP.value = 0;
     return true;
   }
 
-  override applyShopRemovals(removals: ModifierTypeKeys[]): boolean {
-    removals.push("ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "MEMORY_MUSHROOM");
+  override applyModifierPoolModify(poolType: ModifierPoolType, modifierPool: ModifierPool): boolean {
+    if (poolType !== ModifierPoolType.PLAYER) {
+      return false;
+    }
+    const common_block = ["TM_COMMON", "ETHER"];
+    const great_block = ["ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "PP_UP", "MEMORY_MUSHROOM", "TM_GREAT"];
+    const ultra_block = ["TM_ULTRA", "PP_MAX"];
+
+    common_block.map(b => {
+      const idx = modifierPool[ModifierTier.COMMON].findIndex(
+        p => p.modifierType === getModifierType(getModifierTypeFuncById(b)),
+      );
+      if (idx >= 0) {
+        modifierPool[ModifierTier.COMMON].splice(idx, 1);
+      } else {
+        console.log(`${b} not found in Common tier!`);
+      }
+    });
+    great_block.map(b => {
+      const idx = modifierPool[ModifierTier.GREAT].findIndex(
+        p => p.modifierType === getModifierType(getModifierTypeFuncById(b)),
+      );
+      if (idx >= 0) {
+        modifierPool[ModifierTier.GREAT].splice(idx, 1);
+      } else {
+        console.log(`${b} not found in Great tier!`);
+      }
+    });
+    ultra_block.map(b => {
+      const idx = modifierPool[ModifierTier.ULTRA].findIndex(
+        p => p.modifierType === getModifierType(getModifierTypeFuncById(b)),
+      );
+      if (idx >= 0) {
+        modifierPool[ModifierTier.ULTRA].splice(idx, 1);
+      } else {
+        console.log(`${b} not found in Ultra tier!`);
+      }
+    });
     return true;
+  }
+
+  override applyShopModify(options: ModifierTypeOption[]): boolean {
+    const removals = ["ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "MEMORY_MUSHROOM"];
+    const opstart = options.length;
+    removals.map(r => {
+      const idx = options.findIndex(o => o.type === getModifierType(getModifierTypeFuncById(r)));
+      if (idx >= 0) {
+        options.splice(idx, 1);
+      }
+    });
+    return opstart > options.length;
   }
 
   static loadChallenge(source: MetronomeChallenge | any): MetronomeChallenge {
@@ -1084,7 +1161,6 @@ export class LowerStarterPointsChallenge extends Challenge {
 
 /**
  * Apply all challenges that modify starter choice.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
  * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
  * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
@@ -1092,7 +1168,6 @@ export class LowerStarterPointsChallenge extends Challenge {
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.STARTER_CHOICE,
   pokemon: PokemonSpecies,
   valid: Utils.BooleanHolder,
@@ -1100,85 +1175,66 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify available total starter points.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_POINTS
  * @param points {@link Utils.NumberHolder} The amount of points you have available.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.STARTER_POINTS,
-  points: Utils.NumberHolder,
-): boolean;
+export function applyChallenges(challengeType: ChallengeType.STARTER_POINTS, points: Utils.NumberHolder): boolean;
 /**
  * Apply all challenges that modify the cost of a starter.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_COST
  * @param species {@link Species} The pokemon to change the cost of.
  * @param points {@link Utils.NumberHolder} The cost of the pokemon.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.STARTER_COST,
   species: Species,
   cost: Utils.NumberHolder,
 ): boolean;
 /**
  * Apply all challenges that modify a starter after selection.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_MODIFY
  * @param pokemon {@link Pokemon} The starter pokemon to modify.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.STARTER_MODIFY,
-  pokemon: Pokemon,
-): boolean;
+export function applyChallenges(challengeType: ChallengeType.STARTER_MODIFY, pokemon: Pokemon): boolean;
 /**
  * Apply all challenges that what pokemon you can have in battle.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.POKEMON_IN_BATTLE
  * @param pokemon {@link Pokemon} The pokemon to check the validity of.
  * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.POKEMON_IN_BATTLE,
   pokemon: Pokemon,
   valid: Utils.BooleanHolder,
 ): boolean;
 /**
  * Apply all challenges that modify what fixed battles there are.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.FIXED_BATTLES
  * @param waveIndex {@link Number} The current wave index.
  * @param battleConfig {@link FixedBattleConfig} The battle config to modify.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.FIXED_BATTLES,
   waveIndex: number,
   battleConfig: FixedBattleConfig,
 ): boolean;
 /**
  * Apply all challenges that modify type effectiveness.
- * @param gameMode {@linkcode GameMode} The current gameMode
  * @param challengeType {@linkcode ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
  * @param effectiveness {@linkcode Utils.NumberHolder} The current effectiveness of the move.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.TYPE_EFFECTIVENESS,
   effectiveness: Utils.NumberHolder,
 ): boolean;
 /**
  * Apply all challenges that modify what level AI are.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
  * @param level {@link Utils.NumberHolder} The generated level of the pokemon.
  * @param levelCap {@link Number} The maximum level cap for the current wave.
@@ -1187,7 +1243,6 @@ export function applyChallenges(
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.AI_LEVEL,
   level: Utils.NumberHolder,
   levelCap: number,
@@ -1196,42 +1251,36 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify how many move slots the AI has.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_MOVE_SLOTS
  * @param pokemon {@link Pokemon} The pokemon being considered.
  * @param moveSlots {@link Utils.NumberHolder} The amount of move slots.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.AI_MOVE_SLOTS,
   pokemon: Pokemon,
   moveSlots: Utils.NumberHolder,
 ): boolean;
 /**
  * Apply all challenges that modify whether a pokemon has its passive.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.PASSIVE_ACCESS
  * @param pokemon {@link Pokemon} The pokemon to modify.
  * @param hasPassive {@link Utils.BooleanHolder} Whether it has its passive.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.PASSIVE_ACCESS,
   pokemon: Pokemon,
   hasPassive: Utils.BooleanHolder,
 ): boolean;
 /**
  * Apply all challenges that modify the game modes settings.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.GAME_MODE_MODIFY
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.GAME_MODE_MODIFY): boolean;
+export function applyChallenges(challengeType: ChallengeType.GAME_MODE_MODIFY): boolean;
 /**
  * Apply all challenges that modify what level a pokemon can access a move.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_ACCESS
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
@@ -1240,7 +1289,6 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.MOVE_ACCESS,
   pokemon: Pokemon,
   moveSource: MoveSourceType,
@@ -1249,7 +1297,6 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify what weight a pokemon gives to move generation
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_WEIGHT
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
@@ -1258,7 +1305,6 @@ export function applyChallenges(
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.MOVE_WEIGHT,
   pokemon: Pokemon,
   moveSource: MoveSourceType,
@@ -1266,46 +1312,64 @@ export function applyChallenges(
   weight: Utils.NumberHolder,
 ): boolean;
 
+export function applyChallenges(challengeType: ChallengeType.FLIP_STAT, pokemon: Pokemon, baseStats: number[]): boolean;
+
+/**
+ * Apply all challenges that modify Enemy Pokemon generation (after post process funcs)
+ * @param challengeType {@link ChallengeType} ChallengeType.ENEMY_POKEMON_MODIFY
+ * @param pokemon {@link EnemyPokemon} Pokemon to be modified
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.ENEMY_POKEMON_MODIFY, pokemon: EnemyPokemon): boolean;
+
+/**
+ * Apply all challenges that restrict Pokemon from learning certain moves
+ * @param challengeType {@link ChallengeType} ChallengeType.BAN_MOVE_LEARNING
+ * @param pokemon {@link Pokemon} The mon attempting to learn
+ * @param move {@link Moves} The move being learned
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.BAN_MOVE_LEARNING, pokemon: Pokemon, move: Moves): boolean;
+
+/**
+ * Apply all challenges that modify how much PP is used
+ * @param challengeType {@link ChallengeType} ChallengeType.MODIFY_PP_USE
+ * @param pokemon {@link Pokemon} Pokemon using the move
+ * @param move {@link Moves} Move being used
+ * @param usedPP {@link Utils.NumberHolder} Holds the value associated with how much PP should be used
+ * @returns True if any challenge was successfully applied.
+ */
 export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.FLIP_STAT,
+  challengeType: ChallengeType.MODIFY_PP_USE,
   pokemon: Pokemon,
-  baseStats: number[],
+  move: Moves,
+  usedPP: Utils.NumberHolder,
 ): boolean;
 
+/**
+ * Apply all challenges that modify the horrific abomination that is the modifier pools
+ * @param challengeType {@link ChallengeType} ChallengeType.MODIFIER_POOL_MODIFY
+ * @param poolType {@link ModifierPoolType} Which kind of pool is being changed (wild held items, player rewards etc)
+ * @param modifierPool {@link ModifierPool} The item pool the challenge may attempt to modify
+ * @returns True if any challenge was successfully applied.
+ */
 export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.MOVESET_MODIFY,
-  pokemon: Pokemon,
+  challengeType: ChallengeType.MODIFIER_POOL_MODIFY,
+  poolType: ModifierPoolType,
+  modifierPool: ModifierPool,
 ): boolean;
 
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.NO_MOVE_LEARNING,
-  valid: Utils.BooleanHolder,
-): boolean;
+/**
+ * Apply all challenges that modify the shop
+ * @param challengeType ChallengeType.SHOP_MODIFY
+ * @param options {@link ModifierTypeOption} List of shop options including the prices
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.SHOP_MODIFY, options: ModifierTypeOption[]): boolean;
 
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.NO_PP_USE,
-  valid: Utils.BooleanHolder,
-): boolean;
-
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.REWARD_TABLE_MODIFY,
-  modifications: RewardTableModification[],
-): boolean;
-
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.SHOP_REMOVAL,
-  removals: ModifierTypeKeys[],
-): boolean;
-
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
+export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
-  gameMode.challenges.forEach(c => {
+  globalScene.gameMode.challenges.forEach(c => {
     if (c.value !== 0) {
       switch (challengeType) {
         case ChallengeType.STARTER_CHOICE:
@@ -1339,7 +1403,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
           ret ||= c.applyPassiveAccess(args[0], args[1]);
           break;
         case ChallengeType.GAME_MODE_MODIFY:
-          ret ||= c.applyGameModeModify(gameMode);
+          ret ||= c.applyGameModeModify();
           break;
         case ChallengeType.MOVE_ACCESS:
           ret ||= c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
@@ -1350,20 +1414,20 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
         case ChallengeType.FLIP_STAT:
           ret ||= c.applyFlipStat(args[0], args[1]);
           break;
-        case ChallengeType.MOVESET_MODIFY:
-          ret ||= c.applyMovesetModify(args[0]);
+        case ChallengeType.ENEMY_POKEMON_MODIFY:
+          ret ||= c.applyEnemyPokemonModify(args[0]);
           break;
-        case ChallengeType.NO_MOVE_LEARNING:
-          ret ||= c.applyNoMoveLearning(args[0]);
+        case ChallengeType.BAN_MOVE_LEARNING:
+          ret ||= c.applyBanMoveLearning(args[0], args[1]);
           break;
-        case ChallengeType.NO_PP_USE:
-          ret ||= c.applyNoPPUsage(args[0]);
+        case ChallengeType.MODIFY_PP_USE:
+          ret ||= c.applyModifyPPUsage(args[0], args[1], args[2]);
           break;
-        case ChallengeType.REWARD_TABLE_MODIFY:
-          ret ||= c.applyRewardTableModify(args[0]);
+        case ChallengeType.MODIFIER_POOL_MODIFY:
+          ret ||= c.applyModifierPoolModify(args[0], args[1]);
           break;
-        case ChallengeType.SHOP_REMOVAL:
-          ret ||= c.applyShopRemovals(args[0]);
+        case ChallengeType.SHOP_MODIFY:
+          ret ||= c.applyShopModify(args[0]);
           break;
       }
     }
@@ -1422,7 +1486,7 @@ export function initChallenges() {
 export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   if (!soft) {
     const isValidForChallenge = new Utils.BooleanHolder(true);
-    applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+    applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
     return isValidForChallenge.value;
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
@@ -1460,7 +1524,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
  */
 function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   const isValidForChallenge = new Utils.BooleanHolder(true);
-  applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+  applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
   if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
     return isValidForChallenge.value;
   }
@@ -1479,13 +1543,7 @@ function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrPr
         const formProps = { ...props };
         formProps.formIndex = formIndex;
         const isFormValidForChallenge = new Utils.BooleanHolder(true);
-        applyChallenges(
-          globalScene.gameMode,
-          ChallengeType.STARTER_CHOICE,
-          species,
-          isFormValidForChallenge,
-          formProps,
-        );
+        applyChallenges(ChallengeType.STARTER_CHOICE, species, isFormValidForChallenge, formProps);
         if (isFormValidForChallenge.value) {
           return true;
         }

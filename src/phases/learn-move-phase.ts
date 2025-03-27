@@ -13,6 +13,7 @@ import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import type Pokemon from "#app/field/pokemon";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export enum LearnMoveType {
   /** For learning a move via level-up, evolution, or other non-item-based event */
@@ -47,6 +48,10 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId];
     const currentMoveset = pokemon.getMoveset();
+
+    if (applyChallenges(ChallengeType.BAN_MOVE_LEARNING, pokemon, this.moveId)) {
+      return this.end();
+    }
 
     // The game first checks if the Pokemon already has the move and ends the phase if it does.
     const hasMoveAlready = currentMoveset.some(m => m?.moveId === move.id) && this.moveId !== Moves.SKETCH;
