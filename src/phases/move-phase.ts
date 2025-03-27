@@ -350,15 +350,11 @@ export class MovePhase extends BattlePhase {
 
     // "commit" to using the move, deducting PP.
     if (!this.ignorePp) {
-      let ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
+      const ppUsed = new NumberHolder(1 + this.getPpIncreaseFromPressure(targets));
 
-      const ignorePPChallenge = new BooleanHolder(false);
-      applyChallenges(ChallengeType.MODIFY_PP_USE, ignorePPChallenge);
-      if (ignorePPChallenge.value) {
-        ppUsed = 0;
-      }
+      applyChallenges(ChallengeType.MODIFY_PP_USE, this.pokemon, this.move.moveId, ppUsed);
 
-      this.move.usePp(ppUsed);
+      this.move.usePp(ppUsed.value);
       globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
     }
 
