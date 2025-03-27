@@ -41,6 +41,8 @@ interface EventWaveReward {
   type: string;
 }
 
+type EventMusicReplacement = [string, string];
+
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
@@ -58,6 +60,7 @@ interface TimedEvent extends EventBanner {
   boostFusions?: boolean; //MODIFIER REWORK PLEASE
   classicWaveRewards?: EventWaveReward[]; // Rival battle rewards
   trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
+  music?: EventMusicReplacement[];
 }
 
 const timedEvents: TimedEvent[] = [
@@ -281,7 +284,7 @@ const timedEvents: TimedEvent[] = [
     ],
   },
   {
-    name: "APRF25",
+    name: "April Fools 2025",
     eventType: EventType.NO_TIMER_DISPLAY,
     startDate: new Date(Date.UTC(2025, 2, 1)),
     endDate: new Date(Date.UTC(2025, 3, 3)),
@@ -289,6 +292,10 @@ const timedEvents: TimedEvent[] = [
     // scale: 0.21,
     // availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     trainerShinyChance: 16384, // 16384/65536 = 1/4
+    music: [
+      ["title", "mystery_encounter_fun_and_games"],
+      ["battle_rival_3", "mystery_encounter_fun_and_games"],
+    ],
   },
 ];
 
@@ -486,6 +493,21 @@ export class TimedEventManager {
     let ret = 0;
     const tsEvents = timedEvents.filter(te => this.isActive(te) && !isNullOrUndefined(te.trainerShinyChance));
     tsEvents.map(t => (ret += t.trainerShinyChance!));
+    return ret;
+  }
+
+  getEventBgmReplacement(bgm: string): string {
+    let ret = bgm;
+    timedEvents.map(te => {
+      if (this.isActive(te) && !isNullOrUndefined(te.music)) {
+        te.music.map(mr => {
+          if (mr[0] === bgm) {
+            console.log(`it is ${te.name} so instead of ${mr[0]} we play ${mr[1]}`);
+            ret = mr[1];
+          }
+        });
+      }
+    });
     return ret;
   }
 }
