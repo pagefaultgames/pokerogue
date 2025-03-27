@@ -11,6 +11,7 @@ import { TrainerSlot } from "#app/data/trainer-config";
 import { globalScene } from "#app/global-scene";
 import { Biome } from "#app/enums/biome";
 import { achvs } from "#app/system/achv";
+import { timedEventManager } from "#app/global-event-manager";
 
 export class TrainerVictoryPhase extends BattlePhase {
   constructor() {
@@ -29,7 +30,7 @@ export class TrainerVictoryPhase extends BattlePhase {
       globalScene.unshiftPhase(new ModifierRewardPhase(modifierRewardFunc));
     }
 
-    if (globalScene.eventManager.isEventActive()) {
+    if (timedEventManager.isEventActive()) {
       for (const rewardFunc of globalScene.currentBattle.trainer?.config.eventRewardFuncs!) {
         globalScene.unshiftPhase(new ModifierRewardPhase(rewardFunc));
       }
@@ -42,7 +43,7 @@ export class TrainerVictoryPhase extends BattlePhase {
         !globalScene.validateVoucher(vouchers[TrainerType[trainerType]]) &&
         globalScene.currentBattle.trainer?.config.isBoss
       ) {
-        if (globalScene.eventManager.getUpgradeUnlockedVouchers()) {
+        if (timedEventManager.getUpgradeUnlockedVouchers()) {
           globalScene.unshiftPhase(
             new ModifierRewardPhase(
               [
