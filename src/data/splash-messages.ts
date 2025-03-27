@@ -207,7 +207,7 @@ const commonSplashMessages = [
   "isThisThingOn",
   "needsMoreTesting",
   "whoChecksStatChanges",
-  "whenTwoTrainerseyesMeet",
+  "whenTwoTrainersEyesMeet",
   "notOfficiallyOnSteam",
   "fiftyFifty",
   "metaNotIncluded",
