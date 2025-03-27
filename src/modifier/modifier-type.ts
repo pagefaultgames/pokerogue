@@ -2822,10 +2822,7 @@ const modifierPool: ModifierPool = {
       modifierTypes.MYSTICAL_ROCK,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const moveset = p
-            .getMoveset(true)
-            .filter(m => !isNullOrUndefined(m))
-            .map(m => m.moveId);
+          const moveset = p.getMoveset(true).map(m => m.moveId);
 
           const hasAbility = [
             Abilities.DRIZZLE,
