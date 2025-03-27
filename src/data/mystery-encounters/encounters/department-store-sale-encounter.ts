@@ -15,6 +15,8 @@ import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CompatibleMoveRequirement } from "../mystery-encounter-requirements";
 import { Moves } from "#enums/moves";
+import { globalScene } from "#app/global-scene";
+import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/departmentStoreSale";
@@ -103,7 +105,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       while (i < 3) {
         // 2/1 weight on base stat booster vs PP Up
         const roll = randSeedInt(3);
-        if (roll === 0) {
+        if (roll === 0 && !globalScene.gameMode.hasChallenge(Challenges.METRONOME)) {
           modifiers.push(modifierTypes.PP_UP);
         } else {
           modifiers.push(modifierTypes.BASE_STAT_BOOSTER);
