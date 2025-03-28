@@ -7,7 +7,7 @@ import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
-import { DexAttr, type StarterMoveset } from "#app/system/game-data";
+import { DexAttr, DexEntry, type StarterMoveset } from "#app/system/game-data";
 import * as Utils from "#app/utils";
 import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
