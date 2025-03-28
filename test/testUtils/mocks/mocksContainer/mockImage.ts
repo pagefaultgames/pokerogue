@@ -1,6 +1,6 @@
 import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
 
-export default class MockImage extends MockContainer {
+export class MockImage extends MockContainer {
   private texture;
 
   constructor(textureManager, x, y, texture) {

@@ -1,3 +1,4 @@
+import { off } from "process";
 import type { MockGameObject } from "../mockGameObject";
 
 export default class MockRectangle implements MockGameObject {
@@ -72,4 +73,6 @@ export default class MockRectangle implements MockGameObject {
   setScale(_scale) {
     // return this.phaserText.setScale(scale);
   }
+
+  off() {}
 }
