@@ -48,8 +48,8 @@ describe("SelectModifierPhase", () => {
   it("should start a select modifier phase", async () => {
     initSceneWithoutEncounterPhase(scene, [Species.ABRA, Species.VOLCARONA]);
     const selectModifierPhase = new SelectModifierPhase();
-    scene.pushPhase(selectModifierPhase);
-    await game.phaseInterceptor.run(SelectModifierPhase);
+    scene.unshiftPhase(selectModifierPhase);
+    await game.phaseInterceptor.to(SelectModifierPhase);
 
     expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
   });
