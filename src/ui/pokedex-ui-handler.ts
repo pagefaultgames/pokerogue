@@ -781,6 +781,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
+  isSeen(species: PokemonSpecies, dexEntry: DexEntry): boolean {
+    if (dexEntry?.seenAttr) {
+      return true;
+    }
+
+    const starterDexEntry = globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)];
+    return !!starterDexEntry?.caughtAttr;
+  }
+
   /**
    * Determines if 'Icon' based upgrade notifications should be shown
    * @returns true if upgrade notifications are enabled and set to display an 'Icon'
@@ -1364,7 +1373,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const levelMoves = pokemonSpeciesLevelMoves[species.speciesId].map(m => allMoves[m[1]].name);
       // This always gets egg moves from the starter
       const eggMoves = speciesEggMoves[starterId]?.map(m => allMoves[m].name) ?? [];
-      const tmMoves = speciesTmMoves[starterId]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
+      const tmMoves = speciesTmMoves[species.speciesId]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
       const selectedMove1 = this.filterText.getValue(FilterTextRow.MOVE_1);
       const selectedMove2 = this.filterText.getValue(FilterTextRow.MOVE_2);
 
@@ -1740,7 +1749,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
         if (caughtAttr & data.species.getFullUnlocksData() || globalScene.dexForDevs) {
           container.icon.clearTint();
-        } else if (dexEntry.seenAttr) {
+        } else if (this.isSeen(data.species, dexEntry)) {
           container.icon.setTint(0x808080);
         } else {
           container.icon.setTint(0);
@@ -1931,12 +1940,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr));
 
     this.trayContainers = [];
+    const isFormSeen = this.isSeen(species, dexEntry);
     this.trayForms.map((f, index) => {
       const isFormCaught = dexEntry
         ? (dexEntry.caughtAttr & species.getFullUnlocksData() & globalScene.gameData.getFormAttr(f.formIndex ?? 0)) > 0n
-        : false;
-      const isFormSeen = dexEntry
-        ? (dexEntry.seenAttr & globalScene.gameData.getFormAttr(f.formIndex ?? 0)) > 0n
         : false;
       const formContainer = new PokedexMonContainer(species, {
         formIndex: f.formIndex,
@@ -2147,7 +2154,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
 
       const isFormCaught = dexEntry ? (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
-      const isFormSeen = dexEntry ? (dexEntry.seenAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
+      const isFormSeen = this.isSeen(species, dexEntry);
 
       const assetLoadCancelled = new BooleanHolder(false);
       this.assetLoadCancelled = assetLoadCancelled;
