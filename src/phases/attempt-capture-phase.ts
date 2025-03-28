@@ -329,18 +329,11 @@ export class AttemptCapturePhase extends PokemonPhase {
                         form: pokemon.formIndex,
                         female: pokemon.gender === Gender.FEMALE,
                       };
-                      globalScene.ui.setOverlayMode(
-                        Mode.POKEDEX_PAGE,
-                        pokemon.species,
-                        attributes,
-                        [pokemon.species.speciesId],
-                        null,
-                        () => {
-                          globalScene.ui.setMode(Mode.MESSAGE).then(() => {
-                            promptRelease();
-                          });
-                        },
-                      );
+                      globalScene.ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, attributes, null, null, () => {
+                        globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                          promptRelease();
+                        });
+                      });
                     },
                     () => {
                       globalScene.ui.setMode(
