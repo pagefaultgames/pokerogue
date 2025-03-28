@@ -3,10 +3,12 @@ import { globalScene } from "#app/global-scene";
 import {
   AddSecondStrikeAbAttr,
   AlwaysHitAbAttr,
+  applyExecutedMoveAbAttrs,
   applyPostAttackAbAttrs,
   applyPostDamageAbAttrs,
   applyPostDefendAbAttrs,
   applyPreAttackAbAttrs,
+  ExecutedMoveAbAttr,
   IgnoreMoveEffectsAbAttr,
   MaxMultiHitAbAttr,
   PostAttackAbAttr,
@@ -235,6 +237,7 @@ export class MoveEffectPhase extends PokemonPhase {
         moveHistoryEntry.result = MoveResult.FAIL;
       }
       user.pushMoveHistory(moveHistoryEntry);
+      applyExecutedMoveAbAttrs(ExecutedMoveAbAttr, user);
       return this.end();
     }
 
@@ -367,6 +370,7 @@ export class MoveEffectPhase extends PokemonPhase {
               moveHistoryEntry.result = MoveResult.MISS;
             }
             user.pushMoveHistory(moveHistoryEntry);
+            applyExecutedMoveAbAttrs(ExecutedMoveAbAttr, user);
             applyMoveAttrs(MissEffectAttr, user, null, move);
             continue;
           }
@@ -385,6 +389,7 @@ export class MoveEffectPhase extends PokemonPhase {
            * is overwritten and the move is logged as a FAIL.
            */
           moveHistoryEntry.result = MoveResult.SUCCESS;
+          applyExecutedMoveAbAttrs(ExecutedMoveAbAttr, user);
 
           /**
            * Stores the result of applying the invoked move to the target.
