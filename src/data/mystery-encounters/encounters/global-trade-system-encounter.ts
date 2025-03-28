@@ -23,7 +23,7 @@ import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { NumberHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle } from "#app/utils";
+import { NumberHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle, randSeedItem } from "#app/utils";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
@@ -986,8 +986,10 @@ function generateRandomTraderName() {
   // +1 avoids TrainerType.UNKNOWN
   const trainerTypePool = i18next.t("trainersCommon:" + TrainerType[randInt(length) + 1], { returnObjects: true });
   // Some trainers have 2 gendered pools, some do not
-  const genderedPool = trainerTypePool[randInt(trainerTypePool.length)];
-  const trainerNameString = Array.isArray(genderedPool) ? genderedPool[randInt(genderedPool.length)] : genderedPool;
+  const gender = randInt(2) === 0 ? "MALE" : "FEMALE";
+  const trainerNameString = randSeedItem(
+    Object.values(trainerTypePool.hasOwnProperty(gender) ? trainerTypePool[gender] : trainerTypePool),
+  ) as string;
   // Some names have an '&' symbol and need to be trimmed to a single name instead of a double name
   const trainerNames = trainerNameString.split(" & ");
   return trainerNames[randInt(trainerNames.length)];

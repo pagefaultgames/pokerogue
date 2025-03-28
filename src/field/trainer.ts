@@ -61,10 +61,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
       this.config.partyTemplates.length - 1,
     );
     if (i18next.exists("trainersCommon:" + TrainerType[trainerType], { returnObjects: true })) {
-      const namePool = i18next.t("trainersCommon:" + TrainerType[trainerType], { returnObjects: true }) as any;
+      const namePool = i18next.t("trainersCommon:" + TrainerType[trainerType], { returnObjects: true });
       this.name =
         name ||
-        Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool);
+        Utils.randSeedItem(
+          Object.values(
+            namePool.hasOwnProperty("MALE")
+              ? namePool[variant === TrainerVariant.FEMALE ? "FEMALE" : "MALE"]
+              : namePool,
+          ),
+        );
       if (variant === TrainerVariant.DOUBLE) {
         if (this.config.doubleOnly) {
           if (partnerName) {
@@ -73,7 +79,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
             [this.name, this.partnerName] = this.name.split(" & ");
           }
         } else {
-          this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
+          this.partnerName =
+            partnerName ||
+            Utils.randSeedItem(Object.values(namePool.hasOwnProperty("FEMALE") ? namePool["FEMALE"] : namePool));
         }
       }
     }
