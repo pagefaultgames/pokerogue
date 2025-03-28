@@ -2991,6 +2991,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       shinyThreshold.value = thresholdOverride;
     }
 
+    if (!isNullOrUndefined(Overrides.OPP_SHINY_CHANCE_OVERRIDE)) {
+      shinyThreshold.value = Overrides.OPP_SHINY_CHANCE_OVERRIDE;
+    }
+
     this.shiny = (E ^ F) < shinyThreshold.value;
 
     if (this.shiny) {

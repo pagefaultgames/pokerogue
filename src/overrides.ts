@@ -166,6 +166,7 @@ class DefaultOverrides {
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
   readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
   readonly OPP_SHINY_OVERRIDE: boolean | null = null;
+  readonly OPP_SHINY_CHANCE_OVERRIDE: number | null = null; // Max value 65536
   readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
