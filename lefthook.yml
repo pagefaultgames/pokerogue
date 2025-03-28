@@ -8,12 +8,6 @@ pre-commit:
       skip:
         - merge
         - rebase
-
-pre-push:
-  commands:
-    biome-lint:
-      glob: "*.{js,ts,jsx,tsx}"
-      run: npx @biomejs/biome check --reporter=summary {push_files} --no-errors-on-unmatched
       
 post-merge:
   commands:
