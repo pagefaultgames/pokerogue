@@ -41,11 +41,11 @@ import { Gender, getGenderSymbol } from "#app/data/gender";
 import { getNatureName } from "#app/data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { trainerNamePools } from "#app/data/trainer-names";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import type { PokeballType } from "#enums/pokeball";
 import { doShinySparkleAnim } from "#app/field/anims";
+import { TrainerType } from "#enums/trainer-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -982,12 +982,9 @@ function doTradeReceivedSequence(
 }
 
 function generateRandomTraderName() {
-  const length = Object.keys(trainerNamePools).length;
+  const length = TrainerType.YOUNGSTER - TrainerType.ACE_TRAINER + 1;
   // +1 avoids TrainerType.UNKNOWN
-  let trainerTypePool = trainerNamePools[randInt(length) + 1];
-  while (!trainerTypePool) {
-    trainerTypePool = trainerNamePools[randInt(length) + 1];
-  }
+  const trainerTypePool = i18next.t("trainersCommon:" + TrainerType[randInt(length) + 1], { returnObjects: true });
   // Some trainers have 2 gendered pools, some do not
   const genderedPool = trainerTypePool[randInt(trainerTypePool.length)];
   const trainerNameString = Array.isArray(genderedPool) ? genderedPool[randInt(genderedPool.length)] : genderedPool;

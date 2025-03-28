@@ -14,7 +14,6 @@ import {
 import type { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
 import type { PersistentModifier } from "#app/modifier/modifier";
-import { trainerNamePools } from "#app/data/trainer-names";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
@@ -61,8 +60,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
         : Utils.randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1,
     );
-    if (trainerNamePools.hasOwnProperty(trainerType)) {
-      const namePool = trainerNamePools[trainerType];
+    if (i18next.exists("trainersCommon:" + TrainerType[trainerType], { returnObjects: true })) {
+      const namePool = i18next.t("trainersCommon:" + TrainerType[trainerType], { returnObjects: true }) as any;
       this.name =
         name ||
         Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool);
