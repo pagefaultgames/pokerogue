@@ -2661,6 +2661,10 @@ export default class BattleScene extends SceneBase {
         return 41.42;
       case "mystery_encounter_delibirdy": // Firel Delibirdy
         return 82.28;
+      case "title_afd": // Andr06 - PokéRogue Title Remix (AFD)
+        return 47.660;
+      case "battle_rival_3_afd": // Andr06 - Final N Battle Remix (AFD)
+        return 49.147;
     }
 
     return 0;
