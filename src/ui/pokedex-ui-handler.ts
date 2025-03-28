@@ -1173,7 +1173,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
     } else {
       if (button === Button.ACTION) {
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
+        const formIndex = this.pokemonContainers[this.cursor]?.formIndex;
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, this.filteredIndices);
         success = true;
       } else {
         switch (button) {
@@ -1310,18 +1311,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     return sanitizedProps;
   }
 
-  // Returns true if one of the forms has the requested move
-  hasFormLevelMove(form: PokemonForm, selectedMove: string): boolean {
-    if (
-      !pokemonFormLevelMoves.hasOwnProperty(form.speciesId) ||
-      !pokemonFormLevelMoves[form.speciesId].hasOwnProperty(form.formIndex)
-    ) {
-      return false;
-    }
-    const levelMoves = pokemonFormLevelMoves[form.speciesId][form.formIndex].map(m => allMoves[m[1]].name);
-    return levelMoves.includes(selectedMove);
-  }
-
   updateStarters = () => {
     this.scrollCursor = 0;
     this.filteredPokemonData = [];
@@ -1339,140 +1328,18 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const currentDexAttr = this.getCurrentDexProps(species.speciesId);
       const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(species, currentDexAttr));
 
-      const data: ContainerData = {
-        species: species,
-        cost: globalScene.gameData.getSpeciesStarterValue(starterId),
-        props: props,
-      };
-
-      // First, ensure you have the caught attributes for the species else default to bigint 0
-      // TODO: This might be removed depending on how accessible we want the pokedex function to be
-      const caughtAttr =
-        (globalScene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0)) &
-        (globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)]?.caughtAttr || BigInt(0)) &
-        species.getFullUnlocksData();
       const starterData = globalScene.gameData.starterData[starterId];
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
-
-      // Name filter
-      const selectedName = this.filterText.getValue(FilterTextRow.NAME);
-      const fitsName = species.name === selectedName || selectedName === this.filterText.defaultText;
-
-      // Move filter
-      // TODO: There can be fringe cases where the two moves belong to mutually exclusive forms, these must be handled separately (Pikachu);
-      // On the other hand, in some cases it is possible to switch between different forms and combine (Deoxys)
-      const levelMoves = pokemonSpeciesLevelMoves[species.speciesId].map(m => allMoves[m[1]].name);
-      // This always gets egg moves from the starter
-      const eggMoves = speciesEggMoves[starterId]?.map(m => allMoves[m].name) ?? [];
-      const tmMoves = speciesTmMoves[starterId]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
-      const selectedMove1 = this.filterText.getValue(FilterTextRow.MOVE_1);
-      const selectedMove2 = this.filterText.getValue(FilterTextRow.MOVE_2);
-
-      const fitsFormMove1 = species.forms.some(form => this.hasFormLevelMove(form, selectedMove1));
-      const fitsFormMove2 = species.forms.some(form => this.hasFormLevelMove(form, selectedMove2));
-      const fitsLevelMove1 = levelMoves.includes(selectedMove1) || fitsFormMove1;
-      const fitsEggMove1 = eggMoves.includes(selectedMove1);
-      const fitsTmMove1 = tmMoves.includes(selectedMove1);
-      const fitsLevelMove2 = levelMoves.includes(selectedMove2) || fitsFormMove2;
-      const fitsEggMove2 = eggMoves.includes(selectedMove2);
-      const fitsTmMove2 = tmMoves.includes(selectedMove2);
-      const fitsMove1 = fitsLevelMove1 || fitsEggMove1 || fitsTmMove1 || selectedMove1 === this.filterText.defaultText;
-      const fitsMove2 = fitsLevelMove2 || fitsEggMove2 || fitsTmMove2 || selectedMove2 === this.filterText.defaultText;
-      const fitsMoves = fitsMove1 && fitsMove2;
-
-      if (fitsEggMove1 && !fitsLevelMove1) {
-        const em1 = eggMoves.findIndex(name => name === selectedMove1);
-        if ((starterData.eggMoves & (1 << em1)) === 0) {
-          data.eggMove1 = false;
-        } else {
-          data.eggMove1 = true;
-        }
-      } else if (fitsTmMove1 && !fitsLevelMove1) {
-        data.tmMove1 = true;
-      }
-      if (fitsEggMove2 && !fitsLevelMove2) {
-        const em2 = eggMoves.findIndex(name => name === selectedMove2);
-        if ((starterData.eggMoves & (1 << em2)) === 0) {
-          data.eggMove2 = false;
-        } else {
-          data.eggMove2 = true;
-        }
-      } else if (fitsTmMove2 && !fitsLevelMove2) {
-        data.tmMove2 = true;
-      }
-
-      // Ability filter
-      const abilities = [species.ability1, species.ability2, species.abilityHidden].map(a => allAbilities[a].name);
-      const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId)
-        ? species.speciesId
-        : starterPassiveAbilities.hasOwnProperty(starterId)
-          ? starterId
-          : pokemonPrevolutions[starterId];
-      const passives = starterPassiveAbilities[passiveId];
-
-      const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
-      const fitsFormAbility1 = species.forms.some(form =>
-        [form.ability1, form.ability2, form.abilityHidden].map(a => allAbilities[a].name).includes(selectedAbility1),
-      );
-      const fitsAbility1 =
-        abilities.includes(selectedAbility1) || fitsFormAbility1 || selectedAbility1 === this.filterText.defaultText;
-      const fitsPassive1 = Object.values(passives).some(p => allAbilities[p].name === selectedAbility1);
-
-      const selectedAbility2 = this.filterText.getValue(FilterTextRow.ABILITY_2);
-      const fitsFormAbility2 = species.forms.some(form =>
-        [form.ability1, form.ability2, form.abilityHidden].map(a => allAbilities[a].name).includes(selectedAbility2),
-      );
-      const fitsAbility2 =
-        abilities.includes(selectedAbility2) || fitsFormAbility2 || selectedAbility2 === this.filterText.defaultText;
-      const fitsPassive2 = Object.values(passives).some(p => allAbilities[p].name === selectedAbility2);
-
-      // If both fields have been set to the same ability, show both ability and passive
-      const fitsAbilities =
-        (fitsAbility1 && (fitsPassive2 || selectedAbility2 === this.filterText.defaultText)) ||
-        (fitsAbility2 && (fitsPassive1 || selectedAbility1 === this.filterText.defaultText));
-
-      if (fitsPassive1 || fitsPassive2) {
-        if (fitsPassive1) {
-          if (starterData.passiveAttr > 0) {
-            data.passive1 = true;
-          } else {
-            data.passive1 = false;
-          }
-        } else {
-          if (starterData.passiveAttr > 0) {
-            data.passive2 = true;
-          } else {
-            data.passive2 = false;
-          }
-        }
-      }
 
       // Gen filter
       const fitsGen = this.filterBar.getVals(DropDownColumn.GEN).includes(species.generation);
 
-      // Type filter
-      const fitsType = this.filterBar
-        .getVals(DropDownColumn.TYPES)
-        .some(type => species.isOfType((type as number) - 1));
-
-      // Biome filter
-      const indexToBiome = new Map(
-        Object.values(Biome)
-          .map((value, index) => (typeof value === "string" ? [index, value] : undefined))
-          .filter((entry): entry is [number, string] => entry !== undefined),
-      );
-      indexToBiome.set(35, "Uncatchable");
-
-      // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
-      // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => Biome[b.biome]);
-      if (biomes.length === 0) {
-        biomes.push("Uncatchable");
-      }
-      const showNoBiome = !!(biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36);
-      const fitsBiome =
-        this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? "")) ||
-        showNoBiome;
+      // First, ensure you have the caught attributes for the species else default to bigint 0
+      // TODO: This might be removed depending on how accessible we want the pokedex function to be
+      const caughtAttr =
+        (globalScene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0)) & // Change this
+        (globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)]?.caughtAttr || BigInt(0)) &
+        species.getFullUnlocksData();
 
       // Caught / Shiny filter
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
@@ -1629,25 +1496,152 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
       });
 
-      if (
-        fitsName &&
-        fitsAbilities &&
-        fitsMoves &&
-        fitsGen &&
-        fitsBiome &&
-        fitsType &&
-        fitsCaught &&
-        fitsPassive &&
-        fitsCostReduction &&
-        fitsStarter &&
-        fitsFavorite &&
-        fitsWin &&
-        fitsHA &&
-        fitsEgg &&
-        fitsPokerus
-      ) {
-        this.filteredPokemonData.push(data);
-      }
+      const allForms: (PokemonForm | PokemonSpecies)[] = species?.forms?.length > 0 ? species.forms : [species];
+
+      // Name filter
+      const selectedName = this.filterText.getValue(FilterTextRow.NAME);
+      const fitsName = species.name === selectedName || selectedName === this.filterText.defaultText;
+
+      const selectedMove1 = this.filterText.getValue(FilterTextRow.MOVE_1);
+      const selectedMove2 = this.filterText.getValue(FilterTextRow.MOVE_2);
+
+      // This always gets egg moves from the starter
+      const eggMoves = speciesEggMoves[starterId]?.map(m => allMoves[m].name) ?? [];
+      const fitsEggMove1 = eggMoves.includes(selectedMove1);
+      const fitsEggMove2 = eggMoves.includes(selectedMove2);
+
+      allForms.forEach((form, formIndex) => {
+        const formProps = { ...props };
+        formProps.formIndex = formIndex;
+
+        const data: ContainerData = {
+          species: species,
+          cost: globalScene.gameData.getSpeciesStarterValue(starterId),
+          props: formProps,
+        };
+
+        // Move filter
+        const levelMoves =
+          pokemonFormLevelMoves.hasOwnProperty(species.speciesId) &&
+          pokemonFormLevelMoves[species.speciesId].hasOwnProperty(form.formIndex)
+            ? pokemonFormLevelMoves[species.speciesId][form.formIndex].map(m => allMoves[m[1]].name)
+            : pokemonSpeciesLevelMoves[species.speciesId].map(m => allMoves[m[1]].name);
+
+        const fitsLevelMove1 = levelMoves.includes(selectedMove1);
+        const fitsLevelMove2 = levelMoves.includes(selectedMove2);
+
+        // TODO: Also needs to be changed obviously
+        const tmMoves = speciesTmMoves[species.speciesId]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
+
+        const fitsTmMove1 = tmMoves.includes(selectedMove1);
+        const fitsTmMove2 = tmMoves.includes(selectedMove2);
+        const fitsMove1 =
+          fitsLevelMove1 || fitsEggMove1 || fitsTmMove1 || selectedMove1 === this.filterText.defaultText;
+        const fitsMove2 =
+          fitsLevelMove2 || fitsEggMove2 || fitsTmMove2 || selectedMove2 === this.filterText.defaultText;
+        const fitsMoves = fitsMove1 && fitsMove2;
+
+        if (fitsEggMove1 && !fitsLevelMove1) {
+          const em1 = eggMoves.findIndex(name => name === selectedMove1);
+          if ((starterData.eggMoves & (1 << em1)) === 0) {
+            data.eggMove1 = false;
+          } else {
+            data.eggMove1 = true;
+          }
+        } else if (fitsTmMove1 && !fitsLevelMove1) {
+          data.tmMove1 = true;
+        }
+        if (fitsEggMove2 && !fitsLevelMove2) {
+          const em2 = eggMoves.findIndex(name => name === selectedMove2);
+          if ((starterData.eggMoves & (1 << em2)) === 0) {
+            data.eggMove2 = false;
+          } else {
+            data.eggMove2 = true;
+          }
+        } else if (fitsTmMove2 && !fitsLevelMove2) {
+          data.tmMove2 = true;
+        }
+
+        // Rework to look at forms separately
+        const abilities = [form.ability1, form.ability2, form.abilityHidden].map(a => allAbilities[a].name);
+
+        const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
+        const fitsAbility1 = abilities.includes(selectedAbility1) || selectedAbility1 === this.filterText.defaultText;
+
+        const selectedAbility2 = this.filterText.getValue(FilterTextRow.ABILITY_2);
+        const fitsAbility2 = abilities.includes(selectedAbility2) || selectedAbility2 === this.filterText.defaultText;
+
+        const passive = starterPassiveAbilities.hasOwnProperty(species.speciesId)
+          ? starterPassiveAbilities[species.speciesId].hasOwnProperty(formIndex)
+            ? starterPassiveAbilities[species.speciesId][formIndex]
+            : starterPassiveAbilities[species.speciesId][0]
+          : starterPassiveAbilities[starterId][0];
+        const fitsPassive1 = allAbilities[passive].name === selectedAbility1;
+        const fitsPassive2 = allAbilities[passive].name === selectedAbility2;
+
+        // If both fields have been set to the same ability, show both ability and passive
+        const fitsAbilities =
+          (fitsAbility1 && (fitsPassive2 || selectedAbility2 === this.filterText.defaultText)) ||
+          (fitsAbility2 && (fitsPassive1 || selectedAbility1 === this.filterText.defaultText));
+
+        if (fitsPassive1 || fitsPassive2) {
+          if (fitsPassive1) {
+            if (starterData.passiveAttr > 0) {
+              data.passive1 = true;
+            } else {
+              data.passive1 = false;
+            }
+          } else {
+            if (starterData.passiveAttr > 0) {
+              data.passive2 = true;
+            } else {
+              data.passive2 = false;
+            }
+          }
+        }
+
+        // Type filter
+        const fitsType = this.filterBar.getVals(DropDownColumn.TYPES).some(type => form.isOfType((type as number) - 1));
+
+        // Biome filter
+        const indexToBiome = new Map(
+          Object.values(Biome)
+            .map((value, index) => (typeof value === "string" ? [index, value] : undefined))
+            .filter((entry): entry is [number, string] => entry !== undefined),
+        );
+        indexToBiome.set(35, "Uncatchable");
+
+        // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
+        // TODO: We might also need to do it the other way around.
+        const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => Biome[b.biome]);
+        if (biomes.length === 0) {
+          biomes.push("Uncatchable");
+        }
+        const showNoBiome = !!(biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36);
+        const fitsBiome =
+          this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? "")) ||
+          showNoBiome;
+
+        if (
+          fitsName &&
+          fitsAbilities &&
+          fitsMoves &&
+          fitsGen &&
+          fitsBiome &&
+          fitsType &&
+          fitsCaught &&
+          fitsPassive &&
+          fitsCostReduction &&
+          fitsStarter &&
+          fitsFavorite &&
+          fitsWin &&
+          fitsHA &&
+          fitsEgg &&
+          fitsPokerus
+        ) {
+          this.filteredPokemonData.push(data);
+        }
+      });
     });
 
     this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredPokemonData.length / 9), 1));
@@ -1859,9 +1853,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
 
       const species = this.pokemonContainers[cursor]?.species;
+      const props = this.filteredPokemonData[cursor].props;
 
       if (species) {
-        this.setSpecies(species);
+        this.setSpecies(species, props);
         return true;
       }
     }
@@ -2041,7 +2036,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     }
   }
 
-  setSpecies(species: PokemonSpecies | null) {
+  setSpecies(species: PokemonSpecies | null, props: DexAttrProps | null = null) {
     this.speciesStarterDexEntry = species ? globalScene.gameData.dexData[species.speciesId] : null;
 
     if (!species && globalScene.ui.getTooltip().visible) {
@@ -2080,7 +2075,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.type1Icon.setVisible(true);
         this.type2Icon.setVisible(true);
 
-        this.setSpeciesDetails(species);
+        this.setSpeciesDetails(species, props ?? {});
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
