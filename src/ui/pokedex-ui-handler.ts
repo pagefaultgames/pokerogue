@@ -12,7 +12,7 @@ import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUN
 import { catchableSpecies } from "#app/data/balance/biomes";
 import { PokemonType } from "#enums/pokemon-type";
 import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
-import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
+import { AbilityAttr, DexAttr, loadStarterPreferences } from "#app/system/game-data";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "#app/ui/text";
@@ -114,7 +114,7 @@ enum FilterTextOptions {
 interface ContainerData {
   species: PokemonSpecies;
   cost: number;
-  props: DexAttrProps;
+  formIndex: number;
   eggMove1?: boolean;
   eggMove2?: boolean;
   tmMove1?: boolean;
@@ -141,15 +141,6 @@ function calcStarterPosition(index: number): { x: number; y: number } {
   const y = yOffset + Math.floor(index / 9) * height;
 
   return { x: x, y: y };
-}
-
-interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: Variant;
-  abilityIndex?: number;
-  natureIndex?: number;
 }
 
 export default class PokedexUiHandler extends MessageUiHandler {
@@ -631,8 +622,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const icon = container.icon;
       const species = container.species;
 
-      this.starterPreferences[species.speciesId] = this.initStarterPrefs(species);
-
       this.setUpgradeAnimation(icon, species);
     });
 
@@ -648,101 +637,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.filterTextContainer.setVisible(true);
 
     return true;
-  }
-
-  /**
-   * Get the starter attributes for the given PokemonSpecies, after sanitizing them.
-   * If somehow a preference is set for a form, variant, gender, ability or nature
-   * that wasn't actually unlocked or is invalid it will be cleared here
-   *
-   * @param species The species to get Starter Preferences for
-   * @returns StarterAttributes for the species
-   */
-  initStarterPrefs(species: PokemonSpecies): StarterAttributes {
-    const starterAttributes = this.starterPreferences[species.speciesId];
-    const dexEntry = globalScene.gameData.dexData[species.speciesId];
-    const starterData = globalScene.gameData.starterData[species.speciesId];
-
-    // no preferences or Pokemon wasn't caught, return empty attribute
-    if (!starterAttributes || !dexEntry.caughtAttr) {
-      return {};
-    }
-
-    const caughtAttr = dexEntry.caughtAttr & species.getFullUnlocksData();
-
-    const hasShiny = caughtAttr & DexAttr.SHINY;
-    const hasNonShiny = caughtAttr & DexAttr.NON_SHINY;
-    if (starterAttributes.shiny && !hasShiny) {
-      // shiny form wasn't unlocked, purging shiny and variant setting
-
-      starterAttributes.shiny = undefined;
-      starterAttributes.variant = undefined;
-    } else if (starterAttributes.shiny === false && !hasNonShiny) {
-      // non shiny form wasn't unlocked, purging shiny setting
-      starterAttributes.shiny = undefined;
-    }
-
-    if (starterAttributes.variant !== undefined) {
-      const unlockedVariants = [
-        hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT,
-        hasShiny && caughtAttr & DexAttr.VARIANT_2,
-        hasShiny && caughtAttr & DexAttr.VARIANT_3,
-      ];
-      if (
-        Number.isNaN(starterAttributes.variant) ||
-        starterAttributes.variant < 0 ||
-        !unlockedVariants[starterAttributes.variant]
-      ) {
-        // variant value is invalid or requested variant wasn't unlocked, purging setting
-        starterAttributes.variant = undefined;
-      }
-    }
-
-    if (starterAttributes.female !== undefined) {
-      if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
-        // requested gender wasn't unlocked, purging setting
-        starterAttributes.female = undefined;
-      }
-    }
-
-    if (starterAttributes.ability !== undefined) {
-      const speciesHasSingleAbility = species.ability2 === species.ability1;
-      const abilityAttr = starterData.abilityAttr;
-      const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
-      const hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
-      const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
-      // Due to a past bug it is possible that some Pokemon with a single ability have the ability2 flag
-      // In this case, we only count ability2 as valid if ability1 was not unlocked, otherwise we ignore it
-      const unlockedAbilities = [
-        hasAbility1,
-        speciesHasSingleAbility ? hasAbility2 && !hasAbility1 : hasAbility2,
-        hasHiddenAbility,
-      ];
-      if (!unlockedAbilities[starterAttributes.ability]) {
-        // requested ability wasn't unlocked, purging setting
-        starterAttributes.ability = undefined;
-      }
-    }
-
-    const selectedForm = starterAttributes.form;
-    if (
-      selectedForm !== undefined &&
-      (!species.forms[selectedForm]?.isStarterSelectable ||
-        !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
-    ) {
-      // requested form wasn't unlocked/isn't a starter form, purging setting
-      starterAttributes.form = undefined;
-    }
-
-    if (starterAttributes.nature !== undefined) {
-      const unlockedNatures = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr);
-      if (unlockedNatures.indexOf(starterAttributes.nature as unknown as Nature) < 0) {
-        // requested nature wasn't unlocked, purging setting
-        starterAttributes.nature = undefined;
-      }
-    }
-
-    return starterAttributes;
   }
 
   /**
@@ -1174,7 +1068,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else {
       if (button === Button.ACTION) {
         const formIndex = this.pokemonContainers[this.cursor]?.formIndex;
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, formIndex, this.filteredIndices);
+        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
         success = true;
       } else {
         switch (button) {
@@ -1301,16 +1195,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
     controlLabel.setVisible(true);
   }
 
-  getSanitizedProps(props: DexAttrProps): DexAttrProps {
-    const sanitizedProps: DexAttrProps = {
-      shiny: false,
-      female: props.female,
-      variant: 0,
-      formIndex: props.formIndex,
-    };
-    return sanitizedProps;
-  }
-
   updateStarters = () => {
     this.scrollCursor = 0;
     this.filteredPokemonData = [];
@@ -1324,9 +1208,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.allSpecies.forEach(species => {
       const starterId = this.getStarterSpeciesId(species.speciesId);
-
-      const currentDexAttr = this.getCurrentDexProps(species.speciesId);
-      const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(species, currentDexAttr));
 
       const starterData = globalScene.gameData.starterData[starterId];
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
@@ -1510,14 +1391,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const fitsEggMove1 = eggMoves.includes(selectedMove1);
       const fitsEggMove2 = eggMoves.includes(selectedMove2);
 
-      allForms.forEach((form, formIndex) => {
-        const formProps = { ...props };
-        formProps.formIndex = formIndex;
+      const formsData: ContainerData[] = [];
 
+      allForms.forEach((form, formIndex) => {
         const data: ContainerData = {
           species: species,
           cost: globalScene.gameData.getSpeciesStarterValue(starterId),
-          props: formProps,
+          formIndex: formIndex,
         };
 
         // Move filter
@@ -1639,9 +1519,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
           fitsEgg &&
           fitsPokerus
         ) {
-          this.filteredPokemonData.push(data);
+          formsData.push(data);
         }
       });
+
+      if (formsData.length === allForms.length) {
+        this.filteredPokemonData.push(formsData[0]);
+      } else {
+        this.filteredPokemonData.push(...formsData);
+      }
     });
 
     this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredPokemonData.length / 9), 1));
@@ -1714,7 +1600,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         container.setVisible(true);
 
         const data = this.filteredPokemonData[i_data];
-        const props = data.props;
+        const props = this.getDefaultProps(data.species, data.formIndex);
 
         container.setSpecies(data.species, props);
 
@@ -1787,31 +1673,25 @@ export default class PokedexUiHandler extends MessageUiHandler {
             }
           }
 
-          container.starterPassiveBgs.setVisible(
-            !!globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)].passiveAttr,
-          );
+          const starterId = this.getStarterSpeciesId(speciesId);
+
+          container.starterPassiveBgs.setVisible(!!globalScene.gameData.starterData[starterId].passiveAttr);
           container.hiddenAbilityIcon.setVisible(
-            !!caughtAttr && !!(globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)].abilityAttr & 4),
+            !!caughtAttr && !!(globalScene.gameData.starterData[starterId].abilityAttr & 4),
           );
-          container.classicWinIcon.setVisible(
-            globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)].classicWinCount > 0,
-          );
+          container.classicWinIcon.setVisible(globalScene.gameData.starterData[starterId].classicWinCount > 0);
           container.favoriteIcon.setVisible(this.starterPreferences[speciesId]?.favorite ?? false);
 
           // 'Candy Icon' mode
           if (globalScene.candyUpgradeDisplay === 0) {
-            if (!starterColors[this.getStarterSpeciesId(speciesId)]) {
+            if (!starterColors[starterId]) {
               // Default to white if no colors are found
-              starterColors[this.getStarterSpeciesId(speciesId)] = ["ffffff", "ffffff"];
+              starterColors[starterId] = ["ffffff", "ffffff"];
             }
 
             // Set the candy colors
-            container.candyUpgradeIcon.setTint(
-              argbFromRgba(rgbHexToRgba(starterColors[this.getStarterSpeciesId(speciesId)][0])),
-            );
-            container.candyUpgradeOverlayIcon.setTint(
-              argbFromRgba(rgbHexToRgba(starterColors[this.getStarterSpeciesId(speciesId)][1])),
-            );
+            container.candyUpgradeIcon.setTint(argbFromRgba(rgbHexToRgba(starterColors[starterId][0])));
+            container.candyUpgradeOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(starterColors[starterId][1])));
           } else if (globalScene.candyUpgradeDisplay === 1) {
             container.candyUpgradeIcon.setVisible(false);
             container.candyUpgradeOverlayIcon.setVisible(false);
@@ -1853,10 +1733,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
 
       const species = this.pokemonContainers[cursor]?.species;
-      const props = this.filteredPokemonData[cursor].props;
+      const formIndex = this.pokemonContainers[cursor]?.formIndex;
 
       if (species) {
-        this.setSpecies(species, props);
+        this.setSpecies(species, formIndex);
         return true;
       }
     }
@@ -1922,11 +1802,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.formTrayContainer.setY(goUp ? boxPos.y - this.trayBg.height : boxPos.y + 17);
 
     const dexEntry = globalScene.gameData.dexData[species.speciesId];
-    const dexAttr = this.getCurrentDexProps(species.speciesId);
-    const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr));
 
     this.trayContainers = [];
     this.trayForms.map((f, index) => {
+      const props = this.getDefaultProps(species, f.formIndex);
       const isFormCaught = dexEntry
         ? (dexEntry.caughtAttr & species.getFullUnlocksData() & globalScene.gameData.getFormAttr(f.formIndex ?? 0)) > 0n
         : false;
@@ -1974,7 +1853,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.formTrayContainer.setVisible(false);
     this.showingTray = false;
 
-    this.setSpeciesDetails(this.lastSpecies);
+    this.setSpeciesDetails(this.lastSpecies, this.pokemonContainers[this.cursor].formIndex);
     return true;
   }
 
@@ -1994,7 +1873,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const species = this.lastSpecies;
     const formIndex = this.trayForms[cursor].formIndex;
 
-    this.setSpeciesDetails(species, { formIndex: formIndex });
+    this.setSpeciesDetails(species, formIndex);
 
     return changed;
   }
@@ -2027,8 +1906,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const container = this.pokemonContainers[cursor];
     if (container) {
       const lastSpeciesIcon = container.icon;
-      const dexAttr = this.getCurrentDexProps(container.species.speciesId);
-      const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(container.species, dexAttr));
+
+      const props = this.getDefaultProps(container.species, container.formIndex);
+
       this.checkIconId(lastSpeciesIcon, container.species, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
       // Resume the animation for the previously selected species
@@ -2036,7 +1916,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     }
   }
 
-  setSpecies(species: PokemonSpecies | null, props: DexAttrProps | null = null) {
+  setSpecies(species: PokemonSpecies | null, formIndex = 0) {
     this.speciesStarterDexEntry = species ? globalScene.gameData.dexData[species.speciesId] : null;
 
     if (!species && globalScene.ui.getTooltip().visible) {
@@ -2065,7 +1945,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         const speciesForm = getPokemonSpeciesForm(species.speciesId, 0);
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
-        this.setSpeciesDetails(species, {});
+        this.setSpeciesDetails(species, formIndex);
 
         this.pokemonSprite.clearTint();
 
@@ -2075,7 +1955,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.type1Icon.setVisible(true);
         this.type2Icon.setVisible(true);
 
-        this.setSpeciesDetails(species, props ?? {});
+        this.setSpeciesDetails(species, formIndex);
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
@@ -2088,25 +1968,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.type2Icon.setVisible(false);
       if (species) {
         this.pokemonSprite.setTint(0x000000);
-        this.setSpeciesDetails(species, {});
+        this.setSpeciesDetails(species, formIndex);
       }
     }
   }
 
-  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
-    let { shiny, formIndex, female, variant } = options;
-
+  setSpeciesDetails(species: PokemonSpecies, formIndex = 0): void {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite = true;
-
-    if (species?.forms?.find(f => f.formKey === "female")) {
-      if (female !== undefined) {
-        formIndex = female ? 1 : 0;
-      } else if (formIndex !== undefined) {
-        female = formIndex === 1;
-      }
-    }
 
     this.pokemonSprite.setVisible(false);
 
@@ -2122,24 +1992,10 @@ export default class PokedexUiHandler extends MessageUiHandler {
         globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)].caughtAttr &
         species.getFullUnlocksData();
 
-      if (caughtAttr) {
-        const props = this.getSanitizedProps(
-          globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
-        );
-
-        if (shiny === undefined) {
-          shiny = props.shiny;
-        }
-        if (formIndex === undefined) {
-          formIndex = props.formIndex;
-        }
-        if (female === undefined) {
-          female = props.female;
-        }
-        if (variant === undefined) {
-          variant = props.variant;
-        }
-      }
+      const props = this.getDefaultProps(species, formIndex);
+      const shiny = props.shiny;
+      const female = props.female;
+      const variant = props.variant;
 
       const isFormCaught = dexEntry ? (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
       const isFormSeen = dexEntry ? (dexEntry.seenAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
@@ -2286,58 +2142,17 @@ export default class PokedexUiHandler extends MessageUiHandler {
    * @param speciesId the id of the species to get props for
    * @returns the dex props
    */
-  getCurrentDexProps(speciesId: number): bigint {
-    let props = 0n;
-    const species = allSpecies.find(sp => sp.speciesId === speciesId);
-    const caughtAttr =
-      globalScene.gameData.dexData[speciesId].caughtAttr &
-      globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr &
-      (species?.getFullUnlocksData() ?? 0n);
+  getDefaultProps(species: PokemonSpecies, formIndex = 0): DexAttrProps {
+    const props: DexAttrProps = {
+      shiny: false,
+      variant: 0,
+      formIndex: formIndex,
+      female: false,
+    };
+    const fullUnlocks = species.getFullUnlocksData();
 
-    /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
-     *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
-     *  If neither of these pass, we add DexAttr.MALE to our temp props
-     */
-    if (
-      this.starterPreferences[speciesId]?.female ||
-      ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
-    ) {
-      props += DexAttr.FEMALE;
-    } else {
-      props += DexAttr.MALE;
-    }
-    /* This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences.
-     * If they're not there, it enables shiny state by default if any shiny was caught
-     */
-    if (
-      this.starterPreferences[speciesId]?.shiny ||
-      ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)
-    ) {
-      props += DexAttr.SHINY;
-      if (this.starterPreferences[speciesId]?.variant !== undefined) {
-        props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
-      } else {
-        /*  This calculates the correct variant if there's no starter preferences for it.
-         *  This gets the highest tier variant that you've caught and adds it to the temp props
-         */
-        if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-          props += DexAttr.VARIANT_3;
-        } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-          props += DexAttr.VARIANT_2;
-        } else {
-          props += DexAttr.DEFAULT_VARIANT;
-        }
-      }
-    } else {
-      props += DexAttr.NON_SHINY;
-      props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
-    }
-    if (this.starterPreferences[speciesId]?.form) {
-      // this checks for the form of the pokemon
-      props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.form)) * DexAttr.DEFAULT_FORM;
-    } else {
-      // Get the first unlocked form
-      props += globalScene.gameData.getFormAttr(globalScene.gameData.getFormIndex(caughtAttr));
+    if (fullUnlocks & DexAttr.FEMALE) {
+      props.female = true;
     }
 
     return props;
