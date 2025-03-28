@@ -458,7 +458,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
   makeRoomForConfirmUi(speedMultiplier = 1, fromCatch = false): Promise<void> {
     const xPosition = fromCatch
-      ? this.initialX - this.infoWindowWidth - 65
+      ? this.initialX - this.infoWindowWidth - 67
       : this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth;
     return new Promise<void>(resolve => {
       globalScene.tweens.add({

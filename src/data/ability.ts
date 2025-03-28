@@ -308,7 +308,7 @@ export class ClearWeatherAbAttr extends AbAttr {
 
   public override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, true);
+      globalScene.arena.trySetWeather(WeatherType.NONE, pokemon);
     }
   }
 }
@@ -334,7 +334,7 @@ export class ClearTerrainAbAttr extends AbAttr {
 
   public override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE, true, true);
+      globalScene.arena.trySetTerrain(TerrainType.NONE, true, pokemon);
     }
   }
 }
@@ -954,7 +954,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, _args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetTerrain(this.terrainType, true);
+      globalScene.arena.trySetTerrain(this.terrainType, false, pokemon);
     }
   }
 }
@@ -1064,7 +1064,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): void {
-    attacker.damageAndUpdate(Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+    attacker.damageAndUpdate(Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), { result: HitResult.INDIRECT });
     attacker.turnData.damageTaken += Utils.toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio));
   }
 
@@ -1126,7 +1126,7 @@ export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(this.weatherType, true);
+      globalScene.arena.trySetWeather(this.weatherType, pokemon);
     }
   }
 }
@@ -1285,6 +1285,9 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
  * @see {@linkcode applyPreDefend}
  */
 export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
+  constructor(showAbility: boolean = false) {
+    super(showAbility);
+  }
 
   override canApplyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
     return (args[0] as Utils.NumberHolder).value > 0;
@@ -2483,7 +2486,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
 
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(this.weatherType, true);
+      globalScene.arena.trySetWeather(this.weatherType, pokemon);
     }
   }
 }
@@ -2503,7 +2506,7 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
 
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetTerrain(this.terrainType, true);
+      globalScene.arena.trySetTerrain(this.terrainType, false, pokemon);
     }
   }
 }
@@ -2886,7 +2889,7 @@ export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
     }
 
     if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
+      globalScene.arena.trySetWeather(WeatherType.NONE);
       return true;
     }
 
@@ -2986,7 +2989,7 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
    */
   override applyPreLeaveField(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
+      globalScene.arena.trySetWeather(WeatherType.NONE);
     }
   }
 }
@@ -3792,7 +3795,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
     if (!simulated) {
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       globalScene.queueMessage(i18next.t("abilityTriggers:postWeatherLapseDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }));
-      pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / (16 / this.damageFactor)), HitResult.OTHER);
+      pokemon.damageAndUpdate(Utils.toDmgValue(pokemon.getMaxHp() / (16 / this.damageFactor)), { result: HitResult.INDIRECT });
     }
   }
 }
@@ -4084,7 +4087,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
     for (const opp of pokemon.getOpponents()) {
       if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus) {
         if (!simulated) {
-          opp.damageAndUpdate(Utils.toDmgValue(opp.getMaxHp() / 8), HitResult.OTHER);
+          opp.damageAndUpdate(Utils.toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
           globalScene.queueMessage(i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }));
         }
       }
@@ -4137,7 +4140,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetWeather(this.weatherType, true);
+      globalScene.arena.trySetWeather(this.weatherType, pokemon);
     }
   }
 }
@@ -4157,7 +4160,7 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
     if (!simulated) {
-      globalScene.arena.trySetTerrain(this.terrainType, true);
+      globalScene.arena.trySetTerrain(this.terrainType, false, pokemon);
     }
   }
 }
@@ -4567,7 +4570,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 
   override applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): void {
     if (!simulated) {
-      attacker!.damageAndUpdate(Utils.toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+      attacker!.damageAndUpdate(Utils.toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio)), { result: HitResult.INDIRECT });
       attacker!.turnData.damageTaken += Utils.toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio));
     }
   }
@@ -4588,7 +4591,7 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   override applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): void {
     if (move !== undefined && attacker !== undefined && !simulated) { //If the mon didn't die to indirect damage
       const damage = pokemon.turnData.attacksReceived[0].damage;
-      attacker.damageAndUpdate((damage), HitResult.OTHER);
+      attacker.damageAndUpdate((damage), { result: HitResult.INDIRECT });
       attacker.turnData.damageTaken += damage;
     }
   }
@@ -4711,7 +4714,7 @@ export class ForceSwitchOutImmunityAbAttr extends AbAttr {
 
 export class ReduceBerryUseThresholdAbAttr extends AbAttr {
   constructor() {
-    super();
+    super(false);
   }
 
   override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
@@ -4989,7 +4992,7 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
       (args[0] as Utils.NumberHolder).value = this.multiplier;
       pokemon.removeTag(this.tagType);
       if (this.recoilDamageFunc) {
-        pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), HitResult.OTHER, false, false, true, true);
+        pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), { result: HitResult.INDIRECT, ignoreSegments: true, ignoreFaintPhase: true });
       }
     }
   }
