@@ -7,10 +7,10 @@ describe("Data - Splash Messages", () => {
     expect(getSplashMessages().length).toBeGreaterThanOrEqual(15);
   });
 
-  // make sure to adjust this test if the weight it changed!
-  it("should add contain 10 `battlesWon` splash messages", () => {
-    const battlesWonMessages = getSplashMessages().filter(message => message === "splashMessages:battlesWon");
-    expect(battlesWonMessages).toHaveLength(10);
+  // Make sure to adjust this test if the weight is changed!
+  it("should add contain 15 `battlesWon` splash messages", () => {
+    const battlesWonMessages = getSplashMessages().filter((message) => message === "splashMessages:battlesWon");
+    expect(battlesWonMessages).toHaveLength(15);
   });
 
   describe("Seasonal", () => {
@@ -22,16 +22,24 @@ describe("Data - Splash Messages", () => {
       vi.useRealTimers(); // reset system time
     });
 
-    it("should contain halloween messages from Sep 15 to Oct 31", () => {
-      testSeason(new Date("2024-09-15"), new Date("2024-10-31"), "halloween");
+    it("should contain new years messages from Jan 1 to Jan 15", () => {
+      testSeason(new Date("2025-01-01"), new Date("2025-01-15"), "newYears");
     });
 
-    it("should contain xmas messages from Dec 1 to Dec 26", () => {
-      testSeason(new Date("2024-12-01"), new Date("2024-12-26"), "xmas");
+    it("should contain valentines messages from Feb 7 to Feb 21", () => {
+      testSeason(new Date("2025-02-07"), new Date("2025-02-21"), "valentines");
     });
 
-    it("should contain new years messages frm Jan 1 to Jan 31", () => {
-      testSeason(new Date("2024-01-01"), new Date("2024-01-31"), "newYears");
+    it("should contain april fools messages from April 1 to April 3", () => {
+      testSeason(new Date("2025-04-01"), new Date("2025-04-03"), "aprilFools");
+    });
+
+    it("should contain halloween messages from Oct 15 to Oct 31", () => {
+      testSeason(new Date("2025-10-15"), new Date("2025-10-31"), "halloween");
+    });
+
+    it("should contain winter holiday messages from Dec 1 to Dec 31", () => {
+      testSeason(new Date("2025-12-01"), new Date("2025-12-31"), "winterHoliday");
     });
   });
 });
