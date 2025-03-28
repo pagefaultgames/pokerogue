@@ -6743,7 +6743,7 @@ export class RandomMoveAttr extends CallMoveAttr {
    * This function exists solely to allow tests to override the randomly selected move by mocking this function.
    */
   public getMoveOverride(): Moves | null {
-    return Moves.HOLD_HANDS;
+    return null;
   }
 
   /**
