@@ -2231,8 +2231,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     const isFormCaught = this.isFormCaught();
+    const isSeen = this.isSeen();
 
-    if ((this.isCaught() && isFormCaught) || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
+    if ((this.isCaught() && isFormCaught) || isSeen) {
       ui.showText(this.menuDescriptions[cursor]);
     } else {
       ui.showText("");
