@@ -332,8 +332,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                       globalScene.ui.setOverlayMode(
                         Mode.POKEDEX_PAGE,
                         pokemon.species,
-                        pokemon.formIndex,
                         attributes,
+                        [pokemon.species.speciesId],
                         null,
                         () => {
                           globalScene.ui.setMode(Mode.MESSAGE).then(() => {

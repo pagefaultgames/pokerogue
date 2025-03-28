@@ -1111,15 +1111,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         });
         this.blockInput = false;
       } else {
-        ui.revertMode()
-          .then(() => {
-            console.log("exitCallback", this.exitCallback);
-            if (this.exitCallback instanceof Function) {
-              const exitCallback = this.exitCallback;
-              this.exitCallback = null;
-              exitCallback();
-            }
-          });
+        ui.revertMode().then(() => {
+          console.log("exitCallback", this.exitCallback);
+          if (this.exitCallback instanceof Function) {
+            const exitCallback = this.exitCallback;
+            this.exitCallback = null;
+            exitCallback();
+          }
+        });
         success = true;
       }
     } else {
@@ -1988,6 +1987,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+              ui.playError();
+              this.blockInput = false;
+              return true;
+            }
             this.blockInput = true;
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
@@ -2023,6 +2027,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = false;
             break;
           case Button.RIGHT:
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+              ui.playError();
+              this.blockInput = false;
+              return true;
+            }
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
