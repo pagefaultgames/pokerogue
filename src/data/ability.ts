@@ -57,9 +57,9 @@ export class Ability implements Localizable {
   public generation: number;
   public isBypassFaint: boolean;
   public isIgnorable: boolean;
-  public isSuppressable: boolean = true;
-  public isCopiable: boolean = true;
-  public isReplaceable: boolean = true;
+  public isSuppressable = true;
+  public isCopiable = true;
+  public isReplaceable = true;
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
 
