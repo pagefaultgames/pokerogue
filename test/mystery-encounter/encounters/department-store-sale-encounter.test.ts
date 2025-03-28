@@ -84,7 +84,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
   describe("Option 1 - TM Shop", () => {
     it("should have the correct properties", () => {
       const option = DepartmentStoreSaleEncounter.options[0];
-      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
