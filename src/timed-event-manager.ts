@@ -293,8 +293,8 @@ const timedEvents: TimedEvent[] = [
     // availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     trainerShinyChance: 16384, // 16384/65536 = 1/4
     music: [
-      ["title", "mystery_encounter_fun_and_games"],
-      ["battle_rival_3", "mystery_encounter_fun_and_games"],
+      ["title", "title_afd"],
+      ["battle_rival_3", "battle_rival_3_afd"],
     ],
   },
 ];
