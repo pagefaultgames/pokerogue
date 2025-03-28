@@ -1285,6 +1285,9 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
  * @see {@linkcode applyPreDefend}
  */
 export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
+  constructor(showAbility: boolean = false) {
+    super(showAbility);
+  }
 
   override canApplyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean {
     return (args[0] as Utils.NumberHolder).value > 0;
@@ -4711,7 +4714,7 @@ export class ForceSwitchOutImmunityAbAttr extends AbAttr {
 
 export class ReduceBerryUseThresholdAbAttr extends AbAttr {
   constructor() {
-    super();
+    super(false);
   }
 
   override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
