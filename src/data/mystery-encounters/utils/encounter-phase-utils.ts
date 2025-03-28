@@ -227,7 +227,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
             level,
             TrainerSlot.TRAINER,
             isBoss,
-            false,
+            true,
             dataSource,
           );
         } else {
@@ -252,7 +252,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           level,
           TrainerSlot.NONE,
           isBoss,
-          false,
+          true,
           dataSource,
         );
       }
