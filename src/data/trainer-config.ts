@@ -1689,17 +1689,19 @@ function getGymLeaderPartyTemplate() {
 
 /**
  * Randomly selects one of the `Species` from `speciesPool`, determines its evolution, level, and strength.
- * Then adds Pokemon to globalScene.
+ * Locks shiny unless forced to generate a shiny. Then adds Pokemon to globalScene.
  * @param speciesPool
  * @param trainerSlot
  * @param ignoreEvolution
  * @param postProcess
+ * @param forceShiny
  */
 export function getRandomPartyMemberFunc(
   speciesPool: Species[],
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
+  forceShiny = false,
 ) {
   return (level: number, strength: PartyMemberStrength) => {
     let species = Utils.randSeedItem(speciesPool);
@@ -1716,7 +1718,7 @@ export function getRandomPartyMemberFunc(
       level,
       trainerSlot,
       undefined,
-      true, // Shiny lock all trainer Pokémon #TODO: does this affect Ivy's Ray?
+      !forceShiny, // Shiny lock all trainer Pokémon #TODO: does this affect Ivy's Ray?
       undefined,
       postProcess,
     );
@@ -4760,12 +4762,18 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(species => species.baseTotal >= 540)
     .setPartyMemberFunc(
       5,
-      getRandomPartyMemberFunc([Species.RAYQUAZA], TrainerSlot.TRAINER, true, p => {
-        p.setBoss(true, 3);
-        p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
-        p.variant = 1;
-      }),
+      getRandomPartyMemberFunc(
+        [Species.RAYQUAZA],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.setBoss(true, 3);
+          p.pokeball = PokeballType.MASTER_BALL;
+          p.shiny = true;
+          p.variant = 1;
+        },
+        true,
+      ),
     )
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.RIVAL_6]: new TrainerConfig(++t)
@@ -4856,15 +4864,21 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(species => species.baseTotal >= 540)
     .setPartyMemberFunc(
       5,
-      getRandomPartyMemberFunc([Species.RAYQUAZA], TrainerSlot.TRAINER, true, p => {
-        p.setBoss();
-        p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
-        p.variant = 1;
-        p.formIndex = 1; // Mega Rayquaza
-        p.generateName();
-      }),
+      getRandomPartyMemberFunc(
+        [Species.RAYQUAZA],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.setBoss();
+          p.generateAndPopulateMoveset();
+          p.pokeball = PokeballType.MASTER_BALL;
+          p.shiny = true;
+          p.variant = 1;
+          p.formIndex = 1; // Mega Rayquaza
+          p.generateName();
+        },
+        true,
+      ),
     )
     .setInstantTera(0), // Tera starter to primary type
 
