@@ -2312,7 +2312,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
-    if (species && (this.speciesStarterDexEntry?.seenAttr || this.isCaught())) {
+    if (species && (this.isSeen() || this.isCaught())) {
       this.pokemonNumberText.setText(padInt(species.speciesId, 4));
 
       if (this.isCaught()) {
