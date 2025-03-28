@@ -57,9 +57,9 @@ export class Ability implements Localizable {
   public generation: number;
   public isBypassFaint: boolean;
   public isIgnorable: boolean;
-  public isSuppressable: boolean;
-  public isCopiable: boolean;
-  public isReplaceable: boolean;
+  public isSuppressable: boolean = true;
+  public isCopiable: boolean = true;
+  public isReplaceable: boolean = true;
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
 
@@ -71,13 +71,12 @@ export class Ability implements Localizable {
     this.attrs = [];
     this.conditions = [];
 
-    this.isSuppressable = true;
-    this.isCopiable = true;
-    this.isReplaceable = true;
-
     this.localize();
   }
 
+  public get isSwappable(): boolean {
+    return this.isCopiable && this.isReplaceable;
+  }
   localize(): void {
     const i18nKey = Abilities[this.id].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as string;
 
@@ -1160,7 +1159,7 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
     return move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)
-      && attacker.getAbility().isReplaceable && attacker.getAbility().isCopiable && !move.hitsSubstitute(attacker, pokemon);
+      && attacker.getAbility().isSwappable && !move.hitsSubstitute(attacker, pokemon);
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, args: any[]): void {
