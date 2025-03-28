@@ -20,6 +20,7 @@ import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initVouchers } from "#app/system/voucher";
 import { Biome } from "#enums/biome";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
+import { timedEventManager } from "./global-event-manager";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -250,11 +251,13 @@ export class LoadingScene extends SceneBase {
       this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
     }
-    const availableLangs = ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN", "zh-TW", "ca-ES"];
-    if (lang && availableLangs.includes(lang)) {
-      this.loadImage(`pkmnday2025event-${lang}`, "events");
-    } else {
-      this.loadImage("pkmnday2025event-en", "events");
+    if (timedEventManager.activeEventHasBanner()) {
+      const availableLangs = timedEventManager.getEventBannerLangs();
+      if (lang && availableLangs.includes(lang)) {
+        this.loadImage(`${timedEventManager.getEventBannerFilename()}-${lang}`, "events");
+      } else {
+        this.loadImage(`${timedEventManager.getEventBannerFilename()}-en`, "events");
+      }
     }
 
     this.loadAtlas("statuses", "");
