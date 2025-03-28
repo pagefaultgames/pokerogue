@@ -675,7 +675,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
-  isSeen(species: PokemonSpecies, dexEntry: DexEntry): boolean {
+  isSeen(species: PokemonSpecies): boolean {
+    const dexEntry = globalScene.gameData.dexData[species.speciesId];
+
     if (dexEntry?.seenAttr) {
       return true;
     }
@@ -1629,7 +1631,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
         if (caughtAttr & data.species.getFullUnlocksData() || globalScene.dexForDevs) {
           container.icon.clearTint();
-        } else if (this.isSeen(data.species, dexEntry)) {
+        } else if (this.isSeen(data.species)) {
           container.icon.setTint(0x808080);
         } else {
           container.icon.setTint(0);
@@ -1813,7 +1815,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const dexEntry = globalScene.gameData.dexData[species.speciesId];
 
     this.trayContainers = [];
-    const isFormSeen = this.isSeen(species, dexEntry);
+    const isFormSeen = this.isSeen(species);
     this.trayForms.map((f, index) => {
       const props = this.getDefaultProps(species, f.formIndex);
       const isFormCaught = dexEntry
@@ -1936,47 +1938,16 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     if (species) {
       this.lastSpecies = species;
-    }
-
-    if (
-      species &&
-      (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs)
-    ) {
-      this.pokemonNumberText.setText(i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4));
-
-      this.pokemonNameText.setText(species.name);
-
       if (this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs) {
         this.startIconAnimation(this.cursor);
-
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, 0);
-        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-
-        this.setSpeciesDetails(species, formIndex);
-
-        this.pokemonSprite.clearTint();
-
-        this.type1Icon.clearTint();
-        this.type2Icon.clearTint();
-      } else {
-        this.type1Icon.setVisible(true);
-        this.type2Icon.setVisible(true);
-
-        this.setSpeciesDetails(species, formIndex);
-        this.pokemonSprite.setTint(0x808080);
       }
+      // This now handles caught/seen/uncaught
+      this.setSpeciesDetails(species, formIndex);
     } else {
-      this.pokemonNumberText.setText(
-        species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4) : "",
-      );
-      this.pokemonNameText.setText(species ? "???" : "");
+      this.pokemonNumberText.setText("");
+      this.pokemonNameText.setText("");
       this.pokemonFormText.setText("");
-      this.type1Icon.setVisible(false);
-      this.type2Icon.setVisible(false);
-      if (species) {
-        this.pokemonSprite.setTint(0x000000);
-        this.setSpeciesDetails(species, formIndex);
-      }
+      this.setTypeIcons(null, null);
     }
   }
 
@@ -2005,7 +1976,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const variant = props.variant;
 
       const isFormCaught = dexEntry ? (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
-      const isFormSeen = this.isSeen(species, dexEntry);
+      const isFormSeen = this.isSeen(species);
 
       const assetLoadCancelled = new BooleanHolder(false);
       this.assetLoadCancelled = assetLoadCancelled;
@@ -2036,14 +2007,18 @@ export default class PokedexUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0);
       }
 
+      this.pokemonNumberText.setText(i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4));
+
       if (isFormCaught || isFormSeen || globalScene.dexForDevs) {
         // TODO: change this once forms are refactored
+        this.pokemonNameText.setText(species.name);
         if (normalForm.includes(species.speciesId) && !formIndex) {
           this.pokemonFormText.setText("");
         } else {
           this.pokemonFormText.setText(species.getFormNameToDisplay(formIndex, false));
         }
       } else {
+        this.pokemonNameText.setText("???");
         this.pokemonFormText.setText("");
       }
 
