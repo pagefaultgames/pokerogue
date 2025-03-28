@@ -1373,7 +1373,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const levelMoves = pokemonSpeciesLevelMoves[species.speciesId].map(m => allMoves[m[1]].name);
       // This always gets egg moves from the starter
       const eggMoves = speciesEggMoves[starterId]?.map(m => allMoves[m].name) ?? [];
-      const tmMoves = speciesTmMoves[starterId]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
+      const tmMoves = speciesTmMoves[species.speciesId]?.map(m => allMoves[Array.isArray(m) ? m[1] : m].name) ?? [];
       const selectedMove1 = this.filterText.getValue(FilterTextRow.MOVE_1);
       const selectedMove2 = this.filterText.getValue(FilterTextRow.MOVE_2);
 
