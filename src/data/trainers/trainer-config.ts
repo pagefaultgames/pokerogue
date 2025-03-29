@@ -13,7 +13,6 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
 import { PokemonType } from "#enums/pokemon-type";
 import { doubleBattleDialogue } from "#app/data/dialogue";
-import type { PersistentModifier } from "#app/modifier/modifier";
 import { TrainerVariant } from "#app/field/trainer";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
@@ -26,22 +25,21 @@ import { signatureSpecies } from "../balance/signature-species";
 import { Abilities } from "#enums/abilities";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
+import { TrainerSlot } from "#enums/trainer-slot";
+import type {
+  PartyMemberFunc,
+  GenModifiersFunc,
+  GenAIFunc,
+  PartyTemplateFunc,
+  TrainerTierPools,
+  TrainerConfigs,
+} from "./typedefs";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
 
 /** The wave at which (non-Paldean) Gym Leaders start having Tera mons*/
 const GYM_LEADER_TERA_WAVE = 100;
-
-export interface TrainerTierPools {
-  [key: number]: Species[];
-}
-
-export enum TrainerSlot {
-  NONE,
-  TRAINER,
-  TRAINER_PARTNER,
-}
 
 export class TrainerPartyTemplate {
   public size: number;
@@ -67,6 +65,10 @@ export class TrainerPartyTemplate {
   isBalanced(_index: number): boolean {
     return this.balanced;
   }
+}
+
+export interface PartyMemberFuncs {
+  [key: number]: PartyMemberFunc;
 }
 
 export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
@@ -256,15 +258,6 @@ export const trainerPartyTemplates = {
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
   ),
 };
-
-type PartyTemplateFunc = () => TrainerPartyTemplate;
-type PartyMemberFunc = (level: number, strength: PartyMemberStrength) => EnemyPokemon;
-type GenModifiersFunc = (party: EnemyPokemon[]) => PersistentModifier[];
-type GenAIFunc = (party: EnemyPokemon[]) => void;
-
-export interface PartyMemberFuncs {
-  [key: number]: PartyMemberFunc;
-}
 
 /**
  * Stores data and helper functions about a trainers AI options.
@@ -1624,10 +1617,6 @@ export class TrainerConfig {
 }
 
 let t = 0;
-
-interface TrainerConfigs {
-  [key: number]: TrainerConfig;
-}
 
 /**
  * The function to get variable strength grunts

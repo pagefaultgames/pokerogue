@@ -1,7 +1,7 @@
 import { BattleType } from "#app/battle";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { TrainerSlot } from "#app/data/trainers/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { PlayerGender } from "#app/enums/player-gender";
 import { addPokeballOpenParticles } from "#app/field/anims";
 import type Pokemon from "#app/field/pokemon";

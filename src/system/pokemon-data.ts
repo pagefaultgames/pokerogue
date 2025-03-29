@@ -6,7 +6,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
-import { TrainerSlot } from "../data/trainers/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
 import type { Biome } from "#enums/biome";

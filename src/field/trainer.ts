@@ -3,12 +3,8 @@ import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import type { TrainerConfig, TrainerPartyTemplate } from "#app/data/trainers/trainer-config";
-import {
-  TrainerPartyCompoundTemplate,
-  TrainerSlot,
-  trainerConfigs,
-  trainerPartyTemplates,
-} from "#app/data/trainers/trainer-config";
+import { TrainerPartyCompoundTemplate, trainerConfigs, trainerPartyTemplates } from "#app/data/trainers/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import type { EnemyPokemon } from "#app/field/pokemon";

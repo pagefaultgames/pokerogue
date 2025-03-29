@@ -72,7 +72,7 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import FieldSpritePipeline from "#app/pipelines/field-sprite";
 import SpritePipeline from "#app/pipelines/sprite";
 import PartyExpBar from "#app/ui/party-exp-bar";
-import type { TrainerSlot } from "#app/data/trainers/trainer-config";
+import type { TrainerSlot } from "./enums/trainer-slot";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import type TrainerData from "#app/system/trainer-data";
