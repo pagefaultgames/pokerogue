@@ -3204,6 +3204,7 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
+  /** Return whether the ability attribute can be applied */
   canApplyPreSetStatus(
     pokemon: Pokemon,
     passive: boolean,
@@ -3228,7 +3229,7 @@ export class PreSetStatusAbAttr extends AbAttr {
  * Provides immunity to status effects to specified targets.
  */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  private immuneEffects: StatusEffect[];
+  protected immuneEffects: StatusEffect[];
 
   /**
    * @param immuneEffects - The status effects to which the Pokémon is immune.
@@ -3239,6 +3240,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     this.immuneEffects = immuneEffects;
   }
 
+  /** Determine whether the  */
   override canApplyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     return effect !== StatusEffect.FAINT && this.immuneEffects.length < 1 || this.immuneEffects.includes(effect);
   }
@@ -3290,20 +3292,80 @@ export class UserFieldStatusEffectImmunityAbAttr extends PreSetStatusEffectImmun
  *
  */
 export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldStatusEffectImmunityAbAttr {
+  /**
+   * The condition for the field immunity to be applied.
+   * @param target The target of the status effect
+   * @param source The source of the status effect
+   */
   protected condition: (target: Pokemon, source: Pokemon | null) => boolean;
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (cancelled.value || !this.condition(pokemon, args[1] as Pokemon)) {
-      return false;
-    }
-
-    return super.apply(pokemon, passive, simulated, cancelled, args);
+  /**
+   * Evaluate the condition to determine if the {@linkcode ConditionalUserFieldStatusEffectImmunityAbAttr} can be applied.
+   * @param pokemon The pokemon with the ability
+   * @param passive unused
+   * @param simulated Whether the ability is being simulated
+   * @param effect The status effect being applied
+   * @param cancelled Holds whether the status effect was cancelled by a prior effect
+   * @param args `Args[0]` is the target of the status effect, `Args[1]` is the source.
+   * @returns 
+   */
+  override canApplyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: [Pokemon, Pokemon | null, ...any]): boolean {
+    return (!cancelled.value && effect !== StatusEffect.FAINT && this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) && this.condition(pokemon, args[1]);
   }
 
   constructor(condition: (target: Pokemon, source: Pokemon | null) => boolean, ...immuneEffects: StatusEffect[]) {
     super(...immuneEffects);
 
     this.condition = condition;
+  }
+}
+
+/**
+ * Conditionally provides immunity to stat drop effects to the user's field.
+ * 
+ * Used by {@linkcode Abilities.FLOWER_VEIL | Flower Veil}.
+ */
+export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbAttr {
+  /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
+  protected protectedStat?: BattleStat;
+  
+  /** If the method evaluates to true, the stat will be protected. */
+  protected condition: (target: Pokemon) => boolean;
+
+  constructor(condition: (target: Pokemon) => boolean, protectedStat?: BattleStat) {
+    super();
+    this.condition = condition;
+  }
+
+  /**
+   * Determine whether the {@linkcode ConditionalUserFieldProtectStatAbAttr} can be applied.
+   * @param pokemon The pokemon with the ability
+   * @param passive unused
+   * @param simulated Unused
+   * @param stat The stat being affected
+   * @param cancelled Holds whether the stat change was already prevented.
+   * @param args Args[0] is the target pokemon of the stat change.
+   * @returns 
+   */
+  override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: [Pokemon, ...any]): boolean {
+    const target = args[0];
+    if (!target) {
+      return false;
+    }
+    return !cancelled.value && (Utils.isNullOrUndefined(this.protectedStat) || stat === this.protectedStat) && this.condition(target);
+  }
+
+  /**
+   * Apply the {@linkcode ConditionalUserFieldStatusEffectImmunityAbAttr} to an interaction
+   * @param _pokemon The pokemon the stat change is affecting (unused)
+   * @param _passive unused
+   * @param _simulated unused
+   * @param stat The stat being affected
+   * @param cancelled Will be set to true if the stat change is prevented
+   * @param _args unused
+   */
+  override applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _stat: BattleStat, cancelled: Utils.BooleanHolder, _args: any[]): void {
+    cancelled.value = true;
   }
 }
 
@@ -3377,7 +3439,7 @@ export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunit
 export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattlerTagImmunityAbAttr {
   private condition: (target: Pokemon, source: Pokemon | null) => boolean;
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
     if (cancelled.value || !this.condition(pokemon, args[1] as Pokemon)) {
       return false;
     }
@@ -5900,19 +5962,20 @@ export function applyPreLeaveFieldAbAttrs(
   );
 }
 
-export function applyPreStatStageChangeAbAttrs(
-  attrType: Constructor<PreStatStageChangeAbAttr>,
+export function applyPreStatStageChangeAbAttrs<T extends PreStatStageChangeAbAttr > (
+  attrType: Constructor<T>,
   pokemon: Pokemon | null,
   stat: BattleStat,
   cancelled: Utils.BooleanHolder,
   simulated = false,
   ...args: any[]
 ): void {
-  applyAbAttrsInternal<PreStatStageChangeAbAttr>(
+  applyAbAttrsInternal<T>(
     attrType,
     pokemon,
     (attr, passive) => attr.applyPreStatStageChange(pokemon, passive, simulated, stat, cancelled, args),
-    (attr, passive) => attr.canApplyPreStatStageChange(pokemon, passive, simulated, stat, cancelled, args), args,
+    (attr, passive) => attr.canApplyPreStatStageChange(pokemon, passive, simulated, stat, cancelled, args),
+    args,
     simulated,
   );
 }
@@ -6715,17 +6778,19 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.FLOWER_VEIL, 6)
       .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target: Pokemon, source: Pokemon | null) => {
-        return source ? target.getTypes().includes(Type.GRASS) && target.id !== source.id : false;
+        return source ? target.getTypes().includes(PokemonType.GRASS) && target.id !== source.id : false;
       })
       .attr(ConditionalUserFieldBattlerTagImmunityAbAttr,
         (target: Pokemon, source: Pokemon | null) => {
-          return source ? target.getTypes().includes(Type.GRASS) && target.id !== source.id : false;
+          return target.getTypes().includes(PokemonType.GRASS);
         },
         [ BattlerTagType.DROWSY ],
-
       )
-      .ignorable()
-      .unimplemented(),
+      .attr(ConditionalUserFieldProtectStatAbAttr, (target: Pokemon) => {
+        console.log(`target: ${target.name}`);
+        return target.getTypes().includes(PokemonType.GRASS);
+      })
+      .ignorable(),
     new Ability(Abilities.CHEEK_POUCH, 6)
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(Abilities.PROTEAN, 6)

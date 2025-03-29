@@ -12,6 +12,7 @@ import { StatusEffect } from "#enums/status-effect";
 import type { BattlerIndex } from "#app/battle";
 import {
   BlockNonDirectDamageAbAttr,
+  ConditionalUserFieldProtectStatAbAttr,
   InfiltratorAbAttr,
   PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr,
   ProtectStatAbAttr,

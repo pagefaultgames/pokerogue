@@ -4,6 +4,7 @@ import {
   applyAbAttrs,
   applyPostStatStageChangeAbAttrs,
   applyPreStatStageChangeAbAttrs,
+  ConditionalUserFieldProtectStatAbAttr,
   PostStatStageChangeAbAttr,
   ProtectStatAbAttr,
   ReflectStatStageChangeAbAttr,
@@ -22,6 +23,7 @@ import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 import { OctolockTag } from "#app/data/battler-tags";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { pokemonFormChanges } from "#app/data/pokemon-forms";
 
 export type StatStageChangeCallback = (
   target: Pokemon | null,
@@ -151,6 +153,25 @@ export class StatStageChangePhase extends PokemonPhase {
 
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {
         applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled, simulate);
+        applyPreStatStageChangeAbAttrs(
+          ConditionalUserFieldProtectStatAbAttr,
+          pokemon,
+          stat,
+          cancelled,
+          simulate,
+          pokemon,
+        );
+        const ally = pokemon.getAlly();
+        if (ally) {
+          applyPreStatStageChangeAbAttrs(
+            ConditionalUserFieldProtectStatAbAttr,
+            ally,
+            stat,
+            cancelled,
+            simulate,
+            pokemon,
+          );
+        }
 
         /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
         if (

@@ -4766,6 +4766,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         stubTag,
         cancelled,
         true,
+        this,
       ),
     );
 

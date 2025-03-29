@@ -7,7 +7,10 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { allMoves } from "#app/data/moves/move";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { allAbilities } from "#app/data/ability";
 
 describe("Abilities - Flower Veil", () => {
   let phaserGame: Phaser.Game;
@@ -26,7 +29,7 @@ describe("Abilities - Flower Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .enemySpecies(Species.BULBASAUR)
       .ability(Abilities.FLOWER_VEIL)
       .battleType("single")
@@ -37,36 +40,48 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should not prevent any source of self-inflicted status conditions", async () => {
-    game.override.enemyMoveset([ Moves.TACKLE, Moves.SPLASH ])
-      .ability(Abilities.FLOWER_VEIL)
-      .moveset([ Moves.REST, Moves.SPLASH ]);
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    game.override
+      .enemyMoveset([Moves.TACKLE, Moves.SPLASH])
+      .moveset([Moves.REST, Moves.SPLASH])
+      .startingHeldItems([{ name: "FLAME_ORB" }]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
     const user = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.REST);
     await game.forceEnemyMove(Moves.TACKLE);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(user.status?.effect).toBe(StatusEffect.SLEEP);
 
-    game.scene.addModifier(modifierTypes.FLAME_ORB().newModifier(user));
-    game.scene.updateModifiers(true);
-    // remove sleep status
+    // remove sleep status so we can get burn from the orb
     user.resetStatus();
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     expect(user.status?.effect).toBe(StatusEffect.BURN);
+  });
 
-    game.scene.addModifier(modifierTypes.TOXIC_ORB().newModifier(user));
-    game.scene.updateModifiers(true);
-    user.resetStatus();
+  it("should prevent drowsiness from yawn", async () => {
+    game.override.enemyMoveset([Moves.YAWN]).moveset([Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+    const user = game.scene.getPlayerPokemon()!;
+    expect(user.getTag(BattlerTagType.DROWSY)).toBeOneOf([false, undefined, null]);
+  });
 
+  it("should prevent status conditions from moves like Thunder Wave", async () => {
+    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]);
+    vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.THUNDER_WAVE);
+    await game.toNextTurn();
+    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
   });
 
   it("should prevent the drops while retaining the boosts from spicy extract", async () => {
-    game.override.enemyMoveset([ Moves.SPICY_EXTRACT ])
-      .moveset([ Moves.SPLASH ]);
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    game.override.enemyMoveset([Moves.SPICY_EXTRACT]).moveset([Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
     const user = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -75,12 +90,49 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should not prevent self-inflicted stat drops from moves like Close Combat", async () => {
-    game.override.moveset([ Moves.CLOSE_COMBAT ]);
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    game.override.moveset([Moves.CLOSE_COMBAT]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
+    const userPokemon = game.scene.getPlayerPokemon()!;
+    console.log(userPokemon.name);
     game.move.select(Moves.CLOSE_COMBAT);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
-    expect(enemy.getStatStage(Stat.DEF)).toBe(-1);
+    expect(userPokemon.getStatStage(Stat.DEF)).toBe(-1);
+    expect(userPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
+  });
+
+  it("should not prevent status drops of pokemon that are not grass type", async () => {
+    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.SQUIRTLE]);
+    const user = game.scene.getPlayerPokemon()!;
+    game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(user.getStatStage(Stat.ATK)).toBe(-1);
+  });
+
+  it("should not prevent status drops of ally pokemon that are not grass type", async () => {
+    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.SQUIRTLE]);
+    const ally = game.scene.getPlayerField()[1]!;
+
+    // Clear the ally ability to isolate what is being tested
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+    // Both enemies use growl.
+    expect(ally.getStatStage(Stat.ATK)).toBe(-2);
+  });
+
+  it("should prevent the status drops of ally grass type pokemon", async () => {
+    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
+    await game.classicMode.startBattle([Species.SQUIRTLE, Species.BULBASAUR]);
+    const ally = game.scene.getPlayerField()[1]!;
+
+    // Clear the ally ability to isolate the test
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(ally.getStatStage(Stat.ATK)).toBe(0);
   });
 });
