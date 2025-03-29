@@ -9,9 +9,9 @@ import { StatusEffect } from "#enums/status-effect";
  * This is necessary to perform in a phase primarly to ensure that the status icon disappears at the correct time in the battle
  */
 export class ResetStatusPhase extends BattlePhase {
-  private pokemon: Pokemon;
-  private affectConfusion: boolean;
-  private reloadAssets: boolean;
+  private readonly pokemon: Pokemon;
+  private readonly affectConfusion: boolean;
+  private readonly reloadAssets: boolean;
 
   constructor(pokemon: Pokemon, affectConfusion: boolean, reloadAssets: boolean) {
     super();

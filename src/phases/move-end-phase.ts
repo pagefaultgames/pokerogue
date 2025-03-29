@@ -19,7 +19,7 @@ export class MoveEndPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
     if (pokemon.isActive(true)) {
-      pokemon.  lapseTags(BattlerTagLapseType.AFTER_MOVE);
+      pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
     }
     globalScene.arena.setIgnoreAbilities(false);
 

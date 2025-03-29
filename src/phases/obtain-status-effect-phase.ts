@@ -46,7 +46,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
               this.sourceText ?? undefined,
             ),
           );
-          if (this.statusEffect && this.statusEffect !== StatusEffect.FAINT) {
+          if (!isNullOrUndefined(this.statusEffect) && this.statusEffect !== StatusEffect.FAINT) {
             globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);
             // If mold breaker etc was used to set this status, it shouldn't apply to abilities activated afterwards
             globalScene.arena.setIgnoreAbilities(false);
