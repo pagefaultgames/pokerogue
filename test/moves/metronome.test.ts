@@ -13,7 +13,7 @@ describe("Moves - Metronome", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const randomMoveAttr = allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0];
+  let randomMoveAttr: RandomMoveAttr;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -26,6 +26,7 @@ describe("Moves - Metronome", () => {
   });
 
   beforeEach(() => {
+    randomMoveAttr = allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0];
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.METRONOME, Moves.SPLASH])

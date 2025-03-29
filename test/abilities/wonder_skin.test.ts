@@ -1,4 +1,3 @@
-import { allAbilities } from "#app/data/ability";
 import { allMoves } from "#app/data/moves/move";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Abilities } from "#enums/abilities";
@@ -56,16 +55,21 @@ describe("Abilities - Wonder Skin", () => {
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
   });
 
-  const bypassAbilities = [Abilities.MOLD_BREAKER, Abilities.TERAVOLT, Abilities.TURBOBLAZE];
+  const bypassAbilities = [
+    [Abilities.MOLD_BREAKER, "Mold Breaker"],
+    [Abilities.TERAVOLT, "Teravolt"],
+    [Abilities.TURBOBLAZE, "Turboblaze"],
+  ];
 
   bypassAbilities.forEach(ability => {
-    it(`does not affect pokemon with ${allAbilities[ability].name}`, async () => {
+    it(`does not affect pokemon with ${ability[1]}`, async () => {
       const moveToCheck = allMoves[Moves.CHARM];
 
-      game.override.ability(ability);
+      // @ts-ignore ts doesn't know that ability[0] is an ability and not a string...
+      game.override.ability(ability[0]);
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-      await game.startBattle([Species.PIKACHU]);
+      await game.classicMode.startBattle([Species.PIKACHU]);
       game.move.select(Moves.CHARM);
       await game.phaseInterceptor.to(MoveEffectPhase);
 

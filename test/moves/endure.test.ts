@@ -22,7 +22,7 @@ describe("Moves - Endure", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC])
+      .moveset([Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC, Moves.SHEER_COLD])
       .ability(Abilities.SKILL_LINK)
       .startingLevel(100)
       .battleType("single")
@@ -50,16 +50,37 @@ describe("Moves - Endure", () => {
     expect(game.scene.getEnemyPokemon()!.hp).toBe(1);
   });
 
-  it("shouldn't prevent fainting from indirect damage", async () => {
-    game.override.enemyLevel(100);
-    await game.classicMode.startBattle([Species.ARCEUS]);
-
+  it("should let the pokemon survive against OHKO moves", async () => {
+    await game.classicMode.startBattle([Species.MAGIKARP]);
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.hp = 2;
 
-    game.move.select(Moves.TOXIC);
-    await game.phaseInterceptor.to("VictoryPhase");
+    game.move.select(Moves.SHEER_COLD);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemy.isFainted()).toBe(true);
+    expect(enemy.isFainted()).toBeFalsy();
+  });
+
+  // comprehensive indirect damage test copied from Reviver Seed test
+  it.each([
+    { moveType: "Damaging Move Chip Damage", move: Moves.SALT_CURE },
+    { moveType: "Chip Damage", move: Moves.LEECH_SEED },
+    { moveType: "Trapping Chip Damage", move: Moves.WHIRLPOOL },
+    { moveType: "Status Effect Damage", move: Moves.TOXIC },
+    { moveType: "Weather", move: Moves.SANDSTORM },
+  ])("should not prevent fainting from $moveType", async ({ move }) => {
+    game.override
+      .enemyLevel(1)
+      .startingLevel(100)
+      .enemySpecies(Species.MAGIKARP)
+      .moveset(move)
+      .enemyMoveset(Moves.ENDURE);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    const enemy = game.scene.getEnemyPokemon()!;
+    enemy.damageAndUpdate(enemy.hp - 1);
+
+    game.move.select(move);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(enemy.isFainted()).toBeTruthy();
   });
 });
