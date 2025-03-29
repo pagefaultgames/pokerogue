@@ -132,6 +132,7 @@ const GALACTIC: TrainerTierPools = {
     Species.GLISCOR,
     Species.CRANIDOS,
     Species.SHIELDON,
+    Species.ROTOM,
     Species.OVERQWIL,
   ],
   [TrainerPoolTier.RARE]: [Species.SPIRITOMB, Species.URSALUNA, Species.HISUI_SNEASEL, Species.HISUI_LILLIGANT],
@@ -182,9 +183,10 @@ const PLASMA_COLRESS: TrainerTierPools = {
     Species.VOLTORB,
     Species.PORYGON,
     Species.BRONZOR,
+    Species.ROTOM,
     Species.MUNNA,
+    Species.DWEBBLE,
     Species.FERROSEED,
-    Species.TYNAMO,
     Species.ELGYEM,
   ],
   [TrainerPoolTier.UNCOMMON]: [
@@ -192,6 +194,7 @@ const PLASMA_COLRESS: TrainerTierPools = {
     Species.SIGILYPH,
     Species.TIRTOUGA,
     Species.ARCHEN,
+    Species.TYNAMO,
     Species.GOLETT,
     Species.BLIPBUG,
     Species.VAROOM,
@@ -404,7 +407,7 @@ const STAR_FAIRY: TrainerTierPools = {
     Species.IMPIDIMP,
     Species.ALOLA_VULPIX,
   ],
-  [TrainerPoolTier.RARE]: [Species.GALAR_WEEZING, Species.POPPLIO],
+  [TrainerPoolTier.RARE]: [Species.GALAR_PONYTA, Species.POPPLIO],
 };
 
 const STAR_FIGHTING: TrainerTierPools = {
