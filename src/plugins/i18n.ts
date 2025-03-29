@@ -170,7 +170,10 @@ export async function initI18n(): Promise<void> {
   i18next.use(processor);
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
-    fallbackLng: "en",
+    fallbackLng: {
+      "es-MX": ["es-ES", "en"],
+      default: ["en"],
+    },
     supportedLngs: ["en", "es-ES", "es-MX", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES"],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
