@@ -2026,7 +2026,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
-            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+            if (this.filteredIndices?.length <= 1) {
               ui.playError();
               this.blockInput = false;
               return true;
@@ -2066,7 +2066,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = false;
             break;
           case Button.RIGHT:
-            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+            if (this.filteredIndices?.length <= 1) {
               ui.playError();
               this.blockInput = false;
               return true;
@@ -2230,10 +2230,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    const isFormCaught = this.isFormCaught();
-    const isSeen = this.isSeen();
 
-    if ((this.isCaught() && isFormCaught) || isSeen) {
+    if ((this.isCaught() && this.isFormCaught()) || this.isSeen()) {
       ui.showText(this.menuDescriptions[cursor]);
     } else {
       ui.showText("");
