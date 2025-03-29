@@ -14,7 +14,6 @@ import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
-import { getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
 
 export default class PokemonData {
   public id: number;

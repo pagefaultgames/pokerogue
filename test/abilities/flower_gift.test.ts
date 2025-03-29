@@ -40,17 +40,23 @@ describe("Abilities - Flower Gift", () => {
    *
    * @returns Two numbers, the first being the damage done to the target without flower gift active, the second being the damage done with flower gift active
    */
-  const testDamageDealt = async (game: GameManager, move: Moves, allyAttacker: boolean, allyAbility = Abilities.BALL_FETCH, enemyAbility = Abilities.BALL_FETCH): Promise<[number, number]> => {
+  const testDamageDealt = async (
+    game: GameManager,
+    move: Moves,
+    allyAttacker: boolean,
+    allyAbility = Abilities.BALL_FETCH,
+    enemyAbility = Abilities.BALL_FETCH,
+  ): Promise<[number, number]> => {
     game.override.battleType("double");
-    game.override.moveset([ Moves.SPLASH, Moves.SUNNY_DAY, move, Moves.HEAL_PULSE ]);
-    game.override.enemyMoveset([ Moves.SPLASH, Moves.HEAL_PULSE ]);
+    game.override.moveset([Moves.SPLASH, Moves.SUNNY_DAY, move, Moves.HEAL_PULSE]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.HEAL_PULSE]);
     const target_index = allyAttacker ? BattlerIndex.ENEMY : BattlerIndex.PLAYER_2;
     const attacker_index = allyAttacker ? BattlerIndex.PLAYER_2 : BattlerIndex.ENEMY;
     const ally_move = allyAttacker ? move : Moves.SPLASH;
     const enemy_move = allyAttacker ? Moves.SPLASH : move;
     const ally_target = allyAttacker ? BattlerIndex.ENEMY : null;
 
-    await game.classicMode.startBattle([ Species.CHERRIM, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.CHERRIM, Species.MAGIKARP]);
     const target = allyAttacker ? game.scene.getEnemyField()[0] : game.scene.getPlayerField()[1];
     const initialHp = target.getMaxHp();
 
@@ -64,7 +70,7 @@ describe("Abilities - Flower Gift", () => {
     await game.forceEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
     await game.forceEnemyMove(Moves.SPLASH);
     // Ensure sunny day is used last.
-    await game.setTurnOrder([ attacker_index, target_index, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([attacker_index, target_index, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageWithoutGift = initialHp - target.hp;
 
@@ -75,13 +81,12 @@ describe("Abilities - Flower Gift", () => {
     game.move.select(ally_move, 1, ally_target);
     await game.forceEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
     await game.forceEnemyMove(Moves.SPLASH);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, target_index, attacker_index ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, target_index, attacker_index]);
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageWithGift = initialHp - target.hp;
 
-    return [ damageWithoutGift, damageWithGift ];
+    return [damageWithoutGift, damageWithGift];
   };
-
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -129,22 +134,28 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("should not increase the damage of an ally using an ability ignoring move", async () => {
-    const [ damageWithGift, damageWithoutGift ] = await testDamageDealt(game, Moves.SUNSTEEL_STRIKE, true);
+    const [damageWithGift, damageWithoutGift] = await testDamageDealt(game, Moves.SUNSTEEL_STRIKE, true);
     expect(damageWithGift).toBe(damageWithoutGift);
   });
 
   it("should not increase the damage of a mold breaker ally", async () => {
-    const [ damageWithGift, damageWithoutGift ] = await testDamageDealt(game, Moves.TACKLE, true, Abilities.MOLD_BREAKER);
+    const [damageWithGift, damageWithoutGift] = await testDamageDealt(game, Moves.TACKLE, true, Abilities.MOLD_BREAKER);
     expect(damageWithGift).toBe(damageWithoutGift);
   });
 
   it("should decrease the damage an ally takes from a special attack", async () => {
-    const [ damageWithoutGift, damageWithGift ] = await testDamageDealt(game, Moves.MUD_SLAP, false);
+    const [damageWithoutGift, damageWithGift] = await testDamageDealt(game, Moves.MUD_SLAP, false);
     expect(damageWithGift).toBeLessThan(damageWithoutGift);
   });
 
-  it("should not decrease the damage an ally takes from a mold breaker enemy using a special attack", async () =>  {
-    const [ damageWithoutGift, damageWithGift ] = await testDamageDealt(game, Moves.MUD_SLAP, false, Abilities.BALL_FETCH, Abilities.MOLD_BREAKER);
+  it("should not decrease the damage an ally takes from a mold breaker enemy using a special attack", async () => {
+    const [damageWithoutGift, damageWithGift] = await testDamageDealt(
+      game,
+      Moves.MUD_SLAP,
+      false,
+      Abilities.BALL_FETCH,
+      Abilities.MOLD_BREAKER,
+    );
     expect(damageWithGift).toBe(damageWithoutGift);
   });
 
@@ -168,7 +179,7 @@ describe("Abilities - Flower Gift", () => {
 
   it("reverts to Overcast Form when the Pokémon loses Flower Gift, changes form under Harsh Sunlight/Sunny when it regains it", async () => {
     game.override.enemyMoveset([Moves.SKILL_SWAP]).weather(WeatherType.HARSH_SUN);
-    game.override.moveset([ Moves.SKILL_SWAP ]);
+    game.override.moveset([Moves.SKILL_SWAP]);
 
     await game.classicMode.startBattle([Species.CHERRIM]);
 

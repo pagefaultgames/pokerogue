@@ -905,7 +905,7 @@ export default class Move implements Localizable {
       SacrificialAttrOnHit
     ];
 
-    // ...and cannot enhance these specific moves.
+    // ...and cannot enhance these specific moves
     const exceptMoves: Moves[] = [
       Moves.FLING,
       Moves.UPROAR,
@@ -914,10 +914,14 @@ export default class Move implements Localizable {
       Moves.ENDEAVOR
     ];
 
+    // ...and cannot enhance Pollen Puff when targeting an ally.
+    const exceptPollenPuffAlly: boolean = this.id === Moves.POLLEN_PUFF && targets.includes(user.getAlly().getBattlerIndex())
+
     return (!restrictSpread || !isMultiTarget)
       && !this.isChargingMove()
       && !exceptAttrs.some(attr => this.hasAttr(attr))
       && !exceptMoves.some(id => this.id === id)
+      && !exceptPollenPuffAlly
       && this.category !== MoveCategory.STATUS;
   }
 }
@@ -1578,10 +1582,6 @@ export class ModifiedDamageAttr extends MoveAttr {
 export class SurviveDamageAttr extends ModifiedDamageAttr {
   getModifiedDamage(user: Pokemon, target: Pokemon, move: Move, damage: number): number {
     return Math.min(damage, target.hp - 1);
-  }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => target.hp > 1;
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
