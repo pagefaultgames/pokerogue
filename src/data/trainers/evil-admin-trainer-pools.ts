@@ -113,7 +113,7 @@ const GALACTIC: TrainerTierPools = {
     Species.ZUBAT,
     Species.MAGNEMITE,
     Species.RHYHORN,
-    Species.MAGKIARP,
+    Species.MAGIKARP,
     Species.ELEKID,
     Species.MAGBY,
     Species.MURKROW,
