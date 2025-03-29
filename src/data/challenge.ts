@@ -18,9 +18,10 @@ import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
 import type { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { ModifierTier } from "#app/modifier/modifier-tier";
+import { globalScene } from "#app/global-scene";
+import { pokemonFormChanges } from "./pokemon-forms";
+import { pokemonEvolutions } from "./balance/pokemon-evolutions";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -285,15 +286,9 @@ export abstract class Challenge {
    * @param _pokemon {@link PokemonSpecies} The pokemon to check the validity of.
    * @param _valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
    * @param _dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
-   * @param _soft {@link boolean} If true, allow it if it could become a valid pokemon.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterChoice(
-    _pokemon: PokemonSpecies,
-    _valid: Utils.BooleanHolder,
-    _dexAttr: DexAttrProps,
-    _soft = false,
-  ): boolean {
+  applyStarterChoice(_pokemon: PokemonSpecies, _valid: Utils.BooleanHolder, _dexAttr: DexAttrProps): boolean {
     return false;
   }
 
@@ -445,27 +440,8 @@ export class SingleGenerationChallenge extends Challenge {
     super(Challenges.SINGLE_GENERATION, 9);
   }
 
-  applyStarterChoice(
-    pokemon: PokemonSpecies,
-    valid: Utils.BooleanHolder,
-    _dexAttr: DexAttrProps,
-    soft = false,
-  ): boolean {
-    const generations = [pokemon.generation];
-    if (soft) {
-      const speciesToCheck = [pokemon.speciesId];
-      while (speciesToCheck.length) {
-        const checking = speciesToCheck.pop();
-        if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
-          pokemonEvolutions[checking].forEach(e => {
-            speciesToCheck.push(e.speciesId);
-            generations.push(getPokemonSpecies(e.speciesId).generation);
-          });
-        }
-      }
-    }
-
-    if (!generations.includes(this.value)) {
+  applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder): boolean {
+    if (pokemon.generation !== this.value) {
       valid.value = false;
       return true;
     }
@@ -474,7 +450,7 @@ export class SingleGenerationChallenge extends Challenge {
 
   applyPokemonInBattle(pokemon: Pokemon, valid: Utils.BooleanHolder): boolean {
     const baseGeneration = getPokemonSpecies(pokemon.species.speciesId).generation;
-    const fusionGeneration = pokemon.isFusion() ? getPokemonSpecies(pokemon.fusionSpecies!.speciesId).generation : 0; // TODO: is the bang on fusionSpecies correct?
+    const fusionGeneration = pokemon.isFusion() ? getPokemonSpecies(pokemon.fusionSpecies!.speciesId).generation : 0;
     if (
       pokemon.isPlayer() &&
       (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))
@@ -739,41 +715,14 @@ export class SingleTypeChallenge extends Challenge {
     { species: Species.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
-  private static SPECIES_OVERRIDES: Species[] = [Species.MELOETTA];
 
   constructor() {
     super(Challenges.SINGLE_TYPE, 18);
   }
 
-  override applyStarterChoice(
-    pokemon: PokemonSpecies,
-    valid: Utils.BooleanHolder,
-    dexAttr: DexAttrProps,
-    soft = false,
-  ): boolean {
+  override applyStarterChoice(pokemon: PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: DexAttrProps): boolean {
     const speciesForm = getPokemonSpeciesForm(pokemon.speciesId, dexAttr.formIndex);
     const types = [speciesForm.type1, speciesForm.type2];
-    if (soft && !SingleTypeChallenge.SPECIES_OVERRIDES.includes(pokemon.speciesId)) {
-      const speciesToCheck = [pokemon.speciesId];
-      while (speciesToCheck.length) {
-        const checking = speciesToCheck.pop();
-        if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
-          pokemonEvolutions[checking].forEach(e => {
-            speciesToCheck.push(e.speciesId);
-            types.push(getPokemonSpecies(e.speciesId).type1, getPokemonSpecies(e.speciesId).type2);
-          });
-        }
-        if (checking && pokemonFormChanges.hasOwnProperty(checking)) {
-          pokemonFormChanges[checking].forEach(f1 => {
-            getPokemonSpecies(checking).forms.forEach(f2 => {
-              if (f1.formKey === f2.formKey) {
-                types.push(f2.type1, f2.type2);
-              }
-            });
-          });
-        }
-      }
-    }
     if (!types.includes(this.value - 1)) {
       valid.value = false;
       return true;
@@ -1030,7 +979,6 @@ export class LowerStarterPointsChallenge extends Challenge {
  * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
  * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
  * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
- * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
@@ -1039,7 +987,6 @@ export function applyChallenges(
   pokemon: PokemonSpecies,
   valid: Utils.BooleanHolder,
   dexAttr: DexAttrProps,
-  soft: boolean,
 ): boolean;
 /**
  * Apply all challenges that modify available total starter points.
@@ -1222,7 +1169,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
     if (c.value !== 0) {
       switch (challengeType) {
         case ChallengeType.STARTER_CHOICE:
-          ret ||= c.applyStarterChoice(args[0], args[1], args[2], args[3]);
+          ret ||= c.applyStarterChoice(args[0], args[1], args[2]);
           break;
         case ChallengeType.STARTER_POINTS:
           ret ||= c.applyStarterPoints(args[0]);
@@ -1304,4 +1251,88 @@ export function initChallenges() {
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
   );
+}
+
+/**
+ * Apply all challenges to the given starter (and form) to check its validity.
+ * Differs from {@linkcode checkSpeciesValidForChallenge} which only checks form changes.
+ * @param species - The {@linkcode PokemonSpecies} to check the validity of.
+ * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
+ * @param soft - If `true`, allow it if it could become valid through evolution or form change.
+ * @returns `true` if the species is considered valid.
+ */
+export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
+  if (!soft) {
+    const isValidForChallenge = new Utils.BooleanHolder(true);
+    applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+    return isValidForChallenge.value;
+  }
+  // We check the validity of every evolution and form change, and require that at least one is valid
+  const speciesToCheck = [species.speciesId];
+  while (speciesToCheck.length) {
+    const checking = speciesToCheck.pop();
+    // Linter complains if we don't handle this
+    if (!checking) {
+      return false;
+    }
+    const checkingSpecies = getPokemonSpecies(checking);
+    if (checkSpeciesValidForChallenge(checkingSpecies, props, true)) {
+      return true;
+    }
+    if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
+      pokemonEvolutions[checking].forEach(e => {
+        // Form check to deal with cases such as Basculin -> Basculegion
+        // TODO: does this miss anything if checking forms of a stage 2 Pokémon?
+        if (!e?.preFormKey || e.preFormKey === species.forms[props.formIndex].formKey) {
+          speciesToCheck.push(e.speciesId);
+        }
+      });
+    }
+  }
+  return false;
+}
+
+/**
+ * Apply all challenges to the given species (and form) to check its validity.
+ * Differs from {@linkcode checkStarterValidForChallenge} which also checks evolutions.
+ * @param species - The {@linkcode PokemonSpecies} to check the validity of.
+ * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
+ * @param soft - If `true`, allow it if it could become valid through a form change.
+ * @returns `true` if the species is considered valid.
+ */
+function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
+  const isValidForChallenge = new Utils.BooleanHolder(true);
+  applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+  if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
+    return isValidForChallenge.value;
+  }
+  // If the form in props is valid, return true before checking other form changes
+  if (soft && isValidForChallenge.value) {
+    return true;
+  }
+  pokemonFormChanges[species.speciesId].forEach(f1 => {
+    // Exclude form changes that require the mon to be on the field to begin with,
+    // such as Castform
+    if (!("item" in f1)) {
+      return;
+    }
+    species.forms.forEach((f2, formIndex) => {
+      if (f1.formKey === f2.formKey) {
+        const formProps = { ...props };
+        formProps.formIndex = formIndex;
+        const isFormValidForChallenge = new Utils.BooleanHolder(true);
+        applyChallenges(
+          globalScene.gameMode,
+          ChallengeType.STARTER_CHOICE,
+          species,
+          isFormValidForChallenge,
+          formProps,
+        );
+        if (isFormValidForChallenge.value) {
+          return true;
+        }
+      }
+    });
+  });
+  return false;
 }

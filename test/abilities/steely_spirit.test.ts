@@ -12,7 +12,8 @@ describe("Abilities - Steely Spirit", () => {
   let game: GameManager;
   const steelySpiritMultiplier = 1.5;
   const moveToCheck = Moves.IRON_HEAD;
-  const ironHeadPower = allMoves[moveToCheck].power;
+
+  let ironHeadPower: number;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -25,6 +26,7 @@ describe("Abilities - Steely Spirit", () => {
   });
 
   beforeEach(() => {
+    ironHeadPower = allMoves[moveToCheck].power;
     game = new GameManager(phaserGame);
     game.override.battleType("double");
     game.override.enemySpecies(Species.SHUCKLE);
