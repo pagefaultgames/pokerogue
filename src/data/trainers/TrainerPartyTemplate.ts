@@ -238,18 +238,10 @@ export function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
 }
 
 export function getWavePartyTemplate(...templates: TrainerPartyTemplate[]) {
-  return templates[
-    Math.min(
-      Math.max(
-        Math.ceil(
-          (globalScene.gameMode.getWaveForDifficulty(globalScene.currentBattle?.waveIndex || startingWave, true) - 20) /
-            30,
-        ),
-        0,
-      ),
-      templates.length - 1,
-    )
-  ];
+  const { currentBattle, gameMode } = globalScene;
+  const wave = gameMode.getWaveForDifficulty(currentBattle?.waveIndex || startingWave, true);
+  const templateIndex = Math.ceil((wave - 20) / 30);
+  return templates[Phaser.Math.Clamp(templateIndex, 0, templates.length - 1)];
 }
 
 export function getGymLeaderPartyTemplate() {

@@ -2181,7 +2181,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.ZINZOLIN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("plasma_sage", "plasma_zinzolan", [Species.CRYOGONAL])
+    .initForEvilTeamAdmin("plasma_sage", "plasma_zinzolin", [Species.CRYOGONAL])
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_plasma_grunt")

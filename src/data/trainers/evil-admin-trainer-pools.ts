@@ -123,7 +123,7 @@ const GALACTIC: TrainerTierPools = {
   [TrainerPoolTier.RARE]: [Species.SPIRITOMB, Species.URSALUNA, Species.SNEASLER, Species.HISUI_LILLIGANT],
 };
 
-const PLASMA_ZINZOLAN: TrainerTierPools = {
+const PLASMA_ZINZOLIN: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
     Species.GIGALITH,
     Species.CONKELDURR,
@@ -422,7 +422,7 @@ export const evilAdminTrainerPools: Record<EvilTeam, TrainerTierPools> = {
   magma: MAGMA,
   aqua: AQUA,
   galactic: GALACTIC,
-  plasma_zinzolan: PLASMA_ZINZOLAN,
+  plasma_zinzolin: PLASMA_ZINZOLIN,
   plasma_colress: PLASMA_COLRESS,
   flare: FLARE,
   aether: AETHER,
