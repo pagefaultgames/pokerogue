@@ -2,15 +2,14 @@ import { globalScene } from "#app/global-scene";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import type { TrainerConfig, TrainerPartyTemplate } from "#app/data/trainer-config";
-import {
-  TrainerPartyCompoundTemplate,
-  TrainerPoolTier,
-  TrainerSlot,
-  trainerConfigs,
-  trainerPartyTemplates,
-  TeraAIMode,
-} from "#app/data/trainer-config";
+import type { TrainerConfig } from "#app/data/trainers/trainer-config";
+import type { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
+import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { TrainerPoolTier } from "#enums/trainer-pool-tier";
+import { TeraAIMode } from "#enums/tera-ai-mode";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
 import type { PersistentModifier } from "#app/modifier/modifier";

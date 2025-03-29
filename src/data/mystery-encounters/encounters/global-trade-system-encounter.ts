@@ -3,7 +3,7 @@ import {
   selectPokemonForOption,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { MusicPreference } from "#app/system/settings/settings";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
