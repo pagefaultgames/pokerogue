@@ -978,7 +978,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const caughtAttr = this.isCaught();
 
     // no preferences or Pokemon wasn't caught, return empty attribute
-    if (!starterAttributes || !caughtAttr) {
+    if (!starterAttributes || !this.isSeen()) {
       return {};
     }
 
@@ -2026,7 +2026,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
-            if (this.filteredIndices?.length <= 1) {
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
               ui.playError();
               this.blockInput = false;
               return true;
@@ -2066,7 +2066,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = false;
             break;
           case Button.RIGHT:
-            if (this.filteredIndices?.length <= 1) {
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
               ui.playError();
               this.blockInput = false;
               return true;
@@ -2229,7 +2229,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
     const ui = this.getUi();
-
 
     if ((this.isCaught() && this.isFormCaught()) || this.isSeen()) {
       ui.showText(this.menuDescriptions[cursor]);
