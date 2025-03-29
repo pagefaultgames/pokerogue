@@ -3,12 +3,10 @@ import {
   initBattleWithEnemyConfig,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import {
-  trainerConfigs,
-  TrainerPartyCompoundTemplate,
-  TrainerPartyTemplate,
-  trainerPartyTemplates,
-} from "#app/data/trainers/trainer-config";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
+import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";

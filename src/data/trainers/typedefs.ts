@@ -2,7 +2,8 @@ import type { EnemyPokemon } from "#app/field/pokemon";
 import type { PersistentModifier } from "#app/modifier/modifier";
 import type { PartyMemberStrength } from "#enums/party-member-strength";
 import type { Species } from "#enums/species";
-import type { TrainerPartyTemplate, TrainerConfig } from "./trainer-config";
+import type { TrainerConfig } from "./trainer-config";
+import type { TrainerPartyTemplate } from "./TrainerPartyTemplate";
 
 export type PartyTemplateFunc = () => TrainerPartyTemplate;
 export type PartyMemberFunc = (level: number, strength: PartyMemberStrength) => EnemyPokemon;
@@ -14,4 +15,8 @@ export interface TrainerTierPools {
 }
 export interface TrainerConfigs {
   [key: number]: TrainerConfig;
+}
+
+export interface PartyMemberFuncs {
+  [key: number]: PartyMemberFunc;
 }
