@@ -25,20 +25,13 @@ import { Gender } from "#app/data/gender";
 import { signatureSpecies } from "../balance/signature-species";
 import { Abilities } from "#enums/abilities";
 import { TeraAIMode } from "#enums/tera-ai-mode";
+import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
 
 /** The wave at which (non-Paldean) Gym Leaders start having Tera mons*/
 const GYM_LEADER_TERA_WAVE = 100;
-
-export enum TrainerPoolTier {
-  COMMON,
-  UNCOMMON,
-  RARE,
-  SUPER_RARE,
-  ULTRA_RARE,
-}
 
 export interface TrainerTierPools {
   [key: number]: Species[];

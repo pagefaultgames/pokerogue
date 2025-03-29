@@ -5,11 +5,11 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import type { TrainerConfig, TrainerPartyTemplate } from "#app/data/trainers/trainer-config";
 import {
   TrainerPartyCompoundTemplate,
-  TrainerPoolTier,
   TrainerSlot,
   trainerConfigs,
   trainerPartyTemplates,
 } from "#app/data/trainers/trainer-config";
+import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
