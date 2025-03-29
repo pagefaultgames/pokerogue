@@ -24,6 +24,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { Gender } from "#app/data/gender";
 import { signatureSpecies } from "../balance/signature-species";
 import { Abilities } from "#enums/abilities";
+import { TeraAIMode } from "#enums/tera-ai-mode";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
@@ -270,12 +271,6 @@ type GenAIFunc = (party: EnemyPokemon[]) => void;
 
 export interface PartyMemberFuncs {
   [key: number]: PartyMemberFunc;
-}
-
-export enum TeraAIMode {
-  NO_TERA,
-  INSTANT_TERA,
-  SMART_TERA,
 }
 
 /**

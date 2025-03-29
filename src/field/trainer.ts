@@ -9,8 +9,8 @@ import {
   TrainerSlot,
   trainerConfigs,
   trainerPartyTemplates,
-  TeraAIMode,
 } from "#app/data/trainers/trainer-config";
+import { TeraAIMode } from "#enums/tera-ai-mode";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
 import type { PersistentModifier } from "#app/modifier/modifier";
