@@ -1403,7 +1403,10 @@ export default class BattleScene extends SceneBase {
         this.field.add(newTrainer);
       }
     } else {
-      if (!this.gameMode.hasTrainers) {
+      if (
+        !this.gameMode.hasTrainers ||
+        (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && isNullOrUndefined(trainerData))
+      ) {
         newBattleType = BattleType.WILD;
       } else if (battleType === undefined) {
         newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
@@ -2719,6 +2722,18 @@ export default class BattleScene extends SceneBase {
    */
   clearPhaseQueue(): void {
     this.phaseQueue.splice(0, this.phaseQueue.length);
+  }
+
+  /**
+   * Clears all phase-related stuff, including all phase queues, the current and standby phases, and a splice index
+   */
+  clearAllPhases(): void {
+    for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue]) {
+      queue.splice(0, queue.length);
+    }
+    this.currentPhase = null;
+    this.standbyPhase = null;
+    this.clearPhaseQueueSplice();
   }
 
   /**

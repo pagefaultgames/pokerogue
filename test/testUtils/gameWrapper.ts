@@ -6,11 +6,11 @@ import Pokemon from "#app/field/pokemon";
 import * as Utils from "#app/utils";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockClock } from "#test/testUtils/mocks/mockClock";
-import mockConsoleLog from "#test/testUtils/mocks/mockConsoleLog";
+import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
 import { MockFetch } from "#test/testUtils/mocks/mockFetch";
 import MockLoader from "#test/testUtils/mocks/mockLoader";
-import mockLocalStorage from "#test/testUtils/mocks/mockLocalStorage";
-import MockImage from "#test/testUtils/mocks/mocksContainer/mockImage";
+import { mockLocalStorage } from "#test/testUtils/mocks/mockLocalStorage";
+import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
 import MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
 import fs from "node:fs";
 import Phaser from "phaser";
@@ -27,18 +27,6 @@ import UpdateList = Phaser.GameObjects.UpdateList;
 import { version } from "../../package.json";
 import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
 
-Object.defineProperty(window, "localStorage", {
-  value: mockLocalStorage(),
-});
-Object.defineProperty(window, "console", {
-  value: mockConsoleLog(false),
-});
-
-BBCodeText.prototype.destroy = () => null;
-BBCodeText.prototype.resize = () => null;
-InputText.prototype.setElement = () => null;
-InputText.prototype.resize = () => null;
-Phaser.GameObjects.Image = MockImage;
 window.URL.createObjectURL = (blob: Blob) => {
   blobToString(blob).then((data: string) => {
     localStorage.setItem("toExport", data);
@@ -52,25 +40,6 @@ Utils.setCookie(Utils.sessionIdKey, "fake_token");
 window.matchMedia = () => ({
   matches: false,
 });
-
-/**
- * Sets this object's position relative to another object with a given offset
- * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
- * @param x The relative x position
- * @param y The relative y position
- */
-const setPositionRelative = function (guideObject: any, x: number, y: number) {
-  const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
-  const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-  this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
-};
-
-Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
 export default class GameWrapper {
   public game: Phaser.Game;

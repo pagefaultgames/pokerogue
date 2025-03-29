@@ -215,4 +215,10 @@ export default class MockContainer implements MockGameObject {
   }
 
   disableInteractive = () => null;
+
+  each(method) {
+    for (const item of this.list) {
+      method(item);
+    }
+  }
 }
