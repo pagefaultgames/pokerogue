@@ -1,5 +1,6 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves, ShellSideArmCategoryAttr } from "#app/data/move";
+import { allMoves, ShellSideArmCategoryAttr } from "#app/data/moves/move";
+import type Move from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -10,8 +11,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Shell Side Arm", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
-  const shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
+  let shellSideArm: Move;
+  let shellSideArmAttr: ShellSideArmCategoryAttr;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -24,9 +25,11 @@ describe("Moves - Shell Side Arm", () => {
   });
 
   beforeEach(() => {
+    shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
+    shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SHELL_SIDE_ARM, Moves.SPLASH ])
+      .moveset([Moves.SHELL_SIDE_ARM, Moves.SPLASH])
       .battleType("single")
       .startingLevel(100)
       .enemyLevel(100)
@@ -37,7 +40,7 @@ describe("Moves - Shell Side Arm", () => {
   it("becomes a physical attack if forecasted to deal more damage as physical", async () => {
     game.override.enemySpecies(Species.SNORLAX);
 
-    await game.classicMode.startBattle([ Species.RAMPARDOS ]);
+    await game.classicMode.startBattle([Species.RAMPARDOS]);
 
     vi.spyOn(shellSideArmAttr, "apply");
 
@@ -50,7 +53,7 @@ describe("Moves - Shell Side Arm", () => {
   it("remains a special attack if forecasted to deal more damage as special", async () => {
     game.override.enemySpecies(Species.SLOWBRO);
 
-    await game.classicMode.startBattle([ Species.XURKITREE ]);
+    await game.classicMode.startBattle([Species.XURKITREE]);
 
     vi.spyOn(shellSideArmAttr, "apply");
 
@@ -61,11 +64,9 @@ describe("Moves - Shell Side Arm", () => {
   });
 
   it("respects stat stage changes when forecasting base damage", async () => {
-    game.override
-      .enemySpecies(Species.SNORLAX)
-      .enemyMoveset(Moves.COTTON_GUARD);
+    game.override.enemySpecies(Species.SNORLAX).enemyMoveset(Moves.COTTON_GUARD);
 
-    await game.classicMode.startBattle([ Species.MANAPHY ]);
+    await game.classicMode.startBattle([Species.MANAPHY]);
 
     vi.spyOn(shellSideArmAttr, "apply");
 
@@ -73,7 +74,7 @@ describe("Moves - Shell Side Arm", () => {
     await game.toNextTurn();
 
     game.move.select(Moves.SHELL_SIDE_ARM);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);

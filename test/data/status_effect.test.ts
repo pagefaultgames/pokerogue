@@ -13,17 +13,12 @@ import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { mockI18next } from "#test/testUtils/testUtils";
-import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const pokemonName = "PKM";
 const sourceText = "SOURCE";
 
 describe("Status Effect Messages", () => {
-  beforeAll(async () => {
-    await i18next.init();
-  });
-
   describe("NONE", () => {
     const statusEffect = StatusEffect.NONE;
 
@@ -31,7 +26,6 @@ describe("Status Effect Messages", () => {
       mockI18next();
 
       const text = getStatusEffectObtainText(statusEffect, pokemonName);
-      console.log("text:", text);
       expect(text).toBe("");
 
       const emptySourceText = getStatusEffectObtainText(statusEffect, pokemonName, "");
@@ -328,13 +322,13 @@ describe("Status Effects", () => {
         .enemySpecies(Species.MAGIKARP)
         .enemyMoveset(Moves.SPLASH)
         .enemyAbility(Abilities.BALL_FETCH)
-        .moveset([ Moves.QUICK_ATTACK ])
+        .moveset([Moves.QUICK_ATTACK])
         .ability(Abilities.BALL_FETCH)
         .statusEffect(StatusEffect.PARALYSIS);
     });
 
     it("causes the pokemon's move to fail when activated", async () => {
-      await game.classicMode.startBattle([ Species.FEEBAS ]);
+      await game.classicMode.startBattle([Species.FEEBAS]);
 
       game.move.select(Moves.QUICK_ATTACK);
       await game.move.forceStatusActivation(true);
@@ -362,7 +356,7 @@ describe("Status Effects", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
-        .moveset([ Moves.SPLASH ])
+        .moveset([Moves.SPLASH])
         .ability(Abilities.BALL_FETCH)
         .battleType("single")
         .disableCrits()
@@ -372,7 +366,7 @@ describe("Status Effects", () => {
     });
 
     it("should last the appropriate number of turns", async () => {
-      await game.classicMode.startBattle([ Species.FEEBAS ]);
+      await game.classicMode.startBattle([Species.FEEBAS]);
 
       const player = game.scene.getPlayerPokemon()!;
       player.status = new Status(StatusEffect.SLEEP, 0, 4);
@@ -418,7 +412,7 @@ describe("Status Effects", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
-        .moveset([ Moves.SPLASH ])
+        .moveset([Moves.SPLASH])
         .ability(Abilities.BALL_FETCH)
         .battleType("single")
         .disableCrits()
@@ -429,7 +423,7 @@ describe("Status Effects", () => {
     });
 
     it("should not inflict a 0 HP mon with a status", async () => {
-      await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
+      await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
 
       const player = game.scene.getPlayerPokemon()!;
       player.hp = 0;

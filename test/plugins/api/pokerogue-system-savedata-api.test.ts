@@ -6,13 +6,20 @@ import type {
 } from "#app/@types/PokerogueSystemSavedataApi";
 import { PokerogueSystemSavedataApi } from "#app/plugins/api/pokerogue-system-savedata-api";
 import type { SystemSaveData } from "#app/system/game-data";
+import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import { http, HttpResponse } from "msw";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import type { SetupServerApi } from "msw/node";
 
 const apiBase = getApiBaseUrl();
 const systemSavedataApi = new PokerogueSystemSavedataApi(getApiBaseUrl());
-const { server } = global;
+
+let server: SetupServerApi;
+
+beforeAll(async () => {
+  server = await initServerForApiTests();
+});
 
 afterEach(() => {
   server.resetHandlers();
@@ -59,8 +66,8 @@ describe("Pokerogue System Savedata API", () => {
               trainerId: 123456789,
             } as SystemSaveData,
             valid: true,
-          })
-        )
+          }),
+        ),
       );
 
       const savedata = await systemSavedataApi.verify(params);
@@ -76,8 +83,8 @@ describe("Pokerogue System Savedata API", () => {
               trainerId: 123456789,
             } as SystemSaveData,
             valid: false,
-          })
-        )
+          }),
+        ),
       );
 
       const savedata = await systemSavedataApi.verify(params);

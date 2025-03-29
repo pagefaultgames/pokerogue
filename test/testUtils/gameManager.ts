@@ -1,7 +1,7 @@
 import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { getMoveTargets } from "#app/data/move";
+import { getMoveTargets } from "#app/data/moves/move";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
@@ -53,8 +53,11 @@ import { SettingsHelper } from "#test/testUtils/helpers/settingsHelper";
 import PhaseInterceptor from "#test/testUtils/phaseInterceptor";
 import TextInterceptor from "#test/testUtils/TextInterceptor";
 import { AES, enc } from "crypto-js";
-import fs from "fs";
+import fs from "node:fs";
 import { expect, vi } from "vitest";
+import { globalScene } from "#app/global-scene";
+import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
+import { MockFetch } from "#test/testUtils/mocks/mockFetch";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -79,15 +82,39 @@ export default class GameManager {
    * @param phaserGame - The Phaser game instance.
    * @param bypassLogin - Whether to bypass the login phase.
    */
-  constructor(phaserGame: Phaser.Game, bypassLogin: boolean = true) {
+  constructor(phaserGame: Phaser.Game, bypassLogin = true) {
     localStorage.clear();
     ErrorInterceptor.getInstance().clear();
-    BattleScene.prototype.randBattleSeedInt = (range, min: number = 0) => min + range - 1; // This simulates a max roll
+    BattleScene.prototype.randBattleSeedInt = (range, min = 0) => min + range - 1; // This simulates a max roll
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
-    this.scene = new BattleScene();
+
+    let firstTimeScene = false;
+
+    if (globalScene) {
+      this.scene = globalScene;
+    } else {
+      this.scene = new BattleScene();
+      this.gameWrapper.setScene(this.scene);
+      firstTimeScene = true;
+    }
+
     this.phaseInterceptor = new PhaseInterceptor(this.scene);
+
+    if (!firstTimeScene) {
+      this.scene.reset(false, true);
+      (this.scene.ui.handlers[Mode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
+      this.scene.clearAllPhases();
+
+      // Must be run after phase interceptor has been initialized.
+
+      this.scene.pushPhase(new LoginPhase());
+      this.scene.pushPhase(new TitlePhase());
+      this.scene.shiftPhase();
+
+      this.gameWrapper.scene = this.scene;
+    }
+
     this.textInterceptor = new TextInterceptor(this.scene);
-    this.gameWrapper.setScene(this.scene);
     this.override = new OverridesHelper(this);
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
@@ -96,9 +123,12 @@ export default class GameManager {
     this.settings = new SettingsHelper(this);
     this.reload = new ReloadHelper(this);
     this.modifiers = new ModifierHelper(this);
+    this.override.sanitizeOverrides();
 
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
+
+    global.fetch = vi.fn(MockFetch) as any;
   }
 
   /**
@@ -115,7 +145,7 @@ export default class GameManager {
    * @returns A promise that resolves when the mode is set.
    */
   waitMode(mode: Mode): Promise<void> {
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
       await waitUntil(() => this.scene.ui?.getMode() === mode);
       return resolve();
     });
@@ -136,7 +166,13 @@ export default class GameManager {
    * @param callback - The callback function to execute on next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
    */
-  onNextPrompt(phaseTarget: string, mode: Mode, callback: () => void, expireFn?: () => void, awaitingActionInput: boolean = false) {
+  onNextPrompt(
+    phaseTarget: string,
+    mode: Mode,
+    callback: () => void,
+    expireFn?: () => void,
+    awaitingActionInput = false,
+  ) {
     this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn, awaitingActionInput);
   }
 
@@ -205,18 +241,29 @@ export default class GameManager {
 
     await this.runToTitle();
 
-    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-      const starters = generateStarter(this.scene, species);
-      const selectStarterPhase = new SelectStarterPhase();
-      this.scene.pushPhase(new EncounterPhase(false));
-      selectStarterPhase.initBattle(starters);
-    }, () => this.isCurrentPhase(EncounterPhase));
+    this.onNextPrompt(
+      "TitlePhase",
+      Mode.TITLE,
+      () => {
+        this.scene.gameMode = getGameMode(GameModes.CLASSIC);
+        const starters = generateStarter(this.scene, species);
+        const selectStarterPhase = new SelectStarterPhase();
+        this.scene.pushPhase(new EncounterPhase(false));
+        selectStarterPhase.initBattle(starters);
+      },
+      () => this.isCurrentPhase(EncounterPhase),
+    );
 
-    this.onNextPrompt("EncounterPhase", Mode.MESSAGE, () => {
-      const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
-      handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(MysteryEncounterPhase), true);
+    this.onNextPrompt(
+      "EncounterPhase",
+      Mode.MESSAGE,
+      () => {
+        const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
+        handler.processInput(Button.ACTION);
+      },
+      () => this.isCurrentPhase(MysteryEncounterPhase),
+      true,
+    );
 
     await this.phaseInterceptor.run(EncounterPhase);
     if (!isNullOrUndefined(encounterType)) {
@@ -235,15 +282,25 @@ export default class GameManager {
     await this.classicMode.runToSummon(species);
 
     if (this.scene.battleStyle === BattleStyle.SWITCH) {
-      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.setMode(Mode.MESSAGE);
-        this.endPhase();
-      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+      this.onNextPrompt(
+        "CheckSwitchPhase",
+        Mode.CONFIRM,
+        () => {
+          this.setMode(Mode.MESSAGE);
+          this.endPhase();
+        },
+        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
+      );
 
-      this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-        this.setMode(Mode.MESSAGE);
-        this.endPhase();
-      }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase));
+      this.onNextPrompt(
+        "CheckSwitchPhase",
+        Mode.CONFIRM,
+        () => {
+          this.setMode(Mode.MESSAGE);
+          this.endPhase();
+        },
+        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
+      );
     }
 
     await this.phaseInterceptor.to(CommandPhase);
@@ -257,17 +314,29 @@ export default class GameManager {
    * @param movePosition The index of the move in the pokemon's moveset array
    */
   selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
-    this.onNextPrompt("SelectTargetPhase", Mode.TARGET_SELECT, () => {
-      const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-      const move = (this.scene.getCurrentPhase() as SelectTargetPhase).getPokemon().getMoveset()[movePosition]!.getMove(); // TODO: is the bang correct?
-      if (!move.isMultiTarget()) {
-        handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
-      }
-      if (move.isMultiTarget() && targetIndex !== undefined) {
-        throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
-      }
-      handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(MovePhase) || this.isCurrentPhase(TurnStartPhase) || this.isCurrentPhase(TurnEndPhase));
+    this.onNextPrompt(
+      "SelectTargetPhase",
+      Mode.TARGET_SELECT,
+      () => {
+        const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
+        const move = (this.scene.getCurrentPhase() as SelectTargetPhase)
+          .getPokemon()
+          .getMoveset()
+          [movePosition].getMove();
+        if (!move.isMultiTarget()) {
+          handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
+        }
+        if (move.isMultiTarget() && targetIndex !== undefined) {
+          throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
+        }
+        handler.processInput(Button.ACTION);
+      },
+      () =>
+        this.isCurrentPhase(CommandPhase) ||
+        this.isCurrentPhase(MovePhase) ||
+        this.isCurrentPhase(TurnStartPhase) ||
+        this.isCurrentPhase(TurnEndPhase),
+    );
   }
 
   /** Faint all opponents currently on the field */
@@ -280,15 +349,32 @@ export default class GameManager {
 
   /** Emulate selecting a modifier (item) */
   doSelectModifier() {
-    this.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
-      const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
-      handler.processInput(Button.CANCEL);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase), true);
+    this.onNextPrompt(
+      "SelectModifierPhase",
+      Mode.MODIFIER_SELECT,
+      () => {
+        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        handler.processInput(Button.CANCEL);
+      },
+      () =>
+        this.isCurrentPhase(CommandPhase) ||
+        this.isCurrentPhase(NewBattlePhase) ||
+        this.isCurrentPhase(CheckSwitchPhase),
+      true,
+    );
 
-    this.onNextPrompt("SelectModifierPhase", Mode.CONFIRM, () => {
-      const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
-      handler.processInput(Button.ACTION);
-    }, () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(NewBattlePhase) || this.isCurrentPhase(CheckSwitchPhase));
+    this.onNextPrompt(
+      "SelectModifierPhase",
+      Mode.CONFIRM,
+      () => {
+        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        handler.processInput(Button.ACTION);
+      },
+      () =>
+        this.isCurrentPhase(CommandPhase) ||
+        this.isCurrentPhase(NewBattlePhase) ||
+        this.isCurrentPhase(CheckSwitchPhase),
+    );
   }
 
   /**
@@ -305,9 +391,10 @@ export default class GameManager {
 
     vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
       move: moveId,
-      targets: (target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target))
-        ? [ target ]
-        : enemy.getNextTargets(moveId)
+      targets:
+        target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
+          ? [target]
+          : enemy.getNextTargets(moveId),
     });
 
     /**
@@ -322,7 +409,10 @@ export default class GameManager {
     const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
     Trainer.prototype.getPartyMemberMatchupScores = () => {
       Trainer.prototype.getPartyMemberMatchupScores = originalMatchupScore;
-      return [[ 1, 100 ], [ 1, 100 ]];
+      return [
+        [1, 100],
+        [1, 100],
+      ];
     };
   }
 
@@ -335,10 +425,15 @@ export default class GameManager {
   async toNextWave() {
     this.doSelectModifier();
 
-    this.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      this.setMode(Mode.MESSAGE);
-      this.endPhase();
-    }, () => this.isCurrentPhase(TurnInitPhase));
+    this.onNextPrompt(
+      "CheckSwitchPhase",
+      Mode.CONFIRM,
+      () => {
+        this.setMode(Mode.MESSAGE);
+        this.endPhase();
+      },
+      () => this.isCurrentPhase(TurnInitPhase),
+    );
 
     await this.toNextTurn();
   }
@@ -376,7 +471,7 @@ export default class GameManager {
    */
   exportSaveToTest(): Promise<string> {
     const saveKey = "x0i2O7WRiANTqPmZ";
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
       const sessionSaveData = this.scene.gameData.getSessionSaveData();
       const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
       resolve(encryptedSaveData);
@@ -411,7 +506,7 @@ export default class GameManager {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
       this.scene.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
-      await this.phaseInterceptor.to(FaintPhase).catch((e) => reject(e));
+      await this.phaseInterceptor.to(FaintPhase).catch(e => reject(e));
       resolve();
     });
   }

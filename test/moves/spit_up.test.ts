@@ -1,12 +1,13 @@
 import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { TurnMove } from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
+import type Move from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -17,7 +18,7 @@ describe("Moves - Spit Up", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const spitUp = allMoves[Moves.SPIT_UP];
+  let spitUp: Move;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({ type: Phaser.HEADLESS });
@@ -28,6 +29,7 @@ describe("Moves - Spit Up", () => {
   });
 
   beforeEach(() => {
+    spitUp = allMoves[Moves.SPIT_UP];
     game = new GameManager(phaserGame);
 
     game.override.battleType("single");
@@ -48,7 +50,7 @@ describe("Moves - Spit Up", () => {
       const stacksToSetup = 1;
       const expectedPower = 100;
 
-      await game.startBattle([ Species.ABOMASNOW ]);
+      await game.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -70,7 +72,7 @@ describe("Moves - Spit Up", () => {
       const stacksToSetup = 2;
       const expectedPower = 200;
 
-      await game.startBattle([ Species.ABOMASNOW ]);
+      await game.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -93,7 +95,7 @@ describe("Moves - Spit Up", () => {
       const stacksToSetup = 3;
       const expectedPower = 300;
 
-      await game.startBattle([ Species.ABOMASNOW ]);
+      await game.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -115,7 +117,7 @@ describe("Moves - Spit Up", () => {
   });
 
   it("fails without stacks", async () => {
-    await game.startBattle([ Species.ABOMASNOW ]);
+    await game.startBattle([Species.ABOMASNOW]);
 
     const pokemon = game.scene.getPlayerPokemon()!;
 
@@ -125,14 +127,18 @@ describe("Moves - Spit Up", () => {
     game.move.select(Moves.SPIT_UP);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.FAIL, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ]});
+    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      move: Moves.SPIT_UP,
+      result: MoveResult.FAIL,
+      targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],
+    });
 
     expect(spitUp.calculateBattlePower).not.toHaveBeenCalled();
   });
 
   describe("restores stat boosts granted by stacks", () => {
     it("decreases stats based on stored values (both boosts equal)", async () => {
-      await game.startBattle([ Species.ABOMASNOW ]);
+      await game.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -148,7 +154,11 @@ describe("Moves - Spit Up", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ]});
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+        move: Moves.SPIT_UP,
+        result: MoveResult.SUCCESS,
+        targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],
+      });
 
       expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 
@@ -159,7 +169,7 @@ describe("Moves - Spit Up", () => {
     });
 
     it("decreases stats based on stored values (different boosts)", async () => {
-      await game.startBattle([ Species.ABOMASNOW ]);
+      await game.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -176,7 +186,11 @@ describe("Moves - Spit Up", () => {
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({ move: Moves.SPIT_UP, result: MoveResult.SUCCESS, targets: [ game.scene.getEnemyPokemon()!.getBattlerIndex() ]});
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+        move: Moves.SPIT_UP,
+        result: MoveResult.SUCCESS,
+        targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],
+      });
 
       expect(spitUp.calculateBattlePower).toHaveBeenCalledOnce();
 

@@ -8,10 +8,13 @@ import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import type { Species } from "#enums/species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { PlayerGender } from "#enums/player-gender";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
-  private static readonly BATTLES_WON_FALLBACK: number = -99999999;
+  private static readonly BATTLES_WON_FALLBACK: number = -1;
 
   private titleContainer: Phaser.GameObjects.Container;
   private playerCountLabel: Phaser.GameObjects.Text;
@@ -36,7 +39,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = globalScene.add.image((globalScene.game.canvas.width / 6) / 2, 8, "logo");
+    const logo = globalScene.add.image(globalScene.game.canvas.width / 6 / 2, 8, "logo");
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
@@ -48,15 +51,18 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.playerCountLabel = addTextObject(
       // Actual y position will be determined after the title menu has been populated with options
-      (globalScene.game.canvas.width / 6) - 2, 0,
+      globalScene.game.canvas.width / 6 - 2,
+      0,
       `? ${i18next.t("menu:playersOnline")}`,
       TextStyle.MESSAGE,
-      { fontSize: "54px" }
+      { fontSize: "54px" },
     );
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 
-    this.splashMessageText = addTextObject(logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.splashMessageText = addTextObject(logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, {
+      fontSize: "54px",
+    });
     this.splashMessageText.setOrigin(0.5, 0.5);
     this.splashMessageText.setAngle(-20);
     this.titleContainer.add(this.splashMessageText);
@@ -71,14 +77,17 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       yoyo: true,
     });
 
-    this.appVersionText = addTextObject(logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.appVersionText = addTextObject(logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, {
+      fontSize: "54px",
+    });
     this.appVersionText.setOrigin(0.5, 0.5);
     this.appVersionText.setAngle(0);
     this.titleContainer.add(this.appVersionText);
   }
 
   updateTitleStats(): void {
-    pokerogueApi.getGameTitleStats()
+    pokerogueApi
+      .getGameTitleStats()
       .then(stats => {
         if (stats) {
           this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
@@ -92,15 +101,42 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       });
   }
 
+  /** Used solely to display a random Pokémon name in a splash message. */
+  randomPokemon(): void {
+    const rand = Utils.randInt(1025, 1);
+    const pokemon = getPokemonSpecies(rand as Species);
+    if (
+      this.splashMessage === "splashMessages:underratedPokemon" ||
+      this.splashMessage === "splashMessages:dontTalkAboutThePokemonIncident" ||
+      this.splashMessage === "splashMessages:aWildPokemonAppeared" ||
+      this.splashMessage === "splashMessages:aprilFools.removedPokemon"
+    ) {
+      this.splashMessageText.setText(i18next.t(this.splashMessage, { pokemonName: pokemon.name }));
+    }
+  }
+
+  /** Used for a specific April Fools splash message. */
+  genderSplash(): void {
+    if (this.splashMessage === "splashMessages:aprilFools.helloKyleAmber") {
+      globalScene.gameData.gender === PlayerGender.MALE
+        ? this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:player_m") }))
+        : this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:player_f") }));
+    }
+  }
+
   show(args: any[]): boolean {
     const ret = super.show(args);
 
     if (ret) {
       // Moving player count to top of the menu
-      this.playerCountLabel.setY((globalScene.game.canvas.height / 6) - 13 - this.getWindowHeight());
+      this.playerCountLabel.setY(globalScene.game.canvas.height / 6 - 13 - this.getWindowHeight());
 
       this.splashMessage = Utils.randItem(getSplashMessages());
-      this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
+      this.splashMessageText.setText(
+        i18next.t(this.splashMessage, {
+          count: TitleUiHandler.BATTLES_WON_FALLBACK,
+        }),
+      );
 
       this.appVersionText.setText("v" + version);
 
@@ -111,6 +147,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
         this.eventDisplay.show();
       }
 
+      this.randomPokemon();
+      this.genderSplash();
+
       this.updateTitleStats();
 
       this.titleStatsTimer = setInterval(() => {
@@ -118,10 +157,10 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       }, 60000);
 
       globalScene.tweens.add({
-        targets: [ this.titleContainer, ui.getMessageHandler().bg ],
+        targets: [this.titleContainer, ui.getMessageHandler().bg],
         duration: Utils.fixedInt(325),
-        alpha: (target: any) => target === this.titleContainer ? 1 : 0,
-        ease: "Sine.easeInOut"
+        alpha: (target: any) => (target === this.titleContainer ? 1 : 0),
+        ease: "Sine.easeInOut",
       });
     }
 
@@ -139,10 +178,10 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleStatsTimer = null;
 
     globalScene.tweens.add({
-      targets: [ this.titleContainer, ui.getMessageHandler().bg ],
+      targets: [this.titleContainer, ui.getMessageHandler().bg],
       duration: Utils.fixedInt(325),
-      alpha: (target: any) => target === this.titleContainer ? 0 : 1,
-      ease: "Sine.easeInOut"
+      alpha: (target: any) => (target === this.titleContainer ? 0 : 1),
+      ease: "Sine.easeInOut",
     });
   }
 }

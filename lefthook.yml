@@ -1,19 +1,13 @@
 pre-commit:
   parallel: true
   commands:
-    eslint:
+    biome-lint:
       glob: "*.{js,jsx,ts,tsx}"
-      run: npx eslint --fix {staged_files}
+      run: npx @biomejs/biome check --write --reporter=summary {staged_files} --no-errors-on-unmatched
       stage_fixed: true
       skip:
         - merge
         - rebase
-
-pre-push:
-  commands:
-    eslint:
-      glob: "*.{js,ts,jsx,tsx}"
-      run: npx eslint --fix {push_files}
       
 post-merge:
   commands:

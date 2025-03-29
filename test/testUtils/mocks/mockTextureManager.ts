@@ -1,5 +1,5 @@
 import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
-import MockImage from "#test/testUtils/mocks/mocksContainer/mockImage";
+import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
 import MockNineslice from "#test/testUtils/mocks/mocksContainer/mockNineslice";
 import MockPolygon from "#test/testUtils/mocks/mocksContainer/mockPolygon";
 import MockRectangle from "#test/testUtils/mocks/mocksContainer/mockRectangle";
@@ -51,7 +51,7 @@ export default class MockTextureManager {
     return sprite;
   }
 
-  existing(obj) {
+  existing(_obj) {
     // const whitelist = ["ArenaBase", "PlayerPokemon", "EnemyPokemon"];
     // const key = obj.constructor.name;
     // if (whitelist.includes(key) || obj.texture?.key?.includes("trainer_")) {
@@ -74,7 +74,19 @@ export default class MockTextureManager {
   }
 
   nineslice(x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight) {
-    const nineSlice = new MockNineslice(this, x, y, texture, frame, width, height, leftWidth, rightWidth, topHeight, bottomHeight);
+    const nineSlice = new MockNineslice(
+      this,
+      x,
+      y,
+      texture,
+      frame,
+      width,
+      height,
+      leftWidth,
+      rightWidth,
+      topHeight,
+      bottomHeight,
+    );
     this.list.push(nineSlice);
     return nineSlice;
   }

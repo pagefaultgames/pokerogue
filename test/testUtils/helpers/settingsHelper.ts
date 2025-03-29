@@ -27,7 +27,7 @@ export class SettingsHelper extends GameManagerHelper {
    */
   typeHints(enable: boolean): void {
     this.game.scene.typeHints = enable;
-    this.log(`Type Hints ${enable ? "enabled" : "disabled"}` );
+    this.log(`Type Hints ${enable ? "enabled" : "disabled"}`);
   }
 
   /**
@@ -36,7 +36,7 @@ export class SettingsHelper extends GameManagerHelper {
    */
   playerGender(gender: PlayerGender) {
     this.game.scene.gameData.gender = gender;
-    this.log(`Gender set to: ${PlayerGender[gender]} (=${gender})` );
+    this.log(`Gender set to: ${PlayerGender[gender]} (=${gender})`);
   }
 
   /**
@@ -45,7 +45,7 @@ export class SettingsHelper extends GameManagerHelper {
    */
   expGainsSpeed(speed: ExpGainsSpeed) {
     this.game.scene.expGainsSpeed = speed;
-    this.log(`Exp Gains Speed set to: ${ExpGainsSpeed[speed]} (=${speed})` );
+    this.log(`Exp Gains Speed set to: ${ExpGainsSpeed[speed]} (=${speed})`);
   }
 
   private log(...params: any[]) {

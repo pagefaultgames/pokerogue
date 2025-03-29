@@ -3,13 +3,14 @@ import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
+import type Move from "#app/data/moves/move";
 
 describe("Moves - Retaliate", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const retaliate = allMoves[Moves.RETALIATE];
+  let retaliate: Move;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -22,20 +23,21 @@ describe("Moves - Retaliate", () => {
   });
 
   beforeEach(() => {
+    retaliate = allMoves[Moves.RETALIATE];
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([ Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE ])
+      .enemyMoveset([Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE])
       .enemyLevel(100)
-      .moveset([ Moves.RETALIATE, Moves.SPLASH ])
+      .moveset([Moves.RETALIATE, Moves.SPLASH])
       .startingLevel(80)
       .disableCrits();
   });
 
   it("increases power if ally died previous turn", async () => {
     vi.spyOn(retaliate, "calculateBattlePower");
-    await game.startBattle([ Species.ABRA, Species.COBALION ]);
+    await game.startBattle([Species.ABRA, Species.COBALION]);
     game.move.select(Moves.RETALIATE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(retaliate.calculateBattlePower).toHaveLastReturnedWith(70);

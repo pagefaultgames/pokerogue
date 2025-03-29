@@ -1,3 +1,4 @@
+import { off } from "process";
 import type { MockGameObject } from "../mockGameObject";
 
 export default class MockRectangle implements MockGameObject {
@@ -6,23 +7,18 @@ export default class MockRectangle implements MockGameObject {
   public list: MockGameObject[] = [];
   public name: string;
 
-  constructor(textureManager, x, y, width, height, fillColor) {
+  constructor(textureManager, _x, _y, _width, _height, fillColor) {
     this.fillColor = fillColor;
     this.scene = textureManager.scene;
   }
-  setOrigin(x, y) {
-  }
+  setOrigin(_x, _y) {}
 
-  setAlpha(alpha) {
-  }
-  setVisible(visible) {
-  }
+  setAlpha(_alpha) {}
+  setVisible(_visible) {}
 
-  setName(name) {
-  }
+  setName(_name) {}
 
-  once(event, callback, source) {
-  }
+  once(_event, _callback, _source) {}
 
   removeFromDisplayList() {
     // same as remove or destroy
@@ -32,7 +28,7 @@ export default class MockRectangle implements MockGameObject {
     // This callback is invoked when this Game Object is added to a Scene.
   }
 
-  setPositionRelative(source, x, y) {
+  setPositionRelative(_source, _x, _y) {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
   }
 
@@ -74,7 +70,9 @@ export default class MockRectangle implements MockGameObject {
   getAll() {
     return this.list;
   }
-  setScale(scale) {
+  setScale(_scale) {
     // return this.phaserText.setScale(scale);
   }
+
+  off() {}
 }
