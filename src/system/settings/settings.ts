@@ -917,6 +917,10 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("es-ES"),
               },
               {
+                label: "Español (LATAM)",
+                handler: () => changeLocaleHandler("es-MX"),
+              },
+              {
                 label: "Italiano",
                 handler: () => changeLocaleHandler("it"),
               },
