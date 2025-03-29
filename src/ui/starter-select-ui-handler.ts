@@ -1,6 +1,6 @@
 import type { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
 import { BattleSceneEventType } from "#app/events/battle-scene";
-import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type { Variant } from "#app/data/variant";
 import { getVariantTint, getVariantIcon } from "#app/data/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -19,7 +19,7 @@ import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
+import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { PokemonType } from "#enums/pokemon-type";
 import { GameModes } from "#app/game-mode";
