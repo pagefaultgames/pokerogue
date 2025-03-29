@@ -1,31 +1,35 @@
 import { startingWave } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import type { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
-import { PokeballType } from "#enums/pokeball";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
-import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
-import { PokemonType } from "#enums/pokemon-type";
 import { doubleBattleDialogue } from "#app/data/dialogue";
 import { TrainerVariant } from "#app/field/trainer";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
-import { Moves } from "#enums/moves";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { Species } from "#enums/species";
-import { TrainerType } from "#enums/trainer-type";
 import { Gender } from "#app/data/gender";
 import { signatureSpecies } from "../balance/signature-species";
+
+// Enum imports
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { Species } from "#enums/species";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
+import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
+import { TrainerType } from "#enums/trainer-type";
+
+// Type imports
+import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import type { EnemyPokemon } from "#app/field/pokemon";
 import type {
   PartyMemberFunc,
   GenModifiersFunc,
