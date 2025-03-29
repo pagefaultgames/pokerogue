@@ -2151,6 +2151,21 @@ export class TypeBoostTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
   }
+
+  override onAdd(pokemon: Pokemon): void {
+    globalScene.queueMessage(
+      i18next.t("abilityTriggers:typeImmunityPowerBoost", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.boostedType]}`),
+      }),
+    );
+  }
+
+  override onOverlap(pokemon: Pokemon): void {
+    globalScene.queueMessage(
+      i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+    );
+  }
 }
 
 export class CritBoostTag extends BattlerTag {
