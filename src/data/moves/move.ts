@@ -1580,10 +1580,6 @@ export class SurviveDamageAttr extends ModifiedDamageAttr {
     return Math.min(damage, target.hp - 1);
   }
 
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => target.hp > 1;
-  }
-
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     return target.hp > 1 ? 0 : -20;
   }
