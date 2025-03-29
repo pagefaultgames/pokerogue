@@ -19,6 +19,7 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "./TrainerPartyTemplate";
+import { evilAdminTrainerPools } from "./evil-admin-trainer-pools";
 
 // Enum imports
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -37,6 +38,7 @@ import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import type { EnemyPokemon } from "#app/field/pokemon";
+import type { EvilTeam } from "./evil-admin-trainer-pools";
 import type {
   PartyMemberFunc,
   GenModifiersFunc,
@@ -535,430 +537,6 @@ export class TrainerConfig {
   }
 
   /**
-   * Returns the pool of species for an evil team admin
-   * @param team - The evil team the admin belongs to.
-   * @returns {TrainerTierPools}
-   */
-  speciesPoolPerEvilTeamAdmin(team): TrainerTierPools {
-    team = team.toLowerCase();
-    switch (team) {
-      case "rocket": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.RATICATE,
-            Species.ARBOK,
-            Species.VILEPLUME,
-            Species.ARCANINE,
-            Species.GENGAR,
-            Species.HYPNO,
-            Species.ELECTRODE,
-            Species.EXEGGUTOR,
-            Species.CUBONE,
-            Species.KOFFING,
-            Species.GYARADOS,
-            Species.CROBAT,
-            Species.STEELIX,
-            Species.HOUNDOOM,
-            Species.HONCHKROW,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.OMASTAR,
-            Species.KABUTOPS,
-            Species.MAGNEZONE,
-            Species.ELECTIVIRE,
-            Species.MAGMORTAR,
-            Species.PORYGON_Z,
-            Species.ANNIHILAPE,
-            Species.ALOLA_SANDSLASH,
-            Species.ALOLA_PERSIAN,
-            Species.ALOLA_GOLEM,
-            Species.ALOLA_MUK,
-            Species.PALDEA_TAUROS,
-          ],
-          [TrainerPoolTier.RARE]: [Species.DRAGONITE, Species.TYRANITAR],
-        };
-      }
-      case "magma": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.ARCANINE,
-            Species.MAGCARGO,
-            Species.HOUNDOOM,
-            Species.TORKOAL,
-            Species.SOLROCK,
-            Species.CLAYDOL,
-            Species.HIPPOWDON,
-            Species.MAGMORTAR,
-            Species.GLISCOR,
-            Species.COALOSSAL,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.AGGRON,
-            Species.FLYGON,
-            Species.CRADILY,
-            Species.ARMALDO,
-            Species.RHYPERIOR,
-            Species.TURTONATOR,
-            Species.SANDACONDA,
-            Species.TOEDSCRUEL,
-            Species.HISUI_ARCANINE,
-          ],
-          [TrainerPoolTier.RARE]: [Species.CHARCADET, Species.SCOVILLAIN],
-        };
-      }
-      case "aqua": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.TENTACRUEL,
-            Species.LANTURN,
-            Species.AZUMARILL,
-            Species.QUAGSIRE,
-            Species.OCTILLERY,
-            Species.LUDICOLO,
-            Species.PELIPPER,
-            Species.WAILORD,
-            Species.WHISCASH,
-            Species.CRAWDAUNT,
-            Species.WALREIN,
-            Species.CLAMPERL,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.QUAGSIRE,
-            Species.MANTINE,
-            Species.KINGDRA,
-            Species.MILOTIC,
-            Species.DRAGALGE,
-            Species.DHELMISE,
-            Species.BARRASKEWDA,
-            Species.GRAPPLOCT,
-            Species.OVERQWIL,
-          ],
-          [TrainerPoolTier.RARE]: [Species.BASCULEGION, Species.DONDOZO],
-        };
-      }
-      case "galactic": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.ELECTRODE,
-            Species.GYARADOS,
-            Species.CROBAT,
-            Species.HONCHKROW,
-            Species.BRONZONG,
-            Species.DRAPION,
-            Species.LICKILICKY,
-            Species.TANGROWTH,
-            Species.ELECTIVIRE,
-            Species.MAGMORTAR,
-            Species.YANMEGA,
-            Species.MAMOSWINE,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.ALAKAZAM,
-            Species.WEAVILE,
-            Species.GLISCOR,
-            Species.DUSKNOIR,
-            Species.ROTOM,
-            Species.OVERQWIL,
-            Species.HISUI_ARCANINE,
-            Species.HISUI_ELECTRODE,
-          ],
-          [TrainerPoolTier.RARE]: [Species.SPIRITOMB, Species.URSALUNA, Species.SNEASLER, Species.HISUI_LILLIGANT],
-        };
-      }
-      case "plasma": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.GIGALITH,
-            Species.CONKELDURR,
-            Species.SEISMITOAD,
-            Species.KROOKODILE,
-            Species.DARMANITAN,
-            Species.COFAGRIGUS,
-            Species.VANILLUXE,
-            Species.AMOONGUSS,
-            Species.JELLICENT,
-            Species.GALVANTULA,
-            Species.FERROTHORN,
-            Species.BEARTIC,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.EXCADRILL,
-            Species.SIGILYPH,
-            Species.ZOROARK,
-            Species.KLINKLANG,
-            Species.EELEKTROSS,
-            Species.MIENSHAO,
-            Species.GOLURK,
-            Species.BISHARP,
-            Species.MANDIBUZZ,
-            Species.DURANT,
-            Species.GALAR_DARMANITAN,
-          ],
-          [TrainerPoolTier.RARE]: [Species.HAXORUS, Species.HYDREIGON, Species.HISUI_ZOROARK, Species.HISUI_BRAVIARY],
-        };
-      }
-      case "plasma_2": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.MUK,
-            Species.ELECTRODE,
-            Species.BRONZONG,
-            Species.MAGNEZONE,
-            Species.PORYGON_Z,
-            Species.MUSHARNA,
-            Species.REUNICLUS,
-            Species.GALVANTULA,
-            Species.FERROTHORN,
-            Species.EELEKTROSS,
-            Species.BEHEEYEM,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.METAGROSS,
-            Species.ROTOM,
-            Species.CARRACOSTA,
-            Species.ARCHEOPS,
-            Species.GOLURK,
-            Species.DURANT,
-            Species.VIKAVOLT,
-            Species.ORBEETLE,
-            Species.REVAVROOM,
-            Species.ALOLA_MUK,
-            Species.HISUI_ELECTRODE,
-          ],
-          [TrainerPoolTier.RARE]: [Species.ELECTIVIRE, Species.MAGMORTAR, Species.BISHARP, Species.ARCHALUDON],
-        };
-      }
-      case "flare": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.MANECTRIC,
-            Species.DRAPION,
-            Species.LIEPARD,
-            Species.AMOONGUSS,
-            Species.DIGGERSBY,
-            Species.TALONFLAME,
-            Species.PYROAR,
-            Species.PANGORO,
-            Species.MEOWSTIC,
-            Species.MALAMAR,
-            Species.CLAWITZER,
-            Species.HELIOLISK,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.HOUNDOOM,
-            Species.WEAVILE,
-            Species.CHANDELURE,
-            Species.AEGISLASH,
-            Species.BARBARACLE,
-            Species.DRAGALGE,
-            Species.GOODRA,
-            Species.TREVENANT,
-            Species.GOURGEIST,
-          ],
-          [TrainerPoolTier.RARE]: [Species.NOIVERN, Species.HISUI_GOODRA, Species.HISUI_AVALUGG],
-        };
-      }
-      case "aether": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.ALAKAZAM,
-            Species.SLOWBRO,
-            Species.EXEGGUTOR,
-            Species.XATU,
-            Species.CLAYDOL,
-            Species.BEHEEYEM,
-            Species.ORANGURU,
-            Species.BRUXISH,
-            Species.ORBEETLE,
-            Species.FARIGIRAF,
-            Species.ALOLA_RAICHU,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.KIRLIA,
-            Species.MEDICHAM,
-            Species.METAGROSS,
-            Species.MALAMAR,
-            Species.HATTERENE,
-            Species.MR_RIME,
-            Species.GALAR_SLOWKING,
-          ],
-          [TrainerPoolTier.RARE]: [Species.PORYGON_Z, Species.ARMAROUGE, Species.HISUI_BRAVIARY],
-        };
-      }
-      case "skull": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.NIDOQUEEN,
-            Species.GENGAR,
-            Species.KOFFING,
-            Species.CROBAT,
-            Species.ROSERADE,
-            Species.SKUNTANK,
-            Species.TOXICROAK,
-            Species.SCOLIPEDE,
-            Species.TOXAPEX,
-            Species.LURANTIS,
-            Species.ALOLA_MUK,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.DRAPION,
-            Species.MANDIBUZZ,
-            Species.OVERQWIL,
-            Species.GLIMMORA,
-            Species.CLODSIRE,
-            Species.GALAR_SLOWBRO,
-          ],
-          [TrainerPoolTier.RARE]: [Species.DRAGALGE, Species.SNEASLER],
-        };
-      }
-      case "macro": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.NINETALES,
-            Species.BELLOSSOM,
-            Species.MILOTIC,
-            Species.FROSLASS,
-            Species.GOTHITELLE,
-            Species.JELLICENT,
-            Species.SALAZZLE,
-            Species.TSAREENA,
-            Species.POLTEAGEIST,
-            Species.HATTERENE,
-            Species.GALAR_RAPIDASH,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.TOGEKISS,
-            Species.MANDIBUZZ,
-            Species.TOXAPEX,
-            Species.APPLETUN,
-            Species.CURSOLA,
-            Species.ALOLA_NINETALES,
-          ],
-          [TrainerPoolTier.RARE]: [Species.TINKATON, Species.HISUI_LILLIGANT],
-        };
-      }
-      case "star_1": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.SHIFTRY,
-            Species.CACTURNE,
-            Species.HONCHKROW,
-            Species.SKUNTANK,
-            Species.KROOKODILE,
-            Species.OBSTAGOON,
-            Species.LOKIX,
-            Species.MABOSSTIFF,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.UMBREON,
-            Species.CRAWDAUNT,
-            Species.WEAVILE,
-            Species.ZOROARK,
-            Species.MALAMAR,
-            Species.BOMBIRDIER,
-          ],
-          [TrainerPoolTier.RARE]: [Species.HYDREIGON, Species.MEOWSCARADA],
-        };
-      }
-      case "star_2": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.ARCANINE,
-            Species.HOUNDOOM,
-            Species.CAMERUPT,
-            Species.CHANDELURE,
-            Species.TALONFLAME,
-            Species.PYROAR,
-            Species.COALOSSAL,
-            Species.SCOVILLAIN,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.RAPIDASH,
-            Species.FLAREON,
-            Species.TORKOAL,
-            Species.MAGMORTAR,
-            Species.SALAZZLE,
-            Species.TURTONATOR,
-          ],
-          [TrainerPoolTier.RARE]: [Species.VOLCARONA, Species.SKELEDIRGE],
-        };
-      }
-      case "star_3": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.MUK,
-            Species.CROBAT,
-            Species.SKUNTANK,
-            Species.AMOONGUSS,
-            Species.TOXAPEX,
-            Species.TOXTRICITY,
-            Species.GRAFAIAI,
-            Species.CLODSIRE,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.GENGAR,
-            Species.SEVIPER,
-            Species.DRAGALGE,
-            Species.OVERQWIL,
-            Species.ALOLA_MUK,
-            Species.GALAR_SLOWBRO,
-          ],
-          [TrainerPoolTier.RARE]: [Species.GLIMMORA, Species.VENUSAUR],
-        };
-      }
-      case "star_4": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.CLEFABLE,
-            Species.WIGGLYTUFF,
-            Species.AZUMARILL,
-            Species.WHIMSICOTT,
-            Species.FLORGES,
-            Species.HATTERENE,
-            Species.GRIMMSNARL,
-            Species.TINKATON,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.TOGEKISS,
-            Species.GARDEVOIR,
-            Species.SYLVEON,
-            Species.KLEFKI,
-            Species.MIMIKYU,
-            Species.ALOLA_NINETALES,
-          ],
-          [TrainerPoolTier.RARE]: [Species.GALAR_RAPIDASH, Species.PRIMARINA],
-        };
-      }
-      case "star_5": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.BRELOOM,
-            Species.HARIYAMA,
-            Species.MEDICHAM,
-            Species.TOXICROAK,
-            Species.SCRAFTY,
-            Species.MIENSHAO,
-            Species.PAWMOT,
-            Species.PALDEA_TAUROS,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.LUCARIO,
-            Species.CONKELDURR,
-            Species.HAWLUCHA,
-            Species.PASSIMIAN,
-            Species.FALINKS,
-            Species.FLAMIGO,
-          ],
-          [TrainerPoolTier.RARE]: [Species.KOMMO_O, Species.QUAQUAVAL],
-        };
-      }
-    }
-
-    console.warn(`Evil team admin for ${team} not found. Returning empty species pools.`);
-    return [];
-  }
-
-  /**
    * Initializes the trainer configuration for an evil team admin.
    * @param title The title of the evil team admin.
    * @param poolName The evil team the admin belongs to.
@@ -968,7 +546,7 @@ export class TrainerConfig {
    * **/
   initForEvilTeamAdmin(
     title: string,
-    poolName: string,
+    poolName: EvilTeam,
     signatureSpecies: (Species | Species[])[],
     specialtyType?: PokemonType,
   ): TrainerConfig {
@@ -983,7 +561,7 @@ export class TrainerConfig {
     this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
 
     // Set the species pools for the evil team admin.
-    this.speciesPools = this.speciesPoolPerEvilTeamAdmin(poolName);
+    this.speciesPools = evilAdminTrainerPools[poolName];
 
     signatureSpecies.forEach((speciesPool, s) => {
       if (!Array.isArray(speciesPool)) {
@@ -2603,7 +2181,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.ZINZOLIN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("plasma_sage", "plasma", [Species.CRYOGONAL])
+    .initForEvilTeamAdmin("plasma_sage", "plasma_zinzolan", [Species.CRYOGONAL])
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_plasma_grunt")
@@ -2611,7 +2189,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
   [TrainerType.COLRESS]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("plasma_boss", "plasma_2", [Species.KLINKLANG])
+    .initForEvilTeamAdmin("plasma_boss", "plasma_colress", [Species.KLINKLANG])
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_colress")
     .setMixedBattleBgm("battle_colress")
@@ -2830,7 +2408,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.OLEANA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("macro_admin", "macro", [Species.GARBODOR])
+    .initForEvilTeamAdmin("macro_admin", "macro_cosmos", [Species.GARBODOR])
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_oleana")
@@ -2897,7 +2475,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.GIACOMO]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_1", [Species.KINGAMBIT], PokemonType.DARK)
+    .initForEvilTeamAdmin("star_admin", "star_dark", [Species.KINGAMBIT], PokemonType.DARK)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -2917,7 +2495,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.MELA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_2", [Species.ARMAROUGE], PokemonType.FIRE)
+    .initForEvilTeamAdmin("star_admin", "star_fire", [Species.ARMAROUGE], PokemonType.FIRE)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -2937,7 +2515,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ATTICUS]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_3", [Species.REVAVROOM], PokemonType.POISON)
+    .initForEvilTeamAdmin("star_admin", "star_poison", [Species.REVAVROOM], PokemonType.POISON)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -2957,7 +2535,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ORTEGA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_4", [Species.DACHSBUN], PokemonType.FAIRY)
+    .initForEvilTeamAdmin("star_admin", "star_fairy", [Species.DACHSBUN], PokemonType.FAIRY)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -2977,7 +2555,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ERI]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_5", [Species.ANNIHILAPE], PokemonType.FIGHTING)
+    .initForEvilTeamAdmin("star_admin", "star_fighting", [Species.ANNIHILAPE], PokemonType.FIGHTING)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")

@@ -417,7 +417,7 @@ export type EvilTeam =
   | "star_fighting";
 
 /** Trainer pools for each evil admin team */
-export const EvilAdminTrainerPools: Record<EvilTeam, TrainerTierPools> = {
+export const evilAdminTrainerPools: Record<EvilTeam, TrainerTierPools> = {
   rocket: ROCKET,
   magma: MAGMA,
   aqua: AQUA,
