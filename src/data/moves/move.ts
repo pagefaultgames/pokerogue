@@ -4798,8 +4798,8 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.NumberHolder);
 
-    const predictedPhysDmg = target.getBaseDamage(user, move, MoveCategory.PHYSICAL, true, true);
-    const predictedSpecDmg = target.getBaseDamage(user, move, MoveCategory.SPECIAL, true, true);
+    const predictedPhysDmg = target.getBaseDamage(user, move, MoveCategory.PHYSICAL, true, true, true, true);
+    const predictedSpecDmg = target.getBaseDamage(user, move, MoveCategory.SPECIAL, true, true, true, true);
 
     if (predictedPhysDmg > predictedSpecDmg) {
       category.value = MoveCategory.PHYSICAL;
