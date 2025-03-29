@@ -4133,7 +4133,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ignoreAbility,
       ignoreSourceAbility,
       ignoreAllyAbility,
-      ignoreSourceAbility,
+      ignoreSourceAllyAbility,
       isCritical,
       simulated,
     );
@@ -4459,7 +4459,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       cancelled,
       result,
       damage: dmg,
-    } = this.getAttackDamage(source, move, false, false, isCritical, false);
+    } = this.getAttackDamage(source, move, false, false, false, false, isCritical, false);
 
     const typeBoost = source.findTag(
       t =>
@@ -7147,7 +7147,6 @@ export class EnemyPokemon extends Pokemon {
                     !p.getAlly()?.battleData.abilityRevealed,
                     false,
                     isCritical,
-                    true
                   ).damage >= p.hp
                 );
               })
