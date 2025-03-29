@@ -404,7 +404,7 @@ export type EvilTeam =
   | "magma"
   | "aqua"
   | "galactic"
-  | "plasma_zinzolan"
+  | "plasma_zinzolin"
   | "plasma_colress"
   | "flare"
   | "aether"
