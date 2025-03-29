@@ -7,7 +7,7 @@ import * as Utils from "#app/utils";
 import { BattlePhase } from "./battle-phase";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#app/data/trainers/trainer-config";
 import { globalScene } from "#app/global-scene";
 import { Biome } from "#app/enums/biome";
 import { achvs } from "#app/system/achv";

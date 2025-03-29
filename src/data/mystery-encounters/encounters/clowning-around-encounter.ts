@@ -8,7 +8,7 @@ import {
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#app/data/trainer-config";
+import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#app/data/trainers/trainer-config";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { ModifierPoolType, modifierTypes } from "#app/modifier/modifier-type";

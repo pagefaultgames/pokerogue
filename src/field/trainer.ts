@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import type { TrainerConfig, TrainerPartyTemplate } from "#app/data/trainer-config";
+import type { TrainerConfig, TrainerPartyTemplate } from "#app/data/trainers/trainer-config";
 import {
   TrainerPartyCompoundTemplate,
   TrainerPoolTier,
@@ -10,7 +10,7 @@ import {
   trainerConfigs,
   trainerPartyTemplates,
   TeraAIMode,
-} from "#app/data/trainer-config";
+} from "#app/data/trainers/trainer-config";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
 import type { PersistentModifier } from "#app/modifier/modifier";

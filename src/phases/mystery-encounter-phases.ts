@@ -22,7 +22,7 @@ import { globalScene } from "#app/global-scene";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import type { OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { transitionMysteryEncounterIntroVisuals } from "../data/mystery-encounters/utils/encounter-phase-utils";
-import { TrainerSlot } from "../data/trainer-config";
+import { TrainerSlot } from "../data/trainers/trainer-config";
 import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";

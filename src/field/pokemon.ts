@@ -225,7 +225,7 @@ import {
   SpeciesFormChangeStatusEffectTrigger,
 } from "#app/data/pokemon-forms";
 import { TerrainType } from "#app/data/terrain";
-import type { TrainerSlot } from "#app/data/trainer-config";
+import type { TrainerSlot } from "#app/data/trainers/trainer-config";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";

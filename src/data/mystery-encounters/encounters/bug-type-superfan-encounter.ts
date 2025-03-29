@@ -15,7 +15,7 @@ import {
   TrainerPartyCompoundTemplate,
   TrainerPartyTemplate,
   TrainerSlot,
-} from "#app/data/trainer-config";
+} from "#app/data/trainers/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/global-scene";

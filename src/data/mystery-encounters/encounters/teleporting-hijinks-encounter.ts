@@ -24,7 +24,7 @@ import { Biome } from "#enums/biome";
 import { getBiomeKey } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
 import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#app/data/trainers/trainer-config";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
