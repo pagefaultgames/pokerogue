@@ -1,4 +1,3 @@
-import { off } from "process";
 import type { MockGameObject } from "../mockGameObject";
 
 export default class MockRectangle implements MockGameObject {

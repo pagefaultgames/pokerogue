@@ -30,7 +30,6 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { getPokeballTintColor } from "#app/data/pokeball";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";

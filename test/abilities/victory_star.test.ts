@@ -24,7 +24,7 @@ describe("Abilities - Victory Star", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.TACKLE, Moves.SPLASH ])
+      .moveset([Moves.TACKLE, Moves.SPLASH])
       .battleType("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
@@ -33,7 +33,7 @@ describe("Abilities - Victory Star", () => {
   });
 
   it("should increase the accuracy of its user", async () => {
-    await game.classicMode.startBattle([ Species.VICTINI, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.VICTINI, Species.MAGIKARP]);
 
     const user = game.scene.getPlayerField()[0];
 
@@ -46,7 +46,7 @@ describe("Abilities - Victory Star", () => {
   });
 
   it("should increase the accuracy of its user's ally", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.VICTINI ]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.VICTINI]);
 
     const ally = game.scene.getPlayerField()[0];
     vi.spyOn(ally, "getAccuracyMultiplier");

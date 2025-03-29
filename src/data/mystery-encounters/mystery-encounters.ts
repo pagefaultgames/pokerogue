@@ -332,7 +332,6 @@ export function initMysteryEncounters() {
   });
 
   // Add ANY biome encounters to biome map
-  // eslint-disable-next-line
   let _encounterBiomeTableLog = "";
   mysteryEncountersByBiome.forEach((biomeEncounters, biome) => {
     anyBiomeEncounters.forEach(encounter => {

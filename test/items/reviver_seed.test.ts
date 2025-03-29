@@ -26,7 +26,7 @@ describe("Items - Reviver Seed", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.TACKLE, Moves.ENDURE ])
+      .moveset([Moves.SPLASH, Moves.TACKLE, Moves.ENDURE])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -47,13 +47,10 @@ describe("Items - Reviver Seed", () => {
     { moveType: "Fixed Damage Move", move: Moves.SEISMIC_TOSS },
     { moveType: "Final Gambit", move: Moves.FINAL_GAMBIT },
     { moveType: "Counter", move: Moves.COUNTER },
-    { moveType: "OHKO", move: Moves.SHEER_COLD }
+    { moveType: "OHKO", move: Moves.SHEER_COLD },
   ])("should activate the holder's reviver seed from a $moveType", async ({ move }) => {
-    game.override
-      .enemyLevel(100)
-      .startingLevel(1)
-      .enemyMoveset(move);
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+    game.override.enemyLevel(100).startingLevel(1).enemyMoveset(move);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon()!;
     player.damageAndUpdate(player.hp - 1);
 
@@ -67,11 +64,8 @@ describe("Items - Reviver Seed", () => {
   });
 
   it("should activate the holder's reviver seed from confusion self-hit", async () => {
-    game.override
-      .enemyLevel(1)
-      .startingLevel(100)
-      .enemyMoveset(Moves.SPLASH);
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+    game.override.enemyLevel(1).startingLevel(100).enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon()!;
     player.damageAndUpdate(player.hp - 1);
     player.addTag(BattlerTagType.CONFUSED, 3);
@@ -100,7 +94,7 @@ describe("Items - Reviver Seed", () => {
       .enemySpecies(Species.MAGIKARP)
       .moveset(move)
       .enemyMoveset(Moves.ENDURE);
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.damageAndUpdate(enemy.hp - 1);
 
@@ -124,7 +118,7 @@ describe("Items - Reviver Seed", () => {
       .moveset(move)
       .enemyAbility(Abilities.LIQUID_OOZE)
       .enemyMoveset(Moves.SPLASH);
-    await game.classicMode.startBattle([ Species.GASTLY, Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.GASTLY, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon()!;
     player.damageAndUpdate(player.hp - 1);
 
@@ -145,13 +139,13 @@ describe("Items - Reviver Seed", () => {
       .moveset(Moves.DESTINY_BOND)
       .startingHeldItems([]) // reset held items to nothing so user doesn't revive and not trigger Destiny Bond
       .enemyMoveset(Moves.TACKLE);
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon()!;
     player.damageAndUpdate(player.hp - 1);
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.DESTINY_BOND);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.isFainted()).toBeTruthy();
