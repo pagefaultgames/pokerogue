@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { Phase } from "#app/phase";
 
 export class BattlePhase extends Phase {

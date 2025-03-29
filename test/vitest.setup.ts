@@ -14,8 +14,9 @@ import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { afterAll, beforeAll, vi } from "vitest";
 
+import { initTestFile } from "./testUtils/testFileInitialization";
+
 /** Set the timezone to UTC for tests. */
-process.env.TZ = "UTC";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async importOriginal => {
@@ -63,28 +64,10 @@ vi.mock("i18next", async importOriginal => {
   return await importOriginal();
 });
 
-initVouchers();
-initAchievements();
-initStatsKeys();
-initPokemonPrevolutions();
-initBiomes();
-initEggMoves();
-initPokemonForms();
-initSpecies();
-initMoves();
-initAbilities();
-initLoggedInUser();
-initMysteryEncounters();
-
 global.testFailed = false;
 
 beforeAll(() => {
-  Object.defineProperty(document, "fonts", {
-    writable: true,
-    value: {
-      add: () => {},
-    },
-  });
+  initTestFile();
 });
 
 afterAll(() => {
