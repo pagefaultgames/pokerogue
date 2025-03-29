@@ -1174,7 +1174,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.blockInput = false;
       } else {
         ui.revertMode().then(() => {
-          console.log("exitCallback", this.exitCallback);
           if (this.exitCallback instanceof Function) {
             const exitCallback = this.exitCallback;
             this.exitCallback = null;
