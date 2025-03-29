@@ -9,11 +9,17 @@ import type {
 import { PokerogueAdminApi } from "#app/plugins/api/pokerogue-admin-api";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import { http, HttpResponse } from "msw";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import type { SetupServerApi } from "msw/node";
 
 const apiBase = getApiBaseUrl();
 const adminApi = new PokerogueAdminApi(apiBase);
-const { server } = global;
+let server: SetupServerApi;
+
+beforeAll(async () => {
+  server = await initServerForApiTests();
+});
 
 afterEach(() => {
   server.resetHandlers();
