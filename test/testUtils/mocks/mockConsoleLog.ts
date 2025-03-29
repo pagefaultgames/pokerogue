@@ -1,82 +1,80 @@
-const MockConsoleLog = (_logDisabled = false, _phaseText = false) => {
-  let logs: any[] = [];
-  const logDisabled: boolean = _logDisabled;
-  const phaseText: boolean = _phaseText;
-  const originalLog = console.log;
-  const originalError = console.error;
-  const originalDebug = console.debug;
-  const originalWarn = console.warn;
-  const notified: any[] = [];
+const originalLog = console.log;
+const originalError = console.error;
+const originalDebug = console.debug;
+const originalWarn = console.warn;
 
-  const blacklist = ["Phaser", "variant icon does not exist", 'Texture "%s" not found'];
-  const whitelist = ["Phase"];
+const blacklist = ["Phaser", "variant icon does not exist", 'Texture "%s" not found'];
+const whitelist = ["Phase"];
 
-  return {
-    log(...args) {
-      const argsStr = this.getStr(args);
-      logs.push(argsStr);
-      if (logDisabled && !phaseText) {
-        return;
-      }
-      if ((phaseText && !whitelist.some(b => argsStr.includes(b))) || blacklist.some(b => argsStr.includes(b))) {
-        return;
-      }
-      originalLog(args);
-    },
-    error(...args) {
-      const argsStr = this.getStr(args);
-      logs.push(argsStr);
-      originalError(args); // Appelle le console.error originel
-    },
-    debug(...args) {
-      const argsStr = this.getStr(args);
-      logs.push(argsStr);
-      if (logDisabled && !phaseText) {
-        return;
-      }
-      if (!whitelist.some(b => argsStr.includes(b)) || blacklist.some(b => argsStr.includes(b))) {
-        return;
-      }
-      originalDebug(args);
-    },
-    warn(...args) {
-      const argsStr = this.getStr(args);
-      logs.push(args);
-      if (logDisabled && !phaseText) {
-        return;
-      }
-      if (!whitelist.some(b => argsStr.includes(b)) || blacklist.some(b => argsStr.includes(b))) {
-        return;
-      }
-      originalWarn(args);
-    },
-    notify(msg) {
-      originalLog(msg);
-      notified.push(msg);
-    },
-    getLogs() {
-      return logs;
-    },
-    clearLogs() {
-      logs = [];
-    },
-    getStr(...args) {
-      return args
-        .map(arg => {
-          if (typeof arg === "object" && arg !== null) {
-            // Handle objects including arrays
-            return JSON.stringify(arg, (_key, value) => (typeof value === "bigint" ? value.toString() : value));
-          }
-          if (typeof arg === "bigint") {
-            // Handle BigInt values
-            return arg.toString();
-          }
-          // Handle all other types
+export class MockConsoleLog {
+  constructor(
+    private logDisabled = false,
+    private phaseText = false,
+  ) {}
+  private logs: any[] = [];
+  private notified: any[] = [];
+
+  public log(...args) {
+    const argsStr = this.getStr(args);
+    this.logs.push(argsStr);
+    if (this.logDisabled && !this.phaseText) {
+      return;
+    }
+    if ((this.phaseText && !whitelist.some(b => argsStr.includes(b))) || blacklist.some(b => argsStr.includes(b))) {
+      return;
+    }
+    originalLog(args);
+  }
+  public error(...args) {
+    const argsStr = this.getStr(args);
+    this.logs.push(argsStr);
+    originalError(args); // Appelle le console.error originel
+  }
+  public debug(...args) {
+    const argsStr = this.getStr(args);
+    this.logs.push(argsStr);
+    if (this.logDisabled && !this.phaseText) {
+      return;
+    }
+    if (!whitelist.some(b => argsStr.includes(b)) || blacklist.some(b => argsStr.includes(b))) {
+      return;
+    }
+    originalDebug(args);
+  }
+  warn(...args) {
+    const argsStr = this.getStr(args);
+    this.logs.push(args);
+    if (this.logDisabled && !this.phaseText) {
+      return;
+    }
+    if (!whitelist.some(b => argsStr.includes(b)) || blacklist.some(b => argsStr.includes(b))) {
+      return;
+    }
+    originalWarn(args);
+  }
+  notify(msg) {
+    originalLog(msg);
+    this.notified.push(msg);
+  }
+  getLogs() {
+    return this.logs;
+  }
+  clearLogs() {
+    this.logs = [];
+  }
+  getStr(...args) {
+    return args
+      .map(arg => {
+        if (typeof arg === "object" && arg !== null) {
+          // Handle objects including arrays
+          return JSON.stringify(arg, (_key, value) => (typeof value === "bigint" ? value.toString() : value));
+        }
+        if (typeof arg === "bigint") {
+          // Handle BigInt values
           return arg.toString();
-        })
-        .join(";");
-    },
-  };
-};
-
-export default MockConsoleLog;
+        }
+        return arg.toString();
+      })
+      .join(";");
+  }
+}

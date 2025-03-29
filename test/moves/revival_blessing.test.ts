@@ -114,4 +114,21 @@ describe("Moves - Revival Blessing", () => {
     expect(feebas.hp).toBe(toDmgValue(0.5 * feebas.getMaxHp()));
     expect(game.scene.getPlayerField()[0]).toBe(feebas);
   });
+
+  it("should not summon multiple pokemon to the same slot when reviving the enemy ally in doubles", async () => {
+    game.override.battleType("double").enemyMoveset([Moves.REVIVAL_BLESSING]).moveset([Moves.SPLASH]).startingWave(25); // 2nd rival battle - must have 3+ pokemon
+    await game.classicMode.startBattle([Species.ARCEUS, Species.GIRATINA]);
+
+    const enemyFainting = game.scene.getEnemyField()[0];
+
+    game.move.select(Moves.SPLASH, 0);
+    game.move.select(Moves.SPLASH, 1);
+    await game.killPokemon(enemyFainting);
+
+    await game.phaseInterceptor.to("BerryPhase");
+    await game.toNextTurn();
+    // If there are incorrectly two switch phases into this slot, the fainted pokemon will end up in slot 3
+    // Make sure it's still in slot 1
+    expect(game.scene.getEnemyParty()[0]).toBe(enemyFainting);
+  });
 });

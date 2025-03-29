@@ -1,6 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { allMoves, TeraMoveCategoryAttr } from "#app/data/moves/move";
+import type Move from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
 import { HitResult } from "#app/field/pokemon";
@@ -13,13 +14,16 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Tera Blast", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const moveToCheck = allMoves[Moves.TERA_BLAST];
-  const teraBlastAttr = moveToCheck.getAttrs(TeraMoveCategoryAttr)[0];
+
+  let moveToCheck: Move;
+  let teraBlastAttr: TeraMoveCategoryAttr;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
+    moveToCheck = allMoves[Moves.TERA_BLAST];
+    teraBlastAttr = moveToCheck.getAttrs(TeraMoveCategoryAttr)[0];
   });
 
   afterEach(() => {
