@@ -39,6 +39,7 @@ import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { getNatureName } from "#app/data/nature";
+import { speciesStarterCosts } from "#app/data/balance/starters";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
@@ -125,11 +126,25 @@ export class EncounterPhase extends BattlePhase {
           ) {
             enemySpecies = getGoldenBugNetSpecies(level);
           }
+
+          let isCatchable = true;
+          if (globalScene.arena.biomeType === Biome.END) {
+            const canCatch =
+              globalScene.gameData.dexData[enemySpecies.speciesId].caughtAttr ||
+              (enemySpecies.speciesId === Species.ETERNATUS &&
+                globalScene.gameData.getStarterCount(d => !!d.caughtAttr) >=
+                  Object.keys(speciesStarterCosts).length - 1);
+            if (!globalScene.gameMode.isClassic || globalScene.gameMode.isFreshStartChallenge() || !canCatch) {
+              isCatchable = false;
+            }
+          }
+
           battle.enemyParty[e] = globalScene.addEnemyPokemon(
             enemySpecies,
             level,
             TrainerSlot.NONE,
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
+            !isCatchable, // shiny locking if the mon is uncatchable
           );
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
