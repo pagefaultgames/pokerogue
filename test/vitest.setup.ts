@@ -1,17 +1,4 @@
 import "vitest-canvas-mock";
-
-import { initLoggedInUser } from "#app/account";
-import { initAbilities } from "#app/data/ability";
-import { initBiomes } from "#app/data/balance/biomes";
-import { initEggMoves } from "#app/data/balance/egg-moves";
-import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import { initMoves } from "#app/data/moves/move";
-import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { initPokemonForms } from "#app/data/pokemon-forms";
-import { initSpecies } from "#app/data/pokemon-species";
-import { initAchievements } from "#app/system/achv";
-import { initVouchers } from "#app/system/voucher";
-import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { afterAll, beforeAll, vi } from "vitest";
 
 import { initTestFile } from "./testUtils/testFileInitialization";
@@ -20,13 +7,11 @@ import { initTestFile } from "./testUtils/testFileInitialization";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async importOriginal => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();
 
   return {
     default: defaultOverrides,
     defaultOverrides,
-    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   } satisfies typeof import("#app/overrides");
 });
 
