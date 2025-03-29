@@ -220,6 +220,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private showFormTrayLabel: Phaser.GameObjects.Text;
   private canShowFormTray: boolean;
   private filteredIndices: Species[];
+  private filteredFormIndices: Species[];
 
   constructor() {
     super(Mode.POKEDEX);
@@ -1029,7 +1030,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else if (this.showingTray) {
       if (button === Button.ACTION) {
         const formIndex = this.trayForms[this.trayCursor].formIndex;
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
+        ui.setOverlayMode(
+          Mode.POKEDEX_PAGE,
+          this.lastSpecies,
+          { form: formIndex },
+          this.filteredIndices,
+          this.filteredFormIndices,
+        );
         success = true;
       } else {
         const numberOfForms = this.trayContainers.length;
@@ -1079,7 +1086,13 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else {
       if (button === Button.ACTION) {
         const formIndex = this.pokemonContainers[this.cursor]?.formIndex;
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
+        ui.setOverlayMode(
+          Mode.POKEDEX_PAGE,
+          this.lastSpecies,
+          { form: formIndex },
+          this.filteredIndices,
+          this.filteredFormIndices,
+        );
         success = true;
       } else {
         switch (button) {
@@ -1589,6 +1602,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     });
 
     this.filteredIndices = this.filteredPokemonData.map(c => c.species.speciesId);
+    this.filteredFormIndices = this.filteredPokemonData.map(c => c.formIndex);
 
     this.updateScroll();
   };
