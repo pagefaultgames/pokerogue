@@ -2401,14 +2401,12 @@ export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAt
     this.immuneTags = immuneTags;
   }
 
-  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    let removed = false;
-    for (const tag of this.immuneTags) {
-      if (pokemon.removeTag(tag)) {
-        removed = true;
-      }
-    }
-    return removed;
+  public override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return this.immuneTags.some(tagType => !!pokemon.getTag(tagType));
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
+    this.immuneTags.forEach(tagType => pokemon.removeTag(tagType));
   }
 }
 
@@ -2614,15 +2612,18 @@ export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
     this.immuneEffects = immuneEffects;
   }
 
-  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+  public override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const status = pokemon.status?.effect;
-    if (status && (this.immuneEffects.length < 1 || this.immuneEffects.includes(status))) {
+    return !Utils.isNullOrUndefined(status) && (this.immuneEffects.length < 1 || this.immuneEffects.includes(status))
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
+    const status = pokemon.status?.effect;
+    if (!Utils.isNullOrUndefined(status)) {
       this.statusHealed = status;
       pokemon.resetStatus(false);
       pokemon.updateInfo();
-      return true;
     }
-    return false;
   }
 
   public override getTriggerMessage(_pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
