@@ -7,13 +7,11 @@ import { initTestFile } from "./testUtils/testFileInitialization";
 
 /** Mock the override import to always return default values, ignoring any custom overrides. */
 vi.mock("#app/overrides", async importOriginal => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();
 
   return {
     default: defaultOverrides,
     defaultOverrides,
-    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   } satisfies typeof import("#app/overrides");
 });
 

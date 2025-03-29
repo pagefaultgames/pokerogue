@@ -1,5 +1,4 @@
-/* eslint-disable */
-// @ts-nocheck
+// @ts-nocheck - TODO: remove this
 import BattleScene, * as battleScene from "#app/battle-scene";
 import { MoveAnim } from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
@@ -12,15 +11,15 @@ import MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
 import fs from "node:fs";
 import Phaser from "phaser";
 import { vi } from "vitest";
+import { version } from "../../package.json";
 import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
+import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
 import InputManager = Phaser.Input.InputManager;
 import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
 import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
-import { version } from "../../package.json";
-import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
 
 window.URL.createObjectURL = (blob: Blob) => {
   blobToString(blob).then((data: string) => {
