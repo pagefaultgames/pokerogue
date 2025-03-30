@@ -75,7 +75,7 @@ import {
   DoubleBattleChanceAbAttr,
   PostBattleInitAbAttr,
   PostItemLostAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import type { FixedBattleConfig } from "#app/battle";
 import Battle, { BattleType } from "#app/battle";
 import type { GameMode } from "#app/game-mode";

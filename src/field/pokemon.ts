@@ -136,7 +136,7 @@ import {
   WeakenMoveScreenTag,
 } from "#app/data/arena-tag";
 import type { SuppressAbilitiesTag } from "#app/data/arena-tag";
-import type { Ability, AbAttr } from "#app/data/ability";
+import type { Ability, AbAttr } from "#app/data/abilities/ability";
 import {
   StatMultiplierAbAttr,
   BlockCritAbAttr,
@@ -188,7 +188,7 @@ import {
   applyAllyStatMultiplierAbAttrs,
   AllyStatMultiplierAbAttr,
   MoveAbilityBypassAbAttr
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";

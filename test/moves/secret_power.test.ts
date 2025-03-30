@@ -11,7 +11,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { allAbilities, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
+import { allAbilities, MoveEffectChanceMultiplierAbAttr } from "#app/data/abilities/ability";
 
 describe("Moves - Secret Power", () => {
   let phaserGame: Phaser.Game;

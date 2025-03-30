@@ -4,7 +4,7 @@ import {
   applyPreDefendAbAttrs,
   IgnoreMoveEffectsAbAttr,
   MoveEffectChanceMultiplierAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
