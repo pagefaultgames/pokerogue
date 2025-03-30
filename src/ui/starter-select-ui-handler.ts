@@ -2956,7 +2956,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         valueLimit.value = 10;
     }
 
-    Challenge.applyChallenges(globalScene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
+    Challenge.applyChallenges(Challenge.ChallengeType.STARTER_POINTS, valueLimit);
 
     return valueLimit.value;
   }

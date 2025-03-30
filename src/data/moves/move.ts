@@ -8110,7 +8110,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     for (let i = 0; i < Object.keys(PokemonType).length; i++) {
       const multiplier = new NumberHolder(1);
       multiplier.value = getTypeDamageMultiplier(type, i);
-      applyChallenges(gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       if (multiplier.value < 1) {
         typeResistances.push(i);
       }

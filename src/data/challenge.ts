@@ -10,7 +10,6 @@ import { PokemonMove } from "#app/field/pokemon";
 import type { FixedBattleConfig } from "#app/battle";
 import { ClassicFixedBossWaves, BattleType, getRandomTrainerFunc } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
-import type { GameMode } from "#app/game-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
@@ -383,10 +382,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for GAME_MODE_MODIFY challenges. Derived classes should alter this.
-   * @param gameMode {@link GameMode} The current game mode.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyGameModeModify(_gameMode: GameMode): boolean {
+  applyGameModeModify(): boolean {
     return false;
   }
 
@@ -974,7 +972,6 @@ export class LowerStarterPointsChallenge extends Challenge {
 
 /**
  * Apply all challenges that modify starter choice.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
  * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
  * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
@@ -982,7 +979,6 @@ export class LowerStarterPointsChallenge extends Challenge {
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.STARTER_CHOICE,
   pokemon: PokemonSpecies,
   valid: Utils.BooleanHolder,
@@ -990,85 +986,66 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify available total starter points.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_POINTS
  * @param points {@link Utils.NumberHolder} The amount of points you have available.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.STARTER_POINTS,
-  points: Utils.NumberHolder,
-): boolean;
+export function applyChallenges(challengeType: ChallengeType.STARTER_POINTS, points: Utils.NumberHolder): boolean;
 /**
  * Apply all challenges that modify the cost of a starter.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_COST
  * @param species {@link Species} The pokemon to change the cost of.
  * @param points {@link Utils.NumberHolder} The cost of the pokemon.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.STARTER_COST,
   species: Species,
   cost: Utils.NumberHolder,
 ): boolean;
 /**
  * Apply all challenges that modify a starter after selection.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_MODIFY
  * @param pokemon {@link Pokemon} The starter pokemon to modify.
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.STARTER_MODIFY,
-  pokemon: Pokemon,
-): boolean;
+export function applyChallenges(challengeType: ChallengeType.STARTER_MODIFY, pokemon: Pokemon): boolean;
 /**
  * Apply all challenges that what pokemon you can have in battle.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.POKEMON_IN_BATTLE
  * @param pokemon {@link Pokemon} The pokemon to check the validity of.
  * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.POKEMON_IN_BATTLE,
   pokemon: Pokemon,
   valid: Utils.BooleanHolder,
 ): boolean;
 /**
  * Apply all challenges that modify what fixed battles there are.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.FIXED_BATTLES
  * @param waveIndex {@link Number} The current wave index.
  * @param battleConfig {@link FixedBattleConfig} The battle config to modify.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.FIXED_BATTLES,
   waveIndex: number,
   battleConfig: FixedBattleConfig,
 ): boolean;
 /**
  * Apply all challenges that modify type effectiveness.
- * @param gameMode {@linkcode GameMode} The current gameMode
  * @param challengeType {@linkcode ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
  * @param effectiveness {@linkcode Utils.NumberHolder} The current effectiveness of the move.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.TYPE_EFFECTIVENESS,
   effectiveness: Utils.NumberHolder,
 ): boolean;
 /**
  * Apply all challenges that modify what level AI are.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
  * @param level {@link Utils.NumberHolder} The generated level of the pokemon.
  * @param levelCap {@link Number} The maximum level cap for the current wave.
@@ -1077,7 +1054,6 @@ export function applyChallenges(
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.AI_LEVEL,
   level: Utils.NumberHolder,
   levelCap: number,
@@ -1086,42 +1062,36 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify how many move slots the AI has.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.AI_MOVE_SLOTS
  * @param pokemon {@link Pokemon} The pokemon being considered.
  * @param moveSlots {@link Utils.NumberHolder} The amount of move slots.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.AI_MOVE_SLOTS,
   pokemon: Pokemon,
   moveSlots: Utils.NumberHolder,
 ): boolean;
 /**
  * Apply all challenges that modify whether a pokemon has its passive.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.PASSIVE_ACCESS
  * @param pokemon {@link Pokemon} The pokemon to modify.
  * @param hasPassive {@link Utils.BooleanHolder} Whether it has its passive.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.PASSIVE_ACCESS,
   pokemon: Pokemon,
   hasPassive: Utils.BooleanHolder,
 ): boolean;
 /**
  * Apply all challenges that modify the game modes settings.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.GAME_MODE_MODIFY
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType.GAME_MODE_MODIFY): boolean;
+export function applyChallenges(challengeType: ChallengeType.GAME_MODE_MODIFY): boolean;
 /**
  * Apply all challenges that modify what level a pokemon can access a move.
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_ACCESS
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
@@ -1130,7 +1100,6 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.MOVE_ACCESS,
   pokemon: Pokemon,
   moveSource: MoveSourceType,
@@ -1139,7 +1108,6 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify what weight a pokemon gives to move generation
- * @param gameMode {@link GameMode} The current gameMode
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_WEIGHT
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
@@ -1148,7 +1116,6 @@ export function applyChallenges(
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
-  gameMode: GameMode,
   challengeType: ChallengeType.MOVE_WEIGHT,
   pokemon: Pokemon,
   moveSource: MoveSourceType,
@@ -1156,16 +1123,11 @@ export function applyChallenges(
   weight: Utils.NumberHolder,
 ): boolean;
 
-export function applyChallenges(
-  gameMode: GameMode,
-  challengeType: ChallengeType.FLIP_STAT,
-  pokemon: Pokemon,
-  baseStats: number[],
-): boolean;
+export function applyChallenges(challengeType: ChallengeType.FLIP_STAT, pokemon: Pokemon, baseStats: number[]): boolean;
 
-export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType, ...args: any[]): boolean {
+export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
-  gameMode.challenges.forEach(c => {
+  globalScene.gameMode.challenges.forEach(c => {
     if (c.value !== 0) {
       switch (challengeType) {
         case ChallengeType.STARTER_CHOICE:
@@ -1199,7 +1161,7 @@ export function applyChallenges(gameMode: GameMode, challengeType: ChallengeType
           ret ||= c.applyPassiveAccess(args[0], args[1]);
           break;
         case ChallengeType.GAME_MODE_MODIFY:
-          ret ||= c.applyGameModeModify(gameMode);
+          ret ||= c.applyGameModeModify();
           break;
         case ChallengeType.MOVE_ACCESS:
           ret ||= c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
@@ -1264,7 +1226,7 @@ export function initChallenges() {
 export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   if (!soft) {
     const isValidForChallenge = new Utils.BooleanHolder(true);
-    applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+    applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
     return isValidForChallenge.value;
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
@@ -1302,7 +1264,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
  */
 function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   const isValidForChallenge = new Utils.BooleanHolder(true);
-  applyChallenges(globalScene.gameMode, ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
+  applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
   if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
     return isValidForChallenge.value;
   }
@@ -1321,13 +1283,7 @@ function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrPr
         const formProps = { ...props };
         formProps.formIndex = formIndex;
         const isFormValidForChallenge = new Utils.BooleanHolder(true);
-        applyChallenges(
-          globalScene.gameMode,
-          ChallengeType.STARTER_CHOICE,
-          species,
-          isFormValidForChallenge,
-          formProps,
-        );
+        applyChallenges(ChallengeType.STARTER_CHOICE, species, isFormValidForChallenge, formProps);
         if (isFormValidForChallenge.value) {
           return true;
         }
