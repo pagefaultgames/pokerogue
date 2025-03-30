@@ -2,6 +2,8 @@ import { Abilities } from "#enums/abilities";
 import type { AbAttrCondition } from "#app/@types/ability-types";
 import type { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
 import i18next from "i18next";
+import type { Localizable } from "#app/interfaces/locales";
+import type { Constructor } from "#app/utils";
 
 export class Ability implements Localizable {
   public id: Abilities;
