@@ -1,4 +1,3 @@
-
 import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -48,6 +47,7 @@ import { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
 import { Ability } from "#app/data/abilities/ability-class";
 
 // Enum imports
+import { EffectiveStat } from "#app/enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
@@ -63,6 +63,7 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 
 // Type imports
+import type { Constructor } from "#app/utils";
 import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
