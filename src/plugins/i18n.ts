@@ -237,6 +237,7 @@ export async function initI18n(): Promise<void> {
       "terrain",
       "titles",
       "trainerClasses",
+      "trainersCommon",
       "trainerNames",
       "tutorial",
       "voucher",

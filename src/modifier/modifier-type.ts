@@ -107,7 +107,6 @@ import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import { getModifierTierTextTint } from "#app/ui/text";
 import {
-  BooleanHolder,
   formatMoney,
   getEnumKeys,
   getEnumValues,
@@ -2038,8 +2037,8 @@ export const modifierTypes = {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
         return new BerryModifierType(pregenArgs[0] as BerryType);
       }
-      const ppCheck = new NumberHolder(1);
-      applyChallenges(ChallengeType.MODIFY_PP_USE, party[0], Moves.NONE, ppCheck);
+      const ppReduction = new NumberHolder(1); // How much PP is reduced when using a move in this game mode
+      applyChallenges(ChallengeType.MODIFY_PP_USE, party[0], Moves.NONE, ppReduction);
       const berryTypes = getEnumValues(BerryType);
       let randBerryType: BerryType;
       const rand = randSeedInt(12);
@@ -2047,7 +2046,8 @@ export const modifierTypes = {
         randBerryType = BerryType.SITRUS;
       } else if (rand < 4) {
         randBerryType = BerryType.LUM;
-      } else if (rand < 6 && ppCheck.value !== 0) {
+      } else if (rand < 6 && ppReduction.value !== 0) {
+        // If PP isn't reduced, it doesn't need to be restored
         randBerryType = BerryType.LEPPA;
       } else {
         randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];

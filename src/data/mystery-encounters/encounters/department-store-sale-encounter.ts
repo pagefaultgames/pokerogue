@@ -13,8 +13,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { CompatibleMoveRequirement } from "../mystery-encounter-requirements";
-import { Moves } from "#enums/moves";
+import { CanLearnTMRequirement } from "../mystery-encounter-requirements";
 import { globalScene } from "#app/global-scene";
 import { Challenges } from "#enums/challenges";
 
@@ -63,15 +62,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
   .withQuery(`${namespace}:query`)
   .withOption(
     MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withPrimaryPokemonRequirement(
-        new CompatibleMoveRequirement([
-          Moves.PROTECT,
-          Moves.TERA_BLAST,
-          Moves.INFESTATION,
-          Moves.BOUNCE,
-          Moves.ELECTROWEB,
-        ]),
-      ) // Check Protect in compatible tms yeah this sucks
+      .withPrimaryPokemonRequirement(new CanLearnTMRequirement())
       .withDialogue({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,

@@ -21,14 +21,8 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { globalScene } from "#app/global-scene";
 import { pokemonFormChanges } from "./pokemon-forms";
 import { pokemonEvolutions } from "./balance/pokemon-evolutions";
-import {
-  getModifierType,
-  getModifierTypeFuncById,
-  ModifierPoolType,
-  type ModifierPool,
-  type ModifierTypeKeys,
-  type ModifierTypeOption,
-} from "#app/modifier/modifier-type";
+import { ModifierPoolType, type ModifierPool, type ModifierTypeOption } from "#app/modifier/modifier-type";
+import type { LearnMoveType } from "#app/phases/learn-move-phase";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -468,9 +462,11 @@ export abstract class Challenge {
    * An apply function for BAN_MOVE_LEARNING. Derived classes should alter this.
    * @param _pokemon {@link Pokemon} Pokemon who wants to learn the move
    * @param _move {@link Moves} Move being learned
+   * @param _learnType {@link LearnMoveType} How the move is being learned
+   * @param _valid: {@link BooleanHolder} Whether the move is valid for this challenge
    * @returns {@link boolean} Whether the move should be restricted from learning
    */
-  applyBanMoveLearning(_pokemon: Pokemon, _move: Moves) {
+  applyBanMoveLearning(_pokemon: Pokemon, _move: Moves, _learnType: LearnMoveType, _valid: Utils.BooleanHolder) {
     return false;
   }
 
@@ -915,20 +911,21 @@ export class FreshStartChallenge extends Challenge {
       return false;
     }
     let ret = false;
-    let idx = modifierPool[ModifierTier.ULTRA].findIndex(
-      p => p.modifierType === getModifierType(getModifierTypeFuncById("EVIOLITE")),
-    );
-    if (idx >= 0) {
-      modifierPool[ModifierTier.ULTRA].splice(idx, 1);
-      ret = true;
+
+    let idx;
+    const bans = ["EVIOLITE", "MINI_BLACK_HOLE"];
+    const t = [ModifierTier.COMMON, ModifierTier.GREAT, ModifierTier.ULTRA, ModifierTier.ROGUE, ModifierTier.MASTER];
+    for (let i = 0; i < t.length; i++) {
+      idx = 0;
+      while (idx > -1) {
+        idx = modifierPool[t[i]].findIndex(p => bans.includes(p.modifierType.id));
+        if (idx > -1) {
+          modifierPool[t[i]].splice(idx, 1);
+          ret = true;
+        }
+      }
     }
-    idx = modifierPool[ModifierTier.MASTER].findIndex(
-      p => p.modifierType === getModifierType(getModifierTypeFuncById("MINI_BLACK_HOLE")),
-    );
-    if (idx >= 0) {
-      modifierPool[ModifierTier.MASTER].splice(idx, 1);
-      ret = true;
-    }
+
     return ret;
   }
 
@@ -1027,7 +1024,13 @@ export class MetronomeChallenge extends Challenge {
     return true;
   }
 
-  override applyBanMoveLearning(_pokemon: Pokemon, _move: Moves): boolean {
+  override applyBanMoveLearning(
+    _pokemon: Pokemon,
+    _move: Moves,
+    _learnType: LearnMoveType,
+    valid: Utils.BooleanHolder,
+  ): boolean {
+    valid.value = false;
     return true;
   }
 
@@ -1048,39 +1051,40 @@ export class MetronomeChallenge extends Challenge {
       return false;
     }
     let ret = false;
-    const common_block = ["TM_COMMON", "ETHER", "MAX_ETHER"];
-    const great_block = ["ELIXIR", "MAX_ELIXIR", "PP_UP", "MEMORY_MUSHROOM", "TM_GREAT"];
-    const ultra_block = ["TM_ULTRA", "PP_MAX"];
 
-    common_block.map(b => {
-      const idx = modifierPool[ModifierTier.COMMON].findIndex(p => p.modifierType.id === b);
-      if (idx >= 0) {
-        modifierPool[ModifierTier.COMMON].splice(idx, 1);
-        ret = true;
+    let idx;
+    const bans = [
+      "TM_COMMON",
+      "ETHER",
+      "MAX_ETHER",
+      "ELIXIR",
+      "MAX_ELIXIR",
+      "PP_UP",
+      "MEMORY_MUSHROOM",
+      "TM_GREAT",
+      "TM_ULTRA",
+      "PP_MAX",
+    ];
+    const t = [ModifierTier.COMMON, ModifierTier.GREAT, ModifierTier.ULTRA, ModifierTier.ROGUE, ModifierTier.MASTER];
+    for (let i = 0; i < t.length; i++) {
+      idx = 0;
+      while (idx > -1) {
+        idx = modifierPool[t[i]].findIndex(p => bans.includes(p.modifierType.id));
+        if (idx > -1) {
+          modifierPool[t[i]].splice(idx, 1);
+          ret = true;
+        }
       }
-    });
-    great_block.map(b => {
-      const idx = modifierPool[ModifierTier.GREAT].findIndex(p => p.modifierType.id === b);
-      if (idx >= 0) {
-        modifierPool[ModifierTier.GREAT].splice(idx, 1);
-        ret = true;
-      }
-    });
-    ultra_block.map(b => {
-      const idx = modifierPool[ModifierTier.ULTRA].findIndex(p => p.modifierType.id === b);
-      if (idx >= 0) {
-        modifierPool[ModifierTier.ULTRA].splice(idx, 1);
-        ret = true;
-      }
-    });
+    }
+
     return ret;
   }
 
   override applyShopModify(options: ModifierTypeOption[]): boolean {
-    const removals = ["ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "MEMORY_MUSHROOM"];
+    const removals = ["ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "MEMORY_MUSHROOM"]; // Pending rework, these need to match locale key
     const opstart = options.length;
     removals.map(r => {
-      const idx = options.findIndex(o => o.type.localeKey.split(".")[1] === r); // I don't wanna hear it!
+      const idx = options.findIndex(o => o.type.localeKey.split(".")[1] === r); // Currently the quickest way to get the id
       if (idx >= 0) {
         options.splice(idx, 1);
       }
@@ -1329,9 +1333,16 @@ export function applyChallenges(challengeType: ChallengeType.ENEMY_POKEMON_MODIF
  * @param challengeType {@link ChallengeType} ChallengeType.BAN_MOVE_LEARNING
  * @param pokemon {@link Pokemon} The mon attempting to learn
  * @param move {@link Moves} The move being learned
+ * @param learnType {@link LearnMoveType} how the move is being learned
  * @returns True if any challenge was successfully applied.
  */
-export function applyChallenges(challengeType: ChallengeType.BAN_MOVE_LEARNING, pokemon: Pokemon, move: Moves): boolean;
+export function applyChallenges(
+  challengeType: ChallengeType.BAN_MOVE_LEARNING,
+  pokemon: Pokemon,
+  move: Moves,
+  learnType: LearnMoveType,
+  valid: Utils.BooleanHolder,
+): boolean;
 
 /**
  * Apply all challenges that modify how much PP is used
@@ -1420,7 +1431,7 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           ret ||= c.applyEnemyPokemonModify(args[0]);
           break;
         case ChallengeType.BAN_MOVE_LEARNING:
-          ret ||= c.applyBanMoveLearning(args[0], args[1]);
+          ret ||= c.applyBanMoveLearning(args[0], args[1], args[2], args[3]);
           break;
         case ChallengeType.MODIFY_PP_USE:
           ret ||= c.applyModifyPPUsage(args[0], args[1], args[2]);

@@ -4,7 +4,7 @@ import {
   initBattleWithEnemyConfig,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { trainerConfigs } from "#app/data/trainer-config";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import { randSeedShuffle } from "#app/utils";
@@ -30,7 +30,6 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { getPokeballTintColor } from "#app/data/pokeball";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";
