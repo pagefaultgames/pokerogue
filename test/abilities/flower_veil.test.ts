@@ -1,5 +1,4 @@
 import { BattlerIndex } from "#app/battle";
-import { modifierTypes } from "#app/modifier/modifier-type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -39,6 +38,9 @@ describe("Abilities - Flower Veil", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
+  /***********************************************
+   * Tests for proper handling of status effects *
+   ***********************************************/
   it("should not prevent any source of self-inflicted status conditions", async () => {
     game.override
       .enemyMoveset([Moves.TACKLE, Moves.SPLASH])
@@ -60,23 +62,109 @@ describe("Abilities - Flower Veil", () => {
     expect(user.status?.effect).toBe(StatusEffect.BURN);
   });
 
-  it("should prevent drowsiness from yawn", async () => {
-    game.override.enemyMoveset([Moves.YAWN]).moveset([Moves.SPLASH]);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+  it("should prevent drowsiness from yawn for a grass user and its grass allies", async () => {
+    game.override.enemyMoveset([Moves.YAWN]).moveset([Moves.SPLASH]).battleType("double");
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
+
+    // Clear the ability of the ally to isolate the test
+    const ally = game.scene.getPlayerField()[1]!;
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
     game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.YAWN, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.YAWN, BattlerIndex.PLAYER_2);
+
+    await game.phaseInterceptor.to("BerryPhase");
     const user = game.scene.getPlayerPokemon()!;
     expect(user.getTag(BattlerTagType.DROWSY)).toBeOneOf([false, undefined, null]);
+    expect(ally.getTag(BattlerTagType.DROWSY)).toBeOneOf([false, undefined, null]);
   });
 
-  it("should prevent status conditions from moves like Thunder Wave", async () => {
-    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]);
+  it("should prevent status conditions from moves like Thunder Wave for a grass user and its grass allies", async () => {
+    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]).battleType("double");
     vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle([Species.BULBASAUR]);
+
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.THUNDER_WAVE);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
+    vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockClear();
+  });
+
+  it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {
+    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]).battleType("double");
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    const [user, ally] = game.scene.getPlayerField();
+    vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
+    // Clear the ally ability to isolate the test
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(user.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(ally.status?.effect).toBe(StatusEffect.PARALYSIS);
+  });
+
+  /*******************************************
+   * Tests for proper handling of stat drops *
+   *******************************************/
+
+  it("should prevent the status drops from enemies for the a grass user and its grass allies", async () => {
+    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
+    const [user, ally] = game.scene.getPlayerField();
+    // Clear the ally ability to isolate the test
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(user.getStatStage(Stat.ATK)).toBe(0);
+    expect(ally.getStatStage(Stat.ATK)).toBe(0);
+  });
+
+  it("should not prevent status drops for a non-grass user and its non-grass allies", async () => {
+    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    const [user, ally] = game.scene.getPlayerField();
+    // Clear the ally ability to isolate the test
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(user.getStatStage(Stat.ATK)).toBe(-2);
+    expect(ally.getStatStage(Stat.ATK)).toBe(-2);
+  });
+
+  it("should not prevent self-inflicted stat drops from moves like Close Combat for a user or its allies", async () => {
+    game.override.moveset([Moves.CLOSE_COMBAT]).battleType("double");
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
+    const [user, ally] = game.scene.getPlayerField();
+    // Clear the ally ability to isolate the test
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+
+    game.move.select(Moves.CLOSE_COMBAT, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.CLOSE_COMBAT, 1, BattlerIndex.ENEMY_2);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(user.getStatStage(Stat.DEF)).toBe(-1);
+    expect(user.getStatStage(Stat.SPDEF)).toBe(-1);
+    expect(ally.getStatStage(Stat.DEF)).toBe(-1);
+    expect(ally.getStatStage(Stat.SPDEF)).toBe(-1);
+  });
+
+  it("should not prevent status drops of a non-grass user or its non-grass allies", async () => {
+    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    const [user, ally] = game.scene.getPlayerField();
+    // Clear the ally ability to isolate the test
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, 1);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(user.getStatStage(Stat.ATK)).toBe(-2);
+    expect(ally.getStatStage(Stat.ATK)).toBe(-2);
   });
 
   it("should prevent the drops while retaining the boosts from spicy extract", async () => {
@@ -87,52 +175,5 @@ describe("Abilities - Flower Veil", () => {
     await game.phaseInterceptor.to("BerryPhase");
     expect(user.getStatStage(Stat.ATK)).toBe(2);
     expect(user.getStatStage(Stat.DEF)).toBe(0);
-  });
-
-  it("should not prevent self-inflicted stat drops from moves like Close Combat", async () => {
-    game.override.moveset([Moves.CLOSE_COMBAT]);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
-    const userPokemon = game.scene.getPlayerPokemon()!;
-    console.log(userPokemon.name);
-    game.move.select(Moves.CLOSE_COMBAT);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(userPokemon.getStatStage(Stat.DEF)).toBe(-1);
-    expect(userPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
-  });
-
-  it("should not prevent status drops of pokemon that are not grass type", async () => {
-    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]);
-    await game.classicMode.startBattle([Species.SQUIRTLE]);
-    const user = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(user.getStatStage(Stat.ATK)).toBe(-1);
-  });
-
-  it("should not prevent status drops of ally pokemon that are not grass type", async () => {
-    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.SQUIRTLE]);
-    const ally = game.scene.getPlayerField()[1]!;
-
-    // Clear the ally ability to isolate what is being tested
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("BerryPhase");
-    // Both enemies use growl.
-    expect(ally.getStatStage(Stat.ATK)).toBe(-2);
-  });
-
-  it("should prevent the status drops of ally grass type pokemon", async () => {
-    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
-    await game.classicMode.startBattle([Species.SQUIRTLE, Species.BULBASAUR]);
-    const ally = game.scene.getPlayerField()[1]!;
-
-    // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(ally.getStatStage(Stat.ATK)).toBe(0);
   });
 });
