@@ -1,56 +1,75 @@
-import type { EnemyPokemon, PokemonMove } from "../../field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { HitResult, MoveResult, PlayerPokemon } from "../../field/pokemon";
-import { PokemonType } from "#enums/pokemon-type";
+import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
 import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils";
-import { getPokemonNameWithAffix } from "../../messages";
-import type { Weather } from "#app/data/weather";
-import type { BattlerTag } from "#app/data/battler-tags";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
 import { Gender } from "#app/data/gender";
-import type Move from "#app/data/moves/move";
-import { AttackMove, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "../moves/move";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
-import type { ArenaTrapTag, SuppressAbilitiesTag } from "../arena-tag";
+import {
+  AttackMove,
+  FlinchAttr,
+  OneHitKOAttr,
+  HitHealAttr,
+  allMoves,
+  StatusMove,
+  SelfStatusMove,
+  VariablePowerAttr,
+  applyMoveAttrs,
+  VariableMoveTypeAttr,
+  RandomMovesetMoveAttr,
+  RandomMoveAttr,
+  NaturePowerAttr,
+  CopyMoveAttr,
+  NeutralDamageAgainstFlyingTypeMultiplierAttr,
+  FixedDamageAttr,
+} from "#app/data/moves/move";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../../modifier/modifier";
+import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
-import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "../pokemon-forms";
+import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import i18next from "i18next";
 import { Command } from "#app/ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "#app/data/pokeball";
-import type { BattlerIndex } from "#app/battle";
 import { BattleType } from "#app/battle";
-import { Abilities } from "#enums/abilities";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { globalScene } from "#app/global-scene";
-import { SwitchType } from "#app/enums/switch-type";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
+import { allAbilities } from "#app/data/data-lists";
+import { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
+import { Ability } from "#app/data/abilities/ability-class";
+
+// Enum imports
+import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#enums/stat";
+import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
-import { allAbilities } from "#app/data/data-lists";
-import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCondition, PokemonAttackCondition, AbAttrApplyFunc, AbAttrSuccessFunc } from "#app/@types/ability-types";
-import { AbAttr } from "./ab-attrs/ab-attr";
-import {Ability} from "./ability-class";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { SwitchType } from "#enums/switch-type";
+import { MoveFlags } from "#enums/MoveFlags";
+import { MoveTarget } from "#enums/MoveTarget";
+import { MoveCategory } from "#enums/MoveCategory";
 
 // Type imports
+import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import type { Weather } from "#app/data/weather";
+import type { BattlerTag } from "#app/data/battler-tags";
+import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCondition, PokemonAttackCondition, AbAttrApplyFunc, AbAttrSuccessFunc } from "#app/@types/ability-types";
+import type { BattlerIndex } from "#app/battle";
+import type Move from "#app/data/moves/move";
+import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
