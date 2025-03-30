@@ -3204,6 +3204,7 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
+  /** Return whether the ability attribute can be applied */
   canApplyPreSetStatus(
     pokemon: Pokemon,
     passive: boolean,
@@ -3228,7 +3229,7 @@ export class PreSetStatusAbAttr extends AbAttr {
  * Provides immunity to status effects to specified targets.
  */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  private immuneEffects: StatusEffect[];
+  protected immuneEffects: StatusEffect[];
 
   /**
    * @param immuneEffects - The status effects to which the Pokémon is immune.
@@ -3282,6 +3283,92 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr
  */
 export class UserFieldStatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr { }
 
+/**
+ * Conditionally provides immunity to status effects to the user's field.
+ *
+ * Used by {@linkcode Abilities.FLOWER_VEIL | Flower Veil}.
+ * @extends UserFieldStatusEffectImmunityAbAttr
+ *
+ */
+export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldStatusEffectImmunityAbAttr {
+  /**
+   * The condition for the field immunity to be applied.
+   * @param target The target of the status effect
+   * @param source The source of the status effect
+   */
+  protected condition: (target: Pokemon, source: Pokemon | null) => boolean;
+
+  /**
+   * Evaluate the condition to determine if the {@linkcode ConditionalUserFieldStatusEffectImmunityAbAttr} can be applied.
+   * @param pokemon The pokemon with the ability
+   * @param passive unused
+   * @param simulated Whether the ability is being simulated
+   * @param effect The status effect being applied
+   * @param cancelled Holds whether the status effect was cancelled by a prior effect
+   * @param args `Args[0]` is the target of the status effect, `Args[1]` is the source.
+   * @returns Whether the ability can be applied to cancel the status effect.
+   */
+  override canApplyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: [Pokemon, Pokemon | null, ...any]): boolean {
+    return (!cancelled.value && effect !== StatusEffect.FAINT && this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) && this.condition(args[0], args[1]);
+  }
+
+  constructor(condition: (target: Pokemon, source: Pokemon | null) => boolean, ...immuneEffects: StatusEffect[]) {
+    super(...immuneEffects);
+
+    this.condition = condition;
+  }
+}
+
+/**
+ * Conditionally provides immunity to stat drop effects to the user's field.
+ * 
+ * Used by {@linkcode Abilities.FLOWER_VEIL | Flower Veil}.
+ */
+export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbAttr {
+  /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
+  protected protectedStat?: BattleStat;
+  
+  /** If the method evaluates to true, the stat will be protected. */
+  protected condition: (target: Pokemon) => boolean;
+
+  constructor(condition: (target: Pokemon) => boolean, protectedStat?: BattleStat) {
+    super();
+    this.condition = condition;
+  }
+
+  /**
+   * Determine whether the {@linkcode ConditionalUserFieldProtectStatAbAttr} can be applied.
+   * @param pokemon The pokemon with the ability
+   * @param passive unused
+   * @param simulated Unused
+   * @param stat The stat being affected
+   * @param cancelled Holds whether the stat change was already prevented.
+   * @param args Args[0] is the target pokemon of the stat change.
+   * @returns 
+   */
+  override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: [Pokemon, ...any]): boolean {
+    const target = args[0];
+    if (!target) {
+      return false;
+    }
+    return !cancelled.value && (Utils.isNullOrUndefined(this.protectedStat) || stat === this.protectedStat) && this.condition(target);
+  }
+
+  /**
+   * Apply the {@linkcode ConditionalUserFieldStatusEffectImmunityAbAttr} to an interaction
+   * @param _pokemon The pokemon the stat change is affecting (unused)
+   * @param _passive unused
+   * @param _simulated unused
+   * @param stat The stat being affected
+   * @param cancelled Will be set to true if the stat change is prevented
+   * @param _args unused
+   */
+  override applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _stat: BattleStat, cancelled: Utils.BooleanHolder, _args: any[]): void {
+    cancelled.value = true;
+  }
+}
+
+
 export class PreApplyBattlerTagAbAttr extends AbAttr {
   canApplyPreApplyBattlerTag(
     pokemon: Pokemon,
@@ -3308,8 +3395,8 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
  * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
  */
 export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
-  private immuneTagTypes: BattlerTagType[];
-  private battlerTag: BattlerTag;
+  protected immuneTagTypes: BattlerTagType[];
+  protected battlerTag: BattlerTag;
 
   constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super(true);
@@ -3320,7 +3407,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   override canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     this.battlerTag = tag;
 
-    return this.immuneTagTypes.includes(tag.tagType);
+    return !cancelled.value && this.immuneTagTypes.includes(tag.tagType);
   }
 
   override applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): void {
@@ -3347,6 +3434,30 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
  * @extends PreApplyBattlerTagImmunityAbAttr
  */
 export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
+
+export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattlerTagImmunityAbAttr {
+  private condition: (target: Pokemon) => boolean;
+
+  /**
+   * Determine whether the {@linkcode ConditionalUserFieldBattlerTagImmunityAbAttr} can be applied by passing the target pokemon to the condition.
+   * @param pokemon The pokemon owning the ability
+   * @param passive unused
+   * @param simulated whether the ability is being simulated (unused)
+   * @param tag The {@linkcode BattlerTag} being applied
+   * @param cancelled Holds whether the tag was previously cancelled (unused)
+   * @param args Args[0] is the target that the tag is attempting to be applied to
+   * @returns Whether the ability can be used to cancel the battler tag
+   */
+  override canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: [Pokemon, ...any]): boolean {
+    return super.canApplyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args) && this.condition(args[0]);
+  }
+
+  constructor(condition: (target: Pokemon) => boolean, immuneTagTypes: BattlerTagType | BattlerTagType[]) {
+    super(immuneTagTypes);
+
+    this.condition = condition;
+  }
+}
 
 export class BlockCritAbAttr extends AbAttr {
   constructor() {
@@ -5856,19 +5967,20 @@ export function applyPreLeaveFieldAbAttrs(
   );
 }
 
-export function applyPreStatStageChangeAbAttrs(
-  attrType: Constructor<PreStatStageChangeAbAttr>,
+export function applyPreStatStageChangeAbAttrs<T extends PreStatStageChangeAbAttr > (
+  attrType: Constructor<T>,
   pokemon: Pokemon | null,
   stat: BattleStat,
   cancelled: Utils.BooleanHolder,
   simulated = false,
   ...args: any[]
 ): void {
-  applyAbAttrsInternal<PreStatStageChangeAbAttr>(
+  applyAbAttrsInternal<T>(
     attrType,
     pokemon,
     (attr, passive) => attr.applyPreStatStageChange(pokemon, passive, simulated, stat, cancelled, args),
-    (attr, passive) => attr.canApplyPreStatStageChange(pokemon, passive, simulated, stat, cancelled, args), args,
+    (attr, passive) => attr.canApplyPreStatStageChange(pokemon, passive, simulated, stat, cancelled, args),
+    args,
     simulated,
   );
 }
@@ -5921,7 +6033,8 @@ export function applyPreApplyBattlerTagAbAttrs(
     attrType,
     pokemon,
     (attr, passive) => attr.applyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args),
-    (attr, passive) => attr.canApplyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args), args,
+    (attr, passive) => attr.canApplyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args),
+    args,
     simulated,
   );
 }
@@ -5938,7 +6051,8 @@ export function applyPreWeatherEffectAbAttrs(
     attrType,
     pokemon,
     (attr, passive) => attr.applyPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args),
-    (attr, passive) => attr.canApplyPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args), args,
+    (attr, passive) => attr.canApplyPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args),
+    args,
     simulated,
   );
 }
@@ -6670,8 +6784,19 @@ export function initAbilities() {
       .attr(UserFieldBattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT, BattlerTagType.DISABLED, BattlerTagType.TORMENT, BattlerTagType.HEAL_BLOCK ])
       .ignorable(),
     new Ability(Abilities.FLOWER_VEIL, 6)
-      .ignorable()
-      .unimplemented(),
+      .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target: Pokemon, source: Pokemon | null) => {
+        return source ? target.getTypes().includes(PokemonType.GRASS) && target.id !== source.id : false;
+      })
+      .attr(ConditionalUserFieldBattlerTagImmunityAbAttr,
+        (target: Pokemon) => {
+          return target.getTypes().includes(PokemonType.GRASS);
+        },
+        [ BattlerTagType.DROWSY ],
+      )
+      .attr(ConditionalUserFieldProtectStatAbAttr, (target: Pokemon) => {
+        return target.getTypes().includes(PokemonType.GRASS);
+      })
+      .ignorable(),
     new Ability(Abilities.CHEEK_POUCH, 6)
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(Abilities.PROTEAN, 6)
