@@ -117,6 +117,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "52px",
     instructionTextSize: "35px",
   },
+  "es-MX": {
+    starterInfoTextSize: "52px",
+    instructionTextSize: "35px",
+  },
   fr: {
     starterInfoTextSize: "54px",
     instructionTextSize: "38px",
