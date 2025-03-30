@@ -1118,8 +1118,7 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return (move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && !move.hitsSubstitute(attacker, pokemon))
-      && !pokemon.getTag(BattlerTagType.PERISH_SONG) || attacker.getTag(BattlerTagType.PERISH_SONG);
+    return move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && !attacker.getTag(BattlerTagType.PERISH_SONG);
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): void {
