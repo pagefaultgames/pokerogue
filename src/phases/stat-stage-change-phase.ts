@@ -23,7 +23,6 @@ import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 import { OctolockTag } from "#app/data/battler-tags";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
 
 export type StatStageChangeCallback = (
   target: Pokemon | null,
