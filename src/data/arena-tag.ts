@@ -788,7 +788,7 @@ class SpikesTag extends ArenaTrapTag {
             pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           }),
         );
-        pokemon.damageAndUpdate(damage, HitResult.OTHER);
+        pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
         if (pokemon.turnData) {
           pokemon.turnData.damageTaken += damage;
         }
@@ -982,7 +982,7 @@ class StealthRockTag extends ArenaTrapTag {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
-      pokemon.damageAndUpdate(damage, HitResult.OTHER);
+      pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
       if (pokemon.turnData) {
         pokemon.turnData.damageTaken += damage;
       }
@@ -1327,7 +1327,7 @@ class FireGrassPledgeTag extends ArenaTag {
         globalScene.unshiftPhase(
           new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.MAGMA_STORM),
         );
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8));
+        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
       });
 
     return super.lapse(arena);

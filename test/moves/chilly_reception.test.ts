@@ -27,8 +27,8 @@ describe("Moves - Chilly Reception", () => {
       .battleType("single")
       .moveset([Moves.CHILLY_RECEPTION, Moves.SNOWSCAPE])
       .enemyMoveset(Array(4).fill(Moves.SPLASH))
-      .enemyAbility(Abilities.NONE)
-      .ability(Abilities.NONE);
+      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(Abilities.BALL_FETCH);
   });
 
   it("should still change the weather if user can't switch out", async () => {
@@ -72,7 +72,6 @@ describe("Moves - Chilly Reception", () => {
     game.override
       .battleType("single")
       .enemyMoveset([Moves.CHILLY_RECEPTION, Moves.TACKLE])
-      .enemyAbility(Abilities.NONE)
       .moveset(Array(4).fill(Moves.SPLASH));
 
     await game.classicMode.startBattle([Species.SLOWKING, Species.MEOWTH]);
@@ -89,7 +88,6 @@ describe("Moves - Chilly Reception", () => {
       .battleType("single")
       .startingWave(8)
       .enemyMoveset(Array(4).fill(Moves.CHILLY_RECEPTION))
-      .enemyAbility(Abilities.NONE)
       .enemySpecies(Species.MAGIKARP)
       .moveset([Moves.SPLASH, Moves.THUNDERBOLT]);
 

@@ -948,10 +948,10 @@ export function setSetting(setting: string, value: number): boolean {
                 label: "日本語",
                 handler: () => changeLocaleHandler("ja"),
               },
-              // {
-              //   label: "Català",
-              //   handler: () => changeLocaleHandler("ca-ES")
-              // },
+              {
+                label: "Català",
+                handler: () => changeLocaleHandler("ca-ES"),
+              },
               {
                 label: i18next.t("settings:back"),
                 handler: () => cancelHandler(),

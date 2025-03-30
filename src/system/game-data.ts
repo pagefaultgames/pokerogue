@@ -17,7 +17,7 @@ import { Unlockables } from "#app/system/unlockables";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleType } from "#app/battle";
 import TrainerData from "#app/system/trainer-data";
-import { trainerConfigs } from "#app/data/trainer-config";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { resetSettings, setSetting, SettingKeys } from "#app/system/settings/settings";
 import { achvs } from "#app/system/achv";
 import EggData from "#app/system/egg-data";
@@ -98,12 +98,13 @@ export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
   switch (dataType) {
     case GameDataType.SYSTEM:
       return "data";
-    case GameDataType.SESSION:
+    case GameDataType.SESSION: {
       let ret = "sessionData";
       if (slotId) {
         ret += slotId;
       }
       return ret;
+    }
     case GameDataType.SETTINGS:
       return "settings";
     case GameDataType.TUTORIALS:
@@ -201,39 +202,6 @@ export interface DexEntry {
   ivs: number[];
 }
 
-export const DexAttr = {
-  NON_SHINY: 1n,
-  SHINY: 2n,
-  MALE: 4n,
-  FEMALE: 8n,
-  DEFAULT_VARIANT: 16n,
-  VARIANT_2: 32n,
-  VARIANT_3: 64n,
-  DEFAULT_FORM: 128n,
-};
-
-export interface DexAttrProps {
-  shiny: boolean;
-  female: boolean;
-  variant: Variant;
-  formIndex: number;
-}
-
-export const AbilityAttr = {
-  ABILITY_1: 1,
-  ABILITY_2: 2,
-  ABILITY_HIDDEN: 4,
-};
-
-export type RunHistoryData = Record<number, RunEntry>;
-
-export interface RunEntry {
-  entry: SessionSaveData;
-  isVictory: boolean;
-  /*Automatically set to false at the moment - implementation TBD*/
-  isFavorite: boolean;
-}
-
 export type StarterMoveset = [Moves] | [Moves, Moves] | [Moves, Moves, Moves] | [Moves, Moves, Moves, Moves];
 
 export interface StarterFormMoveData {
@@ -259,6 +227,39 @@ export interface StarterAttributes {
 export interface StarterPreferences {
   [key: number]: StarterAttributes;
 }
+
+export interface DexAttrProps {
+  shiny: boolean;
+  female: boolean;
+  variant: Variant;
+  formIndex: number;
+}
+
+export type RunHistoryData = Record<number, RunEntry>;
+
+export interface RunEntry {
+  entry: SessionSaveData;
+  isVictory: boolean;
+  /*Automatically set to false at the moment - implementation TBD*/
+  isFavorite: boolean;
+}
+
+export const DexAttr = {
+  NON_SHINY: 1n,
+  SHINY: 2n,
+  MALE: 4n,
+  FEMALE: 8n,
+  DEFAULT_VARIANT: 16n,
+  VARIANT_2: 32n,
+  VARIANT_3: 64n,
+  DEFAULT_FORM: 128n,
+};
+
+export const AbilityAttr = {
+  ABILITY_1: 1,
+  ABILITY_2: 2,
+  ABILITY_HIDDEN: 4,
+};
 
 // the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
 // if they ever add private static variables, move this into StarterPrefs
@@ -1553,16 +1554,18 @@ export class GameData {
           try {
             dataName = GameDataType[dataType].toLowerCase();
             switch (dataType) {
-              case GameDataType.SYSTEM:
+              case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
                 const systemData = this.parseSystemData(dataStr);
                 valid = !!systemData.dexData && !!systemData.timestamp;
                 break;
-              case GameDataType.SESSION:
+              }
+              case GameDataType.SESSION: {
                 const sessionData = this.parseSessionData(dataStr);
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                 break;
-              case GameDataType.RUN_HISTORY:
+              }
+              case GameDataType.RUN_HISTORY: {
                 const data = JSON.parse(dataStr);
                 const keys = Object.keys(data);
                 dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
@@ -1572,6 +1575,7 @@ export class GameData {
                     ["isFavorite", "isVictory", "entry"].every(v => entryKeys.includes(v)) && entryKeys.length === 3;
                 });
                 break;
+              }
               case GameDataType.SETTINGS:
               case GameDataType.TUTORIALS:
                 valid = true;

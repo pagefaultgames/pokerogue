@@ -140,7 +140,8 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
     // Load animations/sfx for Volcarona moves
     loadCustomMovesForEncounter([Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
 
-    globalScene.arena.trySetWeather(WeatherType.SUNNY, true);
+    const pokemon = globalScene.getEnemyPokemon();
+    globalScene.arena.trySetWeather(WeatherType.SUNNY, pokemon);
 
     encounter.setDialogueToken("volcaronaName", getPokemonSpecies(Species.VOLCARONA).getName());
 

@@ -68,12 +68,12 @@ export class TurnEndPhase extends FieldPhase {
     globalScene.arena.lapseTags();
 
     if (globalScene.arena.weather && !globalScene.arena.weather.lapse()) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
+      globalScene.arena.trySetWeather(WeatherType.NONE);
       globalScene.arena.triggerWeatherBasedFormChangesToNormal();
     }
 
     if (globalScene.arena.terrain && !globalScene.arena.terrain.lapse()) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE, false);
+      globalScene.arena.trySetTerrain(TerrainType.NONE);
     }
 
     this.end();
