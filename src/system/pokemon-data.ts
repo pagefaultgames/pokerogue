@@ -6,7 +6,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
-import { TrainerSlot } from "../data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
 import type { Biome } from "#enums/biome";
@@ -14,7 +14,6 @@ import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
-import { getSpeciesFormChangeMessage } from "#app/data/pokemon-forms";
 
 export default class PokemonData {
   public id: number;

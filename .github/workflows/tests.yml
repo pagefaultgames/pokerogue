@@ -15,29 +15,8 @@ on:
     types: [checks_requested]
 
 jobs:
-  pre-test:
-    name: Run Pre-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
-          path: tests-action
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install Node.js dependencies
-        working-directory: tests-action
-        run: npm ci
-      - name: Run Pre-test
-        working-directory: tests-action
-        run: npx vitest run --project pre ${{ !runner.debug && '--silent' || '' }}
-
   run-tests:
     name: Run Tests 
-    needs: [pre-test]
     strategy:
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
