@@ -2183,7 +2183,7 @@ export class GameData {
     }
 
     const cost = new Utils.NumberHolder(value);
-    applyChallenges(globalScene.gameMode, ChallengeType.STARTER_COST, speciesId, cost);
+    applyChallenges(ChallengeType.STARTER_COST, speciesId, cost);
 
     return cost.value;
   }
