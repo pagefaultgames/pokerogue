@@ -17,8 +17,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EVOLVE_MOVE } from "#app/data/balance/pokemon-level-moves";
-import { BooleanHolder } from "#app/utils";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;

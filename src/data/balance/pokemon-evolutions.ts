@@ -92,7 +92,7 @@ export class SpeciesFormEvolution {
   public evoFormKey: string | null;
   public level: number;
   public item: EvolutionItem | null;
-  public condition: SpeciesEvolutionCondition | null;
+  public condition: SpeciesEvolutionCondition | null; // TODO: Add a ChallengeType to change evolution conditions based on what kind of condition it is (use an enum)
   public wildDelay: SpeciesWildEvolutionDelay;
   public description = "";
 
@@ -181,6 +181,7 @@ class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
 class MoveEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   constructor(move: Moves) {
+    // TODO: Remove deprecated Challenge check
     super(p => p.moveset.filter(m => m.moveId === move).length > 0 || globalScene.gameMode.hasChallenge(Challenges.METRONOME));
     this.move = move;
     const moveKey = Moves[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
@@ -220,6 +221,7 @@ class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public amount: number;
   public type: PokemonType;
   constructor(amount: number, type: PokemonType) {
+    // TODO: Remove deprecated Challenge check
     super(p =>
       p.friendship >= amount &&
       (!!p.getMoveset().find(m => m?.getMove().type === type ||
@@ -269,6 +271,7 @@ class WeatherEvolutionCondition extends SpeciesEvolutionCondition {
 class MoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
   public type: PokemonType;
   constructor(type: PokemonType) {
+    // TODO: Remove deprecated Challenge check
     super(p => p.moveset.filter(m => m?.getMove().type === type).length > 0 ||
       (globalScene.gameMode.hasChallenge(Challenges.METRONOME) &&
       !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(type) > -1)));
@@ -290,6 +293,7 @@ class TreasureEvolutionCondition extends SpeciesEvolutionCondition {
 class TyrogueEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   constructor(move: Moves) {
+    // TODO: Remove deprecated Challenge check
     super(p =>
       (globalScene.gameMode.hasChallenge(Challenges.METRONOME) && ( // Metronome mode = no moves, do it the old fashioned way
         (move === Moves.LOW_SWEEP && p.stats[Stat.ATK] > p.stats[Stat.DEF]) ||
@@ -316,6 +320,7 @@ class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
   public move: Moves;
   public timesOfDay: TimeOfDay[];
   constructor(move: Moves, tod: "day" | "night") {
+    // TODO: Remove deprecated Challenge check
     if (tod === "day") {
       super(p =>
         (p.moveset.filter(m => m.moveId === move).length > 0 ||
@@ -350,6 +355,7 @@ class BiomeEvolutionCondition extends SpeciesEvolutionCondition {
 
 class DunsparceEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
+    // TODO: Remove deprecated Challenge check
     super(p => {
       let ret = false;
       if (p.moveset.filter(m => m.moveId === Moves.HYPER_DRILL).length > 0 || globalScene.gameMode.hasChallenge(Challenges.METRONOME)) {

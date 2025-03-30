@@ -6,9 +6,8 @@ import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#app/system/achv";
-import { BooleanHolder, NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import i18next from "i18next";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   protected lastLevel: number;

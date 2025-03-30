@@ -114,7 +114,7 @@ export enum ChallengeType {
    */
   MODIFY_PP_USE,
   /**
-   * Modifies modifier pools of specified type (PLEASE MODIFIER REWORK PLEASE I'M BEGGING YOU PLEASE PLEASE PLEASE PLEASE)
+   * Modifies modifier pools of specified type
    */
   MODIFIER_POOL_MODIFY,
   /**
@@ -914,19 +914,22 @@ export class FreshStartChallenge extends Challenge {
     if (poolType !== ModifierPoolType.PLAYER) {
       return false;
     }
+    let ret = false;
     let idx = modifierPool[ModifierTier.ULTRA].findIndex(
       p => p.modifierType === getModifierType(getModifierTypeFuncById("EVIOLITE")),
     );
     if (idx >= 0) {
       modifierPool[ModifierTier.ULTRA].splice(idx, 1);
+      ret = true;
     }
     idx = modifierPool[ModifierTier.MASTER].findIndex(
       p => p.modifierType === getModifierType(getModifierTypeFuncById("MINI_BLACK_HOLE")),
     );
     if (idx >= 0) {
       modifierPool[ModifierTier.MASTER].splice(idx, 1);
+      ret = true;
     }
-    return true;
+    return ret;
   }
 
   override getDifficulty(): number {
@@ -1028,6 +1031,13 @@ export class MetronomeChallenge extends Challenge {
     return true;
   }
 
+  /**
+   * Makes sure 0 PP is used, called when applying other PP usage modifiers such as Pressure
+   * @param _pokemon {@link Pokemon} unused
+   * @param _move {@link Moves} unused
+   * @param usedPP
+   * @returns true
+   */
   override applyModifyPPUsage(_pokemon: Pokemon, _move: Moves, usedPP: Utils.NumberHolder): boolean {
     usedPP.value = 0;
     return true;
@@ -1037,6 +1047,7 @@ export class MetronomeChallenge extends Challenge {
     if (poolType !== ModifierPoolType.PLAYER) {
       return false;
     }
+    let ret = false;
     const common_block = ["TM_COMMON", "ETHER", "MAX_ETHER"];
     const great_block = ["ELIXIR", "MAX_ELIXIR", "PP_UP", "MEMORY_MUSHROOM", "TM_GREAT"];
     const ultra_block = ["TM_ULTRA", "PP_MAX"];
@@ -1045,21 +1056,24 @@ export class MetronomeChallenge extends Challenge {
       const idx = modifierPool[ModifierTier.COMMON].findIndex(p => p.modifierType.id === b);
       if (idx >= 0) {
         modifierPool[ModifierTier.COMMON].splice(idx, 1);
+        ret = true;
       }
     });
     great_block.map(b => {
       const idx = modifierPool[ModifierTier.GREAT].findIndex(p => p.modifierType.id === b);
       if (idx >= 0) {
         modifierPool[ModifierTier.GREAT].splice(idx, 1);
+        ret = true;
       }
     });
     ultra_block.map(b => {
       const idx = modifierPool[ModifierTier.ULTRA].findIndex(p => p.modifierType.id === b);
       if (idx >= 0) {
         modifierPool[ModifierTier.ULTRA].splice(idx, 1);
+        ret = true;
       }
     });
-    return true;
+    return ret;
   }
 
   override applyShopModify(options: ModifierTypeOption[]): boolean {
@@ -1335,7 +1349,7 @@ export function applyChallenges(
 ): boolean;
 
 /**
- * Apply all challenges that modify the horrific abomination that is the modifier pools
+ * Apply all challenges that modify modifier pools //TODO: Modifier rework will need to look at this
  * @param challengeType {@link ChallengeType} ChallengeType.MODIFIER_POOL_MODIFY
  * @param poolType {@link ModifierPoolType} Which kind of pool is being changed (wild held items, player rewards etc)
  * @param modifierPool {@link ModifierPool} The item pool the challenge may attempt to modify
