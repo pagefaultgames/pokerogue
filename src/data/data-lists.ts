@@ -1,3 +1,3 @@
-import type { Ability } from "./abilities/ability";
+import type { Ability } from "./abilities/ability-class";
 
 export const allAbilities: Ability[] = [];
