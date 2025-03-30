@@ -3240,7 +3240,6 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     this.immuneEffects = immuneEffects;
   }
 
-  /** Determine whether the  */
   override canApplyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     return effect !== StatusEffect.FAINT && this.immuneEffects.length < 1 || this.immuneEffects.includes(effect);
   }
@@ -3307,7 +3306,7 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
    * @param effect The status effect being applied
    * @param cancelled Holds whether the status effect was cancelled by a prior effect
    * @param args `Args[0]` is the target of the status effect, `Args[1]` is the source.
-   * @returns 
+   * @returns Whether the ability can be applied to cancel the status effect.
    */
   override canApplyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: [Pokemon, Pokemon | null, ...any]): boolean {
     return (!cancelled.value && effect !== StatusEffect.FAINT && this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) && this.condition(args[0], args[1]);
@@ -3441,13 +3440,13 @@ export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattl
 
   /**
    * Determine whether the {@linkcode ConditionalUserFieldBattlerTagImmunityAbAttr} can be applied by passing the target pokemon to the condition.
-   * @param pokemon 
-   * @param passive 
-   * @param simulated 
-   * @param tag 
-   * @param cancelled 
-   * @param args 
-   * @returns 
+   * @param pokemon The pokemon owning the ability
+   * @param passive unused
+   * @param simulated whether the ability is being simulated (unused)
+   * @param tag The {@linkcode BattlerTag} being applied
+   * @param cancelled Holds whether the tag was previously cancelled (unused)
+   * @param args Args[0] is the target that the tag is attempting to be applied to
+   * @returns Whether the ability can be used to cancel the battler tag
    */
   override canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: [Pokemon, ...any]): boolean {
     return super.canApplyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args) && this.condition(args[0]);

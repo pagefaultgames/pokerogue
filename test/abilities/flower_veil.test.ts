@@ -76,8 +76,8 @@ describe("Abilities - Flower Veil", () => {
 
     await game.phaseInterceptor.to("BerryPhase");
     const user = game.scene.getPlayerPokemon()!;
-    expect(user.getTag(BattlerTagType.DROWSY)).toBeOneOf([false, undefined, null]);
-    expect(ally.getTag(BattlerTagType.DROWSY)).toBeOneOf([false, undefined, null]);
+    expect(user.getTag(BattlerTagType.DROWSY)).toBeFalsy();
+    expect(ally.getTag(BattlerTagType.DROWSY)).toBeFalsy();
   });
 
   it("should prevent status conditions from moves like Thunder Wave for a grass user and its grass allies", async () => {
