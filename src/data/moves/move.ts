@@ -7466,7 +7466,7 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().isReplaceable && pkmn.getAbility().isCopiable);
+    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().isSwappable);
   }
 }
 
