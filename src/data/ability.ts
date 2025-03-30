@@ -3450,7 +3450,6 @@ export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattl
    * @returns 
    */
   override canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: [Pokemon, ...any]): boolean {
-    console.log("==========Checking if we can apply the tag to " + args[0]?.name);
     return super.canApplyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args) && this.condition(args[0]);
   }
 
