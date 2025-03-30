@@ -1,5 +1,5 @@
-import type { Ability } from "#app/data/abilities/ability";
-import { allAbilities } from "#app/data/abilities/ability";
+import type { Ability } from "#app/data/abilities/ability-class";
+import { allAbilities } from "#app/data/data-lists";
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
   initBattleWithEnemyConfig,

@@ -31,7 +31,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Stat, type BattleStat, type EffectiveStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
+import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -46,22 +46,15 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
+import { allAbilities } from "../data-lists";
+import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCondition, PokemonAttackCondition, AbAttrApplyFunc, AbAttrSuccessFunc } from "#app/@types/ability-types";
+import { AbAttr } from "./ab-attrs/ab-attr";
+import {Ability} from "./ability-class";
 
-export class Ability implements Localizable {
-  public id: Abilities;
+// Type imports
 
-  private nameAppend: string;
-  public name: string;
-  public description: string;
-  public generation: number;
-  public isBypassFaint: boolean;
-  public isIgnorable: boolean;
-  public isSuppressable = true;
-  public isCopiable = true;
-  public isReplaceable = true;
-  public attrs: AbAttr[];
-  public conditions: AbAttrCondition[];
 
+<<<<<<< HEAD
   constructor(id: Abilities, generation: number) {
     this.id = id;
 
@@ -223,6 +216,8 @@ export abstract class AbAttr {
     return true;
   }
 }
+=======
+>>>>>>> 6ba1a7036 (Extract types out of ability.ts)
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -6453,10 +6448,9 @@ function getPokemonWithWeatherBasedForms() {
   );
 }
 
-export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
-
 export function initAbilities() {
   allAbilities.push(
+    new Ability(Abilities.NONE, 3),
     new Ability(Abilities.STENCH, 3)
       .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr(FlinchAttr) && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, 3)

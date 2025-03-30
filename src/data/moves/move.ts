@@ -34,7 +34,6 @@ import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "../arena-tag";
 import {
-  allAbilities,
   AllyMoveCategoryPowerBoostAbAttr,
   applyAbAttrs,
   applyPostAttackAbAttrs,
@@ -66,6 +65,7 @@ import {
   VariableMovePowerAbAttr,
   WonderSkinAbAttr,
 } from "../abilities/ability";
+import { allAbilities } from "../data-lists";
 import {
   AttackTypeBoosterModifier,
   BerryModifier,
