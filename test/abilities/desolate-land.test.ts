@@ -135,10 +135,8 @@ describe("Abilities - Desolate Land", () => {
   });
 
   it("should lift after fleeing from a wild pokemon", async () => {
-    game.override
-      .enemyAbility(Abilities.DESOLATE_LAND)
-      .ability(Abilities.BALL_FETCH);
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    game.override.enemyAbility(Abilities.DESOLATE_LAND).ability(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
     vi.spyOn(game.scene.getPlayerPokemon()!, "randSeedInt").mockReturnValue(0);
