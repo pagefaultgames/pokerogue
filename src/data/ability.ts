@@ -57,6 +57,9 @@ export class Ability implements Localizable {
   public generation: number;
   public isBypassFaint: boolean;
   public isIgnorable: boolean;
+  public isSuppressable = true;
+  public isCopiable = true;
+  public isReplaceable = true;
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
 
@@ -68,9 +71,16 @@ export class Ability implements Localizable {
     this.attrs = [];
     this.conditions = [];
 
+    this.isSuppressable = true;
+    this.isCopiable = true;
+    this.isReplaceable = true;
+
     this.localize();
   }
 
+  public get isSwappable(): boolean {
+    return this.isCopiable && this.isReplaceable;
+  }
   localize(): void {
     const i18nKey = Abilities[this.id].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as string;
 
@@ -118,6 +128,21 @@ export class Ability implements Localizable {
 
   ignorable(): Ability {
     this.isIgnorable = true;
+    return this;
+  }
+
+  unsuppressable(): Ability {
+    this.isSuppressable = false;
+    return this;
+  }
+
+  uncopiable(): Ability {
+    this.isCopiable = false;
+    return this;
+  }
+
+  unreplaceable(): Ability {
+    this.isReplaceable = false;
     return this;
   }
 
@@ -1138,7 +1163,7 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
     return move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)
-      && !attacker.getAbility().hasAttr(UnswappableAbilityAbAttr) && !move.hitsSubstitute(attacker, pokemon);
+      && attacker.getAbility().isSwappable && !move.hitsSubstitute(attacker, pokemon);
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, args: any[]): void {
@@ -1163,7 +1188,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.getAbility().hasAttr(UnsuppressableAbilityAbAttr)
+    return move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && attacker.getAbility().isSuppressable
       && !attacker.getAbility().hasAttr(PostDefendAbilityGiveAbAttr) && !move.hitsSubstitute(attacker, pokemon);
   }
 
@@ -2159,7 +2184,7 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
   }
 
   override canApplyPostKnockOut(pokemon: Pokemon, passive: boolean, simulated: boolean, knockedOut: Pokemon, args: any[]): boolean {
-    return pokemon.isPlayer() === knockedOut.isPlayer() && !knockedOut.getAbility().hasAttr(UncopiableAbilityAbAttr);
+    return pokemon.isPlayer() === knockedOut.isPlayer() && knockedOut.getAbility().isCopiable;
   }
 
   override applyPostKnockOut(pokemon: Pokemon, passive: boolean, simulated: boolean, knockedOut: Pokemon, args: any[]): void {
@@ -2606,7 +2631,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
     }
 
     if (
-      target!.getAbility().hasAttr(UncopiableAbilityAbAttr) &&
+      !target!.getAbility().isCopiable &&
       // Wonder Guard is normally uncopiable so has the attribute, but Trace specifically can copy it
       !(pokemon.hasAbility(Abilities.TRACE) && target!.getAbility().id === Abilities.WONDER_GUARD)
     ) {
@@ -4979,24 +5004,6 @@ export class InfiltratorAbAttr extends AbAttr {
  */
 export class ReflectStatusMoveAbAttr extends AbAttr { }
 
-export class UncopiableAbilityAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-}
-
-export class UnsuppressableAbilityAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-}
-
-export class UnswappableAbilityAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-}
-
 export class NoTransformAbilityAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -6338,8 +6345,7 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(Abilities.WONDER_GUARD, 3)
       .attr(NonSuperEffectiveImmunityAbAttr)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
       .ignorable(),
     new Ability(Abilities.LEVITATE, 3)
       .attr(AttackTypeImmunityAbAttr, PokemonType.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY))
@@ -6373,7 +6379,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.TRACE, 3)
       .attr(PostSummonCopyAbilityAbAttr)
-      .attr(UncopiableAbilityAbAttr),
+      .uncopiable(),
     new Ability(Abilities.HUGE_POWER, 3)
       .attr(StatMultiplierAbAttr, Stat.ATK, 2),
     new Ability(Abilities.POISON_POINT, 3)
@@ -6426,7 +6432,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.PICKUP, 3)
       .attr(PostBattleLootAbAttr)
-      .attr(UnsuppressableAbilityAbAttr),
+      .unsuppressable(),
     new Ability(Abilities.TRUANT, 3)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, 3)
@@ -6439,7 +6445,8 @@ export function initAbilities() {
     new Ability(Abilities.MINUS, 3)
       .conditionalAttr(p => globalScene.currentBattle.double && [ Abilities.PLUS, Abilities.MINUS ].some(a => p.getAlly().hasAbility(a)), StatMultiplierAbAttr, Stat.SPATK, 1.5),
     new Ability(Abilities.FORECAST, 3)
-      .attr(UncopiableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
       .attr(NoFusionAbilityAbAttr)
       .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FORECAST)
       .attr(PostWeatherChangeFormChangeAbAttr, Abilities.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ]),
@@ -6619,25 +6626,26 @@ export function initAbilities() {
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SNOW),
     new Ability(Abilities.HONEY_GATHER, 4)
       .attr(MoneyAbAttr)
-      .attr(UnsuppressableAbilityAbAttr),
+      .unsuppressable(),
     new Ability(Abilities.FRISK, 4)
       .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.RECKLESS_MOVE), 1.2),
     new Ability(Abilities.MULTITYPE, 4)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
-      .attr(NoFusionAbilityAbAttr),
+      .attr(NoFusionAbilityAbAttr)
+      .uncopiable()
+      .unsuppressable()
+      .unreplaceable(),
     new Ability(Abilities.FLOWER_GIFT, 4)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 1.5)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.SPDEF, 1.5)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), AllyStatMultiplierAbAttr, Stat.ATK, 1.5)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), AllyStatMultiplierAbAttr, Stat.SPDEF, 1.5)
-      .attr(UncopiableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(PostSummonFormChangeByWeatherAbAttr, Abilities.FLOWER_GIFT)
       .attr(PostWeatherChangeFormChangeAbAttr, Abilities.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ])
+      .uncopiable()
+      .unreplaceable()
       .ignorable(),
     new Ability(Abilities.BAD_DREAMS, 4)
       .attr(PostTurnHurtIfSleepingAbAttr),
@@ -6719,12 +6727,11 @@ export function initAbilities() {
         return Utils.isNullOrUndefined(movePhase);
       }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
       .unimplemented(),
     new Ability(Abilities.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
-      .attr(UncopiableAbilityAbAttr),
+      .uncopiable(),
     new Ability(Abilities.INFILTRATOR, 5)
       .attr(InfiltratorAbAttr)
       .partial(), // does not bypass Mist
@@ -6766,10 +6773,10 @@ export function initAbilities() {
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 1 : 0)
       .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 1 : 0)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .bypassFaint(),
     new Ability(Abilities.VICTORY_STAR, 5)
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.1)
@@ -6822,10 +6829,10 @@ export function initAbilities() {
       .ignorable()
       .partial(), // Mold Breaker ally should not be affected by Sweet Veil
     new Ability(Abilities.STANCE_CHANGE, 6)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
-      .attr(NoFusionAbilityAbAttr),
+      .attr(NoFusionAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable(),
     new Ability(Abilities.GALE_WINGS, 6)
       .attr(ChangeMovePriorityAbAttr, (pokemon, move) => pokemon.isFullHp() && pokemon.getMoveType(move) === PokemonType.FLYING, 1),
     new Ability(Abilities.MEGA_LAUNCHER, 6)
@@ -6890,11 +6897,11 @@ export function initAbilities() {
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .conditionalAttr(p => p.formIndex !== 7, StatusEffectImmunityAbAttr)
       .conditionalAttr(p => p.formIndex !== 7, BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .bypassFaint(),
     new Ability(Abilities.STAKEOUT, 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => !!target?.turnData.switchedInThisTurn, 2),
@@ -6925,15 +6932,12 @@ export function initAbilities() {
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
       .attr(PostTurnFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .bypassFaint(),
     new Ability(Abilities.DISGUISE, 7)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       // Add BattlerTagType.DISGUISE if the pokemon is in its disguised form
@@ -6943,15 +6947,18 @@ export function initAbilities() {
         (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
         (pokemon) => Utils.toDmgValue(pokemon.getMaxHp() / 8))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .bypassFaint()
       .ignorable(),
     new Ability(Abilities.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, () => 2)
       .attr(PostBattleInitFormChangeAbAttr, () => 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .bypassFaint(),
     new Ability(Abilities.POWER_CONSTRUCT, 7)
       .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostBattleInitFormChangeAbAttr, () => 2)
@@ -6960,20 +6967,20 @@ export function initAbilities() {
       .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
       .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "10-complete" ? 5 : 3)
       .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "10-complete" ? 5 : 3)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .bypassFaint(),
     new Ability(Abilities.CORROSION, 7)
       .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ PokemonType.STEEL, PokemonType.POISON ])
       .edgeCase(), // Should poison itself with toxic orb.
     new Ability(Abilities.COMATOSE, 7)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(StatusEffectImmunityAbAttr, ...getNonVolatileStatusEffects())
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY),
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable(),
     new Ability(Abilities.QUEENLY_MAJESTY, 7)
       .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
@@ -6997,10 +7004,10 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), Stat.SPD, -1, false),
     new Ability(Abilities.RECEIVER, 7)
       .attr(CopyFaintedAllyAbilityAbAttr)
-      .attr(UncopiableAbilityAbAttr),
+      .uncopiable(),
     new Ability(Abilities.POWER_OF_ALCHEMY, 7)
       .attr(CopyFaintedAllyAbilityAbAttr)
-      .attr(UncopiableAbilityAbAttr),
+      .uncopiable(),
     new Ability(Abilities.BEAST_BOOST, 7)
       .attr(PostVictoryStatStageChangeAbAttr, p => {
         let highestStat: EffectiveStat;
@@ -7015,10 +7022,10 @@ export function initAbilities() {
         return highestStat!;
       }, 1),
     new Ability(Abilities.RKS_SYSTEM, 7)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
-      .attr(NoFusionAbilityAbAttr),
+      .attr(NoFusionAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable(),
     new Ability(Abilities.ELECTRIC_SURGE, 7)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC),
@@ -7064,11 +7071,11 @@ export function initAbilities() {
      * @see {@linkcode GulpMissileTagAttr} and {@linkcode GulpMissileTag} for Gulp Missile implementation
      */
     new Ability(Abilities.GULP_MISSILE, 8)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .unsuppressable()
+      .uncopiable()
+      .unreplaceable()
       .bypassFaint(),
     new Ability(Abilities.STALWART, 8)
       .attr(BlockRedirectAbAttr),
@@ -7091,9 +7098,6 @@ export function initAbilities() {
     new Ability(Abilities.RIPEN, 8)
       .attr(DoubleBerryEffectAbAttr),
     new Ability(Abilities.ICE_FACE, 8)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       // Add BattlerTagType.ICE_FACE if the pokemon is in ice face form
@@ -7106,6 +7110,9 @@ export function initAbilities() {
         (target, user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE), 0, BattlerTagType.ICE_FACE,
         (pokemon, abilityName) => i18next.t("abilityTriggers:iceFaceAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .bypassFaint()
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, 8)
@@ -7128,8 +7135,7 @@ export function initAbilities() {
     new Ability(Abilities.NEUTRALIZING_GAS, 8)
       .attr(PostSummonAddArenaTagAbAttr, true, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
       .attr(NoTransformAbilityAbAttr)
       .bypassFaint(),
     new Ability(Abilities.PASTEL_VEIL, 8)
@@ -7139,11 +7145,11 @@ export function initAbilities() {
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey() ? 1 : 0)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .condition((pokemon) => !pokemon.isTerastallized),
+      .condition((pokemon) => !pokemon.isTerastallized)
+      .uncopiable()
+      .unreplaceable(),
     new Ability(Abilities.QUICK_DRAW, 8)
       .attr(BypassSpeedChanceAbAttr, 30),
     new Ability(Abilities.UNSEEN_FIST, 8)
@@ -7162,16 +7168,16 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAsOneGlastrier", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(PreventBerryUseAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, Stat.ATK, 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr),
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable(),
     new Ability(Abilities.AS_ONE_SPECTRIER, 8)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAsOneSpectrier", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(PreventBerryUseAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, Stat.SPATK, 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr),
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable(),
     new Ability(Abilities.LINGERING_AROMA, 9)
       .attr(PostDefendAbilityGiveAbAttr, Abilities.LINGERING_AROMA)
       .bypassFaint(),
@@ -7206,9 +7212,9 @@ export function initAbilities() {
     new Ability(Abilities.WIND_POWER, 9)
       .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.hasFlag(MoveFlags.WIND_MOVE), BattlerTagType.CHARGED),
     new Ability(Abilities.ZERO_TO_HERO, 9)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
@@ -7217,22 +7223,20 @@ export function initAbilities() {
     new Ability(Abilities.COMMANDER, 9)
       .attr(CommanderAbAttr)
       .attr(DoubleBattleChanceAbAttr)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
       .edgeCase(), // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
     new Ability(Abilities.ELECTROMORPHOSIS, 9)
       .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattlerTagType.CHARGED),
     new Ability(Abilities.PROTOSYNTHESIS, 9)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), PostSummonAddBattlerTagAbAttr, BattlerTagType.PROTOSYNTHESIS, 0, true)
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.PROTOSYNTHESIS, 0, WeatherType.SUNNY, WeatherType.HARSH_SUN)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.QUARK_DRIVE, 9)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), PostSummonAddBattlerTagAbAttr, BattlerTagType.QUARK_DRIVE, 0, true)
       .attr(PostTerrainChangeAddBattlerTagAttr, BattlerTagType.QUARK_DRIVE, 0, TerrainType.ELECTRIC)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.GOOD_AS_GOLD, 9)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.category === MoveCategory.STATUS && ![ MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES, MoveTarget.USER_SIDE ].includes(move.moveTarget))
@@ -7296,45 +7300,45 @@ export function initAbilities() {
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable() // TODO is this true?
       .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.EMBODY_ASPECT_WELLSPRING, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPDEF ], 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.EMBODY_ASPECT_HEARTHFLAME, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.ATK ], 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.EMBODY_ASPECT_CORNERSTONE, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.DEF ], 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.TERA_SHIFT, 9)
       .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
+      .unsuppressable()
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.TERA_SHELL, 9)
       .attr(FullHpResistTypeAbAttr)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
       .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, 9)
       .attr(ClearWeatherAbAttr, [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.STRONG_WINDS ])
       .attr(ClearTerrainAbAttr, [ TerrainType.MISTY, TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.PSYCHIC ])
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable()
       .condition(getOncePerBattleCondition(Abilities.TERAFORM_ZERO)),
     new Ability(Abilities.POISON_PUPPETEER, 9)
-      .attr(UncopiableAbilityAbAttr)
-      .attr(UnswappableAbilityAbAttr)
+      .uncopiable()
+      .unreplaceable() // TODO is this true?
       .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
   );
 }
