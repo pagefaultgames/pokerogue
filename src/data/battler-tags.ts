@@ -7,7 +7,7 @@ import {
   ProtectStatAbAttr,
   ConditionalUserFieldProtectStatAbAttr,
   ReverseDrainAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import {

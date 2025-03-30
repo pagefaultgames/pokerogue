@@ -67,7 +67,7 @@ import {
   UserFieldMoveTypePowerBoostAbAttr,
   VariableMovePowerAbAttr,
   WonderSkinAbAttr,
-} from "../ability";
+} from "../abilities/ability";
 import {
   AttackTypeBoosterModifier,
   BerryModifier,
