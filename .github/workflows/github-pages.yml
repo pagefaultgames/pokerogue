@@ -34,14 +34,15 @@ jobs:
           sudo apt update
           sudo apt install -y git openssh-client
 
-      - name: Setup Node 20.13.1
-        uses: actions/setup-node@v1
+      - name: Setup Node for Github Pages
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
+          cache: 'npm'
 
       - name: Checkout repository for Github Pages
         if: github.event_name == 'push'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: pokerogue_gh
           ref: gh-pages
