@@ -1730,10 +1730,12 @@ export async function populateAnims() {
     let props: string[];
     for (let p = 0; p < propSets.length; p++) {
       props = propSets[p];
+      // @ts-ignore TODO
       const ai = props.indexOf(a.key);
       if (ai === -1) {
         continue;
       }
+      // @ts-ignore TODO
       const bi = props.indexOf(b.key);
 
       return ai < bi ? -1 : ai > bi ? 1 : 0;
