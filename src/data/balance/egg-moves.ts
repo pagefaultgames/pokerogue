@@ -464,7 +464,7 @@ export const speciesEggMoves = {
   [Species.HATENNA]: [ Moves.RECOVER, Moves.MOONBLAST, Moves.BUZZY_BUZZ, Moves.TORCH_SONG ],
   [Species.IMPIDIMP]: [ Moves.SLACK_OFF, Moves.PARTING_SHOT, Moves.OCTOLOCK, Moves.WICKED_BLOW ],
   [Species.MILCERY]: [ Moves.MOONBLAST, Moves.CHILLY_RECEPTION, Moves.EARTH_POWER, Moves.GEOMANCY ],
-  [Species.FALINKS]: [ Moves.BATON_PASS, Moves.POWER_TRIP, Moves.COMBAT_TORQUER, Moves.HEAL_ORDER ],
+  [Species.FALINKS]: [ Moves.BATON_PASS, Moves.POWER_TRIP, Moves.COMBAT_TORQUE, Moves.HEAL_ORDER ],
   [Species.PINCURCHIN]: [ Moves.TRICK_ROOM, Moves.VOLT_SWITCH, Moves.STRENGTH_SAP, Moves.THUNDERCLAP ],
   [Species.SNOM]: [ Moves.FROST_BREATH, Moves.HEAL_ORDER, Moves.EARTH_POWER, Moves.SPORE ],
   [Species.STONJOURNER]: [ Moves.BODY_PRESS, Moves.HELPING_HAND, Moves.ACCELEROCK, Moves.DIAMOND_STORM ],
