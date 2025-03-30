@@ -31,7 +31,7 @@ vi.mock("i18next", async importOriginal => {
       const filename = req.params[0];
 
       try {
-        const json = await import(`../public/locales/en/${req.params[0]}`);
+        const json = await import(`../public/locales/en/${req.params[0]}.json`);
         console.log("Loaded locale", filename);
         return HttpResponse.json(json);
       } catch (err) {
