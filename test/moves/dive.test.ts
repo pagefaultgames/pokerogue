@@ -120,7 +120,7 @@ describe("Moves - Dive", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.phaseInterceptor.to("TurnStartPhase", false);
-    game.scene.arena.trySetWeather(WeatherType.HARSH_SUN, false);
+    game.scene.arena.trySetWeather(WeatherType.HARSH_SUN);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);

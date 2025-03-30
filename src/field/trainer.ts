@@ -2,19 +2,17 @@ import { globalScene } from "#app/global-scene";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import type { TrainerConfig, TrainerPartyTemplate } from "#app/data/trainer-config";
-import {
-  TrainerPartyCompoundTemplate,
-  TrainerPoolTier,
-  TrainerSlot,
-  trainerConfigs,
-  trainerPartyTemplates,
-  TeraAIMode,
-} from "#app/data/trainer-config";
+import type { TrainerConfig } from "#app/data/trainers/trainer-config";
+import type { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
+import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { TrainerPoolTier } from "#enums/trainer-pool-tier";
+import { TeraAIMode } from "#enums/tera-ai-mode";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
 import type { PersistentModifier } from "#app/modifier/modifier";
-import { trainerNamePools } from "#app/data/trainer-names";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
@@ -61,11 +59,17 @@ export default class Trainer extends Phaser.GameObjects.Container {
         : Utils.randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1,
     );
-    if (trainerNamePools.hasOwnProperty(trainerType)) {
-      const namePool = trainerNamePools[trainerType];
+    if (i18next.exists("trainersCommon:" + TrainerType[trainerType], { returnObjects: true })) {
+      const namePool = i18next.t("trainersCommon:" + TrainerType[trainerType], { returnObjects: true });
       this.name =
         name ||
-        Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[variant === TrainerVariant.FEMALE ? 1 : 0] : namePool);
+        Utils.randSeedItem(
+          Object.values(
+            namePool.hasOwnProperty("MALE")
+              ? namePool[variant === TrainerVariant.FEMALE ? "FEMALE" : "MALE"]
+              : namePool,
+          ),
+        );
       if (variant === TrainerVariant.DOUBLE) {
         if (this.config.doubleOnly) {
           if (partnerName) {
@@ -74,7 +78,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
             [this.name, this.partnerName] = this.name.split(" & ");
           }
         } else {
-          this.partnerName = partnerName || Utils.randSeedItem(Array.isArray(namePool[0]) ? namePool[1] : namePool);
+          this.partnerName =
+            partnerName ||
+            Utils.randSeedItem(Object.values(namePool.hasOwnProperty("FEMALE") ? namePool["FEMALE"] : namePool));
         }
       }
     }
