@@ -90,7 +90,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
     encounter.enemyPartyConfigs = [config];
 
     // Load animations/sfx for Garbodor fight start moves
-    loadCustomMovesForEncounter([Moves.TOXIC, Moves.AMNESIA]);
+    loadCustomMovesForEncounter([Moves.TOXIC, Moves.STOCKPILE]);
 
     globalScene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
     globalScene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
@@ -115,7 +115,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         doGarbageDig();
       })
       .withOptionPhase(async () => {
-        // Gain 2 Leftovers and 2 Shell Bell
+        // Gain 2 Leftovers and 1 Shell Bell
         await transitionMysteryEncounterIntroVisuals();
         await tryApplyDigRewardItems();
 
@@ -175,7 +175,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY],
-            move: new PokemonMove(Moves.AMNESIA),
+            move: new PokemonMove(Moves.STOCKPILE),
             ignorePp: true,
           },
         );
@@ -263,7 +263,7 @@ async function tryApplyDigRewardItems() {
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: shellBell.name,
-      count: 2,
+      count: 1,
     }),
     null,
     undefined,
