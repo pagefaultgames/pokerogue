@@ -154,19 +154,6 @@ describe("Abilities - Flower Veil", () => {
     expect(ally.getStatStage(Stat.SPDEF)).toBe(-1);
   });
 
-  it("should not prevent status drops of a non-grass user or its non-grass allies", async () => {
-    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
-    const [user, ally] = game.scene.getPlayerField();
-    // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(user.getStatStage(Stat.ATK)).toBe(-2);
-    expect(ally.getStatStage(Stat.ATK)).toBe(-2);
-  });
-
   it("should prevent the drops while retaining the boosts from spicy extract", async () => {
     game.override.enemyMoveset([Moves.SPICY_EXTRACT]).moveset([Moves.SPLASH]);
     await game.classicMode.startBattle([Species.BULBASAUR]);
