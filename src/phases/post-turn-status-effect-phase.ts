@@ -7,7 +7,7 @@ import {
   BlockStatusDamageAbAttr,
   PostDamageAbAttr,
   ReduceBurnDamageAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectActivationText } from "#app/data/status-effect";
 import { BattleSpec } from "#app/enums/battle-spec";

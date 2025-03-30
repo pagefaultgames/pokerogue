@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/abilities/ability";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves, FlinchAttr } from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";

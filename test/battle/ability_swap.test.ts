@@ -1,4 +1,4 @@
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/abilities/ability";
 import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
