@@ -978,7 +978,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const caughtAttr = this.isCaught();
 
     // no preferences or Pokemon wasn't caught, return empty attribute
-    if (!starterAttributes || !caughtAttr) {
+    if (!starterAttributes || !this.isSeen()) {
       return {};
     }
 
@@ -2026,6 +2026,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+              ui.playError();
+              this.blockInput = false;
+              return true;
+            }
             this.blockInput = true;
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
@@ -2061,6 +2066,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = false;
             break;
           case Button.RIGHT:
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+              ui.playError();
+              this.blockInput = false;
+              return true;
+            }
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
@@ -2220,9 +2230,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    const isFormCaught = this.isFormCaught();
-
-    if ((this.isCaught() && isFormCaught) || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
+    if ((this.isCaught() && this.isFormCaught()) || this.isSeen()) {
       ui.showText(this.menuDescriptions[cursor]);
     } else {
       ui.showText("");
@@ -2301,7 +2309,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
-    if (species && (this.speciesStarterDexEntry?.seenAttr || this.isCaught())) {
+    if (species && (this.isSeen() || this.isCaught())) {
       this.pokemonNumberText.setText(padInt(species.speciesId, 4));
 
       if (this.isCaught()) {
