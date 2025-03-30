@@ -3310,7 +3310,7 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
    * @returns 
    */
   override canApplyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: [Pokemon, Pokemon | null, ...any]): boolean {
-    return (!cancelled.value && effect !== StatusEffect.FAINT && this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) && this.condition(pokemon, args[1]);
+    return (!cancelled.value && effect !== StatusEffect.FAINT && this.immuneEffects.length < 1 || this.immuneEffects.includes(effect)) && this.condition(args[0], args[1]);
   }
 
   constructor(condition: (target: Pokemon, source: Pokemon | null) => boolean, ...immuneEffects: StatusEffect[]) {
@@ -3396,8 +3396,8 @@ export class PreApplyBattlerTagAbAttr extends AbAttr {
  * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
  */
 export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
-  private immuneTagTypes: BattlerTagType[];
-  private battlerTag: BattlerTag;
+  protected immuneTagTypes: BattlerTagType[];
+  protected battlerTag: BattlerTag;
 
   constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super(true);
@@ -3408,7 +3408,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   override canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     this.battlerTag = tag;
 
-    return this.immuneTagTypes.includes(tag.tagType);
+    return !cancelled.value && this.immuneTagTypes.includes(tag.tagType);
   }
 
   override applyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): void {
@@ -3437,17 +3437,24 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
 export class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr { }
 
 export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattlerTagImmunityAbAttr {
-  private condition: (target: Pokemon, source: Pokemon | null) => boolean;
+  private condition: (target: Pokemon) => boolean;
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]) {
-    if (cancelled.value || !this.condition(pokemon, args[1] as Pokemon)) {
-      return false;
-    }
-
-    return super.apply(pokemon, passive, simulated, cancelled, args);
+  /**
+   * Determine whether the {@linkcode ConditionalUserFieldBattlerTagImmunityAbAttr} can be applied by passing the target pokemon to the condition.
+   * @param pokemon 
+   * @param passive 
+   * @param simulated 
+   * @param tag 
+   * @param cancelled 
+   * @param args 
+   * @returns 
+   */
+  override canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: [Pokemon, ...any]): boolean {
+    console.log("==========Checking if we can apply the tag to " + args[0]?.name);
+    return super.canApplyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args) && this.condition(args[0]);
   }
 
-  constructor(condition: (target: Pokemon, source: Pokemon | null) => boolean, immuneTagTypes: BattlerTagType | BattlerTagType[]) {
+  constructor(condition: (target: Pokemon) => boolean, immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super(immuneTagTypes);
 
     this.condition = condition;
@@ -6028,7 +6035,8 @@ export function applyPreApplyBattlerTagAbAttrs(
     attrType,
     pokemon,
     (attr, passive) => attr.applyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args),
-    (attr, passive) => attr.canApplyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args), args,
+    (attr, passive) => attr.canApplyPreApplyBattlerTag(pokemon, passive, simulated, tag, cancelled, args),
+    args,
     simulated,
   );
 }
@@ -6045,7 +6053,8 @@ export function applyPreWeatherEffectAbAttrs(
     attrType,
     pokemon,
     (attr, passive) => attr.applyPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args),
-    (attr, passive) => attr.canApplyPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args), args,
+    (attr, passive) => attr.canApplyPreWeatherEffect(pokemon, passive, simulated, weather, cancelled, args),
+    args,
     simulated,
   );
 }
@@ -6781,13 +6790,12 @@ export function initAbilities() {
         return source ? target.getTypes().includes(PokemonType.GRASS) && target.id !== source.id : false;
       })
       .attr(ConditionalUserFieldBattlerTagImmunityAbAttr,
-        (target: Pokemon, source: Pokemon | null) => {
+        (target: Pokemon) => {
           return target.getTypes().includes(PokemonType.GRASS);
         },
         [ BattlerTagType.DROWSY ],
       )
       .attr(ConditionalUserFieldProtectStatAbAttr, (target: Pokemon) => {
-        console.log(`target: ${target.name}`);
         return target.getTypes().includes(PokemonType.GRASS);
       })
       .ignorable(),
