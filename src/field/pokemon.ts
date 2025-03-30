@@ -635,7 +635,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public isAllowedInChallenge(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.POKEMON_IN_BATTLE,
       this,
       challengeAllowed,
@@ -1599,7 +1598,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   calculateBaseStats(): number[] {
     const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.FLIP_STAT,
       this,
       baseStats,
@@ -1621,7 +1619,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion()) {
       const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
       applyChallenges(
-        globalScene.gameMode,
         ChallengeType.FLIP_STAT,
         this,
         fusionBaseStats,
@@ -2595,7 +2592,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           getTypeDamageMultiplier(moveType, defType),
         );
         applyChallenges(
-          globalScene.gameMode,
           ChallengeType.TYPE_EFFECTIVENESS,
           multiplier,
         );
@@ -2647,7 +2643,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       getTypeDamageMultiplier(moveType, PokemonType.FLYING),
     );
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.TYPE_EFFECTIVENESS,
       typeMultiplierAgainstFlying,
     );
