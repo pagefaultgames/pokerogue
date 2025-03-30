@@ -161,7 +161,6 @@ import {
   applyPreAttackAbAttrs,
   applyPreDefendAbAttrs,
   applyPreSetStatusAbAttrs,
-  UnsuppressableAbilityAbAttr,
   NoFusionAbilityAbAttr,
   MultCritAbAttr,
   IgnoreTypeImmunityAbAttr,
@@ -2174,7 +2173,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (
       this.summonData?.abilitySuppressed &&
-      !ability.hasAttr(UnsuppressableAbilityAbAttr)
+      ability.isSuppressable
     ) {
       return false;
     }
@@ -2197,7 +2196,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       // (Balance decided that the other ability of a neutralizing gas pokemon should not be neutralized)
       // If the ability itself is neutralizing gas, don't suppress it (handled through arena tag)
       const unsuppressable =
-        ability.hasAttr(UnsuppressableAbilityAbAttr) ||
+        !ability.isSuppressable ||
         thisAbilitySuppressing ||
         (hasSuppressingAbility && !suppressAbilitiesTag.shouldApplyToSelf());
       if (!unsuppressable) {
@@ -4761,6 +4760,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         stubTag,
         cancelled,
         true,
+        this,
       ),
     );
 
@@ -4788,18 +4788,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       newTag,
       cancelled,
     );
+    if (cancelled.value) {
+      return false;
+    }
 
-    const userField = this.getAlliedField();
-    userField.forEach(pokemon =>
+    for (const pokemon of this.getAlliedField()) {
       applyPreApplyBattlerTagAbAttrs(
         UserFieldBattlerTagImmunityAbAttr,
         pokemon,
         newTag,
         cancelled,
-      ),
-    );
+        false,
+        this
+      );
+      if (cancelled.value) {
+        return false;
+      }
+    }
 
-    if (!cancelled.value && newTag.canAdd(this)) {
+    if (newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
       newTag.onAdd(this);
 
@@ -5443,17 +5450,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       cancelled,
       quiet,
     );
+    if (cancelled.value) {
+      return false;
+    }
 
-    const userField = this.getAlliedField();
-    userField.forEach(pokemon =>
+    for (const pokemon of this.getAlliedField()) {
       applyPreSetStatusAbAttrs(
         UserFieldStatusEffectImmunityAbAttr,
         pokemon,
         effect,
         cancelled,
-        quiet,
-      ),
-    );
+        quiet, this, sourcePokemon,
+      )
+      if (cancelled.value) {
+        break;
+      }
+    }
 
     if (cancelled.value) {
       return false;
