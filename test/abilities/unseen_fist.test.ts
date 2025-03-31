@@ -8,7 +8,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryPhase } from "#app/phases/berry-phase";
 
-
 describe("Abilities - Unseen Fist", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -28,63 +27,54 @@ describe("Abilities - Unseen Fist", () => {
     game.override.battleType("single");
     game.override.starterSpecies(Species.URSHIFU);
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([ Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT ]);
+    game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
   });
 
-  it(
-    "should cause a contact move to ignore Protect",
-    () => testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, true),
-  );
+  it("should cause a contact move to ignore Protect", async () =>
+    await testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, true));
 
-  it(
-    "should not cause a non-contact move to ignore Protect",
-    () => testUnseenFistHitResult(game, Moves.ABSORB, Moves.PROTECT, false),
-  );
+  it("should not cause a non-contact move to ignore Protect", async () =>
+    await testUnseenFistHitResult(game, Moves.ABSORB, Moves.PROTECT, false));
 
-  it(
-    "should not apply if the source has Long Reach",
-    async () => {
-      game.override.passiveAbility(Abilities.LONG_REACH);
-      await testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
-    }
-  );
+  it("should not apply if the source has Long Reach", async () => {
+    game.override.passiveAbility(Abilities.LONG_REACH);
+    await testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
+  });
 
-  it(
-    "should cause a contact move to ignore Wide Guard",
-    () => testUnseenFistHitResult(game, Moves.BREAKING_SWIPE, Moves.WIDE_GUARD, true),
-  );
+  it("should cause a contact move to ignore Wide Guard", async () =>
+    await testUnseenFistHitResult(game, Moves.BREAKING_SWIPE, Moves.WIDE_GUARD, true));
 
-  it(
-    "should not cause a non-contact move to ignore Wide Guard",
-    () => testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false),
-  );
+  it("should not cause a non-contact move to ignore Wide Guard", async () =>
+    await testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false));
 
-  it(
-    "should cause a contact move to ignore Protect, but not Substitute",
-    async () => {
-      game.override.enemyLevel(1);
-      game.override.moveset([ Moves.TACKLE ]);
+  it("should cause a contact move to ignore Protect, but not Substitute", async () => {
+    game.override.enemyLevel(1);
+    game.override.moveset([Moves.TACKLE]);
 
-      await game.classicMode.startBattle();
+    await game.classicMode.startBattle();
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
-      enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, enemyPokemon.id);
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, enemyPokemon.id);
 
-      game.move.select(Moves.TACKLE);
+    game.move.select(Moves.TACKLE);
 
-      await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to(BerryPhase, false);
 
-      expect(enemyPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    }
-  );
+    expect(enemyPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+  });
 });
 
-async function testUnseenFistHitResult(game: GameManager, attackMove: Moves, protectMove: Moves, shouldSucceed: boolean = true): Promise<void> {
-  game.override.moveset([ attackMove ]);
-  game.override.enemyMoveset([ protectMove, protectMove, protectMove, protectMove ]);
+async function testUnseenFistHitResult(
+  game: GameManager,
+  attackMove: Moves,
+  protectMove: Moves,
+  shouldSucceed = true,
+): Promise<void> {
+  game.override.moveset([attackMove]);
+  game.override.enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
 
   await game.classicMode.startBattle();
 

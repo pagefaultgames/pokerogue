@@ -23,17 +23,17 @@ describe("Moves - Defog", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.MIST, Moves.SAFEGUARD, Moves.SPLASH ])
+      .moveset([Moves.MIST, Moves.SAFEGUARD, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([ Moves.DEFOG, Moves.GROWL ]);
+      .enemyMoveset([Moves.DEFOG, Moves.GROWL]);
   });
 
   it("should not allow Safeguard to be active", async () => {
-    await game.classicMode.startBattle([ Species.REGIELEKI ]);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -44,13 +44,11 @@ describe("Moves - Defog", () => {
 
     expect(playerPokemon[0].isSafeguarded(enemyPokemon[0])).toBe(false);
 
-
     expect(true).toBe(true);
   });
 
-
   it("should not allow Mist to be active", async () => {
-    await game.classicMode.startBattle([ Species.REGIELEKI ]);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const playerPokemon = game.scene.getPlayerField();
 

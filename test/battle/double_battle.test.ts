@@ -34,11 +34,7 @@ describe("Double Battles", () => {
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
   it("3v2 edge case: player summons 2 pokemon on the next battle after being fainted and revived", async () => {
     game.override.battleType("double").enemyMoveset(Moves.SPLASH).moveset(Moves.SPLASH);
-    await game.startBattle([
-      Species.BULBASAUR,
-      Species.CHARIZARD,
-      Species.SQUIRTLE,
-    ]);
+    await game.startBattle([Species.BULBASAUR, Species.CHARIZARD, Species.SQUIRTLE]);
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
@@ -70,13 +66,14 @@ describe("Double Battles", () => {
       return rngSweepProgress * (max - min) + min;
     });
 
-    game.override.enemyMoveset(Moves.SPLASH)
+    game.override
+      .enemyMoveset(Moves.SPLASH)
       .moveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH);
 
     // Play through endless, waves 1 to 9, counting number of double battles from waves 2 to 9
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
     game.scene.gameMode = getGameMode(GameModes.ENDLESS);
 
     for (let i = 0; i < DOUBLE_CHANCE; i++) {

@@ -29,13 +29,13 @@ describe("Moves - Quash", () => {
       .enemyLevel(1)
       .enemySpecies(Species.SLOWPOKE)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([ Moves.RAIN_DANCE, Moves.SPLASH ])
+      .enemyMoveset([Moves.RAIN_DANCE, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .moveset([ Moves.QUASH, Moves.SUNNY_DAY, Moves.RAIN_DANCE, Moves.SPLASH ]);
+      .moveset([Moves.QUASH, Moves.SUNNY_DAY, Moves.RAIN_DANCE, Moves.SPLASH]);
   });
 
   it("makes the target move last in a turn, ignoring priority", async () => {
-    await game.classicMode.startBattle([ Species.ACCELGOR, Species.RATTATA ]);
+    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
 
     game.move.select(Moves.QUASH, 0, BattlerIndex.PLAYER_2);
     game.move.select(Moves.SUNNY_DAY, 1);
@@ -48,7 +48,7 @@ describe("Moves - Quash", () => {
   });
 
   it("fails if the target has already moved", async () => {
-    await game.classicMode.startBattle([ Species.ACCELGOR, Species.RATTATA ]);
+    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.QUASH, 1, BattlerIndex.PLAYER);
 
@@ -59,10 +59,9 @@ describe("Moves - Quash", () => {
   });
 
   it("makes multiple quashed targets move in speed order at the end of the turn", async () => {
-    game.override.enemySpecies(Species.NINJASK)
-      .enemyLevel(100);
+    game.override.enemySpecies(Species.NINJASK).enemyLevel(100);
 
-    await game.classicMode.startBattle([ Species.ACCELGOR, Species.RATTATA ]);
+    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
 
     // both users are quashed - rattata is slower so sun should be up at end of turn
     game.move.select(Moves.RAIN_DANCE, 0);
@@ -76,9 +75,9 @@ describe("Moves - Quash", () => {
   });
 
   it("respects trick room", async () => {
-    game.override.enemyMoveset([ Moves.RAIN_DANCE, Moves.SPLASH, Moves.TRICK_ROOM ]);
+    game.override.enemyMoveset([Moves.RAIN_DANCE, Moves.SPLASH, Moves.TRICK_ROOM]);
 
-    await game.classicMode.startBattle([ Species.ACCELGOR, Species.RATTATA ]);
+    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.SPLASH, 1);
 
@@ -95,5 +94,4 @@ describe("Moves - Quash", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
   });
-
 });

@@ -24,7 +24,7 @@ describe("Abilities - Analytic", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.TACKLE ])
+      .moveset([Moves.SPLASH, Moves.TACKLE])
       .ability(Abilities.ANALYTIC)
       .battleType("single")
       .disableCrits()
@@ -36,45 +36,45 @@ describe("Abilities - Analytic", () => {
   });
 
   it("should increase damage if the user moves last", async () => {
-    await game.classicMode.startBattle([ Species.ARCEUS ]);
+    await game.classicMode.startBattle([Species.ARCEUS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.TACKLE);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     const damage1 = enemy.getInverseHp();
     enemy.hp = enemy.getMaxHp();
 
     game.move.select(Moves.TACKLE);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(isBetween(enemy.getInverseHp(), toDmgValue(damage1 * 1.3) - 3, toDmgValue(damage1 * 1.3) + 3)).toBe(true);
   });
 
   it("should increase damage only if the user moves last in doubles", async () => {
     game.override.battleType("double");
-    await game.classicMode.startBattle([ Species.GENGAR, Species.SHUCKLE ]);
+    await game.classicMode.startBattle([Species.GENGAR, Species.SHUCKLE]);
 
-    const [ enemy, ] = game.scene.getEnemyField();
+    const [enemy] = game.scene.getEnemyField();
 
     game.move.select(Moves.TACKLE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.toNextTurn();
     const damage1 = enemy.getInverseHp();
     enemy.hp = enemy.getMaxHp();
 
     game.move.select(Moves.TACKLE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
-    await game.setTurnOrder([ BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(isBetween(enemy.getInverseHp(), toDmgValue(damage1 * 1.3) - 3, toDmgValue(damage1 * 1.3) + 3)).toBe(true);
     enemy.hp = enemy.getMaxHp();
 
     game.move.select(Moves.TACKLE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
-    await game.setTurnOrder([ BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(enemy.getInverseHp()).toBe(damage1);
   });

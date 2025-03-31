@@ -4,12 +4,11 @@ import { isNullOrUndefined } from "#app/utils";
 import type PokemonSpecies from "../data/pokemon-species";
 import { addTextObject, TextStyle } from "./text";
 
-
 interface SpeciesDetails {
-  shiny?: boolean,
-  formIndex?: number
-  female?: boolean,
-  variant?: Variant
+  shiny?: boolean;
+  formIndex?: number;
+  female?: boolean;
+  variant?: Variant;
 }
 
 export class PokedexMonContainer extends Phaser.GameObjects.Container {
@@ -31,7 +30,7 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public passive2Icon: Phaser.GameObjects.Image;
   public passive1OverlayIcon: Phaser.GameObjects.Image;
   public passive2OverlayIcon: Phaser.GameObjects.Image;
-  public cost: number = 0;
+  public cost = 0;
 
   constructor(species: PokemonSpecies, options: SpeciesDetails = {}) {
     super(globalScene, 0, 0);
@@ -57,7 +56,9 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.add(this.shinyIcons);
 
     // value label
-    const label = addTextObject(1, 2, "0", TextStyle.WINDOW, { fontSize: "32px" });
+    const label = addTextObject(1, 2, "0", TextStyle.WINDOW, {
+      fontSize: "32px",
+    });
     label.setShadowOffset(2, 2);
     label.setOrigin(0, 0);
     label.setVisible(false);
@@ -136,7 +137,6 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.add(tmMove2Icon);
     this.tmMove2Icon = tmMove2Icon;
 
-
     // passive icons
     const passive1Icon = globalScene.add.image(3, 3, "candy");
     passive1Icon.setOrigin(0, 0);
@@ -169,7 +169,6 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
   }
 
   setSpecies(species: PokemonSpecies, options: SpeciesDetails = {}) {
-
     this.species = species;
 
     const { shiny, formIndex, female, variant } = options;
@@ -196,10 +195,16 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     }
 
     // icon
-    this.icon = globalScene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+    this.icon = globalScene.add.sprite(
+      -2,
+      2,
+      species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
+    );
     this.icon.setScale(0.5);
     this.icon.setOrigin(0, 0);
-    this.icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+    this.icon.setFrame(
+      species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
+    );
     this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
     this.add(this.icon);
   }

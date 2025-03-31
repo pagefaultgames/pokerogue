@@ -6,7 +6,10 @@ import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
+import {
+  runMysteryEncounterToEnd,
+  skipBattleRunMysteryEncounterRewardsPhase,
+} from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -19,7 +22,7 @@ import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import i18next from "i18next";
 
 const namespace = "mysteryEncounters/aTrainersTest";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -41,10 +44,10 @@ describe("A Trainer's Test - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
+      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [ MysteryEncounterType.A_TRAINERS_TEST ]);
+      biomeMap.set(biome, [MysteryEncounterType.A_TRAINERS_TEST]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -107,8 +110,17 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(scene.currentBattle.trainer).toBeDefined();
-      expect([ i18next.t("trainerNames:buck"), i18next.t("trainerNames:cheryl"), i18next.t("trainerNames:marley"), i18next.t("trainerNames:mira"), i18next.t("trainerNames:riley") ]
-        .map(name => name.toLowerCase()).includes(scene.currentBattle.trainer!.config.name)).toBeTruthy();
+      expect(
+        [
+          i18next.t("trainerNames:buck"),
+          i18next.t("trainerNames:cheryl"),
+          i18next.t("trainerNames:marley"),
+          i18next.t("trainerNames:mira"),
+          i18next.t("trainerNames:riley"),
+        ]
+          .map(name => name.toLowerCase())
+          .includes(scene.currentBattle.trainer!.config.name),
+      ).toBeTruthy();
       expect(enemyField[0]).toBeDefined();
     });
 
@@ -138,7 +150,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       vi.spyOn(scene, "playSoundWithoutBgm").mockImplementation(() => {
         return {
           totalDuration: 1,
-          destroy: () => null
+          destroy: () => null,
         } as any;
       });
     });

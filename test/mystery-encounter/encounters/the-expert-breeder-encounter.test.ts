@@ -5,7 +5,10 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
+import {
+  runMysteryEncounterToEnd,
+  skipBattleRunMysteryEncounterRewardsPhase,
+} from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -21,7 +24,7 @@ import { PostMysteryEncounterPhase } from "#app/phases/mystery-encounter-phases"
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -42,11 +45,9 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
 
-    const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [ Biome.VOLCANO, [ MysteryEncounterType.FIGHT_OR_FLIGHT ]],
-    ]);
+    const biomeMap = new Map<Biome, MysteryEncounterType[]>([[Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [ MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER ]);
+      biomeMap.set(biome, [MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -65,15 +66,17 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
     expect(TheExpertPokemonBreederEncounter.dialogue).toBeDefined();
     expect(TheExpertPokemonBreederEncounter.dialogue.intro).toStrictEqual([
       {
-        text: `${namespace}:intro`
+        text: `${namespace}:intro`,
       },
       {
         speaker: "trainerNames:expert_pokemon_breeder",
-        text: `${namespace}:intro_dialogue`
+        text: `${namespace}:intro_dialogue`,
       },
     ]);
     expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
-    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
+    expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.description).toBe(
+      `${namespace}:description`,
+    );
     expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
     expect(TheExpertPokemonBreederEncounter.options.length).toBe(3);
   });
@@ -83,7 +86,9 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
     game.override.startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER);
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(
+      MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER,
+    );
   });
 
   it("should initialize fully", async () => {
@@ -133,12 +138,15 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
         const ace = scene.currentBattle?.enemyParty[0];
         if (ace) {
           // Pretend that loading assets takes an extra 500ms
-          vi.spyOn(ace, "loadAssets").mockImplementation(() => new Promise(resolve => {
-            setTimeout(() => {
-              successfullyLoaded = true;
-              resolve();
-            }, 500);
-          }));
+          vi.spyOn(ace, "loadAssets").mockImplementation(
+            () =>
+              new Promise(resolve => {
+                setTimeout(() => {
+                  successfullyLoaded = true;
+                  resolve();
+                }, 500);
+              }),
+          );
         }
 
         return scene.currentBattle?.enemyParty ?? [];
@@ -215,12 +223,15 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
         const ace = scene.currentBattle?.enemyParty[0];
         if (ace) {
           // Pretend that loading assets takes an extra 500ms
-          vi.spyOn(ace, "loadAssets").mockImplementation(() => new Promise(resolve => {
-            setTimeout(() => {
-              successfullyLoaded = true;
-              resolve();
-            }, 500);
-          }));
+          vi.spyOn(ace, "loadAssets").mockImplementation(
+            () =>
+              new Promise(resolve => {
+                setTimeout(() => {
+                  successfullyLoaded = true;
+                  resolve();
+                }, 500);
+              }),
+          );
         }
 
         return scene.currentBattle?.enemyParty ?? [];
@@ -294,12 +305,15 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
         const ace = scene.currentBattle?.enemyParty[0];
         if (ace) {
           // Pretend that loading assets takes an extra 500ms
-          vi.spyOn(ace, "loadAssets").mockImplementation(() => new Promise(resolve => {
-            setTimeout(() => {
-              successfullyLoaded = true;
-              resolve();
-            }, 500);
-          }));
+          vi.spyOn(ace, "loadAssets").mockImplementation(
+            () =>
+              new Promise(resolve => {
+                setTimeout(() => {
+                  successfullyLoaded = true;
+                  resolve();
+                }, 500);
+              }),
+          );
         }
 
         return scene.currentBattle?.enemyParty ?? [];

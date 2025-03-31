@@ -45,11 +45,7 @@ describe("Abilities - Illuminate", () => {
   });
 
   it("should guarantee double battle with any one LURE", async () => {
-    game.override
-      .startingModifier([
-        { name: "LURE" },
-      ])
-      .startingWave(2);
+    game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
 
     await game.classicMode.startBattle();
 

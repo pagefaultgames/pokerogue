@@ -23,7 +23,7 @@ describe("Moves - Entrainment", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.ENTRAINMENT ])
+      .moveset([Moves.SPLASH, Moves.ENTRAINMENT])
       .ability(Abilities.ADAPTABILITY)
       .battleType("single")
       .disableCrits()
@@ -33,7 +33,7 @@ describe("Moves - Entrainment", () => {
   });
 
   it("gives its ability to the target", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
@@ -43,7 +43,7 @@ describe("Moves - Entrainment", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.ability(Abilities.INTIMIDATE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");

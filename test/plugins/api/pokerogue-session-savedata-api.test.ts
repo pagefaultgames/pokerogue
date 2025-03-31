@@ -10,11 +10,17 @@ import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-
 import type { SessionSaveData } from "#app/system/game-data";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import { http, HttpResponse } from "msw";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import type { SetupServerApi } from "msw/node";
 
 const apiBase = getApiBaseUrl();
 const sessionSavedataApi = new PokerogueSessionSavedataApi(apiBase);
-const { server } = global;
+
+let server: SetupServerApi;
+beforeAll(async () => {
+  server = await initServerForApiTests();
+});
 
 afterEach(() => {
   server.resetHandlers();
@@ -29,7 +35,7 @@ describe("Pokerogue Session Savedata API", () => {
     const params: NewClearSessionSavedataRequest = {
       clientSessionId: "test-session-id",
       isVictory: true,
-      slot: 3
+      slot: 3,
     };
 
     it("should return true on SUCCESS", async () => {
@@ -132,7 +138,7 @@ describe("Pokerogue Session Savedata API", () => {
 
     it("should return an error string on FAILURE", async () => {
       server.use(
-        http.get(`${apiBase}/savedata/session/delete`, () => new HttpResponse("Failed to delete!", { status: 400 }))
+        http.get(`${apiBase}/savedata/session/delete`, () => new HttpResponse("Failed to delete!", { status: 400 })),
       );
 
       const error = await sessionSavedataApi.delete(params);
@@ -162,8 +168,8 @@ describe("Pokerogue Session Savedata API", () => {
         http.post(`${apiBase}/savedata/session/clear`, () =>
           HttpResponse.json<ClearSessionSavedataResponse>({
             success: true,
-          })
-        )
+          }),
+        ),
       );
 
       const { success, error } = await sessionSavedataApi.clear(params, {} as SessionSaveData);
@@ -178,8 +184,8 @@ describe("Pokerogue Session Savedata API", () => {
           HttpResponse.json<ClearSessionSavedataResponse>({
             success: false,
             error: "Failed to clear!",
-          })
-        )
+          }),
+        ),
       );
 
       const { success, error } = await sessionSavedataApi.clear(params, {} as SessionSaveData);

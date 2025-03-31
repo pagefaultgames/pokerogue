@@ -7,7 +7,6 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Items - Leftovers", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -27,15 +26,15 @@ describe("Items - Leftovers", () => {
     game.override.battleType("single");
     game.override.startingLevel(2000);
     game.override.ability(Abilities.UNNERVE);
-    game.override.moveset([ Moves.SPLASH ]);
+    game.override.moveset([Moves.SPLASH]);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.UNNERVE);
-    game.override.enemyMoveset([ Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE ]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
     game.override.startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
   });
 
   it("leftovers works", async () => {
-    await game.startBattle([ Species.ARCANINE ]);
+    await game.startBattle([Species.ARCANINE]);
 
     // Make sure leftovers are there
     expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");

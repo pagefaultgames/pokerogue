@@ -28,10 +28,8 @@ describe("Items - Grip Claw", () => {
 
     game.override
       .battleType("double")
-      .moveset([ Moves.TACKLE, Moves.SPLASH, Moves.ATTRACT ])
-      .startingHeldItems([
-        { name: "GRIP_CLAW", count: 1 },
-      ])
+      .moveset([Moves.TACKLE, Moves.SPLASH, Moves.ATTRACT])
+      .startingHeldItems([{ name: "GRIP_CLAW", count: 1 }])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.UNNERVE)
       .ability(Abilities.UNNERVE)
@@ -41,13 +39,12 @@ describe("Items - Grip Claw", () => {
         { name: "BERRY", type: BerryType.LUM, count: 2 },
       ])
       .enemyLevel(100);
-
   });
 
   it("should steal items on contact and only from the attack target", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
 
-    const [ playerPokemon, ] = game.scene.getPlayerField();
+    const [playerPokemon] = game.scene.getPlayerField();
 
     const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
     vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
@@ -74,9 +71,9 @@ describe("Items - Grip Claw", () => {
   });
 
   it("should not steal items when using a targetted, non attack move", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MILOTIC ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
 
-    const [ playerPokemon, ] = game.scene.getPlayerField();
+    const [playerPokemon] = game.scene.getPlayerField();
 
     const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
     vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
@@ -101,6 +98,31 @@ describe("Items - Grip Claw", () => {
     expect(enemy1HeldItemCountsAfter).toBe(enemy1HeldItemCount);
     expect(enemy2HeldItemCountsAfter).toBe(enemy2HeldItemCount);
   });
+
+  it("should not allow Pollen Puff to steal items when healing ally", async () => {
+    game.override
+      .battleType("double")
+      .moveset([Moves.POLLEN_PUFF, Moves.ENDURE])
+      .startingHeldItems([
+        { name: "GRIP_CLAW", count: 1 },
+        { name: "BERRY", type: BerryType.LUM, count: 1 },
+      ]);
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
+
+    const [leftPokemon, rightPokemon] = game.scene.getPlayerField();
+
+    const gripClaw = leftPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
+    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
+
+    const heldItemCountBefore = getHeldItemCount(rightPokemon);
+
+    game.move.select(Moves.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
+    game.move.select(Moves.ENDURE, 1);
+
+    await game.toNextTurn();
+
+    expect(getHeldItemCount(rightPokemon)).toBe(heldItemCountBefore);
+  });
 });
 
 /*
@@ -109,4 +131,3 @@ describe("Items - Grip Claw", () => {
 function getHeldItemCount(pokemon: Pokemon) {
   return pokemon.getHeldItems().reduce((currentTotal, item) => currentTotal + item.getStackCount(), 0);
 }
-

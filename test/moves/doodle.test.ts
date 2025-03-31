@@ -24,7 +24,7 @@ describe("Moves - Doodle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.DOODLE ])
+      .moveset([Moves.SPLASH, Moves.DOODLE])
       .ability(Abilities.ADAPTABILITY)
       .battleType("single")
       .disableCrits()
@@ -34,7 +34,7 @@ describe("Moves - Doodle", () => {
   });
 
   it("should copy the opponent's ability in singles", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.DOODLE);
     await game.phaseInterceptor.to("BerryPhase");
@@ -44,7 +44,7 @@ describe("Moves - Doodle", () => {
 
   it("should copy the opponent's ability to itself and its ally in doubles", async () => {
     game.override.battleType("double");
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     game.move.select(Moves.DOODLE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
@@ -55,10 +55,9 @@ describe("Moves - Doodle", () => {
   });
 
   it("should activate post-summon abilities", async () => {
-    game.override.battleType("double")
-      .enemyAbility(Abilities.INTIMIDATE);
+    game.override.battleType("double").enemyAbility(Abilities.INTIMIDATE);
 
-    await game.classicMode.startBattle([ Species.FEEBAS, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     game.move.select(Moves.DOODLE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);

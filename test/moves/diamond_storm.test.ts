@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -24,7 +24,7 @@ describe("Moves - Diamond Storm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.DIAMOND_STORM ])
+      .moveset([Moves.DIAMOND_STORM])
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -36,7 +36,7 @@ describe("Moves - Diamond Storm", () => {
     const diamondStorm = allMoves[Moves.DIAMOND_STORM];
     vi.spyOn(diamondStorm, "chance", "get").mockReturnValue(100);
     vi.spyOn(diamondStorm, "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.DIAMOND_STORM);
     await game.phaseInterceptor.to("BerryPhase");

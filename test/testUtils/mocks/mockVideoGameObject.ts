@@ -4,8 +4,6 @@ import type { MockGameObject } from "./mockGameObject";
 export class MockVideoGameObject implements MockGameObject {
   public name: string;
 
-  constructor() {}
-
   public play = () => null;
   public stop = () => this;
   public setOrigin = () => null;

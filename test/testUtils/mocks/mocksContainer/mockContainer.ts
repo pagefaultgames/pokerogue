@@ -25,17 +25,15 @@ export default class MockContainer implements MockGameObject {
     this.visible = visible;
   }
 
-  once(event, callback, source) {
-  }
+  once(_event, _callback, _source) {}
 
-  off(event, callback, source) {
-  }
+  off(_event, _callback, _source) {}
 
   removeFromDisplayList() {
     // same as remove or destroy
   }
 
-  removeBetween(startIndex, endIndex, destroyChild) {
+  removeBetween(_startIndex, _endIndex, _destroyChild) {
     // Removes multiple children across an index range
   }
 
@@ -43,7 +41,7 @@ export default class MockContainer implements MockGameObject {
     // This callback is invoked when this Game Object is added to a Scene.
   }
 
-  setSize(width, height) {
+  setSize(_width, _height) {
     // Sets the size of this Game Object.
   }
 
@@ -51,7 +49,7 @@ export default class MockContainer implements MockGameObject {
     /// Sets the mask that this Game Object will use to render with.
   }
 
-  setPositionRelative(source, x, y) {
+  setPositionRelative(_source, _x, _y) {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
   }
 
@@ -66,11 +64,11 @@ export default class MockContainer implements MockGameObject {
     this.alpha = alpha;
   }
 
-  setFrame(frame, updateSize?: boolean, updateOrigin?: boolean) {
+  setFrame(_frame, _updateSize?: boolean, _updateOrigin?: boolean) {
     // Sets the frame this Game Object will use to render with.
   }
 
-  setScale(scale) {
+  setScale(_scale) {
     // Sets the scale of this Game Object.
   }
 
@@ -91,59 +89,59 @@ export default class MockContainer implements MockGameObject {
     this.list = [];
   }
 
-  setShadow(shadowXpos, shadowYpos, shadowColor) {
+  setShadow(_shadowXpos, _shadowYpos, _shadowColor) {
     // Sets the shadow settings for this Game Object.
   }
 
-  setLineSpacing(lineSpacing) {
+  setLineSpacing(_lineSpacing) {
     // Sets the line spacing value of this Game Object.
   }
 
-  setText(text) {
+  setText(_text) {
     // Sets the text this Game Object will display.
   }
 
-  setAngle(angle) {
+  setAngle(_angle) {
     // Sets the angle of this Game Object.
   }
 
-  setShadowOffset(offsetX, offsetY) {
+  setShadowOffset(_offsetX, _offsetY) {
     // Sets the shadow offset values.
   }
 
-  setWordWrapWidth(width) {
+  setWordWrapWidth(_width) {
     // Sets the width (in pixels) to use for wrapping lines.
   }
 
-  setFontSize(fontSize) {
+  setFontSize(_fontSize) {
     // Sets the font size of this Game Object.
   }
   getBounds() {
     return { width: this.width, height: this.height };
   }
 
-  setColor(color) {
+  setColor(_color) {
     // Sets the tint of this Game Object.
   }
 
-  setShadowColor(color) {
+  setShadowColor(_color) {
     // Sets the shadow color.
   }
 
-  setTint(color) {
+  setTint(_color) {
     // Sets the tint of this Game Object.
   }
 
-  setStrokeStyle(thickness, color) {
+  setStrokeStyle(_thickness, _color) {
     // Sets the stroke style for the graphics.
     return this;
   }
 
-  setDepth(depth) {
+  setDepth(_depth) {
     // Sets the depth of this Game Object.
   }
 
-  setTexture(texture) {
+  setTexture(_texture) {
     // Sets the texture this Game Object will use to render with.
   }
 
@@ -155,15 +153,15 @@ export default class MockContainer implements MockGameObject {
     // Sends this Game Object to the back of its parent's display list.
   }
 
-  moveTo(obj) {
+  moveTo(_obj) {
     // Moves this Game Object to the given index in the list.
   }
 
-  moveAbove(obj) {
+  moveAbove(_obj) {
     // Moves this Game Object to be above the given Game Object in the display list.
   }
 
-  moveBelow(obj) {
+  moveBelow(_obj) {
     // Moves this Game Object to be below the given Game Object in the display list.
   }
 
@@ -171,12 +169,11 @@ export default class MockContainer implements MockGameObject {
     this.name = name;
   }
 
-  bringToTop(obj) {
+  bringToTop(_obj) {
     // Brings this Game Object to the top of its parents display list.
   }
 
-  on(event, callback, source) {
-  }
+  on(_event, _callback, _source) {}
 
   add(obj) {
     // Adds a child to this Game Object.
@@ -218,4 +215,10 @@ export default class MockContainer implements MockGameObject {
   }
 
   disableInteractive = () => null;
+
+  each(method) {
+    for (const item of this.list) {
+      method(item);
+    }
+  }
 }

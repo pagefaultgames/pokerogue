@@ -1,6 +1,5 @@
 import Clock = Phaser.Time.Clock;
 
-
 export class MockClock extends Clock {
   public overrideDelay: number | null = 1;
   constructor(scene) {

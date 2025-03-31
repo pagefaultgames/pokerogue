@@ -26,7 +26,10 @@ describe("Reload", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(pokerogueApi, "getGameTitleStats").mockResolvedValue({ battleCount: -1, playerCount: -1 });
+    vi.spyOn(pokerogueApi, "getGameTitleStats").mockResolvedValue({
+      battleCount: -1,
+      playerCount: -1,
+    });
     vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
   });
 
@@ -48,7 +51,7 @@ describe("Reload", () => {
       .battleType("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH);
     await game.dailyMode.startBattle();
 
@@ -81,7 +84,7 @@ describe("Reload", () => {
       .battleType("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle(); // Apparently daily mode would override the biome
 
@@ -153,7 +156,7 @@ describe("Reload", () => {
 
   it("should not have RNG inconsistencies at a Daily run wave 50 Boss fight", async () => {
     game.override.battleType("single").startingWave(50);
-    await game.runToFinalBossEncounter([ Species.BULBASAUR ], GameModes.DAILY);
+    await game.runToFinalBossEncounter([Species.BULBASAUR], GameModes.DAILY);
 
     const preReloadRngState = Phaser.Math.RND.state();
 

@@ -7,7 +7,6 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-
 describe("Abilities - ZEN MODE", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -38,7 +37,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("shouldn't change form when taking damage if not dropping below 50% HP", async () => {
-    await game.classicMode.startBattle([ Species.DARMANITAN ]);
+    await game.classicMode.startBattle([Species.DARMANITAN]);
     const darmanitan = game.scene.getPlayerPokemon()!;
     expect(darmanitan.formIndex).toBe(baseForm);
 
@@ -51,10 +50,10 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should change form when falling below 50% HP", async () => {
-    await game.classicMode.startBattle([ Species.DARMANITAN ]);
+    await game.classicMode.startBattle([Species.DARMANITAN]);
 
     const darmanitan = game.scene.getPlayerPokemon()!;
-    darmanitan.hp = (darmanitan.getMaxHp() / 2) + 1;
+    darmanitan.hp = darmanitan.getMaxHp() / 2 + 1;
     expect(darmanitan.formIndex).toBe(baseForm);
 
     game.move.select(Moves.SPLASH);
@@ -65,9 +64,9 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should stay zen mode when fainted", async () => {
-    await game.classicMode.startBattle([ Species.DARMANITAN, Species.CHARIZARD ]);
+    await game.classicMode.startBattle([Species.DARMANITAN, Species.CHARIZARD]);
     const darmanitan = game.scene.getPlayerPokemon()!;
-    darmanitan.hp = (darmanitan.getMaxHp() / 2) + 1;
+    darmanitan.hp = darmanitan.getMaxHp() / 2 + 1;
     expect(darmanitan.formIndex).toBe(baseForm);
 
     game.move.select(Moves.SPLASH);
@@ -91,7 +90,7 @@ describe("Abilities - ZEN MODE", () => {
       [Species.DARMANITAN]: zenForm,
     });
 
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.DARMANITAN ]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.DARMANITAN]);
 
     const darmanitan = game.scene.getPlayerParty()[1];
     darmanitan.hp = 1;

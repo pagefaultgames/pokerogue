@@ -1,4 +1,4 @@
-import { applyMoveAttrs, MoveHeaderAttr } from "#app/data/move";
+import { applyMoveAttrs, MoveHeaderAttr } from "#app/data/moves/move";
 import type { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";

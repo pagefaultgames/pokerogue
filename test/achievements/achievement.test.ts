@@ -1,18 +1,27 @@
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
-import { Achv, AchvTier, DamageAchv, HealAchv, LevelAchv, ModifierAchv, MoneyAchv, RibbonAchv, achvs } from "#app/system/achv";
+import {
+  Achv,
+  AchvTier,
+  DamageAchv,
+  HealAchv,
+  LevelAchv,
+  ModifierAchv,
+  MoneyAchv,
+  RibbonAchv,
+  achvs,
+} from "#app/system/achv";
 import { NumberHolder } from "#app/utils";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import BattleScene from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 
 describe("check some Achievement related stuff", () => {
-  it ("should check Achievement creation", () => {
+  it("should check Achievement creation", () => {
     const ach = new MoneyAchv("", "Achievement", 1000, null!, 100);
     expect(ach.name).toBe("Achievement");
   });
 });
-
 
 describe("Achv", () => {
   let achv: Achv;
@@ -61,13 +70,32 @@ describe("Achv", () => {
     const conditionFunc = vi.fn((args: any[]) => args[0] === 10);
     const achv = new Achv("", "Test Achievement", "Test Description", "test_icon", 10, conditionFunc);
 
-    expect(achv.validate([ 5 ])).toBe(false);
-    expect(achv.validate([ 10 ])).toBe(true);
+    expect(achv.validate([5])).toBe(false);
+    expect(achv.validate([10])).toBe(true);
     expect(conditionFunc).toHaveBeenCalledTimes(2);
   });
 });
 
 describe("MoneyAchv", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+  let scene: BattleScene;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    scene = game.scene;
+  });
+
   it("should create an instance of MoneyAchv", () => {
     const moneyAchv = new MoneyAchv("", "Test Money Achievement", 10000, "money_icon", 10);
     expect(moneyAchv).toBeInstanceOf(MoneyAchv);
@@ -76,7 +104,6 @@ describe("MoneyAchv", () => {
 
   it("should validate the achievement based on the money amount", () => {
     const moneyAchv = new MoneyAchv("", "Test Money Achievement", 10000, "money_icon", 10);
-    const scene = new BattleScene();
     scene.money = 5000;
 
     expect(moneyAchv.validate([])).toBe(false);
@@ -140,10 +167,10 @@ describe("DamageAchv", () => {
     const damageAchv = new DamageAchv("", "Test Damage Achievement", 250, "damage_icon", 10);
     const numberHolder = new NumberHolder(200);
 
-    expect(damageAchv.validate([ numberHolder ])).toBe(false);
+    expect(damageAchv.validate([numberHolder])).toBe(false);
 
     numberHolder.value = 300;
-    expect(damageAchv.validate([ numberHolder ])).toBe(true);
+    expect(damageAchv.validate([numberHolder])).toBe(true);
   });
 });
 
@@ -158,10 +185,10 @@ describe("HealAchv", () => {
     const healAchv = new HealAchv("", "Test Heal Achievement", 250, "heal_icon", 10);
     const numberHolder = new NumberHolder(200);
 
-    expect(healAchv.validate([ numberHolder ])).toBe(false);
+    expect(healAchv.validate([numberHolder])).toBe(false);
 
     numberHolder.value = 300;
-    expect(healAchv.validate([ numberHolder ])).toBe(true);
+    expect(healAchv.validate([numberHolder])).toBe(true);
   });
 });
 
@@ -176,25 +203,39 @@ describe("LevelAchv", () => {
     const levelAchv = new LevelAchv("", "Test Level Achievement", 100, "level_icon", 10);
     const integerHolder = new NumberHolder(50);
 
-    expect(levelAchv.validate([ integerHolder ])).toBe(false);
+    expect(levelAchv.validate([integerHolder])).toBe(false);
 
     integerHolder.value = 150;
-    expect(levelAchv.validate([ integerHolder ])).toBe(true);
+    expect(levelAchv.validate([integerHolder])).toBe(true);
   });
 });
 
 describe("ModifierAchv", () => {
   it("should create an instance of ModifierAchv", () => {
-    const modifierAchv = new ModifierAchv("", "Test Modifier Achievement", "Test Description", "modifier_icon", 10, () => true);
+    const modifierAchv = new ModifierAchv(
+      "",
+      "Test Modifier Achievement",
+      "Test Description",
+      "modifier_icon",
+      10,
+      () => true,
+    );
     expect(modifierAchv).toBeInstanceOf(ModifierAchv);
     expect(modifierAchv instanceof Achv).toBe(true);
   });
 
   it("should validate the achievement based on the modifier function", () => {
-    const modifierAchv = new ModifierAchv("", "Test Modifier Achievement", "Test Description", "modifier_icon", 10, () => true);
+    const modifierAchv = new ModifierAchv(
+      "",
+      "Test Modifier Achievement",
+      "Test Description",
+      "modifier_icon",
+      10,
+      () => true,
+    );
     const modifier = new TurnHeldItemTransferModifier(null!, 3, 1);
 
-    expect(modifierAchv.validate([ modifier ])).toBe(true);
+    expect(modifierAchv.validate([modifier])).toBe(true);
   });
 });
 
@@ -243,7 +284,6 @@ describe("achvs", () => {
   });
 
   it("should initialize the achievements with IDs and parent IDs", () => {
-
     expect(achvs._10K_MONEY.id).toBe("_10K_MONEY");
     expect(achvs._10K_MONEY.hasParent).toBe(undefined);
     expect(achvs._100K_MONEY.id).toBe("_100K_MONEY");

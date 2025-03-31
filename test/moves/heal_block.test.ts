@@ -28,7 +28,7 @@ describe("Moves - Heal Block", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.ABSORB, Moves.WISH, Moves.SPLASH, Moves.AQUA_RING ])
+      .moveset([Moves.ABSORB, Moves.WISH, Moves.SPLASH, Moves.AQUA_RING])
       .enemyMoveset(Moves.HEAL_BLOCK)
       .ability(Abilities.NO_GUARD)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -36,9 +36,8 @@ describe("Moves - Heal Block", () => {
       .disableCrits();
   });
 
-  it("shouldn't stop damage from HP-drain attacks, just HP restoration", async() => {
-
-    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+  it("shouldn't stop damage from HP-drain attacks, just HP restoration", async () => {
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -46,31 +45,31 @@ describe("Moves - Heal Block", () => {
     player.damageAndUpdate(enemy.getMaxHp() - 1);
 
     game.move.select(Moves.ABSORB);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.hp).toBe(1);
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
-  it("shouldn't stop Liquid Ooze from dealing damage", async() => {
+  it("shouldn't stop Liquid Ooze from dealing damage", async () => {
     game.override.enemyAbility(Abilities.LIQUID_OOZE);
 
-    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.ABSORB);
-    await game.setTurnOrder([ BattlerIndex.ENEMY, BattlerIndex.PLAYER ]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.isFullHp()).toBe(false);
     expect(enemy.isFullHp()).toBe(false);
   });
 
-  it("should stop delayed heals, such as from Wish", async() => {
-    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+  it("should stop delayed heals, such as from Wish", async () => {
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const player = game.scene.getPlayerPokemon()!;
 
@@ -88,10 +87,10 @@ describe("Moves - Heal Block", () => {
     expect(player.hp).toBe(1);
   });
 
-  it("should prevent Grassy Terrain from restoring HP", async() => {
+  it("should prevent Grassy Terrain from restoring HP", async () => {
     game.override.enemyAbility(Abilities.GRASSY_SURGE);
 
-    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const player = game.scene.getPlayerPokemon()!;
 
@@ -103,8 +102,8 @@ describe("Moves - Heal Block", () => {
     expect(player.hp).toBe(1);
   });
 
-  it("should prevent healing from heal-over-time moves", async() => {
-    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+  it("should prevent healing from heal-over-time moves", async () => {
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const player = game.scene.getPlayerPokemon()!;
 
@@ -117,12 +116,10 @@ describe("Moves - Heal Block", () => {
     expect(player.hp).toBe(1);
   });
 
-  it("should prevent abilities from restoring HP", async() => {
-    game.override
-      .weather(WeatherType.RAIN)
-      .ability(Abilities.RAIN_DISH);
+  it("should prevent abilities from restoring HP", async () => {
+    game.override.weather(WeatherType.RAIN).ability(Abilities.RAIN_DISH);
 
-    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const player = game.scene.getPlayerPokemon()!;
 
@@ -134,10 +131,10 @@ describe("Moves - Heal Block", () => {
     expect(player.hp).toBe(1);
   });
 
-  it("should stop healing from items", async() => {
+  it("should stop healing from items", async () => {
     game.override.startingHeldItems([{ name: "LEFTOVERS" }]);
 
-    await game.classicMode.startBattle([ Species.CHARIZARD ]);
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const player = game.scene.getPlayerPokemon()!;
     player.damageAndUpdate(player.getMaxHp() - 1);

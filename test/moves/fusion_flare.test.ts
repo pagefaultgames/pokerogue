@@ -24,11 +24,11 @@ describe("Moves - Fusion Flare", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([ fusionFlare ]);
+    game.override.moveset([fusionFlare]);
     game.override.startingLevel(1);
 
     game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset([ Moves.REST, Moves.REST, Moves.REST, Moves.REST ]);
+    game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
 
     game.override.battleType("single");
     game.override.startingWave(97);
@@ -36,9 +36,7 @@ describe("Moves - Fusion Flare", () => {
   });
 
   it("should thaw freeze status condition", async () => {
-    await game.startBattle([
-      Species.RESHIRAM,
-    ]);
+    await game.startBattle([Species.RESHIRAM]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
 

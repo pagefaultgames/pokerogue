@@ -25,7 +25,7 @@ describe("Game Over Phase", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.MEMENTO, Moves.ICE_BEAM, Moves.SPLASH ])
+      .moveset([Moves.MEMENTO, Moves.ICE_BEAM, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -37,7 +37,7 @@ describe("Game Over Phase", () => {
   });
 
   it("winning a run should give rewards", async () => {
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 
     // Note: `game.doKillOpponents()` does not properly handle final boss
@@ -60,7 +60,7 @@ describe("Game Over Phase", () => {
   });
 
   it("losing a run should not give rewards", async () => {
-    await game.classicMode.startBattle([ Species.BULBASAUR ]);
+    await game.classicMode.startBattle([Species.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 
     game.move.select(Moves.MEMENTO);

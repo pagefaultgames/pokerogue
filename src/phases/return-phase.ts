@@ -12,7 +12,7 @@ export class ReturnPhase extends SwitchSummonPhase {
     this.end();
   }
 
-  summon(): void { }
+  summon(): void {}
 
   onEnd(): void {
     const pokemon = this.getPokemon();

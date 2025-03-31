@@ -1,6 +1,7 @@
 import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/move";
+import { allMoves } from "#app/data/moves/move";
+import type Move from "#app/data/moves/move";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
@@ -15,8 +16,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const fusionFlare = allMoves[Moves.FUSION_FLARE];
-  const fusionBolt = allMoves[Moves.FUSION_BOLT];
+  let fusionFlare: Move;
+  let fusionBolt: Move;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -29,12 +30,14 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   });
 
   beforeEach(() => {
+    fusionFlare = allMoves[Moves.FUSION_FLARE];
+    fusionBolt = allMoves[Moves.FUSION_BOLT];
     game = new GameManager(phaserGame);
-    game.override.moveset([ fusionFlare.id, fusionBolt.id ]);
+    game.override.moveset([fusionFlare.id, fusionBolt.id]);
     game.override.startingLevel(1);
 
     game.override.enemySpecies(Species.RESHIRAM);
-    game.override.enemyMoveset([ Moves.REST, Moves.REST, Moves.REST, Moves.REST ]);
+    game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
 
     game.override.battleType("double");
     game.override.startingWave(97);
@@ -45,16 +48,13 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   });
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT", async () => {
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
 
     // Force user party to act before enemy party
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -68,16 +68,13 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_BOLT should double power of subsequent FUSION_FLARE", async () => {
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     game.move.select(fusionBolt.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionFlare.id, 1, BattlerIndex.ENEMY);
 
     // Force user party to act before enemy party
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -91,16 +88,13 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT if a move failed in between", async () => {
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.PLAYER);
     game.move.select(fusionBolt.id, 1, BattlerIndex.PLAYER);
 
     // Force first enemy to act (and fail) in between party
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -119,17 +113,14 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE should not double power of subsequent FUSION_BOLT if a move succeeded in between", async () => {
-    game.override.enemyMoveset([ Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH ]);
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
 
     // Force first enemy to act in between party
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionFlare.id);
@@ -147,16 +138,13 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT if moves are aimed at allies", async () => {
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.RESHIRAM
-    ]);
+    await game.startBattle([Species.ZEKROM, Species.RESHIRAM]);
 
     game.move.select(fusionBolt.id, 0, BattlerIndex.PLAYER_2);
     game.move.select(fusionFlare.id, 1, BattlerIndex.PLAYER);
 
     // Force user party to act before enemy party
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2 ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -170,11 +158,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves", async () => {
-    game.override.enemyMoveset([ fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id ]);
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    game.override.enemyMoveset([fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id]);
+    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
@@ -185,19 +170,17 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
-      enemy: [
-        [ ...enemyParty[0].stats ],
-        [ ...enemyParty[1].stats ],
-      ],
-      player: [
-        [ ...party[0].stats ],
-        [ ...party[1].stats ],
-      ]
+      enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
+      player: [[...party[0].stats], [...party[1].stats]],
     };
 
     // Ensure survival by reducing enemy Sp. Atk and boosting party Sp. Def
-    vi.spyOn(enemyParty[0], "stats", "get").mockReturnValue(stats.enemy[0].map((val, i) => (i === Stat.SPATK ? 1 : val)));
-    vi.spyOn(enemyParty[1], "stats", "get").mockReturnValue(stats.enemy[1].map((val, i) => (i === Stat.SPATK ? 1 : val)));
+    vi.spyOn(enemyParty[0], "stats", "get").mockReturnValue(
+      stats.enemy[0].map((val, i) => (i === Stat.SPATK ? 1 : val)),
+    );
+    vi.spyOn(enemyParty[1], "stats", "get").mockReturnValue(
+      stats.enemy[1].map((val, i) => (i === Stat.SPATK ? 1 : val)),
+    );
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[0].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[1].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
 
@@ -205,7 +188,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
 
     // Force first enemy to act in between party
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);
@@ -229,11 +212,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves if moves are aimed at allies", async () => {
-    game.override.enemyMoveset([ fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id ]);
-    await game.startBattle([
-      Species.ZEKROM,
-      Species.ZEKROM
-    ]);
+    game.override.enemyMoveset([fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id]);
+    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
 
     const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
@@ -244,19 +224,17 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
-      enemy: [
-        [ ...enemyParty[0].stats ],
-        [ ...enemyParty[1].stats ],
-      ],
-      player: [
-        [ ...party[0].stats ],
-        [ ...party[1].stats ],
-      ]
+      enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
+      player: [[...party[0].stats], [...party[1].stats]],
     };
 
     // Ensure survival by reducing enemy Sp. Atk and boosting party Sp. Def
-    vi.spyOn(enemyParty[0], "stats", "get").mockReturnValue(stats.enemy[0].map((val, i) => (i === Stat.SPATK ? 1 : val)));
-    vi.spyOn(enemyParty[1], "stats", "get").mockReturnValue(stats.enemy[1].map((val, i) => (i === Stat.SPATK ? 1 : val)));
+    vi.spyOn(enemyParty[0], "stats", "get").mockReturnValue(
+      stats.enemy[0].map((val, i) => (i === Stat.SPATK ? 1 : val)),
+    );
+    vi.spyOn(enemyParty[1], "stats", "get").mockReturnValue(
+      stats.enemy[1].map((val, i) => (i === Stat.SPATK ? 1 : val)),
+    );
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[0].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
     vi.spyOn(party[1], "stats", "get").mockReturnValue(stats.player[1].map((val, i) => (i === Stat.SPDEF ? 250 : val)));
 
@@ -264,7 +242,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.move.select(fusionBolt.id, 1, BattlerIndex.PLAYER);
 
     // Force first enemy to act in between party
-    await game.setTurnOrder([ BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY ]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.moveId).toBe(fusionBolt.id);

@@ -21,7 +21,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import * as Utils from "#app/utils";
 
 const namespace = "mysteryEncounters/globalTradeSystem";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -43,10 +43,10 @@ describe("Global Trade System - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [ Biome.VOLCANO, [ MysteryEncounterType.MYSTERIOUS_CHALLENGERS ]],
+      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
     ]);
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
-      biomeMap.set(biome, [ MysteryEncounterType.GLOBAL_TRADE_SYSTEM ]);
+      biomeMap.set(biome, [MysteryEncounterType.GLOBAL_TRADE_SYSTEM]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });
@@ -71,7 +71,7 @@ describe("Global Trade System - Mystery Encounter", () => {
   });
 
   it("should not loop infinitely when generating trade options for extreme BST non-legendaries", async () => {
-    const extremeBstTeam = [ Species.SLAKING, Species.WISHIWASHI, Species.SUNKERN ];
+    const extremeBstTeam = [Species.SLAKING, Species.WISHIWASHI, Species.SUNKERN];
     await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, extremeBstTeam);
 
     expect(GlobalTradeSystemEncounter.encounterType).toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);
@@ -160,7 +160,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
-        buttonTooltip: `${namespace}:option.2.tooltip`
+        buttonTooltip: `${namespace}:option.2.tooltip`,
       });
     });
 
@@ -232,7 +232,9 @@ describe("Global Trade System - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier).toBe(ModifierTier.MASTER);
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);

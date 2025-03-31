@@ -27,12 +27,7 @@ describe("Items - Double Battle Chance Boosters", () => {
   });
 
   it("should guarantee double battle with 2 unique tiers", async () => {
-    game.override
-      .startingModifier([
-        { name: "LURE" },
-        { name: "SUPER_LURE" }
-      ])
-      .startingWave(2);
+    game.override.startingModifier([{ name: "LURE" }, { name: "SUPER_LURE" }]).startingWave(2);
 
     await game.classicMode.startBattle();
 
@@ -40,13 +35,7 @@ describe("Items - Double Battle Chance Boosters", () => {
   });
 
   it("should guarantee double boss battle with 3 unique tiers", async () => {
-    game.override
-      .startingModifier([
-        { name: "LURE" },
-        { name: "SUPER_LURE" },
-        { name: "MAX_LURE" }
-      ])
-      .startingWave(10);
+    game.override.startingModifier([{ name: "LURE" }, { name: "SUPER_LURE" }, { name: "MAX_LURE" }]).startingWave(10);
 
     await game.classicMode.startBattle();
 
@@ -57,16 +46,14 @@ describe("Items - Double Battle Chance Boosters", () => {
     expect(enemyField[1].isBoss()).toBe(true);
   });
 
-  it("should renew how many battles are left of existing booster when picking up new booster of same tier", async() => {
+  it("should renew how many battles are left of existing booster when picking up new booster of same tier", async () => {
     game.override
       .startingModifier([{ name: "LURE" }])
       .itemRewards([{ name: "LURE" }])
       .moveset(Moves.SPLASH)
       .startingLevel(200);
 
-    await game.classicMode.startBattle([
-      Species.PIKACHU
-    ]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
     game.move.select(Moves.SPLASH);
 
@@ -74,17 +61,25 @@ describe("Items - Double Battle Chance Boosters", () => {
 
     await game.phaseInterceptor.to("BattleEndPhase");
 
-    const modifier = game.scene.findModifier(m => m instanceof DoubleBattleChanceBoosterModifier) as DoubleBattleChanceBoosterModifier;
+    const modifier = game.scene.findModifier(
+      m => m instanceof DoubleBattleChanceBoosterModifier,
+    ) as DoubleBattleChanceBoosterModifier;
     expect(modifier.getBattleCount()).toBe(9);
 
     // Forced LURE to spawn in the first slot with override
-    game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
-      const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
-      // Traverse to first modifier slot
-      handler.setCursor(0);
-      handler.setRowCursor(ShopCursorTarget.REWARDS);
-      handler.processInput(Button.ACTION);
-    }, () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("NewBattlePhase"), true);
+    game.onNextPrompt(
+      "SelectModifierPhase",
+      Mode.MODIFIER_SELECT,
+      () => {
+        const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+        // Traverse to first modifier slot
+        handler.setCursor(0);
+        handler.setRowCursor(ShopCursorTarget.REWARDS);
+        handler.processInput(Button.ACTION);
+      },
+      () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("NewBattlePhase"),
+      true,
+    );
 
     await game.phaseInterceptor.to("TurnInitPhase");
 

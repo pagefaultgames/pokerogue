@@ -36,7 +36,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
-    await game.classicMode.startBattle([ Species.DITTO ]);
+    await game.classicMode.startBattle([Species.DITTO]);
 
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -75,9 +75,9 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset([ Moves.POWER_SPLIT ]);
+    game.override.enemyMoveset([Moves.POWER_SPLIT]);
 
-    await game.classicMode.startBattle([ Species.DITTO ]);
+    await game.classicMode.startBattle([Species.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -96,9 +96,9 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should set each move's pp to a maximum of 5", async () => {
-    game.override.enemyMoveset([ Moves.SWORDS_DANCE, Moves.GROWL, Moves.SKETCH, Moves.RECOVER ]);
+    game.override.enemyMoveset([Moves.SWORDS_DANCE, Moves.GROWL, Moves.SKETCH, Moves.RECOVER]);
 
-    await game.classicMode.startBattle([ Species.DITTO ]);
+    await game.classicMode.startBattle([Species.DITTO]);
     const player = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.TACKLE);
@@ -120,11 +120,70 @@ describe("Abilities - Imposter", () => {
   it("should activate its ability if it copies one that activates on summon", async () => {
     game.override.enemyAbility(Abilities.INTIMIDATE);
 
-    await game.classicMode.startBattle([ Species.DITTO ]);
+    await game.classicMode.startBattle([Species.DITTO]);
 
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
+  });
+
+  it("should persist transformed attributes across reloads", async () => {
+    game.override.moveset([Moves.ABSORB]);
+
+    await game.classicMode.startBattle([Species.DITTO]);
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
+
+    await game.reload.reloadSession();
+
+    const playerReloaded = game.scene.getPlayerPokemon()!;
+    const playerMoveset = player.getMoveset();
+
+    expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
+    expect(playerReloaded.getAbility()).toBe(enemy.getAbility());
+    expect(playerReloaded.getGender()).toBe(enemy.getGender());
+
+    expect(playerReloaded.getStat(Stat.HP, false)).not.toBe(enemy.getStat(Stat.HP));
+    for (const s of EFFECTIVE_STATS) {
+      expect(playerReloaded.getStat(s, false)).toBe(enemy.getStat(s, false));
+    }
+
+    expect(playerMoveset.length).toEqual(1);
+    expect(playerMoveset[0]?.moveId).toEqual(Moves.SPLASH);
+  });
+
+  it("should stay transformed with the correct form after reload", async () => {
+    game.override.moveset([Moves.ABSORB]);
+    game.override.enemySpecies(Species.UNOWN);
+    await game.classicMode.startBattle([Species.DITTO]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    // change form
+    enemy.species.forms[5];
+    enemy.species.formIndex = 5;
+
+    game.move.select(Moves.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
+
+    await game.reload.reloadSession();
+
+    const playerReloaded = game.scene.getPlayerPokemon()!;
+
+    expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
+    expect(playerReloaded.getSpeciesForm().formIndex).toBe(enemy.getSpeciesForm().formIndex);
   });
 });

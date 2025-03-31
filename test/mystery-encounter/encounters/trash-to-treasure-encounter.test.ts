@@ -1,30 +1,40 @@
+import type BattleScene from "#app/battle-scene";
+import * as BattleAnims from "#app/data/battle-anims";
+import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import {
+  type EnemyPartyConfig,
+  type EnemyPokemonConfig,
+  generateModifierType,
+} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import * as BattleAnims from "#app/data/battle-anims";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/mystery-encounter/encounter-test-utils";
-import { Moves } from "#enums/moves";
-import type BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
-import { Mode } from "#app/ui/ui";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { HitHealModifier, HealShopCostModifier, TurnHealModifier } from "#app/modifier/modifier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
+import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { modifierTypes, type PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { Mode } from "#app/ui/ui";
+import * as Utils from "#app/utils";
+import { Moves } from "#enums/moves";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import {
+  runMysteryEncounterToEnd,
+  skipBattleRunMysteryEncounterRewardsPhase,
+} from "#test/mystery-encounter/encounter-test-utils";
+import GameManager from "#test/testUtils/gameManager";
+import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/trashToTreasure";
-const defaultParty = [ Species.LAPRAS, Species.GENGAR, Species.ABRA ];
+const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -46,9 +56,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [ Biome.CAVE, [ MysteryEncounterType.TRASH_TO_TREASURE ]],
-      ])
+      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]]]),
     );
   });
 
@@ -72,6 +80,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
   });
 
   it("should initialize fully", async () => {
+    vi.spyOn(Utils, "randSeedInt").mockImplementation((range, min = 0) => min + range - 1);
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = TrashToTreasureEncounter;
     const moveInitSpy = vi.spyOn(BattleAnims, "initMoveAnim");
@@ -84,22 +93,61 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     TrashToTreasureEncounter.populateDialogueTokensFromRequirements();
     const onInitResult = onInit!();
 
-    expect(TrashToTreasureEncounter.enemyPartyConfigs).toEqual([
-      {
-        levelAdditiveModifier: 0.5,
-        disableSwitch: true,
-        pokemonConfigs: [
-          {
-            species: getPokemonSpecies(Species.GARBODOR),
-            isBoss: true,
-            shiny: false,
-            formIndex: 1,
-            bossSegmentModifier: 1,
-            moveSet: [ Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH ],
-          }
-        ],
-      }
-    ]);
+    const bossSpecies = getPokemonSpecies(Species.GARBODOR);
+    const pokemonConfig: EnemyPokemonConfig = {
+      species: bossSpecies,
+      isBoss: true,
+      shiny: false, // Shiny lock because of custom intro sprite
+      formIndex: 1, // Gmax
+      bossSegmentModifier: 1, // +1 Segment from normal
+      moveSet: [Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.HAMMER_ARM, Moves.PAYBACK],
+      modifierConfigs: [
+        {
+          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
+          stackCount: Utils.randSeedInt(2, 0),
+        },
+        {
+          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
+          stackCount: Utils.randSeedInt(2, 1),
+        },
+        {
+          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
+          stackCount: Utils.randSeedInt(3, 1),
+        },
+        {
+          modifier: generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType,
+          stackCount: Utils.randSeedInt(2, 0),
+        },
+      ],
+    };
+    const config: EnemyPartyConfig = {
+      levelAdditiveModifier: 0.5,
+      pokemonConfigs: [pokemonConfig],
+      disableSwitch: true,
+    };
+    const enemyPartyConfigs = [config];
+
+    expect(JSON.stringify(TrashToTreasureEncounter.enemyPartyConfigs, undefined, 2)).toEqual(
+      JSON.stringify(enemyPartyConfigs, undefined, 2),
+    );
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
     await vi.waitFor(() => expect(moveLoadSpy).toHaveBeenCalled());
     expect(onInitResult).toBe(true);
@@ -121,7 +169,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       });
     });
 
-    it("should give 2 Leftovers, 2 Shell Bell, and Black Sludge", async () => {
+    it("should give 2 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
@@ -133,7 +181,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
       const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
       expect(shellBell).toBeDefined();
-      expect(shellBell?.stackCount).toBe(2);
+      expect(shellBell?.stackCount).toBe(1);
 
       const blackSludge = scene.findModifier(m => m instanceof HealShopCostModifier) as HealShopCostModifier;
       expect(blackSludge).toBeDefined();
@@ -176,13 +224,18 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
-      expect(enemyField[0].moveset).toEqual([ new PokemonMove(Moves.PAYBACK), new PokemonMove(Moves.GUNK_SHOT), new PokemonMove(Moves.STOMPING_TANTRUM), new PokemonMove(Moves.DRAIN_PUNCH) ]);
+      expect(enemyField[0].moveset).toEqual([
+        new PokemonMove(Moves.GUNK_SHOT),
+        new PokemonMove(Moves.STOMPING_TANTRUM),
+        new PokemonMove(Moves.HAMMER_ARM),
+        new PokemonMove(Moves.PAYBACK),
+      ]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(2);
       expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.TOXIC).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.AMNESIA).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STOCKPILE).length).toBe(1);
     });
 
     it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {
@@ -194,12 +247,26 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+      const modifierSelectHandler = scene.ui.handlers.find(
+        h => h instanceof ModifierSelectUiHandler,
+      ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ROGUE);
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ROGUE);
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.tier - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount).toEqual(ModifierTier.ULTRA);
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.tier - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount).toEqual(ModifierTier.GREAT);
+      expect(
+        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ROGUE);
+      expect(
+        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ROGUE);
+      expect(
+        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.ULTRA);
+      expect(
+        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
+          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+      ).toEqual(ModifierTier.GREAT);
     });
   });
 });

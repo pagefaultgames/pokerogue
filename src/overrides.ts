@@ -1,22 +1,31 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
 import { type PokeballCounts } from "#app/battle-scene";
+import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
 import { Gender } from "#app/data/gender";
+import { FormChangeItem } from "#app/data/pokemon-forms";
 import { Variant } from "#app/data/variant";
 import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
+import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
 import { Moves } from "#enums/moves";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 
+/**
+ * This comment block exists to prevent IDEs from automatically removing unused imports
+ * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
+ * {@linkcode Stat}, {@linkcode PokemonType}
+ */
 /**
  * Overrides that are using when testing different in game situations
  *
@@ -245,6 +254,11 @@ class DefaultOverrides {
    * Note that, for all items in the array, `count` is not used.
    */
   readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
+
+  /**
+   * If `true`, disable all non-scripted opponent trainer encounters.
+   */
+  readonly DISABLE_STANDARD_TRAINERS_OVERRIDE: boolean = false;
 }
 
 export const defaultOverrides = new DefaultOverrides();

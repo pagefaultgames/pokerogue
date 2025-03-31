@@ -1,6 +1,7 @@
-import { allMoves, FlinchAttr, StatStageChangeAttr } from "#app/data/move";
+import { allMoves, FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
+import type Move from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -9,14 +10,17 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Triple Arrows", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const tripleArrows = allMoves[Moves.TRIPLE_ARROWS];
-  const flinchAttr = tripleArrows.getAttrs(FlinchAttr)[0];
-  const defDropAttr = tripleArrows.getAttrs(StatStageChangeAttr)[0];
+  let tripleArrows: Move;
+  let flinchAttr: FlinchAttr;
+  let defDropAttr: StatStageChangeAttr;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
+    tripleArrows = allMoves[Moves.TRIPLE_ARROWS];
+    flinchAttr = tripleArrows.getAttrs(FlinchAttr)[0];
+    defDropAttr = tripleArrows.getAttrs(StatStageChangeAttr)[0];
   });
 
   afterEach(() => {
@@ -27,7 +31,7 @@ describe("Moves - Triple Arrows", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.BALL_FETCH)
-      .moveset([ Moves.TRIPLE_ARROWS ])
+      .moveset([Moves.TRIPLE_ARROWS])
       .battleType("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.STURDY)
@@ -38,7 +42,7 @@ describe("Moves - Triple Arrows", () => {
   });
 
   it("has a 30% flinch chance and 50% defense drop chance", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");
@@ -49,7 +53,7 @@ describe("Moves - Triple Arrows", () => {
 
   it("is affected normally by Serene Grace", async () => {
     game.override.ability(Abilities.SERENE_GRACE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");

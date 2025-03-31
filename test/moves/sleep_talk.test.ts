@@ -25,7 +25,7 @@ describe("Moves - Sleep Talk", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH, Moves.SLEEP_TALK ])
+      .moveset([Moves.SPLASH, Moves.SLEEP_TALK])
       .statusEffect(StatusEffect.SLEEP)
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
@@ -38,7 +38,7 @@ describe("Moves - Sleep Talk", () => {
 
   it("should fail when the user is not asleep", async () => {
     game.override.statusEffect(StatusEffect.NONE);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SLEEP_TALK);
     await game.toNextTurn();
@@ -46,8 +46,8 @@ describe("Moves - Sleep Talk", () => {
   });
 
   it("should fail if the user has no valid moves", async () => {
-    game.override.moveset([ Moves.SLEEP_TALK, Moves.DIG, Moves.METRONOME, Moves.SOLAR_BEAM ]);
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    game.override.moveset([Moves.SLEEP_TALK, Moves.DIG, Moves.METRONOME, Moves.SOLAR_BEAM]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SLEEP_TALK);
     await game.toNextTurn();
@@ -55,8 +55,8 @@ describe("Moves - Sleep Talk", () => {
   });
 
   it("should call a random valid move if the user is asleep", async () => {
-    game.override.moveset([ Moves.SLEEP_TALK, Moves.DIG, Moves.FLY, Moves.SWORDS_DANCE ]); // Dig and Fly are invalid moves, Swords Dance should always be called
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    game.override.moveset([Moves.SLEEP_TALK, Moves.DIG, Moves.FLY, Moves.SWORDS_DANCE]); // Dig and Fly are invalid moves, Swords Dance should always be called
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SLEEP_TALK);
     await game.toNextTurn();
@@ -64,7 +64,7 @@ describe("Moves - Sleep Talk", () => {
   });
 
   it("should apply secondary effects of a move", async () => {
-    game.override.moveset([ Moves.SLEEP_TALK, Moves.DIG, Moves.FLY, Moves.WOOD_HAMMER ]); // Dig and Fly are invalid moves, Wood Hammer should always be called
+    game.override.moveset([Moves.SLEEP_TALK, Moves.DIG, Moves.FLY, Moves.WOOD_HAMMER]); // Dig and Fly are invalid moves, Wood Hammer should always be called
     await game.classicMode.startBattle();
 
     game.move.select(Moves.SLEEP_TALK);

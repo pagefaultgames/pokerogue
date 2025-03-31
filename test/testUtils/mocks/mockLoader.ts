@@ -1,17 +1,16 @@
 import CacheManager = Phaser.Cache.CacheManager;
 
-
 export default class MockLoader {
   public cacheManager;
   constructor(scene) {
     this.cacheManager = new CacheManager(scene);
   }
 
-  once(event, callback) {
+  once(_event, callback) {
     callback();
   }
 
-  setBaseURL(url) {
+  setBaseURL(_url) {
     return null;
   }
 
@@ -19,24 +18,17 @@ export default class MockLoader {
     return null;
   }
 
-  spritesheet(key, url, frameConfig) {
-  }
+  spritesheet(_key, _url, _frameConfig) {}
 
-  audio(key, url) {
-
-  }
+  audio(_key, _url) {}
 
   isLoading() {
     return false;
   }
 
-  start() {
-  }
+  start() {}
 
-  image() {
+  image() {}
 
-  }
-
-  atlas(key, textureUrl, atlasUrl) {
-  }
+  atlas(_key, _textureUrl, _atlasUrl) {}
 }

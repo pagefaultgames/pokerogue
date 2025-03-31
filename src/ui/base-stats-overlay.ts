@@ -6,21 +6,20 @@ import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
 interface BaseStatsOverlaySettings {
-    scale?:number; // scale the box? A scale of 0.5 is recommended
-    x?: number;
-    y?: number;
-    /** Default is always half the screen, regardless of scale */
-    width?: number;
+  scale?: number; // scale the box? A scale of 0.5 is recommended
+  x?: number;
+  y?: number;
+  /** Default is always half the screen, regardless of scale */
+  width?: number;
 }
 
 const HEIGHT = 120;
 const BORDER = 8;
 const GLOBAL_SCALE = 6;
-const shortStats = [ "HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD" ];
+const shortStats = ["HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD"];
 
 export class BaseStatsOverlay extends Phaser.GameObjects.Container implements InfoToggle {
-
-  public active: boolean = false;
+  public active = false;
 
   private statsLabels: Phaser.GameObjects.Text[] = [];
   private statsRectangles: Phaser.GameObjects.Rectangle[] = [];
@@ -67,8 +66,7 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
   }
 
   // show this component with infos for the specific move
-  show(values: number[], total: number):boolean {
-
+  show(values: number[], total: number): boolean {
     for (let i = 0; i < 6; i++) {
       this.statsLabels[i].setText(i18next.t(`pokemonInfo:Stat.${shortStats[i]}shortened`) + ": " + `${values[i]}`);
       // This accounts for base stats up to 200, might not be enough.
@@ -78,7 +76,6 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
     }
 
     this.statsTotalLabel.setText(i18next.t("pokedexUiHandler:baseTotal") + ": " + `${total}`);
-
 
     this.setVisible(true);
     this.active = true;
@@ -98,7 +95,7 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
       targets: this.statsLabels,
       duration: Utils.fixedInt(125),
       ease: "Sine.easeInOut",
-      alpha: visible ? 1 : 0
+      alpha: visible ? 1 : 0,
     });
     if (!visible) {
       this.setVisible(false);
@@ -110,12 +107,12 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
   }
 
   // width of this element
-  static getWidth(scale:number):number {
+  static getWidth(_scale: number): number {
     return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
   }
 
   // height of this element
-  static getHeight(scale:number, onSide?: boolean):number {
+  static getHeight(scale: number, _onSide?: boolean): number {
     return HEIGHT * scale;
   }
 }

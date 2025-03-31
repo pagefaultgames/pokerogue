@@ -29,14 +29,12 @@ describe("Moves - Heart Swap", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
-      .moveset([ Moves.HEART_SWAP ])
+      .moveset([Moves.HEART_SWAP])
       .ability(Abilities.NONE);
   });
 
   it("should swap all of the user's stat stages with the target's", async () => {
-    await game.classicMode.startBattle([
-      Species.MANAPHY
-    ]);
+    await game.classicMode.startBattle([Species.MANAPHY]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

@@ -30,15 +30,17 @@ describe("Items - Toxic orb", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH)
-      .startingHeldItems([{
-        name: "TOXIC_ORB",
-      }]);
+      .startingHeldItems([
+        {
+          name: "TOXIC_ORB",
+        },
+      ]);
 
     vi.spyOn(i18next, "t");
   });
 
   it("should badly poison the holder", async () => {
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const player = game.scene.getPlayerPokemon()!;
     expect(player.getHeldItems()[0].type.id).toBe("TOXIC_ORB");
