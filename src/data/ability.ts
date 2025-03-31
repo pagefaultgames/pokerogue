@@ -5237,13 +5237,13 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
   /**
    * Destroy illusion if attack move deals damage to zoroark
    *
-   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - N/A
-   * @param {Pokemon} attacker - The attacking Pokémon.
-   * @param {PokemonMove} move - The move being used.
-   * @param {PokemonMove} hitResult - The type of hitResult the pokemon got
-   * @param {...any} args - N/A
-   * @returns {boolean} - Whether the illusion was destroyed.
+   * @param pokemon - The Pokémon with the Illusion ability.
+   * @param passive - unused
+   * @param attacker - The attacking Pokémon.
+   * @param move - The move being used.
+   * @param hitResult - The type of hitResult the pokemon got
+   * @param args - unused
+   * @returns - Whether the illusion was destroyed.
    */
   applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
 
