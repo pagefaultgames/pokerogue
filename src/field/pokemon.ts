@@ -733,8 +733,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.loadAssets(false, true).then(() => this.playAnim());
       this.updateInfo();
     } else {
-      let availables: Species[] = [];
-      let randomIllusion: PokemonSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, this.level);
+      const availables: Species[] = [];
+      const randomIllusion: PokemonSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, this.level);
       /*
       if (this.isBoss()) {
         availables = [ Species.ENTEI, Species.RAIKOU, Species.SUICUNE ];
@@ -758,16 +758,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   breakIllusion(): boolean {
-    console.log("breakIllusion");
     if (!this.battleData?.illusion.active) {
       return false;
     }
-    this.name = this.battleData?.illusion.basePokemon!.name;
-    this.nickname = this.battleData?.illusion.basePokemon!.nickname;
-    this.shiny = this.battleData?.illusion.basePokemon!.shiny;
-    this.variant = this.battleData?.illusion.basePokemon!.variant;
-    this.fusionVariant = this.battleData?.illusion.basePokemon!.fusionVariant;
-    this.fusionShiny = this.battleData?.illusion.basePokemon!.fusionShiny;
+    this.name = this.battleData?.illusion.basePokemon?.name ?? this.name;
+    this.nickname = this.battleData?.illusion.basePokemon?.nickname ?? this.nickname;
+    this.shiny = this.battleData?.illusion.basePokemon?.shiny ?? this.shiny;
+    this.variant = this.battleData?.illusion.basePokemon?.variant ?? this.variant;
+    this.fusionVariant = this.battleData?.illusion.basePokemon?.fusionVariant ?? this.fusionVariant;
+    this.fusionShiny = this.battleData?.illusion.basePokemon?.fusionShiny ?? this.fusionShiny;
     this.battleData.illusion = { active: false, available: false, basePokemon: this };
     if (this.isOnField()) {
       globalScene.playSound("PRSFX- Transform");
@@ -5835,6 +5834,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetBattleData(): void {
+    console.log("RESET BATTLE DATA")
     const illusionActive: boolean = this.battleData?.illusion.active;
     this.breakIllusion();
     this.battleData = new PokemonBattleData();
@@ -7829,7 +7829,7 @@ interface Illusion {
    * The formIndex of the illusion
    * @type {integer}
    */
-  formIndex?: integer;
+  formIndex?: number;
   /**
    * The gender of the illusion
    * @type {Gender}
@@ -7848,12 +7848,17 @@ interface Illusion {
    * The fusionFormIndex of the illusion
    * @type {integer}
    */
-  fusionFormIndex?: integer;
+  fusionFormIndex?: number;
   /**
    * The fusionGender of the illusion if it's a fusion
    * @type {Gender}
    */
   fusionGender?: Gender;
+  /**
+   * The level of the illusion
+   * @type {integer}
+   */
+  level?: number
 }
 
 export interface TurnMove {
