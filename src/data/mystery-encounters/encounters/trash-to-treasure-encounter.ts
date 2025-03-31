@@ -27,6 +27,7 @@ import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { randSeedInt } from "#app/utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -80,7 +81,43 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
       shiny: false, // Shiny lock because of custom intro sprite
       formIndex: 1, // Gmax
       bossSegmentModifier: 1, // +1 Segment from normal
-      moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.HAMMER_ARM],
+      moveSet: [Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.HAMMER_ARM, Moves.PAYBACK],
+      modifierConfigs: [
+        {
+          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
+          stackCount: randSeedInt(2, 0),
+        },
+        {
+          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
+          stackCount: randSeedInt(2, 1),
+        },
+        {
+          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
+          stackCount: randSeedInt(3, 1),
+        },
+        {
+          modifier: generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType,
+          stackCount: randSeedInt(2, 0),
+        },
+      ],
     };
     const config: EnemyPartyConfig = {
       levelAdditiveModifier: 0.5,
