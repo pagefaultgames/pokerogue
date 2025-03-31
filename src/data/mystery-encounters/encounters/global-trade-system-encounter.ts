@@ -46,7 +46,7 @@ import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-en
 import type { PokeballType } from "#enums/pokeball";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { TrainerType } from "#enums/trainer-type";
-import { Challenges } from "#enums/challenges";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -101,7 +101,6 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withDisallowedChallenges(Challenges.METRONOME)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([
@@ -210,6 +209,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const tradedPokemon: PlayerPokemon = encounter.misc.tradedPokemon;
         const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
+        applyChallenges(ChallengeType.ENEMY_POKEMON_MODIFY, receivedPokemonData);
         const modifiers = tradedPokemon
           .getHeldItems()
           .filter(m => !(m instanceof PokemonFormChangeItemModifier) && !(m instanceof SpeciesStatBoosterModifier));
@@ -331,6 +331,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const tradedPokemon: PlayerPokemon = encounter.misc.tradedPokemon;
         const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
+        applyChallenges(ChallengeType.ENEMY_POKEMON_MODIFY, receivedPokemonData);
         const modifiers = tradedPokemon
           .getHeldItems()
           .filter(m => !(m instanceof PokemonFormChangeItemModifier) && !(m instanceof SpeciesStatBoosterModifier));

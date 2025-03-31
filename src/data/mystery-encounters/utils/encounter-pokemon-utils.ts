@@ -38,6 +38,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { Abilities } from "#enums/abilities";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -643,6 +644,7 @@ export async function catchPokemon(
   showCatchObtainMessage = true,
   isObtain = false,
 ): Promise<void> {
+  applyChallenges(ChallengeType.ENEMY_POKEMON_MODIFY, pokemon);
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
   if (
