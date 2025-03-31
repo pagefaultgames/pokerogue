@@ -786,7 +786,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   abstract getBattlerIndex(): BattlerIndex;
 
   /**
-   * @param {boolean} useIllusion - Whether we want the illusion or not.
+   * @param useIllusion - Whether we want the illusion or not.
    */
   loadAssets(ignoreOverride: boolean = true, useIllusion: boolean = false): Promise<void> {
     return new Promise(resolve => {
