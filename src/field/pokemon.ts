@@ -541,11 +541,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} fakeName - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
+   * @param {boolean} useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
    */
-  getNameToRender(fakeName: boolean = true) {
-    const name: string = (!fakeName && this.battleData?.illusion.active) ? this.battleData?.illusion.basePokemon!.name : this.name;
-    const nickname: string = (!fakeName && this.battleData?.illusion.active) ? this.battleData?.illusion.basePokemon!.nickname : this.nickname;
+  getNameToRender(useIllusion: boolean = true) {
+    const name: string = (!useIllusion && this.battleData?.illusion.active) ? this.battleData?.illusion.basePokemon!.name : this.name;
+    const nickname: string = (!useIllusion && this.battleData?.illusion.active) ? this.battleData?.illusion.basePokemon!.nickname : this.nickname;
     try {
       if (nickname) {
         return decodeURIComponent(escape(atob(nickname)));
@@ -1824,10 +1824,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} fakeGender - Whether we want the fake or real gender (illusion ability).
+   * @param {boolean} useIllusion - Whether we want the fake or real gender (illusion ability).
    */
-  getGender(ignoreOverride?: boolean, fakeGender: boolean = false): Gender {
-    if (fakeGender && this.battleData?.illusion.active) {
+  getGender(ignoreOverride?: boolean, useIllusion: boolean = false): Gender {
+    if (useIllusion && this.battleData?.illusion.active) {
       return this.battleData?.illusion.gender!;
     } else if (!ignoreOverride && this.summonData?.gender !== undefined) {
       return this.summonData.gender;
@@ -1836,10 +1836,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} fakeGender - Whether we want the fake or real gender (illusion ability).
+   * @param {boolean} useIllusion - Whether we want the fake or real gender (illusion ability).
    */
-  getFusionGender(ignoreOverride?: boolean, fakeGender: boolean = false): Gender {
-    if (fakeGender && this.battleData?.illusion.active) {
+  getFusionGender(ignoreOverride?: boolean, useIllusion: boolean = false): Gender {
+    if (useIllusion && this.battleData?.illusion.active) {
       return this.battleData?.illusion.fusionGender!;
     } else if (!ignoreOverride && this.summonData?.fusionGender !== undefined) {
       return this.summonData.fusionGender;
@@ -1848,34 +1848,34 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} fakeShininess - Whether we want the fake or real shininess (illusion ability).
+   * @param {boolean} useIllusion - Whether we want the fake or real shininess (illusion ability).
    */
-  isShiny(fakeShininess: boolean = false): boolean {
-    if (!fakeShininess && this.battleData?.illusion.active) {
+  isShiny(useIllusion: boolean = false): boolean {
+    if (!useIllusion && this.battleData?.illusion.active) {
       return this.battleData?.illusion.basePokemon?.shiny || (!!this.battleData?.illusion.fusionSpecies && this.battleData?.illusion.basePokemon?.fusionShiny) || false;
     } else {
-      return this.shiny || (this.isFusion(fakeShininess) && this.fusionShiny);
+      return this.shiny || (this.isFusion(useIllusion) && this.fusionShiny);
     }
   }
 
   /**
    * 
-   * @param fakeShininess - Whether we want the fake or real shininess (illusion ability).
+   * @param useIllusion - Whether we want the fake or real shininess (illusion ability).
    * @returns `true` if the {@linkcode Pokemon} is shiny and the fusion is shiny as well, `false` otherwise
    */
-  isDoubleShiny(fakeShininess: boolean = false): boolean {
-    if (!fakeShininess && this.battleData?.illusion.active) {
+  isDoubleShiny(useIllusion: boolean = false): boolean {
+    if (!useIllusion && this.battleData?.illusion.active) {
       return this.isFusion(false) && this.battleData?.illusion.basePokemon!.shiny && this.battleData?.illusion.basePokemon.fusionShiny;
     } else {
-      return this.isFusion(fakeShininess) && this.shiny && this.fusionShiny;
+      return this.isFusion(useIllusion) && this.shiny && this.fusionShiny;
     }
   }
 
   /**
-   * @param {boolean} fakeVariant - Whether we want the fake or real variant (illusion ability).
+   * @param {boolean} useIllusion - Whether we want the fake or real variant (illusion ability).
    */
-  getVariant(fakeVariant: boolean = false): Variant {
-    if (!fakeVariant && this.battleData?.illusion.active) {
+  getVariant(useIllusion: boolean = false): Variant {
+    if (!useIllusion && this.battleData?.illusion.active) {
       return !this.isFusion(false) 
       ? this.battleData?.illusion.basePokemon!.variant 
       : Math.max(this.variant, this.fusionVariant) as Variant;
@@ -1910,10 +1910,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} fakeName - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
+   * @param {boolean} useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
    */
-  getName(fakeName: boolean = false): string {
-    return (!fakeName && this.battleData?.illusion.active && this.battleData?.illusion.basePokemon) 
+  getName(useIllusion: boolean = false): string {
+    return (!useIllusion && this.battleData?.illusion.active && this.battleData?.illusion.basePokemon) 
     ? this.battleData?.illusion.basePokemon.name 
     : this.name;
   }
@@ -2030,14 +2030,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param includeTeraType - `true` to include tera-formed type; Default: `false`
    * @param forDefend - `true` if the pokemon is defending from an attack; Default: `false`
    * @param ignoreOverride - If `true`, ignore ability changing effects; Default: `false`
-   * @param fakeType - `true` to return the types of the illusion instead of the actual types; "AUTO" will depend on forDefend param; Default: "AUTO"
+   * @param useIllusion - `true` to return the types of the illusion instead of the actual types; "AUTO" will depend on forDefend param; Default: "AUTO"
    * @returns array of {@linkcode PokemonType}
    */
   public getTypes(
     includeTeraType = false, 
     forDefend: boolean = false, 
     ignoreOverride?: boolean, 
-    fakeType: boolean | "AUTO" = "AUTO"
+    useIllusion: boolean | "AUTO" = "AUTO"
   ): PokemonType[] {
     const types: PokemonType[] = [];
 
@@ -2053,7 +2053,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (!types.length || !includeTeraType) {
 
-      const doIllusion: boolean = (fakeType === "AUTO") ? !forDefend : fakeType;
+      const doIllusion: boolean = (useIllusion === "AUTO") ? !forDefend : useIllusion;
       if (
         !ignoreOverride && 
         this.summonData?.types && 
@@ -2616,7 +2616,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreAbility Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
    * @param simulated Whether to apply abilities via simulated calls (defaults to `true`)
    * @param cancelled {@linkcode Utils.BooleanHolder} Stores whether the move was cancelled by a non-type-based immunity.
-   * @param {boolean} useFakeType - Whether we want the attack move effectiveness on the illusion or not
+   * @param {boolean} useIllusion - Whether we want the attack move effectiveness on the illusion or not
    * Currently only used by {@linkcode Pokemon.apply} to determine whether a "No effect" message should be shown.
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
@@ -2626,7 +2626,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ignoreAbility: boolean = false, 
     simulated: boolean = true, 
     cancelled?: Utils.BooleanHolder, 
-    useFakeType: boolean = false
+    useIllusion: boolean = false
   ): TypeDamageMultiplier {
     if (!Utils.isNullOrUndefined(this.turnData?.moveEffectiveness)) {
       return this.turnData?.moveEffectiveness;
@@ -2646,7 +2646,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         false, 
         simulated, 
         move, 
-        useFakeType
+        useIllusion
       )
       : 1);
 
@@ -2752,7 +2752,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
    * @param simulated tag to only apply the strong winds effect message when the move is used
    * @param move (optional) the move whose type effectiveness is to be checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
-   * @param {boolean} useFakeType - Whether we want the attack type effectiveness on the illusion or not
+   * @param {boolean} useIllusion - Whether we want the attack type effectiveness on the illusion or not
    * @returns a multiplier for the type effectiveness
    */
   getAttackTypeEffectiveness(
@@ -2761,12 +2761,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ignoreStrongWinds: boolean = false, 
     simulated: boolean = true, 
     move?: Move, 
-    useFakeType: boolean = false
+    useIllusion: boolean = false
   ): TypeDamageMultiplier {
     if (moveType === PokemonType.STELLAR) {
       return this.isTerastallized ? 2 : 1;
     }
-    const types = this.getTypes(true, true, undefined, useFakeType);
+    const types = this.getTypes(true, true, undefined, useIllusion);
     const arena = globalScene.arena;
 
     // Handle flying v ground type immunity without removing flying type so effective types are still effective
