@@ -2371,7 +2371,7 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
  */
 export class PostSummonRemoveIllusionAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    for (const pokemon of globalScene.getField(true) {
+    for (const pokemon of globalScene.getField(true)) {
       pokemon.breakIllusion();
     }
     return true;
