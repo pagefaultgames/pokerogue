@@ -80,7 +80,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
       shiny: false, // Shiny lock because of custom intro sprite
       formIndex: 1, // Gmax
       bossSegmentModifier: 1, // +1 Segment from normal
-      moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH],
+      moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.HAMMER_ARM],
     };
     const config: EnemyPartyConfig = {
       levelAdditiveModifier: 0.5,
@@ -231,21 +231,7 @@ async function tryApplyDigRewardItems() {
     true,
   );
 
-  // First Shell bell
-  for (const pokemon of party) {
-    const heldItems = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    const existingShellBell = heldItems.find(m => m instanceof HitHealModifier) as HitHealModifier;
-
-    if (!existingShellBell || existingShellBell.getStackCount() < existingShellBell.getMaxStackCount()) {
-      await applyModifierTypeToPlayerPokemon(pokemon, shellBell);
-      break;
-    }
-  }
-
-  // Second Shell bell
+  // Only Shell bell
   for (const pokemon of party) {
     const heldItems = globalScene.findModifiers(
       m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
