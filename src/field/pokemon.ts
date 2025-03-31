@@ -693,9 +693,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Generate an illusion of the last pokemon in the party, as other wild pokemon in the area.
-   *
-   * @param {Pokemon} pokemon - The Pokemon that will create an illusion.
-   * @param {Pokemon[]} party - The party of the trainer's pokemon.
    */
   generateIllusion(): boolean {
     if (this.hasTrainer()) {
