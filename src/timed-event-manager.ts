@@ -292,12 +292,12 @@ const timedEvents: TimedEvent[] = [
   },
   {
     name: "April Fools 2025",
-    eventType: EventType.NO_TIMER_DISPLAY,
-    startDate: new Date(Date.UTC(2025, 3, 1)),
+    eventType: EventType.LUCK,
+    startDate: new Date(Date.UTC(2025, 2, 31)),
     endDate: new Date(Date.UTC(2025, 3, 3)),
-    // bannerKey: "aprf25-",
-    // scale: 0.21,
-    // availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    bannerKey: "aprf25",
+    scale: 0.21,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
     trainerShinyChance: 13107, // 13107/65536 = 1/5
     music: [
       ["title", "title_afd"],
@@ -572,11 +572,12 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       let key = this.event.bannerKey;
       if (lang && this.event.availableLangs && this.event.availableLangs.length > 0) {
         if (this.event.availableLangs.includes(lang)) {
-          key += lang;
+          key += "-" + lang;
         } else {
-          key += "en";
+          key += "-en";
         }
       }
+      console.log(key);
       console.log(this.event.bannerKey);
       const padding = 5;
       const showTimer = this.event.eventType !== EventType.NO_TIMER_DISPLAY;
