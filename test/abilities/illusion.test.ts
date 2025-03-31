@@ -77,7 +77,7 @@ describe("Abilities - Illusion", () => {
     expect(zorua.battleData.illusion.active).equals(false);
   });
 
-  it("trick the enemy AI for moves effectiveness using ILLUSION type instead of actual type", async () => {
+  it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
     game.override.enemyMoveset([Moves.FLAMETHROWER, Moves.PSYCHIC, Moves.TACKLE, Moves.TACKLE]);
     await game.classicMode.startBattle([Species.ZOROARK, Species.AXEW]);
 
