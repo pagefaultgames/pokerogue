@@ -123,14 +123,7 @@ describe("Abilities - Illusion", () => {
   });
 
   it("copy the the name, the nickname, the gender, the shininess and the pokeball of the pokemon", async () => {
-    vi.spyOn(overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([
-      Moves.SCARY_FACE,
-      Moves.SCARY_FACE,
-      Moves.SCARY_FACE,
-      Moves.SCARY_FACE,
-    ]);
-
-    await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
+    await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]).enemyMoveset([Moves.SPLASH]);
 
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
