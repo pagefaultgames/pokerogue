@@ -149,7 +149,7 @@ class DefaultOverrides {
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly OPP_SPECIES_OVERRIDE: Species | number = Species.ZORUA;
+  readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
   /**
    * This will make all opponents fused Pokemon
    */
