@@ -46,6 +46,7 @@ import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-en
 import type { PokeballType } from "#enums/pokeball";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { TrainerType } from "#enums/trainer-type";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -100,6 +101,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
+  .withDisallowedChallenges(Challenges.METRONOME)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([

@@ -29,6 +29,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { Stat } from "#enums/stat";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theStrongStuff";
@@ -46,6 +47,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
   MysteryEncounterType.THE_STRONG_STUFF,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
+  .withDisallowedChallenges(Challenges.METRONOME)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
   .withMaxAllowedEncounters(1)

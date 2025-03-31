@@ -27,6 +27,7 @@ import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -45,6 +46,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.TRASH_TO_TREASURE,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
+  .withDisallowedChallenges(Challenges.METRONOME)
   .withSceneWaveRangeRequirement(60, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
   .withMaxAllowedEncounters(1)
   .withFleeAllowed(false)

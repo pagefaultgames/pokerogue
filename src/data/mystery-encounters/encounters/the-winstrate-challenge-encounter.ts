@@ -34,6 +34,7 @@ import i18next from "i18next";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theWinstrateChallenge";
@@ -47,6 +48,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
   MysteryEncounterType.THE_WINSTRATE_CHALLENGE,
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
+  .withDisallowedChallenges(Challenges.METRONOME)
   .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
   .withIntroSpriteConfigs([
     {
