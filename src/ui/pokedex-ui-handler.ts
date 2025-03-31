@@ -12,7 +12,7 @@ import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUN
 import { catchableSpecies } from "#app/data/balance/biomes";
 import { PokemonType } from "#enums/pokemon-type";
 import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
-import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
+import { AbilityAttr, DexAttr, loadStarterPreferences } from "#app/system/game-data";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "#app/ui/text";
