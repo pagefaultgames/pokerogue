@@ -6,7 +6,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
-import { TrainerSlot } from "../data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/data/variant";
 import { loadBattlerTag } from "../data/battler-tags";
 import type { Biome } from "#enums/biome";
@@ -34,7 +34,7 @@ export default class PokemonData {
   public stats: number[];
   public ivs: number[];
   public nature: Nature;
-  public moveset: (PokemonMove | null)[];
+  public moveset: PokemonMove[];
   public status: Status | null;
   public friendship: number;
   public metLevel: number;

@@ -116,6 +116,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "52px",
     instructionTextSize: "35px",
   },
+  "es-MX": {
+    starterInfoTextSize: "52px",
+    instructionTextSize: "35px",
+  },
   fr: {
     starterInfoTextSize: "54px",
     instructionTextSize: "38px",
@@ -2968,7 +2972,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         valueLimit.value = 10;
     }
 
-    Challenge.applyChallenges(globalScene.gameMode, Challenge.ChallengeType.STARTER_POINTS, valueLimit);
+    Challenge.applyChallenges(Challenge.ChallengeType.STARTER_POINTS, valueLimit);
 
     return valueLimit.value;
   }
@@ -4591,5 +4595,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
       icon.setFrame(species.getIconId(female, formIndex, false, variant));
     }
+  }
+
+  /**
+   * Clears this UI's starter preferences.
+   *
+   * Designed to be used for unit tests that utilize this UI.
+   */
+  clearStarterPreferences() {
+    this.starterPreferences = {};
   }
 }

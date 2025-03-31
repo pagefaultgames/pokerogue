@@ -181,7 +181,7 @@ describe("Abilities - Forecast", () => {
 
       expect(castform.formIndex).toBe(SNOWY_FORM);
 
-      game.scene.arena.trySetWeather(WeatherType.FOG, false);
+      game.scene.arena.trySetWeather(WeatherType.FOG);
       game.move.select(Moves.SPLASH);
       game.move.select(Moves.SPLASH, 1);
       await game.phaseInterceptor.to("TurnStartPhase");
@@ -208,37 +208,6 @@ describe("Abilities - Forecast", () => {
 
     expect(game.scene.getPlayerPokemon()?.formIndex).toBe(RAINY_FORM);
     expect(game.scene.getEnemyPokemon()?.formIndex).not.toBe(RAINY_FORM);
-  });
-
-  it("reverts to Normal Form when Castform loses Forecast, changes form to match the weather when it regains it", async () => {
-    game.override
-      .moveset([Moves.SKILL_SWAP, Moves.WORRY_SEED, Moves.SPLASH])
-      .weather(WeatherType.RAIN)
-      .battleType("double");
-    await game.startBattle([Species.CASTFORM, Species.FEEBAS]);
-
-    const castform = game.scene.getPlayerField()[0];
-
-    expect(castform.formIndex).toBe(RAINY_FORM);
-
-    game.move.select(Moves.SKILL_SWAP, 0, BattlerIndex.PLAYER_2);
-    game.move.select(Moves.SKILL_SWAP, 1, BattlerIndex.PLAYER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(castform.formIndex).toBe(NORMAL_FORM);
-
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(castform.formIndex).toBe(RAINY_FORM);
-
-    await game.toNextTurn();
-
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.WORRY_SEED, 1, BattlerIndex.PLAYER);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-    await game.phaseInterceptor.to("MoveEndPhase");
-
-    expect(castform.formIndex).toBe(NORMAL_FORM);
   });
 
   it("reverts to Normal Form when Forecast is suppressed, changes form to match the weather when it regains it", async () => {

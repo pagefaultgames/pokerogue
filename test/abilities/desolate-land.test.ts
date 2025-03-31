@@ -1,5 +1,7 @@
 import { PokeballType } from "#app/enums/pokeball";
 import { WeatherType } from "#app/enums/weather-type";
+import type { CommandPhase } from "#app/phases/command-phase";
+import { Command } from "#app/ui/command-ui-handler";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -128,6 +130,20 @@ describe("Abilities - Desolate Land", () => {
     game.doThrowPokeball(PokeballType.MASTER_BALL);
 
     await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
+  });
+
+  it("should lift after fleeing from a wild pokemon", async () => {
+    game.override.enemyAbility(Abilities.DESOLATE_LAND).ability(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+
+    vi.spyOn(game.scene.getPlayerPokemon()!, "randSeedInt").mockReturnValue(0);
+
+    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    commandPhase.handleCommand(Command.RUN, 0);
+    await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
   });
