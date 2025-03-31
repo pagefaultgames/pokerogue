@@ -105,7 +105,7 @@ describe("Abilities - Illusion", () => {
     expect(psychicEffectiveness).above(flameThrowerEffectiveness);
   });
 
-  it("do not breaks if the pokemon takes indirect damages", async () => {
+  it("does not break from indirect damage", async () => {
     game.override.enemySpecies(Species.GIGALITH);
     game.override.enemyAbility(Abilities.SAND_STREAM);
     game.override.enemyMoveset([Moves.WILL_O_WISP, Moves.WILL_O_WISP, Moves.WILL_O_WISP, Moves.WILL_O_WISP]);
