@@ -24,7 +24,6 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/mysteriousChest";
@@ -45,7 +44,6 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.MYSTERIOUS_CHEST,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withDisallowedChallenges(Challenges.METRONOME)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withScenePartySizeRequirement(2, 6, true)
   .withAutoHideIntroVisuals(false)
