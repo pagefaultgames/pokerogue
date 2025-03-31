@@ -29,3 +29,30 @@ export function getVariantIcon(variant: Variant): number {
       return VariantTier.EPIC;
   }
 }
+
+/** Delete all of the keys in variantData */
+export function clearVariantData() {
+  for (const key in variantData) {
+    delete variantData[key];
+  }
+}
+
+/** Update the variant data to use experiment sprite files for variants that have experimental sprites. */
+export async function mergeExperimentalData(mainData: any, expData: any) {
+  if (!expData) {
+    return;
+  }
+
+  for (const key of Object.keys(expData)) {
+    if (typeof expData[key] === "object" && !Array.isArray(expData[key])) {
+      // If the value is an object, recursively merge.
+      if (!mainData[key]) {
+        mainData[key] = {};
+      }
+      this.mergeExperimentalData(mainData[key], expData[key]);
+    } else {
+      // Otherwise, replace the value
+      mainData[key] = expData[key];
+    }
+  }
+}
