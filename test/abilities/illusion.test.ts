@@ -28,10 +28,10 @@ describe("Abilities - Illusion", () => {
     game.override.battleType("single");
     game.override.enemySpecies(Species.ZORUA);
     game.override.enemyAbility(Abilities.ILLUSION);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
     game.override.enemyHeldItems([{ name: "WIDE_LENS", count: 3 }]);
 
-    game.override.moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE, Moves.TACKLE]);
+    game.override.moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE]);
     game.override.startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
   });
 
@@ -108,7 +108,7 @@ describe("Abilities - Illusion", () => {
   it("does not break from indirect damage", async () => {
     game.override.enemySpecies(Species.GIGALITH);
     game.override.enemyAbility(Abilities.SAND_STREAM);
-    game.override.enemyMoveset([Moves.WILL_O_WISP, Moves.WILL_O_WISP, Moves.WILL_O_WISP, Moves.WILL_O_WISP]);
+    game.override.enemyMoveset(Moves.WILL_O_WISP);
     game.override.moveset([Moves.FLARE_BLITZ]);
 
     await game.classicMode.startBattle([Species.ZOROARK, Species.AZUMARILL]);
@@ -122,9 +122,9 @@ describe("Abilities - Illusion", () => {
     expect(zoroark.battleData.illusion.active).equals(true);
   });
 
-  it("copy the the name, the nickname, the gender, the shininess and the pokeball of the pokemon", async () => {
-    await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]).enemyMoveset([Moves.SPLASH]);
-
+  it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
+    game.override.enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
     axew.nickname = btoa(unescape(encodeURIComponent("axew nickname")));

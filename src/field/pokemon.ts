@@ -735,10 +735,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     } else {
       let availables: Species[] = [];
       let randomIllusion: PokemonSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, this.level);
+      /*
       if (this.isBoss()) {
         availables = [ Species.ENTEI, Species.RAIKOU, Species.SUICUNE ];
         randomIllusion = getPokemonSpecies(availables[this.randSeedInt(availables.length)]);
       }
+      */
 
       this.battleData.illusion = {
         active: true,
@@ -1857,6 +1859,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * 
+   * @param fakeShininess - Whether we want the fake or real shininess (illusion ability).
+   * @returns `true` if the {@linkcode Pokemon} is shiny and the fusion is shiny as well, `false` otherwise
+   */
   isDoubleShiny(fakeShininess: boolean = false): boolean {
     if (!fakeShininess && this.battleData?.illusion.active) {
       return this.isFusion(false) && this.battleData?.illusion.basePokemon!.shiny && this.battleData?.illusion.basePokemon.fusionShiny;

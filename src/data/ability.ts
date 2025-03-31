@@ -5245,14 +5245,13 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
    * @param args - unused
    * @returns - Whether the illusion was destroyed.
    */
-  applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
-
-    const breakIllusion: HitResult[] = [ HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO ];
-    if (!breakIllusion.includes(hitResult)) {
-      return false;
-    }
+  override applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): void {
     pokemon.breakIllusion();
-    return true;
+  }
+
+  override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    const breakIllusion: HitResult[] = [ HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO ];
+    return breakIllusion.includes(hitResult) && pokemon.battleData.illusion.active
   }
 }
 
@@ -5265,10 +5264,9 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
    * @param {...any} args - N/A
    * @returns {boolean} - Whether the illusion was applied.
    */
-  applyPostBattle(pokemon: Pokemon, passive: boolean, simulated:boolean, args: any[]): boolean {
+  override applyPostBattle(pokemon: Pokemon, passive: boolean, simulated:boolean, args: any[]): void {
     pokemon.breakIllusion();
     pokemon.battleData.illusion.available = true;
-    return true;
   }
 }
 
