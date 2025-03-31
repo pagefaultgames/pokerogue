@@ -293,12 +293,12 @@ const timedEvents: TimedEvent[] = [
   {
     name: "April Fools 2025",
     eventType: EventType.NO_TIMER_DISPLAY,
-    startDate: new Date(Date.UTC(2025, 2, 31)),
+    startDate: new Date(Date.UTC(2025, 3, 1)),
     endDate: new Date(Date.UTC(2025, 3, 3)),
     // bannerKey: "aprf25-",
     // scale: 0.21,
     // availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
-    trainerShinyChance: 32769, // 16384/65536 = 1/4
+    trainerShinyChance: 13107, // 13107/65536 = 1/5
     music: [
       ["title", "title_afd"],
       ["battle_rival_3", "battle_rival_3_afd"],
