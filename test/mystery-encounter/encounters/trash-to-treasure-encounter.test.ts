@@ -188,7 +188,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(2);
       expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.TOXIC).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.AMNESIA).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STOCKPILE).length).toBe(1);
     });
 
     it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {
