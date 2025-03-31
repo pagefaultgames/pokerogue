@@ -6,4 +6,5 @@ export enum Challenges {
     FRESH_START,
     INVERSE_BATTLE,
     FLIP_STAT,
+    METRONOME,
 }

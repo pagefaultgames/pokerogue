@@ -6,7 +6,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { type EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type { FixedBattleConfig } from "#app/battle";
 import { ClassicFixedBossWaves, BattleType, getRandomTrainerFunc } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
@@ -15,12 +15,14 @@ import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
-import type { Moves } from "#enums/moves";
+import { Moves } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { globalScene } from "#app/global-scene";
 import { pokemonFormChanges } from "./pokemon-forms";
 import { pokemonEvolutions } from "./balance/pokemon-evolutions";
+import { ModifierPoolType, type ModifierPool, type ModifierTypeOption } from "#app/modifier/modifier-type";
+import type { LearnMoveType } from "#app/phases/learn-move-phase";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -93,6 +95,26 @@ export enum ChallengeType {
    * Modifies what the pokemon stats for Flip Stat Mode.
    */
   FLIP_STAT,
+  /**
+   * Modifies enemy mons AFTER post process function
+   */
+  ENEMY_POKEMON_MODIFY,
+  /**
+   * Prevents the learning of moves
+   */
+  BAN_MOVE_LEARNING,
+  /**
+   * Negates PP Usage
+   */
+  MODIFY_PP_USE,
+  /**
+   * Modifies modifier pools of specified type
+   */
+  MODIFIER_POOL_MODIFY,
+  /**
+   * Modifies the shop options
+   */
+  SHOP_MODIFY,
 }
 
 /**
@@ -424,6 +446,57 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyFlipStat(_pokemon: Pokemon, _baseStats: number[]) {
+    return false;
+  }
+
+  /**
+   * An apply function for ENEMY_POKEMON_MODIFY. Derived classes should alter this.
+   * @param _pokemon {@link EnemyPokemon} the mon to be modified
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyEnemyPokemonModify(_pokemon: EnemyPokemon) {
+    return false;
+  }
+
+  /**
+   * An apply function for BAN_MOVE_LEARNING. Derived classes should alter this.
+   * @param _pokemon {@link Pokemon} Pokemon who wants to learn the move
+   * @param _move {@link Moves} Move being learned
+   * @param _learnType {@link LearnMoveType} How the move is being learned
+   * @param _valid: {@link BooleanHolder} Whether the move is valid for this challenge
+   * @returns {@link boolean} Whether the move should be restricted from learning
+   */
+  applyBanMoveLearning(_pokemon: Pokemon, _move: Moves, _learnType: LearnMoveType, _valid: Utils.BooleanHolder) {
+    return false;
+  }
+
+  /**
+   * An apply function for MODIFY_PP_USE. Derived classes should alter this.
+   * @param _pokemon {@link Pokemon} Pokemon using the move
+   * @param _move {@link Moves} Move being used
+   * @param _usedPP {@link Utils.NumberHolder} Holds the value associated with how much PP should be used
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyModifyPPUsage(_pokemon: Pokemon, _move: Moves, _usedPP: Utils.NumberHolder) {
+    return false;
+  }
+
+  /**
+   * An apply function for MODIFIER_POOL_MODIFY. Derived classes should alter this.
+   * @param _poolType {@link ModifierPoolType} What kind of item pool
+   * @param _modifierPool {@link ModifierPool} Pool to modify
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyModifierPoolModify(_poolType: ModifierPoolType, _modifierPool: ModifierPool) {
+    return false;
+  }
+
+  /**
+   * An apply function for SHOP_MODIFY. Derived classes should alter this.
+   * @param _options {@link ModifierTypeOption} Array of shop options
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyShopModify(_options: ModifierTypeOption[]) {
     return false;
   }
 }
@@ -833,6 +906,29 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
+  override applyModifierPoolModify(poolType: ModifierPoolType, modifierPool: ModifierPool): boolean {
+    if (poolType !== ModifierPoolType.PLAYER) {
+      return false;
+    }
+    let ret = false;
+
+    let idx;
+    const bans = ["EVIOLITE", "MINI_BLACK_HOLE"];
+    const t = [ModifierTier.COMMON, ModifierTier.GREAT, ModifierTier.ULTRA, ModifierTier.ROGUE, ModifierTier.MASTER];
+    for (let i = 0; i < t.length; i++) {
+      idx = 0;
+      while (idx > -1) {
+        idx = modifierPool[t[i]].findIndex(p => bans.includes(p.modifierType.id));
+        if (idx > -1) {
+          modifierPool[t[i]].splice(idx, 1);
+          ret = true;
+        }
+      }
+    }
+
+    return ret;
+  }
+
   override getDifficulty(): number {
     return 0;
   }
@@ -862,6 +958,14 @@ export class InverseBattleChallenge extends Challenge {
 
   override getDifficulty(): number {
     return 0;
+  }
+
+  override applyEnemyPokemonModify(pokemon: EnemyPokemon): boolean {
+    if (pokemon.species.speciesId === Species.ETERNATUS) {
+      pokemon.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
+      return true;
+    }
+    return false;
   }
 
   applyTypeEffectiveness(effectiveness: Utils.NumberHolder): boolean {
@@ -899,6 +1003,97 @@ export class FlipStatChallenge extends Challenge {
 
   static loadChallenge(source: FlipStatChallenge | any): FlipStatChallenge {
     const newChallenge = new FlipStatChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+export class MetronomeChallenge extends Challenge {
+  constructor() {
+    super(Challenges.METRONOME, 1);
+  }
+
+  override applyStarterModify(pokemon: Pokemon): boolean {
+    pokemon.moveset = [new PokemonMove(Moves.METRONOME, 0, 3)];
+    return true;
+  }
+
+  override applyEnemyPokemonModify(pokemon: EnemyPokemon): boolean {
+    pokemon.moveset = [new PokemonMove(Moves.METRONOME, 0, 3)];
+    return true;
+  }
+
+  override applyBanMoveLearning(
+    _pokemon: Pokemon,
+    _move: Moves,
+    _learnType: LearnMoveType,
+    valid: Utils.BooleanHolder,
+  ): boolean {
+    valid.value = false;
+    return true;
+  }
+
+  /**
+   * Makes sure 0 PP is used, called when applying other PP usage modifiers such as Pressure
+   * @param _pokemon {@link Pokemon} unused
+   * @param _move {@link Moves} unused
+   * @param usedPP
+   * @returns true
+   */
+  override applyModifyPPUsage(_pokemon: Pokemon, _move: Moves, usedPP: Utils.NumberHolder): boolean {
+    usedPP.value = 0;
+    return true;
+  }
+
+  override applyModifierPoolModify(poolType: ModifierPoolType, modifierPool: ModifierPool): boolean {
+    if (poolType !== ModifierPoolType.PLAYER) {
+      return false;
+    }
+    let ret = false;
+
+    let idx;
+    const bans = [
+      "TM_COMMON",
+      "ETHER",
+      "MAX_ETHER",
+      "ELIXIR",
+      "MAX_ELIXIR",
+      "PP_UP",
+      "MEMORY_MUSHROOM",
+      "TM_GREAT",
+      "TM_ULTRA",
+      "PP_MAX",
+    ];
+    const t = [ModifierTier.COMMON, ModifierTier.GREAT, ModifierTier.ULTRA, ModifierTier.ROGUE, ModifierTier.MASTER];
+    for (let i = 0; i < t.length; i++) {
+      idx = 0;
+      while (idx > -1) {
+        idx = modifierPool[t[i]].findIndex(p => bans.includes(p.modifierType.id));
+        if (idx > -1) {
+          modifierPool[t[i]].splice(idx, 1);
+          ret = true;
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  override applyShopModify(options: ModifierTypeOption[]): boolean {
+    const removals = ["ETHER", "MAX_ETHER", "ELIXIR", "MAX_ELIXIR", "MEMORY_MUSHROOM"]; // Pending rework, these need to match locale key
+    const opstart = options.length;
+    removals.map(r => {
+      const idx = options.findIndex(o => o.type.localeKey.split(".")[1] === r); // Currently the quickest way to get the id
+      if (idx >= 0) {
+        options.splice(idx, 1);
+      }
+    });
+    return opstart > options.length;
+  }
+
+  static loadChallenge(source: MetronomeChallenge | any): MetronomeChallenge {
+    const newChallenge = new MetronomeChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
     return newChallenge;
@@ -1125,6 +1320,66 @@ export function applyChallenges(
 
 export function applyChallenges(challengeType: ChallengeType.FLIP_STAT, pokemon: Pokemon, baseStats: number[]): boolean;
 
+/**
+ * Apply all challenges that modify Enemy Pokemon generation (after post process funcs)
+ * @param challengeType {@link ChallengeType} ChallengeType.ENEMY_POKEMON_MODIFY
+ * @param pokemon {@link EnemyPokemon} Pokemon to be modified
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.ENEMY_POKEMON_MODIFY, pokemon: EnemyPokemon): boolean;
+
+/**
+ * Apply all challenges that restrict Pokemon from learning certain moves
+ * @param challengeType {@link ChallengeType} ChallengeType.BAN_MOVE_LEARNING
+ * @param pokemon {@link Pokemon} The mon attempting to learn
+ * @param move {@link Moves} The move being learned
+ * @param learnType {@link LearnMoveType} how the move is being learned
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.BAN_MOVE_LEARNING,
+  pokemon: Pokemon,
+  move: Moves,
+  learnType: LearnMoveType,
+  valid: Utils.BooleanHolder,
+): boolean;
+
+/**
+ * Apply all challenges that modify how much PP is used
+ * @param challengeType {@link ChallengeType} ChallengeType.MODIFY_PP_USE
+ * @param pokemon {@link Pokemon} Pokemon using the move
+ * @param move {@link Moves} Move being used
+ * @param usedPP {@link Utils.NumberHolder} Holds the value associated with how much PP should be used
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.MODIFY_PP_USE,
+  pokemon: Pokemon,
+  move: Moves,
+  usedPP: Utils.NumberHolder,
+): boolean;
+
+/**
+ * Apply all challenges that modify modifier pools //TODO: Modifier rework will need to look at this
+ * @param challengeType {@link ChallengeType} ChallengeType.MODIFIER_POOL_MODIFY
+ * @param poolType {@link ModifierPoolType} Which kind of pool is being changed (wild held items, player rewards etc)
+ * @param modifierPool {@link ModifierPool} The item pool the challenge may attempt to modify
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.MODIFIER_POOL_MODIFY,
+  poolType: ModifierPoolType,
+  modifierPool: ModifierPool,
+): boolean;
+
+/**
+ * Apply all challenges that modify the shop
+ * @param challengeType ChallengeType.SHOP_MODIFY
+ * @param options {@link ModifierTypeOption} List of shop options including the prices
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.SHOP_MODIFY, options: ModifierTypeOption[]): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
@@ -1172,6 +1427,21 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
         case ChallengeType.FLIP_STAT:
           ret ||= c.applyFlipStat(args[0], args[1]);
           break;
+        case ChallengeType.ENEMY_POKEMON_MODIFY:
+          ret ||= c.applyEnemyPokemonModify(args[0]);
+          break;
+        case ChallengeType.BAN_MOVE_LEARNING:
+          ret ||= c.applyBanMoveLearning(args[0], args[1], args[2], args[3]);
+          break;
+        case ChallengeType.MODIFY_PP_USE:
+          ret ||= c.applyModifyPPUsage(args[0], args[1], args[2]);
+          break;
+        case ChallengeType.MODIFIER_POOL_MODIFY:
+          ret ||= c.applyModifierPoolModify(args[0], args[1]);
+          break;
+        case ChallengeType.SHOP_MODIFY:
+          ret ||= c.applyShopModify(args[0]);
+          break;
       }
     }
   });
@@ -1199,6 +1469,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return InverseBattleChallenge.loadChallenge(source);
     case Challenges.FLIP_STAT:
       return FlipStatChallenge.loadChallenge(source);
+    case Challenges.METRONOME:
+      return MetronomeChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -1212,6 +1484,7 @@ export function initChallenges() {
     new FreshStartChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
+    new MetronomeChallenge(),
   );
 }
 

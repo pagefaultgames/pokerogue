@@ -65,6 +65,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -393,6 +394,8 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       if (config.mysteryEncounterBattleEffects) {
         enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
       }
+
+      applyChallenges(ChallengeType.ENEMY_POKEMON_MODIFY, enemyPokemon);
 
       // Requires re-priming summon data to update everything properly
       enemyPokemon.primeSummonData(enemyPokemon.summonData);

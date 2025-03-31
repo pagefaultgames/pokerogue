@@ -30,6 +30,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { getPokeballTintColor } from "#app/data/pokeball";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";
@@ -123,6 +124,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
   MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
+  .withDisallowedChallenges(Challenges.METRONOME)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
   .withIntroSpriteConfigs([]) // These are set in onInit()

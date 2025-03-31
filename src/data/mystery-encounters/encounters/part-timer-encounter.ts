@@ -22,6 +22,7 @@ import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/partTimer";
@@ -36,6 +37,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withDisallowedChallenges(Challenges.METRONOME)
   .withIntroSpriteConfigs([
     {
       spriteKey: "part_timer_crate",

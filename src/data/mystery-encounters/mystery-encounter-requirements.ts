@@ -650,6 +650,39 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
   }
 }
 
+export class CanLearnTMRequirement extends EncounterPokemonRequirement {
+  min: number;
+  excludeDisallowedPokemon: boolean;
+  /**
+   * Constructs a new CanLearnTMRequirement
+   * @param min Minimum number of party members who can learn a TM, defaults to 1.
+   * @param excludeDisallowed Whether to exclude ineligible party members, defaults to false
+   */
+  constructor(min = 1, excludeDisallowed = false) {
+    super();
+    this.min = min;
+    this.excludeDisallowedPokemon = excludeDisallowed;
+  }
+
+  override meetsRequirement(): boolean {
+    const partyPokemon = globalScene.getPlayerParty();
+    if (isNullOrUndefined(partyPokemon)) {
+      return false;
+    }
+    return this.queryParty(partyPokemon).length >= this.min;
+  }
+
+  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+    return partyPokemon.filter(
+      pokemon => (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle()) && pokemon.compatibleTms.length >= 0,
+    );
+  }
+
+  override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
+    return ["canLearnTM", ""];
+  }
+}
+
 export class AbilityRequirement extends EncounterPokemonRequirement {
   requiredAbilities: Abilities[];
   minNumberOfPokemon: number;

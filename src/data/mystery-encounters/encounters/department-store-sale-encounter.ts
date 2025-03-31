@@ -11,6 +11,11 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { MysteryEncounterOptionBuilder } from "../mystery-encounter-option";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { CanLearnTMRequirement } from "../mystery-encounter-requirements";
+import { globalScene } from "#app/global-scene";
+import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/departmentStoreSale";
@@ -55,34 +60,37 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
   .withTitle(`${namespace}:title`)
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
-  .withSimpleOption(
-    {
-      buttonLabel: `${namespace}:option.1.label`,
-      buttonTooltip: `${namespace}:option.1.tooltip`,
-    },
-    async () => {
-      // Choose TMs
-      const modifiers: ModifierTypeFunc[] = [];
-      let i = 0;
-      while (i < 5) {
-        // 2/2/1 weight on TM rarity
-        const roll = randSeedInt(5);
-        if (roll < 2) {
-          modifiers.push(modifierTypes.TM_COMMON);
-        } else if (roll < 4) {
-          modifiers.push(modifierTypes.TM_GREAT);
-        } else {
-          modifiers.push(modifierTypes.TM_ULTRA);
+  .withOption(
+    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withPrimaryPokemonRequirement(new CanLearnTMRequirement())
+      .withDialogue({
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
+      })
+      .withOptionPhase(async () => {
+        // Choose TMs
+        const modifiers: ModifierTypeFunc[] = [];
+        let i = 0;
+        while (i < 5) {
+          // 2/2/1 weight on TM rarity
+          const roll = randSeedInt(5);
+          if (roll < 2) {
+            modifiers.push(modifierTypes.TM_COMMON);
+          } else if (roll < 4) {
+            modifiers.push(modifierTypes.TM_GREAT);
+          } else {
+            modifiers.push(modifierTypes.TM_ULTRA);
+          }
+          i++;
         }
-        i++;
-      }
 
-      setEncounterRewards({
-        guaranteedModifierTypeFuncs: modifiers,
-        fillRemaining: false,
-      });
-      leaveEncounterWithoutBattle();
-    },
+        setEncounterRewards({
+          guaranteedModifierTypeFuncs: modifiers,
+          fillRemaining: false,
+        });
+        leaveEncounterWithoutBattle();
+      })
+      .build(),
   )
   .withSimpleOption(
     {
@@ -96,7 +104,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       while (i < 3) {
         // 2/1 weight on base stat booster vs PP Up
         const roll = randSeedInt(3);
-        if (roll === 0) {
+        if (roll === 0 && !globalScene.gameMode.hasChallenge(Challenges.METRONOME)) {
           modifiers.push(modifierTypes.PP_UP);
         } else {
           modifiers.push(modifierTypes.BASE_STAT_BOOSTER);

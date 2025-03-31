@@ -170,6 +170,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { initGlobalScene } from "#app/global-scene";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
+import { applyChallenges, ChallengeType } from "./data/challenge";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1081,6 +1082,8 @@ export default class BattleScene extends SceneBase {
     if (postProcess) {
       postProcess(pokemon);
     }
+
+    applyChallenges(ChallengeType.ENEMY_POKEMON_MODIFY, pokemon);
 
     for (let i = 0; i < pokemon.ivs.length; i++) {
       if (OPP_IVS_OVERRIDE_VALIDATED[i] > -1) {

@@ -127,6 +127,7 @@ import type { PermanentStat, TempBattleStat } from "#enums/stat";
 import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -2032,10 +2033,12 @@ export const modifierTypes = {
     }),
 
   BERRY: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+    new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
         return new BerryModifierType(pregenArgs[0] as BerryType);
       }
+      const ppReduction = new NumberHolder(1); // How much PP is reduced when using a move in this game mode
+      applyChallenges(ChallengeType.MODIFY_PP_USE, party[0], Moves.NONE, ppReduction);
       const berryTypes = getEnumValues(BerryType);
       let randBerryType: BerryType;
       const rand = randSeedInt(12);
@@ -2043,7 +2046,8 @@ export const modifierTypes = {
         randBerryType = BerryType.SITRUS;
       } else if (rand < 4) {
         randBerryType = BerryType.LUM;
-      } else if (rand < 6) {
+      } else if (rand < 6 && ppReduction.value !== 0) {
+        // If PP isn't reduced, it doesn't need to be restored
         randBerryType = BerryType.LEPPA;
       } else {
         randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];
@@ -2392,7 +2396,7 @@ export const modifierTypes = {
     ),
 };
 
-interface ModifierPool {
+export interface ModifierPool {
   [tier: string]: WeightedModifierType[];
 }
 
@@ -2691,7 +2695,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
     new WeightedModifierType(modifierTypes.EVIOLITE, (party: Pokemon[]) => {
       const { gameMode, gameData } = globalScene;
-      if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
+      if (gameMode.isDaily || gameData.isUnlocked(Unlockables.EVIOLITE)) {
         return party.some(p => {
           // Check if Pokemon's species (or fusion species, if applicable) can evolve or if they're G-Max'd
           if (
@@ -2948,11 +2952,7 @@ const modifierPool: ModifierPool = {
     ),
     new WeightedModifierType(
       modifierTypes.MINI_BLACK_HOLE,
-      () =>
-        globalScene.gameMode.isDaily ||
-        (!globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))
-          ? 1
-          : 0,
+      () => (globalScene.gameMode.isDaily || globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE) ? 1 : 0),
       1,
     ),
   ].map(m => {
@@ -3154,6 +3154,7 @@ export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool
       pool = dailyStarterModifierPool;
       break;
   }
+  applyChallenges(ChallengeType.MODIFIER_POOL_MODIFY, poolType, pool);
   return pool;
 }
 
@@ -3165,9 +3166,6 @@ export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Ma
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount = 0) {
   const pool = getModifierPoolForType(poolType);
-  itemPoolChecks.forEach((_v, k) => {
-    itemPoolChecks.set(k, false);
-  });
 
   const ignoredIndexes = {};
   const modifierTableData = {};
@@ -3452,7 +3450,9 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
     [new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)],
     [new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)],
   ];
-  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+  const opts = options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+  applyChallenges(ChallengeType.SHOP_MODIFY, opts);
+  return opts;
 }
 
 export function getEnemyBuffModifierForWave(

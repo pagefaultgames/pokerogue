@@ -50,6 +50,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
@@ -349,9 +350,11 @@ export class MovePhase extends BattlePhase {
 
     // "commit" to using the move, deducting PP.
     if (!this.ignorePp) {
-      const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
+      const ppUsed = new NumberHolder(1 + this.getPpIncreaseFromPressure(targets));
 
-      this.move.usePp(ppUsed);
+      applyChallenges(ChallengeType.MODIFY_PP_USE, this.pokemon, this.move.moveId, ppUsed);
+
+      this.move.usePp(ppUsed.value);
       globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
     }
 

@@ -241,7 +241,7 @@ import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LearnMovePhase, LearnMoveType } from "#app/phases/learn-move-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
@@ -6360,13 +6360,20 @@ export class PlayerPokemon extends Pokemon {
     return this.getFieldIndex();
   }
 
-  generateCompatibleTms(): void {
-    this.compatibleTms = [];
+  /**
+   * Finds the list of TMs this PlayerPokemon is compatible with based on species, form, and challenges
+   * @param alsoSet Whether this PlayerPokemon's compatibleTms list should be set by this function
+   * @param applyChal Whether to apply challenges which would ban the mon from learning specific moves
+   * @returns {@link Moves} the list of compatible TM moves for this PlayerPokemon
+   */
+  generateCompatibleTms(alsoSet: boolean = true, applyChal: boolean = true): Moves[] {
+    const ret: Moves[] = [];
+    const compatible = new Utils.BooleanHolder(false);
 
     const tms = Object.keys(tmSpecies);
     for (const tm of tms) {
       const moveId = Number.parseInt(tm) as Moves;
-      let compatible = false;
+      compatible.value = false;
       for (const p of tmSpecies[tm]) {
         if (Array.isArray(p)) {
           const [pkm, form] = p;
@@ -6375,24 +6382,32 @@ export class PlayerPokemon extends Pokemon {
               (this.fusionSpecies && pkm === this.fusionSpecies.speciesId)) &&
             form === this.getFormKey()
           ) {
-            compatible = true;
+            compatible.value = true;
             break;
           }
         } else if (
           p === this.species.speciesId ||
           (this.fusionSpecies && p === this.fusionSpecies.speciesId)
         ) {
-          compatible = true;
+          compatible.value = true;
           break;
         }
       }
       if (reverseCompatibleTms.indexOf(moveId) > -1) {
-        compatible = !compatible;
+        compatible.value = !compatible.value;
       }
-      if (compatible) {
-        this.compatibleTms.push(moveId);
+      if (compatible.value && applyChal) {
+        applyChallenges(ChallengeType.BAN_MOVE_LEARNING, this, moveId, LearnMoveType.TM, compatible);
+      }
+      if (compatible.value) {
+        ret.push(moveId);
       }
     }
+    if (alsoSet) {
+      this.compatibleTms = ret;
+    }
+
+    return ret;
   }
 
   tryPopulateMoveset(moveset: StarterMoveset): boolean {
@@ -7054,14 +7069,12 @@ export class EnemyPokemon extends Pokemon {
               new PokemonMove(Moves.FLAMETHROWER),
               new PokemonMove(Moves.COSMIC_POWER),
             ];
-        if (globalScene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
-          this.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
-        }
         break;
       default:
         super.generateAndPopulateMoveset();
         break;
     }
+    applyChallenges(ChallengeType.ENEMY_POKEMON_MODIFY, this);
   }
 
   /**
