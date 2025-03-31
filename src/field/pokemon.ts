@@ -263,6 +263,7 @@ import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
+import { hasExpSprite } from "#app/sprites/sprite-utilts";
 import { timedEventManager } from "#app/global-event-manager";
 
 export enum LearnMoveSituation {
@@ -765,7 +766,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 let config = variantData;
                 const useExpSprite =
                   globalScene.experimentalSprites &&
-                  globalScene.hasExpSprite(
+                  hasExpSprite(
                     this.getBattleSpriteKey(isBackSprite, ignoreOverride),
                   );
                 battleSpritePath

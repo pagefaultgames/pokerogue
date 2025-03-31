@@ -107,7 +107,7 @@ import { biomeDepths, getBiomeName } from "#app/data/balance/biomes";
 import { SceneBase } from "#app/scene-base";
 import CandyBar from "#app/ui/candy-bar";
 import type { Variant, VariantSet } from "#app/data/variant";
-import { variantColorCache, variantData } from "#app/data/variant";
+import { variantColorCache, variantData, clearVariantData } from "#app/data/variant";
 import type { Localizable } from "#app/interfaces/locales";
 import Overrides from "#app/overrides";
 import { InputsController } from "#app/inputs-controller";
@@ -170,6 +170,8 @@ import { StatusEffect } from "#enums/status-effect";
 import { initGlobalScene } from "#app/global-scene";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
+import { expSpriteKeys } from "./sprites/sprite-keys";
+import { hasExpSprite } from "./sprites/sprite-utilts";
 import { timedEventManager } from "./global-event-manager";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -181,8 +183,6 @@ const OPP_IVS_OVERRIDE_VALIDATED: number[] = (
 ).map(iv => (Number.isNaN(iv) || iv === null || iv > 31 ? -1 : iv));
 
 export const startingWave = Overrides.STARTING_WAVE_OVERRIDE || 1;
-
-const expSpriteKeys: string[] = [];
 
 export let starterColors: StarterColors;
 interface StarterColors {
@@ -409,7 +409,7 @@ export default class BattleScene extends SceneBase {
     }
     const variant = atlasPath.includes("variant/") || /_[0-3]$/.test(atlasPath);
     if (experimental) {
-      experimental = this.hasExpSprite(key);
+      experimental = hasExpSprite(key);
     }
     if (variant) {
       atlasPath = atlasPath.replace("variant/", "");
@@ -425,7 +425,7 @@ export default class BattleScene extends SceneBase {
    * Load the variant assets for the given sprite and stores them in {@linkcode variantColorCache}
    */
   public async loadPokemonVariantAssets(spriteKey: string, fileRoot: string, variant?: Variant): Promise<void> {
-    const useExpSprite = this.experimentalSprites && this.hasExpSprite(spriteKey);
+    const useExpSprite = this.experimentalSprites && hasExpSprite(spriteKey);
     if (useExpSprite) {
       fileRoot = `exp/${fileRoot}`;
     }
@@ -796,40 +796,21 @@ export default class BattleScene extends SceneBase {
       });
   }
 
-  async initVariantData(): Promise<void> {
-    for (const key of Object.keys(variantData)) {
-      delete variantData[key];
+  /**Initialize the variant data.
+   *
+   * If experimental sprites are enabled, their entries are replaced via this method.
+   */
+  async initVariantData() {
+    clearVariantData();
+    const otherVariantData = await this.cachedFetch("./images/pokemon/variant/_masterlist.json").then(r => r.json());
+    for (const k of Object.keys(otherVariantData)) {
+      variantData[k] = otherVariantData[k];
     }
-    await this.cachedFetch("./images/pokemon/variant/_masterlist.json")
-      .then(res => res.json())
-      .then(v => {
-        for (const k of Object.keys(v)) {
-          variantData[k] = v[k];
-        }
-        if (this.experimentalSprites) {
-          const expVariantData = variantData["exp"];
-          const traverseVariantData = (keys: string[]) => {
-            let variantTree = variantData;
-            let expTree = expVariantData;
-            keys.map((k: string, i: number) => {
-              if (i < keys.length - 1) {
-                variantTree = variantTree[k];
-                expTree = expTree[k];
-              } else if (variantTree.hasOwnProperty(k) && expTree.hasOwnProperty(k)) {
-                if (["back", "female"].includes(k)) {
-                  traverseVariantData(keys.concat(k));
-                } else {
-                  variantTree[k] = expTree[k];
-                }
-              }
-            });
-          };
-          for (const ek of Object.keys(expVariantData)) {
-            traverseVariantData([ek]);
-          }
-        }
-        Promise.resolve();
-      });
+    if (!this.experimentalSprites) {
+      return;
+    }
+    const expVariantData = await this.cachedFetch("./images/pokemon/variant/_exp_masterlist.json").then(r => r.json());
+    Utils.deepMergeObjects(variantData, expVariantData);
   }
 
   cachedFetch(url: string, init?: RequestInit): Promise<Response> {
@@ -860,31 +841,6 @@ export default class BattleScene extends SceneBase {
           resolve();
         });
     });
-  }
-
-  hasExpSprite(key: string): boolean {
-    const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
-    if (!keyMatch) {
-      return false;
-    }
-
-    let k = keyMatch[4]!;
-    if (keyMatch[2]) {
-      k += "s";
-    }
-    if (keyMatch[1]) {
-      k += "b";
-    }
-    if (keyMatch[3]) {
-      k += "f";
-    }
-    if (keyMatch[5]) {
-      k += keyMatch[5];
-    }
-    if (!expSpriteKeys.includes(k)) {
-      return false;
-    }
-    return true;
   }
 
   public getPlayerParty(): PlayerPokemon[] {

@@ -22,6 +22,9 @@ from typing import Literal as L
 MASTERLIST_PATH = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), "public", "images", "pokemon", "variant", "_masterlist.json"
 )
+EXP_MASTERLIST_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "public", "images", "pokemon", "variant", "_exp_masterlist.json"
+)
 DEFAULT_OUTPUT_PATH = "sprite-mismatches.csv"
 
 
@@ -93,6 +96,7 @@ if __name__ == "__main__":
         help=f"The path to a file to save the output file. If not specified, will write to {DEFAULT_OUTPUT_PATH}.",
     )
     p.add_argument("--masterlist", default=MASTERLIST_PATH, help=f"The path to the masterlist file to validate. Defaults to {MASTERLIST_PATH}.")
+    p.add_argument("--exp-masterlist", default=EXP_MASTERLIST_PATH, help=f"The path to the exp masterlist file to validate against. Defaults to {EXP_MASTERLIST_PATH}.")
     args = p.parse_args()
     mismatches = make_mismatch_sprite_list(args.masterlist)
     write_mismatch_csv(args.output, mismatches)
