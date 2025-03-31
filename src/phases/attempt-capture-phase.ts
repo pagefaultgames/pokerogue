@@ -24,6 +24,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import { Gender } from "#app/data/gender";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
@@ -320,6 +321,19 @@ export class AttemptCapturePhase extends PokemonPhase {
                         },
                         false,
                       );
+                    },
+                    () => {
+                      const attributes = {
+                        shiny: pokemon.shiny,
+                        variant: pokemon.variant,
+                        form: pokemon.formIndex,
+                        female: pokemon.gender === Gender.FEMALE,
+                      };
+                      globalScene.ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, attributes, null, null, () => {
+                        globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                          promptRelease();
+                        });
+                      });
                     },
                     () => {
                       globalScene.ui.setMode(

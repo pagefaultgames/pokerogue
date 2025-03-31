@@ -329,7 +329,7 @@ export default class UI extends Phaser.GameObjects.Container {
     promptDelay?: number | null,
   ): void {
     const pokename: string[] = [];
-    const repname = [ "#POKEMON1", "#POKEMON2" ];
+    const repname = ["#POKEMON1", "#POKEMON2"];
     for (let p = 0; p < globalScene.getPlayerField().length; p++) {
       pokename.push(globalScene.getPlayerField()[p].getNameToRender());
       text = text.split(pokename[p]).join(repname[p]);

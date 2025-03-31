@@ -285,7 +285,7 @@ export class GameMode implements GameModeConfig {
     const dummyConfig = new FixedBattleConfig();
     return (
       this.battleConfig.hasOwnProperty(waveIndex) ||
-      applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig)
+      applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig)
     );
   }
 
@@ -296,7 +296,7 @@ export class GameMode implements GameModeConfig {
    */
   getFixedBattle(waveIndex: number): FixedBattleConfig {
     const challengeConfig = new FixedBattleConfig();
-    if (applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
+    if (applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
       return challengeConfig;
     }
     return this.battleConfig[waveIndex];
