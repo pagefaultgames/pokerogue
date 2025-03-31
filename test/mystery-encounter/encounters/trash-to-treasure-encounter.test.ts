@@ -96,7 +96,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
             shiny: false,
             formIndex: 1,
             bossSegmentModifier: 1,
-            moveSet: [Moves.PAYBACK, Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.DRAIN_PUNCH],
+            moveSet: [Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.HAMMER_ARM, Moves.PAYBACK],
           },
         ],
       },
@@ -122,7 +122,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       });
     });
 
-    it("should give 2 Leftovers, 2 Shell Bell, and Black Sludge", async () => {
+    it("should give 2 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
@@ -134,7 +134,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
       const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
       expect(shellBell).toBeDefined();
-      expect(shellBell?.stackCount).toBe(2);
+      expect(shellBell?.stackCount).toBe(1);
 
       const blackSludge = scene.findModifier(m => m instanceof HealShopCostModifier) as HealShopCostModifier;
       expect(blackSludge).toBeDefined();
