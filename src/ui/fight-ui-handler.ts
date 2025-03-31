@@ -306,6 +306,9 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       pokemon,
       pokemonMove.getMove(),
       !opponent.battleData?.abilityRevealed,
+      undefined,
+      undefined,
+      true
     );
     if (effectiveness === undefined) {
       return undefined;
