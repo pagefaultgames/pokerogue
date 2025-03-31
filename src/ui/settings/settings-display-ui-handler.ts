@@ -33,6 +33,12 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
             label: "Español (ES)",
           };
           break;
+        case "es-MX":
+          this.settings[languageIndex].options[0] = {
+            value: "Español (LATAM)",
+            label: "Español (LATAM)",
+          };
+          break;
         case "it":
           this.settings[languageIndex].options[0] = {
             value: "Italiano",

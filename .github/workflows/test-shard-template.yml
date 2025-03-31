@@ -29,4 +29,4 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
       - name: Run tests
-        run: npx vitest --project ${{ inputs.project }} --shard=${{ inputs.shard }}/${{ inputs.totalShards }} ${{ !runner.debug && '--silent' || '' }}
+        run: npx vitest --project ${{ inputs.project }} --no-isolate --shard=${{ inputs.shard }}/${{ inputs.totalShards }} ${{ !runner.debug && '--silent' || '' }}
