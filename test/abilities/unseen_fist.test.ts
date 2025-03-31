@@ -32,22 +32,22 @@ describe("Abilities - Unseen Fist", () => {
     game.override.enemyLevel(100);
   });
 
-  it("should cause a contact move to ignore Protect", () =>
-    testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, true));
+  it("should cause a contact move to ignore Protect", async () =>
+    await testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, true));
 
-  it("should not cause a non-contact move to ignore Protect", () =>
-    testUnseenFistHitResult(game, Moves.ABSORB, Moves.PROTECT, false));
+  it("should not cause a non-contact move to ignore Protect", async () =>
+    await testUnseenFistHitResult(game, Moves.ABSORB, Moves.PROTECT, false));
 
   it("should not apply if the source has Long Reach", async () => {
     game.override.passiveAbility(Abilities.LONG_REACH);
     await testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
   });
 
-  it("should cause a contact move to ignore Wide Guard", () =>
-    testUnseenFistHitResult(game, Moves.BREAKING_SWIPE, Moves.WIDE_GUARD, true));
+  it("should cause a contact move to ignore Wide Guard", async () =>
+    await testUnseenFistHitResult(game, Moves.BREAKING_SWIPE, Moves.WIDE_GUARD, true));
 
-  it("should not cause a non-contact move to ignore Wide Guard", () =>
-    testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false));
+  it("should not cause a non-contact move to ignore Wide Guard", async () =>
+    await testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false));
 
   it("should cause a contact move to ignore Protect, but not Substitute", async () => {
     game.override.enemyLevel(1);

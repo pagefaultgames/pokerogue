@@ -742,6 +742,26 @@ export async function catchPokemon(
                     );
                   },
                   () => {
+                    const attributes = {
+                      shiny: pokemon.shiny,
+                      variant: pokemon.variant,
+                      form: pokemon.formIndex,
+                      female: pokemon.gender === Gender.FEMALE,
+                    };
+                    globalScene.ui.setOverlayMode(
+                      Mode.POKEDEX_PAGE,
+                      pokemon.species,
+                      pokemon.formIndex,
+                      attributes,
+                      null,
+                      () => {
+                        globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                          promptRelease();
+                        });
+                      },
+                    );
+                  },
+                  () => {
                     globalScene.ui.setMode(
                       Mode.PARTY,
                       PartyUiMode.RELEASE,

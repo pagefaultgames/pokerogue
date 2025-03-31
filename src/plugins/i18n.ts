@@ -170,8 +170,11 @@ export async function initI18n(): Promise<void> {
   i18next.use(processor);
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
-    fallbackLng: "en",
-    supportedLngs: ["en", "es-ES", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES", "da"],
+    fallbackLng: {
+      "es-MX": ["es-ES", "en"],
+      default: ["en"],
+    },
+    supportedLngs: ["en", "es-ES", "es-MX", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES", "da"],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
         let fileName: string;
@@ -237,6 +240,7 @@ export async function initI18n(): Promise<void> {
       "terrain",
       "titles",
       "trainerClasses",
+      "trainersCommon",
       "trainerNames",
       "tutorial",
       "voucher",

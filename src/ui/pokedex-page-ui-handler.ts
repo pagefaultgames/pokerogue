@@ -25,7 +25,7 @@ import { AbilityAttr, DexAttr } from "#app/system/game-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { StatsContainer } from "#app/ui/stats-container";
-import { TextStyle, addTextObject, getTextStyleOptions } from "#app/ui/text";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#app/ui/text";
 import { Mode } from "#app/ui/ui";
 import { addWindow } from "#app/ui/ui-theme";
 import { Egg } from "#app/data/egg";
@@ -63,6 +63,7 @@ import { TimeOfDay } from "#app/enums/time-of-day";
 import type { Abilities } from "#app/enums/abilities";
 import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";
 import { globalScene } from "#app/global-scene";
+import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -250,7 +251,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   // Menu
   private menuContainer: Phaser.GameObjects.Container;
   private menuBg: Phaser.GameObjects.NineSlice;
-  protected optionSelectText: Phaser.GameObjects.Text;
+  protected optionSelectText: BBCodeText;
   private menuOptions: MenuOptions[];
   protected scale = 0.1666666667;
   private menuDescriptions: string[];
@@ -261,6 +262,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private unlockedVariants: boolean[];
 
   private canUseCandies: boolean;
+  private exitCallback;
 
   constructor() {
     super(Mode.POKEDEX_PAGE);
@@ -592,14 +594,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
-    this.optionSelectText = addTextObject(
+    this.optionSelectText = addBBCodeTextObject(
       0,
       0,
       this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`).join("\n"),
       TextStyle.WINDOW,
-      { maxLines: this.menuOptions.length },
+      { maxLines: this.menuOptions.length, lineSpacing: 12 },
     );
-    this.optionSelectText.setLineSpacing(12);
 
     this.menuDescriptions = [
       i18next.t("pokedexUiHandler:showBaseStats"),
@@ -622,7 +623,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     );
     this.menuBg.setOrigin(0, 0);
 
-    this.optionSelectText.setPositionRelative(this.menuBg, 10 + 24 * this.scale, 6);
+    this.optionSelectText.setPosition(this.menuBg.x + 10 + 24 * this.scale, this.menuBg.y + 6);
 
     this.menuContainer.add(this.menuBg);
 
@@ -681,6 +682,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.filteredIndices = args[2] ?? null;
     this.starterSetup();
 
+    if (args[4] instanceof Function) {
+      this.exitCallback = args[4];
+    }
+
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.infoOverlay.clear();
 
@@ -699,9 +704,37 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.setSpecies();
     this.updateInstructions();
 
+    this.optionSelectText.setText(this.getMenuText());
+
     this.setCursor(0);
 
     return true;
+  }
+
+  getMenuText(): string {
+    const isSeen = this.isSeen();
+    const isStarterCaught = !!this.isCaught(this.getStarterSpecies(this.species));
+
+    return this.menuOptions
+      .map(o => {
+        const label = `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`;
+        const isDark =
+          !isSeen ||
+          (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES)) ||
+          (this.tmMoves.length < 1 && o === MenuOptions.TM_MOVES);
+        const color = getTextColor(
+          isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE,
+          false,
+          globalScene.uiTheme,
+        );
+        const shadow = getTextColor(
+          isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE,
+          true,
+          globalScene.uiTheme,
+        );
+        return `[shadow=${shadow}][color=${color}]${label}[/color][/shadow]`;
+      })
+      .join("\n");
   }
 
   starterSetup(): void {
@@ -899,6 +932,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     return (dexEntry?.caughtAttr ?? 0n) & (starterDexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
   }
+
   /**
    * Check whether a given form is caught for a given species.
    * All forms that can be reached through a form change during battle are considered caught and show up in the dex as such.
@@ -923,6 +957,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return isFormCaught;
   }
 
+  isSeen(): boolean {
+    if (this.speciesStarterDexEntry?.seenAttr) {
+      return true;
+    }
+    const starterCaughtAttr = this.isCaught(this.getStarterSpecies(this.species));
+    return !!starterCaughtAttr;
+  }
+
   /**
    * Get the starter attributes for the given PokemonSpecies, after sanitizing them.
    * If somehow a preference is set for a form, variant, gender, ability or nature
@@ -936,7 +978,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const caughtAttr = this.isCaught();
 
     // no preferences or Pokemon wasn't caught, return empty attribute
-    if (!starterAttributes || !caughtAttr) {
+    if (!starterAttributes || !this.isSeen()) {
       return {};
     }
 
@@ -1071,6 +1113,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const isCaught = this.isCaught();
     const isFormCaught = this.isFormCaught();
+    const isSeen = this.isSeen();
+    const isStarterCaught = !!this.isCaught(this.getStarterSpecies(this.species));
 
     if (this.blockInputOverlay) {
       if (button === Button.CANCEL || button === Button.ACTION) {
@@ -1106,7 +1150,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         });
         this.blockInput = false;
       } else {
-        ui.revertMode();
+        ui.revertMode().then(() => {
+          console.log("exitCallback", this.exitCallback);
+          if (this.exitCallback instanceof Function) {
+            const exitCallback = this.exitCallback;
+            this.exitCallback = null;
+            exitCallback();
+          }
+        });
         success = true;
       }
     } else {
@@ -1117,7 +1168,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         switch (this.cursor) {
           case MenuOptions.BASE_STATS:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1137,7 +1188,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.LEVEL_MOVES:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1195,7 +1246,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.EGG_MOVES:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1262,7 +1313,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.TM_MOVES:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else if (this.tmMoves.length < 1) {
               ui.showText(i18next.t("pokedexUiHandler:noTmMoves"));
@@ -1313,7 +1364,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.ABILITIES:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1401,7 +1452,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.BIOMES:
-            if (!(isCaught || this.speciesStarterDexEntry?.seenAttr)) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1480,7 +1531,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.EVOLUTIONS:
-            if (!isCaught || !isFormCaught) {
+            if (!isSeen) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1664,7 +1715,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.TOGGLE_IVS:
-            if (!isCaught || !isFormCaught) {
+            if (!isStarterCaught) {
               error = true;
             } else {
               this.toggleStatsMode();
@@ -1674,7 +1725,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.NATURES:
-            if (!isCaught || !isFormCaught) {
+            if (!isStarterCaught) {
               error = true;
             } else {
               this.blockInput = true;
@@ -1975,6 +2026,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+              ui.playError();
+              this.blockInput = false;
+              return true;
+            }
             this.blockInput = true;
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
@@ -2010,6 +2066,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = false;
             break;
           case Button.RIGHT:
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+              ui.playError();
+              this.blockInput = false;
+              return true;
+            }
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
@@ -2169,9 +2230,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    const isFormCaught = this.isFormCaught();
-
-    if ((this.isCaught() && isFormCaught) || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
+    if ((this.isCaught() && this.isFormCaught()) || this.isSeen()) {
       ui.showText(this.menuDescriptions[cursor]);
     } else {
       ui.showText("");
@@ -2250,7 +2309,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
-    if (species && (this.speciesStarterDexEntry?.seenAttr || this.isCaught())) {
+    if (species && (this.isSeen() || this.isCaught())) {
       this.pokemonNumberText.setText(padInt(species.speciesId, 4));
 
       if (this.isCaught()) {
@@ -2379,8 +2438,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (species) {
-      const dexEntry = globalScene.gameData.dexData[species.speciesId];
-
       const caughtAttr = this.isCaught(species);
 
       if (!caughtAttr) {
@@ -2401,7 +2458,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
 
       const isFormCaught = this.isFormCaught();
-      const isFormSeen = dexEntry ? (dexEntry.seenAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n : false;
+      const isFormSeen = this.isSeen();
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
