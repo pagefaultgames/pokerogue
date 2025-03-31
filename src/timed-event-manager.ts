@@ -9,6 +9,7 @@ import { WeatherType } from "#enums/weather-type";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
 import { MysteryEncounterType } from "./enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
+import { Challenges } from "#enums/challenges";
 
 export enum EventType {
   SHINY,
@@ -43,6 +44,11 @@ interface EventWaveReward {
 
 type EventMusicReplacement = [string, string];
 
+interface EventChallenge {
+  challenge: Challenges;
+  value: number;
+}
+
 interface TimedEvent extends EventBanner {
   name: string;
   eventType: EventType;
@@ -61,6 +67,7 @@ interface TimedEvent extends EventBanner {
   classicWaveRewards?: EventWaveReward[]; // Rival battle rewards
   trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
   music?: EventMusicReplacement[];
+  dailyRunChallenges?: EventChallenge[];
 }
 
 const timedEvents: TimedEvent[] = [
@@ -296,6 +303,12 @@ const timedEvents: TimedEvent[] = [
       ["title", "title_afd"],
       ["battle_rival_3", "battle_rival_3_afd"],
     ],
+    dailyRunChallenges: [
+      {
+        challenge: Challenges.INVERSE_BATTLE,
+        value: 1,
+      },
+    ],
   },
 ];
 
@@ -509,6 +522,16 @@ export class TimedEventManager {
       }
     });
     return ret;
+  }
+
+  /**
+   * Activates any challenges on {@linkcode globalScene.gameMode} for the currently active event
+   */
+  startEventChallenges(): void {
+    const challenges = this.activeEvent()?.dailyRunChallenges;
+    challenges?.forEach((eventChal: EventChallenge) =>
+      globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value),
+    );
   }
 }
 
