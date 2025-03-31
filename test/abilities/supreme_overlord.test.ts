@@ -1,4 +1,5 @@
 import { Moves } from "#app/enums/moves";
+import type Move from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { BattlerIndex } from "#app/battle";
@@ -12,8 +13,8 @@ describe("Abilities - Supreme Overlord", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const move = allMoves[Moves.TACKLE];
-  const basePower = move.power;
+  let move: Move;
+  let basePower: number;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -26,6 +27,8 @@ describe("Abilities - Supreme Overlord", () => {
   });
 
   beforeEach(() => {
+    move = allMoves[Moves.TACKLE];
+    basePower = move.power;
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
