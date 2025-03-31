@@ -21,12 +21,11 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
 
   show(args: any[]): boolean {
     if (
-      args.length === 5 &&
+      args.length === 4 &&
       args[0] instanceof Function &&
       args[1] instanceof Function &&
       args[2] instanceof Function &&
-      args[3] instanceof Function &&
-      args[4] === "fullParty"
+      args[3] === "fullParty"
     ) {
       const config: OptionSelectConfig = {
         options: [
@@ -38,36 +37,29 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
             },
           },
           {
-            label: i18next.t("partyUiHandler:POKEDEX"),
+            label: i18next.t("menu:yes"),
             handler: () => {
               args[1]();
               return true;
             },
           },
           {
-            label: i18next.t("menu:yes"),
+            label: i18next.t("menu:no"),
             handler: () => {
               args[2]();
               return true;
             },
           },
-          {
-            label: i18next.t("menu:no"),
-            handler: () => {
-              args[3]();
-              return true;
-            },
-          },
         ],
-        delay: args.length >= 9 && args[8] !== null ? (args[8] as number) : 0,
+        delay: args.length >= 8 && args[7] !== null ? (args[7] as number) : 0,
       };
 
       super.show([config]);
 
-      this.switchCheck = args.length >= 6 && args[5] !== null && (args[5] as boolean);
+      this.switchCheck = args.length >= 5 && args[4] !== null && (args[4] as boolean);
 
-      const xOffset = args.length >= 7 && args[6] !== null ? (args[6] as number) : 0;
-      const yOffset = args.length >= 8 && args[7] !== null ? (args[7] as number) : 0;
+      const xOffset = args.length >= 6 && args[5] !== null ? (args[5] as number) : 0;
+      const yOffset = args.length >= 7 && args[6] !== null ? (args[6] as number) : 0;
 
       this.optionSelectContainer.setPosition(globalScene.game.canvas.width / 6 - 1 + xOffset, -48 + yOffset);
 

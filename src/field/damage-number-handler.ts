@@ -46,7 +46,6 @@ export default class DamageNumberHandler {
       case HitResult.NOT_VERY_EFFECTIVE:
         [textColor, shadowColor] = ["#f08030", "#c03028"];
         break;
-      case HitResult.INDIRECT_KO:
       case HitResult.ONE_HIT_KO:
         [textColor, shadowColor] = ["#a040a0", "#483850"];
         break;

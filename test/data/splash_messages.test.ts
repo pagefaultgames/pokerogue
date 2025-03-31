@@ -9,7 +9,7 @@ describe("Data - Splash Messages", () => {
 
   // Make sure to adjust this test if the weight is changed!
   it("should add contain 15 `battlesWon` splash messages", () => {
-    const battlesWonMessages = getSplashMessages().filter((message) => message === "splashMessages:battlesWon");
+    const battlesWonMessages = getSplashMessages().filter(message => message === "splashMessages:battlesWon");
     expect(battlesWonMessages).toHaveLength(15);
   });
 

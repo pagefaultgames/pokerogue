@@ -7,7 +7,7 @@ import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { getRandomWeatherType } from "#app/data/weather";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";

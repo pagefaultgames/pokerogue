@@ -3,6 +3,7 @@ import type { BattlerIndex } from "#app/battle";
 import { CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { StatusEffect } from "#app/enums/status-effect";
+import type { DamageResult } from "#app/field/pokemon";
 import { HitResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HealingBoosterModifier } from "#app/modifier/modifier";
@@ -78,7 +79,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       }
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
-        pokemon.damageAndUpdate(healAmount.value * -1, { result: HitResult.INDIRECT });
+        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL as DamageResult);
         healAmount.value = 0;
       }
       // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)

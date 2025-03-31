@@ -216,7 +216,7 @@ export default class PartyUiHandler extends MessageUiHandler {
    */
   private FilterChallengeLegal = (pokemon: PlayerPokemon) => {
     const challengeAllowed = new Utils.BooleanHolder(true);
-    applyChallenges(globalScene.gameMode, ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
+    applyChallenges(ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
     if (!challengeAllowed.value) {
       return i18next.t("partyUiHandler:cantBeUsed", {
         pokemonName: getPokemonNameWithAffix(pokemon),
@@ -574,7 +574,9 @@ export default class PartyUiHandler extends MessageUiHandler {
             form: pokemon.formIndex,
             female: pokemon.gender === Gender.FEMALE,
           };
-          ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, attributes).then(() => this.clearOptions());
+          ui.setOverlayMode(Mode.POKEDEX_PAGE, pokemon.species, pokemon.formIndex, attributes).then(() =>
+            this.clearOptions(),
+          );
           return true;
         } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
           this.clearOptions();
