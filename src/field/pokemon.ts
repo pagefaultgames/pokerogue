@@ -7074,6 +7074,7 @@ export class EnemyPokemon extends Pokemon {
         super.generateAndPopulateMoveset();
         break;
     }
+    applyChallenges(ChallengeType.ENEMY_POKEMON_MODIFY, this);
   }
 
   /**
