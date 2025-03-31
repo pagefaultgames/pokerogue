@@ -326,7 +326,7 @@ export class TimedEventManager {
   }
 
   activeEventHasBanner(): boolean {
-    const activeEvents = timedEvents.filter(te => this.isActive(te) && te.hasOwnProperty("bannerFilename"));
+    const activeEvents = timedEvents.filter(te => this.isActive(te) && te.hasOwnProperty("bannerKey"));
     return activeEvents.length > 0;
   }
 
