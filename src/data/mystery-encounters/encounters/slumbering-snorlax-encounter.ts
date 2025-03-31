@@ -29,7 +29,6 @@ import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { BerryType } from "#enums/berry-type";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";
@@ -43,7 +42,6 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
   MysteryEncounterType.SLUMBERING_SNORLAX,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withDisallowedChallenges(Challenges.METRONOME)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
