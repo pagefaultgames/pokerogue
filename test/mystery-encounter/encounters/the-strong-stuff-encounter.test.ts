@@ -114,7 +114,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
             bossSegments: 5,
             shiny: false,
             customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
-            nature: Nature.BOLD,
+            nature: Nature.HARDY,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: expect.any(Array),
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
