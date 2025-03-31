@@ -178,10 +178,10 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
       expect(enemyField[0].moveset).toEqual([
-        new PokemonMove(Moves.PAYBACK),
         new PokemonMove(Moves.GUNK_SHOT),
         new PokemonMove(Moves.STOMPING_TANTRUM),
-        new PokemonMove(Moves.DRAIN_PUNCH),
+        new PokemonMove(Moves.HAMMER_ARM),
+        new PokemonMove(Moves.PAYBACK),
       ]);
 
       // Should have used moves pre-battle
