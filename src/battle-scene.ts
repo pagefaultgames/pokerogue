@@ -106,8 +106,8 @@ import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { biomeDepths, getBiomeName } from "#app/data/balance/biomes";
 import { SceneBase } from "#app/scene-base";
 import CandyBar from "#app/ui/candy-bar";
-import type { Variant, VariantSet } from "#app/data/variant";
-import { variantColorCache, variantData, clearVariantData } from "#app/data/variant";
+import type { Variant } from "#app/data/variant";
+import { variantData, clearVariantData } from "#app/data/variant";
 import type { Localizable } from "#app/interfaces/locales";
 import Overrides from "#app/overrides";
 import { InputsController } from "#app/inputs-controller";
@@ -419,35 +419,6 @@ export default class BattleScene extends SceneBase {
       `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,
       `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`,
     );
-  }
-
-  /**
-   * Load the variant assets for the given sprite and stores them in {@linkcode variantColorCache}
-   */
-  public async loadPokemonVariantAssets(spriteKey: string, fileRoot: string, variant?: Variant): Promise<void> {
-    const useExpSprite = this.experimentalSprites && hasExpSprite(spriteKey);
-    if (useExpSprite) {
-      fileRoot = `exp/${fileRoot}`;
-    }
-    let variantConfig = variantData;
-    fileRoot.split("/").map(p => (variantConfig ? (variantConfig = variantConfig[p]) : null));
-    const variantSet = variantConfig as VariantSet;
-
-    return new Promise<void>(resolve => {
-      if (variantSet && variant !== undefined && variantSet[variant] === 1) {
-        if (variantColorCache.hasOwnProperty(spriteKey)) {
-          return resolve();
-        }
-        this.cachedFetch(`./images/pokemon/variant/${fileRoot}.json`)
-          .then(res => res.json())
-          .then(c => {
-            variantColorCache[spriteKey] = c;
-            resolve();
-          });
-      } else {
-        resolve();
-      }
-    });
   }
 
   async preload() {
@@ -824,23 +795,15 @@ export default class BattleScene extends SceneBase {
     return fetch(url, init);
   }
 
-  initStarterColors(): Promise<void> {
-    return new Promise(resolve => {
-      if (starterColors) {
-        return resolve();
-      }
-
-      this.cachedFetch("./starter-colors.json")
-        .then(res => res.json())
-        .then(sc => {
-          starterColors = {};
-          for (const key of Object.keys(sc)) {
-            starterColors[key] = sc[key];
-          }
-
-          resolve();
-        });
-    });
+  async initStarterColors() {
+    if (starterColors) {
+      return;
+    }
+    const sc = await this.cachedFetch("./starter-colors.json").then(res => res.json());
+    starterColors = {};
+    for (const key of Object.keys(sc)) {
+      starterColors[key] = sc[key];
+    }
   }
 
   public getPlayerParty(): PlayerPokemon[] {
