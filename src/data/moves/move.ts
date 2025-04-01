@@ -2431,29 +2431,11 @@ export class StatusEffectAttr extends MoveEffectAttr {
         }
       }
 
-      if (user !== target && target.isSafeguarded(user)) {
-        if (move.category === MoveCategory.STATUS) {
-          globalScene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
-        }
+      if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, false, false, user, true)) {
         return false;
       }
-      if (!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0)){ 
-        const statusApplied = pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining);
-        if (!statusApplied) {
-          const isImmune = 
-            (this.effect === StatusEffect.POISON || this.effect === StatusEffect.TOXIC)
-              && (pokemon.isOfType(PokemonType.POISON) || pokemon.isOfType(PokemonType.STEEL) || pokemon.hasAbility(Abilities.IMMUNITY)) 
-            || (this.effect === StatusEffect.PARALYSIS
-              && (pokemon.isOfType(PokemonType.ELECTRIC) || pokemon.hasAbility(Abilities.LIMBER)))
-            || (this.effect === StatusEffect.BURN 
-              && (pokemon.isOfType(PokemonType.FIRE) || pokemon.hasAbility(Abilities.WATER_VEIL))) 
-            || (this.effect === StatusEffect.FREEZE 
-              && (pokemon.isOfType(PokemonType.ICE) || pokemon.hasAbility(Abilities.MAGMA_ARMOR)));
-          if (isImmune) {
-            globalScene.queueMessage(i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }));
-          }
-          return false;
-        }
+      if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
+        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
