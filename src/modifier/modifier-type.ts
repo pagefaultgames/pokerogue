@@ -2823,37 +2823,48 @@ const modifierPool: ModifierPool = {
       modifierTypes.MYSTICAL_ROCK,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const moveset = p.getMoveset(true).map(m => m.moveId);
+          let isHoldingMax = false;
+          for (const i of p.getHeldItems()) {
+            if (i.type.id === "MYSTICAL_ROCK") {
+              isHoldingMax = i.getStackCount() === i.getMaxStackCount();
+              break;
+            }
+          }
 
-          const hasAbility = [
-            Abilities.DRIZZLE,
-            Abilities.ORICHALCUM_PULSE,
-            Abilities.DRIZZLE,
-            Abilities.SAND_STREAM,
-            Abilities.SAND_SPIT,
-            Abilities.SNOW_WARNING,
-            Abilities.ELECTRIC_SURGE,
-            Abilities.HADRON_ENGINE,
-            Abilities.PSYCHIC_SURGE,
-            Abilities.GRASSY_SURGE,
-            Abilities.SEED_SOWER,
-            Abilities.MISTY_SURGE,
-          ].some(a => p.hasAbility(a, false, true));
+          if (!isHoldingMax) {
+            const moveset = p.getMoveset(true).map(m => m.moveId);
 
-          const hasMoves = [
-            Moves.SUNNY_DAY,
-            Moves.RAIN_DANCE,
-            Moves.SANDSTORM,
-            Moves.SNOWSCAPE,
-            Moves.HAIL,
-            Moves.CHILLY_RECEPTION,
-            Moves.ELECTRIC_TERRAIN,
-            Moves.PSYCHIC_TERRAIN,
-            Moves.GRASSY_TERRAIN,
-            Moves.MISTY_TERRAIN,
-          ].some(m => moveset.includes(m));
+            const hasAbility = [
+              Abilities.DRIZZLE,
+              Abilities.ORICHALCUM_PULSE,
+              Abilities.DRIZZLE,
+              Abilities.SAND_STREAM,
+              Abilities.SAND_SPIT,
+              Abilities.SNOW_WARNING,
+              Abilities.ELECTRIC_SURGE,
+              Abilities.HADRON_ENGINE,
+              Abilities.PSYCHIC_SURGE,
+              Abilities.GRASSY_SURGE,
+              Abilities.SEED_SOWER,
+              Abilities.MISTY_SURGE,
+            ].some(a => p.hasAbility(a, false, true));
 
-          return hasAbility || hasMoves;
+            const hasMoves = [
+              Moves.SUNNY_DAY,
+              Moves.RAIN_DANCE,
+              Moves.SANDSTORM,
+              Moves.SNOWSCAPE,
+              Moves.HAIL,
+              Moves.CHILLY_RECEPTION,
+              Moves.ELECTRIC_TERRAIN,
+              Moves.PSYCHIC_TERRAIN,
+              Moves.GRASSY_TERRAIN,
+              Moves.MISTY_TERRAIN,
+            ].some(m => moveset.includes(m));
+
+            return hasAbility || hasMoves;
+          }
+          return false;
         })
           ? 10
           : 0;
