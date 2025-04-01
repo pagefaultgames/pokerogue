@@ -2785,7 +2785,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     const targets = pokemon.getOpponents();
     const target = this.getTarget(targets);
 
-    if (target.battleData.illusion.active) {
+    if (!!target.summonData?.illusion) {
       return false;
     }
 
@@ -5225,11 +5225,22 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
    * @returns {boolean} - Whether the illusion was applied.
    */
   override applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): void {
-    pokemon.generateIllusion();
+    const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
+    const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;
+    pokemon.setIllusion(lastPokemon);
   }
 
   override canApplyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    return pokemon.battleData.illusion.available && pokemon.canApplyAbility();
+    if(pokemon.hasTrainer()){
+      const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
+      const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;
+      const speciesId = lastPokemon.species.speciesId;
+      if ( lastPokemon === pokemon || !!pokemon.summonData?.illusion ||
+        ((speciesId === Species.OGERPON || speciesId === Species.TERAPAGOS) && (lastPokemon.isTerastallized || pokemon.isTerastallized))) {
+        return false;
+      }
+    }
+    return pokemon.canApplyAbility();
   }
 }
 
@@ -5251,7 +5262,7 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     const breakIllusion: HitResult[] = [ HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO ];
-    return breakIllusion.includes(hitResult) && pokemon.battleData.illusion.active
+    return breakIllusion.includes(hitResult) && !!pokemon.summonData?.illusion
   }
 }
 
@@ -5265,10 +5276,11 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
    * @returns {boolean} - Whether the illusion was applied.
    */
   override applyPostBattle(pokemon: Pokemon, passive: boolean, simulated:boolean, args: any[]): void {
-    const illusion = pokemon.breakIllusion();
+    /*const illusion = pokemon.breakIllusion();
     if (illusion) {
-      pokemon.battleData.illusion.available = true;
-    }
+      pokemon.summonData?.illusion.available = true;
+    }*/
+   pokemon.breakIllusion()
   }
 }
 
@@ -6832,9 +6844,9 @@ export function initAbilities() {
       }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       //The pokemon generate an illusion if it's available
-      .conditionalAttr((pokemon) => pokemon.battleData.illusion.available, IllusionPreSummonAbAttr, false)
+      .attr(IllusionPreSummonAbAttr, false)
       //The pokemon loses his illusion when he is damaged by a move
-      .conditionalAttr((pokemon) => pokemon.battleData.illusion.active, IllusionBreakAbAttr, true)
+      .attr(IllusionBreakAbAttr, true)
       //Illusion is available again after a battle
       .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
       .uncopiable()

@@ -8654,7 +8654,7 @@ export function initMoves() {
     new StatusMove(Moves.TRANSFORM, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .condition((user, target, move) => !target.battleData.illusion.active && !user.battleData.illusion.active)
+      .condition((user, target, move) => !target.summonData?.illusion && !user.summonData?.illusion)
       // transforming from or into fusion pokemon causes various problems (such as crashes)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
       .ignoresProtect(),

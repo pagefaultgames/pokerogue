@@ -259,10 +259,9 @@ export class EncounterPhase extends BattlePhase {
         }
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
-            for (const pokemon of globalScene.getPlayerField()) {
+            for (const pokemon of globalScene.getField()) {
               applyPreSummonAbAttrs(PreSummonAbAttr, pokemon, []);
             }
-            applyPreSummonAbAttrs(PreSummonAbAttr, enemyPokemon, []);
             globalScene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = globalScene.getPlayerPokemon();

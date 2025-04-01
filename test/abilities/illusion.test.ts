@@ -1,7 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import overrides from "#app/overrides";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
@@ -40,8 +39,8 @@ describe("Abilities - Illusion", () => {
     const zoroark = game.scene.getPlayerPokemon()!;
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(zoroark.battleData.illusion.active).equals(true);
-    expect(zorua.battleData.illusion.active).equals(true);
+    expect(!!zoroark.summonData?.illusion).equals(true);
+    expect(!!zorua.summonData?.illusion).equals(true);
   });
 
   it("break after receiving damaging move", async () => {
@@ -52,8 +51,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(zorua.battleData.illusion.active).equals(false);
-    expect(zorua.battleData.illusion.available).equals(false);
+    expect(!!zorua.summonData?.illusion).equals(false);
     expect(zorua.name).equals("Zorua");
   });
 
@@ -65,7 +63,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(zorua.battleData.illusion.active).equals(false);
+    expect(!!zorua.summonData?.illusion).equals(false);
   });
 
   it("break if the ability is suppressed", async () => {
@@ -74,7 +72,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(zorua.battleData.illusion.active).equals(false);
+    expect(!!zorua.summonData?.illusion).equals(false);
   });
 
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
@@ -119,7 +117,7 @@ describe("Abilities - Illusion", () => {
 
     const zoroark = game.scene.getPlayerPokemon()!;
 
-    expect(zoroark.battleData.illusion.active).equals(true);
+    expect(!!zoroark.summonData?.illusion).equals(true);
   });
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
@@ -136,10 +134,12 @@ describe("Abilities - Illusion", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const zoroark = game.scene.getPlayerPokemon()!;
+
+    console.log("OOOOOOOOOOOOOOOOOOOOO", !!zoroark.summonData.illusion)
     expect(zoroark.name).equals("Axew");
     expect(zoroark.getNameToRender()).equals("axew nickname");
     expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);
     expect(zoroark.isShiny(true)).equals(true);
-    expect(zoroark.battleData.illusion.pokeball).equals(PokeballType.GREAT_BALL);
+    expect(zoroark.summonData?.illusion?.pokeball).equals(PokeballType.GREAT_BALL);
   });
 });
