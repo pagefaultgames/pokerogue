@@ -24,11 +24,11 @@ export default class EggHatchSceneHandler extends UiHandler {
     globalScene.fieldUI.add(this.eggHatchContainer);
 
     const eggLightraysAnimFrames = globalScene.anims.generateFrameNames("egg_lightrays", { start: 0, end: 3 });
-    if (!(globalScene.anims.exists("egg_lightrays"))) {
+    if (!globalScene.anims.exists("egg_lightrays")) {
       globalScene.anims.create({
         key: "egg_lightrays",
         frames: eggLightraysAnimFrames,
-        frameRate: 32
+        frameRate: 32,
       });
     }
   }

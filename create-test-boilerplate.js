@@ -1,5 +1,5 @@
 /**
- * This script creates a test boilerplate file in the appropriate 
+ * This script creates a test boilerplate file in the appropriate
  * directory based on the type selected.
  * @example npm run create-test
  */
@@ -31,7 +31,8 @@ async function promptTestType() {
   if (typeAnswer.selectedOption === "EXIT") {
     console.log("Exiting...");
     return process.exit();
-  } else if (!typeChoices.includes(typeAnswer.selectedOption)) {
+  }
+  if (!typeChoices.includes(typeAnswer.selectedOption)) {
     console.error(`Please provide a valid type (${typeChoices.join(", ")})!`);
     return await promptTestType();
   }
@@ -74,29 +75,29 @@ async function runInteractive() {
   const fileName = fileNameAnswer.userInput
     .replace(/-+/g, "_") // Convert kebab-case (dashes) to underscores
     .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
-    .replace(/\s+/g, '_') // Replace spaces with underscores
+    .replace(/\s+/g, "_") // Replace spaces with underscores
     .toLowerCase(); // Ensure all lowercase
   // Format the description for the test case
 
-  const formattedName = fileName.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+  const formattedName = fileName.replace(/_/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   // Determine the directory based on the type
   let dir;
   let description;
   switch (type) {
     case "move":
-      dir = path.join(__dirname, "src", "test", "moves");
+      dir = path.join(__dirname, "test", "moves");
       description = `Moves - ${formattedName}`;
       break;
     case "ability":
-      dir = path.join(__dirname, "src", "test", "abilities");
+      dir = path.join(__dirname, "test", "abilities");
       description = `Abilities - ${formattedName}`;
       break;
     case "item":
-      dir = path.join(__dirname, "src", "test", "items");
+      dir = path.join(__dirname, "test", "items");
       description = `Items - ${formattedName}`;
       break;
     case "mystery encounter":
-      dir = path.join(__dirname, "src", "test", "mystery-encounter", "encounters");
+      dir = path.join(__dirname, "test", "mystery-encounter", "encounters");
       description = `Mystery Encounter - ${formattedName}`;
       break;
     default:
@@ -108,7 +109,7 @@ async function runInteractive() {
   const content = `import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import GameManager from "#test/utils/gameManager";
+import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

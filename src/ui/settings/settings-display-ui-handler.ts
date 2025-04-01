@@ -1,7 +1,7 @@
 import type { Mode } from "../ui";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { SettingKeys, SettingType } from "#app/system/settings/settings";
-"#app/inputs-controller";
+("#app/inputs-controller");
 
 export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
   /**
@@ -31,6 +31,12 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
           this.settings[languageIndex].options[0] = {
             value: "Español (ES)",
             label: "Español (ES)",
+          };
+          break;
+        case "es-MX":
+          this.settings[languageIndex].options[0] = {
+            value: "Español (LATAM)",
+            label: "Español (LATAM)",
           };
           break;
         case "it":

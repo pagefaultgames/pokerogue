@@ -20,7 +20,7 @@ export class SwitchBiomePhase extends BattlePhase {
     }
 
     globalScene.tweens.add({
-      targets: [ globalScene.arenaEnemy, globalScene.lastEnemyTrainer ],
+      targets: [globalScene.arenaEnemy, globalScene.lastEnemyTrainer],
       x: "+=300",
       duration: 2000,
       onComplete: () => {
@@ -38,11 +38,11 @@ export class SwitchBiomePhase extends BattlePhase {
         globalScene.arenaPlayerTransition.setVisible(true);
 
         globalScene.tweens.add({
-          targets: [ globalScene.arenaPlayer, globalScene.arenaBgTransition, globalScene.arenaPlayerTransition ],
+          targets: [globalScene.arenaPlayer, globalScene.arenaBgTransition, globalScene.arenaPlayerTransition],
           duration: 1000,
           delay: 1000,
           ease: "Sine.easeInOut",
-          alpha: (target: any) => target === globalScene.arenaPlayer ? 0 : 1,
+          alpha: (target: any) => (target === globalScene.arenaPlayer ? 0 : 1),
           onComplete: () => {
             globalScene.arenaBg.setTexture(bgTexture);
             globalScene.arenaPlayer.setBiome(this.nextBiome);
@@ -57,9 +57,9 @@ export class SwitchBiomePhase extends BattlePhase {
             }
 
             this.end();
-          }
+          },
         });
-      }
+      },
     });
   }
 }

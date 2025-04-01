@@ -4,7 +4,6 @@ import { randomString, padInt } from "./utils";
 import Phaser from "phaser";
 
 describe("utils", () => {
-
   beforeAll(() => {
     new Phaser.Game({
       type: Phaser.HEADLESS,
