@@ -5272,7 +5272,7 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
 
 export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
   /**
-   * Illusion will be available again after a battle and apply the illusion of the pokemon is already on field
+   * Break the illusion once the battle ends
    *
    * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
    * @param {boolean} passive - N/A
