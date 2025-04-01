@@ -70,7 +70,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
           ? variant === TrainerVariant.FEMALE
             ? ".FEMALE"
             : ".MALE"
-          : undefined;
+          : "";
         const trainerKey = Utils.randSeedItem(
           Object.keys(i18next.t(`${classKey}${genderKey}`, { returnObjects: true })),
         );
