@@ -86,15 +86,15 @@ export default class Trainer extends Phaser.GameObjects.Container {
             [this.name, this.partnerName] = this.name.split(" & ");
           }
         } else {
-          this.partnerNameKey =
-            partnerNameKey ||
-            Utils.randSeedItem(
-              Object.keys(
-                i18next.t(`${classKey}${i18next.exists(`${classKey}.FEMALE`) ? ".FEMALE" : undefined}`, {
-                  returnObjects: true,
-                }),
-              ),
-            );
+          const partnerGenderKey = i18next.exists(`${classKey}.FEMALE`) ? ".FEMALE" : "";
+          const partnerTrainerKey = Utils.randSeedItem(
+            Object.keys(
+              i18next.t(`${classKey}${partnerGenderKey}`, {
+                returnObjects: true,
+              }),
+            ),
+          );
+          this.partnerNameKey = `${classKey}${partnerGenderKey}.${partnerTrainerKey}`;
           this.partnerName = i18next.t(this.partnerNameKey);
         }
       }
