@@ -5274,10 +5274,10 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
   /**
    * Break the illusion once the battle ends
    *
-   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - N/A
-   * @param {...any} args - N/A
-   * @returns {boolean} - Whether the illusion was applied.
+   * @param pokemon - The Pokémon with the Illusion ability.
+   * @param passive - Unused
+   * @param args - Unused
+   * @returns - Whether the illusion was applied.
    */
   override applyPostBattle(pokemon: Pokemon, passive: boolean, simulated:boolean, args: any[]): void {
    pokemon.breakIllusion()
