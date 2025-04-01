@@ -912,7 +912,7 @@ export default class Move implements Localizable {
     ];
 
     // ...and cannot enhance Pollen Puff when targeting an ally.
-    const exceptPollenPuffAlly: boolean = this.id === Moves.POLLEN_PUFF && targets.includes(user.getAlly().getBattlerIndex())
+    const exceptPollenPuffAlly: boolean = this.id === Moves.POLLEN_PUFF && targets.includes(user.getAlly()?.getBattlerIndex())
 
     return (!restrictSpread || !isMultiTarget)
       && !this.isChargingMove()
