@@ -5234,8 +5234,13 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
       const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
       const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;
       const speciesId = lastPokemon.species.speciesId;
-      if ( lastPokemon === pokemon || !!pokemon.summonData?.illusion ||
-        ((speciesId === Species.OGERPON || speciesId === Species.TERAPAGOS) && (lastPokemon.isTerastallized || pokemon.isTerastallized))) {
+
+      // If the last conscious Pokémon in the party is a Terastallized Ogerpon or Terapagos, Illusion will not activate.
+      // Illusion will also not activate if the Pokémon with Illusion is Terastallized and the last Pokémon in the party is Ogerpon or Terapagos.
+      if ( 
+        lastPokemon === pokemon ||
+        ((speciesId === Species.OGERPON || speciesId === Species.TERAPAGOS) && (lastPokemon.isTerastallized || pokemon.isTerastallized))
+      ) {
         return false;
       }
     }
