@@ -1,7 +1,7 @@
 import { BattleType } from "#app/battle";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { PlayerGender } from "#app/enums/player-gender";
 import { addPokeballOpenParticles } from "#app/field/anims";
 import type Pokemon from "#app/field/pokemon";
@@ -195,6 +195,10 @@ export class SummonPhase extends PartyMemberPokemonPhase {
                 pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
                 pokemon.getSprite().clearTint();
                 pokemon.resetSummonData();
+                // necessary to stay transformed during wild waves
+                if (pokemon.summonData?.speciesForm) {
+                  pokemon.loadAssets(false);
+                }
                 globalScene.time.delayedCall(1000, () => this.end());
               },
             });

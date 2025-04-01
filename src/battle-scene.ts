@@ -72,8 +72,8 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import FieldSpritePipeline from "#app/pipelines/field-sprite";
 import SpritePipeline from "#app/pipelines/sprite";
 import PartyExpBar from "#app/ui/party-exp-bar";
-import type { TrainerSlot } from "#app/data/trainer-config";
-import { trainerConfigs } from "#app/data/trainer-config";
+import type { TrainerSlot } from "./enums/trainer-slot";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import type TrainerData from "#app/system/trainer-data";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -167,7 +167,10 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 import { StatusEffect } from "#enums/status-effect";
-import { initGlobalScene } from "#app/global-scene";
+import { globalScene, initGlobalScene } from "#app/global-scene";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
+import { timedEventManager } from "./global-event-manager";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1369,6 +1372,7 @@ export default class BattleScene extends SceneBase {
     return Math.max(doubleChance.value, 1);
   }
 
+  // TODO: ...this never actually returns `null`, right?
   newBattle(
     waveIndex?: number,
     battleType?: BattleType,
@@ -1400,7 +1404,10 @@ export default class BattleScene extends SceneBase {
         this.field.add(newTrainer);
       }
     } else {
-      if (!this.gameMode.hasTrainers) {
+      if (
+        !this.gameMode.hasTrainers ||
+        (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && isNullOrUndefined(trainerData))
+      ) {
         newBattleType = BattleType.WILD;
       } else if (battleType === undefined) {
         newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
@@ -2262,6 +2269,9 @@ export default class BattleScene extends SceneBase {
     if (bgmName === undefined) {
       bgmName = this.currentBattle?.getBgmOverride() || this.arena?.bgm;
     }
+
+    bgmName = timedEventManager.getEventBgmReplacement(bgmName);
+
     if (this.bgm && bgmName === this.bgm.key) {
       if (!this.bgm.isPlaying) {
         this.bgm.play({
@@ -2654,6 +2664,10 @@ export default class BattleScene extends SceneBase {
         return 41.42;
       case "mystery_encounter_delibirdy": // Firel Delibirdy
         return 82.28;
+      case "title_afd": // Andr06 - PokéRogue Title Remix (AFD)
+        return 47.660;
+      case "battle_rival_3_afd": // Andr06 - Final N Battle Remix (AFD)
+        return 49.147;
     }
 
     return 0;
@@ -2716,6 +2730,18 @@ export default class BattleScene extends SceneBase {
    */
   clearPhaseQueue(): void {
     this.phaseQueue.splice(0, this.phaseQueue.length);
+  }
+
+  /**
+   * Clears all phase-related stuff, including all phase queues, the current and standby phases, and a splice index
+   */
+  clearAllPhases(): void {
+    for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue]) {
+      queue.splice(0, queue.length);
+    }
+    this.currentPhase = null;
+    this.standbyPhase = null;
+    this.clearPhaseQueueSplice();
   }
 
   /**
@@ -2902,6 +2928,21 @@ export default class BattleScene extends SceneBase {
       //remember that pushPhase adds it to nextCommandPhaseQueue
       this.pushPhase(phase);
     }
+  }
+
+  /**
+   * Queues an ability bar flyout phase
+   * @param pokemon The pokemon who has the ability
+   * @param passive Whether the ability is a passive
+   * @param show Whether to show or hide the bar
+   */
+  public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
+    this.unshiftPhase(
+      show
+        ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive)
+        : new HideAbilityPhase(pokemon.getBattlerIndex(), passive),
+    );
+    this.clearPhaseQueueSplice();
   }
 
   /**
@@ -3133,6 +3174,41 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
+  canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
+    const mod = itemModifier.clone() as PokemonHeldItemModifier;
+    const source = mod.pokemonId ? mod.getPokemon() : null;
+    const cancelled = new Utils.BooleanHolder(false);
+
+    if (source && source.isPlayer() !== target.isPlayer()) {
+      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+    }
+
+    if (cancelled.value) {
+      return false;
+    }
+
+    const matchingModifier = this.findModifier(
+      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
+      target.isPlayer(),
+    ) as PokemonHeldItemModifier;
+
+    if (matchingModifier) {
+      const maxStackCount = matchingModifier.getMaxStackCount();
+      if (matchingModifier.stackCount >= maxStackCount) {
+        return false;
+      }
+      const countTaken = Math.min(transferQuantity, mod.stackCount, maxStackCount - matchingModifier.stackCount);
+      mod.stackCount -= countTaken;
+    } else {
+      const countTaken = Math.min(transferQuantity, mod.stackCount);
+      mod.stackCount -= countTaken;
+    }
+
+    const removeOld = mod.stackCount === 0;
+
+    return !removeOld || !source || this.hasModifier(itemModifier, !source.isPlayer());
+  }
+
   removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
     return new Promise(resolve => {
       const pokemonId = this.getPlayerParty()[partyMemberIndex].id;
@@ -3288,6 +3364,11 @@ export default class BattleScene extends SceneBase {
         }),
       ).then(() => resolve());
     });
+  }
+
+  hasModifier(modifier: PersistentModifier, enemy = false): boolean {
+    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+    return modifiers.indexOf(modifier) > -1;
   }
 
   /**
