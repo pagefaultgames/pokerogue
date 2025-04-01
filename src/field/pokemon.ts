@@ -693,9 +693,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Generate an illusion of the last pokemon in the party, as other wild pokemon in the area.
-   *
-   * @param {Pokemon} pokemon - The Pokemon that will create an illusion.
-   * @param {Pokemon[]} party - The party of the trainer's pokemon.
    */
   setIllusion(pokemon: Pokemon): boolean {
     if (this.hasTrainer()) {
@@ -779,7 +776,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   abstract getBattlerIndex(): BattlerIndex;
 
   /**
-   * @param {boolean} useIllusion - Whether we want the illusion or not.
+   * @param useIllusion - Whether we want the illusion or not.
    */
   loadAssets(ignoreOverride: boolean = true, useIllusion: boolean = false): Promise<void> {
     return new Promise(resolve => {
