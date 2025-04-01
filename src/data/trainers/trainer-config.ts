@@ -1,280 +1,60 @@
-import { startingWave } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import type { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import * as Utils from "#app/utils";
-import { PokeballType } from "#enums/pokeball";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
-import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
-import { PokemonType } from "#enums/pokemon-type";
 import { doubleBattleDialogue } from "#app/data/dialogue";
-import type { PersistentModifier } from "#app/modifier/modifier";
 import { TrainerVariant } from "#app/field/trainer";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
-import { Moves } from "#enums/moves";
+import { Gender } from "#app/data/gender";
+import { signatureSpecies } from "../balance/signature-species";
+import {
+  getEvilGruntPartyTemplate,
+  getGymLeaderPartyTemplate,
+  getWavePartyTemplate,
+  TrainerPartyCompoundTemplate,
+  TrainerPartyTemplate,
+  trainerPartyTemplates,
+} from "./TrainerPartyTemplate";
+import { evilAdminTrainerPools } from "./evil-admin-trainer-pools";
+
+// Enum imports
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
+import { Moves } from "#enums/moves";
+import { Abilities } from "#enums/abilities";
+import { TeraAIMode } from "#enums/tera-ai-mode";
+import { TrainerPoolTier } from "#enums/trainer-pool-tier";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
-import { Gender } from "#app/data/gender";
+import { timedEventManager } from "#app/global-event-manager";
+
+// Type imports
+import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
+import type PokemonSpecies from "#app/data/pokemon-species";
+import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import type { EnemyPokemon } from "#app/field/pokemon";
+import type { EvilTeam } from "./evil-admin-trainer-pools";
+import type {
+  PartyMemberFunc,
+  GenModifiersFunc,
+  GenAIFunc,
+  PartyTemplateFunc,
+  TrainerTierPools,
+  TrainerConfigs,
+  PartyMemberFuncs,
+} from "./typedefs";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
 
 /** The wave at which (non-Paldean) Gym Leaders start having Tera mons*/
 const GYM_LEADER_TERA_WAVE = 100;
-
-export enum TrainerPoolTier {
-  COMMON,
-  UNCOMMON,
-  RARE,
-  SUPER_RARE,
-  ULTRA_RARE,
-}
-
-export interface TrainerTierPools {
-  [key: number]: Species[];
-}
-
-export enum TrainerSlot {
-  NONE,
-  TRAINER,
-  TRAINER_PARTNER,
-}
-
-export class TrainerPartyTemplate {
-  public size: number;
-  public strength: PartyMemberStrength;
-  public sameSpecies: boolean;
-  public balanced: boolean;
-
-  constructor(size: number, strength: PartyMemberStrength, sameSpecies?: boolean, balanced?: boolean) {
-    this.size = size;
-    this.strength = strength;
-    this.sameSpecies = !!sameSpecies;
-    this.balanced = !!balanced;
-  }
-
-  getStrength(_index: number): PartyMemberStrength {
-    return this.strength;
-  }
-
-  isSameSpecies(_index: number): boolean {
-    return this.sameSpecies;
-  }
-
-  isBalanced(_index: number): boolean {
-    return this.balanced;
-  }
-}
-
-export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
-  public templates: TrainerPartyTemplate[];
-
-  constructor(...templates: TrainerPartyTemplate[]) {
-    super(
-      templates.reduce((total: number, template: TrainerPartyTemplate) => {
-        total += template.size;
-        return total;
-      }, 0),
-      PartyMemberStrength.AVERAGE,
-    );
-    this.templates = templates;
-  }
-
-  getStrength(index: number): PartyMemberStrength {
-    let t = 0;
-    for (const template of this.templates) {
-      if (t + template.size > index) {
-        return template.getStrength(index - t);
-      }
-      t += template.size;
-    }
-
-    return super.getStrength(index);
-  }
-
-  isSameSpecies(index: number): boolean {
-    let t = 0;
-    for (const template of this.templates) {
-      if (t + template.size > index) {
-        return template.isSameSpecies(index - t);
-      }
-      t += template.size;
-    }
-
-    return super.isSameSpecies(index);
-  }
-
-  isBalanced(index: number): boolean {
-    let t = 0;
-    for (const template of this.templates) {
-      if (t + template.size > index) {
-        return template.isBalanced(index - t);
-      }
-      t += template.size;
-    }
-
-    return super.isBalanced(index);
-  }
-}
-
-export const trainerPartyTemplates = {
-  ONE_WEAK_ONE_STRONG: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.WEAK),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ),
-  ONE_AVG: new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-  ONE_AVG_ONE_STRONG: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ),
-  ONE_STRONG: new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ONE_STRONGER: new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  TWO_WEAKER: new TrainerPartyTemplate(2, PartyMemberStrength.WEAKER),
-  TWO_WEAK: new TrainerPartyTemplate(2, PartyMemberStrength.WEAK),
-  TWO_WEAK_ONE_AVG: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.WEAK),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-  ),
-  TWO_WEAK_SAME_ONE_AVG: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-  ),
-  TWO_WEAK_SAME_TWO_WEAK_SAME: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true),
-    new TrainerPartyTemplate(2, PartyMemberStrength.WEAK, true),
-  ),
-  TWO_WEAK_ONE_STRONG: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.WEAK),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ),
-  TWO_AVG: new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-  TWO_AVG_ONE_STRONG: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ),
-  TWO_AVG_SAME_ONE_AVG: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-  ),
-  TWO_AVG_SAME_ONE_STRONG: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ),
-  TWO_AVG_SAME_TWO_AVG_SAME: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true),
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, true),
-  ),
-  TWO_STRONG: new TrainerPartyTemplate(2, PartyMemberStrength.STRONG),
-  THREE_WEAK: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK),
-  THREE_WEAK_SAME: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK, true),
-  THREE_AVG: new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
-  THREE_AVG_SAME: new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, true),
-  THREE_WEAK_BALANCED: new TrainerPartyTemplate(3, PartyMemberStrength.WEAK, false, true),
-  FOUR_WEAKER: new TrainerPartyTemplate(4, PartyMemberStrength.WEAKER),
-  FOUR_WEAKER_SAME: new TrainerPartyTemplate(4, PartyMemberStrength.WEAKER, true),
-  FOUR_WEAK: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK),
-  FOUR_WEAK_SAME: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK, true),
-  FOUR_WEAK_BALANCED: new TrainerPartyTemplate(4, PartyMemberStrength.WEAK, false, true),
-  FIVE_WEAKER: new TrainerPartyTemplate(5, PartyMemberStrength.WEAKER),
-  FIVE_WEAK: new TrainerPartyTemplate(5, PartyMemberStrength.WEAK),
-  FIVE_WEAK_BALANCED: new TrainerPartyTemplate(5, PartyMemberStrength.WEAK, false, true),
-  SIX_WEAKER: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER),
-  SIX_WEAKER_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER, true),
-  SIX_WEAK_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, true),
-  SIX_WEAK_BALANCED: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, false, true),
-
-  GYM_LEADER_1: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ),
-  GYM_LEADER_2: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  ),
-  GYM_LEADER_3: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  ),
-  GYM_LEADER_4: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  ),
-  GYM_LEADER_5: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(2, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  ),
-
-  ELITE_FOUR: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(3, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  ),
-
-  CHAMPION: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(4, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(2, PartyMemberStrength.STRONGER, false, true),
-  ),
-
-  RIVAL: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-  ),
-  RIVAL_2: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true),
-  ),
-  RIVAL_3: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE, false, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true),
-  ),
-  RIVAL_4: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, false, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.WEAK, false, true),
-  ),
-  RIVAL_5: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-  ),
-  RIVAL_6: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  ),
-};
-
-type PartyTemplateFunc = () => TrainerPartyTemplate;
-type PartyMemberFunc = (level: number, strength: PartyMemberStrength) => EnemyPokemon;
-type GenModifiersFunc = (party: EnemyPokemon[]) => PersistentModifier[];
-type GenAIFunc = (party: EnemyPokemon[]) => void;
-
-export interface PartyMemberFuncs {
-  [key: number]: PartyMemberFunc;
-}
-
-export enum TeraAIMode {
-  NO_TERA,
-  INSTANT_TERA,
-  SMART_TERA,
-}
 
 /**
  * Stores data and helper functions about a trainers AI options.
@@ -737,13 +517,13 @@ export class TrainerConfig {
   //   return ret;
   // }
 
-  setEventModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
-    this.eventRewardFuncs = modifierTypeFuncs.map(func => () => {
-      const modifierTypeFunc = func();
-      const modifierType = modifierTypeFunc();
-      modifierType.withIdFromFunc(modifierTypeFunc);
-      return modifierType;
-    });
+  /**
+   * Sets eventRewardFuncs to the active event rewards for the specified wave
+   * @param wave Associated with {@linkcode getFixedBattleEventRewards}
+   * @returns this
+   */
+  setEventModifierRewardFuncs(wave: number): TrainerConfig {
+    this.eventRewardFuncs = timedEventManager.getFixedBattleEventRewards(wave).map(r => modifierTypes[r]);
     return this;
   }
 
@@ -758,430 +538,6 @@ export class TrainerConfig {
   }
 
   /**
-   * Returns the pool of species for an evil team admin
-   * @param team - The evil team the admin belongs to.
-   * @returns {TrainerTierPools}
-   */
-  speciesPoolPerEvilTeamAdmin(team): TrainerTierPools {
-    team = team.toLowerCase();
-    switch (team) {
-      case "rocket": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.RATICATE,
-            Species.ARBOK,
-            Species.VILEPLUME,
-            Species.ARCANINE,
-            Species.GENGAR,
-            Species.HYPNO,
-            Species.ELECTRODE,
-            Species.EXEGGUTOR,
-            Species.CUBONE,
-            Species.KOFFING,
-            Species.GYARADOS,
-            Species.CROBAT,
-            Species.STEELIX,
-            Species.HOUNDOOM,
-            Species.HONCHKROW,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.OMASTAR,
-            Species.KABUTOPS,
-            Species.MAGNEZONE,
-            Species.ELECTIVIRE,
-            Species.MAGMORTAR,
-            Species.PORYGON_Z,
-            Species.ANNIHILAPE,
-            Species.ALOLA_SANDSLASH,
-            Species.ALOLA_PERSIAN,
-            Species.ALOLA_GOLEM,
-            Species.ALOLA_MUK,
-            Species.PALDEA_TAUROS,
-          ],
-          [TrainerPoolTier.RARE]: [Species.DRAGONITE, Species.TYRANITAR],
-        };
-      }
-      case "magma": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.ARCANINE,
-            Species.MAGCARGO,
-            Species.HOUNDOOM,
-            Species.TORKOAL,
-            Species.SOLROCK,
-            Species.CLAYDOL,
-            Species.HIPPOWDON,
-            Species.MAGMORTAR,
-            Species.GLISCOR,
-            Species.COALOSSAL,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.AGGRON,
-            Species.FLYGON,
-            Species.CRADILY,
-            Species.ARMALDO,
-            Species.RHYPERIOR,
-            Species.TURTONATOR,
-            Species.SANDACONDA,
-            Species.TOEDSCRUEL,
-            Species.HISUI_ARCANINE,
-          ],
-          [TrainerPoolTier.RARE]: [Species.CHARCADET, Species.SCOVILLAIN],
-        };
-      }
-      case "aqua": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.TENTACRUEL,
-            Species.LANTURN,
-            Species.AZUMARILL,
-            Species.QUAGSIRE,
-            Species.OCTILLERY,
-            Species.LUDICOLO,
-            Species.PELIPPER,
-            Species.WAILORD,
-            Species.WHISCASH,
-            Species.CRAWDAUNT,
-            Species.WALREIN,
-            Species.CLAMPERL,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.QUAGSIRE,
-            Species.MANTINE,
-            Species.KINGDRA,
-            Species.MILOTIC,
-            Species.DRAGALGE,
-            Species.DHELMISE,
-            Species.BARRASKEWDA,
-            Species.GRAPPLOCT,
-            Species.OVERQWIL,
-          ],
-          [TrainerPoolTier.RARE]: [Species.BASCULEGION, Species.DONDOZO],
-        };
-      }
-      case "galactic": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.ELECTRODE,
-            Species.GYARADOS,
-            Species.CROBAT,
-            Species.HONCHKROW,
-            Species.BRONZONG,
-            Species.DRAPION,
-            Species.LICKILICKY,
-            Species.TANGROWTH,
-            Species.ELECTIVIRE,
-            Species.MAGMORTAR,
-            Species.YANMEGA,
-            Species.MAMOSWINE,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.ALAKAZAM,
-            Species.WEAVILE,
-            Species.GLISCOR,
-            Species.DUSKNOIR,
-            Species.ROTOM,
-            Species.OVERQWIL,
-            Species.HISUI_ARCANINE,
-            Species.HISUI_ELECTRODE,
-          ],
-          [TrainerPoolTier.RARE]: [Species.SPIRITOMB, Species.URSALUNA, Species.SNEASLER, Species.HISUI_LILLIGANT],
-        };
-      }
-      case "plasma": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.GIGALITH,
-            Species.CONKELDURR,
-            Species.SEISMITOAD,
-            Species.KROOKODILE,
-            Species.DARMANITAN,
-            Species.COFAGRIGUS,
-            Species.VANILLUXE,
-            Species.AMOONGUSS,
-            Species.JELLICENT,
-            Species.GALVANTULA,
-            Species.FERROTHORN,
-            Species.BEARTIC,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.EXCADRILL,
-            Species.SIGILYPH,
-            Species.ZOROARK,
-            Species.KLINKLANG,
-            Species.EELEKTROSS,
-            Species.MIENSHAO,
-            Species.GOLURK,
-            Species.BISHARP,
-            Species.MANDIBUZZ,
-            Species.DURANT,
-            Species.GALAR_DARMANITAN,
-          ],
-          [TrainerPoolTier.RARE]: [Species.HAXORUS, Species.HYDREIGON, Species.HISUI_ZOROARK, Species.HISUI_BRAVIARY],
-        };
-      }
-      case "plasma_2": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.MUK,
-            Species.ELECTRODE,
-            Species.BRONZONG,
-            Species.MAGNEZONE,
-            Species.PORYGON_Z,
-            Species.MUSHARNA,
-            Species.REUNICLUS,
-            Species.GALVANTULA,
-            Species.FERROTHORN,
-            Species.EELEKTROSS,
-            Species.BEHEEYEM,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.METAGROSS,
-            Species.ROTOM,
-            Species.CARRACOSTA,
-            Species.ARCHEOPS,
-            Species.GOLURK,
-            Species.DURANT,
-            Species.VIKAVOLT,
-            Species.ORBEETLE,
-            Species.REVAVROOM,
-            Species.ALOLA_MUK,
-            Species.HISUI_ELECTRODE,
-          ],
-          [TrainerPoolTier.RARE]: [Species.ELECTIVIRE, Species.MAGMORTAR, Species.BISHARP, Species.ARCHALUDON],
-        };
-      }
-      case "flare": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.MANECTRIC,
-            Species.DRAPION,
-            Species.LIEPARD,
-            Species.AMOONGUSS,
-            Species.DIGGERSBY,
-            Species.TALONFLAME,
-            Species.PYROAR,
-            Species.PANGORO,
-            Species.MEOWSTIC,
-            Species.MALAMAR,
-            Species.CLAWITZER,
-            Species.HELIOLISK,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.HOUNDOOM,
-            Species.WEAVILE,
-            Species.CHANDELURE,
-            Species.AEGISLASH,
-            Species.BARBARACLE,
-            Species.DRAGALGE,
-            Species.GOODRA,
-            Species.TREVENANT,
-            Species.GOURGEIST,
-          ],
-          [TrainerPoolTier.RARE]: [Species.NOIVERN, Species.HISUI_GOODRA, Species.HISUI_AVALUGG],
-        };
-      }
-      case "aether": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.ALAKAZAM,
-            Species.SLOWBRO,
-            Species.EXEGGUTOR,
-            Species.XATU,
-            Species.CLAYDOL,
-            Species.BEHEEYEM,
-            Species.ORANGURU,
-            Species.BRUXISH,
-            Species.ORBEETLE,
-            Species.FARIGIRAF,
-            Species.ALOLA_RAICHU,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.KIRLIA,
-            Species.MEDICHAM,
-            Species.METAGROSS,
-            Species.MALAMAR,
-            Species.HATTERENE,
-            Species.MR_RIME,
-            Species.GALAR_SLOWKING,
-          ],
-          [TrainerPoolTier.RARE]: [Species.PORYGON_Z, Species.ARMAROUGE, Species.HISUI_BRAVIARY],
-        };
-      }
-      case "skull": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.NIDOQUEEN,
-            Species.GENGAR,
-            Species.KOFFING,
-            Species.CROBAT,
-            Species.ROSERADE,
-            Species.SKUNTANK,
-            Species.TOXICROAK,
-            Species.SCOLIPEDE,
-            Species.TOXAPEX,
-            Species.LURANTIS,
-            Species.ALOLA_MUK,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.DRAPION,
-            Species.MANDIBUZZ,
-            Species.OVERQWIL,
-            Species.GLIMMORA,
-            Species.CLODSIRE,
-            Species.GALAR_SLOWBRO,
-          ],
-          [TrainerPoolTier.RARE]: [Species.DRAGALGE, Species.SNEASLER],
-        };
-      }
-      case "macro": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.NINETALES,
-            Species.BELLOSSOM,
-            Species.MILOTIC,
-            Species.FROSLASS,
-            Species.GOTHITELLE,
-            Species.JELLICENT,
-            Species.SALAZZLE,
-            Species.TSAREENA,
-            Species.POLTEAGEIST,
-            Species.HATTERENE,
-            Species.GALAR_RAPIDASH,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.TOGEKISS,
-            Species.MANDIBUZZ,
-            Species.TOXAPEX,
-            Species.APPLETUN,
-            Species.CURSOLA,
-            Species.ALOLA_NINETALES,
-          ],
-          [TrainerPoolTier.RARE]: [Species.TINKATON, Species.HISUI_LILLIGANT],
-        };
-      }
-      case "star_1": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.SHIFTRY,
-            Species.CACTURNE,
-            Species.HONCHKROW,
-            Species.SKUNTANK,
-            Species.KROOKODILE,
-            Species.OBSTAGOON,
-            Species.LOKIX,
-            Species.MABOSSTIFF,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.UMBREON,
-            Species.CRAWDAUNT,
-            Species.WEAVILE,
-            Species.ZOROARK,
-            Species.MALAMAR,
-            Species.BOMBIRDIER,
-          ],
-          [TrainerPoolTier.RARE]: [Species.HYDREIGON, Species.MEOWSCARADA],
-        };
-      }
-      case "star_2": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.ARCANINE,
-            Species.HOUNDOOM,
-            Species.CAMERUPT,
-            Species.CHANDELURE,
-            Species.TALONFLAME,
-            Species.PYROAR,
-            Species.COALOSSAL,
-            Species.SCOVILLAIN,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.RAPIDASH,
-            Species.FLAREON,
-            Species.TORKOAL,
-            Species.MAGMORTAR,
-            Species.SALAZZLE,
-            Species.TURTONATOR,
-          ],
-          [TrainerPoolTier.RARE]: [Species.VOLCARONA, Species.SKELEDIRGE],
-        };
-      }
-      case "star_3": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.MUK,
-            Species.CROBAT,
-            Species.SKUNTANK,
-            Species.AMOONGUSS,
-            Species.TOXAPEX,
-            Species.TOXTRICITY,
-            Species.GRAFAIAI,
-            Species.CLODSIRE,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.GENGAR,
-            Species.SEVIPER,
-            Species.DRAGALGE,
-            Species.OVERQWIL,
-            Species.ALOLA_MUK,
-            Species.GALAR_SLOWBRO,
-          ],
-          [TrainerPoolTier.RARE]: [Species.GLIMMORA, Species.VENUSAUR],
-        };
-      }
-      case "star_4": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.CLEFABLE,
-            Species.WIGGLYTUFF,
-            Species.AZUMARILL,
-            Species.WHIMSICOTT,
-            Species.FLORGES,
-            Species.HATTERENE,
-            Species.GRIMMSNARL,
-            Species.TINKATON,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.TOGEKISS,
-            Species.GARDEVOIR,
-            Species.SYLVEON,
-            Species.KLEFKI,
-            Species.MIMIKYU,
-            Species.ALOLA_NINETALES,
-          ],
-          [TrainerPoolTier.RARE]: [Species.GALAR_RAPIDASH, Species.PRIMARINA],
-        };
-      }
-      case "star_5": {
-        return {
-          [TrainerPoolTier.COMMON]: [
-            Species.BRELOOM,
-            Species.HARIYAMA,
-            Species.MEDICHAM,
-            Species.TOXICROAK,
-            Species.SCRAFTY,
-            Species.MIENSHAO,
-            Species.PAWMOT,
-            Species.PALDEA_TAUROS,
-          ],
-          [TrainerPoolTier.UNCOMMON]: [
-            Species.LUCARIO,
-            Species.CONKELDURR,
-            Species.HAWLUCHA,
-            Species.PASSIMIAN,
-            Species.FALINKS,
-            Species.FLAMIGO,
-          ],
-          [TrainerPoolTier.RARE]: [Species.KOMMO_O, Species.QUAQUAVAL],
-        };
-      }
-    }
-
-    console.warn(`Evil team admin for ${team} not found. Returning empty species pools.`);
-    return [];
-  }
-
-  /**
    * Initializes the trainer configuration for an evil team admin.
    * @param title The title of the evil team admin.
    * @param poolName The evil team the admin belongs to.
@@ -1191,7 +547,7 @@ export class TrainerConfig {
    * **/
   initForEvilTeamAdmin(
     title: string,
-    poolName: string,
+    poolName: EvilTeam,
     signatureSpecies: (Species | Species[])[],
     specialtyType?: PokemonType,
   ): TrainerConfig {
@@ -1206,7 +562,7 @@ export class TrainerConfig {
     this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
 
     // Set the species pools for the evil team admin.
-    this.speciesPools = this.speciesPoolPerEvilTeamAdmin(poolName);
+    this.speciesPools = evilAdminTrainerPools[poolName];
 
     signatureSpecies.forEach((speciesPool, s) => {
       if (!Array.isArray(speciesPool)) {
@@ -1635,56 +991,6 @@ export class TrainerConfig {
 
 let t = 0;
 
-interface TrainerConfigs {
-  [key: number]: TrainerConfig;
-}
-
-/**
- * The function to get variable strength grunts
- * @returns the correct TrainerPartyTemplate
- */
-function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
-  const waveIndex = globalScene.currentBattle?.waveIndex;
-  if (waveIndex < 40) {
-    return trainerPartyTemplates.TWO_AVG;
-  }
-  if (waveIndex < 63) {
-    return trainerPartyTemplates.THREE_AVG;
-  }
-  if (waveIndex < 65) {
-    return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
-  }
-  if (waveIndex < 112) {
-    return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
-  }
-  return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
-}
-
-function getWavePartyTemplate(...templates: TrainerPartyTemplate[]) {
-  return templates[
-    Math.min(
-      Math.max(
-        Math.ceil(
-          (globalScene.gameMode.getWaveForDifficulty(globalScene.currentBattle?.waveIndex || startingWave, true) - 20) /
-            30,
-        ),
-        0,
-      ),
-      templates.length - 1,
-    )
-  ];
-}
-
-function getGymLeaderPartyTemplate() {
-  return getWavePartyTemplate(
-    trainerPartyTemplates.GYM_LEADER_1,
-    trainerPartyTemplates.GYM_LEADER_2,
-    trainerPartyTemplates.GYM_LEADER_3,
-    trainerPartyTemplates.GYM_LEADER_4,
-    trainerPartyTemplates.GYM_LEADER_5,
-  );
-}
-
 /**
  * Randomly selects one of the `Species` from `speciesPool`, determines its evolution, level, and strength.
  * Then adds Pokemon to globalScene.
@@ -1743,148 +1049,6 @@ function getSpeciesFilterRandomPartyMemberFunc(
     return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
   };
 }
-
-type SignatureSpecies = {
-  [key in string]: (Species | Species[])[];
-};
-
-/*
- * The signature species for each Gym Leader, Elite Four member, and Champion.
- * The key is the trainer type, and the value is an array of Species or Species arrays.
- * This is in a separate const so it can be accessed from other places and not just the trainerConfigs
- */
-export const signatureSpecies: SignatureSpecies = {
-  BROCK: [Species.GEODUDE, Species.ONIX],
-  MISTY: [Species.STARYU, Species.PSYDUCK],
-  LT_SURGE: [Species.VOLTORB, Species.PIKACHU, Species.ELECTABUZZ],
-  ERIKA: [Species.ODDISH, Species.BELLSPROUT, Species.TANGELA, Species.HOPPIP],
-  JANINE: [Species.VENONAT, Species.SPINARAK, Species.ZUBAT],
-  SABRINA: [Species.ABRA, Species.MR_MIME, Species.ESPEON],
-  BLAINE: [Species.GROWLITHE, Species.PONYTA, Species.MAGMAR],
-  GIOVANNI: [Species.SANDILE, Species.MURKROW, Species.NIDORAN_M, Species.NIDORAN_F],
-  FALKNER: [Species.PIDGEY, Species.HOOTHOOT, Species.DODUO],
-  BUGSY: [Species.SCYTHER, Species.HERACROSS, Species.SHUCKLE, Species.PINSIR],
-  WHITNEY: [Species.JIGGLYPUFF, Species.MILTANK, Species.AIPOM, Species.GIRAFARIG],
-  MORTY: [Species.GASTLY, Species.MISDREAVUS, Species.SABLEYE],
-  CHUCK: [Species.POLIWRATH, Species.MANKEY],
-  JASMINE: [Species.MAGNEMITE, Species.STEELIX],
-  PRYCE: [Species.SEEL, Species.SWINUB],
-  CLAIR: [Species.DRATINI, Species.HORSEA, Species.GYARADOS],
-  ROXANNE: [Species.GEODUDE, Species.NOSEPASS],
-  BRAWLY: [Species.MACHOP, Species.MAKUHITA],
-  WATTSON: [Species.MAGNEMITE, Species.VOLTORB, Species.ELECTRIKE],
-  FLANNERY: [Species.SLUGMA, Species.TORKOAL, Species.NUMEL],
-  NORMAN: [Species.SLAKOTH, Species.SPINDA, Species.ZIGZAGOON, Species.KECLEON],
-  WINONA: [Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY],
-  TATE: [Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE],
-  LIZA: [Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR],
-  JUAN: [Species.HORSEA, Species.BARBOACH, Species.SPHEAL, Species.RELICANTH],
-  ROARK: [Species.CRANIDOS, Species.LARVITAR, Species.GEODUDE],
-  GARDENIA: [Species.ROSELIA, Species.TANGELA, Species.TURTWIG],
-  MAYLENE: [Species.LUCARIO, Species.MEDITITE, Species.CHIMCHAR],
-  CRASHER_WAKE: [Species.BUIZEL, Species.WOOPER, Species.PIPLUP, Species.MAGIKARP],
-  FANTINA: [Species.MISDREAVUS, Species.DRIFLOON, Species.SPIRITOMB],
-  BYRON: [Species.SHIELDON, Species.BRONZOR, Species.AGGRON],
-  CANDICE: [Species.SNEASEL, Species.SNOVER, Species.SNORUNT],
-  VOLKNER: [Species.SHINX, Species.CHINCHOU, Species.ROTOM],
-  CILAN: [Species.PANSAGE, Species.FOONGUS, Species.PETILIL],
-  CHILI: [Species.PANSEAR, Species.DARUMAKA, Species.NUMEL],
-  CRESS: [Species.PANPOUR, Species.TYMPOLE, Species.SLOWPOKE],
-  CHEREN: [Species.LILLIPUP, Species.MINCCINO, Species.PIDOVE],
-  LENORA: [Species.PATRAT, Species.DEERLING, Species.AUDINO],
-  ROXIE: [Species.VENIPEDE, Species.TRUBBISH, Species.SKORUPI],
-  BURGH: [Species.SEWADDLE, Species.SHELMET, Species.KARRABLAST],
-  ELESA: [Species.EMOLGA, Species.BLITZLE, Species.JOLTIK],
-  CLAY: [Species.DRILBUR, Species.SANDILE, Species.GOLETT],
-  SKYLA: [Species.DUCKLETT, Species.WOOBAT, Species.RUFFLET],
-  BRYCEN: [Species.CRYOGONAL, Species.VANILLITE, Species.CUBCHOO],
-  DRAYDEN: [Species.DRUDDIGON, Species.AXEW, Species.DEINO],
-  MARLON: [Species.WAILMER, Species.FRILLISH, Species.TIRTOUGA],
-  VIOLA: [Species.SURSKIT, Species.SCATTERBUG],
-  GRANT: [Species.AMAURA, Species.TYRUNT],
-  KORRINA: [Species.HAWLUCHA, Species.LUCARIO, Species.MIENFOO],
-  RAMOS: [Species.SKIDDO, Species.HOPPIP, Species.BELLSPROUT],
-  CLEMONT: [Species.HELIOPTILE, Species.MAGNEMITE, Species.EMOLGA],
-  VALERIE: [Species.SYLVEON, Species.MAWILE, Species.MR_MIME],
-  OLYMPIA: [Species.ESPURR, Species.SIGILYPH, Species.SLOWKING],
-  WULFRIC: [Species.BERGMITE, Species.SNOVER, Species.CRYOGONAL],
-  MILO: [Species.GOSSIFLEUR, Species.APPLIN, Species.BOUNSWEET],
-  NESSA: [Species.CHEWTLE, Species.ARROKUDA, Species.WIMPOD],
-  KABU: [Species.SIZZLIPEDE, Species.VULPIX, Species.TORKOAL],
-  BEA: [Species.GALAR_FARFETCHD, Species.MACHOP, Species.CLOBBOPUS],
-  ALLISTER: [Species.GALAR_YAMASK, Species.GALAR_CORSOLA, Species.GASTLY],
-  OPAL: [Species.MILCERY, Species.TOGETIC, Species.GALAR_WEEZING],
-  BEDE: [Species.HATENNA, Species.GALAR_PONYTA, Species.GARDEVOIR],
-  GORDIE: [Species.ROLYCOLY, Species.STONJOURNER, Species.BINACLE],
-  MELONY: [Species.SNOM, Species.GALAR_DARUMAKA, Species.GALAR_MR_MIME],
-  PIERS: [Species.GALAR_ZIGZAGOON, Species.SCRAGGY, Species.INKAY],
-  MARNIE: [Species.IMPIDIMP, Species.PURRLOIN, Species.MORPEKO],
-  RAIHAN: [Species.DURALUDON, Species.TURTONATOR, Species.GOOMY],
-  KATY: [Species.TEDDIURSA, Species.NYMBLE, Species.TAROUNTULA], // Tera Bug Teddiursa
-  BRASSIUS: [Species.SUDOWOODO, Species.BRAMBLIN, Species.SMOLIV], // Tera Grass Sudowoodo
-  IONO: [Species.MISDREAVUS, Species.TADBULB, Species.WATTREL], // Tera Ghost Misdreavus
-  KOFU: [Species.CRABRAWLER, Species.VELUZA, Species.WIGLETT, Species.WINGULL], // Tera Water Crabrawler
-  LARRY: [Species.STARLY, Species.DUNSPARCE, Species.LECHONK, Species.KOMALA], // Tera Normal Starly
-  RYME: [Species.TOXEL, Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU], // Tera Ghost Toxel
-  TULIP: [Species.FLABEBE, Species.FLITTLE, Species.RALTS, Species.GIRAFARIG], // Tera Psychic Flabebe
-  GRUSHA: [Species.SWABLU, Species.CETODDLE, Species.CUBCHOO, Species.ALOLA_VULPIX], // Tera Ice Swablu
-  LORELEI: [
-    Species.JYNX,
-    [Species.SLOWBRO, Species.GALAR_SLOWBRO],
-    Species.LAPRAS,
-    [Species.CLOYSTER, Species.ALOLA_SANDSLASH],
-  ],
-  BRUNO: [Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [Species.GOLEM, Species.ALOLA_GOLEM]],
-  AGATHA: [Species.GENGAR, [Species.ARBOK, Species.WEEZING], Species.CROBAT, Species.ALOLA_MAROWAK],
-  LANCE: [Species.DRAGONITE, Species.GYARADOS, Species.AERODACTYL, Species.ALOLA_EXEGGUTOR],
-  WILL: [Species.XATU, Species.JYNX, [Species.SLOWBRO, Species.SLOWKING], Species.EXEGGUTOR],
-  KOGA: [[Species.MUK, Species.WEEZING], [Species.VENOMOTH, Species.ARIADOS], Species.CROBAT, Species.TENTACRUEL],
-  KAREN: [Species.UMBREON, Species.HONCHKROW, Species.HOUNDOOM, Species.WEAVILE],
-  SIDNEY: [
-    [Species.SHIFTRY, Species.CACTURNE],
-    [Species.SHARPEDO, Species.CRAWDAUNT],
-    Species.ABSOL,
-    Species.MIGHTYENA,
-  ],
-  PHOEBE: [Species.SABLEYE, Species.DUSKNOIR, Species.BANETTE, [Species.DRIFBLIM, Species.MISMAGIUS]],
-  GLACIA: [Species.GLALIE, Species.WALREIN, Species.FROSLASS, Species.ABOMASNOW],
-  DRAKE: [Species.ALTARIA, Species.SALAMENCE, Species.FLYGON, Species.KINGDRA],
-  AARON: [[Species.SCIZOR, Species.KLEAVOR], Species.HERACROSS, [Species.VESPIQUEN, Species.YANMEGA], Species.DRAPION],
-  BERTHA: [Species.WHISCASH, Species.HIPPOWDON, Species.GLISCOR, Species.RHYPERIOR],
-  FLINT: [
-    [Species.RAPIDASH, Species.FLAREON],
-    Species.MAGMORTAR,
-    [Species.STEELIX, Species.LOPUNNY],
-    Species.INFERNAPE,
-  ], // Tera Fire Steelix or Lopunny
-  LUCIAN: [Species.MR_MIME, Species.GALLADE, Species.BRONZONG, [Species.ALAKAZAM, Species.ESPEON]],
-  SHAUNTAL: [Species.COFAGRIGUS, Species.CHANDELURE, Species.GOLURK, Species.JELLICENT],
-  MARSHAL: [Species.CONKELDURR, Species.MIENSHAO, Species.THROH, Species.SAWK],
-  GRIMSLEY: [Species.LIEPARD, Species.KINGAMBIT, Species.SCRAFTY, Species.KROOKODILE],
-  CAITLIN: [Species.MUSHARNA, Species.GOTHITELLE, Species.SIGILYPH, Species.REUNICLUS],
-  MALVA: [Species.PYROAR, Species.TORKOAL, Species.CHANDELURE, Species.TALONFLAME],
-  SIEBOLD: [Species.CLAWITZER, Species.GYARADOS, Species.BARBARACLE, Species.STARMIE],
-  WIKSTROM: [Species.KLEFKI, Species.PROBOPASS, Species.SCIZOR, Species.AEGISLASH],
-  DRASNA: [Species.DRAGALGE, Species.DRUDDIGON, Species.ALTARIA, Species.NOIVERN],
-  HALA: [Species.HARIYAMA, Species.BEWEAR, Species.CRABOMINABLE, [Species.POLIWRATH, Species.ANNIHILAPE]],
-  MOLAYNE: [Species.KLEFKI, Species.MAGNEZONE, Species.METAGROSS, Species.ALOLA_DUGTRIO],
-  OLIVIA: [Species.RELICANTH, Species.CARBINK, Species.ALOLA_GOLEM, Species.LYCANROC],
-  ACEROLA: [[Species.BANETTE, Species.DRIFBLIM], Species.MIMIKYU, Species.DHELMISE, Species.PALOSSAND],
-  KAHILI: [[Species.BRAVIARY, Species.MANDIBUZZ], Species.HAWLUCHA, Species.ORICORIO, Species.TOUCANNON],
-  MARNIE_ELITE: [Species.MORPEKO, Species.LIEPARD, [Species.TOXICROAK, Species.SCRAFTY], Species.GRIMMSNARL],
-  NESSA_ELITE: [Species.GOLISOPOD, [Species.QUAGSIRE, Species.PELIPPER], Species.TOXAPEX, Species.DREDNAW],
-  BEA_ELITE: [Species.HAWLUCHA, [Species.GRAPPLOCT, Species.SIRFETCHD], Species.FALINKS, Species.MACHAMP],
-  ALLISTER_ELITE: [Species.DUSKNOIR, [Species.POLTEAGEIST, Species.RUNERIGUS], Species.CURSOLA, Species.GENGAR],
-  RAIHAN_ELITE: [Species.GOODRA, [Species.TORKOAL, Species.TURTONATOR], Species.FLYGON, Species.ARCHALUDON],
-  RIKA: [Species.CLODSIRE, [Species.DUGTRIO, Species.DONPHAN], Species.CAMERUPT, Species.WHISCASH], // Tera Ground Clodsire
-  POPPY: [Species.TINKATON, Species.BRONZONG, Species.CORVIKNIGHT, Species.COPPERAJAH], // Tera Steel Tinkaton
-  LARRY_ELITE: [Species.FLAMIGO, Species.STARAPTOR, [Species.ALTARIA, Species.TROPIUS], Species.ORICORIO], // Tera Flying Flamigo; random Oricorio
-  HASSEL: [Species.BAXCALIBUR, [Species.FLAPPLE, Species.APPLETUN], Species.DRAGALGE, Species.NOIVERN], // Tera Dragon Baxcalibur
-  CRISPIN: [Species.BLAZIKEN, Species.MAGMORTAR, [Species.CAMERUPT, Species.TALONFLAME], Species.ROTOM], // Tera Fire Blaziken; Heat Rotom
-  AMARYS: [Species.METAGROSS, Species.SCIZOR, Species.EMPOLEON, Species.SKARMORY], // Tera Steel Metagross
-  LACEY: [Species.EXCADRILL, Species.PRIMARINA, [Species.WHIMSICOTT, Species.ALCREMIE], Species.GRANBULL], // Tera Fairy Excadrill
-  DRAYTON: [Species.ARCHALUDON, Species.DRAGONITE, Species.HAXORUS, Species.SCEPTILE], // Tera Dragon Archaludon
-};
 
 export const trainerConfigs: TrainerConfigs = {
   [TrainerType.UNKNOWN]: new TrainerConfig(0).setHasGenders(),
@@ -1952,12 +1116,92 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BAKER]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.CLERK)
     .setMoneyMultiplier(1.35)
-    .setSpeciesFilter(s => s.isOfType(PokemonType.GRASS) || s.isOfType(PokemonType.FIRE)),
-  [TrainerType.BEAUTY]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.PARASOL_LADY),
+    .setSpeciesFilter(
+      s =>
+        [s.ability1, s.ability2, s.abilityHidden].some(
+          a =>
+            !!a &&
+            [
+              Abilities.WHITE_SMOKE,
+              Abilities.GLUTTONY,
+              Abilities.HONEY_GATHER,
+              Abilities.HARVEST,
+              Abilities.CHEEK_POUCH,
+              Abilities.SWEET_VEIL,
+              Abilities.RIPEN,
+              Abilities.PURIFYING_SALT,
+              Abilities.WELL_BAKED_BODY,
+              Abilities.SUPERSWEET_SYRUP,
+              Abilities.HOSPITALITY,
+            ].includes(a),
+        ) ||
+        s
+          .getLevelMoves()
+          .some(plm =>
+            [Moves.SOFT_BOILED, Moves.SPORE, Moves.MILK_DRINK, Moves.OVERHEAT, Moves.TEATIME].includes(plm[1]),
+          ),
+    ), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
+  [TrainerType.BEAUTY]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.55)
+    .setEncounterBgm(TrainerType.PARASOL_LADY)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
+      trainerPartyTemplates.THREE_AVG_SAME,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+      trainerPartyTemplates.ONE_STRONG,
+    )
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        Species.MEOWTH,
+        Species.GOLDEEN,
+        Species.MAREEP,
+        Species.MARILL,
+        Species.SKITTY,
+        Species.GLAMEOW,
+        Species.PURRLOIN,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [
+        Species.SMOOCHUM,
+        Species.ROSELIA,
+        Species.LUVDISC,
+        Species.BLITZLE,
+        Species.SEWADDLE,
+        Species.PETILIL,
+        Species.MINCCINO,
+        Species.GOTHITA,
+        Species.SPRITZEE,
+        Species.FLITTLE,
+      ],
+      [TrainerPoolTier.RARE]: [
+        Species.FEEBAS,
+        Species.FURFROU,
+        Species.SALANDIT,
+        Species.BRUXISH,
+        Species.HATENNA,
+        Species.SNOM,
+        Species.ALOLA_VULPIX,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [Species.CLAMPERL, Species.AMAURA, Species.SYLVEON, Species.GOOMY, Species.POPPLIO],
+    }),
   [TrainerType.BIKER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)
-    .setSpeciesFilter(s => s.isOfType(PokemonType.POISON)),
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [Species.EKANS, Species.KOFFING, Species.CROAGUNK, Species.VENIPEDE, Species.SCRAGGY],
+      [TrainerPoolTier.UNCOMMON]: [
+        Species.GRIMER,
+        Species.VOLTORB,
+        Species.TEDDIURSA,
+        Species.MAGBY,
+        Species.SKORUPI,
+        Species.SANDILE,
+        Species.PAWNIARD,
+        Species.SHROODLE,
+      ],
+      [TrainerPoolTier.RARE]: [Species.VAROOM, Species.CYCLIZAR],
+    }),
   [TrainerType.BLACK_BELT]: new TrainerConfig(++t)
     .setHasGenders("Battle Girl", TrainerType.PSYCHIC)
     .setHasDouble("Crush Kin")
@@ -2059,9 +1303,15 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.CYCLIST)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.ONE_AVG)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [Species.PICHU, Species.STARLY, Species.TAILLOW, Species.BOLTUND],
-      [TrainerPoolTier.UNCOMMON]: [Species.DODUO, Species.ELECTRIKE, Species.BLITZLE, Species.WATTREL],
-      [TrainerPoolTier.RARE]: [Species.YANMA, Species.NINJASK, Species.WHIRLIPEDE, Species.EMOLGA],
+      [TrainerPoolTier.COMMON]: [Species.DODUO, Species.PICHU, Species.TAILLOW, Species.STARLY, Species.PONYTA],
+      [TrainerPoolTier.UNCOMMON]: [
+        Species.ELECTRIKE,
+        Species.SHINX,
+        Species.BLITZLE,
+        Species.DUCKLETT,
+        Species.WATTREL,
+      ],
+      [TrainerPoolTier.RARE]: [Species.YANMA, Species.NINJASK, Species.WHIRLIPEDE, Species.EMOLGA, Species.SKIDDO],
       [TrainerPoolTier.SUPER_RARE]: [Species.ACCELGOR, Species.DREEPY],
     }),
   [TrainerType.DANCER]: new TrainerConfig(++t)
@@ -2077,7 +1327,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.COMMON]: [Species.RALTS, Species.SPOINK, Species.LOTAD, Species.BUDEW],
       [TrainerPoolTier.UNCOMMON]: [Species.SPINDA, Species.SWABLU, Species.MARACTUS],
       [TrainerPoolTier.RARE]: [Species.BELLOSSOM, Species.HITMONTOP, Species.MIME_JR, Species.ORICORIO],
-      [TrainerPoolTier.SUPER_RARE]: [Species.POPPLIO],
+      [TrainerPoolTier.SUPER_RARE]: [Species.QUAXLY, Species.JANGMO_O],
     }),
   [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setMoneyMultiplier(1.45).setEncounterBgm(TrainerType.CLERK),
   [TrainerType.DOCTOR]: new TrainerConfig(++t)
@@ -2195,7 +1445,15 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.HOOLIGANS]: new TrainerConfig(++t)
     .setDoubleOnly()
+    .setMoneyMultiplier(1.5)
     .setEncounterBgm(TrainerType.ROUGHNECK)
+    .setPartyTemplateFunc(() =>
+      getWavePartyTemplate(
+        trainerPartyTemplates.TWO_WEAK,
+        trainerPartyTemplates.TWO_AVG,
+        trainerPartyTemplates.ONE_AVG_ONE_STRONG,
+      ),
+    )
     .setSpeciesFilter(s => s.isOfType(PokemonType.POISON) || s.isOfType(PokemonType.DARK)),
   [TrainerType.HOOPSTER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.INFIELDER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
@@ -2203,7 +1461,14 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LINEBACKER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.MAID]: new TrainerConfig(++t).setMoneyMultiplier(1.6).setEncounterBgm(TrainerType.RICH),
   [TrainerType.MUSICIAN]: new TrainerConfig(++t)
-    .setEncounterBgm(TrainerType.ROUGHNECK)
+    .setMoneyMultiplier(1.1)
+    .setEncounterBgm(TrainerType.POKEFAN)
+    .setPartyTemplates(
+      trainerPartyTemplates.FOUR_WEAKER,
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG,
+    )
     .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.SING)),
   [TrainerType.HEX_MANIAC]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
@@ -2215,7 +1480,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.THREE_AVG,
       trainerPartyTemplates.TWO_STRONG,
     )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.GHOST)),
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GHOST) || s.isOfType(PokemonType.PSYCHIC)),
   [TrainerType.NURSERY_AIDE]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm("lass"),
   [TrainerType.OFFICER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
@@ -2245,9 +1510,37 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.PARASOL_LADY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
     .setEncounterBgm(TrainerType.PARASOL_LADY)
-    .setSpeciesFilter(s => s.isOfType(PokemonType.WATER)),
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+      trainerPartyTemplates.ONE_STRONG,
+    )
+    .setSpeciesFilter(
+      s =>
+        [s.ability1, s.ability2, s.abilityHidden].some(
+          a =>
+            !!a &&
+            [
+              Abilities.DRIZZLE,
+              Abilities.SWIFT_SWIM,
+              Abilities.HYDRATION,
+              Abilities.RAIN_DISH,
+              Abilities.DRY_SKIN,
+              Abilities.WIND_POWER,
+            ].includes(a),
+        ) || s.getLevelMoves().some(plm => plm[1] === Moves.RAIN_DANCE),
+    ), // Mons with rain abilities or who learn Rain Dance by level
   [TrainerType.PILOT]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.75)
     .setEncounterBgm(TrainerType.CLERK)
+    .setPartyTemplates(
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.THREE_AVG,
+    )
     .setSpeciesFilter(s => tmSpecies[Moves.FLY].indexOf(s.speciesId) > -1),
   [TrainerType.POKEFAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
@@ -2263,7 +1556,8 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.FOUR_WEAK_SAME,
       trainerPartyTemplates.FIVE_WEAK,
       trainerPartyTemplates.SIX_WEAKER_SAME,
-    ),
+    )
+    .setSpeciesFilter(s => tmSpecies[Moves.HELPING_HAND].indexOf(s.speciesId) > -1),
   [TrainerType.PRESCHOOLER]: new TrainerConfig(++t)
     .setMoneyMultiplier(0.2)
     .setEncounterBgm(TrainerType.YOUNGSTER)
@@ -2385,16 +1679,29 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [Species.LARVESTA],
     }),
   [TrainerType.RICH]: new TrainerConfig(++t)
-    .setMoneyMultiplier(5)
+    .setMoneyMultiplier(3.25)
     .setName("Gentleman")
     .setHasGenders("Madame")
-    .setHasDouble("Rich Couple"),
+    .setHasDouble("Rich Couple")
+    .setPartyTemplates(
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.FOUR_WEAK,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+      trainerPartyTemplates.THREE_AVG,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.ELECTRIC)),
   [TrainerType.RICH_KID]: new TrainerConfig(++t)
-    .setMoneyMultiplier(3.75)
+    .setMoneyMultiplier(2.5)
     .setName("Rich Boy")
     .setHasGenders("Lady")
     .setHasDouble("Rich Kids")
-    .setEncounterBgm(TrainerType.RICH),
+    .setEncounterBgm(TrainerType.RICH)
+    .setPartyTemplates(
+      trainerPartyTemplates.FOUR_WEAKER,
+      trainerPartyTemplates.THREE_WEAK_SAME,
+      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
+    )
+    .setSpeciesFilter(s => s.baseTotal <= 460),
   [TrainerType.ROUGHNECK]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)
@@ -2592,19 +1899,21 @@ export const trainerConfigs: TrainerConfigs = {
         Species.MANKEY,
         Species.GROWLITHE,
         Species.MAGNEMITE,
-        Species.GASTLY,
+        Species.ONIX,
         Species.VOLTORB,
         Species.EXEGGCUTE,
         Species.CUBONE,
         Species.LICKITUNG,
-        Species.SCYTHER,
         Species.TAUROS,
-        Species.GYARADOS,
+        Species.MAGIKARP,
         Species.MURKROW,
         Species.ELEKID,
         Species.MAGBY,
       ],
       [TrainerPoolTier.RARE]: [
+        Species.ABRA,
+        Species.GASTLY,
+        Species.SCYTHER,
         Species.PORYGON,
         Species.OMANYTE,
         Species.KABUTO,
@@ -2663,7 +1972,6 @@ export const trainerConfigs: TrainerConfigs = {
         Species.DIGLETT,
         Species.GROWLITHE,
         Species.SLUGMA,
-        Species.MAGBY,
         Species.POOCHYENA,
         Species.ZIGZAGOON,
         Species.NUMEL,
@@ -2672,24 +1980,24 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.UNCOMMON]: [
         Species.RHYHORN,
-        Species.GLIGAR,
         Species.PHANPY,
+        Species.MAGBY,
+        Species.ZANGOOSE,
         Species.SOLROCK,
-        Species.HIPPOPOTAS,
         Species.HEATMOR,
         Species.ROLYCOLY,
-        Species.SILICOBRA,
+        Species.CAPSAKID,
       ],
       [TrainerPoolTier.RARE]: [
-        Species.ARON,
         Species.TRAPINCH,
         Species.LILEEP,
         Species.ANORITH,
+        Species.GOLETT,
         Species.TURTONATOR,
         Species.TOEDSCOOL,
         Species.HISUI_GROWLITHE,
       ],
-      [TrainerPoolTier.SUPER_RARE]: [Species.CHARCADET, Species.CAPSAKID],
+      [TrainerPoolTier.SUPER_RARE]: [Species.CHARCADET, Species.ARON],
     }),
   [TrainerType.TABITHA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
@@ -2722,6 +2030,7 @@ export const trainerConfigs: TrainerConfigs = {
         Species.REMORAID,
         Species.ZIGZAGOON,
         Species.LOTAD,
+        Species.WINGULL,
         Species.CARVANHA,
         Species.WAILMER,
         Species.BARBOACH,
@@ -2733,16 +2042,18 @@ export const trainerConfigs: TrainerConfigs = {
         Species.HORSEA,
         Species.CHINCHOU,
         Species.WOOPER,
-        Species.WINGULL,
         Species.AZURILL,
+        Species.SEVIPER,
         Species.CLAMPERL,
+        Species.WIMPOD,
         Species.CLOBBOPUS,
       ],
       [TrainerPoolTier.RARE]: [
         Species.MANTYKE,
+        Species.TYMPOLE,
         Species.SKRELP,
-        Species.DHELMISE,
         Species.ARROKUDA,
+        Species.WIGLETT,
         Species.HISUI_QWILFISH,
         Species.PALDEA_WOOPER,
       ],
@@ -2797,6 +2108,7 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.RARE]: [
         Species.SNEASEL,
+        Species.TEDDIURSA,
         Species.ELEKID,
         Species.MAGBY,
         Species.DUSKULL,
@@ -2875,7 +2187,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.ZINZOLIN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("plasma_sage", "plasma", [Species.CRYOGONAL])
+    .initForEvilTeamAdmin("plasma_sage", "plasma_zinzolin", [Species.CRYOGONAL])
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_plasma_grunt")
@@ -2883,7 +2195,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
   [TrainerType.COLRESS]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("plasma_boss", "plasma_2", [Species.KLINKLANG])
+    .initForEvilTeamAdmin("plasma_boss", "plasma_colress", [Species.KLINKLANG])
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_colress")
     .setMixedBattleBgm("battle_colress")
@@ -2900,10 +2212,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
-        Species.PONYTA,
         Species.HOUNDOUR,
+        Species.GULPIN,
         Species.SKORUPI,
         Species.CROAGUNK,
+        Species.PURRLOIN,
         Species.SCRAGGY,
         Species.FLETCHLING,
         Species.SCATTERBUG,
@@ -2914,7 +2227,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.UNCOMMON]: [
         Species.POOCHYENA,
         Species.ELECTRIKE,
-        Species.PURRLOIN,
         Species.FOONGUS,
         Species.PANCHAM,
         Species.BINACLE,
@@ -2924,8 +2236,13 @@ export const trainerConfigs: TrainerConfigs = {
         Species.PHANTUMP,
         Species.PUMPKABOO,
       ],
-      [TrainerPoolTier.RARE]: [Species.SNEASEL, Species.LITWICK, Species.PAWNIARD, Species.SLIGGOO],
-      [TrainerPoolTier.SUPER_RARE]: [Species.NOIBAT, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG],
+      [TrainerPoolTier.RARE]: [
+        Species.SNEASEL, 
+        Species.LITWICK, 
+        Species.PAWNIARD, 
+        Species.NOIBAT,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [Species.SLIGGOO, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG],
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
@@ -2980,14 +2297,13 @@ export const trainerConfigs: TrainerConfigs = {
         Species.ORANGURU,
         Species.PASSIMIAN,
         Species.PYUKUMUKU,
-        Species.MINIOR,
         Species.BRUXISH,
         Species.ALOLA_SANDSHREW,
         Species.ALOLA_VULPIX,
         Species.ALOLA_MAROWAK,
       ],
       [TrainerPoolTier.RARE]: [
-        Species.MAGNEMITE,
+        Species.MINIOR,
         Species.TURTONATOR,
         Species.MIMIKYU,
         Species.DRAMPA,
@@ -3015,6 +2331,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
         Species.EKANS,
+        Species.VENONAT,
         Species.DROWZEE,
         Species.KOFFING,
         Species.SPINARAK,
@@ -3073,7 +2390,7 @@ export const trainerConfigs: TrainerConfigs = {
         Species.KLINK,
         Species.SKWOVET,
         Species.ROOKIDEE,
-        Species.CRAMORANT,
+        Species.ROLYCOLY,
         Species.CUFANT,
         Species.GALAR_MEOWTH,
         Species.GALAR_ZIGZAGOON,
@@ -3083,9 +2400,11 @@ export const trainerConfigs: TrainerConfigs = {
         Species.RIOLU,
         Species.DRILBUR,
         Species.APPLIN,
+        Species.CRAMORANT,
         Species.ARROKUDA,
         Species.SINISTEA,
         Species.HATENNA,
+        Species.FALINKS,
         Species.GALAR_PONYTA,
         Species.GALAR_YAMASK,
       ],
@@ -3093,7 +2412,6 @@ export const trainerConfigs: TrainerConfigs = {
         Species.SCIZOR,
         Species.BELDUM,
         Species.HONEDGE,
-        Species.FALINKS,
         Species.GALAR_FARFETCHD,
         Species.GALAR_MR_MIME,
         Species.GALAR_DARUMAKA,
@@ -3102,7 +2420,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.OLEANA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("macro_admin", "macro", [Species.GARBODOR])
+    .initForEvilTeamAdmin("macro_admin", "macro_cosmos", [Species.GARBODOR])
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_oleana")
@@ -3169,7 +2487,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.GIACOMO]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_1", [Species.KINGAMBIT], PokemonType.DARK)
+    .initForEvilTeamAdmin("star_admin", "star_dark", [Species.KINGAMBIT], PokemonType.DARK)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -3189,7 +2507,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.MELA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_2", [Species.ARMAROUGE], PokemonType.FIRE)
+    .initForEvilTeamAdmin("star_admin", "star_fire", [Species.ARMAROUGE], PokemonType.FIRE)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -3209,7 +2527,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ATTICUS]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_3", [Species.REVAVROOM], PokemonType.POISON)
+    .initForEvilTeamAdmin("star_admin", "star_poison", [Species.REVAVROOM], PokemonType.POISON)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -3229,7 +2547,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ORTEGA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_4", [Species.DACHSBUN], PokemonType.FAIRY)
+    .initForEvilTeamAdmin("star_admin", "star_fairy", [Species.DACHSBUN], PokemonType.FAIRY)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -3249,7 +2567,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ERI]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_5", [Species.ANNIHILAPE], PokemonType.FIGHTING)
+    .initForEvilTeamAdmin("star_admin", "star_fighting", [Species.ANNIHILAPE], PokemonType.FIGHTING)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
@@ -4379,11 +3697,7 @@ export const trainerConfigs: TrainerConfigs = {
       () => modifierTypes.SUPER_EXP_CHARM,
       () => modifierTypes.EXP_SHARE,
     )
-    .setEventModifierRewardFuncs(
-      () => modifierTypes.SHINY_CHARM,
-      () => modifierTypes.ABILITY_CHARM,
-      () => modifierTypes.CATCHING_CHARM,
-    )
+    .setEventModifierRewardFuncs(8)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4451,7 +3765,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
-    .setEventModifierRewardFuncs(() => modifierTypes.SHINY_CHARM)
+    .setEventModifierRewardFuncs(25)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4760,7 +4074,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.RAYQUAZA], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 3);
         p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
+        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
         p.variant = 1;
       }),
     )
@@ -4857,7 +4171,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss();
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
+        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
         p.variant = 1;
         p.formIndex = 1; // Mega Rayquaza
         p.generateName();
@@ -5527,7 +4841,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = Utils.randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
         if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.TECHNO_BLAST)) {
           // Check if Techno Blast is in the moveset, if not, replace the first move with Techno Blast.
-          p.moveset[0] = new PokemonMove(Moves.TECHNO_BLAST);
+          p.moveset[2] = new PokemonMove(Moves.TECHNO_BLAST);
         }
       }),
     )
