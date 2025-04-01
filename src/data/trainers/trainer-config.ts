@@ -2236,12 +2236,7 @@ export const trainerConfigs: TrainerConfigs = {
         Species.PHANTUMP,
         Species.PUMPKABOO,
       ],
-      [TrainerPoolTier.RARE]: [
-        Species.SNEASEL, 
-        Species.LITWICK, 
-        Species.PAWNIARD, 
-        Species.NOIBAT,
-      ],
+      [TrainerPoolTier.RARE]: [Species.SNEASEL, Species.LITWICK, Species.PAWNIARD, Species.NOIBAT],
       [TrainerPoolTier.SUPER_RARE]: [Species.SLIGGOO, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG],
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t)

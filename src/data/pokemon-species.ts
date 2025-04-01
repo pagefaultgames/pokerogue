@@ -31,6 +31,7 @@ import { variantData } from "#app/data/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
+import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 
 export enum Region {
   NORMAL,
@@ -387,6 +388,7 @@ export abstract class PokemonSpeciesForm {
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
+  /** Compute the sprite ID of the pokemon form. */
   getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant = 0, back?: boolean): string {
     if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
@@ -394,7 +396,9 @@ export abstract class PokemonSpeciesForm {
 
     const formSpriteKey = this.getFormSpriteKey(formIndex);
     const showGenderDiffs =
-      this.genderDiffs && female && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].find(k => formSpriteKey === k);
+      this.genderDiffs &&
+      female &&
+      ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
 
     const baseSpriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
 
@@ -621,7 +625,9 @@ export abstract class PokemonSpeciesForm {
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
           .replace("variant/", "")
           .replace(/_[1-3]$/, "");
-        globalScene.loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
+        if (!Utils.isNullOrUndefined(variant)) {
+          loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
+        }
       });
       if (startLoad) {
         if (!globalScene.load.isLoading()) {
