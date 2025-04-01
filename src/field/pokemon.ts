@@ -723,12 +723,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.updateInfo();
     } else {
       const randomIllusion: PokemonSpecies = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, this.level);
-      /*
-      if (this.isBoss()) {
-        const availables = [ Species.ENTEI, Species.RAIKOU, Species.SUICUNE ];
-        randomIllusion = getPokemonSpecies(availables[this.randSeedInt(availables.length)]);
-      }
-      */
 
       this.summonData.illusion = {
         basePokemon: { ...this },
