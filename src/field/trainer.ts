@@ -33,14 +33,16 @@ export default class Trainer extends Phaser.GameObjects.Container {
   public partyTemplateIndex: number;
   public name: string;
   public partnerName: string;
+  public nameKey: string;
+  public partnerNameKey: string | undefined;
   public originalIndexes: { [key: number]: number } = {};
 
   constructor(
     trainerType: TrainerType,
     variant: TrainerVariant,
     partyTemplateIndex?: number,
-    name?: string,
-    partnerName?: string,
+    nameKey?: string,
+    partnerNameKey?: string,
     trainerConfigOverride?: TrainerConfig,
   ) {
     super(globalScene, -72, 80);
@@ -59,28 +61,41 @@ export default class Trainer extends Phaser.GameObjects.Container {
         : Utils.randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1,
     );
-    if (i18next.exists("trainersCommon:" + TrainerType[trainerType], { returnObjects: true })) {
-      const namePool = i18next.t("trainersCommon:" + TrainerType[trainerType], { returnObjects: true });
-      this.name =
-        name ||
-        Utils.randSeedItem(
-          Object.values(
-            namePool.hasOwnProperty("MALE")
-              ? namePool[variant === TrainerVariant.FEMALE ? "FEMALE" : "MALE"]
-              : namePool,
-          ),
+    const classKey = `trainersCommon:${TrainerType[trainerType]}`;
+    if (i18next.exists(classKey, { returnObjects: true })) {
+      if (nameKey) {
+        this.nameKey = nameKey;
+      } else {
+        const genderKey = i18next.exists(`${classKey}.MALE`)
+          ? variant === TrainerVariant.FEMALE
+            ? ".FEMALE"
+            : ".MALE"
+          : undefined;
+        const trainerKey = Utils.randSeedItem(
+          Object.keys(i18next.t(`${classKey}${genderKey}`, { returnObjects: true })),
         );
+        this.nameKey = `${classKey}${genderKey}.${trainerKey}`;
+      }
+      this.name = i18next.t(this.nameKey);
       if (variant === TrainerVariant.DOUBLE) {
         if (this.config.doubleOnly) {
-          if (partnerName) {
-            this.partnerName = partnerName;
+          if (partnerNameKey) {
+            this.partnerNameKey = partnerNameKey;
+            this.partnerName = i18next.t(this.partnerNameKey);
           } else {
             [this.name, this.partnerName] = this.name.split(" & ");
           }
         } else {
-          this.partnerName =
-            partnerName ||
-            Utils.randSeedItem(Object.values(namePool.hasOwnProperty("FEMALE") ? namePool["FEMALE"] : namePool));
+          this.partnerNameKey =
+            partnerNameKey ||
+            Utils.randSeedItem(
+              Object.keys(
+                i18next.t(`${classKey}${i18next.exists(`${classKey}.FEMALE`) ? ".FEMALE" : undefined}`, {
+                  returnObjects: true,
+                }),
+              ),
+            );
+          this.partnerName = i18next.t(this.partnerNameKey);
         }
       }
     }
