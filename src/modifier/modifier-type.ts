@@ -2837,7 +2837,7 @@ const modifierPool: ModifierPool = {
             const hasAbility = [
               Abilities.DRIZZLE,
               Abilities.ORICHALCUM_PULSE,
-              Abilities.DRIZZLE,
+              Abilities.DROUGHT,
               Abilities.SAND_STREAM,
               Abilities.SAND_SPIT,
               Abilities.SNOW_WARNING,
